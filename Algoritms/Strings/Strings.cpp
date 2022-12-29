@@ -1,0 +1,1477 @@
+//============================================================================
+// Name        : Strings.cpp
+// Created on  : 13.07.2021
+// Author      : Tokmakov Andrey
+// Version     : 1.0
+// Copyright   : Your copyright notice
+// Description : Strings src class
+//============================================================================
+
+#include "Strings.h"
+
+#include <iostream>
+#include <string>
+#include <cassert>
+#include <algorithm>
+#include <numeric>
+#include <cstring>
+
+#include <array>
+#include <vector>
+#include <set>
+#include <unordered_set>
+#include <queue>
+#include <stack>
+#include <map>
+#include <unordered_map>
+
+namespace Strings {
+
+    bool _is_palindrome_1(const std::string& str) {
+        return std::equal(str.begin(),
+                          str.begin() + std::ssize(str)/ 2,
+                          str.rbegin());
+    }
+
+    bool _is_palindrome_2(const std::string& string1) {
+        return std::equal(string1.begin(),string1.end(),string1.rbegin());
+    }
+
+	bool _is_palindrome_3(const std::string& word) {
+		for (size_t index = 0; index < word.size() / 2; index++) {
+			if (tolower(word.at(index)) != tolower(word.at(word.size() - index - 1)))
+				return false;
+		}
+		return true;
+	}
+
+	void Palindrome_Test()
+	{
+        for (const auto& str: { "deleveled", "malayalam", "bab", "balam" })
+        {
+            std::cout << str << ": " << std::boolalpha << _is_palindrome_1(str)
+                             << " " << _is_palindrome_2(str)
+                             << " " << _is_palindrome_3(str)  << std::endl;
+        }
+	}
+
+	//--------------------------------------------------------------------------------------//
+
+	size_t __palindrom_length(const std::string& str, size_t start, size_t end) {
+		size_t length = 0;
+		while (start >= 0 && end < str.size()) {
+			if (str[start] == str[end]) {
+				length = end - start + 1;
+				start--;
+				end++;
+			}
+			else
+				break;
+		}
+		return length;
+	}
+
+	std::string longestPalindrome(const std::string& str) {
+		size_t start = 0, end = 0;
+		if (true == str.empty())
+			return "";
+
+		size_t len1 = 0, len2 = 0;
+		for (size_t center = 0; center < str.size(); center++) {
+			len1 = __palindrom_length(str, center, center);
+			len2 = __palindrom_length(str, center, center + 1);
+			if (len1 > end - start) {
+				start = center - len1 / 2;
+				end = center + len1 / 2;
+			}
+			if (len2 > end - start) {
+				start = center + 1 - len2 / 2;
+				end = center + len2 / 2;
+			}
+		}
+		return str.substr(start, end - start + 1);
+	}
+
+	void Longest_Palindrome_1()
+	{
+		std::string str = "ddddd3456654321";
+		std::cout << longestPalindrome(str) << std::endl;
+	}
+
+	//--------------------------------------------------------------------------------------//
+
+	size_t __palindrom_length_2(const std::string& str, size_t start, size_t end) {
+		size_t length = 0;
+		while (start >= 0 && end < str.size() &&
+			str[start--] == str[end++]) {
+			length = end - start - 1;
+		}
+		return length;
+	}
+
+	std::string longestPalindrome2(const std::string& str) {
+		if (str.empty())
+			return "";
+
+        size_t start = 0, end = 0;
+		size_t len1 = 0, len2 = 0;
+		for (size_t center = 0; center < str.size(); center++) {
+			len1 = __palindrom_length_2(str, center, center);
+			len2 = __palindrom_length_2(str, center, center + 1);
+			if (len1 > end - start) {
+				start = center - len1 / 2;
+				end = center + len1 / 2;
+			}
+			if (len2 > end - start) {
+				start = center + 1 - len2 / 2;
+				end = center + len2 / 2;
+			}
+			if ((end - start) > (str.size() - center - 1) * 2) {
+				break;
+			}
+		}
+		return str.substr(start, end - start + 1);
+	}
+
+	void Longest_Palindrome_2() {
+		assert(longestPalindrome2("11111") == "11111");
+		assert(longestPalindrome2("12345543211234") == "1234554321");
+		assert(longestPalindrome2("123456789123456789aaaaa1111") == "aaaaa");
+	}
+
+	//--------------------------------------------------------------------------------------//
+
+	bool isKPal(const std::string& str, size_t k)
+	{
+		// find longest palindromic subsequence of given string 
+		std::string lps = longestPalindrome2(str);
+
+		// If the difference between longest palindromic 
+		// subsequence and the original string is less 
+		// than equal to k, then the string is k-palindrome 
+		return (str.size() - lps.size() <= k);
+	}
+
+	void Find_If_KPalindrome() {
+		std::string str = "abcdeca";
+		size_t k = 2;
+
+		std::cout << std::boolalpha << isKPal(str, k) << std::endl;
+	}
+
+	//--------------------------------------------------------------------------------------//
+
+	void _find_all_palindrome_substrings(const std::string& text) {
+		std::set<std::string> palindromes;
+		auto func = [&](const std::string& str, int start, int end) {
+			while (start >= 0 && end < std::ssize(text) && str[start] == str[end]) {
+				if (end > start) // ignore single char palindromes
+                    palindromes.insert(str.substr(start, end - start + 1));
+				start--;
+				end++;
+			}
+		};
+
+		for (int i = 0; i < std::ssize(text) - 1; i++) {
+			func(text, i, i);
+			func(text, i, i + 1);
+		}
+
+		for (const auto& s : palindromes)
+			std::cout << s << std::endl;
+	}
+
+	void Find_All_Palindrome_In_String() {
+		std::string str = "lgooglaabbaae";
+		_find_all_palindrome_substrings(str);
+	}
+
+	//--------------------------------------------------------------------------------------//
+
+	void _removeCharsOfOneString_FromAnother(std::string& text, const std::string& mask) {
+		char dups[256] = { 0 };
+		for (const char c : mask)
+			dups[c] = 1;
+
+		size_t index = 0;
+		for (char c : text) {
+			if (0 == dups[c])
+				text[index++] = c;
+		}
+		text.resize(index);
+	}
+
+	void RemoveCharsOfOneString_FromAnother()
+	{
+		std::string text = "AAAAAAABBBBBCCCCCCCDDDDDDDDEEEEEEFFFFFFF";
+		const std::string mask = "AF";
+
+		std::cout << text << std::endl;
+        _removeCharsOfOneString_FromAnother(text, mask);
+		std::cout << text << std::endl;
+	}
+
+	//--------------------------------------------------------------------------------------//
+
+	void _rearrange_string(std::string& text) {
+		int chars[256] = { 0 };
+		for (char c : text) {
+			//if (c >= 'A' && 'z' >= c) {
+            chars[(int8_t)(c)]++;
+			//}
+		}
+
+		size_t pos = 0;
+		for (size_t i = 0; i < 256; i++) {
+			while (chars[i]--) {
+				text[pos++] = (char)i;
+			}
+		}
+	}
+
+	void _rearrange_string2(std::string& text) {
+		int chars[256]{ 0 };
+        for (char c : text)
+            chars[(int8_t)(c)]++;
+
+		size_t pos = 0, diff = (int)'a' - (int)'A';
+		for (size_t i = 'A'; i <= 'z'; i++) {
+			while (chars[i + diff]) {
+				text[pos++] = (char)(i + diff);
+				chars[i + diff]--;
+			}
+			while (chars[i]) {
+				text[pos++] = (char)i;
+				chars[i]--;
+			}
+		}
+	}
+
+	void RearrangeString() {
+		{
+			std::string str = "FNYaJGNMHSWUzAGQLADQUaYMYSGQRxPCAXU";
+
+
+			std::cout << str << std::endl;
+            _rearrange_string(str);
+			std::cout << str << std::endl;
+		}
+		{
+			std::string str = "FNYaJGNMHSWUzAGQLADQUaYMYSGQRxPCAXU";
+
+
+			std::cout << str << std::endl;
+            _rearrange_string2(str);
+			std::cout << str << std::endl;
+		}
+	}
+
+	//--------------------------------------------------------------------------------------//
+
+	void __rearrange_string_with_numbers(std::string& text) {
+		int chars[256] = { 0 }, sum = 0;
+		for (char c : text) {
+			if ('9' >= c && c >= '0') {
+				sum += (int)(c - '0');
+			}
+			else {
+				chars[c]++;
+			}
+		}
+
+		for (size_t i = 0; i < 256; i++) {
+			while (chars[i]--) {
+				std::cout << (char)i;
+			}
+		}
+		std::cout << sum << std::endl;
+	}
+
+	void RearrangeString_WithNumbers() {
+		std::string str = "DORWBL4A1aaa6H1";
+
+
+		std::cout << str << std::endl;
+		__rearrange_string_with_numbers(str);
+	}
+	//--------------------------------------------------------------------------------------//
+
+	// Given a string with repeated characters, rearrange the string so that no two adjacent characters are the same.
+	// If this is not possible, return None. For example, given "aaabbc", you could return "ababac". Given "aaab", return None.
+
+	void RearrangeString_NoAdjacent() {
+		std::string text = "aaabbc";
+		std::cout << text << "   --->    ";
+
+		int chars[256] = { 0 };
+		for (char c : text)
+			chars[c]++;
+
+		size_t pos = 0;
+		bool stop = false;
+		while (false == stop) {
+			for (size_t i = 0; i < std::size(chars); i++) {
+				if (chars[i]) {
+					text[pos] = i;
+					chars[i]--;
+					pos++;
+				}
+			}
+			stop = std::all_of(std::begin(chars), std::end(chars), [](auto v) { return v == 0; });
+		}
+		std::cout << text << std::endl;
+	}
+
+	//--------------------------------------------------------------------------------------//
+
+	using CharPair = std::pair<char, size_t>;
+	struct Comparator {
+		bool operator() (const CharPair& pair1, const CharPair& pair2) {
+			return pair1.second > pair2.second;
+		}
+	};
+
+	void Find_K_MostFrequentCharacter() {
+		std::string str = "GeeksforGeeksG";
+		size_t K = 3, chars[256] = { 0 };
+
+		for (char c : str)
+			chars[c]++;
+
+		std::priority_queue<CharPair, std::vector<CharPair>, Comparator> queue;
+		for (size_t i = 0; i < 256; i++) {
+			if (chars[i]) {
+				if (queue.size() != 3) {
+					queue.push(CharPair((char)i, chars[i]));
+				}
+				else if (chars[i] > queue.top().second) {
+					queue.pop();
+					queue.push(CharPair((char)i, chars[i]));
+				}
+			}
+		}
+
+		while (!queue.empty()) {
+			std::cout << ' ' << queue.top().first << "  " << queue.top().second << std::endl;
+			queue.pop();
+		}
+		std::cout << std::endl;
+	}
+
+	//--------------------------------------------------------------------------------------//
+
+	void Find_K_MostFrequentCharacter_2() {
+		const std::string str = "GeeksforGeeksGzG";
+
+        std::multimap<int, char, std::greater<>> dict;
+        {
+            size_t chars[256] = {0};
+            for (char c: str)
+                chars[c]++;
+
+            for (int i = 0; i < std::ssize(chars); i++) {
+                if (chars[i])
+                    dict.emplace(chars[i], i);
+            }
+        }
+
+        size_t K = 3;
+		for (const auto& [k, v] : dict) {
+			std::cout << k << " = " << v << std::endl;
+			if (0 == (--K))
+				break;
+		}
+	}
+
+	//--------------------------------------------------------------------------------------//
+
+
+	//--------------------------------------------------------------------------------------//
+
+	void _removeDuplicates(std::string& text) {
+		char tmp[256] = { 0 };
+		size_t u_index = 0;
+		for (size_t pos = 0; pos < text.length(); pos++) {
+			if (1 == tmp[text[pos]]) {
+				continue;
+			}
+			else if (u_index != pos) {
+				text[u_index] = text[pos];
+			}
+			tmp[text[pos]] = 1;
+			u_index++;
+		}
+		text.resize(u_index);
+	}
+
+	void _removeDuplicates2(std::string& text) {
+		char tmp[256] = { 0 };
+		size_t index = 0;
+		for (char c : text) {
+			if (0 == tmp[c]++)
+				text[index++] = c;
+		}
+		text.resize(index);
+	}
+
+
+	void RemoveDuplicates()
+    {
+        {
+            std::string s = "aaaaabbbbbb";
+
+            std::cout << s << "  --->  ";
+            _removeDuplicates(s);
+            std::cout << s << std::endl;
+        }
+		{
+			std::string s = "aaaaabbbbbb";
+
+			std::cout << s << "  --->  ";
+            _removeDuplicates2(s);
+			std::cout << s << std::endl;
+		}
+		{
+			std::string s = "abcabcabcabcabc";
+
+			std::cout << s << "  --->  ";
+            _removeDuplicates2(s);
+			std::cout << s << std::endl;
+		}
+	}
+	//--------------------------------------------------------------------------------------//
+
+	void _rotate_string_once(std::string& str) {
+		char tmp = str.back();
+		memcpy(str.data() + 1, str.data(), str.length() - 1);
+		str.front() = tmp;
+	}
+
+	void _rotate_string_K(std::string& str, size_t K) {
+		K = K % str.length();
+		char* tmp = new char[K];
+		memcpy(tmp, str.data() + K + 1, K);
+		memcpy(str.data() + K, str.data(), str.length() - K);
+		memcpy(str.data(), tmp, K);
+		delete[] tmp;
+	}
+
+	void _rotate_string_K_2(std::string& str, size_t K) {
+		std::string result(str);
+		for (size_t pos = 0; pos < str.size(); pos++, K++)
+			result[K % str.size()] = str[pos];
+		str.swap(result);
+	}
+
+	void RotateString() {
+		{
+			std::string text = "567891234";
+			_rotate_string_once(text);
+			std::cout << text << std::endl;
+		}
+		{
+			std::string text = "567891234";
+			_rotate_string_K(text, 4 + text.length());
+			std::cout << text << std::endl;
+		}
+		{
+			std::string text = "567891234";
+			_rotate_string_K_2(text, 4);
+			std::cout << text << std::endl;
+		}
+	}
+
+	//--------------------------------------------------------------------------------------//
+
+	bool _is_K_rotate_equals(const std::string& str1, const std::string& str2, size_t K) {
+		for (size_t pos = 0; pos < str1.size(); pos++, K++)
+			if (str2[K % str1.size()] != str1[pos])
+				return false;
+		return true;
+	}
+
+	int _Find_K_Rotates_To_Make_Equal(const std::string& str1, const std::string& str2) {
+		if (str1.size() != str2.size())
+			return -1;
+		for (size_t pos = 0; pos < str1.size(); pos++)
+			if (true == _is_K_rotate_equals(str1, str2, pos))
+				return pos;
+		return -1;
+	}
+
+	void CheckIfStrings_RotareRotateEquals() {
+		std::string text1 = "123456789", text2 = "789123456";
+		std::cout << _Find_K_Rotates_To_Make_Equal(text1, text2) << std::endl;
+	}
+
+	//--------------------------------------------------------------------------------------//
+
+	void __moveAtEnd1(std::string str, unsigned int i, unsigned int l) {
+		if (i >= l)
+			return;
+
+		char curr = str[i];
+		if (curr != 'x')
+			std::cout << curr;
+		__moveAtEnd1(str, i + 1, l);
+		if (curr == 'x')
+			std::cout << curr;
+		return;
+	}
+
+	void __moveAtEnd2(const std::string& str) {
+		int count = str.length();
+		for (auto c : str) {
+			if ('x' != c) {
+				count--;
+				std::cout << c;
+			}
+		}
+		while (count--)
+			std::cout << 'x';
+		std::cout << std::endl;
+	}
+
+	void MoveCharsToEnd() {
+		std::string text = "geekxsforgexxeksxx";
+		__moveAtEnd1(text, 0, text.length());
+		std::cout << std::endl;
+		__moveAtEnd2(text);
+	}
+
+
+	//--------------------------------------------------------------------------------------//
+
+	void _move_zeros_to_end(std::string& str) {
+		size_t pos = 0;
+		for (size_t i = 0; i < str.length(); i++)
+			if ('0' != str[i])
+				str[pos++] = str[i];
+		for (size_t i = pos; i < str.length(); i++)
+			str[i] = '0';
+	}
+
+    void _move_zeros_to_end_EX(std::string& str) {
+        for (size_t pos = 0; char& c: str)
+            if ('0' != c)
+                std::swap(str[pos++], c);
+    }
+
+	void MoveZerosToEnd() {
+		std::string text = "a0b0c0d0e";
+
+        {
+            std::string input {text};
+            _move_zeros_to_end(input);
+            std::cout << text << " --> "<< input << std::endl;
+        }
+        {
+            std::string input {text};
+            _move_zeros_to_end_EX(input);
+            std::cout << text << " --> "<< input << std::endl;
+        }
+	}
+
+	//--------------------------------------------------------------------------------------//
+
+	std::string longestUniqueSubstr_1(const std::string& text) {
+		char duplicates[256] = { 0 };
+		size_t beg = 0, length = 0, maxlen = 0;
+		for (size_t index = 0; index < text.length(); index++) {
+            const char c = text[index];
+			if (1 == duplicates[c]) {
+				length = 1;
+				memset(duplicates, 0, sizeof(duplicates));
+			}
+			else {
+				if (++length > maxlen) {
+					maxlen = length;
+					beg = index - length + 1;
+				}
+			}
+			duplicates[text[index]] = 1;
+		}
+		return text.substr(beg, maxlen);
+	}
+
+    size_t longestUniqueSubstr_2(const std::string& text) {
+		size_t maxLength = 0, repeat_count = 0, indexes[256] = { 0 };
+		for (size_t idx = 0; char c: text) {
+			repeat_count = std::max(repeat_count, indexes[c] + 1);
+			maxLength = std::max(maxLength, idx - repeat_count + 1);
+			indexes[c] = idx++;
+		}
+		return maxLength;
+	}
+
+    size_t longestUniqueSubstr_3_Map(const std::string& text) {
+        std::unordered_map<char, size_t> seen;
+        size_t result = 0;
+        for (size_t fast = 0, slow = 0; fast < text.size(); ++fast) {
+            if (seen.count(text[fast]) != 0)
+                slow = std::max(slow, seen[text[fast]] + 1);
+            seen[text[fast]] = fast;
+            result = std::max(result, fast - slow + 1);
+        }
+        return result;
+    }
+
+    size_t longestUniqueSubstr_4_Tbl(const std::string& text) {
+        size_t result = 0, indexes[256] {0};
+        for (size_t fastIdx = 0, slow = 0; const char c: text) {
+            slow = std::max(slow, indexes[c] + 1);
+            indexes[c] = fastIdx++;
+            result = std::max(result, fastIdx - slow);
+        }
+        return result;
+    }
+
+    size_t longestUniqueSubstr_4_Tbl_Debug(const std::string& text) {
+        size_t result = 0, indexes[256] {0};
+        for (size_t fastIdx = 0, slow = 0; const char c: text) {
+            slow = std::max(slow, indexes[c] + 1);
+            indexes[c] = fastIdx++;
+            std::cout << c << "  |  " << indexes[c] << "  |  " << fastIdx << "  |  " << slow << std::endl;
+            result = std::max(result, fastIdx - slow);
+        }
+        return result;
+    }
+
+	void LongestSubstringWithoutRepeatingCharacters() {
+		std::string text = "AAAAAbcdAEEE";
+
+		std::cout << longestUniqueSubstr_1(text) << std::endl;
+		std::cout << longestUniqueSubstr_2(text) << std::endl;
+		std::cout << longestUniqueSubstr_3_Map(text) << std::endl;
+		std::cout << longestUniqueSubstr_4_Tbl(text) << std::endl;
+		std::cout << longestUniqueSubstr_4_Tbl_Debug(text) << std::endl;
+	}
+
+	//--------------------------------------------------------------------------------------//
+
+	void LongestConsecutiveCharacters() {
+		const std::string text = "AAAABBAAEDRWWWDDDEERRTTTTTTTTSSDDGERRSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSGGGGGGGGGGGGGSCCCSDSDDDQPBBBBOAAAAAAAAAAAAAAAAAAAAAAAAAAAAA";
+		char c {};
+		unsigned int len = 1, max_len = 1;
+		for (unsigned int i = 1; i < text.length(); ++i) {
+			if (text[i - 1] != text[i]) {
+				len = 1;
+			}
+			else {
+				if (++len > max_len) {
+					max_len = len;
+					c = text[i];
+				}
+			}
+		}
+		std::cout << " Max = " << max_len << " of " << c << std::endl;
+	}
+
+
+    //---------------------------------------------------------------------------//
+
+    double getAngleOnClock(std::string_view timeStr) {
+        const size_t pos = timeStr.find(':');
+        const double hours = atoi(timeStr.substr(0, pos).data());
+        const double minutes = atoi(timeStr.substr(pos + 1, timeStr.length() - pos -1).data());
+
+        /*
+         * The whole dial is 360 degrees and each interval is 30 degrees
+         * Then there will be 150 degrees (5 intervals) between the marks corresponding to 10 and 15
+         * However, the hour hand will shift from 10 to 15 minutes, which is 25% of the hour, that is 7.5 degrees from 30.
+         * Then 150-7.5=142.5
+         */
+
+        auto degrees = std::abs(hours * 30  -  minutes * 6 + (30 * minutes) / 60);
+        degrees = std::min(degrees, 360 - degrees);
+        const double radians = ( degrees * std::numbers::pi ) / 180;
+
+        // std::cout << "degrees = " << degrees << std::endl;
+        // std::cout << "radians = " << radians << std::endl;
+        return degrees;
+    }
+
+    void AnalogClockAngles() {
+        // std::string timeString = "03:00";
+        std::string timeString = "09:30";
+
+        getAngleOnClock(timeString);
+    }
+
+    //--------------------------------------------------------------------------------------//
+
+    unsigned int _atoi(const char* str) {
+        unsigned int result {0};
+        char c = *str;
+        while (c >= '0' && c <= '9') {
+            result = result * 10 + (c - '0');
+            c = *(++str);
+        }
+        return result;
+    }
+
+    unsigned int _atoi2(const char* c) {
+        unsigned int result {0};
+        while (*c >= '0' && *c <= '9')
+            result = result * 10 + (*(c++) - '0');
+        return result;
+    }
+
+    void Atoi() {
+        std::cout << _atoi("123") <<  "    " << _atoi2("123") << std::endl;
+        std::cout << _atoi("1203") <<  "    " << _atoi2("1203") << std::endl;
+        std::cout << _atoi("931aa") <<  "    " << _atoi2("931aa") << std::endl;
+
+
+    }
+
+	//--------------------------------------------------------------------------------------//
+
+	void __printDistinctSubStrs__(const std::string& str) {
+		std::unordered_map<std::string, unsigned int> pairs;
+		for (size_t i = 0; i < str.size() - 1; i++)
+			pairs[str.substr(i, 2)]++;
+
+		std::cout << "Distinct sub-strings with counts:" << std::endl;
+		for (const auto it : pairs)
+			std::cout << it.first << "-" << it.second << std::endl;
+	}
+
+	void Print_Distinct_SubStrings()
+	{
+		std::string str = "abcacdcacabacaassddssklac";
+		__printDistinctSubStrs__(str);
+	}
+
+	//--------------------------------------------------------------------------------------//
+
+	void print(std::string str, size_t pos) {
+		if (str.length() == pos) {
+			std::cout << str << std::endl;
+			return;
+		}
+		if ('?' == str[pos]) {
+			str[pos] = '0';
+			print(str, pos + 1);
+			str[pos] = '1';
+			print(str, pos + 1);
+		}
+		else {
+			print(str, pos + 1);
+		}
+	}
+
+	void Print_1_0_Instead_Wildcards() {
+		const std::string text = "1??0?101";
+		print(text, 0);
+	}
+
+	//--------------------------------------------------------------------------------------//
+
+	void print_2(const std::string& str) {
+		std::deque<std::string> strings{ str };
+		size_t wildPos = std::string::npos;
+		while (std::string::npos != (wildPos = strings.front().find('?'))) {
+			strings.emplace_back(strings.front())[wildPos] = '0';
+			strings.emplace_back(strings.front())[wildPos] = '1';
+			strings.pop_front();
+		}
+		std::for_each(strings.begin(), strings.end(), [](const auto& s) { std::cout << s << std::endl; });
+	}
+
+	void Print_1_0_Instead_Wildcards_2() {
+		const std::string text = "2?3?4";
+		print_2(text);
+	}
+
+	//--------------------------------------------------------------------------------------//
+
+	void FindDuplicateSymbols() {
+		const std::string text = "1234567829dabcdfGGG";
+		int chars[256] = {};
+
+		std::cout << "Duplicate symbols: \n";
+		for (const auto c : text) {
+			if (1 == chars[c]++) {
+				std::cout << c << ' ';
+			}
+		}
+		std::cout << std::endl;
+	}
+
+	//--------------------------------------------------------------------------------------//
+
+	void firstNonRepeatingChar(char* str) {
+		std::pair<int, int> arr[256];
+		for (int i = 0; str[i]; i++) {
+			arr[str[i]].first += 1;
+			arr[str[i]].second = i;
+		}
+
+		int pos = INT64_MAX;
+		for (int i = 0; i < 256; i++) {
+			// First occured once element should have arr[i].first == 1 and arr[i].second -> MIN of all
+			if (arr[i].first == 1) {
+				pos = std::min(pos, arr[i].second);
+			}
+		}
+
+		std::cout << "Result = " << str[pos] << std::endl;
+	}
+
+	void firstNonRepeatingChar_GOOD(char* str) {
+		int chars[256]{ 0 };
+		for (int i = 0; str[i]; i++)
+			chars[str[i]]++;
+
+		char result = '\0';
+		for (int i = 0; str[i]; i++)
+			if (1 == chars[str[i]]) {
+				result = str[i];
+				break;
+			}
+
+		std::cout << "Result = " << result << std::endl;
+	}
+
+	void firstNonRepeatingChar_GOOD_CppStyle(std::string&& str) {
+		int chars[256]{ 0 };
+		for (char c : str)
+			chars[c]++;
+
+		for (char c : str)
+			if (1 == chars[c]) {
+                std::cout << "Result = " << c << std::endl;
+				break;
+			}
+	}
+
+	void  Find_First_Char_Occured_Once() {
+
+		char str[] = "geeksforgeeks";
+		firstNonRepeatingChar(str);
+		firstNonRepeatingChar_GOOD(str);
+		firstNonRepeatingChar_GOOD_CppStyle(str);
+	}
+
+    //---------------------------------------------------------------------------------------//
+
+	void Find_First_K_Chars_Occured_Once() {
+		std::string str = "AZBCDBAGHCHFAC";
+		int k = 4;
+
+		int chars[256] = { 0 };
+		for (const auto c : str)
+			chars[c]++;
+		for (const auto c : str) {
+			if (1 == chars[c]) {
+				std::cout << c << ::std::endl;
+				if (0 == --k)
+					break;
+			}
+		}
+	}
+
+	//---------------------------------------------------------------------------------------//
+
+	int find_minimum_index_of_repeating_element(const std::vector<int>& numbers) {
+		std::unordered_set<int> dup;
+		int pos = -1;
+		for (int i = numbers.size() - 1; i > 0; i--) {
+			if (!dup.insert(numbers[i]).second)
+				pos = i;
+		}
+		return pos;
+	}
+
+	int find_minimum_index_of_repeating_element_3(const std::vector<int>& numbers) {
+		std::unordered_set<int> dup{ numbers.begin(), numbers.end() };
+		int pos = -1;
+		for (int i = numbers.size() - 1; i > 0; i--) {
+			if (dup.end() != dup.find(numbers[i]))
+				pos = i;
+		}
+		return pos;
+	}
+
+	int find_minimum_index_of_repeating_element_2(const std::vector<int>& numbers) {
+		std::unordered_map<int, int> dup;
+		int pos = numbers.size();
+		for (size_t i = 0; i < numbers.size(); i++) {
+			if (auto result = dup.insert({ numbers[i], i }); !result.second)
+				pos = std::min(pos, result.first->second);
+		}
+		return pos == numbers.size() ? -1 : pos;
+	}
+
+	void Find_Minimum_Index_Of_RepeatingElement() {
+		std::vector<int> numbers = { 5,6,3,4,3,6,4 };
+		std::cout << "Result = " << find_minimum_index_of_repeating_element(numbers) << std::endl;
+		std::cout << "Result = " << find_minimum_index_of_repeating_element_2(numbers) << std::endl;
+		std::cout << "Result = " << find_minimum_index_of_repeating_element_3(numbers) << std::endl;
+	}
+
+	//--------------------------------------------------------------------------------------//
+
+	int find_longestsubstring_with_k_distinctcharacters(const std::string& str, size_t K) {
+		int chars[256] = { 0 };
+
+		int max_len = 0;
+		for (size_t i = 0; i < str.size(); i++) {
+			int distink_left = K, n = i;
+			memset(chars, 0, sizeof(chars));
+			while (n < str.size()) {
+				if (0 == chars[str[n]]++ && 0 == distink_left--) {
+					break;
+				}
+				std::cout << str[n];
+				n++;
+			}
+			std::cout << std::endl;
+		}
+
+		return 0;
+	}
+
+	void Find_LongestSubstring_With_K_DistinctCharacters() {
+		std::string str = "aaabaaaaadddddccccccggggg";
+		find_longestsubstring_with_k_distinctcharacters(str, 2);
+	}
+
+	//--------------------------------------------------------------------------------------//
+
+	void Find_If_String_IsSubstring_OfAnother() {
+		std::string text = "qw34er333345tyui34op", str = "345";
+
+
+		for (size_t i = 0; i < text.length(); ++i) {
+			if (text[i] == str[0]) {
+				int k = i, n = 0;
+				while (text[k++] == str[n++]) {
+					if (n == str.length()) {
+						std::cout << "Ok" << std::endl;
+						return;
+					}
+				}
+			}
+		}
+		std::cout << "Done" << std::endl;
+	}
+
+	//--------------------------------------------------------------------------------------//
+
+	bool __check_parentheses(const std::string& str) {
+		std::stack<char> stack;
+		for (const char c : str) {
+			if ('(' == c)
+				stack.push(c);
+			else if (')' == c) {
+				if (stack.empty())
+					return false;
+				if ('(' == stack.top())
+					stack.pop();
+			}
+		}
+		return stack.empty();
+	}
+
+	bool __check_parentheses_vector(const std::string& str) {
+		std::vector<char> brackets;
+		brackets.reserve(str.length());
+		for (const char c : str) {
+			if ('(' == c) {
+				brackets.push_back(c);
+			}
+			else if (')' == c) {
+				if (!brackets.empty() && '(' == brackets.back())
+					brackets.pop_back();
+				else return false;
+			}
+		}
+		return brackets.empty();
+	}
+
+	void CalcParentheses() {
+
+		std::vector<std::string> params = { "()", ")(()))", "(" ,"(())((()())())", "))" };
+		for (const auto& str : params) {
+			std::cout << std::boolalpha << __check_parentheses(str) << "   "
+                      << std::boolalpha << __check_parentheses_vector(str) << std::endl;
+		}
+		std::cout << std::endl;
+	}
+
+	//--------------------------------------------------------------------------------------//
+
+	bool __check_parentheses_3_bracket(const std::string& str) {
+		std::vector<char> brackets;
+		brackets.reserve(str.length());
+		for (const char c : str) {
+			if ('(' == c || '[' == c || '{' == c) {
+				brackets.push_back(c);
+			}
+			else if (')' == c || ']' == c || '}' == c) {
+				if (brackets.empty()) {
+					return false;
+				}
+				else if (')' == c) {
+					if ('(' == brackets.back())
+						brackets.pop_back();
+					else
+						return false;
+				}
+				else if ('}' == c) {
+					if ('{' == brackets.back())
+						brackets.pop_back();
+					else
+						return false;
+				}
+				else if (']' == c) {
+					if ('[' == brackets.back())
+						brackets.pop_back();
+					else
+						return false;
+				}
+				else {
+					return false;
+				}
+			}
+		}
+		return brackets.empty();
+	}
+
+    bool check_parentheses_3_bracket_ex(const std::string& str)
+    {
+        constexpr std::array<std::pair<char, char>, 3> symbols {{
+                                                                        {'[', ']'}, {'{', '}'}, {'(', ')'}
+                                                                }};
+        std::vector<char> brackets;
+        for (const char c : str) {
+            for (const auto& [open, close]: symbols) {
+                if (c == open)
+                    brackets.push_back(c);
+                else if (c == close) {
+                    if (brackets.empty() || open != brackets.back())
+                        return false;
+                    else
+                        brackets.pop_back();
+                }
+            }
+        }
+        return brackets.empty();
+    }
+
+	void CalcParentheses_3_BRacket() {
+        for (const auto& str: {"{[(]}", "()", "()()", "({}[{}])"})
+        {
+            std::cout << str << " = " << std::boolalpha << __check_parentheses_3_bracket(str) << std::endl;
+            std::cout << str << " = " << std::boolalpha << check_parentheses_3_bracket_ex(str) << std::endl;
+        }
+	}
+
+	//--------------------------------------------------------------------------------------//
+
+	int _calcParentheses_K_deletions(const std::string& str) {
+		std::vector<char> brackets;
+		brackets.reserve(str.length());
+		for (const char c : str) {
+			if ('(' == c) {
+				brackets.push_back(c);
+			}
+			else if (')' == c) {
+				if (brackets.empty() || ')' == brackets.back())
+					brackets.push_back(c);
+				else
+					brackets.pop_back();
+			}
+		}
+		return brackets.size();
+	}
+
+	// Given a string of parentheses, write a function to compute the minimum number of parentheses to be removed to make the string valid 
+	// (i.e. each open parenthesis is eventually closed). For example, given the string "()())()", you should return 1. 
+	// Given the string ")(", you should return 2, since we must remove all of them.
+
+	void CalcParentheses_K_Deletions() {
+		{
+			std::string str = "()())()";
+			std::cout << str << " = " << _calcParentheses_K_deletions(str) << std::endl;
+		}
+		{
+			std::string str = ")(";
+			std::cout << str << " = " << _calcParentheses_K_deletions(str) << std::endl;
+		}
+		{
+			std::string str = ")()(";
+			std::cout << str << " = " << _calcParentheses_K_deletions(str) << std::endl;
+		}
+		{
+			std::string str = "((()))()";
+			std::cout << str << " = " << _calcParentheses_K_deletions(str) << std::endl;
+		}
+	}
+
+	//--------------------------------------------------------------------------------------//
+
+	void Remove_Add_Chars() {
+		std::string text = "a1b2a3b4a5b6232323";
+
+		size_t pos = 0;
+		for (size_t i = 0; i < text.length(); i++) {
+			if ('a' != text[i])
+				text[pos++] = text[i];
+		}
+
+		for (size_t i = 0; i < text.length(); i++) {
+			if ('b' == text[i]) {
+				char c = text[i + 1], c1 = text[i + 2];
+				for (size_t n = i + 1; n < text.length(); n++) {
+					c1 = text[n + 1];
+					text[n + 1] = c;
+					c = c1;
+				}
+				text[++i] = 'b';
+			}
+		}
+
+		std::cout << text << std::endl;
+	}
+
+	//--------------------------------------------------------------------------------------//
+
+	// ERROR: if  text = "dcbefebcfe", mask = "fd" we have resul = 'dcbefebcf' instread 'dcbef'
+	std::string _minimum_length_substrings(const std::string& text, const std::string& mask) {
+		size_t chars[256] = { 0 };
+		for (size_t pos = 0; pos < text.length(); pos++)
+			chars[text[pos]] = pos + 1;
+
+		size_t start = text.length(), end = 0;
+		for (char c : mask) {
+			if (0 == chars[c])
+				return "";
+			start = std::min(chars[c], start);
+			end = std::max(chars[c], end);
+		}
+		return text.substr(start - 1, end - start + 1);
+	}
+
+	std::string _minimum_length_substrings_2(const std::string& text, const std::string& mask) {
+		// Hask map of elements in MASK
+		size_t mask_chars[256] = { 0 };
+		for (char c : mask)
+			mask_chars[c] = 1;
+
+		std::map<size_t, char> map;
+		// If 'Text' containt elements from MASK insert them to map as <POS, CHAR>
+		for (size_t pos = 0; pos < text.length(); pos++)
+			if (1 == mask_chars[text[pos]])
+				map.insert({ pos, text[pos] });
+
+		assert(false == map.empty());
+		std::pair<size_t, size_t> bounds = { map.begin()->first, std::prev(map.end())->first };
+
+		// From left -> right to determine last repeated charachter from begining, it there are any: 
+		for (auto it = std::next(map.begin()); map.end() != it && it->second == map.begin()->second; ++it)
+			bounds.first = it->first;
+
+		// From right --> left to determine last repeated charachter at the end, it there are any: 
+		for (auto it = std::next(map.rbegin()); map.rend() != it && it->second == map.rbegin()->second; ++it)
+			bounds.second = it->first;
+
+		return text.substr(bounds.first, bounds.second - bounds.first + 1);
+	}
+
+
+	// You are given two strings s and t. You can select any substring of string s and 
+	// rearrange the characters of the selected substring. Determine the minimum length 
+	// of the substring of s such that string t is a substring of the selected substring.
+	// Example: s = "dcbefebce" and t = "fd"' -- > dcbef
+	void Minimum_Length_Substrings() {
+		std::string text = "dcdbefebcfe", mask = "fd";
+
+		std::cout << text << std::endl;
+
+		std::cout << "Test1: " << _minimum_length_substrings(text, mask) << std::endl;
+		std::cout << "Test2: " << _minimum_length_substrings_2(text, mask) << std::endl;
+	}
+
+	//--------------------------------------------------------------------------------------//
+
+	bool _are_permutation(const std::string& str1, const std::string& str2) {
+		if (str1.length() != str2.length())
+			return false;
+
+		int chars[256] = { 0 };
+		for (char c : str1)
+			chars[c]++;
+		for (char c : str2)
+			if (1 > chars[c]--)
+				return false;
+		return true;
+	}
+
+	// Write a function to check whether two given strings are Permutation of each other or not.
+	// A Permutation of a string is another string that contains same characters, only the order
+	// of characters can be different. For example, �abcd� and �dabc� are Permutation of each other.
+	void CheckIfTwoStringsArePermutation() {
+		{
+			std::string str1 = "test", str2 = "estt";
+			std::cout << std::boolalpha << _are_permutation(str1, str2) << std::endl;
+		}
+		{
+			std::string str1 = "ABBAACCDDD", str2 = "BACDBACDAD";
+			std::cout << std::boolalpha << _are_permutation(str1, str2) << std::endl;
+		}
+		{
+			std::string str1 = "ABCDDDDBA", str2 = "ABCCDDDBA";
+			std::cout << std::boolalpha << _are_permutation(str1, str2) << std::endl;
+		}
+		{
+			std::string str1 = "abcd", str2 = "bbbb";
+			std::cout << std::boolalpha << _are_permutation(str1, str2) << std::endl;
+		}
+	}
+
+	//--------------------------------------------------------------------------------------//
+
+	// Same as isPermutation
+	bool _are_anagrams(const std::string& str1, const std::string& str2) {
+		if (str1.length() != str2.length())
+			return false;
+
+		int chars[256] = { 0 };
+		for (char c : str1)
+			chars[c]++;
+		for (char c : str2)
+			if (1 > chars[c]--)
+				return false;
+		return true;
+	}
+
+	void AreAnagrams() {
+		{
+			std::string str1 = "triangle", str2 = "integral";
+			std::cout << "Is '" << str1 << "' and '" << str2 << "' anagrams: " << std::boolalpha << _are_anagrams(str1, str2) << std::endl;
+		}
+		{
+			std::string str1 = "listen", str2 = "silent";
+			std::cout << "Is '" << str1 << "' and '" << str2 << "' anagrams: " << std::boolalpha << _are_anagrams(str1, str2) << std::endl;
+		}
+		{
+			std::string str1 = "acbdd", str2 = "aabc";
+			std::cout << "Is '" << str1 << "' and '" << str2 << "' anagrams: " << std::boolalpha << _are_anagrams(str1, str2) << std::endl;
+		}
+	}
+
+	//--------------------------------------------------------------------------------------//
+
+	size_t count_deletions_to_make_aragrams(const std::string& str1,
+		const std::string& str2) {
+
+		int chars1[256]{ 0 }, chars2[256]{ 0 };
+		for (char c : str1)
+			chars1[c]++;
+		for (char c : str2)
+			chars2[c]++;
+		size_t result = 0;
+		for (int i = 0; i < 256; ++i) {
+			if (chars1[i] && chars2[i])
+				result += std::abs(chars1[i] - chars2[i]);
+			else
+				result += chars1[i] + chars2[i];
+		}
+		return result;
+	}
+
+	size_t count_deletions_to_make_aragrams2(const std::string& str1,
+		const std::string& str2) {
+		int chars[256]{ 0 };
+		for (char c : str1)
+			chars[c]++;
+		size_t result = 0;
+		for (char c : str2) {
+			if (chars[c])
+				chars[c]--;
+			else
+				result++;
+		}
+		return result + std::accumulate(std::begin(chars), std::end(chars), 0);
+	}
+
+	size_t count_deletions_to_make_aragrams_super(const std::string& str1, const std::string& str2) {
+		int chars[256]{ 0 };
+		for (char c : str1)
+			chars[c]++;
+		for (char c : str2)
+			chars[c]--;
+		return std::accumulate(std::begin(chars), std::end(chars), 0, [](int a, int b) {
+			return std::abs(a) + std::abs(b);
+			});
+	}
+
+	void MakeAnagrams_CountDeletions() {
+		{
+			std::string str1 = "mabc", str2 = "cbdka";
+			std::cout << count_deletions_to_make_aragrams(str1, str2) << std::endl;
+			std::cout << count_deletions_to_make_aragrams2(str1, str2) << std::endl;
+			std::cout << count_deletions_to_make_aragrams_super(str1, str2) << std::endl;
+		}
+
+	}
+
+	//--------------------------------------------------------------------------------------//
+
+	void _rotational_cipher(std::string& text, int rotationFactor) {
+		int charRange = 'Z' - 'A' + 1;
+		int charFactor = (rotationFactor % 256) % charRange;
+		int intFactor = (rotationFactor % 256) % 10;
+
+		for (char& c : text) {
+			if (c >= 'A' && 'Z' >= c) {
+				c = (c + charFactor) > 'Z' ? c + charFactor - charRange : c + charFactor;
+			}
+			else if (c >= 'a' && 'z' >= c) {
+				c = (c + charFactor) > 'z' ? c + charFactor - charRange : c + charFactor;
+			}
+			else if (c >= '0' && '9' >= c) {
+				c = c + intFactor;
+				if (c > '9')
+					c = c - 10;
+			}
+		}
+	}
+
+	void RotationalCipher() {
+		{
+			std::string text = "Zebra-493?";
+			std::cout << text << std::endl;
+
+			_rotational_cipher(text, 3);
+			std::cout << text << std::endl;
+		}
+		{
+			std::string text = "abcdefghijklmNOPQRSTUVWXYZ0123456789";
+			std::cout << text << std::endl;
+
+			_rotational_cipher(text, 39);
+			std::cout << text << std::endl;
+		}
+		{
+			std::string text = "abcdZXYzxy-999.@";
+			std::cout << text << std::endl;
+
+			_rotational_cipher(text, 200);
+			std::cout << text << std::endl;
+		}
+		{
+			std::string text = "Epp-gsrzsCw-3-fi:Epivx5.";
+			std::cout << text << std::endl;
+
+			_rotational_cipher(text, 200);
+			std::cout << text << std::endl;
+		}
+	}
+
+	//-----------------------------------------------------------------//
+
+	void permute(const std::string& prefix, std::string s) {
+		if (s.size() <= 1)
+			std::cout << prefix << s << std::endl;
+		else {
+			for (auto iter = s.begin(); s.end() != iter; ++iter) {
+				char curr = *iter;
+				s.erase(iter);
+				//std::cout << "---> [" << curr << ", " << s << "]" << std::endl;
+				permute(prefix + curr, s);
+				//std::cout << "<--- [" << curr << ", " << s << "]" << std::endl;
+				s.insert(iter, curr);
+			}
+		}
+	}
+
+	void Permutations() {
+		permute("", "1234");
+	}
+
+	//-----------------------------------------------------------------//
+
+	// Function to print permutations of string
+	// This function takes three parameters:
+	// 1. String
+	// 2. Starting index of the string
+	// 3. Ending index of the string.
+	void permute_good(std::string& str, size_t begin, size_t end){
+		if (begin == end) // Base case
+			std::cout << str << std::endl;
+		else {   // Permutations made
+			for (size_t i = begin; i <= end; ++i) {
+				// std::cout << "[" << begin << ", " << i << "]\n";
+				std::swap(str[begin], str[i]);      // Swapping done       (1)
+				permute_good(str, begin + 1, end);  // Recursion called
+				std::swap(str[begin], str[i]);      // Backtrack -- Revert (1)
+			}
+		}
+	}
+
+	void Permutations2() {
+		std::string str {"12"};
+
+		std::cout << "Original: " << str << std::endl;
+		permute_good(str, 0, str.size() - 1);
+		std::cout << "Original: " << str << std::endl;
+	}
+};
+
+void Strings::TEST_ALL()
+{
+	// Strings::LongestSubstringWithoutRepeatingCharacters();
+	// Strings::LongestConsecutiveCharacters();
+	// Strings::AnalogClockAngles();
+	// Strings::Atoi();
+
+	// Strings::RotateString();
+	// Strings::CheckIfStrings_RotareRotateEquals();
+
+	// Strings::MoveCharsToEnd();
+    // Strings::MoveZerosToEnd();
+	// Strings::Remove_Add_Chars();
+	// Strings::RemoveDuplicates();
+    // Strings::RemoveCharsOfOneString_FromAnother();
+
+	// Strings::Print_Distinct_SubStrings();
+	// Strings::Print_1_0_Instead_Wildcards();
+	// Strings::Print_1_0_Instead_Wildcards_2();
+
+	// Strings::RearrangeString();
+	// Strings::RearrangeString_WithNumbers();
+	// Strings::RearrangeString_NoAdjacent();
+
+	// Strings::Find_K_MostFrequentCharacter();
+	// Strings::Find_K_MostFrequentCharacter_2();
+
+	// Strings::Find_First_Char_Occured_Once();
+	// Strings::Find_First_K_Chars_Occured_Once();
+	// Strings::Find_Minimum_Index_Of_RepeatingElement();
+	// Strings::Find_LongestSubstring_With_K_DistinctChar acters();
+
+	// Strings::Palindrome_Test();
+	// Strings::Longest_Palindrome_1();
+	// Strings::Longest_Palindrome_2();
+
+	// Strings::Find_If_KPalindrome();
+	// Strings::Find_All_Palindrome_In_String();
+	// Strings::FindDuplicateSymbols();
+    // Strings::Find_If_String_IsSubstring_OfAnother();
+	// Strings::CalcParentheses();
+	// Strings::CalcParentheses_3_BRacket();
+	// Strings::CalcParentheses_K_Deletions();
+	// Strings::Minimum_Length_Substrings();
+	// Strings::RotationalCipher();
+
+	// Strings::Permutations();
+	// Strings::Permutations2();
+
+    // Strings::CheckIfTwoStringsArePermutation();
+	// Strings::AreAnagrams();
+	// Strings::MakeAnagrams_CountDeletions();
+};

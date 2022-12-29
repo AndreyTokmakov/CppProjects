@@ -1,0 +1,28 @@
+https://www.eriksmistad.no/getting-started-with-google-test-on-ubuntu
+
+
+sudo apt-get install libgtest-dev
+
+
+sudo apt-get install cmake # install cmake
+cd /usr/src/gtest
+sudo cmake CMakeLists.txt
+sudo make
+
+# copy or symlink libgtest.a and libgtest_main.a to your /usr/lib folder
+sudo cp *.a /usr/lib
+
+
+
+----------------------------- CMakeList.txt------------------------------------
+
+
+cmake_minimum_required(VERSION 2.6)
+
+# Locate GTest
+find_package(GTest REQUIRED)
+include_directories(${GTEST_INCLUDE_DIRS})
+
+# Link runTests with what we want to test and the GTest and pthread library
+add_executable(runTests tests.cpp)
+target_link_libraries(runTests ${GTEST_LIBRARIES} pthread)

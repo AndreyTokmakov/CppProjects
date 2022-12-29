@@ -1,0 +1,39 @@
+cmake_minimum_required(VERSION 3.16 FATAL_ERROR)
+
+project(Multithreding)
+set(CMAKE_C_FLAGS_RELEASE "${CMAKE_C_FLAGS_RELEASE} -pthread")
+set(PROJECT_VERSION 1.0.0.0)
+project(${PROJECT_NAME} VERSION ${PROJECT_VERSION} LANGUAGES CXX)
+
+
+add_compile_options(-c -Wall -Wextra -O3 -std=c++2a)
+
+# include all components
+add_executable(Multithreding MACOSX_BUNDLE 
+    main.cpp
+        ThreadPoolBlocking/ThreadPoolBlocking.cpp ThreadPoolBlocking/ThreadPoolBlocking.h
+        AsyncLaunch/AsyncLaunch.cpp AsyncLaunch/AsyncLaunch.h
+        ThreadHelperUtilities/ThreadHelperUtilities.cpp ThreadHelperUtilities/ThreadHelperUtilities.h
+        Atomic/Atomic.cpp Atomic/Atomic.h
+        Barrier/Barrier.cpp Barrier/Barrier.h
+        CallOnce/CallOnce.cpp CallOnce/CallOnce.h
+        ConditionVariable/ConditionVariable.cpp ConditionVariable/ConditionVariable.h
+        Exceptions_Handling/Exceptions_Handling.cpp Exceptions_Handling/Exceptions_Handling.h
+        Future/Future.cpp Future/Future.h
+        Integer/Integer.cpp Integer/Integer.h
+        JThreads/JThreads.cpp JThreads/JThreads.h
+        Latch/Latch.cpp Latch/Latch.h
+        Multithreading_Collections/Multithreading_Collections.cpp Multithreading_Collections/Multithreading_Collections.h
+        Multithreading_Communication/Multithreading_Communication.cpp Multithreading_Communication/Multithreading_Communication.h
+        Multithreading_Performance/Multithreading_Performance.cpp Multithreading_Performance/Multithreading_Performance.h
+        PackagedTask/PackagedTask.cpp PackagedTask/PackagedTask.h
+        ParallelExecutionAlgoritms/ParallelExecutionAlgoritms.cpp ParallelExecutionAlgoritms/ParallelExecutionAlgoritms.h
+        Promise/Promise.cpp Promise/Promise.h
+        Semaphore/Semaphore.cpp Semaphore/Semaphore.h
+        Synchronization/Synchronization.cpp Synchronization/Synchronization.h
+        ThreadPools/ThreadPools.cpp ThreadPools/ThreadPools.h
+        LockFreeDataStructures/LockFreeQueue.cpp LockFreeDataStructures/LockFreeQueue.h
+        Threads/Threads.cpp Threads/Threads.h FalseSharing/FalseSharingExperiments.cpp FalseSharing/FalseSharingExperiments.h SynchStream/SynchStream.cpp SynchStream/SynchStream.h)
+
+ # Link phread library
+TARGET_LINK_LIBRARIES(Multithreding pthread)
