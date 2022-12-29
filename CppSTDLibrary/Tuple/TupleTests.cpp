@@ -1,0 +1,290 @@
+//============================================================================
+// Name        : TupleTests.cpp
+// Created on  : 17.04.2020
+// Author      : Tokmakov Andrey
+// Version     : 1.0
+// Copyright   : Your copyright notice
+// Description : TupleTests testing 
+//============================================================================
+
+#include <iostream>
+#include <string>
+#include <tuple>
+
+#include "TupleTests.h"
+
+namespace Tuple {
+
+	using String = std::string;
+	using CString = const String&;
+
+	namespace utils {
+
+		template<std::size_t Index, class TCallback, class ...TParams>
+		struct _foreach_ {
+			static void tupleForeach_(TCallback& callback,
+				const std::tuple<TParams...>& tuple) {
+				const std::size_t idx = sizeof...(TParams) - Index;
+				callback.operator() < idx > (std::get<idx>(tuple));
+				_foreach_<Index - 1, TCallback, TParams...>::tupleForeach_(callback, tuple);
+			}
+		};
+
+		template<class TCallback, class ...TParams>
+		struct _foreach_<0, TCallback, TParams...> {
+			static void tupleForeach_(TCallback& /*callback*/,
+				const std::tuple<TParams...>& /*tuple*/) {}
+		};
+
+		template<class TCallback, class ...TParams>
+		void tupleForeach(TCallback& callback, const std::tuple<TParams...>& tuple) {
+			_foreach_<sizeof...(TParams), TCallback, TParams...>::tupleForeach_(callback, tuple);
+		}
+
+		template<class Tuple, std::size_t N>
+		struct TuplePrinter {
+			static void print(const Tuple& t) {
+				TuplePrinter<Tuple, N - 1>::print(t);
+				std::cout << ", " << std::get<N - 1>(t);
+			}
+		};
+
+		template<class Tuple>
+		struct TuplePrinter<Tuple, 1> {
+			static void print(const Tuple& t) {
+				std::cout << std::get<0>(t);
+			}
+		};
+
+		template<class... Args>
+		void print(const std::tuple<Args...>& t) {
+			std::cout << "(";
+			TuplePrinter<decltype(t), sizeof...(Args)>::print(t);
+			std::cout << ")\n";
+		}
+
+		struct ForeachCallback {
+			template<std::size_t Index, class T>
+			void operator()(T&& element) {
+				std::cout << "( " << Index << " : " << element << " ) ";
+			}
+		};
+	}
+
+	std::tuple<double, char, std::string> get_student(int id) {
+		if (id == 0) return std::make_tuple(3.8, 'A', "Lisa Simpson");
+		if (id == 1) return std::make_tuple(2.9, 'C', "Milhouse Van Houten");
+		if (id == 2) return std::make_tuple(1.7, 'D', "Ralph Wiggum");
+		throw std::invalid_argument("id");
+	}
+
+
+
+	std::tuple<int, int> foo_tuple() {
+		return { 1, -1 };
+	}
+
+	void CreateTupleTest() {
+		auto T = foo_tuple();
+		std::cout << "T[0] = " << std::get<0>(T) << std::endl;
+		std::cout << "T[1] = " << std::get<1>(T) << std::endl;
+	}
+
+	void TupleTest2() {
+		auto[a, b, c] = std::tuple(32, "hello", 13.9);
+
+		std::cout << "1 element (a) = " << a << std::endl;
+		std::cout << "2 element (b) = " << b << std::endl;
+		std::cout << "3 element (c) = " << c << std::endl;
+	}
+
+	void ChangeTuppleValue() {
+		{
+			std::tuple<int> t1(1);
+			std::cout << std::get<0>(t1) << std::endl;
+
+			std::get<0>(t1) = 2;
+			std::cout << std::get<0>(t1) << std::endl;
+		}
+
+		{
+			std::tuple<String, String> tup("Val1", "Val2");
+			std::cout << std::get<0>(tup) << ", " << std::get<1>(tup) << std::endl;
+
+			std::get<0>(tup) = "Val_new_1";
+			std::cout << std::get<0>(tup) << ", " << std::get<1>(tup) << std::endl;
+
+			std::get<1>(tup) = "Val_new_2";
+			std::cout << std::get<0>(tup) << ", " << std::get<1>(tup) << std::endl;
+		}
+	}
+
+	void ForeachTupple() {
+		auto myTyple = std::make_tuple(42, 3.14, "boo");
+		//utils::tupleForeach(utils::ForeachCallback(), myTyple);
+	}
+
+	void CreateAndGet() {
+		auto student0 = get_student(0);
+		std::cout << "ID: 0,  GPA: " << std::get<0>(student0) << ", grade: " << std::get<1>(student0) << ", name: " << std::get<2>(student0) << std::endl;
+
+		double gpa1;
+		char grade1;
+		std::string name1;
+		std::tie(gpa1, grade1, name1) = get_student(1);
+		std::cout << "ID: 1, GPA: " << gpa1 << ", grade: " << grade1 << ", name: " << name1 << std::endl;
+
+		// C++17 structured binding:
+		auto[gpa2, grade2, name2] = get_student(2);
+		std::cout << "ID: 2, GPA: " << gpa2 << ", grade: " << grade2 << ", name: " << name2 << std::endl;
+	}
+
+	void TupleCat_Test() {
+		std::tuple<int, std::string, float> t1(10, "Test", 3.14f);
+		int n = 7;
+
+		auto t2 = std::tuple_cat(t1, std::make_pair("Foo", "bar"), t1, std::tie(n));
+
+		utils::print(t2);
+
+		n = 10;
+
+		utils::print(t2);
+	}
+
+	void TupleTypeCastError() {
+		std::tuple<int, double, std::string> PI(3, 3.14, "Pi = 3.14");
+
+		int piInt = std::get<0>(PI);
+		double piDouble = std::get<1>(PI);
+		std::string piStr = std::get<2>(PI);
+
+		std::cout << "Pi (Int) = " << piInt << ", Pi (Double) = " << piDouble << ", Pi (String) = '" << piStr << "' " << std::endl;
+
+		// 
+		//auto piUnknown = std::get<3>(PI); // Compile error
+
+	}
+
+	void TupleType_OutOfRangeError() {
+
+		std::tuple<int, double, std::string> PI(3, 3.14, "Pi = 3.14");
+
+		auto piUnknown = std::get<2>(PI); // Compile OK
+
+		//int val = std::get<2>(PI); // Compile error
+	}
+}
+
+namespace Tuple::Make_Tuples {
+	 
+	class Foo{
+	private:
+		int first;
+		float second;
+		int third;
+
+	public:
+		Foo(int first, float second, int third): first(first), second(second), third(third) {
+			std::cout << "Foo(" << first << ", " << second << ", " << third << ")" << std::endl;
+		}
+
+		Foo(const Foo &foo) {
+			this->first = foo.first;
+			this->second = foo.second;
+			this->third = foo.third;
+			std::cout << "Copy constructor Foo(" << first << ", " << second << ", " << third << ")" << std::endl;
+		}
+
+		Foo& operator=(const Foo& right) {
+			if (this != &right) {
+				this->first = right.first;
+				this->second = right.second;
+				this->third = right.third;
+			}
+			std::cout << "Copy assignment Foo(" << first << ", " << second << ", " << third << ")" << std::endl;
+			return *this;
+		}
+
+		Foo(Foo&& foo) noexcept {
+			this->first = std::exchange(foo.first, 0);
+			this->second = std::exchange(foo.second, 0.0f);
+			this->third = std::exchange(foo.third, 0);
+			std::cout << "Move constructor Foo(" << first << ", " << second << ", " << third << ")" << std::endl;
+		}
+
+		Foo& operator=(Foo&& foo) noexcept {
+			if (this != &foo) {
+				this->first = std::exchange(foo.first, 0);
+				this->second = std::exchange(foo.second, 0.0f);
+				this->third = std::exchange(foo.third, 0);
+			}
+			std::cout << "Mpve assignment Foo(" << first << ", " << second << ", " << third << ")" << std::endl;
+			return *this;
+		}
+
+		~Foo() {
+			std::cout << "~Foo(" << first << ", " << second << ", " << third << ")" << std::endl;
+		}
+
+		friend std::ostream& operator<<(std::ostream& stream, Foo& foo) {
+			stream << "Foo(" << foo.first << ", " << foo.second << ", " << foo.third << ")";
+			return stream;
+		}
+
+		void info() const noexcept {
+			std::cout << "INFO : Foo(" << first << ", " << second << ", " << third << ")" << std::endl;
+		}
+	};
+
+	class Object {
+	private:
+		std::string str1;
+		std::string str2;
+
+	public:
+		Object(const std::string& s1, const std::string& s2) : str1(s1), str2(s2) {
+		}
+
+		std::string toString() const noexcept {
+			return "{" + str1 + "," + str2 + "}";
+		}
+	};
+
+	///////////////////////////////////////////////////////////////////////////////////////////////////////
+
+	void Test()
+	{
+		auto tuple = std::make_tuple(42, 3.14f, 0);
+		auto obj = std::make_from_tuple<Foo>(std::move(tuple));
+		obj.info();
+	
+	}
+
+	void Test2()
+	{
+		auto tuple = std::make_tuple("val1", "val2");
+		Object obj = std::make_from_tuple<Object>(std::move(tuple));
+		std::cout << obj.toString() << std::endl;
+	}
+}
+
+void Tuple::TestAll() {
+	 CreateTupleTest();
+
+	// TupleTest2();
+
+	// ChangeTuppleValue();
+
+	// CreateAndGet();
+
+	// TupleCat_Test();
+
+	// TupleTypeCastError();
+
+	// ForeachTupple();
+
+	// Make_Tuples::Test();
+	// Make_Tuples::Test2();
+
+};

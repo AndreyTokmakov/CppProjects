@@ -1,0 +1,331 @@
+/**============================================================================
+Name        : CollectionsTests.h
+Created on  : 11.06.2022.
+Author      : Tokmakov Andrei
+Version     : 1.0
+Copyright   : Your copyright notice
+Description : CollectionsTests
+============================================================================**/
+
+#include "CollectionsTests.h"
+
+#include <iostream>
+#include <utility>
+#include <numeric>
+
+#include <list>
+#include <vector>
+#include <array>
+
+#include <chrono>
+
+namespace CollectionsTests::CustomArrayTest {
+
+    template<typename T = int>
+    class Array {
+    private:
+        using value_type = T;
+        using size_type  = size_t;
+
+        static_assert(!std::is_same_v<value_type, void>,
+                      "Type of the value shall not be void");
+
+        value_type* data { nullptr };
+        size_type size { 0 };
+
+    public:
+        explicit Array(size_type s): data {new value_type[s]}, size {s} {
+        }
+
+        value_type& operator[](size_type idx) {
+            return data[idx];
+        }
+
+        const value_type& operator[](size_type idx) const {
+            return data[idx];
+        }
+
+        inline value_type* Data() noexcept {
+            return data;
+        }
+
+        [[nodiscard]]
+        inline size_type Size() const noexcept {
+            return size;
+        }
+
+        Array(const Array& other):
+                data { new value_type[other.size] }, size { other.size } {
+            std::copy_n(other.data, size, data);
+        }
+
+        Array(Array&& other) noexcept:
+                data { std::exchange(other.data, nullptr) },
+                size { std::exchange(other.size, 0) } {
+        }
+
+        Array& operator=(const Array& other) {
+            Array localCopy(other);
+            // swap(localCopy);
+            Array::swap(localCopy, *this);
+            return *this;
+        }
+
+        Array& operator=(Array&& other) noexcept {
+            if (this != &other) {
+                delete[] data;
+                data = std::exchange(other.data, nullptr);
+                size = std::exchange(other.size, 0);
+            }
+            return *this;
+        }
+
+        /*
+        [[nodiscard]]
+        inline T begin() const noexcept {
+            return data[0];
+        }
+
+        [[nodiscard]]
+        inline T end() const noexcept {
+            return data[size - 1];
+        }
+        */
+
+        void swap(Array& other) noexcept {
+            std::swap(this->data, other.data);
+            std::swap(this->size, other.size);
+        }
+
+        static void swap(Array& first, Array& second) noexcept {
+            std::swap(first.data, second.data);
+            std::swap(first.size, second.size);
+        }
+
+        ~Array() {
+            std::cout << "Array::~Array()\n";
+            delete[] data;
+            data = nullptr;
+            size = 0;
+        }
+    };
+
+
+    template <typename T, typename Coll>
+    class IteratorBase {
+    private:
+        using value_type = T;
+        using size_type  = size_t;
+        using collection_type  = Coll;
+
+        size_type index {0};
+        collection_type& collection;
+
+    public:
+        IteratorBase(collection_type& collection, const size_type index) :
+                index { index }, collection { collection } {
+        }
+
+        inline bool operator!=(const IteratorBase& other) const noexcept {
+            return index != other.index;
+        }
+
+        inline const value_type& operator*() const noexcept {
+            return collection[index];
+        }
+
+        const IteratorBase& operator++() noexcept {
+            ++index;
+            return *this;
+        }
+    };
+
+    template <typename T>
+    using ArrayIterator = IteratorBase<T, Array<T>>;
+
+    template <typename T>
+    using ArrayConstIterator = IteratorBase<T, const Array<T>>;
+
+
+    template <typename T>
+    inline ArrayIterator<T> begin(Array<T>& collection) {
+        return ArrayIterator<T> (collection, 0);
+    }
+
+    template <typename T>
+    inline ArrayIterator<T> end(Array<T>& collection) {
+        return ArrayIterator<T> (collection, collection.Size());
+    }
+
+
+    void Test() {
+        Array<int> numbers {3};
+
+        numbers[2] = 4;
+
+        for (int i = 0; i < numbers.Size(); ++i) {
+            std::cout << numbers[i] << std::endl;
+        }
+
+        std::cout << "--------------------------------------------\n";
+
+        Array<int> numbers1 (numbers);
+        for (int i = 0; i < numbers1.Size(); ++i) {
+            std::cout << numbers1[i] << std::endl;
+        }
+
+        std::cout << "--------------------------------------------\n";
+
+        Array<int> numbers2(3);
+        numbers2 = numbers1;
+        for (int i = 0; i < numbers2.Size(); ++i) {
+            std::cout << numbers2[i] << std::endl;
+        }
+
+        std::cout << "--------------------------------------------\n";
+
+        numbers2 = numbers2;
+        for (int i = 0; i < numbers2.Size(); ++i) {
+            std::cout << numbers2[i] << std::endl;
+        }
+    }
+
+    void MoveConstructor_Test() {
+        Array<int> numbers {5};
+
+        std::iota(numbers.Data(), numbers.Data() + numbers.Size(), 1);
+        for (size_t i = 0; i < numbers.Size(); ++i)
+            std::cout << numbers[i] << std::endl;
+
+        std::cout << "--------------------------------------------\n";
+
+        Array<int> numbers2 = std::move(numbers);
+        for (size_t i = 0; i < numbers2.Size(); ++i)
+            std::cout << numbers2[i] << std::endl;
+
+        std::cout << "--------------------------------------------\n";
+
+        std::cout << numbers.Size() << " " << numbers2.Size() << std::endl;
+    }
+
+    void MoveAssignment_Test() {
+        Array<int> numbers1 {5}, numbers2 {5};
+
+        std::iota(numbers1.Data(), numbers1.Data() + numbers1.Size(), 1);
+        std::iota(numbers2.Data(), numbers2.Data() + numbers2.Size(), 5);
+
+        auto printArrays = [](const Array<int>& array1, const Array<int>& array2) {
+            const auto maxSize = std::max(array1.Size(), array2.Size());
+            for (size_t i = 0; i < maxSize; ++i) {
+                if (array1.Size() > i) std::cout << array1[i];
+                std::cout << "     ";
+                if (array2.Size() > i) std::cout << array2[i];
+                std::cout << std::endl;
+            }
+        };
+
+        printArrays(numbers1, numbers2);
+
+        std::cout << "---------------- move test ----------------------------\n";
+
+        numbers1 = std::move(numbers2);
+        printArrays(numbers1, numbers2);
+
+        std::cout << "--------------- self assignment -----------------------------\n";
+
+        numbers1 = std::move(numbers1);
+        printArrays(numbers1, numbers2);
+
+        std::cout << "--------------------------------------------\n";
+    }
+
+    void IteratorsTest() {
+        Array<int> numbers {10};
+        std::iota(numbers.Data(), numbers.Data() + numbers.Size(), 1);
+
+        for (auto && e : numbers) {
+            std::cout << e << std::endl;
+        }
+    }
+}
+
+
+namespace CollectionsTests::MoveConstructor_Noexcept_Vector
+{
+    struct Widget {
+        std::list<int> data_;
+        explicit Widget(int n) : data_(n) {}
+    };
+
+    struct Gadget {
+        std::list<int> data_;
+        explicit Gadget(int n) : data_(n) {}
+
+        Gadget(Gadget&&) noexcept = default;
+        Gadget(const Gadget&) = default;
+        Gadget& operator=(Gadget&&) = default;
+        Gadget& operator=(const Gadget&) = default;
+    };
+
+    template<class T>
+    void time_it(const char *message)
+    {
+        std::vector<T> v(10000, T(1000));
+        // assert(v.capacity() == 10000);
+        auto start = std::chrono::system_clock::now();
+
+        v.push_back(T(0));
+
+        auto elapsed_ms = std::chrono::duration_cast<std::chrono::milliseconds>(
+                std::chrono::system_clock::now() - start
+        );
+        printf("%s: %zums\n", message, size_t(elapsed_ms.count()));
+    }
+
+    void test()
+    {
+        time_it<Widget>("reallocation with Widgets");
+        time_it<Gadget>("reallocation with Gadgets");
+    }
+}
+
+namespace CollectionsTests::Arrays
+{
+    template<typename T, size_t Size>
+    void printArray(const std::array<T, Size>& data)
+    {
+        for (const auto& v: data)
+            std::cout << v << ' ';
+        std::cout << std::endl;
+    }
+
+    template<typename T>
+    void printArray2(const T& data)
+    {
+        for (const auto& v: data)
+            std::cout << v << ' ';
+        std::cout << std::endl;
+    }
+
+    void PrintArrayTest()
+    {
+        std::array<int, 10> numbers {};
+        std::iota(numbers.begin(), numbers.end(), 1);
+
+        printArray(numbers);
+        printArray2(numbers);
+    }
+}
+
+
+void CollectionsTests::TestAll()
+{
+    // CustomArrayTest::Test();
+    // CustomArrayTest::MoveConstructor_Test();
+    // CustomArrayTest::MoveAssignment_Test();
+    // CustomArrayTest::IteratorsTest();
+
+    // MoveConstructor_Noexcept_Vector::test();
+
+    Arrays::PrintArrayTest();
+};

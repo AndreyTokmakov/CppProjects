@@ -1,0 +1,28 @@
+1. Finish the Treatment Plan
+  - add the remaining blocks
+
+2. Move class Global from Tooth.cpp
+  - think about how to issue it
+
+3. You need to do a preprocessing of vtkPolyData teeth
+  - should I store the original?
+  - where to store the discharged data
+
+4. Calculate the mesiodistal lengths of teeth
+
+5. Contact points
+  - Where to store
+
+6. Add logging
+
+7. Tooth readers/writers
+  - Create separete module
+
+8. Change:
+        vtkSmartPointer<vtkObject> MyObject = vtkObject::New();
+          --->
+        vtkSmartPointer<vtkObject> MyObject = vtkSmartPointer<vtkObject>::New();
+
+--------------- Quality metrics:
+
+1. Tooth symmety

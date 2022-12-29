@@ -1,0 +1,18 @@
+//============================================================================
+// Name        : Utilities.h
+// Created on  : 10.06.2020
+// Author      : Tokmakov Andrey
+// Version     : 1.0
+// Copyright   : Your copyright notice
+// Description : Utilities libraries src
+//============================================================================
+
+#ifndef UTILITIES_INCLUDE_GUARD__H
+#define UTILITIES_INCLUDE_GUARD__H
+
+namespace Utilities
+{
+	void TestAll();
+};
+
+#endif /* UTILITIES_INCLUDE_GUARD__H */

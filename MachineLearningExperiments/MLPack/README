@@ -1,0 +1,40 @@
+sudo apt-get install
+    libmlpack-dev liblapack-dev libblas-dev libarmadillo-dev binutils-dev
+    libboost-math-dev libboost-program-options-dev
+    libboost-test-dev libboost-serialization-dev
+
+
+
+====================================== CMAKE ==================================================
+
+
+cmake_minimum_required(VERSION 3.16 FATAL_ERROR)
+project(MachineLearningExperiments)
+
+set(PROJECT_VERSION 1.0.0.0)
+project(${PROJECT_NAME} VERSION ${PROJECT_VERSION} LANGUAGES CXX)
+
+add_compile_options(-c -Wall -Wextra -O3 -std=c++2a)
+
+
+# message (STATUS "OpenMP_CXX_FOUND = ${OpenMP_CXX_FOUND}")
+
+# if(MLPACK_FOUND)
+#    set(MLPACK_INCLUDE_DIRS ${MLPACK_INCLUDE_DIR})
+#    set(MLPACK_LIBRARIES ${MLPACK_LIBRARY})
+# endif()
+
+SET(CMAKE_CXX_FLAGS -fopenmp)
+
+# include all components
+add_executable(${PROJECT_NAME}  MACOSX_BUNDLE
+    main.cpp
+	Utilities.h
+	LinearRegression/LinearRegression.h LinearRegression/LinearRegression.cpp
+	Types/Types.h Types/Types.cpp
+	Experiments/Experiments.h Experiments/Experiments.cpp
+    MLPack/MLPack.cpp MLPack/MLPack.h
+)
+
+ # Link phread library
+TARGET_LINK_LIBRARIES(${PROJECT_NAME} pthread mlpack blas armadillo lapack)
