@@ -16,7 +16,6 @@
 #include <filesystem>
 #include <tuple>
 #include <exception>
-#include <random>
 #include <thread>
 #include <future>
 #include <mutex>
@@ -34,7 +33,6 @@
 #include <array>
 #include <version>
 #include <concepts>
-#include <unordered_set>
 
 #include "Algorithms/Algorithms.h"
 #include "Geometry/PointsAndLines.h"
@@ -57,9 +55,7 @@
 #include "Helpers/Utilities.h"
 #include "Strings/Strings.h"
 #include "CopyElision_RVO/CopyElision_RVO.h"
-
-
-
+#include "Performance/Performance.h"
 
 
 
@@ -629,12 +625,14 @@ int main([[maybe_unused]] int argc,
     // Unicode::TestAll();                   // Encoding
     // StringUtils::TestAll();               // Encoding
     // Convertaion_UTF8_UTF32::TestAll();    // Encoding
-
+    Performance::TestAll();
 
     // OOP::Test();
     // OOP::VirtualMethodTests();
     // OOP::MoveTest();
-    OOP::TestClassConversationOperatorCall();
+    // OOP::TestClassConversationOperatorCall();
+
+
 
 
     // Templates::Test();

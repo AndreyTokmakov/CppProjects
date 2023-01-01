@@ -22,7 +22,7 @@ add_executable(DesignPatterns
     FabricMethod/FabricMethod.h FabricMethod/FabricMethod.cpp  FabricMethod/FabricMethod2.cpp
 	Facade/Facade.cpp Facade/Facade.h
     Filter/Filter.cpp Filter/Filter.h
-    Flyweight/Flyweight.cpp Flyweight/Flyweight.h Flyweight/Flyweight_Icon.cpp Flyweight/Flyweight_Icon.h
+    Flyweight/Flyweight.cpp Flyweight/Flyweight.h Flyweight/IconFlyweight.cpp
     Interpreter/Interpreter.cpp Interpreter/Interpreter.h
     Mediator/Mediator.cpp Mediator/Mediator.h
     Memento/Memento.cpp Memento/Memento.h
@@ -30,13 +30,9 @@ add_executable(DesignPatterns
 	ObjectPools/ObjectPoolsSimple.cpp  ObjectPools/ObjectPoolsExtended.cpp ObjectPools/ObjectPools.h
     Observer/Observer.cpp Observer/Observer.h
     Prototype/Prototype.cpp Prototype/Prototype.h
-	Proxy/Document.cpp Proxy/Document.h
-	Proxy/IPage.h 
-	Proxy/Page.cpp Proxy/Page.h 
-	Proxy/PageProxy.cpp Proxy/PageProxy.h 
-	Proxy/Proxy.cpp Proxy/Proxy.h 
-	Proxy/Proxy_Pattern_Tests.cpp Proxy/Proxy_Pattern_Tests.h 
-	Proxy/Subject.cpp Proxy/Subject.h 
+	Proxy/Document.cpp
+		Proxy/CarProxy.cpp Proxy/Proxy.h
+	Proxy/Subject.cpp
     RAII/RAII.cpp
     Singleton/Singleton.cpp Singleton/Singleton.h
 	ExecutorAdapter/ExecutorAdapter.cpp ExecutorAdapter/ExecutorAdapter.h
@@ -51,6 +47,6 @@ add_executable(DesignPatterns
     Iterator/Iterator.cpp Iterator/Iterator.h
     Builder/UserBuilder.cpp
     RAII/RAII.cpp RAII/RAII.h
-        VirtualConstructor/VirtualConstructor.cpp VirtualConstructor/VirtualConstructor.h State/State.cpp State/State.h TemplateMethod/TemplateMethod.cpp TemplateMethod/TemplateMethod.h Adapter/BaseAdapter.cpp Adapter/GoodExample.cpp Bridge/DrawingBridge.cpp)
+        VirtualConstructor/VirtualConstructor.cpp VirtualConstructor/VirtualConstructor.h State/State.cpp State/State.h TemplateMethod/TemplateMethod.cpp TemplateMethod/TemplateMethod.h Adapter/BaseAdapter.cpp Adapter/GoodExample.cpp Bridge/DrawingBridge.cpp Decorator/ShapeDecorator.cpp Decorator/ShapeDecorator.h LazyInitialization/LazyInitialization.cpp LazyInitialization/LazyInitialization.h)
 
 TARGET_LINK_LIBRARIES(DesignPatterns pthread)

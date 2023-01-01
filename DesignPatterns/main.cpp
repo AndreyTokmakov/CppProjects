@@ -29,7 +29,7 @@
 #include "Observer/Observer.h"
 #include "FabricMethod/FabricMethod.h"
 #include "ExecutorAdapter/ExecutorAdapter.h"
-#include "Proxy/Proxy_Pattern_Tests.h"
+#include "Proxy/Proxy.h"
 #include "Singleton/Singleton.h"
 #include "State/State.h"
 #include "Mediator/Mediator.h"
@@ -45,6 +45,7 @@
 #include "RAII/RAII.h"
 #include "VirtualConstructor/VirtualConstructor.h"
 #include "TemplateMethod/TemplateMethod.h"
+#include "LazyInitialization/LazyInitialization.h"
 
 
 int main([[maybe_unused]]  int argc,
@@ -60,6 +61,19 @@ int main([[maybe_unused]]  int argc,
     // Singleton::TEST_ALL();;
     // ObjectPools::SimpleTest();
     // ObjectPools::ExtentedTest();
+    /// Dependency_injection ???
+    LazyInitialization::TestAll();
+
+    /** Structural patterns: **/
+    // Adapter::TestAll();
+    // Bridge::TestAll();
+    // Composite::Test();
+    // Facade::Test();
+    // Decorator::Test();
+    // Flyweight::Test();
+    // Proxy::CarTest();
+    // Proxy::DocumentTest();
+    // Proxy::SubjectTest();
 
     /** Behaviour patterns **/
     // Strategy::Test();
@@ -72,14 +86,10 @@ int main([[maybe_unused]]  int argc,
     // Observer_Tests_Ex::Test();
     // State::TestAll();
     // TemplateMethod::TestAll();
-
-
-    /** Structural patterns: **/
-    // Adapter::TestAll();
-    // Bridge::TestAll();
-    Composite::Test();
-    // Facade::Test();
-
+    // Interpreter::Test();
+    /// NULL OBJECT
+    // Visitor_Pattern_Tests::test();
+    // StockVisitor::test();
 
     /** C++ IDIOMS: **/
     // CRTP_Tests::Test();
@@ -91,33 +101,9 @@ int main([[maybe_unused]]  int argc,
 
 
 
-
     // ExecutorAdapter::TestAll();
-
-
-
     // Policy::Test();
-
-	// Interpreter::Test();
-
-
-    // Flyweight::TestDriver();
-
-
-	// DecoratorTests::Test();
-
-	// Proxy_Pattern_Tests::Test();
-	// Proxy_Pattern_Tests::Test2();
-	// Proxy_Pattern_Tests::Test3();
-
-
-	// Visitor_Pattern_Tests::test();
-	// StockVisitor::test();
-
-
 	// NamedParameter::Test();
-
-
     // Filter::Test();
 }
 

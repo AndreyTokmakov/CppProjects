@@ -13,31 +13,11 @@
 #include <iostream>
 #include <memory>
 
-namespace Proxy_Pattern_Tests {
-
-	class ICar {
-	public:
-		virtual ~ICar();
-
-		virtual void DriveCar() noexcept = 0;
-	};
-
-
-	class Car : public ICar {
-	public:
-		void DriveCar() noexcept override;
-	};
-
-
-	class ProxyCar : public ICar {
-	private:
-		std::unique_ptr<ICar> real_car_ = std::make_unique<Car>();
-		int driver_age_;
-
-	public:
-		ProxyCar(int driver_age);
-		void DriveCar() noexcept override;
-	};
+namespace Proxy
+{
+    void CarTest();
+    void DocumentTest();
+    void SubjectTest();
 }
 
 #endif /* PROXY_PATTERN_TESTS__H_ */
