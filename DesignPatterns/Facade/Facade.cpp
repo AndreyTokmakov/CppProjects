@@ -11,54 +11,80 @@
 #include <iostream>
 #include <string>
 #include <memory>
-
-namespace Facade {
-
-	/**
-	 * The Subsystem can accept requests either from the facade or client directly.
-	 * In any case, to the Subsystem, the Facade is yet another client, and it's not
-	 * a part of the Subsystem.
-	 */
-	std::string System1::Operation1() const noexcept {
-		return "Subsystem1: Ready!\n";
-	}
-
-	std::string System1::OperationN() const noexcept {
-		return "Subsystem1: Go!\n";
-	}
+#include <vector>
 
 
+namespace Facade::Systems
+{
 
-	/**
-	 * Some facades can work with multiple subsystems at the same time.
-	 */
-	std::string System2::Operation1() const noexcept {
-		return "Subsystem2: Get ready!\n";
-	}
+    class System1 {
+    public:
+        [[nodiscard]]
+        std::string Operation1() const noexcept {
+            return "Subsystem1: Operation1!\n";
+        }
 
-	std::string System2::OperationZ() const noexcept {
-		return "Subsystem2: Fire!\n";
-	}
+        [[nodiscard]]
+        std::string OperationA() const noexcept {
+            return "Subsystem1: OperationA\n";
+        }
+
+    };
 
 
 
-	/**
-	 * In this case we will delegate the memory ownership to Facade Class
-	 */
-	Facade::Facade(std::unique_ptr<System1> sys1, std::unique_ptr<System2> sys2):
-		system1(std::move(sys1)), system2(std::move(sys2)) {
-	}
+    class System2 {
+    public:
 
-	std::string Facade::Operation() noexcept {
-		std::string result = "Facade initializes subsystems:\n";
-		result += this->system1->Operation1();
-		result += this->system2->Operation1();
-		result += "Facade orders subsystems to perform the action:\n";
-		result += this->system1->OperationN();
-		result += this->system2->OperationZ();
-		return result;
-	}
-}
+        [[nodiscard]]
+        std::string Operation1() const noexcept {
+            return "Subsystem2: Operation1\n";
+        }
+
+        [[nodiscard]]
+        std::string OperationB() const noexcept {
+            return "Subsystem2: OperationB!\n";
+        }
+    };
+
+
+    class Facade {
+    protected:
+        std::unique_ptr<System1> system1;
+        std::unique_ptr<System2> system2;
+
+    public:
+
+        Facade(std::unique_ptr<System1> sys1, std::unique_ptr<System2> sys2):
+                system1(std::move(sys1)), system2(std::move(sys2)) {
+        }
+
+        virtual ~Facade() = default;
+
+        std::string Operation() noexcept
+        {
+            std::string result = "Facade initializes subsystems:\n";
+            result += this->system1->Operation1();
+            result += this->system2->Operation1();
+
+            result += "\nFacade orders subsystems to perform the action:\n";
+            result += this->system1->OperationA();
+            result += this->system2->OperationB();
+            return result;
+        }
+    };
+
+    void Test()
+    {
+        std::shared_ptr<Facade> facade = std::make_shared<Facade>(
+                std::unique_ptr<System1>(),
+                std::unique_ptr<System2>()
+        );
+
+        std::cout << facade->Operation();
+    }
+};
+
 
 namespace Facade::HouseFacade
 {
@@ -116,7 +142,7 @@ namespace Facade::HouseFacade
 
     void Test()
     {
-        HouseFacade hf;
+        HouseFacade hf {};
 
         hf.goToWork();
         hf.comeHome();
@@ -125,8 +151,6 @@ namespace Facade::HouseFacade
 
 void Facade::Test()
 {
-	// std::shared_ptr<Facade> facade = std::make_shared<Facade>(std::unique_ptr<System1>(), std::unique_ptr<System2>());
-	// std::cout << facade->Operation();
-
+    // Systems::Test();
     HouseFacade::Test();
 }

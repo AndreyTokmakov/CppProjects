@@ -66,28 +66,34 @@ namespace UnorderedMap {
 			"Bangladesh", "Barbados", "Belarus", "Belgium", "Belize", "Benin", "Bermuda", "Bhutan", "Bolivia",
 			"Bonaire", "Bosnia and Herzegovina", "Botswana", "Bouvet Island", "Brazil", "British Indian Ocean Territory",
 			"Brunei Darussalam", "Bulgaria", "Burkina Faso", "Burundi", "Cambodia", "Cameroon", "Canada", "Cape Verde",
-			"Cayman Islands", "Central African Republic", "Chad", "Chile", "China", "Christmas Island", "Cocos (Keeling) Islands", 
-			"Colombia", "Comoros", "Congo", "Congo, the Democratic Republic of the", "Cook Islands", "Costa Rica", "Cte d'Ivoire",
-			"Croatia", "Cuba", "Curaciao", "Cyprus", "Czech Republic", "Denmark", "Djibouti", "Dominica", "Dominican Republic",
-			"Ecuador", "Egypt", "El Salvador", "Equatorial Guinea", "Eritrea", "Estonia", "Ethiopia", "Falkland Islands (Malvinas)",
-			"Faroe Islands", "Fiji", "Finland", "France", "French Guiana", "French Polynesia", "French Southern Territories", "Gabon",
-			"Gambia", "Georgia", "Germany", "Ghana", "Gibraltar", "Greece", "Greenland", "Grenada", "Guadeloupe", "Guam", "Guatemala",
-			"Guernsey", "Guinea", "Guinea-Bissau", "Guyana", "Haiti", "Heard Island and McDonald Islands", "Holy See", "Honduras", "Hong Kong",
-			"Hungary", "Iceland", "India", "Indonesia", "Iran", "Iraq", "Ireland", "Isle of Man", "Israel", "Italy", "Jamaica", "Japan",
-			"Jersey", "Jordan", "Kazakhstan", "Kenya", "Kiribati", "Korea, Democratic People's Republic of", "Korea, Republic of", "Kuwait",
-			"Kyrgyzstan", "Lao People's Democratic Republic", "Latvia", "Lebanon", "Lesotho", "Liberia", "Libya", "Liechtenstein", 
-			"Lithuania", "Luxembourg", "Macao", "Macedonia, the Former Yugoslav Republic of", "Madagascar", "Malawi", "Malaysia",
+			"Cayman Islands", "Central African Republic", "Chad", "Chile", "China", "Christmas Island",
+            "Cocos (Keeling) Islands","Colombia", "Comoros", "Congo", "Congo, the Democratic Republic of the",
+            "Cook Islands", "Costa Rica","Cte d'Ivoire",
+			"Croatia", "Cuba", "Curaciao", "Cyprus", "Czech Republic", "Denmark", "Djibouti", "Dominica",
+            "Dominican Republic", "Ecuador", "Egypt", "El Salvador", "Equatorial Guinea", "Eritrea", "Estonia", "Ethiopia",
+            "Falkland Islands (Malvinas)","Faroe Islands", "Fiji", "Finland", "France", "French Guiana", "French Polynesia"
+            "French Southern Territories", "Gabon","Gambia", "Georgia", "Germany", "Ghana", "Gibraltar",
+            "Greece", "Greenland", "Grenada", "Guadeloupe", "Guam", "Guatemala",
+			"Guernsey", "Guinea", "Guinea-Bissau", "Guyana", "Haiti", "Heard Island and McDonald Islands",
+            "Holy See", "Honduras", "Hong Kong", "Hungary", "Iceland", "India", "Indonesia",
+            "Iran", "Iraq", "Ireland", "Isle of Man", "Israel", "Italy", "Jamaica", "Japan",
+			"Jersey", "Jordan", "Kazakhstan", "Kenya", "Kiribati", "Korea, Democratic People's Republic of",
+            "Korea, Republic of", "Kuwait", "Kyrgyzstan", "Lao People's Democratic Republic",
+            "Latvia", "Lebanon", "Lesotho", "Liberia", "Libya", "Liechtenstein", "Lithuania",
+            "Luxembourg", "Macao", "Macedonia, the Former Yugoslav Republic of", "Madagascar", "Malawi", "Malaysia",
 			"Maldives", "Mali", "Malta", "Marshall Islands", "Martinique", "Mauritania", "Mauritius", "Mayotte", "Mexico",
 			"Micronesia, Federated States of", "Moldova, Republic of", "Monaco", "Mongolia", "Montenegro", "Montserrat",
-			"Morocco", "Mozambique", "Myanmar", "Namibia", "Nauru", "Nepal", "Netherlands", "New Caledonia", "New Zealand",
-			"Nicaragua", "Niger", "Nigeria", "Niue", "Norfolk Island", "Northern Mariana Islands", "Norway", "Oman", "Pakistan",
-			"Palau", "Palestine, IState of", "Panama", "Papua New Guinea", "Paraguay", "Peru", "Philippines", "Pitcairn", "Poland",
-			"Portugal", "Puerto Rico", "Qatar", "Reunion", "Romania", "Russian Federation", "Rwanda", "Saint Barthlemy",
-			"Saint Helena, Ascension and Tristan da Cunha", "Saint Kitts and Nevis", "Saint Lucia", "Saint Martin (French part)",
-			"Saint Pierre and Miquelon", "Saint Vincent and the Grenadines","Samoa", "San Marino", "Sao Tome and Principe", "Saudi Arabia",
-			"Senegal", "Serbia", "Seychelles", "Sierra Leone", "Singapore", "Sint Maarten (Dutch part)", "Slovakia", "Slovenia",
-			"Solomon Islands", "Somalia", "South Africa", "South Georgia and the South Sandwich Islands", "South Sudan", "Spain",
-			"Sri Lanka", "Sudan", "Suriname", "Svalbard and Jan Mayen", "Swaziland", "Sweden", "Switzerland", "Syrian Arab Republic"
+			"Morocco", "Mozambique", "Myanmar", "Namibia", "Nauru", "Nepal", "Netherlands", "New Caledonia",
+            "New Zealand", "Nicaragua", "Niger", "Nigeria", "Niue", "Norfolk Island", "Northern Mariana Islands",
+            "Norway", "Oman", "Pakistan", "Palau", "Palestine, IState of", "Panama", "Papua New Guinea",
+            "Paraguay", "Peru", "Philippines", "Pitcairn", "Poland", "Portugal", "Puerto Rico", "Qatar",
+            "Reunion", "Romania", "Russian Federation", "Rwanda", "Saint Barthlemy",
+            "Saint Helena, Ascension and Tristan da Cunha", "Saint Kitts and Nevis", "Saint Lucia", "Saint Martin (French part)",
+            "Saint Pierre and Miquelon", "Saint Vincent and the Grenadines","Samoa", "San Marino", "Sao Tome and Principe",
+            "Saudi Arabia", "Senegal", "Serbia", "Seychelles", "Sierra Leone", "Singapore", "Sint Maarten (Dutch part)",
+            "Slovakia", "Slovenia", "Solomon Islands", "Somalia", "South Africa",
+            "South Georgia and the South Sandwich Islands", "South Sudan", "Spain", "Sri Lanka", "Sudan",
+            "Suriname", "Svalbard and Jan Mayen", "Swaziland", "Sweden", "Switzerland", "Syrian Arab Republic"
 		};
 		return cities;
 	}
@@ -97,7 +103,7 @@ namespace UnorderedMap
 {
 	void Constructors_Tests() {
 		constexpr auto merge =
-                [](std::unordered_map<std::string, std::string> map1, std::unordered_map<std::string, std::string> map2) {
+                [](std::unordered_map<std::string, std::string> map1,std::unordered_map<std::string, std::string> map2) {
 			std::unordered_map<std::string, std::string> temp(map1);
 			temp.insert(map2.begin(), map2.end());
 			return temp;
@@ -414,7 +420,7 @@ namespace UnorderedMap
             std::cout << "Data::Data(" << a << "," << b  << ")" << std::endl;
         }
 
-        Data(int i, int j): a(i), b{j} {
+        Data(int i, int j = 0): a(i) {
             std::cout << "Data::Data(" << a << "," << b  << ")" << std::endl;
         }
 
@@ -426,23 +432,16 @@ namespace UnorderedMap
     void Try_Emplace_CustomType() {
         std::unordered_map<std::string, Data> dict;
 
-        dict.emplace("One", Data{});
-
+        dict.try_emplace("One", 1);
         std::cout << "---------------------------------------------------\n";
 
-        dict.try_emplace("One");
-
+        dict.try_emplace("One", 2); // NOTE: Constructor WILL not be called
         std::cout << "---------------------------------------------------\n";
 
 
-        /*
-        std::cout << "\nConstrucor for Integer(5) will NOT be called:" << std::endl;
-        auto [iter, ok] = dict.try_emplace("Five", 5);
-        if (false == ok) {
-            std::cout << "Record already exists:" << iter->first << "  " << iter->second << std::endl;
-        }
-        */
-        std::cout << std::endl;
+        for (const auto& [key, data]: dict)
+            std::cout << key << ": Data(" << data.a << ", " << data.b << ")\n";
+        std::cout << "---------------------------------------------------\n";
     }
 
 	class Pool {
@@ -544,7 +543,9 @@ namespace UnorderedMap
 			}
 
 			std::cout << "size = " << dict.size() << std::endl;
-			std::for_each(dict.cbegin(), dict.cend(), [](const auto& e) { std::cout << e.first << " = " << e.second << std::endl; });
+			std::for_each(dict.cbegin(), dict.cend(), [](const auto& e) {
+                std::cout << e.first << " = " << e.second << std::endl;
+            });
 		}
 
 
@@ -562,7 +563,9 @@ namespace UnorderedMap
 			}
 
 			std::cout << "size = " << dict.size() << std::endl;
-			std::for_each(dict.cbegin(), dict.cend(), [](const auto& e) { std::cout << e.first << " = " << e.second << std::endl; });
+			std::for_each(dict.cbegin(), dict.cend(), [](const auto& e) {
+                std::cout << e.first << " = " << e.second << std::endl;
+            });
 		}
 	}
 
@@ -794,7 +797,7 @@ void UnorderedMap::TEST_ALL()
 	// Erase_Loop();
 
 	// Try_Emplace();
-    // Try_Emplace_CustomType();
+    Try_Emplace_CustomType();
 	// Try_Emplace_Ptr();
 
 	// Extract();
@@ -811,7 +814,7 @@ void UnorderedMap::TEST_ALL()
     // TransparentComparators::MapWith_String_Key();
     // TransparentComparators::PerformanceTest();
 
-    InvalidateIterators::CheckValueIterators_MAP();
+    // InvalidateIterators::CheckValueIterators_MAP();
 
 
     // Tests();
