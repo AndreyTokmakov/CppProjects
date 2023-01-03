@@ -14,9 +14,12 @@
 #include <string>
 #include <memory>
 
-namespace ChainOfResponsibility_Pattern_Tests
+namespace ChainOfResponsibility
 {
+	void TestAll();
+
 	void Test();
+    void Example2_Test();
 }
 
 #endif /* CHAIN_OF_RESPONSIBILITY_PATTERN_TESTS__H_ */

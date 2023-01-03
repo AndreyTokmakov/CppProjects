@@ -94,58 +94,11 @@ namespace Command::Switch_ON_OFF_Light
     }
 }
 
-#if 0
-namespace Command::SimpleExample
-{
-    struct Number
-    {
-        void dubble(int &value) {
-            value *= 2;
-        }
-    };
-
-    struct Command
-    {
-        virtual void execute(int &) = 0;
-    };
-
-    class SimpleCommand: public Command
-    {
-        typedef void(Number::*Action)(int &);
-        Number *receiver;
-        Action action;
-
-    public:
-        SimpleCommand(Number *rec, Action act): receiver { rec },  action { act} {
-        }
-
-        void execute(int &num) override
-        {
-            (receiver->*action)(num);
-        }
-    };
-
-    class MacroCommand: public Command
-    {
-        std::vector<Command*> list;
-
-    public:
-        void add(Command *cmd)
-        {
-            list.push_back(cmd);
-        }
-
-        void execute(int &num) override
-        {
-            for (auto cmd: list)
-                cmd->execute(num);
-        }
-    };
-}
-#endif
+void Test_MethodPtr();
 
 void Command::TestAll()
 {
-    Switch_ON_OFF_Light::Test();
 
+    // Switch_ON_OFF_Light::Test();
+    Test_MethodPtr();
 }

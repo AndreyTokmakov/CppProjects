@@ -42,8 +42,44 @@ namespace Strings
         // constexpr std::string sd;
         return true;
     }
-
 };
+
+namespace Strings::Literals
+{
+
+    class Literal {
+        const char* const mData{};
+        const size_t      mLen{};
+
+        friend constexpr Literal operator""_l(const char* data, size_t len);
+        friend constexpr bool operator==(const Literal& l1, const Literal& l2);
+
+        constexpr Literal(const char* data, size_t len)
+                : mData { data }, mLen { len } {
+        }
+
+    public:
+        // imagine the access functions you need
+    };
+
+    constexpr Literal operator""_l(const char* data, size_t len){
+        return {data, len};
+    }
+
+    constexpr bool operator==(const Literal &l1, const Literal &l2) {
+        // TODO: Add str content check
+        return l1.mLen == l2.mLen;
+    }
+
+    void Insert(Literal str, size_t len) {}
+
+    void Test()
+    {
+        Insert("Hello"_l, 20);
+        static_assert("Hello"_l == "Hello"_l);
+    }
+}
+
 
 void Strings::TestAll()
 {

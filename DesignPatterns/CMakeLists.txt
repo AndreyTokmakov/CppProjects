@@ -47,6 +47,6 @@ add_executable(DesignPatterns
     Iterator/Iterator.cpp Iterator/Iterator.h
     Builder/UserBuilder.cpp
     RAII/RAII.cpp RAII/RAII.h
-        VirtualConstructor/VirtualConstructor.cpp VirtualConstructor/VirtualConstructor.h State/State.cpp State/State.h TemplateMethod/TemplateMethod.cpp TemplateMethod/TemplateMethod.h Adapter/BaseAdapter.cpp Adapter/GoodExample.cpp Bridge/DrawingBridge.cpp Decorator/ShapeDecorator.cpp Decorator/ShapeDecorator.h LazyInitialization/LazyInitialization.cpp LazyInitialization/LazyInitialization.h)
+        VirtualConstructor/VirtualConstructor.cpp VirtualConstructor/VirtualConstructor.h State/State.cpp State/State.h TemplateMethod/TemplateMethod.cpp TemplateMethod/TemplateMethod.h Adapter/BaseAdapter.cpp Adapter/GoodExample.cpp Bridge/DrawingBridge.cpp Decorator/ShapeDecorator.cpp Decorator/ShapeDecorator.h LazyInitialization/LazyInitialization.cpp LazyInitialization/LazyInitialization.h ChainOfResponsibility/Example2.cpp Command/Command_MethodPtr.cpp)
 
 TARGET_LINK_LIBRARIES(DesignPatterns pthread)
