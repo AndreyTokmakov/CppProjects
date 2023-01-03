@@ -11,6 +11,7 @@ Description : ExecutorAdapter
 
 #include <iostream>
 #include <memory>
+#include <functional>
 
 namespace ExecutorAdapter::One
 {
@@ -32,6 +33,7 @@ namespace ExecutorAdapter::One
 
         void execute() override {
             (object->*method)();
+            // std::invoke(method, object);
         }
 
     private:
@@ -74,6 +76,7 @@ namespace ExecutorAdapter::Two
 
         void execute() override {
             (object.get()->*method)();
+            // std::invoke(method, object);
         }
 
     private:
@@ -118,7 +121,8 @@ namespace ExecutorAdapter::Three
         }
 
         Ret execute() override {
-            return (object.get()->*method)();
+            // return (object.get()->*method)();
+            return std::invoke(method, object);
         }
 
     private:

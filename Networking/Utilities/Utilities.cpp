@@ -30,7 +30,7 @@ void Utilities::PrintMACAddress(const uint8_t* mac)
 
 [[nodiscard("nodiscard")]]
 std::string Utilities::IpToStr(unsigned long address) {
-    return inet_ntoa({ static_cast<in_addr_t>(address) });
+    return inet_ntoa({ static_cast<in_addr_t>(htonl(address)) });
 }
 
 

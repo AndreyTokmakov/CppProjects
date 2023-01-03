@@ -158,8 +158,8 @@ namespace ARPTester::Tests
     // constexpr std::string_view srcMac { "a8:93:4a:4e:00:6b" };
     // constexpr std::string_view dstMac { "f4:8c:eb:b8:b8:61" };
 
-    constexpr std::string_view interfaceName { "wlp0s20f3" };
-    constexpr std::string_view interfaceIP { "192.168.57.54" };
+    constexpr std::string_view interfaceName { "wlp4s0" };
+    constexpr std::string_view interfaceIP { "192.168.0.184" };
 
     // Comms_Sleeve: wlp1s0 --> 00:30:1a:4f:8d:c4
     constexpr std::string_view cmsIfaceMac { "00:30:1a:4f:8d:c4" };
@@ -213,6 +213,38 @@ namespace ARPTester::Tests
             } else {
                 std::cout << bytes << " send\n";
             }
+        }
+    }
+
+    void ARP_ScanRange()
+    {
+        sockaddr_ll device = Utilities::ResolveInterfaceAddress(interfaceName);
+        Utilities::SocketScoped socket = createSocket();
+        enableBroadcast(socket);
+
+        uint8_t packet[sizeof(EthernetHeader) + sizeof(ARPHeader)] {};
+        initEthernetHeader(reinterpret_cast<EthernetHeader*>(packet), device,
+                           "ff:ff:ff:ff:ff:ff");
+
+        for (int i = 0; i < 255; ++i)
+        {
+            ARPHeader* arpHeader = initARPHeader_Request(reinterpret_cast<ARPHeader*>((packet + sizeof(EthernetHeader))),
+                                                         device);
+            arpHeader->SetSenderAddress(interfaceIP);   // Our IP: IP where replay packet shall be sent back
+            // 3232235776 --> 192.168.1.9
+            arpHeader->SetTargetAddress(htonl(3232235776 + i)); // The MAC addr for this IP we want to find out
+
+            long bytes = sendto(socket,
+                                reinterpret_cast<uint8_t*>(&packet),sizeof(packet),0,
+                                reinterpret_cast<sockaddr*>(&device),sizeof(device));
+            if (-1 == bytes) {
+                std::cerr << "Error sending packet: " << errno << std::endl;
+            } else {
+                std::cout << bytes << " send\n";
+            }
+
+
+            //std::cout << Utilities::IpToStr(3232235776) << std::endl;
         }
     }
 
@@ -337,6 +369,9 @@ void ARPTester::TestAll()
 
     // Tests::TestSocket();
     // Tests::SendRequest();
+    Tests::ARP_ScanRange();
     // Tests::SendReply();
-    Tests::PoisoningTest();
+    // Tests::PoisoningTest();
+
+
 }

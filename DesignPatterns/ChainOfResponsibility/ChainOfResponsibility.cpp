@@ -11,7 +11,7 @@
 
 #include <utility>
 
-namespace ChainOfResponsibility_Pattern_Tests
+namespace ChainOfResponsibility
 {
     using String = std::string;
     using CString = const String&;
@@ -128,4 +128,9 @@ namespace ChainOfResponsibility_Pattern_Tests
 		policeman->investigate(std::make_shared<CriminalAction>(5, "A series of explosions in downtown New York"));
 	}
 
+    void TestAll()
+    {
+        // Test();
+        Example2_Test();
+    }
 }

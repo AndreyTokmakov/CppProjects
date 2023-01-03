@@ -607,7 +607,7 @@ int main([[maybe_unused]] int argc,
     // DesignPatterns::TestAll();
     // Multithreading::TestAll();
     // Memory::Test();
-    // Strings::TestAll();
+    Strings::TestAll();
     // Iterators::TestAll();
     // Algorithms::TestAll();
     // Files::TestAll();
@@ -625,7 +625,7 @@ int main([[maybe_unused]] int argc,
     // Unicode::TestAll();                   // Encoding
     // StringUtils::TestAll();               // Encoding
     // Convertaion_UTF8_UTF32::TestAll();    // Encoding
-    Performance::TestAll();
+    // Performance::TestAll();
 
     // OOP::Test();
     // OOP::VirtualMethodTests();

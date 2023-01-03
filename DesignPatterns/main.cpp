@@ -62,7 +62,7 @@ int main([[maybe_unused]]  int argc,
     // ObjectPools::SimpleTest();
     // ObjectPools::ExtentedTest();
     /// Dependency_injection ???
-    LazyInitialization::TestAll();
+    // LazyInitialization::TestAll();
 
     /** Structural patterns: **/
     // Adapter::TestAll();
@@ -77,8 +77,9 @@ int main([[maybe_unused]]  int argc,
 
     /** Behaviour patterns **/
     // Strategy::Test();
-    // ChainOfResponsibility_Pattern_Tests::Test();
-    // Command::TestAll();
+    // Policy::Test();
+    // ChainOfResponsibility::TestAll();
+    Command::TestAll();
     // Iterator::Test();
     // Mediator::TestAll();
     // Memento::TestAll();
@@ -102,7 +103,7 @@ int main([[maybe_unused]]  int argc,
 
 
     // ExecutorAdapter::TestAll();
-    // Policy::Test();
+
 	// NamedParameter::Test();
     // Filter::Test();
 }

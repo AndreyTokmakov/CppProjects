@@ -51,6 +51,10 @@ public:
     void SetTargetAddress(std::string_view address) {
         target_ip = inet_addr(address.data());
     }
+
+    void SetTargetAddress(uint32_t address) {
+        target_ip = address;
+    }
 } __attribute__((packed, aligned(1))) ;;
 
 
