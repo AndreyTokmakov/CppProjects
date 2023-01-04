@@ -261,7 +261,7 @@ int main(int argc, char** argv)
     // Files::ReadFile();
     // AggregateInitialization::TestAll();
     // Algorithms::TestAll();
-    Alignment::TestAll();
+    // Alignment::TestAll();
     // Any::TestAll();
     // Arrays::TestAll();
     // Asserts::TestAll();
@@ -314,7 +314,7 @@ int main(int argc, char** argv)
     // TypeTraits::TestAll();
     // Tuple::TestAll();
     // TypeCast::TestAll();
-    // Templates::TestAll();
+    Templates::TestAll();
     // Utilities::TestAll();
     // UniquePtr_Tests::TestAll();
     // Variant::TestAll();

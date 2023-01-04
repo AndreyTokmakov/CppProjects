@@ -1030,6 +1030,7 @@ namespace SharedPtr_Tests::Aliasing {
 
 namespace SharedPtr_Tests::Arrays {
 
+#if 0
 	void CreateSharedPtrArray() {
 		std::shared_ptr<Integer[]> numbers = std::make_shared<Integer[]>(3);
 
@@ -1038,6 +1039,7 @@ namespace SharedPtr_Tests::Arrays {
 		for (int i = 0; i < 3; ++i) 
 			std::cout << numbers.get()[i] << std::endl;
 	}
+#endif
 }
 
 namespace SharedPtr_Tests::CreateSharedPtr_PrivateConstructor {
