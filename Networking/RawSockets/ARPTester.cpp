@@ -365,13 +365,14 @@ Reply:  192.168.57.1 is at e8:eb:34:bf:80:2f
 
 void ARPTester::TestAll()
 {
-    checkRunningUnderRoot();
+    //checkRunningUnderRoot();
 
     // Tests::TestSocket();
     // Tests::SendRequest();
-    Tests::ARP_ScanRange();
+    // Tests::ARP_ScanRange();
     // Tests::SendReply();
     // Tests::PoisoningTest();
 
+    std::cout << sizeof(ARPHeader) << std::endl;
 
 }

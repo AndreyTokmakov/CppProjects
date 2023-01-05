@@ -20,7 +20,8 @@
 // IExpression interface used to check the interpreter. 
 class IExpression {
 public:
-	virtual bool interpret(const std::string& condition) const noexcept = 0;
+	[[nodiscard]]
+    virtual bool interpret(const std::string& condition) const noexcept = 0;
 };
 
 // Expression class implementing the above interface. 
@@ -30,10 +31,11 @@ private:
 	std::string str;
 
 public:
-	Expression(std::string data): str(std::move(data)){
+	explicit Expression(std::string data): str(std::move(data)){
 	}
 
-	bool interpret(const std::string& condition) const noexcept override {
+	[[nodiscard]]
+    bool interpret(const std::string& condition) const noexcept override {
 		return std::string::npos != condition.find(this->str);
 	}
 };
@@ -49,11 +51,12 @@ public:
 		exprList.assign(il);
 	}
 
-	void addExpression(std::shared_ptr<IExpression> expr) {
+	void addExpression(const std::shared_ptr<IExpression>& expr) {
 		exprList.push_back(expr);
 	}
 
-	virtual bool interpret(const std::string& condition) const noexcept = 0;
+	[[nodiscard]]
+    bool interpret(const std::string& condition) const noexcept override = 0;
 };
 
 // OrExpression class implementing the above interface. This interpreter just
@@ -64,7 +67,8 @@ public:
 		ComplexExpression(il){
 	}
 
-	bool interpret(const std::string& condition) const noexcept override {
+	[[nodiscard]]
+    bool interpret(const std::string& condition) const noexcept override {
 		return std::any_of(exprList.begin(), exprList.end(), [&condition](const auto& expr) {
 			return expr->interpret(condition);
 		});
@@ -79,14 +83,16 @@ public:
 		ComplexExpression(il) {
 	}
 
-	bool interpret(const std::string& condition) const noexcept override {
+	[[nodiscard]]
+    bool interpret(const std::string& condition) const noexcept override {
 		return std::all_of(exprList.begin(), exprList.end(), [&condition](const auto& expr) {
 			return expr->interpret(condition);
 		});
 	}
 };
 
-namespace Interpreter {
+namespace Interpreter
+{
 	void Test() {
 		auto expr1 = std::make_shared<Expression>("AAA");
 		auto expr2 = std::make_shared<Expression>("BBB");
@@ -94,8 +100,8 @@ namespace Interpreter {
 		OrExpression orExpr({ expr1 , expr2 });
 		AndExpression andExpr({ expr1 , expr2 });
 
-		std::cout << std::boolalpha << orExpr.interpret("AAABBCCDD") << std::endl;
-		std::cout << std::boolalpha << andExpr.interpret("AAABBCCDD") << std::endl;
+		std::cout << std::boolalpha << orExpr.interpret("AAABBCCDD") << std::endl;  // true
+		std::cout << std::boolalpha << andExpr.interpret("AAABBCCDD") << std::endl; // false
 	}
 };
 

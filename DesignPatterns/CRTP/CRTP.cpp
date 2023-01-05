@@ -1,16 +1,18 @@
-//============================================================================
-// Name        : CRTP.cpp
-// Created on  : 09.04.2021
-// Author      : Tokmakov Andrey
-// Version     : 1.0
-// Copyright   : Your copyright notice
-// Description : CRTP src
-//============================================================================
+/**============================================================================
+Name        : CRTP.cpp
+Created on  : 09.04.2021
+Author      : Andrei Tokmakov
+Version     : 1.0
+Copyright   : Your copyright notice
+Description : CRTP src
+============================================================================**/
 
 #include <iostream>
-#include "CRTP_Tests.h"
+#include "CRTP.h"
+#include "ObjectCounter.h"
 
-namespace CRTP_Tests {
+
+namespace CRTP {
 	
 	template <typename Derived>
 	class Base
@@ -53,9 +55,10 @@ namespace CRTP_Tests {
 
 }
 
-void CRTP_Tests::Test() {
+void CRTP::Test()
+{
+	// Triangle().info();
+	// Square().info();
 
-	Triangle().info();
-	Square().info();
-
+    ObjectCounter::Test();
 }
