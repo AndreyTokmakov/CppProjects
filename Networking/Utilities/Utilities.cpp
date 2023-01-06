@@ -27,6 +27,17 @@ void Utilities::PrintMACAddress(const uint8_t* mac)
     printf ("%02x", mac[5]);
 }
 
+void Utilities::checkRunningUnderRoot()
+{
+    const uint32_t userID { getuid() };
+    if (0 != userID)
+    {
+        // throw std::runtime_error("Application require the ROOT user access"  );
+        std::cerr << "Application require the ROOT user access" << std::endl;
+        std::exit(0);
+    }
+}
+
 
 [[nodiscard("nodiscard")]]
 std::string Utilities::IpToStr(unsigned long address) {

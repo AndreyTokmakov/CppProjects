@@ -36,6 +36,8 @@ namespace Utilities
     [[nodiscard("Don't forget to use the return value somehow.")]]
     std::string HostToIp(std::string_view host) noexcept;
 
+    // Terminates if not
+    void checkRunningUnderRoot();
 
     struct SocketScoped
     {

@@ -115,18 +115,6 @@ namespace ARPTester
         return arpHeader;
     }
 
-    void checkRunningUnderRoot()
-    {
-        const uint32_t userID { getuid() };
-        if (0 != userID)
-        {
-            // throw std::runtime_error("Application require the ROOT user access"  );
-
-            std::cerr << "Application require the ROOT user access" << std::endl;
-            std::exit(0);
-        }
-    }
-
     // TODO: SocketScoped ----> Socket ???
     // FIXME: We need to use SocketScoped in the right way. or follow the rule of 5 ??
     Utilities::SocketScoped createSocket()
@@ -365,7 +353,7 @@ Reply:  192.168.57.1 is at e8:eb:34:bf:80:2f
 
 void ARPTester::TestAll()
 {
-    //checkRunningUnderRoot();
+    Utilities::checkRunningUnderRoot();
 
     // Tests::TestSocket();
     // Tests::SendRequest();
