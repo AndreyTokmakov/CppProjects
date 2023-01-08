@@ -12,6 +12,8 @@ Description : Utilities
 #include <iostream>
 #include <unistd.h>
 #include <cstring>
+#include <array>
+#include <charconv>
 
 #include <netinet/in.h>
 #include <sys/ioctl.h>
@@ -160,4 +162,63 @@ void Utilities::SocketScoped::closeSocket(int s)
     if (INVALID_HANDLE != s && SOCKET_ERROR == ::close(s)) {
         std::cerr << "close() function failed with error: " << errno << std::endl;
     }
+}
+
+namespace Utilities::IP
+{
+
+
+
+    [[nodiscard]]
+    std::string ipInt2Str(uint32_t ip)
+    {
+        std::string ipStr { "000.000.000.000"};
+        const uint32_t len = snprintf(ipStr.data(), ipStr.capacity(), "%d.%d.%d.%d",
+                                      ip / 16777216 % 256, ip / 65536 % 256, ip / 256 % 256, ip % 256);
+        ipStr.resize(len);
+        ipStr.shrink_to_fit();
+        return ipStr;
+    }
+
+    [[nodiscard]]
+    std::string ipInt2StrOLD(uint32_t ip)
+    {
+        std::array<unsigned char, 4> bytes {};
+        for (size_t i = 0; i < bytes.size(); ++i) {
+            bytes[i] = (ip >> i*8) & 0xFF;
+        }
+        std::string ipStr(16, '\0');
+        int n = std::sprintf(ipStr.data(), "%d.%d.%d.%d", bytes[3], bytes[2], bytes[1], bytes[0]);
+        ipStr.resize(n);
+        return ipStr;
+    }
+
+
+    uint32_t ipInt2Str(std::string_view ip)
+    {
+        size_t pos = 0, prev = 0, id = 0;
+        std::array<uint16_t, 4> octets {};
+        while ((pos = ip.find('.', prev)) != std::string::npos) {
+            std::from_chars(ip.data() + prev, ip.data() + pos, octets[id++]);
+            prev = pos + 1;
+        }
+
+        std::from_chars(ip.data() + prev, ip.data() + ip.length() - prev, octets[id++]);
+        return (octets[0] << 24) | (octets[1] << 16) | (octets[2] << 8) | (octets[3]);
+    }
+
+    uint32_t ipInt2Str2(std::string_view ip)
+    {
+        size_t pos = 0, prev = 0, result = 0;
+        uint8_t octet =0, bit = 32;
+        while ((pos = ip.find('.', prev)) != std::string::npos) {
+            std::from_chars(ip.data() + prev, ip.data() + pos, octet);
+            prev = pos + 1;
+            result |= octet << (bit-= 8);
+        }
+
+        std::from_chars(ip.data() + prev, ip.data() + ip.length() - prev, octet);
+        return result |= octet;
+    }
+
 }

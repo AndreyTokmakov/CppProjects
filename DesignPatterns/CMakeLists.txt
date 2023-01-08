@@ -55,6 +55,6 @@ add_executable(DesignPatterns
 		LazyInitialization/LazyInitialization.cpp
 		LazyInitialization/LazyInitialization.h
 		ChainOfResponsibility/Example2.cpp
-		Command/Command_MethodPtr.cpp Iterator/RangeIterator.cpp)
+		Command/Command_MethodPtr.cpp Iterator/RangeIterator.cpp Mediator/ChatMediator.cpp Observer/ObserverBasic.cpp)
 
 TARGET_LINK_LIBRARIES(DesignPatterns pthread)

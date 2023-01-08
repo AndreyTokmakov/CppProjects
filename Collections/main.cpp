@@ -49,7 +49,7 @@ int main([[maybe_unused]] int argc,
          [[maybe_unused]] char** argv)
 {
 	// TEST(Array);
-	// TEST(List);
+	TEST(List);
 	// TEST(ForwardList);
 	// TEST(Deque);
 	// TEST(Stack);
@@ -58,7 +58,7 @@ int main([[maybe_unused]] int argc,
 	// TEST(Valarray);
 	// TEST(Map);
 	// TEST(MultiMap);
-    TEST(UnorderedMap);
+    // TEST(UnorderedMap);
     // TEST(Set);
     // TEST(UnorderedSet);
 	// TEST(Queue);

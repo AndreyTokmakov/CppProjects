@@ -20,10 +20,10 @@ namespace Memento
     class Memento {
     public:
         [[nodiscard]]
-        virtual std::string getName()  const noexcept = 0;
+        virtual std::string getName() const noexcept = 0;
 
         [[nodiscard]]
-        virtual std::string getDate()  const noexcept = 0;
+        virtual std::string getDate() const noexcept = 0;
 
         [[nodiscard]]
         virtual std::string getState() const noexcept = 0;

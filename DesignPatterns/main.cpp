@@ -81,12 +81,12 @@ int main([[maybe_unused]]  int argc,
     // ChainOfResponsibility::TestAll();
     // Command::TestAll();
     // Iterator::Test();
-    Interpreter::Test();
+    // Interpreter::Test();
     // Mediator::TestAll();
     // Memento::TestAll();
     // Observer::TestAll();
     // Observer_Tests_Ex::Test();
-    // State::TestAll();
+    State::TestAll();
     // TemplateMethod::TestAll();
     /// NULL OBJECT
     // Visitor_Pattern_Tests::test();

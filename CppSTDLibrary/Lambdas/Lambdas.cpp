@@ -480,7 +480,31 @@ namespace Lambdas {
 		}
 	}
 
-	//----------------------------------------------------------------------------------------------------------------------------//
+    //---------------------------------------------------------------------------------------------------//
+
+    int fact_std_func(int n) {
+        std::function<int(int)> fact = [&](auto n) {
+            if (n == 1) return 1;
+            return n * fact(n-1);
+        };
+        return fact(n);
+    }
+
+    int fact_comb(int n) {
+        auto fact = [](auto n, auto self) -> int {
+            if (n == 1) return 1;
+            return n * self(n-1, self);
+        };
+        return fact(n, fact);
+    }
+
+    void Recursive_Lambda2()
+    {
+        std::cout << fact_std_func(5) << std::endl;
+        std::cout << fact_comb(5) << std::endl;
+    }
+
+	//---------------------------------------------------------------------------------------------------//
 
 	void Lambda_Itialyzed_With_Another_Lambda() {
 		auto l = [
@@ -905,7 +929,7 @@ void Lambdas::TestAll()
 	// Lambdas::Lambda_Itialyzed_With_Another_Lambda();
 	// Lambdas::LambdasWithDestructors();
 	// Lambdas::Inheriting_From_Lambdas();
-	Lambdas::Overload_Example();
+	// Lambdas::Overload_Example();
 
 	// Lambdas::Template_Lambda();
 	// Lambdas::Template_Lambda_Default();
@@ -915,7 +939,8 @@ void Lambdas::TestAll()
 
 	// Lambdas::Get_Lambda_Return_Type();
 
-	// Lambdas::Recursive_Lambda();
+	Lambdas::Recursive_Lambda();
+	Lambdas::Recursive_Lambda2();
 
 	// Lambdas::Get_Lambda_Type();
 

@@ -459,7 +459,6 @@ namespace RecursiveLambda {
 
 
 
-
 class StaticInitObject
 {
     static inline const int x = []{
@@ -598,6 +597,49 @@ namespace Templates
     }
 }
 
+
+namespace Memory
+{
+    using session = int;
+
+    auto session_factory(int id) {
+        return std::make_shared<session>(id);
+    }
+
+    // https://ibob.bg/blog/2023/01/01/tracking-shared-ptr-leaks/
+    void SharedPtrLeak()
+    {
+        std::shared_ptr<session> leak;
+
+        std::vector<std::weak_ptr<session>> registry;
+
+        constexpr int N = 20;
+        srand(unsigned(std::time(nullptr)));
+        auto i_to_leak = rand() % (2 * N);
+
+        // std::cout << "i_to_leak = " << i_to_leak << std::endl;
+
+        for (int i = 0; i < N; ++i) {
+            auto sptr = session_factory(i);
+            registry.push_back(sptr);
+            if (i == i_to_leak) {
+                leak = sptr;
+                // std::cout << "Expect " << leak << " to leak\n";
+            }
+        }
+
+        for (auto& w : registry) {
+            if (w.use_count()) {
+                std::cout << "found a leak in " << w.lock() << "\n";
+            }
+        }
+
+        std::cout << "Done\n";
+    }
+}
+
+#include <system_error>
+
 int main([[maybe_unused]] int argc,
          [[maybe_unused]] char** argv)
 {
@@ -607,7 +649,7 @@ int main([[maybe_unused]] int argc,
     // DesignPatterns::TestAll();
     // Multithreading::TestAll();
     // Memory::Test();
-    Strings::TestAll();
+    // Strings::TestAll();
     // Iterators::TestAll();
     // Algorithms::TestAll();
     // Files::TestAll();
@@ -633,6 +675,7 @@ int main([[maybe_unused]] int argc,
     // OOP::TestClassConversationOperatorCall();
 
 
+    // Memory::SharedPtrLeak();
 
 
     // Templates::Test();

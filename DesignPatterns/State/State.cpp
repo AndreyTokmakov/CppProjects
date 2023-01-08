@@ -374,10 +374,10 @@ namespace State::TCPStateMachine_Visitor
 
 void State::TestAll()
 {
-    // ClimateControl::Test();
+    ClimateControl::Test();
 
     // TCPStateMachine::Test();
-    TCPStateMachine_Visitor::Test();
 
+    // TCPStateMachine_Visitor::Test();
 }
 

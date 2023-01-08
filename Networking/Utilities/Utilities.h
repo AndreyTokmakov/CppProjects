@@ -88,5 +88,31 @@ namespace Utilities
 
 };
 
+namespace Utilities::IP
+{
+    constexpr uint32_t ip_octets_to_int(uint8_t first, uint8_t second, uint8_t third, uint8_t fourth)
+    {
+        return (first << 24) | (second << 16) | (third << 8) | (fourth);
+    }
+
+    constexpr uint32_t ip_octets_to_int2(uint8_t first, uint8_t second, uint8_t third, uint8_t fourth)
+    {
+        int result = first << 24;
+        result |= second << 16;
+        result |= third << 8;
+        return result |= fourth;
+    }
+
+    [[nodiscard]]
+    std::string ipInt2Str(uint32_t ip);
+
+    [[nodiscard]]
+    std::string ipInt2StrOLD(uint32_t ip);
+
+    uint32_t ipInt2Str(std::string_view ip);
+    uint32_t ipInt2Str2(std::string_view ip);
+
+}
+
 
 #endif //CPPPROJECTS_UTILITIES_H
