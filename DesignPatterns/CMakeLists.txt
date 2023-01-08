@@ -17,7 +17,7 @@ add_executable(DesignPatterns
     ChainOfResponsibility/ChainOfResponsibility.cpp ChainOfResponsibility/ChainOfResponsibility.h
     Command/Command.cpp Command/Command.h
     Composite/Composite.cpp Composite/Composite.h
-    CRTP/CRTP_Tests.cpp CRTP/CRTP_Tests.h
+    CRTP/CRTP.cpp CRTP/CRTP.h CRTP/ObjectCounter.cpp CRTP/ObjectCounter.h
     Decorator/Decorator.cpp Decorator/Decorator.h
     FabricMethod/FabricMethod.h FabricMethod/FabricMethod.cpp  FabricMethod/FabricMethod2.cpp
 	Facade/Facade.cpp Facade/Facade.h
@@ -47,6 +47,14 @@ add_executable(DesignPatterns
     Iterator/Iterator.cpp Iterator/Iterator.h
     Builder/UserBuilder.cpp
     RAII/RAII.cpp RAII/RAII.h
-        VirtualConstructor/VirtualConstructor.cpp VirtualConstructor/VirtualConstructor.h State/State.cpp State/State.h TemplateMethod/TemplateMethod.cpp TemplateMethod/TemplateMethod.h Adapter/BaseAdapter.cpp Adapter/GoodExample.cpp Bridge/DrawingBridge.cpp Decorator/ShapeDecorator.cpp Decorator/ShapeDecorator.h LazyInitialization/LazyInitialization.cpp LazyInitialization/LazyInitialization.h ChainOfResponsibility/Example2.cpp Command/Command_MethodPtr.cpp)
+        VirtualConstructor/VirtualConstructor.cpp VirtualConstructor/VirtualConstructor.h
+		State/State.cpp State/State.h
+		TemplateMethod/TemplateMethod.cpp TemplateMethod/TemplateMethod.h
+		Adapter/BaseAdapter.cpp Adapter/GoodExample.cpp Bridge/DrawingBridge.cpp
+		Decorator/ShapeDecorator.cpp Decorator/ShapeDecorator.h
+		LazyInitialization/LazyInitialization.cpp
+		LazyInitialization/LazyInitialization.h
+		ChainOfResponsibility/Example2.cpp
+		Command/Command_MethodPtr.cpp Iterator/RangeIterator.cpp Mediator/ChatMediator.cpp Observer/ObserverBasic.cpp)
 
 TARGET_LINK_LIBRARIES(DesignPatterns pthread)

@@ -261,7 +261,7 @@ int main(int argc, char** argv)
     // Files::ReadFile();
     // AggregateInitialization::TestAll();
     // Algorithms::TestAll();
-    Alignment::TestAll();
+    // Alignment::TestAll();
     // Any::TestAll();
     // Arrays::TestAll();
     // Asserts::TestAll();
@@ -287,7 +287,7 @@ int main(int argc, char** argv)
     // Format::TestAll();
     // FunctionObjects::TestAll();
     // Hashing::TestAll();
-    // Lambdas::TestAll();
+    Lambdas::TestAll();
     // Locale::TestAll();
     // Literals::TestAll();
     // MoveSemantics_RuleOfFive::TestAll();

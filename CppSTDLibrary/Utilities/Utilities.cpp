@@ -182,6 +182,18 @@ namespace Integer_Comparison_Functions {
 	}
 }
 
+namespace Utilities
+{
+    void In_Range()
+    {
+        std::cout << std::boolalpha;
+
+        std::cout << std::in_range<std::size_t>(-1) << '\n';
+        std::cout << std::in_range<std::size_t>(42) << '\n';
+    }
+
+}
+
 void Utilities::TestAll()
 {
 	// ApplyTests::Apply_Sum_Test();
@@ -198,8 +210,12 @@ void Utilities::TestAll()
 
 	// Utilities_Library::Ptrdiff_t();
 
+    In_Range();
+
+    /*
 	Integer_Comparison_Functions::Compare_Greater_Bad();
 	Integer_Comparison_Functions::Compare_Greater_Better();
 	Integer_Comparison_Functions::Compare_Greater_Perfect();
 	Integer_Comparison_Functions::Tests();
+    */
 };

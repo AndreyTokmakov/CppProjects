@@ -38,7 +38,7 @@
 #include "Visitor/Visitor.h"
 #include "Visitor/StockVisitor.h"
 #include "Named_Parameter_Idiom/NamedParameter.h"
-#include "CRTP/CRTP_Tests.h"
+#include "CRTP/CRTP.h"
 #include "TypeErasure/TypeErasure.h"
 #include "TagDispatching/TagDispatching.h"
 #include "Policy/Policy.h"
@@ -79,21 +79,21 @@ int main([[maybe_unused]]  int argc,
     // Strategy::Test();
     // Policy::Test();
     // ChainOfResponsibility::TestAll();
-    Command::TestAll();
+    // Command::TestAll();
     // Iterator::Test();
+    // Interpreter::Test();
     // Mediator::TestAll();
     // Memento::TestAll();
     // Observer::TestAll();
     // Observer_Tests_Ex::Test();
-    // State::TestAll();
+    State::TestAll();
     // TemplateMethod::TestAll();
-    // Interpreter::Test();
     /// NULL OBJECT
     // Visitor_Pattern_Tests::test();
     // StockVisitor::test();
 
     /** C++ IDIOMS: **/
-    // CRTP_Tests::Test();
+    // CRTP::Test();
     // TypeErasure::Test();
     // RAII::Test();
     // CopyAndSwap::TEST_ALL();   ---- TESTs

@@ -1,17 +1,19 @@
 /**============================================================================
-Name        : Mediator.h
-Created on  : 17.08.2020
+Name        : CRTP.h
+Created on  : 09.04.2021
 Author      : Andrei Tokmakov
 Version     : 1.0
 Copyright   : Your copyright notice
-Description : Mediator pattern src
+Description : CRTP src
 ============================================================================**/
 
-#ifndef MEDIATOR_PATTERN__TESTS_H__
-#define MEDIATOR_PATTERN__TESTS_H__
+#ifndef CRTP_DESIGN_PATTERN_TESTS__H_
+#define CRTP_DESIGN_PATTERN_TESTS__H_
 
-namespace Mediator {
-	void TestAll();
+namespace CRTP {
+	void Test();
 }
 
-#endif // !(MEDIATOR_PATTERN__TESTS_H__)
+#endif /* CRTP_DESIGN_PATTERN_TESTS__H_ */
+
+

@@ -318,10 +318,14 @@ namespace Observer::Parsons
     }
 }
 
+/// From ObseverBasic.cpp
+void ObserverBasic_Test();
 
 void Observer::TestAll()
 {
     // Test1::Test();
-    Test2::Test();
+    // Test2::Test();
     // Parsons::Test();
+
+    ObserverBasic_Test();
 }

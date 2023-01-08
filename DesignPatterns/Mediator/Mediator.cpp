@@ -1,11 +1,11 @@
-//============================================================================
-// Name        : Mediator.cpp
-// Created on  : 17.08.2020
-// Author      : Tokmakov Andrey
-// Version     : 1.0
-// Copyright   : Your copyright notice
-// Description : Mediator pattern src
-//============================================================================
+/**============================================================================
+Name        : Mediator.cpp
+Created on  : 17.08.2020
+Author      : Andrei Tokmakov
+Version     : 1.0
+Copyright   : Your copyright notice
+Description : Mediator pattern src
+============================================================================**/
 
 #include "Mediator.h"
 #include <iostream>
@@ -19,9 +19,8 @@ namespace Mediator
 {
 
     /**
-     * The Mediator interface declares a method used by components to notify the
-     * mediator about various events. The Mediator may react to these events and
-     * pass the execution to other components.
+     * The Mediator interface declares a method used by components to notify the mediator about various events.
+     * The Mediator may react to these events and pass the execution to other components.
      */
     class Mediator {
     public:
@@ -33,8 +32,7 @@ namespace Mediator
 
 
     /**
-     * The Base Component provides the basic functionality of storing a mediator's
-     * instance inside component objects.
+     * The Base Component provides the basic functionality of storing a mediator's instance inside component objects.
      */
     class BaseComponent {
     protected:
@@ -127,10 +125,17 @@ namespace Mediator
     };
 }
 
+/** From CharMediator.cpp **/
+void CharRoomMediator();
+
 void Mediator::TestAll()
 {
+
+    CharRoomMediator();
+
+    /*
 	std::shared_ptr<Component1> c1 = std::make_shared<Component1>();
-	std::shared_ptr<Component2> c2 = std::make_shared<Component2>();
+	std::shared_ptr<Component2> c2           = std::make_shared<Component2>();
 
 	std::shared_ptr<ConcreteMediator> mediator = std::make_shared<ConcreteMediator>(c1, c2);
 	mediator->Init();
@@ -141,6 +146,6 @@ void Mediator::TestAll()
 
 	std::cout << "\n\nClient triggers operation D." << std::endl;
 	c2->DoD();
-
+    */
 }
 

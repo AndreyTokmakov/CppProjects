@@ -239,6 +239,82 @@ namespace Templates::ClassSpecialization
 };
 
 
+namespace Templates::ClassSpecialization_RawArrays
+{
+    template<typename T>
+    struct ArrayKeeper;
+
+    /// primary template
+    template<typename T, std::size_t SZ>
+    struct ArrayKeeper<T[SZ]> /// partial specialization for arrays of known bounds
+    {
+        static void print() {
+            std::cout << "print() for T[" << SZ << "]\n";
+        }
+    };
+
+
+    template<typename T, std::size_t SZ>
+    struct ArrayKeeper<T(&)[SZ]> /// partial spec. for references to arrays of known bounds
+    {
+        static void print() {
+            std::cout << "print() for T(&)[" << SZ << "]\n";
+        }
+    };
+
+
+    template<typename T>
+    struct ArrayKeeper<T[]> /// partial specialization for arrays of unknown bounds
+    {
+        static void print() {
+            std::cout << "print() for T[]\n";
+        }
+    };
+
+
+    template<typename T>
+    struct ArrayKeeper<T(&)[]> /// partial spec. for references to arrays of unknown bounds
+    {
+        static void print() {
+            std::cout << "print() for T(&)[]\n";
+        }
+    };
+
+
+    template<typename T>
+    struct ArrayKeeper<T*> /// partial specialization for pointers
+    {
+        static void print() {
+            std::cout << "print() for T*\n";
+        }
+    };
+
+    template<typename T1, typename T2, typename T3>
+    void foo(int a1[7],
+             int a2[],
+             int (&a3)[42],
+             int (&x0)[],
+             T1 x1,
+             T2& x2, T3&& x3)
+    {
+        ArrayKeeper<decltype(a1)>::print(); /// uses MyClass<T*>
+        ArrayKeeper<decltype(a2)>::print(); /// uses MyClass<T*>
+        ArrayKeeper<decltype(a3)>::print(); /// uses MyClass<T(&)[SZ]>
+        ArrayKeeper<decltype(x0)>::print(); /// uses MyClass<T(&)[]>
+        ArrayKeeper<decltype(x1)>::print(); /// uses MyClass<T*>
+        ArrayKeeper<decltype(x2)>::print(); /// uses MyClass<T(&)[]>
+        ArrayKeeper<decltype(x3)>::print(); /// uses MyClass<T(&)[]>
+    }
+
+    void Specialize_ForRawArrays()
+    {
+        int a[42];
+        extern int x[];
+
+        foo(a, a, a, x, x, x, x);
+    }
+}
+
 namespace Templates::PartialSpecialization {
 
     template<typename T1, typename T2>
@@ -2563,7 +2639,7 @@ void Templates::TestAll()
 
 	// FoldExpression_CallClassMethod::FoldClassMethod();
 	// FoldExpression_CallClassMethod::FoldedPathTraversals();
-	FoldExpression_CallClassMethod::FoldedMultiClassConstructors();
+	// FoldExpression_CallClassMethod::FoldedMultiClassConstructors();
 
 	// FoldExpression_Examples::Average();
 	// FoldExpression_Examples::For_Each();
@@ -2592,6 +2668,8 @@ void Templates::TestAll()
 
     // PartialSpecialization::Test();
     // PartialSpecialization::Test2();
+
+    ClassSpecialization_RawArrays::Specialize_ForRawArrays();
 
     // -------------------------------------------------------------------------------------------------
 

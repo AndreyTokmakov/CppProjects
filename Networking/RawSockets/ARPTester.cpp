@@ -115,18 +115,6 @@ namespace ARPTester
         return arpHeader;
     }
 
-    void checkRunningUnderRoot()
-    {
-        const uint32_t userID { getuid() };
-        if (0 != userID)
-        {
-            // throw std::runtime_error("Application require the ROOT user access"  );
-
-            std::cerr << "Application require the ROOT user access" << std::endl;
-            std::exit(0);
-        }
-    }
-
     // TODO: SocketScoped ----> Socket ???
     // FIXME: We need to use SocketScoped in the right way. or follow the rule of 5 ??
     Utilities::SocketScoped createSocket()
@@ -149,21 +137,24 @@ namespace ARPTester
             std::exit(0);
         }
     }
-
-
 }
 
 namespace ARPTester::Tests
 {
-    // constexpr std::string_view srcMac { "a8:93:4a:4e:00:6b" };
-    // constexpr std::string_view dstMac { "f4:8c:eb:b8:b8:61" };
 
+#define ON_WORK true
+#ifdef ON_WORK
+    constexpr std::string_view interfaceName { "wlp0s20f3" };
+    constexpr std::string_view interfaceIP { "192.168.57.54" };
+#elif
     constexpr std::string_view interfaceName { "wlp4s0" };
     constexpr std::string_view interfaceIP { "192.168.0.184" };
+#endif
+
+    constexpr std::string_view BROADCAST_MAC { "ff:ff:ff:ff:ff:ff"};
 
     // Comms_Sleeve: wlp1s0 --> 00:30:1a:4f:8d:c4
     constexpr std::string_view cmsIfaceMac { "00:30:1a:4f:8d:c4" };
-
     // Comms_Sleeve: wlan1 --> e4:5f:01:61:5b:fc
     constexpr std::string_view cms_wlan1_Mac { "e4:5f:01:61:5b:fc" };
 
@@ -177,8 +168,7 @@ namespace ARPTester::Tests
         sockaddr_ll device = Utilities::ResolveInterfaceAddress(interfaceName);
         uint8_t packet[sizeof(EthernetHeader) + sizeof(ARPHeader)] {};
 
-        initEthernetHeader(reinterpret_cast<EthernetHeader*>(packet), device,
-                           "ff:ff:ff:ff:ff:ff");
+        initEthernetHeader(reinterpret_cast<EthernetHeader*>(packet), device,BROADCAST_MAC);
 
         /** To send request directly to Comms_Sleeve IP **/
         // initEthernetHeader(reinterpret_cast<EthernetHeader*>(packet), device,
@@ -223,16 +213,14 @@ namespace ARPTester::Tests
         enableBroadcast(socket);
 
         uint8_t packet[sizeof(EthernetHeader) + sizeof(ARPHeader)] {};
-        initEthernetHeader(reinterpret_cast<EthernetHeader*>(packet), device,
-                           "ff:ff:ff:ff:ff:ff");
+        initEthernetHeader(reinterpret_cast<EthernetHeader*>(packet), device,BROADCAST_MAC);
 
         for (int i = 0; i < 255; ++i)
         {
             ARPHeader* arpHeader = initARPHeader_Request(reinterpret_cast<ARPHeader*>((packet + sizeof(EthernetHeader))),
                                                          device);
             arpHeader->SetSenderAddress(interfaceIP);   // Our IP: IP where replay packet shall be sent back
-            // 3232235776 --> 192.168.1.9
-            arpHeader->SetTargetAddress(htonl(3232235776 + i)); // The MAC addr for this IP we want to find out
+            arpHeader->SetTargetAddress(htonl(3232250122 + i)); // The MAC addr for this IP we want to find out
 
             long bytes = sendto(socket,
                                 reinterpret_cast<uint8_t*>(&packet),sizeof(packet),0,
@@ -253,7 +241,7 @@ namespace ARPTester::Tests
         sockaddr_ll device = Utilities::ResolveInterfaceAddress(interfaceName);
         uint8_t packet[sizeof(EthernetHeader) + sizeof(ARPHeader)] {};
 
-        // initEthernetHeader(reinterpret_cast<EthernetHeader*>(packet), device, "ff:ff:ff:ff:ff:ff");
+        // initEthernetHeader(reinterpret_cast<EthernetHeader*>(packet), device, BROADCAST_MAC);
 
         /** To send request directly to Comms_Sleeve IP **/
         // initEthernetHeader(reinterpret_cast<EthernetHeader*>(packet), device,cms_wlan1_Mac);
@@ -308,7 +296,7 @@ namespace ARPTester::Tests
         // 'Sender IP Address' ---> It the POISONED MAC address
         ARPHeader* arpHeader = initARPHeader_Reply(reinterpret_cast<ARPHeader*>((packet + sizeof(EthernetHeader))),
                                                    "22:22:22:22:33:33",  // MAC of IP requested IP in REQUEST
-                                                   "ff:ff:ff:ff:ff:ff"); // MAC of 'Sender IP Address' from Request
+                                                   BROADCAST_MAC); // MAC of 'Sender IP Address' from Request
 
         // IP address for which the MAC has been requested in the Request ARP packet
         arpHeader->SetSenderAddress("192.168.57.56");
@@ -365,13 +353,14 @@ Reply:  192.168.57.1 is at e8:eb:34:bf:80:2f
 
 void ARPTester::TestAll()
 {
-    checkRunningUnderRoot();
+    Utilities::checkRunningUnderRoot();
 
     // Tests::TestSocket();
     // Tests::SendRequest();
-    Tests::ARP_ScanRange();
+    // Tests::ARP_ScanRange();
     // Tests::SendReply();
     // Tests::PoisoningTest();
 
+    std::cout << sizeof(ARPHeader) << std::endl;
 
 }

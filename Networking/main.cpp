@@ -36,11 +36,11 @@ int main([[maybe_unused]] int argc,
     // DNS_ResponseParser::TestAll();
 
     // RawSocketsTests::TestAll();
-    ARPTester::TestAll();
+    // ARPTester::TestAll();
     // BuildAndSendPacketsTests::TestAll();
 
     // Experiments::Tests();
-    // UtilitiesTests::TestAll();
+    UtilitiesTests::TestAll();
 
     // NetLink::TestAll();
 

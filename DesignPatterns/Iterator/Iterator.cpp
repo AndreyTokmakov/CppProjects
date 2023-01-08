@@ -89,8 +89,13 @@ namespace Iterator
     }
 };
 
+void RangeIteratorTests();
+
 void Iterator::Test()
 {
+    RangeIteratorTests();
+
+    /*
     Stack s1;
     for (int i = 1; i < 5; i++)
         s1.push(i);
@@ -106,6 +111,7 @@ void Iterator::Test()
     std::cout << "1 == 3 is " << (s1 == s3) << std::endl;
     std::cout << "1 == 4 is " << (s1 == s4) << std::endl;
     std::cout << "1 == 5 is " << (s1 == s5) << std::endl;
+    */
 };
 
 /*
