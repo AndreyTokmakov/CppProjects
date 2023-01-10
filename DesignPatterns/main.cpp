@@ -36,7 +36,6 @@
 #include "Memento/Memento.h"
 #include "Strategy/Strategy.h"
 #include "Visitor/Visitor.h"
-#include "Visitor/StockVisitor.h"
 #include "Named_Parameter_Idiom/NamedParameter.h"
 #include "CRTP/CRTP.h"
 #include "TypeErasure/TypeErasure.h"
@@ -86,11 +85,10 @@ int main([[maybe_unused]]  int argc,
     // Memento::TestAll();
     // Observer::TestAll();
     // Observer_Tests_Ex::Test();
-    State::TestAll();
+    // State::TestAll();
     // TemplateMethod::TestAll();
+    Visitor::test();
     /// NULL OBJECT
-    // Visitor_Pattern_Tests::test();
-    // StockVisitor::test();
 
     /** C++ IDIOMS: **/
     // CRTP::Test();

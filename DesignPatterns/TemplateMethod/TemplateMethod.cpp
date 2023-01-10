@@ -70,7 +70,14 @@ namespace TemplateMethod::Game
     }
 };
 
+void TemplateMethod_ExampleTwo_Test();
+void TemplateMethod_ExampleThree_Test();
+
 void TemplateMethod::TestAll()
 {
-    Game::Test();
+    // Game::Test();
+
+    // TemplateMethod_ExampleTwo_Test();
+
+    TemplateMethod_ExampleThree_Test();
 };

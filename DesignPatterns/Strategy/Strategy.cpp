@@ -60,11 +60,11 @@ namespace Strategy::SimpleStrategy
 
     class Client : public IContext {
     public:
-        void useStrategy() {
+        void useStrategy() override {
             operation->use();
         }
 
-        void setStrategy(std::unique_ptr<IStrategy> strategy) {
+        void setStrategy(std::unique_ptr<IStrategy> strategy) override {
             operation = std::move(strategy);
         }
     };
@@ -325,7 +325,7 @@ void Strategy::Test()
 {
     // SimpleStrategy::Test();
 
-    // Calculations::Test();
+    Calculations::Test();
 
-    Strategy_Text::Test();
+    // Strategy_Text::Test();
 }

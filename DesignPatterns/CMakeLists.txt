@@ -38,7 +38,8 @@ add_executable(DesignPatterns
 	ExecutorAdapter/ExecutorAdapter.cpp ExecutorAdapter/ExecutorAdapter.h
     State/State.cpp State/State.h
     Strategy/Strategy.cpp Strategy/Strategy.h
-    Visitor/Visitor.cpp Visitor/Visitor.h Visitor/StockVisitor.cpp Visitor/StockVisitor.h
+    Visitor/Visitor.cpp Visitor/Visitor.h Visitor/StockVisitor.cpp
+    Visitor/DynamicComponentsVisitor.cpp
     Builder/HtmlBuilder.cpp
     TypeErasure/TypeErasure.cpp TypeErasure/TypeErasure.h
     CopyAndSwap/CopyAndSwap.cpp CopyAndSwap/CopyAndSwap.h
@@ -55,6 +56,6 @@ add_executable(DesignPatterns
 		LazyInitialization/LazyInitialization.cpp
 		LazyInitialization/LazyInitialization.h
 		ChainOfResponsibility/Example2.cpp
-		Command/Command_MethodPtr.cpp Iterator/RangeIterator.cpp Mediator/ChatMediator.cpp Observer/ObserverBasic.cpp)
+		Command/Command_MethodPtr.cpp Iterator/RangeIterator.cpp Mediator/ChatMediator.cpp Observer/ObserverBasic.cpp TemplateMethod/TemplateMethod_ExampleTwo.cpp TemplateMethod/TemplateMethod_ExampleThree.cpp Visitor/DynamicComponentsVisitor.cpp Visitor/DynamicComponentsVisitor.cpp Visitor/DynamicComponentsVisitor.cpp)
 
 TARGET_LINK_LIBRARIES(DesignPatterns pthread)

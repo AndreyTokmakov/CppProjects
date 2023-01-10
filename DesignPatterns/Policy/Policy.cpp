@@ -24,7 +24,7 @@ namespace Policy
         using OutputPolicy::print;
     };
 
-    class WriteToCout {
+    class WriteToStdOut {
     protected:
         void print(const std::string& message) const {
             std::cout << "To cout: " << message << '\n';
@@ -38,6 +38,7 @@ namespace Policy
             // std::ofstream myFile;
             // myFile.open("policyInheritance.txt");
             // myFile << message << '\n';
+
             std::cout << "To file: " << message << '\n';
         }
     };
@@ -46,7 +47,7 @@ namespace Policy
 
 void Policy::Test()
 {
-    Message<WriteToCout> messageCout {};
+    Message<WriteToStdOut> messageCout {};
     messageCout.write("Hello world");
 
     Message<WriteToFile> messageFile {};
