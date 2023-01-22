@@ -1,11 +1,11 @@
-//============================================================================
-// Name        : TypeErasure.cpp
-// Created on  : 08.05.22.
-// Author      : Tokmakov Andrey
-// Version     : 1.0
-// Copyright   : Your copyright notice
-// Description : TypeErasure
-//============================================================================
+/**============================================================================
+Name        : TypeErasure.cpp
+Created on  : 08.05.22.
+Author      : Andrei Tokmakov
+Version     : 1.0
+Copyright   : Your copyright notice
+Description : TypeErasure
+============================================================================**/
 
 #include "TypeErasure.h"
 
@@ -18,24 +18,24 @@ namespace TypeErasure::ExperimentFirst
     class Object {
     public:
         template<typename T>
-        Object(T&& obj) : concept_(std::make_shared<ConcreteCommand<T>>(std::forward<T>(obj))) {
-
+        explicit Object(T&& obj):
+            concept_(std::make_shared<struct ConcreteCommand<T>>(std::forward<T>(obj))) {
         }
 
         [[nodiscard]]
         int get_id() const { return concept_->get_id(); }
 
     private:
-        struct Command {
-            virtual ~Command() = default;
+        struct ICommand {
+            virtual ~ICommand() = default;
 
             [[nodiscard]]
             virtual int get_id() const = 0;
         };
 
         template<typename T>
-        struct ConcreteCommand final : Command {
-            ConcreteCommand(T&& obj) noexcept : object_(std::forward<T>(obj)) {
+        struct ConcreteCommand final : ICommand {
+            explicit ConcreteCommand(T&& obj) noexcept : object_(std::forward<T>(obj)) {
 
             }
 
@@ -48,7 +48,7 @@ namespace TypeErasure::ExperimentFirst
             T object_;
         };
 
-        std::shared_ptr<Command> concept_;
+        std::shared_ptr<ICommand> concept_;
     };
 
     class Bar {
@@ -91,11 +91,11 @@ namespace TypeErasure::ExperimentSecond
             virtual std::string getName() const = 0;
         };
 
-        std::shared_ptr<const Interface> object;
+        std::shared_ptr<const Interface> object {};
 
         template <typename T>
         explicit Object(T&& obj): object {
-            std::make_shared<Model<T>>(std::forward<T>(obj))} {
+            std::make_shared<struct Model<T>>(std::forward<T>(obj))} {
         }
 
         [[nodiscard]]
@@ -106,10 +106,11 @@ namespace TypeErasure::ExperimentSecond
         template<typename T>
         struct Model : Interface
         {
-            explicit Model(const T& t) : object { t } {
-            }
+            explicit Model(const T& t) : object { t } { }
+            explicit Model(T&& t) : object { std::move(t) } { }
 
-            [[nodiscard]] std::string getName() const override {
+            [[nodiscard]]
+            std::string getName() const override {
                 return object.getName();
             }
         private:
@@ -119,7 +120,7 @@ namespace TypeErasure::ExperimentSecond
 
     struct Bar {
         [[nodiscard]]
-        std::string getName() const {
+        static std::string getName() {
             return "Bar";
         }
     };

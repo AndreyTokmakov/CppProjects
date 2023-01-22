@@ -1,17 +1,17 @@
 //============================================================================
-// Name        : LinkedList.h
-// Created on  : 13.03.2022.
+// Name        : SynchStream.h
+// Created on  : 23.08.2022
 // Author      : Tokmakov Andrey
 // Version     : 1.0
 // Copyright   : Your copyright notice
-// Description : LinkedList
+// Description : SynchStream
 //============================================================================
 
-#ifndef CPPPROJECTS_LINKEDLIST_H
-#define CPPPROJECTS_LINKEDLIST_H
+#ifndef CPPPROJECTS_SYNCHSTREAM_CUSTOM_H
+#define CPPPROJECTS_SYNCHSTREAM_CUSTOM_H
 
-namespace LinkedLists {
+namespace SynchStream_Custom {
     void TEST_ALL();
 };
 
-#endif //CPPPROJECTS_LINKEDLIST_H
+#endif //CPPPROJECTS_SYNCHSTREAM_CUSTOM_H

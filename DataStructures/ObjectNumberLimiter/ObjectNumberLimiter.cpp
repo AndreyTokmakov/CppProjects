@@ -21,7 +21,8 @@ namespace ObjectNumberLimiter
 
         LimitNoOfInstances() {
             if (count >= maxInstance)
-                throw std::logic_error { "Too Many Instances "};
+                throw std::logic_error { std::string {"Too Many Instances of class "}
+                    .append(typeid(LimitedClassType).name())};
             ++count;
         }
 
@@ -36,11 +37,16 @@ namespace ObjectNumberLimiter
         struct One : LimitNoOfInstances<One, 1> { };
         struct Two : LimitNoOfInstances<Two, 2> { };
 
-        Two _2_0, _2_1;
         try {
-            One _1_0, _1_1;
+            Two one, two;
         } catch (std::exception &e) {
-            std::cout << e.what() << std::endl;
+            std::cout << "TWO: " << e.what() << std::endl;
+        }
+
+        try {
+            One one, two;
+        } catch (std::exception &e) {
+            std::cout << "ONE: " << e.what() << std::endl;
         }
     }
 }

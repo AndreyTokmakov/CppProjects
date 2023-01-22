@@ -15,10 +15,12 @@
 #include <fstream>
 #include <filesystem>
 #include <tuple>
+
 #include <exception>
 #include <thread>
 #include <future>
 #include <mutex>
+#include <syncstream>
 
 #include <numeric>
 
@@ -638,7 +640,6 @@ namespace Memory
     }
 }
 
-#include <system_error>
 
 int main([[maybe_unused]] int argc,
          [[maybe_unused]] char** argv)
@@ -673,6 +674,8 @@ int main([[maybe_unused]] int argc,
     // OOP::VirtualMethodTests();
     // OOP::MoveTest();
     // OOP::TestClassConversationOperatorCall();
+
+    std::osyncstream(std::cout) << "Filling the resource and notifying the consumer.\n";
 
 
     // Memory::SharedPtrLeak();

@@ -803,6 +803,24 @@ namespace Variant::VisitTests {
 			), variant);
 		}
 	}
+
+    void Vizit_Multiple_Variants()
+    {
+        std::variant<int, float, char> v1 { 's' };
+        std::variant<int, float, char> v2 { 10 };
+
+        std::visit(overload{
+                [](int a, int b) {std::cout << "     [](int, int) [" << a << ", " << b << "]\n"; },
+                [](int a, float b) { std::cout << "  [](int, float) [" << a << ", " << b << "]\n"; },
+                [](int a, char b) { std::cout << "   [](int, char) [" << a << ", " << b << "]\n"; },
+                [](float a, int b) { std::cout << "  [](float, int) [" << a << ", " << b << "]\n"; },
+                [](float a, float b) { std::cout << "[](float, float) [" << a << ", " << b << "]\n"; },
+                [](float a, char b) { std::cout << " [](float, char) [" << a << ", " << b << "]\n"; },
+                [](char a, int b) {   std::cout << " [](char, int) [" << a << ", " << b << "]\n"; },
+                [](char a, float b) { std::cout << " [](char, float) [" << a << ", " << b << "]\n"; },
+                [](char a, char b) {  std::cout << " [](char, char) [" << a << ", " << b << "]\n"; },
+        }, v1, v2);
+    }
 }
 
 
@@ -1002,7 +1020,8 @@ void Variant::TestAll()
 	// VisitTests::Simple_Visit();
 	// VisitTests::Polymorphism_Test();
 	// VisitTests::VizitTest();
-	VisitTests::Vizit_With_Overloads();
+	// VisitTests::Vizit_With_Overloads();
+	VisitTests::Vizit_Multiple_Variants();
 
 
 

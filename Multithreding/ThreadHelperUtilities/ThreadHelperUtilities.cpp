@@ -22,11 +22,14 @@ namespace ThreadHelperUtilities {
     const std::thread::id mainThreadId = std::this_thread::get_id();
     std::mutex print_mutex;
 
-    const std::string ThreadInfo::getCurrentTime() const noexcept {
+    std::string ThreadInfo::getCurrentTime() const noexcept {
         auto now = std::chrono::system_clock::now();
         auto in_time_t = std::chrono::system_clock::to_time_t(now);
+        const auto nowMs = std::chrono::duration_cast<std::chrono::microseconds>(
+                now.time_since_epoch()) % 1000000;
         std::stringstream ss;
-        ss << std::put_time(std::localtime(&in_time_t), "%Y-%m-%d %X");
+        ss << std::put_time(std::localtime(&in_time_t), "%a %b %d %Y %T")
+           << '.' << std::setfill('0') << std::setw(6) << nowMs.count();
         return ss.str();
     }
 

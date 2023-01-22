@@ -50,13 +50,13 @@ namespace CircularBuffers::Base
 
 	template <class T>
 	inline bool circular_buffer<T>::isFull() const noexcept {
-		//If tail is ahead the head by 1, we are full
+		/// If tail is ahead the head by 1, we are full
 		return full;
 	}
 
 	template <class T>
 	inline bool circular_buffer<T>::empty() const noexcept {
-		// if head and tail are equal, we are empty
+		/// if head and tail are equal, we are empty
 		return (!full && (head == tail));
 	}
 
@@ -368,5 +368,5 @@ void CircularBuffers::TEST_ALL()
 	// PerformanceTests::TestVector();
 	// PerformanceTests::TestRingBuffer();
 
-	// SimpleRingArray::Test();
+	SimpleRingArray::Test();
 }

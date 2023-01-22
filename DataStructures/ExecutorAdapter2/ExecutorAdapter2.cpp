@@ -18,9 +18,10 @@ namespace ExecutorAdapter2
     {
     public:
         template<class ClassType>
-        explicit ExecutorView(const ClassType& type): object { &type }, func_impl {[](const void* obj) {
-            return static_cast<const ClassType*>(obj)->execute();
-        }} { }
+        explicit ExecutorView(const ClassType& type):
+                object { &type },
+                func_impl {[](const void* obj) { return static_cast<const ClassType*>(obj)->execute();}
+        } { /** Do something **/ }
 
         void execute() {
             func_impl(object);
@@ -35,11 +36,15 @@ namespace ExecutorAdapter2
 namespace ExecutorAdapter2::Tests
 {
     struct ClassA {
-        void execute() const { std::cout << "ClassA::execute()"  << std::endl; }
+        void execute() const {
+            std::cout << "ClassA::execute()"  << std::endl;
+        }
     };
 
     struct ClassB {
-        void execute() const { std::cout << "ClassB::execute()"  << std::endl; }
+        void execute() const {
+            std::cout << "ClassB::execute()"  << std::endl;
+        }
     };
 
     void invoke(ExecutorView view) {

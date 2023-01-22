@@ -28,19 +28,21 @@ namespace Networking::BuildPacket {
 
     EthernetHeader* initEthernetHeader(EthernetHeader* ethernetHeader,
                                        std::string_view src,
-                                       std::string_view dst) {
+                                       std::string_view dst,
+                                       uint16_t packetType = ETHERTYPE_IP) {
         ethernetHeader->SetDestinationMACAddress(dst.data());
         ethernetHeader->SetSourceMACAddress(src.data());
-        ethernetHeader->SetType(ETHERTYPE_IP);
+        ethernetHeader->SetType(packetType);
         return ethernetHeader;
     }
 
     EthernetHeader* initEthernetHeader(EthernetHeader* ethernetHeader,
                                        const sockaddr_ll& device,
-                                       std::string_view dst) {
+                                       std::string_view dst,
+                                       uint16_t packetType = ETHERTYPE_IP) {
         ethernetHeader->SetDestinationMACAddress(dst.data());
         ethernetHeader->SetSourceMACAddress(device.sll_addr);
-        ethernetHeader->SetType(ETHERTYPE_IP);
+        ethernetHeader->SetType(packetType);
         return ethernetHeader;
     }
 
@@ -365,6 +367,119 @@ namespace Sniffer
     }
 }
 
+namespace Networking::Batman
+{
+    using namespace BuildPacket;
+    constexpr std::string_view interfaceName { "wlp4s0" };
+
+    // TODO: SocketScoped ----> Socket ???
+    // FIXME: We need to use SocketScoped in the right way. or follow the rule of 5 ??
+    Utilities::SocketScoped createSocket()
+    {
+        Utilities::SocketScoped socket = ::socket(PF_PACKET, SOCK_RAW, htons(ETH_P_ALL));
+        if (-1 == socket) {
+            std::cerr << "Failed to create socket. Error = " << errno << std::endl;
+            std::exit(0);
+        }
+        return socket;
+    }
+
+    void enableBroadcast(Utilities::SocketScoped& sock)
+    {
+        uint32_t broadcastEnable { 1 };
+        int32_t ret = setsockopt(sock, SOL_SOCKET, SO_BROADCAST,
+                                 &broadcastEnable, sizeof(broadcastEnable));
+        if (-1 == ret) {
+            std::cerr << "Failed to enable broadcast on socket (" << sock << ", Error = " << errno << std::endl;
+            std::exit(0);
+        }
+    }
+
+
+    struct BatmanOGMHeader final
+    {
+        uint8_t  packetType { 0 };
+        uint8_t  version { 0 };
+        uint8_t  ttl { 0 };
+        uint8_t  flags { 0 };
+        uint32_t seqNumber { 0 };
+        uint8_t  originatorMAC[ETH_ALEN]{};
+        uint8_t  prevSenderMAC[ETH_ALEN]{};
+        uint8_t  reserved { 0 };
+        uint8_t  tq { 0 };
+        uint16_t tvlvLength  { 0 };
+    };
+
+    void InspectPacket(const uint8_t* packet, ssize_t size)
+    {
+        constexpr uint16_t batmanProtocolId = 1347;
+
+        const EthernetHeader *ethHeader = (EthernetHeader*)packet;
+        const uint16_t type = ethHeader->GetType();
+
+        if (batmanProtocolId == type)
+        {
+            std::cout << "Got B.A.T.M.A.N packet" << std::endl;
+        }
+        else
+        {
+            std::cout << type << std::endl;
+        }
+    }
+
+    void SniffNetworkPackets()
+    {
+        Utilities::checkRunningUnderRoot();
+
+        sockaddr_ll device {};
+        if (!Utilities::ResolveInterfaceAddress(interfaceName, device)) {
+            std::cerr << "Failed to get '" << interfaceName << "' MAC address\n";
+            return;
+        }
+
+        Utilities::SocketScoped socket = ::socket(PF_PACKET, SOCK_RAW, htons(ETH_P_ALL));
+        uint8_t buffer[2048];
+        ssize_t bytes = 0;
+        socklen_t len;
+        while (bytes >= 0) {
+            bytes = recvfrom(socket, buffer, std::size(buffer), 0, (sockaddr*)&device, &len);
+            InspectPacket(buffer, bytes);
+        }
+    }
+
+    void SendOGMMessage()
+    {
+        sockaddr_ll device = Utilities::ResolveInterfaceAddress(interfaceName);
+        uint8_t packet[sizeof(EthernetHeader) + sizeof(BatmanOGMHeader)] {};
+
+        initEthernetHeader(reinterpret_cast<EthernetHeader*>(packet), device,
+                           "00:30:1a:4f:8d:c4", ETH_P_BATMAN);
+        BatmanOGMHeader* ogmHeader = reinterpret_cast<BatmanOGMHeader*>(packet + sizeof(EthernetHeader));
+        ogmHeader->packetType = 0;
+        ogmHeader->version = 15;
+        ogmHeader->ttl = 50;
+        ogmHeader->flags = 0;
+        ogmHeader->seqNumber = htonl(100000001);
+        EthernetHeader::SetMACAddress("a8:93:4a:4e:00:6b", ogmHeader->originatorMAC);
+        EthernetHeader::SetMACAddress("a8:93:4a:4e:00:6b", ogmHeader->prevSenderMAC);
+        ogmHeader->reserved = 0;
+        ogmHeader->tq = 191;
+        ogmHeader->tvlvLength = htons(36);
+
+        Utilities::SocketScoped socket = createSocket();
+        enableBroadcast(socket);
+
+
+        const long bytes = sendto(socket,reinterpret_cast<uint8_t*>(&packet),std::ssize(packet),
+                                  0,reinterpret_cast<sockaddr*>(&device),sizeof(device));
+        if (-1 == bytes) {
+            std::cerr << "Error sending packet: " << errno << std::endl;
+        } else {
+            std::cout << bytes << " send\n";
+        }
+    }
+}
+
 
 void Networking::TestAll()
 {
@@ -372,7 +487,10 @@ void Networking::TestAll()
 
     // WiFi::GetInterfaceInfo_WiFi();
     // WiFi::TrySendPacket();
-    WiFi::SendICMP_PING();
+    // WiFi::SendICMP_PING();
 
     // Sniffer::DumpWiFiTraffic();
+
+    // Batman::SniffNetworkPackets();
+    Batman::SendOGMMessage();
 }

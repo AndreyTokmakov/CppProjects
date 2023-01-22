@@ -271,7 +271,7 @@ int main(int argc, char** argv)
     // BitSet::TestAll();
     // BitwiseOperation::TestAll();
     // Byte::TestAll();
-    // Chrono::TestAll();
+    Chrono::TestAll();
     // Concepts::TestAll();
     // ConsoleInOut::TestAll();
     // CopyElision::TestAll();
@@ -287,7 +287,7 @@ int main(int argc, char** argv)
     // Format::TestAll();
     // FunctionObjects::TestAll();
     // Hashing::TestAll();
-    Lambdas::TestAll();
+    // Lambdas::TestAll();
     // Locale::TestAll();
     // Literals::TestAll();
     // MoveSemantics_RuleOfFive::TestAll();

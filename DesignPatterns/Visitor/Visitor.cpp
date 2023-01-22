@@ -69,6 +69,7 @@ namespace Visitor
 
 void StockVisitorTest();
 void DynamicComponentsVisitorTest();
+void CarVisitorTest();
 
 void Visitor::test()
 {
@@ -86,6 +87,6 @@ void Visitor::test()
     */
 
     // StockVisitorTest();
-
-    DynamicComponentsVisitorTest();
+    // DynamicComponentsVisitorTest();
+    CarVisitorTest();
 }

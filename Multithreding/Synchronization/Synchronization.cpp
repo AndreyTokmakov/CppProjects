@@ -22,6 +22,8 @@
 #include <sstream>
 #include <unordered_map>
 
+#include <ranges>
+#include <span>
 #include <chrono>
 #include <cstdlib>
 #include <ctime>
@@ -584,6 +586,30 @@ namespace Synchronization::TimedMutex {
         job2.wait();
         THREAD_INFO << "Done." << std::endl;
     }
+
+    void LimitTime_Using_UniqueLock()
+    {
+        std::timed_mutex mtx {};
+        const std::jthread holder = std::jthread([&mtx] {
+            std::lock_guard<std::timed_mutex> lock {mtx};
+            THREAD_INFO << "Blocking mutex for 2 sec" << std::endl;
+            std::this_thread::sleep_for(std::chrono::seconds(2));
+        });
+
+        auto task = [&mtx]{
+            std::unique_lock<std::timed_mutex> lock {mtx, std::chrono::milliseconds (200)};
+            if (!lock.owns_lock())
+                THREAD_INFO << "Failed to get lock." << std::endl;
+            else
+                THREAD_INFO << "Got get lock." << std::endl;
+            return;
+        };
+
+        for (int i = 0; i < 3; ++i) {
+            auto T1 = std::jthread(task);
+            std::this_thread::sleep_for(std::chrono::milliseconds(1200));
+        }
+    }
 }
 
 namespace Synchronization::ScopedLock {
@@ -736,6 +762,86 @@ namespace Synchronization::ScopedLock {
     }
 }
 
+namespace Synchronization::RecursiveMutex
+{
+
+    struct NonRecursive
+    {
+        void push_back(int value)
+        {
+            std::unique_lock lock(mux_);
+            /// We already hold mux_, so we couldn't call reserve()
+            if (size_ == capacity_)
+                reserve_impl(capacity_ == 0 ? 64 : capacity_ * 2);
+            data_[size_++] = value;
+        }
+
+        void reserve(size_t cnt) {
+            std::unique_lock lock(mux_);
+            reserve_impl(cnt);
+        }
+
+    private:
+
+        /// reserve_impl expects mux_ to be held by the caller
+        void reserve_impl(size_t cnt) {
+            auto new_data = std::make_unique<int[]>(cnt);
+            std::copy_n(data_.get(), size_, new_data.get());
+            data_ = std::move(new_data);
+            capacity_ = cnt;
+            size_ = std::min(size_, capacity_);
+        }
+
+        std::mutex mux_;
+        std::unique_ptr<int[]> data_;
+        size_t size_ = 0;
+        size_t capacity_ = 0;
+    };
+
+    struct Recursive
+    {
+        void push_back(int value)
+        {
+            std::unique_lock lock(mux_);
+            // holding a recursive mutex multiple times is fine
+            if (size_ == capacity_)
+                reserve(capacity_ == 0 ? 64 : capacity_ * 2);
+            data_[size_++] = value;
+        }
+
+        void reserve(size_t cnt)
+        {
+            std::unique_lock lock(mux_);
+            auto new_data = std::make_unique<int[]>(cnt);
+            std::copy_n(data_.get(), size_, new_data.get());
+            data_ = std::move(new_data);
+            capacity_ = cnt;
+            size_ = std::min(size_, capacity_);
+        }
+
+    private:
+        std::recursive_mutex mux_;
+        std::unique_ptr<int[]> data_;
+        size_t size_ = 0;
+        size_t capacity_ = 0;
+    };
+
+    void main()
+    {
+        NonRecursive non;
+        for (int i = 0; i < 200; i++)
+            non.push_back(i);
+        non.reserve(2);  // malloc(): corrupted top size
+
+        std::cout << "-----------------\n";
+
+        Recursive rec;
+        for (int i = 0; i < 200; i++)
+            rec.push_back(i);
+        rec.reserve(2);
+    }
+}
+
 void Synchronization::TEST_ALL() {
     // Test_Unsynch();
 
@@ -762,6 +868,9 @@ void Synchronization::TEST_ALL() {
     // TimedMutex::TryLockFor_1();
     // TimedMutex::TryLockUntil();
     // TimedMutex::TryLockUntil_1();
+    // TimedMutex::TryLockUntil_1();
+    TimedMutex::LimitTime_Using_UniqueLock();
+
 
 
 
@@ -771,9 +880,10 @@ void Synchronization::TEST_ALL() {
     // SharedTimedMutext::Try_Lock_For();
 
 
-
-
     // ScopedLock::Complex_Test();
     // ScopedLock::Simple_Test();
     // ScopedLock::Good_Example();
+
+
+    // RecursiveMutex::main();
 };

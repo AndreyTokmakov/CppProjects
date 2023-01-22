@@ -170,12 +170,13 @@ namespace DateAndTime::Performance
 }
 
 
-void DateAndTime::TestAll() {
+void DateAndTime::TestAll()
+{
     // Asctime();
     // StringToDate_1();
     // StringToDate_3();
     // StringToTime_1("11:16:12");
-    Timestamp2Integer();
+    // Timestamp2Integer();
 
     // StringToTime_Manual_1("11:13:35.0400123");
     // StringToTime_Manual_2("11:13:35.0400123");

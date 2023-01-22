@@ -318,8 +318,9 @@ namespace Observer::Parsons
     }
 }
 
-/// From ObseverBasic.cpp
-void ObserverBasic_Test();
+
+void ObserverBasic_Test();    /// ObserverBasic.cpp
+void SubjectObserver_Test();  /// ObserverSubject.cpp
 
 void Observer::TestAll()
 {
@@ -327,5 +328,7 @@ void Observer::TestAll()
     // Test2::Test();
     // Parsons::Test();
 
-    ObserverBasic_Test();
+    // ObserverBasic_Test();
+
+    SubjectObserver_Test();
 }

@@ -294,17 +294,17 @@ namespace Vector {
         std::cout << "]\n";
     }
 
-    void Erase_Tests_3()
+    void Erase_IF()
     {
         std::vector<int> numbers = { 1,2,3,4, -1, -2, -3,5,6,7};
         std::cout << numbers << std::endl;
 
-        /*
-        std::erase_if(numbers.begin(), numbers.end(), [](const auto v) {
+
+        std::erase_if(numbers, [](const auto v) {
             return 0 > v;
         });
         std::cout << numbers << std::endl;
-        */
+
     }
 
 	void Erase_Tests_Loop()
@@ -927,10 +927,11 @@ void Vector::TEST_ALL() {
 	// Insert_At_TheEnd();
 	// Assign_Test();
 
-	Erase_Tests();
+	// Erase_Tests();
     // Erase_Tests_2();
-    // Erase_Tests_3();
 	// Erase_Tests_Loop();
+
+    Erase_IF();
 
 	// Emplace_Back_SimpleTest();
 	// Emplace_Back_SimpleTest1();

@@ -84,7 +84,6 @@ int main([[maybe_unused]]  int argc,
     // Mediator::TestAll();
     // Memento::TestAll();
     // Observer::TestAll();
-    // Observer_Tests_Ex::Test();
     // State::TestAll();
     // TemplateMethod::TestAll();
     Visitor::test();
@@ -95,13 +94,11 @@ int main([[maybe_unused]]  int argc,
     // TypeErasure::Test();
     // RAII::Test();
     // CopyAndSwap::TEST_ALL();   ---- TESTs
-    // TagDispatching::Test();    ---- TESTS
+    // TagDispatching::Test();    // ---- TESTS
     // VirtualConstructor::Test();
 
 
-
     // ExecutorAdapter::TestAll();
-
 	// NamedParameter::Test();
     // Filter::Test();
 }

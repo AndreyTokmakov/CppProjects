@@ -16,22 +16,18 @@ template<typename T>
 class function;
 
 
-template<typename Ret, typename ... Args>
-class function<Ret (Args...)>
+template<typename ReturnType, typename ... Args>
+class function<ReturnType (Args...)>
 {
 public:
-    /*
-    Function(Ret (*f)(Args ...))
-        : callable { std::make_unique<CallableImpl<Ret (*)(Args ...)>>(f)} {
-    }
-    */
+    /// Function(Ret (*f)(Args ...)) : callable { std::make_unique<CallableImpl<Ret (*)(Args ...)>>(f)} { }
 
     template<class FunctionalObject>
     explicit function(FunctionalObject funcObj)
             : callable { std::make_unique<CallableImpl<FunctionalObject>>(funcObj)} {
     }
 
-    Ret operator()(Args ... params) {
+    ReturnType operator()(Args ... params) {
         return callable->call(params ...);
     }
 
@@ -39,7 +35,7 @@ public:
 
 private:
     struct ICallable {
-        virtual Ret call(Args ...) = 0;
+        virtual ReturnType call(Args ...) = 0;
         virtual ~ICallable() = default;
 
         // TODO: Finish rule of 5
@@ -48,10 +44,10 @@ private:
 
     template<typename Callable>
     struct CallableImpl: public ICallable {
-        explicit CallableImpl(Callable callable_): callable {std::move(callable_)} {
+        explicit CallableImpl(Callable callable_): callable { std::move(callable_) } {
         }
 
-        Ret call(Args ... params) override {
+        ReturnType call(Args ... params) override {
             return callable(params ...);
         }
 

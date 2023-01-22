@@ -9,32 +9,51 @@
 
 #include "LinkedList.h"
 #include <iostream>
+#include <memory>
+#include <list>
 
-namespace LinkedList {
+namespace LinkedLists {
 
     template<typename T>
     struct Node {
         T data {};
         Node *next {nullptr};
+
+        Node (T v, Node<T>* nxt = nullptr): data {v}, next {next} {
+
+        }
     };
 
 
     template<typename T>
-    struct LinkedList {
-        Node<T> *head { nullptr };
-        Node<T> *tail { nullptr };
+    struct LinkedList
+    {
+        using object_type = T;
+        using reference = object_type&;
+        using pointer = object_type*;
+        using const_reference = const object_type&;
+        using const_pointer = const object_type*;
+
+        static_assert(!std::is_same_v<object_type, void>,
+                      "Type of the Objects in the pool can not be void");
+
+        Node<object_type> *head { nullptr };
+        Node<object_type> *tail { nullptr };
+
+        // TODO: Increment
+        size_t size {0};
 
     public:
         class ListIterator {
-            using value_type = T;
-            using reference = T& ;
-            using pointer = T* ;
+            using value_type = LinkedList::object_type;
+            using reference = LinkedList::reference;
+            using pointer = LinkedList::pointer;
             // using self_type = ListIterator;
 
             Node<value_type> *ptr;
 
             template<typename Type>
-            friend class LinkedList;
+            friend struct LinkedList;
 
             [[maybe_unused]]
             explicit ListIterator(Node<value_type> *p) : ptr{p} {
@@ -52,7 +71,7 @@ namespace LinkedList {
             }
 
             ListIterator operator++(int) {
-                auto iter = *this;
+                ListIterator iter = *this;
                 ++*this;
                 return iter;
             }
@@ -67,14 +86,14 @@ namespace LinkedList {
         };
 
         class ListConstIterator {
-            using value_type = T;
-            using const_reference = const T& ;
-            using const_pointer = const T* ;
+            using value_type = LinkedList::object_type;
+            using const_reference = LinkedList::const_reference;
+            using const_pointer = LinkedList::const_pointer;
 
             Node<value_type> *ptr;
 
             template<typename Type>
-            friend class LinkedList;
+            friend struct LinkedList;
 
             [[maybe_unused]]
             explicit ListConstIterator(Node<value_type> *p) : ptr{p} {
@@ -112,66 +131,191 @@ namespace LinkedList {
             }
         };
 
-
     public:
         using Iterator = ListIterator;
         using ConstIterator = ListConstIterator;
 
-        explicit LinkedList(Node<T> *p): head {p} {
+        LinkedList() = default;
+
+        // TODO: Copy constructor
+        // TODO: Copy assignment operator
+        // TODO: Move constructor
+        // TODO: Move assignment operator
+        // TODO: Destructor
+
+        // TODO: Swap
+        // TODO: Reverse
+        // TODO: Reverse
+
+        explicit LinkedList(Node<object_type> *p): head {p} {
         }
 
+        LinkedList(std::initializer_list<object_type> args)
+        {
+            if (not empty(args)) {
+                head = new Node<object_type>(*std::begin(args));
+                Node<object_type> *node = head;
+                for (const object_type *it = std::begin(args) + 1; it != std::end(args); ++it) {
+                    node->next = new Node<object_type>(*it);
+                    node = node->next;
+                }
+                tail = node;
+            }
+        }
+
+        ~LinkedList() {
+            /*
+            auto node = head;
+            while (head) {
+                node = head;
+                head = head->next;
+                delete node;
+            }*/
+
+            // std::destroy_n(head, size);
+
+            while (head) {
+                delete std::exchange(head, head->next);
+            }
+        }
+
+        void push_back(object_type val) {
+            if (auto last = new Node<object_type>{val}; head) {
+                auto prev = tail;
+                tail = last;
+                prev->next = tail;
+            } else {
+                tail = head = last;
+            }
+        }
+
+        /** Iterators support:  **/
+
         [[nodiscard]]
-        inline Iterator begin() {
+        inline Iterator begin() noexcept {
             return Iterator {head};
+
         }
 
         [[nodiscard]]
-        inline Iterator end() {
-            return Iterator {tail};
+        inline Iterator end() noexcept {
+            // return Iterator {tail};
+
+            /// In case of single linked list 'tail' <--> The last element
+            /// tail->next == NULLPTR
+            return Iterator { nullptr };
         }
 
         [[nodiscard]]
-        inline ConstIterator begin() const {
+        inline ConstIterator begin() const noexcept {
             return ConstIterator {head};
         }
 
         [[nodiscard]]
-        inline ConstIterator end() const {
-            return ConstIterator {tail};
+        inline ConstIterator end() const noexcept {
+            // return ConstIterator {tail};
+
+            /// In case of single linked list 'tail' <--> The last element
+            /// tail->next == NULLPTR
+            return ConstIterator { nullptr };
         }
     };
 
+}
+
+namespace LinkedLists::Tests
+{
+    template<typename T>
+    std::ostream& operator<<(std::ostream& stream, const std::list<T>& list) {
+        for (const auto& v: list)
+            stream << v << ' ';
+        return stream;
+    }
 
     template<typename T>
-    Node<T>* getList() {
-        Node<int>* root = new Node<int>{0}, *node = root;
-        for (int i = 1; i < 10; ++i) {
-            node->next = new Node<int>{i};
+    std::ostream& operator<<(std::ostream& stream, const LinkedList<T>& list) {
+        for (const auto& v: list)
+            stream << v << ' ';
+        return stream;
+    }
+
+    template<typename T>
+    Node<T>* getTestList(T start = 0, T end = 5) {
+        Node<T>* root = new Node<T>{start}, *node = root;
+        for (T i = start + 1; i < end; ++i) {
+            node->next = new Node<T>{i};
             node = node->next;
         }
         return root;
     }
+
+
+
+    void PrintContent_Iterator()
+    {
+        Node<int>* root = getTestList<int>();
+        const LinkedList list {root};
+
+        for (auto it: list)
+            std::cout << it << " ";
+        std::cout << std::endl;
+
+        for (const auto it: list)
+            std::cout << it << " ";
+        std::cout << std::endl;
+    }
+
+
+    void PushBackElement()
+    {
+        constexpr int32_t len {10};
+
+        std::list<int> stdList;
+        LinkedList<int> list;
+        for (int i = 0; i < len; ++i) {
+            stdList.push_back(i);
+            list.push_back(i);
+        }
+
+        std::cout << stdList << std::endl;
+        std::cout << list << std::endl;
+    }
+
+    void initializer_list()
+    {
+        {
+            std::list<int> stdList{1, 2, 3, 4, 5};
+            LinkedList<int> list{1, 2, 3, 4, 5};
+
+            std::cout << stdList << std::endl;
+            std::cout << list << std::endl;
+        }
+
+        {
+            std::list<int> stdList{};
+            LinkedList<int> list{};
+
+            std::cout << stdList << std::endl;
+            std::cout << list << std::endl;
+        }
+    }
+
+    void TEST()
+    {
+        LinkedList<int> list {1,2,3,4,5};
+
+    }
 }
 
-void LinkedList::TEST_ALL()
+
+void LinkedLists::TEST_ALL()
 {
+    // Tests::PrintContent_Iterator();
 
-    Node<int>* root = getList<int>();
-    const LinkedList list {root};
+    // Tests::PushBackElement();
+    // Tests::initializer_list();
+    Tests::TEST();
 
-    for (auto it: list)
-        std::cout << it << " ";
-    std::cout << std::endl;
 
-    for (const auto it: list)
-        std::cout << it << " ";
-    std::cout << std::endl;
-
-    /*
-    Node *node = root;
-    while (nullptr != node) {
-        std::cout << node->data << std::endl;
-        node = node->next;
-    }*/
 
 };

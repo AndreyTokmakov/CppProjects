@@ -85,6 +85,14 @@ void Strings::TestAll()
 {
     // GetStringLengthAsCompileTime();
 
-    std::cout << sizeof(std::string) << std::endl;
+    // std::cout << sizeof(std::string) << std::endl;
+
+    std::string str { "123456789" };
+
+    std::cout << str.size() << std::endl;
+
+    auto x = std::move(str);
+
+    std::cout << str.size() << std::endl;
 
 };

@@ -148,7 +148,8 @@ namespace CustomVector {
         Allocator allocator;
 
     private:
-        void increaseCapacity() {
+        void increaseCapacity()
+        {
             capacity *= growthFactor;
             pointer newData { allocator.allocate(capacity) };
             // std::move(data, data + size, newData);

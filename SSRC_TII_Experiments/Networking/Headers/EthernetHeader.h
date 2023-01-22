@@ -81,7 +81,7 @@ struct EthernetHeader final
         return SetMACAddress(mac, this->destMac);
     }
 
-protected:
+public:
     // TODO: Refactor
     static bool CompareMacs(std::string_view s, const uint8_t* d) {
         unsigned u[6], i;

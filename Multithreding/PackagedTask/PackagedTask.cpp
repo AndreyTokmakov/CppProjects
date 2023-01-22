@@ -113,43 +113,51 @@ namespace PackagedTask {
         THREAD_INFO << "Prepare future object." << std::endl;
         std::future<std::string> futureResult = task.get_future();
 
-        THREAD_INFO << "Sleep for 2 sec" << std::endl;
-        std::this_thread::sleep_for(std::chrono::seconds(2));
+        THREAD_INFO << "Sleep for 0.5 seconds" << std::endl;
+        std::this_thread::sleep_for(std::chrono::milliseconds(500));
 
-        THREAD_INFO << "Running the Task in Thread." << std::endl;
+        THREAD_INFO << "* * * * * Running task * * * * *\n";
         std::thread threadHandle(std::move(task), 4);
 
-        THREAD_INFO << "Wait for the task to finish and get result." << std::endl;
+        THREAD_INFO << "* * * * * After task * * * * *\n";
         auto value = futureResult.get();
 
         threadHandle.join();
         THREAD_INFO << value << " seconds." << std::endl;
     }
 
-    void Lambda_Task() {
+    void Lambda_Task()
+    {
         std::packaged_task<double(int, int)> task([](int a, int b) {
-            THREAD_INFO << "Working on task....." << std::endl;
+            THREAD_INFO << "**** Executing task ******" << std::endl;
             std::this_thread::sleep_for(std::chrono::seconds(3));
+            THREAD_INFO << "**** Task completed ******" << std::endl;
             return std::pow(a, b);
         });
+
+        THREAD_INFO << "Entered" << std::endl;
         std::future<double> result = task.get_future();
 
-        THREAD_INFO << "Sleep before run task." << std::endl;
-        std::this_thread::sleep_for(std::chrono::seconds(3));
-
-        THREAD_INFO << "Running task..." << std::endl;
+        THREAD_INFO << "Running task... " << std::endl;
         task(2, 9);
-        THREAD_INFO << "Task result: " << result.get() << std::endl;
+        THREAD_INFO << "After task [BLOCKED!!!!]" << std::endl;
+
+        THREAD_INFO << "Result: " << result.get() << std::endl;
     }
 
     void Bind_Task() {
         auto func = [](int x, int y) {
+            std::this_thread::sleep_for(std::chrono::seconds(2));
             return std::pow(x, y);
         };
-        std::packaged_task<double()> task(std::bind(func, 2, 11));
+        // std::packaged_task<double()> task(std::bind(func, 2, 11));
+        std::packaged_task<double()> task([func] { return func(2, 11); });
         std::future<double> result = task.get_future();
+
+        THREAD_INFO << "Before task... \n";
         task();
-        std::cout << "task_bind:\t" << result.get() << '\n';
+        THREAD_INFO << "After task [BLOCKED!!!!]\n";
+        THREAD_INFO << "Result: " << result.get() << std::endl;
     }
 
     void Run_Task_Test() {
@@ -275,12 +283,13 @@ namespace PackagedTask {
 
 }
 
-void PackagedTask::TEST_ALL() {
+void PackagedTask::TEST_ALL()
+{
     // Task_From_ClassParam();
 
-    // PackagedTask_Create_and_Run();
+    PackagedTask_Create_and_Run();
 
-    TEST_PackagedTask();
+    // TEST_PackagedTask();
     // Lambda_Task();
     // Bind_Task();
     // Run_Task_Test();

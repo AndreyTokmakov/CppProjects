@@ -39,6 +39,7 @@
 #include "Barrier/Barrier.h"
 #include "FalseSharing/FalseSharingExperiments.h"
 #include "LockFreeDataStructures/LockFreeQueue.h"
+#include "SynchStream_Custom/SynchStream_Custom.h"
 #include "SynchStream/SynchStream.h"
 
 
@@ -49,10 +50,10 @@ int main([[maybe_unused]] int argc,
     // Atomic::TEST_ALL();
     // Barrier::TEST_ALL();
     // CallOnce::TEST_ALL();
-    // ConditionVariable::TEST_ALL();
+    ConditionVariable::TEST_ALL();
     // Exceptions_Handling::TEST_ALL();
     // Future::TEST_ALL();
-    // JThreads::TEST_ALL();
+
     // Latch::TEST_ALL();
     // LockFreeQueue::TEST_ALL()
     // Multithreading_Performance::TEST_ALL();
@@ -65,9 +66,12 @@ int main([[maybe_unused]] int argc,
     // Semaphore::TEST_ALL();
     // Synchronization::TEST_ALL();
     // SynchStream::TEST_ALL();
+    // SynchStream_Custom::TEST_ALL();
     // ThreadPools::TEST_ALL();
     // ThreadPoolBlocking::TEST_ALL();
-    Threads::TEST_ALL();
+
+    // Threads::TEST_ALL();
+    // JThreads::TEST_ALL();
 
     return EXIT_SUCCESS;
 }

@@ -49,12 +49,12 @@ int main([[maybe_unused]] int argc,
          [[maybe_unused]] char** argv)
 {
 	// TEST(Array);
-	TEST(List);
+	// TEST(List);
 	// TEST(ForwardList);
 	// TEST(Deque);
 	// TEST(Stack);
 	// TEST(Heap);
-	// TEST(Vector);
+	TEST(Vector);
 	// TEST(Valarray);
 	// TEST(Map);
 	// TEST(MultiMap);

@@ -20,6 +20,7 @@ link_directories(/home/andtokm/DiskS/Unikie/TII/libserial/build/lib)
 # include all components
 add_executable(SSRC_TII_Experiments MACOSX_BUNDLE 
     main.cpp
+        Networking/Headers/ARPHeader.h
         Networking/Headers/EthernetHeader.h
         Networking/Headers/IPv4Header.h
         Networking/Headers/TCPHeader.h

@@ -18,6 +18,7 @@
 #include <vector>
 #include <cassert>
 #include <iomanip>
+#include <syncstream>
 
 #include "ConditionVariable.h"
 #include "../ThreadHelperUtilities/ThreadHelperUtilities.h"
@@ -49,8 +50,8 @@ namespace ConditionVariable::Classic_Test {
 
         std::thread consumer([&]() {
             std::unique_lock<std::mutex> lock(m);
-            while (false == done) {
-                while (false == notified) {  // loop to avoid spurious wakeups
+            while (!done) {
+                while (!notified) {  // loop to avoid spurious wakeups
                     cond_var.wait(lock);
                     std::cout << "Condition var notified." << std::endl;
                 }
@@ -89,7 +90,7 @@ namespace ConditionVariable::Classic_Test {
 
         std::thread consumer([&]() {
             std::unique_lock<std::mutex> lock(m);
-            while (false == done) {
+            while (!done) {
                 cond_var.wait(lock, [&] {return notified; });
                 std::cout << "Condition var notified." << std::endl;
 
@@ -190,7 +191,7 @@ namespace ConditionVariable::Classic_Test {
             for (int i = 0; i < 50; ++i) {
                 std::this_thread::sleep_for(std::chrono::milliseconds(100));
                 std::unique_lock<std::mutex> lock(mtx);
-                THREAD_INFO << "Producer: producing " << i << std::endl;;
+                THREAD_INFO << "Producer: producing " << i << std::endl;
                 queue.push(i);
                 notified = true;
                 trigger.notify_one();
@@ -251,7 +252,7 @@ namespace ConditionVariable::Classic_Test {
         th1.join();
         th2.join();
     }
-};
+}
 
 namespace ConditionVariable::SimpleTest {
 
@@ -549,7 +550,7 @@ namespace ConditionVariable::SimpleTest {
         std::atomic<int> index = ATOMIC_VAR_INIT(0);
 
 
-        std::future<void> producer = std::async(std::launch::async, [&trigger, &index](unsigned int timeout)-> void {
+        std::future<void> producer = std::async(std::launch::async, [&trigger](unsigned int timeout)-> void {
             THREAD_INFO << "Producer: Sleeping for " << timeout << " seconds..." << std::endl;
             std::this_thread::sleep_for(std::chrono::seconds(timeout));
             std::cout << std::endl;
@@ -692,7 +693,7 @@ namespace ConditionVariable::VariableAny {
         auto print_id = [&](int id)-> void {
             THREAD_INFO << "Print thread " << id << " started." << std::endl;
             std::lock_guard<std::mutex> lock(mtx);
-            while (false == ready) {
+            while (!ready) {
                 trigger.wait(mtx);
             }
             THREAD_INFO << "Print thread " << id << " done." << std::endl;
@@ -844,6 +845,70 @@ namespace ConditionVariable::Experiments
     }
 }
 
+namespace ConditionVariable::ResourceClass
+{
+    struct Resource
+    {
+        bool full {false};
+        std::mutex mux {};
+        std::condition_variable cond {};
+
+        void produce()
+        {
+            {
+                std::unique_lock lock(mux);
+                // wait until the condition is true
+                // 1. the lock is released
+                // 2. when the thread is woken up, the lock is reacquired and the condition checked
+                // 3. if the condition is still not true, the lock is rereleased, and we go to step 2.
+                // 4. if the condition is true, the wait() call finishes
+                cond.wait(lock, [this] { return !full; });
+                std::osyncstream(std::cout) << "Filling the resource and notifying the consumer.\n";
+                full = true;
+                std::this_thread::sleep_for(200ms);
+            }
+
+            // wake up one thread waiting on this condition variable
+            // note that we already released our lock, otherwise
+            // the notified thread would wake up and fail to acquire
+            // the lock and suspend itself again
+            cond.notify_one();
+        }
+
+        void consume()
+        {
+            {
+                std::unique_lock lock(mux);
+                // same as above, but with opposite semantics
+                cond.wait(lock, [this]{ return full; });
+                std::osyncstream(std::cout) << "Consuming the resource and notifying the producer.\n";
+                full = false;
+                std::this_thread::sleep_for(200ms);
+            }
+            cond.notify_one();
+        }
+    };
+
+    void Consume_Produce()
+    {
+        Resource resource;
+
+        auto t1 = std::jthread([&resource](const std::stop_token& token){
+            while (!token.stop_requested())
+                resource.produce();
+        });
+
+        auto t2 = std::jthread([&resource](const std::stop_token& token){
+            while (!token.stop_requested())
+                resource.consume();
+        });
+
+        std::this_thread::sleep_for(2s);
+        t1.request_stop();
+        t2.request_stop();
+    }
+}
+
 void ConditionVariable::TEST_ALL() {
     // Classic_Test::Test();
     // Classic_Test::Test_Predicate_0();
@@ -871,5 +936,7 @@ void ConditionVariable::TEST_ALL() {
     // VariableAny::NotifyAll_CV_ANY();
     // VariableAny::NotifyAll_CV_not_Any();
 
-    Experiments::Consumer_BlockingProducer();
+    ResourceClass::Consume_Produce();
+
+    // Experiments::Consumer_BlockingProducer();
 };

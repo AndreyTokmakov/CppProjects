@@ -136,7 +136,7 @@ namespace BitwiseOperation
         }
     }
 
-    void  Find_Element_Occured_Only_once_Test(void)
+    void  Find_Element_Occured_Only_once_Test()
     {
         {
             int arr[] = { 12, 12, 14, 90, 14, 14, 14, 11, 23,23, 22,22, 90 };
@@ -425,7 +425,7 @@ void BitwiseOperation::TestAll() {
     // IsOdd_Test();
     // Find_Element_Occured_Only_once_Test();
 
-    Swap_Bits();
+    // Swap_Bits();
     // Swap_Bits_2();
 
     // SetBit();

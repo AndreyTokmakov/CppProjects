@@ -437,7 +437,8 @@ uint64_t format_date(std::string_view str)
 }
 
 
-void Chrono::TestAll() {
+void Chrono::TestAll()
+{
     // Steady_clock();
     // Duration_TimePoint_Print();
     // Clock_Test();
@@ -468,7 +469,7 @@ void Chrono::TestAll() {
 
     // TimeZones::Test();
 
-    // StringFormat::StrfTime();
+    StringFormat::StrfTime();
     // StringFormat::Asctime();
     // StringFormat::PutTime_To_String();
     // StringFormat::CTime_String();
@@ -486,7 +487,5 @@ void Chrono::TestAll() {
     // auto v =format_date("11:22:33.123123");
     // std::cout << v << std::endl;
 
-    tm dt;
-    std::cout << sizeof (dt) << std::endl;
 };
 

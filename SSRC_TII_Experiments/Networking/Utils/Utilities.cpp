@@ -12,13 +12,15 @@ Description : Utilities
 #include <iostream>
 #include <unistd.h>
 #include <cstring>
+#include <array>
+#include <charconv>
 
 #include <netinet/in.h>
 #include <sys/ioctl.h>
 #include <bits/ioctls.h>
 #include <net/if.h>
 #include <arpa/inet.h>
-
+#include <netdb.h>
 
 void Utilities::PrintMACAddress(const uint8_t* mac)
 {
@@ -27,9 +29,31 @@ void Utilities::PrintMACAddress(const uint8_t* mac)
     printf ("%02x", mac[5]);
 }
 
+void Utilities::checkRunningUnderRoot()
+{
+    const uint32_t userID { getuid() };
+    if (0 != userID)
+    {
+        // throw std::runtime_error("Application require the ROOT user access"  );
+        std::cerr << "Application require the ROOT user access" << std::endl;
+        std::exit(0);
+    }
+}
 
+
+[[nodiscard("nodiscard")]]
 std::string Utilities::IpToStr(unsigned long address) {
-    return inet_ntoa({ static_cast<in_addr_t>(address) });
+    return inet_ntoa({ static_cast<in_addr_t>(htonl(address)) });
+}
+
+
+[[nodiscard("Don't forget to use the return value somehow.")]]
+std::string HostToIp(std::string_view host) noexcept
+{
+    const hostent* hostname { gethostbyname(host.data()) };
+    if (hostname)
+        return std::string { inet_ntoa(**(in_addr**)hostname->h_addr_list) };
+    return std::string {};
 }
 
 
@@ -57,6 +81,7 @@ uint16_t Utilities::Checksum(uint16_t *ptr, uint16_t bytes) noexcept
 
     return answer;
 }
+
 
 [[nodiscard]]
 sockaddr_ll Utilities::ResolveInterfaceAddress(std::string_view interfaceName)

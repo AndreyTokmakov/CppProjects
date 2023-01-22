@@ -40,7 +40,7 @@ namespace HashTable::Simple
         int size = 0;
 
     public:
-        HashMap(int capacity = 20): capacity {capacity}
+        explicit HashMap(int capacity = 20): capacity {capacity}
         {
             // Initialise all elements of array as NULL
             for (int i = 0; i < capacity; i++)
@@ -198,10 +198,12 @@ namespace HashTable::Impl2 {
         // TODO: Static assert (k == k)
         // TODO: Calculate when we need to grow the table
 
-        static inline constexpr size_t INITIAL_CAPACITY { 10 };
+        static inline constexpr size_t INITIAL_CAPACITY { 2 };
         static inline constexpr size_t GROWTH_FACTOR { 4 };
 
+        // TODO: Use Templates to specify HASHING STRATEGY
         static inline constexpr std::hash<key_type> hasher {};
+        static inline constexpr size_t MAX_LOAD_FACTOR { 3 };
 
         std::vector<Entry<key_type, value_type>> table { INITIAL_CAPACITY };
         size_t maxBundleSize { 0 };
@@ -213,6 +215,21 @@ namespace HashTable::Impl2 {
             return hasher(key);
         }
 
+        [[nodiscard]]
+        constexpr size_t getBundleSize() const noexcept {
+            return maxBundleSize;
+        }
+
+        [[nodiscard]]
+        constexpr size_t size() const noexcept {
+            return table.size();
+        }
+
+        [[nodiscard]]
+        constexpr size_t capacity() const noexcept {
+            return table.capacity();
+        }
+
         void put(key_type key, value_type value)
         {
             const size_t index { calculateHash(key) % table.size() };
@@ -222,6 +239,11 @@ namespace HashTable::Impl2 {
 
             // TODO: Check LoadFactor? Rebuild table?
             // TODO: Calculate when we need to grow the table
+
+            if (maxBundleSize >= MAX_LOAD_FACTOR)
+            {
+                enlarge();
+            }
         }
 
         [[nodiscard]]
@@ -238,6 +260,8 @@ namespace HashTable::Impl2 {
         // TODO: Check for performance
         void enlarge()
         {
+            std::cout << "Resizing....\n";
+
             size_t maxBundleSizeLocal = 0;
             std::vector<Entry<key_type, value_type>> tableLocal { table.size() * GROWTH_FACTOR};
             for (const size_t size = tableLocal.size(); const auto& entry: table) {
@@ -280,18 +304,33 @@ namespace HashTable::Impl2 {
         const auto& result = tbl.find("Two");
         std::cout << result.value_or(0) << std::endl;
 
-        std::cout << "----------------------------------------" << std::endl;
+        std::cout << "----------------------------" << tbl.getBundleSize() << "------------------------------" << std::endl;
 
         tbl.enlarge();
         tbl.display();
 
         std::cout << tbl.find("Two").value_or(0) << std::endl;
+        std::cout << "----------------------------" << tbl.getBundleSize() << "------------------------------" << std::endl;
+
     }
 
+    void Push_And_Growth_Test()
+    {
+        HashTable<int, int> table;
+        for (int i = 200; i < 300; ++i) {
+            table.put(i, i);
+        }
+
+        // table.display();
+        std::cout << "Size: " << table.size() << std::endl;
+        std::cout << "Capacity: " << table.capacity() << std::endl;
+    }
 }
 
 void HashTable::TestAll()
 {
     // Simple::Test();
-    Impl2::Test();
+
+    // Impl2::Test();
+    Impl2::Push_And_Growth_Test();
 };

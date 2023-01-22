@@ -22,7 +22,7 @@ namespace ThreadHelperUtilities {
         std::thread::id this_thread_id;
 
     protected:
-        const std::string getCurrentTime() const noexcept;
+        std::string getCurrentTime() const noexcept;
 
     public:
         ThreadInfo();
