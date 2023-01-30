@@ -49,23 +49,22 @@ namespace Promise {
 
         THREAD_INFO << "main thread" << std::endl;
 
-        std::promise<int> promise;                      // create promise
-        std::future<int> future = promise.get_future(); // engagement with future
-        std::thread th1(print_int, std::ref(future));   // send future to new thread
+        std::promise<int> promise;
+        std::future<int> future = promise.get_future();
+        std::jthread job(print_int, std::ref(future));
 
-        promise.set_value(123);                          // fulfill promise (synchronizes with getting the future)
-        th1.join();
+        promise.set_value(123);
     }
 
 
     void SimpleTest1() {
-        std::promise<void> ready_p;
-        std::future<void> ready_f = ready_p.get_future();
+        std::promise<void> promise;
+        std::future<void> ready = promise.get_future();
 
         std::thread thread_b([&]() {
             THREAD_INFO << "Worer: Do some work 1 . . . ." << std::endl;
             std::this_thread::sleep_for(std::chrono::seconds(3));
-            ready_p.set_value();
+            promise.set_value();
             THREAD_INFO << "Worer: Do some work 2 . . . ." << std::endl;
             std::this_thread::sleep_for(std::chrono::seconds(3));
             THREAD_INFO << "Worer: Done" << std::endl;
@@ -73,8 +72,28 @@ namespace Promise {
 
         THREAD_INFO << "Before wait()" << std::endl;
 
-        ready_f.wait();
+        ready.wait();
 
+        THREAD_INFO << "After wait()" << std::endl;
+    }
+
+    void SimpleTest1_1()
+    {
+        std::promise<void> promise;
+        std::future<void> future = promise.get_future();
+
+        std::jthread task([promise = std::move(promise)]()mutable {
+            THREAD_INFO << "Worker: Do some work 1 . . . ." << std::endl;
+            std::this_thread::sleep_for(std::chrono::seconds(3));
+            promise.set_value();
+            THREAD_INFO << "Worker: Do some work 2 . . . ." << std::endl;
+            std::this_thread::sleep_for(std::chrono::seconds(3));
+            THREAD_INFO << "Worker: Done" << std::endl;
+        });
+
+        std::this_thread::sleep_for(std::chrono::milliseconds (10));
+        THREAD_INFO << "Before wait()" << std::endl;
+        future.wait();
         THREAD_INFO << "After wait()" << std::endl;
     }
 
@@ -225,9 +244,11 @@ namespace Promise {
     }
 }
 
-void Promise::TEST_ALL() {
+void Promise::TEST_ALL()
+{
     // SimpleTest();
-    SimpleTest1();
+    // SimpleTest1();
+    SimpleTest1_1();
     // SimpleTest2();
 
     // ComplexTest();

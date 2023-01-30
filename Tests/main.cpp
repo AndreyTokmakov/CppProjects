@@ -648,7 +648,7 @@ int main([[maybe_unused]] int argc,
 
     // Experiments::Test({20, 40, 60});
     // DesignPatterns::TestAll();
-    // Multithreading::TestAll();
+    Multithreading::TestAll();
     // Memory::Test();
     // Strings::TestAll();
     // Iterators::TestAll();
@@ -674,8 +674,6 @@ int main([[maybe_unused]] int argc,
     // OOP::VirtualMethodTests();
     // OOP::MoveTest();
     // OOP::TestClassConversationOperatorCall();
-
-    std::osyncstream(std::cout) << "Filling the resource and notifying the consumer.\n";
 
 
     // Memory::SharedPtrLeak();

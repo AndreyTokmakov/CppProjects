@@ -427,10 +427,9 @@ namespace LRUCache::CircleIterator_Deque {
 };
 
 
-void LRUCache::TEST_ALL() {
+void LRUCache::TEST_ALL()
+{
 	// CircleIteratorArray::Tests::RunAllTests();
 	Cache_LinkedList::RunTests();
-
-
 	// Cache_LinkedList::RunTests();  // UNIMPLEMENTED
 };

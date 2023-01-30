@@ -758,9 +758,9 @@ namespace BinTreeTests {
         std::vector<BinTree::Node*> stack {};
         BinTree::Node *curr = node;
 
-        while (nullptr != curr || !stack.empty())
+        while (curr || !stack.empty())
         {   /* Reach the left most Node of the curr Node */
-            while (nullptr != curr)
+            while (curr)
             { /* place pointer to a tree node on the stack before traversing the node's left subtree */
                 stack.push_back(curr);
                 curr = curr->left;
@@ -1469,7 +1469,7 @@ namespace BinTreeTests {
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////
 
-	int _find_maximum_path_sum_betwee_nodes(const BinTree::Node* node) {
+	int _find_maximum_path_sum_between_nodes(const BinTree::Node* node) {
 		static int max_path = std::numeric_limits<int>::min();
 		if (nullptr == node)
 			return max_path;
@@ -1478,13 +1478,13 @@ namespace BinTreeTests {
 
 		// Find maximum sum in left and right subtree. Also find maximum node to 
 		// leaf sums in left and right  subtrees and store them in ls and rs 
-		int ls = _find_maximum_path_sum_betwee_nodes(node->left);
-		int rs = _find_maximum_path_sum_betwee_nodes(node->right);
+		int ls = _find_maximum_path_sum_between_nodes(node->left);
+		int rs = _find_maximum_path_sum_between_nodes(node->right);
 
 		// If both left and right children exist 
 		if (node->left && node->right) {
 			max_path = std::max(max_path, ls + rs + node->data);
-			// Return maxium possible value for root being  on one side 
+			// Return maximum possible value for root being  on one side
 			return std::max(ls, rs) + node->data;
 		}
 
@@ -1492,10 +1492,34 @@ namespace BinTreeTests {
 		return (nullptr == node->left) ? rs + node->data : ls + node->data;
 	}
 
+    /// RIGHT ONE
+    std::pair<int, int> _find_maximum_path_sum_between_nodes2(const BinTree::Node* node) {
+        int max_path = node->data;
+        int max_subtree = node->data;
+        int full_path = node->data;
+
+        if (node->left) {
+            auto [path, tree] = _find_maximum_path_sum_between_nodes2(node->left);
+            max_path = std::max(max_path, path + node->data);
+            max_subtree = std::max(max_subtree, tree);
+            full_path += path;
+        }
+        if (node->right) {
+            auto [path, tree] = _find_maximum_path_sum_between_nodes2(node->right);
+            max_path = std::max(max_path, path + node->data);
+            max_subtree = std::max(max_subtree, tree);
+            full_path += path;
+        }
+
+        max_subtree = std::max(max_subtree, std::max(full_path, max_path));
+        return {max_path, max_subtree};
+    }
+
 	void Find_Maximum_PathSum_BetweenNodes() {
-		BinTree::BinaryTree tree{ 40,22,85 ,10,30,54,125 };
-		int result = _find_maximum_path_sum_betwee_nodes(tree.getRoot());
-		std::cout << result << std::endl;
+		BinTree::BinaryTree tree{ 40,25,85 ,10,30,55,125 };
+
+		std::cout << _find_maximum_path_sum_between_nodes(tree.getRoot()) << std::endl;
+		std::cout << _find_maximum_path_sum_between_nodes2(tree.getRoot()).second << std::endl;
 	}
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////
@@ -1752,7 +1776,8 @@ namespace Trees::Complete_Tree {
 }
 
 
-void Trees::TEST_ALL() {
+void Trees::TEST_ALL()
+{
 	// BinTree_Bad::TEST();
 
 	// BinTreeTests::Remove_Tests();
@@ -1771,7 +1796,7 @@ void Trees::TEST_ALL() {
 	// BinTreeTests::Check_Is_Trees_Identical();
 
 	// BinTreeTests::Inorder_Walkthrough();
-	// BinTreeTests::Inorder_Walkthrough_NonRecursion();
+	BinTreeTests::Inorder_Walkthrough_NonRecursion();
 	// BinTreeTests::Backwards_Walkthrough();
 	// BinTreeTests::Print_Top_View();
 	// BinTreeTests::Level_Order_Traversal();
@@ -1791,7 +1816,7 @@ void Trees::TEST_ALL() {
 	// BinTreeTests::Find_Deepest_Node();
 	// BinTreeTests::Find_Maximum_Node_AtLevel();
 	// BinTreeTests::Find_Maximum_Level_Sum();
-	BinTreeTests::Find_Level_With_Maximum_Sum();
+	// BinTreeTests::Find_Level_With_Maximum_Sum();
 	// BinTreeTests::Find_Min_Depth();
 	// BinTreeTests::Find_Depth_Tests_2();
 	// BinTreeTests::Find_MaxElement_NotForBST();

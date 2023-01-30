@@ -14,6 +14,7 @@
 #include "ExecutorAdapter/ExecutorAdapter.h"
 #include "ExecutorAdapter2/ExecutorAdapter2.h"
 #include "HashTable/HashTable.h"
+#include "BinaryTree/BinaryTree.h"
 #include "BitSet/BitSet.h"
 #include "CircularBuffers/CircularBuffers.h"
 #include "ThreadsafeQueue/ThreadsafeQueue.h"
@@ -42,6 +43,7 @@ int main([[maybe_unused]] int argc,
 {
     // Array::TEST_ALL();
     // BitSet::TEST_ALL();
+    BinaryTree::TestAll();
     // CategoryTree::TEST_ALL();
     // CircularBuffers::TEST_ALL();
     // CustomVector::TestAll();
@@ -50,7 +52,7 @@ int main([[maybe_unused]] int argc,
     // Function::Test();
     // HashTable::TestAll();
     // LinkedLists::TEST_ALL();
-    Logging::TEST_ALL();
+    // Logging::TEST_ALL();
 	// LRUCache::TEST_ALL();
     // ObjectPools::TEST_ALL();
     // Optional::TEST_ALL();

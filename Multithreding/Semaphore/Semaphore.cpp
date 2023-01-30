@@ -12,6 +12,7 @@
 
 #include <iostream>
 #include <thread>
+#include <future>
 #include <chrono>
 #include <semaphore>
 
@@ -97,11 +98,37 @@ namespace Semaphore::BinarySemaphore {
     }
 };
 
+namespace Semaphore::Tests
+{
+    void Simple_Acquire_Release()
+    {
+        std::binary_semaphore semaphore {1};
+
+        auto task = [&semaphore] {
+            THREAD_INFO << "Started\n";
+            semaphore.acquire();
+            THREAD_INFO << "Semaphore captured...\n";
+
+            std::this_thread::sleep_for(std::chrono::seconds(2));
+
+            THREAD_INFO << "Semaphore released...\n";
+            semaphore.release();
+        };
+
+        std::future<void> job1 = std::async(task);
+        std::future<void> job2 = std::async(task);
+
+        job1.wait();
+        job2.wait();
+    }
+}
 
 void Semaphore::TEST_ALL()
 {
     // BinarySemaphore::Release_Acquire_BasicTest();
     // BinarySemaphore::Release_TRY_Acquire__BasicTest();
-    BinarySemaphore::Release_TRY_Acquire_FOR__BasicTest();
+    // BinarySemaphore::Release_TRY_Acquire_FOR__BasicTest();
+
+    Tests::Simple_Acquire_Release();
 };
 

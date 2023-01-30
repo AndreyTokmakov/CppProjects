@@ -42,8 +42,8 @@ namespace Optional {
 		*/
 
 	private:
-		char data[sizeof(data_type)]{};
-		bool has_value{ false };
+		char data [sizeof(data_type)]{};
+		bool has_value { false };
 
 	public:
 		Optional() noexcept = default;
