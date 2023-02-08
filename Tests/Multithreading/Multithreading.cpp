@@ -14,11 +14,16 @@ Description : Multithreading
 #include <future>
 #include <thread>
 #include <vector>
+#include <list>
 #include <unordered_map>
 #include <sstream>
 #include <iomanip>
 #include <ctime>
 #include <atomic>
+#include <deque>
+#include <concepts>
+#include <functional>
+#include <syncstream>
 
 #include "../Helpers/Utilities.h"
 
@@ -317,6 +322,214 @@ namespace Multithreading::LockFree
     }
 }
 
+
+namespace Multithreading::Pools
+{
+    template<typename Task = std::function<void()>>
+    struct thread_pool
+    {
+        // TODO: Refactor?? use template like std::func
+        using TaskType = Task;
+
+        mutable std::mutex mutex;
+
+        std::deque<TaskType> queue;
+        // std::list<TaskType> queue;
+
+        std::condition_variable updated;
+
+        std::atomic_bool run { true };
+
+        std::vector<std::jthread> workers {};
+
+        /** Maximum number of request handler workers: **/
+        // static inline const size_t THREADS_COUNT { std::thread::hardware_concurrency() };
+        static inline const size_t THREADS_COUNT { 3 };
+
+        /** Maximum number of request handler workers: **/
+        static inline const size_t MAX_CAPACITY { 1 };
+
+        static inline const std::chrono::duration<int64_t, std::ratio<1, 1000>> TIMEOUT =
+                std::chrono::milliseconds(2000);
+
+        static inline const std::chrono::duration<int64_t, std::ratio<1, 1000>> POLL_TIMEOUT =
+                std::chrono::milliseconds(250);
+
+    private:
+
+        template<class Rep, class Period>
+        bool wait_for_and_pop(TaskType &task,
+                              const std::chrono::duration<Rep, Period> &timeout) noexcept {
+            std::unique_lock<std::mutex> lock(mutex);
+            if (!updated.wait_for(lock, timeout, [this] { return !queue.empty(); }))
+                return false;
+            task = std::move(queue.front());
+            queue.pop_front();
+            lock.unlock();
+            updated.notify_all();
+            return true;
+        }
+
+    private:
+
+        void worker_thread()
+        {
+            TaskType task;
+            while (run) {
+                if (auto result = wait_for_and_pop(task, TIMEOUT); result) {
+                    task();
+                }
+            }
+        }
+
+    public:
+        thread_pool()
+        {
+            try {
+                for (size_t i = 0; i < THREADS_COUNT; ++i) {
+                    workers.emplace_back(&thread_pool::worker_thread, this);
+                }
+            } catch (...) {
+                run = false;
+                throw;
+            }
+        }
+
+        ~thread_pool() {
+            run = false;
+        }
+
+        [[nodiscard("Its not for free")]]
+        bool empty() const noexcept {
+            std::lock_guard<std::mutex> lock(mutex);
+            return queue.empty();
+        }
+
+        [[nodiscard("Its not for free")]]
+        size_t size() const noexcept {
+            std::lock_guard<std::mutex> lock(mutex);
+            return queue.size();
+        }
+
+        void submit(TaskType &&new_value) noexcept
+        {
+            std::unique_lock<std::mutex> lock(mutex);
+            if (MAX_CAPACITY >= queue.size()) {
+                while (!updated.wait_for(lock, POLL_TIMEOUT, [this] { return MAX_CAPACITY > queue.size(); })) { /** **/ }
+            }
+            queue.push_back(std::move(new_value));
+            lock.unlock();
+            updated.notify_one();
+        }
+
+        // TODO: Make it work!
+        template<typename... Args>
+        void emplace(Args &&... args) noexcept
+        {
+            {
+                std::lock_guard<std::mutex> lock(mutex);
+                queue.emplace_back(std::forward<Args>(args)...);
+            }
+            updated.notify_one();
+        }
+    };
+
+    void Test()
+    {
+        thread_pool pool;
+
+        auto task = []() {
+            std::osyncstream(std::cout) << "Starting job\n";
+            std::this_thread::sleep_for(std::chrono::seconds(1));
+            std::osyncstream(std::cout) << "Job done\n";
+        };
+
+        std::vector<std::future<void>> workers;
+        for (int i = 0; i < 25; ++i) {
+            workers.emplace_back(std::async([&] { pool.submit(task); } ));
+        }
+        std::for_each(workers.cbegin(), workers.cend(), [](const auto &task) {
+            task.wait();
+        });
+    }
+};
+
+
+namespace Multithreading::SimpleThreadSafeCollection
+{
+    template<typename F>
+    concept FunctionPointer = std::is_member_function_pointer_v<F>;
+
+    template<typename T>
+    struct ListWrapper
+    {
+        using value_type = T;
+
+
+        mutable std::mutex mtx;
+        std::list<value_type> list;
+
+        template<typename Method, typename... Args>
+        void callMethodSynchronized(Method func, Args&&... params)
+        {
+            std::lock_guard<std::mutex> lock {mtx};
+            std::osyncstream(std::cout) << "Size: " << list.size();
+
+            std::invoke(func, this, std::forward<Args>(params)...);
+
+            std::osyncstream(std::cout) << " --> " << list.size() << std::endl;
+        }
+
+        void __push_back(const value_type& v) {
+            list.push_back(v);
+        }
+
+        void push_back(const value_type& v) {
+            callMethodSynchronized(&ListWrapper<T>::__push_back, v);
+        }
+
+        void __push_front(const value_type& v) {
+            list.push_front(v);
+        }
+
+        void push_front(const value_type& v) {
+            callMethodSynchronized(&ListWrapper<T>::__push_front, v);
+        }
+
+        void __pop_back() {
+            list.pop_back();
+        }
+
+        void pop_back(const value_type& v) {
+            callMethodSynchronized(&ListWrapper<T>::__pop_back, v);
+        }
+
+        void __pop_front(){
+            list.pop_front();
+        }
+
+        void pop_front(const value_type& v) {
+            callMethodSynchronized(&ListWrapper<T>::__pop_front, v);
+        }
+    };
+
+    void Test()
+    {
+        ListWrapper<int> wrapper;
+
+        std::vector<std::future<void>> workers;
+        for (int i = 0; i < 10; ++i) {
+            workers.emplace_back(std::async([&] { wrapper.push_back(i); } ));
+        }
+        std::for_each(workers.cbegin(), workers.cend(), [](const auto &task) {
+            task.wait();
+        });
+
+        std::cout << "Done\n";
+        std::this_thread::sleep_for(std::chrono::seconds(5));
+    }
+}
+
 void Multithreading::TestAll()
 {
 
@@ -342,9 +555,12 @@ void Multithreading::TestAll()
     ssrc.request_stop();
     */
 
-    SwitchingThreads::Test();
-
+    // SwitchingThreads::Test();
 
     // Experiments::CalcTeethContactPoints();
     // Experiments::Debug("33", 333);
+
+    Pools::Test();
+
+    // SimpleThreadSafeCollection::Test();
 }

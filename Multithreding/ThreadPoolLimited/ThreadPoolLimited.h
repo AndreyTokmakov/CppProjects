@@ -1,0 +1,17 @@
+/**============================================================================
+Name        : ThreadPoolLimited.h
+Created on  : 05.02.2023
+Author      : Andrei Tokmakov
+Version     : 1.0
+Copyright   : Your copyright notice
+Description : ThreadPool with limited queue capacity
+============================================================================**/
+
+#ifndef CPPPROJECTS_THREADPOOLLIMITED_H
+#define CPPPROJECTS_THREADPOOLLIMITED_H
+
+namespace ThreadPoolLimited {
+    void TestAll();
+};
+
+#endif //CPPPROJECTS_THREADPOOLLIMITED_H

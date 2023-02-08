@@ -436,6 +436,56 @@ namespace CallOnce::CallClassMethod_Static {
     }
 }
 
+/*
+namespace CallOnce::AccessResource
+{
+    struct GlobalResource
+    {
+        static constexpr inline std::string_view headerPath = "/some/path/header";
+        static constexpr inline std::string_view bodyPath = "/some/path/body";
+
+        struct Header { };
+        struct Body { };
+
+        static const Header& getHeader() {
+            std::call_once(flag, load, headerPath);
+            return instance->header;
+        }
+
+        static const Body& getBody() {
+            std::call_once(flag, load, bodyPath);
+            return instance->body;
+        }
+
+    private:
+        Header header;
+        Body body;
+
+        static void load(std::string_view path)
+        {
+            std::cout << "Loading resource from " << path << std::endl;
+        }
+
+        static inline std::once_flag flag;
+        static inline std::unique_ptr<GlobalResource> instance { nullptr };
+    };
+
+
+    int Test() {
+        std::vector<std::jthread> runners;
+        std::generate_n(std::back_inserter(runners), 4,[]{
+            return std::jthread([]{
+                auto& header = GlobalResource::getHeader();
+                // process header
+
+                auto& body = GlobalResource::getBody();
+                // process body
+            });
+        });
+    }
+};
+*/
+
 void CallOnce::TEST_ALL() {
     // SimpleTests::Test0();
 
@@ -450,7 +500,9 @@ void CallOnce::TEST_ALL() {
     // SingletonTests_Mutex::Test();
     // SingletonTests_CallOnce::Test();
 
-    // CallClassMethod::Test();
+    CallClassMethod::Test();
 
-    CallClassMethod_Static::Test();
+    // CallClassMethod_Static::Test();
+
+    // AccessResource::Test();
 };

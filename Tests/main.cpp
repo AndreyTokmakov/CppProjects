@@ -640,6 +640,82 @@ namespace Memory
     }
 }
 
+namespace InvokeTest {
+
+    template<typename F>
+    concept FunctionPointer = std::is_member_function_pointer_v<F>;
+
+    template<typename Derived>
+    struct BuilderBase
+    {
+        /*
+        template<typename... T>
+        auto &When(FunctionPointer auto func, T &&... params) {
+            auto &self = static_cast<This&>(*this);
+            std::invoke(func, self, std::forward<T>(params)...);
+            return actualThis;
+        }
+
+        auto &When(auto action) {
+            auto &self = static_cast<This &>(*this);
+            action(self);
+            return actualThis;
+        }
+        */
+
+        auto getSelf()
+        {
+            auto &self = static_cast<Derived&>(*this);
+            return self;
+        }
+
+    };
+
+
+    struct DataBuilder: BuilderBase<DataBuilder>
+    {
+        void getInfo(int v) {
+            std::cout << "Data::getInfo()" << std::endl;
+        }
+
+        void invokeInfo() {
+
+            std::invoke(&DataBuilder::getInfo, this, 2);
+        }
+    };
+
+
+    /*
+    template <typename Derived>
+    struct Base {
+        void info() {
+            auto &self = static_cast<Derived&>(*this);
+            self.info_impl();
+        }
+
+    protected:
+        virtual void info_impl() = 0;
+    };
+
+    struct Triangle : public Base<Triangle> {
+        void info_impl() { std::cout << "Triangle::info_impl()\n"; }
+    };
+    */
+
+    void Test()
+    {
+        DataBuilder data;
+        auto obj = data.getSelf();
+
+
+        // data.invokeInfo();
+        // BuilderBase<Data>{}.When(&Data::getInfo, 6);
+
+
+
+    }
+}
+
 
 int main([[maybe_unused]] int argc,
          [[maybe_unused]] char** argv)
@@ -676,15 +752,15 @@ int main([[maybe_unused]] int argc,
     // OOP::TestClassConversationOperatorCall();
 
 
-    // Memory::SharedPtrLeak();
+    // InvokeTest::Test();
 
+
+    // Memory::SharedPtrLeak();
 
     // Templates::Test();
     // Templates::Test2();
 
     // StaticInitObject a, b;
-
-
     // Concepts_Experiments::TestConcepts();
 
     // OrderBook::TestAll();

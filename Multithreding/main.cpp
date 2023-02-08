@@ -19,6 +19,7 @@
 #include "Latch/Latch.h"
 #include "ThreadPools/ThreadPools.h"
 #include "ThreadPoolBlocking/ThreadPoolBlocking.h"
+#include "ThreadPoolLimited/ThreadPoolLimited.h"
 #include "Atomic/Atomic.h"
 #include "Promise/Promise.h"
 #include "Future/Future.h"
@@ -59,7 +60,7 @@ int main([[maybe_unused]] int argc,
     // Multithreading_Performance::TEST_ALL();
     // Multithreading_Collections::TEST_ALL();
     // Multithreading_Communication::TEST_ALL();
-    Promise::TEST_ALL();
+    // Promise::TEST_ALL();
     // PackagedTask::TEST_ALL();
     // ParallelExecutionAlgoritms::TEST_ALL();
     // FalseSharingExperiments::TEST_ALL();
@@ -67,8 +68,11 @@ int main([[maybe_unused]] int argc,
     // Synchronization::TEST_ALL();
     // SynchStream::TEST_ALL();
     // SynchStream_Custom::TEST_ALL();
+
     // ThreadPools::TEST_ALL();
     // ThreadPoolBlocking::TEST_ALL();
+    //ThreadPoolBlocking::TEST_ALL();
+    ThreadPoolLimited::TestAll();
 
     // Threads::TEST_ALL();
     // JThreads::TEST_ALL();

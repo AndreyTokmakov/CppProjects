@@ -373,6 +373,14 @@ namespace Algorithms::NonModifying {
         std::cout << "sum: " << s.sum << std::endl;
     }
 
+    void ForEachN()
+    {
+        std::vector<int> nums{ 3, 4, 2, 8, 15, 267 };
+        auto print = [](const int& n) { std::cout << " " << n; };
+
+        std::for_each_n(nums.begin(), 3, print);
+    }
+
     void Equal() {
         std::cout << "\n--------------------------------- Compare same strings: ----------------------------------" << std::endl;
         {
@@ -1537,12 +1545,29 @@ namespace Algorithms::Partitioning {
     }
 }
 
+
+namespace Algorithms
+{
+    void Includes()
+    {
+
+        const std::array v1 = {'a', 'b', 'c', 'f', 'h', 'x'};
+        const std::array v2 = {'a', 'b', 'c'};
+
+        std::cout << std::boolalpha
+                  << std::includes(v1.begin(), v1.end(), v2.begin(), v2.end())
+                  << '\n';
+
+    }
+}
+
 void Algorithms::TestAll() {
 
     // NonModifying::All_Of();
     // NonModifying::Any_Of();
     // NonModifying::None_Of();
     // NonModifying::ForEach();
+    NonModifying::ForEachN();
     // NonModifying::Count();
     // NonModifying::Count_IF();
     // NonModifying::Find();
@@ -1552,7 +1577,7 @@ void Algorithms::TestAll() {
     // NonModifying::Find_End();
     // NonModifying::Adjacent_Find();
     // NonModifying::Adjacent_Find_1();
-    NonModifying::Equal();
+    // NonModifying::Equal();
     // NonModifying::Equal_Applications(); // is_palindrom
     // NonModifying::Mismatch();
     // NonModifying::Mismatch2();
@@ -1605,7 +1630,7 @@ void Algorithms::TestAll() {
     // BinarySearch::UpperBound();
     // BinarySearch::UpperBound1();
     // BinarySearch::LowerBound_UpperBound();
-    BinarySearch::EqualRange();
+    // BinarySearch::EqualRange();
     // BinarySearch::Set_Union();
 
 
@@ -1630,6 +1655,7 @@ void Algorithms::TestAll() {
     // Parralel::ForEach_Parralel();
 
 
+    // Includes();
 
     // Uninitialized_Copy();
 

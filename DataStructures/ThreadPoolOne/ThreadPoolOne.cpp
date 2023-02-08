@@ -27,12 +27,15 @@ namespace ThreadPoolOne {
 
     class ThreadPool {
         using UniqueFunction = std::packaged_task<void()>;
-        struct {
+
+        struct State
+        {
             std::mutex mtx;
             std::queue<UniqueFunction> work_queue;
-            bool aborting = false;
-        } state;
+            bool aborting { false };
+        };
 
+        State state {};
         std::vector<std::thread> workers;
         std::condition_variable updated;
 
@@ -43,15 +46,19 @@ namespace ThreadPoolOne {
             }
         }
 
-        void enqueue_task(UniqueFunction task) {
-            if (std::unique_lock<std::mutex> lock {state.mtx}; true) {
+        void enqueue_task(UniqueFunction task)
+        {
+            {
+                std::unique_lock<std::mutex> lock {state.mtx};
                 state.work_queue.push(std::move(task));
             }
             updated.notify_one();
         }
 
-        ~ThreadPool() {
-            if (std::unique_lock<std::mutex> lock {state.mtx}; true) {
+        ~ThreadPool()
+        {
+            {
+                std::unique_lock<std::mutex> lock {state.mtx};
                 state.aborting = true;
             }
             updated.notify_all();
@@ -81,7 +88,9 @@ namespace ThreadPoolOne {
                 while (state.work_queue.empty() && !state.aborting) {
                     updated.wait(lock);
                 }
-                if (state.aborting) break;
+                if (state.aborting)
+                    break;
+
                 assert(!state.work_queue.empty());
                 UniqueFunction task = std::move(state.work_queue.front());
                 state.work_queue.pop();

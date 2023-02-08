@@ -260,7 +260,7 @@ int main(int argc, char** argv)
 
     // Files::ReadFile();
     // AggregateInitialization::TestAll();
-    // Algorithms::TestAll();
+    Algorithms::TestAll();
     // Alignment::TestAll();
     // Any::TestAll();
     // Arrays::TestAll();
@@ -271,7 +271,7 @@ int main(int argc, char** argv)
     // BitSet::TestAll();
     // BitwiseOperation::TestAll();
     // Byte::TestAll();
-    Chrono::TestAll();
+    // Chrono::TestAll();
     // Concepts::TestAll();
     // ConsoleInOut::TestAll();
     // CopyElision::TestAll();

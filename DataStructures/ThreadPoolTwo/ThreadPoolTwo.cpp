@@ -96,7 +96,7 @@ namespace ThreadPoolTwo
     class thread_pool {
     private:
         mutable std::mutex mutex;
-        std::deque<Task>   qeque;
+        std::deque<Task>   queue;
         std::condition_variable updated;
 
         /** Run switch: **/
@@ -120,26 +120,26 @@ namespace ThreadPoolTwo
 
     private:
 
-        template<class _Rep, class _Period>
+        template<class Rep, class Period>
         bool wait_for_and_pop(Task &task,
-                              const std::chrono::duration<_Rep, _Period> &_Rel_time) noexcept {
+                              const std::chrono::duration<Rep, Period> &timeout) noexcept {
             std::unique_lock<std::mutex> lock(mutex);
-            if (!updated.wait_for(lock, _Rel_time, [this] { return not qeque.empty();}))
+            if (!updated.wait_for(lock, timeout, [this] { return !queue.empty();}))
                 return false;
 
-            task = std::move(qeque.front());
-            qeque.pop_front();
+            task = std::move(queue.front());
+            queue.pop_front();
             return true;
         }
 
     private:
 
-        void worker_thread() {
+        void worker_thread()
+        {
             Task task;
             while (run) {
-                auto result = wait_for_and_pop(task, TIMEOUT);
                 // THREAD_INFO << "result = " << std::boolalpha << result << std::endl;
-                if (true == result) {
+                if (auto result = wait_for_and_pop(task, TIMEOUT); result) {
                     task();
                 }
             }
@@ -178,29 +178,31 @@ namespace ThreadPoolTwo
         [[nodiscard("Its not for free")]]
         bool empty() const noexcept {
             std::lock_guard<std::mutex> lock(mutex);
-            return qeque.empty();
+            return queue.empty();
         }
 
         [[nodiscard("Its not for free")]]
         size_t size() const noexcept {
             std::lock_guard<std::mutex> lock(mutex);
-            return qeque.size();
+            return queue.size();
         }
 
-        void submit(Task &&new_value) noexcept {
+        void submit(Task &&new_value) noexcept
+        {
             {
                 std::lock_guard<std::mutex> lock(mutex);
-                qeque.push_back(std::move(new_value));
+                queue.push_back(std::move(new_value));
             }
             updated.notify_one();
         }
 
         // TODO: Make it work!
         template<typename... Args>
-        void emplace(Args &&... args) noexcept {
+        void emplace(Args &&... args) noexcept
+        {
             {
                 std::lock_guard<std::mutex> lock(mutex);
-                qeque.emplace_back(std::forward<Args>(args)...);
+                queue.emplace_back(std::forward<Args>(args)...);
             }
             updated.notify_one();
         }
@@ -213,7 +215,7 @@ namespace ThreadPoolTwo
         const static inline std::thread::id mainThreadId { std::this_thread::get_id() };
 
     private:
-        std::string getCurrentTime() const noexcept {
+        static std::string getCurrentTime() noexcept {
             auto now = std::chrono::system_clock::now();
             auto in_time_t = std::chrono::system_clock::to_time_t(now);
             std::stringstream ss;

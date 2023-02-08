@@ -2061,6 +2061,83 @@ namespace Concepts::CheckFunctionOverloadExists
     }
 }
 
+
+namespace Concepts::Regular
+{
+    // regular
+    // std:::semiregular
+
+    struct Long
+    {
+        long value {0};
+
+        Long() = default;
+        ~Long() = default;
+
+        Long(const Long& l) : value { l.value } {}
+        Long(Long&& l) noexcept : value { std::exchange(l.value, 0) } {}
+
+        Long& operator=(const Long& right) {
+            if (&right != this)
+                value = right.value;
+            return *this;
+        }
+
+        Long& operator=(Long&& right) noexcept {
+            if (this != &right)
+                this->value = std::exchange(right.value, 0);
+            return *this;
+        }
+    };
+
+
+    struct LongComparable
+    {
+        long value {0};
+
+        LongComparable() = default;
+        ~LongComparable() = default;
+
+        LongComparable(const LongComparable& l) : value { l.value } {}
+        LongComparable(LongComparable&& l) noexcept : value { std::exchange(l.value, 0) } {}
+
+        LongComparable& operator=(const LongComparable& right) {
+            if (&right != this)
+                value = right.value;
+            return *this;
+        }
+
+        LongComparable& operator=(LongComparable&& right) noexcept {
+            if (this != &right)
+                this->value = std::exchange(right.value, 0);
+            return *this;
+        }
+
+        friend bool operator==(const LongComparable& left, const LongComparable& right) noexcept;
+        friend bool operator!=(const LongComparable& left, const LongComparable& right) noexcept;
+    };
+
+    bool operator==(const LongComparable& left, const LongComparable& right) noexcept {
+        return left.value == right.value;
+    }
+
+    bool operator!=(const LongComparable& left, const LongComparable& right) noexcept {
+        return not (left == right);
+    }
+
+    void IsSemirRegular()
+    {
+        static_assert(std::semiregular<Long> == true);
+        // static_assert(std::regular<Long> == true);
+    }
+
+    void IsRegular()
+    {
+        static_assert(std::semiregular<LongComparable> == true);
+        static_assert(std::regular<LongComparable> == true);
+    }
+}
+
 void Concepts::TestAll()
 {
     // MovableTest();
@@ -2126,11 +2203,13 @@ void Concepts::TestAll()
     // Is_Constructible::ConstructTest1();      /** Fabric test **/
     // Is_Constructible::ConstructTest2();      /** Fabric test + Concepts **/
 
-
     // ValidatTypeContains_Members_or_Types::ContainTypeDef();
     // ValidatTypeContains_Members_or_Types::Valid_Template_Substitution();
 
-    CheckFunctionOverloadExists::TryCallFunction();
+    // CheckFunctionOverloadExists::TryCallFunction();
+
+    Regular::IsSemirRegular();
+    Regular::IsRegular();
 
 
     // Containers::Test();

@@ -23,17 +23,16 @@ namespace Queues::Multithreading {
 		class ThreadsafeQueue {
 		private:
 			mutable std::mutex mutex;
-			std::deque<T> qeque;
+			std::deque<T> queue;
 			std::condition_variable updated;
 
 		public:
-			ThreadsafeQueue() {
-			}
+			ThreadsafeQueue() = default;
 
 			void push(T&& new_value) noexcept {
 				{
 					std::lock_guard<std::mutex> lock(mutex);
-					qeque.push_back(std::move(new_value));
+					queue.push_back(std::move(new_value));
 				}
 				updated.notify_one();
 			}
@@ -42,7 +41,7 @@ namespace Queues::Multithreading {
 			void emplace(Args&& ... args) noexcept {
 				{
 					std::lock_guard<std::mutex> lock(mutex);
-					qeque.emplace_back(std::forward<Args>(args)...);
+					queue.emplace_back(std::forward<Args>(args)...);
 				}
 				updated.notify_one();
 			}
@@ -56,62 +55,62 @@ namespace Queues::Multithreading {
 			void wait_and_pop(T& value) noexcept {
 				std::unique_lock<std::mutex> lock(mutex);
 				updated.wait(lock, [this] {
-					return false == qeque.empty();
+					return false == queue.empty();
 					});
-				value = std::move(qeque.front());
-				qeque.pop_front();
+				value = std::move(queue.front());
+				queue.pop_front();
 			}
 
 			template<class _Rep, class _Period>
 			bool wait_for_and_pop(T& value, const std::chrono::duration<_Rep, _Period>& _Rel_time) noexcept {
 				std::unique_lock<std::mutex> lock(mutex);
 				bool ok = updated.wait_for(lock, _Rel_time, [this] {
-					return false == qeque.empty();
+					return false == queue.empty();
 					});
 				if (false == ok)
 					return false;
-				value = std::move(qeque.front());
-				qeque.pop_front();
+				value = std::move(queue.front());
+				queue.pop_front();
 				return true;
 			}
 
 			T&& wait_and_pop() noexcept {
 				std::unique_lock<std::mutex> lock(mutex);
 				updated.wait(lock, [this] {
-					return false == qeque.empty();
+					return false == queue.empty();
 					});
-				auto&& entry = qeque.front();
-				qeque.pop_front();
+				auto&& entry = queue.front();
+				queue.pop_front();
 				return std::move(entry);
 			}
 
 			bool try_pop(T& value) noexcept {
 				std::lock_guard<std::mutex> lock(mutex);
-				if (qeque.empty())
+				if (queue.empty())
 					return false;
-				value = std::move(qeque.front());
-				qeque.pop_front();
+				value = std::move(queue.front());
+				queue.pop_front();
 				return true;
 			}
 
 			std::shared_ptr<T> try_pop() {
 				std::lock_guard<std::mutex> lock(mutex);
-				if (qeque.empty())
+				if (queue.empty())
 					return std::shared_ptr<T>();
 				std::shared_ptr<T> result =
-					std::make_shared<T>(std::move(qeque.front()));
-				qeque.pop_front();
+					std::make_shared<T>(std::move(queue.front()));
+				queue.pop_front();
 				return result;
 			}
 
 			bool empty() const noexcept {
 				std::lock_guard<std::mutex> lock(mutex);
-				return qeque.empty();
+				return queue.empty();
 			}
 
 			bool size() const noexcept {
 				std::lock_guard<std::mutex> lock(mutex);
-				return qeque.size();
+				return queue.size();
 			}
 		};
 	}

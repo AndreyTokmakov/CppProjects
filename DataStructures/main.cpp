@@ -27,6 +27,7 @@
 #include "LinkedList/LinkedList.h"
 #include "ThreadPoolOne/ThreadPoolOne.h"
 #include "ThreadPoolTwo/ThreadPoolTwo.h"
+#include "ThreadPoolLimited/ThreadPoolLimited.h"
 #include "CategoryTree/CategoryTree.h"
 #include "PriorityList/PriorityList.h"
 #include "LockFreeDataStructures/LockFreeQueue.h"
@@ -41,9 +42,12 @@
 int main([[maybe_unused]] int argc,
          [[maybe_unused]] char** argv)
 {
+    /// Unimplemented
+    // BinaryTree::TestAll();
+
+
     // Array::TEST_ALL();
     // BitSet::TEST_ALL();
-    BinaryTree::TestAll();
     // CategoryTree::TEST_ALL();
     // CircularBuffers::TEST_ALL();
     // CustomVector::TestAll();
@@ -59,11 +63,11 @@ int main([[maybe_unused]] int argc,
     // PriorityList::TEST_ALL();
     // RAII_CommitWrapper::TEST_ALL();
     // ReferenceWrapper::Test();
-
     // Memory::Shared_Ptr_Tests();
 
     // ThreadPoolOne::TEST_ALL();
-    // ThreadPoolTwo::TEST_ALL();
+    //ThreadPoolTwo::TEST_ALL();
+    ThreadPoolLimited::TestAll();
 
     // ObjectNumberLimiter::TestAll();
 

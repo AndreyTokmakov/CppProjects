@@ -11,21 +11,29 @@
 #include <iostream>
 #include "ReferenceWrapper.h"
 
+#include <experimental/propagate_const>
+
 namespace ReferenceWrapper
 {
     template<typename T>
-    class ReferenceWrapper {
-        T *m_ptr;
+    class ReferenceWrapper
+    {
+        using value_type = T;
+        using pointer = value_type*;
+        using reference = value_type&;
+
+        pointer m_ptr;
+
     public:
-        explicit ReferenceWrapper(T& t) noexcept : m_ptr(&t) {
+        explicit ReferenceWrapper(reference t) noexcept : m_ptr(&t) {
         }
 
-        operator T& () const noexcept {
+        operator reference () const noexcept {
             return *m_ptr;
         }
 
         [[nodiscard]]
-        T& get() const noexcept {
+        reference get() const noexcept {
             return *m_ptr;
         }
     };
@@ -35,9 +43,13 @@ namespace ReferenceWrapper
 
 void ReferenceWrapper::Test() {
     int a = 10;
+
     ReferenceWrapper<int> w(a);
 
     std::cout << "a = " << a << ", w = " <<  w << std::endl;
 
+    w.get() = 11;
+
+    std::cout << "a = " << a << ", w = " <<  w << std::endl;
 }
 

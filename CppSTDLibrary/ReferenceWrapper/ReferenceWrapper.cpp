@@ -141,6 +141,22 @@ namespace ReferenceWrapper {
 		integers.emplace_back(int3);
 	}
 
+    void Modify_Vector_Contents()
+    {
+        std::list<int> myList{1, 2, 3, 4, 5};
+        std::vector<std::reference_wrapper<int>> myRefVector(myList.begin(), myList.end());
+
+        for (auto l: myList)
+            std::cout << l << " ";
+        std::cout << " ==> ";
+
+        for (auto& v: myRefVector)
+            v *= v;
+
+        for (auto l: myList)
+            std::cout << l << " ";
+    }
+
 	void Pass_And_Modify_Value()
 	{
 		const auto modify_integer = [](std::reference_wrapper<Integer> ref, int new_val) {
@@ -246,13 +262,15 @@ namespace ReferenceWrapper {
 void ReferenceWrapper::TestAll()
 {
 	// Random_Ints_List();
-	 Simple_Tests();
+	// Simple_Tests();
 	// CRef_Test();
 
 	// Vector_With_References();
 
 	// Vector_List();
 	// Vector_Test();
+    Modify_Vector_Contents();
+
 	// Pass_And_Modify_Value();
 
 	// Callable_Test_1();
@@ -260,7 +278,7 @@ void ReferenceWrapper::TestAll()
 	// Bad_Usage();
 
 	// Reassign_Test();
-	Reassign_TestScoped();
+	// Reassign_TestScoped();
 
 	// Tests();
 

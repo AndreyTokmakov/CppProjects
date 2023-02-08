@@ -81,7 +81,7 @@ namespace Utilities::Invoke_Tests {
 		utils.printValue();
 	}
 
-	void Invote_Functor() {
+	void Invoke_Functor() {
 		const auto sum = [](int a, int b)-> int { return a + b; };
 
 		std::cout << "is_invocable<Functor(): "<< std::boolalpha << std::is_invocable<Functor()>::value << std::endl;
@@ -102,6 +102,46 @@ namespace Utilities::Invoke_Tests {
 		std::cout << std::boolalpha << std::is_invocable<decltype(sum)>::value << std::endl;
 		std::cout << std::boolalpha << std::is_invocable<int>::value << std::endl;
 	}
+
+    // --------------------------------------------------------------------------
+
+
+    class SomeType
+    {
+        void putInfo(int value, std::string_view text)
+        {
+            std::cout << "PrivateInfo: Value = " << value << ", Text: " << text << std::endl;
+        }
+
+        template<typename Method, typename... Args>
+        void delegate(Method func, Args&&... params)
+        {
+            std::invoke(func, this, std::forward<Args>(params)...);
+        }
+
+    public:
+
+        void info()
+        {
+            std::invoke(&SomeType::putInfo, this, 101, "Text");
+        }
+
+        void invokeWithDelegate()
+        {
+            delegate(&SomeType::putInfo, 102, "Text2");
+        }
+
+    };
+
+    void Invoke_Class_Method_FromMethod()
+    {
+        SomeType{}.info();
+    }
+
+    void Invoke_Class_Method_FromMethod_Delegate()
+    {
+        SomeType{}.invokeWithDelegate();
+    }
 }
 
 namespace Utilities::Make_Tuples {
@@ -203,14 +243,16 @@ void Utilities::TestAll()
 	// Invoke_Tests::Access_Member();
 	// Invoke_Tests::Call_Class_Method();
 	// Invoke_Tests::Is_Invocable();
-	// Invoke_Tests::Invote_Functor();
+	// Invoke_Tests::Invoke_Functor();
+	// Invoke_Tests::Invoke_Class_Method_FromMethod();
+	Invoke_Tests::Invoke_Class_Method_FromMethod_Delegate();
 
 	// Make_Tuples::Test();
 	// Make_Tuples::Test2();
 
 	// Utilities_Library::Ptrdiff_t();
 
-    In_Range();
+    // In_Range();
 
     /*
 	Integer_Comparison_Functions::Compare_Greater_Bad();
