@@ -152,7 +152,8 @@ namespace Algorithms {
 #endif
     }
 
-    void Partition() {
+    void Partition()
+    {
         std::cout << "--------------------------------- Test1: ----------------------------------" << std::endl;
         {
             const auto  isOdd = [](int i)->bool { return (i % 2) == 1; };
@@ -164,10 +165,9 @@ namespace Algorithms {
         }
         std::cout << "\n--------------------------------- Test2: ----------------------------------" << std::endl;
         {
-            const auto greatern_than_6 = [](int i)->bool { return i > 6; };
             std::vector<int> vect = { 1,6,2,8,9,4,2,7 };
 
-            auto bound = std::partition(vect.begin(), vect.end(), greatern_than_6);
+            auto bound = std::partition(vect.begin(), vect.end(),  [](int i) { return i > 6; });
             print_range(vect.begin(), bound, "> 6  : ");
             print_range(bound, vect.end(), "< 6  : ");
         }
@@ -1186,7 +1186,7 @@ namespace Algorithms::ModifyingSequenceOperations {
             print_vector_ex(numbers, "");
             std::cout << std::endl;
 
-            auto iter = remove(numbers.begin(), numbers.end(), 99);
+            auto iter = std::remove(numbers.begin(), numbers.end(), 99);
 
             print_range(numbers.begin(), iter, "[", "]");
             print_range(iter, numbers.end(), " [", "]");
@@ -1198,7 +1198,7 @@ namespace Algorithms::ModifyingSequenceOperations {
             print_vector_ex(numbers, "");
             std::cout << std::endl;
 
-            auto iter = remove(numbers.begin(), numbers.end(), 99);
+            auto iter = std::remove(numbers.begin(), numbers.end(), 99);
             numbers.erase(iter, numbers.end());
 
             print_range(numbers.begin(), iter, "[", "]");
@@ -1567,7 +1567,7 @@ void Algorithms::TestAll() {
     // NonModifying::Any_Of();
     // NonModifying::None_Of();
     // NonModifying::ForEach();
-    NonModifying::ForEachN();
+    // NonModifying::ForEachN();
     // NonModifying::Count();
     // NonModifying::Count_IF();
     // NonModifying::Find();
@@ -1619,7 +1619,7 @@ void Algorithms::TestAll() {
     // Sorting::IsSorted_until();
     // Sorting::Sort();
     // Sorting::PartialSort();
-    // Sorting::Nth_Element();
+    Sorting::Nth_Element();
     // Sorting::Sort_Parralel();
 
 

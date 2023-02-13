@@ -8,10 +8,7 @@ Description : Catch2Tests C++ project
 ============================================================================**/
 
 #include <iostream>
-
-#include <catch2/catch_test_macros.hpp>
 #include <catch2/catch_session.hpp>
-
 
 int main([[maybe_unused]] int argc,
          [[maybe_unused]] char** argv)

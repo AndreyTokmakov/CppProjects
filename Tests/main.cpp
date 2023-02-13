@@ -717,14 +717,16 @@ namespace InvokeTest {
 }
 
 
+
 int main([[maybe_unused]] int argc,
          [[maybe_unused]] char** argv)
 {
     const std::vector<std::string_view> args(argv + 1, argv + argc);
 
+
     // Experiments::Test({20, 40, 60});
     // DesignPatterns::TestAll();
-    Multithreading::TestAll();
+    // Multithreading::TestAll();
     // Memory::Test();
     // Strings::TestAll();
     // Iterators::TestAll();
@@ -733,7 +735,7 @@ int main([[maybe_unused]] int argc,
     // ConstexprMap::TestAll()
     // DebugLogger::TestAll();
     // UniquePtr_Size::SizeTest();
-    // CollectionsTests::TestAll();
+    CollectionsTests::TestAll();
     // Templates::TestAll();
     // ExpressionTemplates::TestAll();
     // CopyElision_RVO::TestAll();

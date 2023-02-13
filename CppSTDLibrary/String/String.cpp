@@ -1086,16 +1086,6 @@ namespace String::WString {
 	}
 }
 
-namespace String::SSO {
-
-	void Test() {
-		std::string text{""};
-		for (int i = 0; i < 20; ++i) {
-			text.append("X");
-			std::cout << text.size() << "   " << text.capacity() << std::endl;
-		}
-	}
-}
 
 namespace String::TESTS {
 
@@ -1354,6 +1344,40 @@ namespace String::Application_Examples
     }
 }
 
+// #define SSO_STR_ALLOC_TEST
+
+#ifdef SSO_STR_ALLOC_TEST
+    void *operator new(size_t sz) {
+        std::cout << "[allocating " << sz << " bytes]\n";
+        return std::malloc(sz);
+    }
+#endif
+
+namespace String::SSO
+{
+
+    void Test()
+    {
+        std::string text{""};
+        for (int i = 0; i < 20; ++i) {
+            text.append("X");
+            std::cout << text.size() << "   " << text.capacity() << std::endl;
+        }
+    }
+
+
+    void AllocationTest()
+    {
+        std::cout << "----------------------------------------------------------------\n";
+        std::cout << "\tDo not forget uncomment: 'void *operator new(size_t sz)'\n";
+        std::cout << "----------------------------------------------------------------\n";
+
+        std::string s1 { "0123456789" };
+        std::string s2 { "01234567890123456789"};
+    }
+
+}
+
 void String::TestAll(){
 	// Create_Test();
 	// Create_FromStrings();
@@ -1442,6 +1466,7 @@ void String::TestAll(){
 	// Format::Test();
 
 	// SSO::Test();
+	SSO::AllocationTest();
 
 	// WString::Create_Print();
 
@@ -1459,5 +1484,5 @@ void String::TestAll(){
 
     // Application_Examples::Split_String_Tests();
     // Application_Examples::TrimString();
-    Application_Examples::IsPalindrome();
+    // Application_Examples::IsPalindrome();
 };

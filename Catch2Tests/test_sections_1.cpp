@@ -7,6 +7,9 @@
 // Description : Catch2 Test sections
 //============================================================================
 
+#include "test_controller.h"
+#ifdef TEST_SECTIONS_1
+
 #include <iostream>
 #include <catch2/catch_test_macros.hpp>
 
@@ -57,3 +60,5 @@ TEST_CASE( "vectors can be sized and resized", "[vector]") {
         REQUIRE(v.capacity() >= 5);
     }
 }
+
+#endif

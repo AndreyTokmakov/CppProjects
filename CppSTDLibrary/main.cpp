@@ -260,7 +260,7 @@ int main(int argc, char** argv)
 
     // Files::ReadFile();
     // AggregateInitialization::TestAll();
-    Algorithms::TestAll();
+    // Algorithms::TestAll();
     // Alignment::TestAll();
     // Any::TestAll();
     // Arrays::TestAll();
@@ -278,7 +278,7 @@ int main(int argc, char** argv)
     // DateAndTime::TestAll();
     // EnumTests::TestAll();
     // StrongTypes::TestAll();
-    // InitializerList::TestAll();
+    InitializerList::TestAll();
     // InlineVariables::TestAll();
     // Initialization::TestAll();
     // IteratorTests::TestAll();

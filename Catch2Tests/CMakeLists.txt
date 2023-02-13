@@ -20,7 +20,7 @@ link_directories(/home/andtokm/DiskS/ProjectsUbuntu/Catch2/cmake-build-release/s
 # include all components
 add_executable(Catch2Tests
         main.cpp
-        factorial_tests.cpp test_sections_1.cpp matchers.cpp asserts.cpp)
+        factorial_tests.cpp test_sections_1.cpp matchers.cpp asserts.cpp test_controller.h)
 
 
 # Link phread library

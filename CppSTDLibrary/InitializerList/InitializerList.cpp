@@ -51,16 +51,30 @@ namespace InitializerList
 	}
 };
 
-namespace InitializerList
-{
-	void TestAll()
-	{
-		// PrintTest();
-		Test1();
 
-		std::initializer_list list{1,2,3,4,5};
-		for (const auto v : list) {
-			std::cout << v << std::endl;
-		}
-	}
+namespace InitializerList::Experiments
+{
+    std::initializer_list<int> wrong() { // for illustration only!
+        return { 1, 2, 3, 4};
+    }
+
+
+    void BAD() {
+        std::initializer_list<int> x = wrong();
+    }
+}
+
+void InitializerList::TestAll()
+{
+    // PrintTest();
+    // Test1();
+
+    /*
+    std::initializer_list list{1,2,3,4,5};
+    for (const auto v : list) {
+        std::cout << v << std::endl;
+    }*/
+
+
+    Experiments::BAD();
 };
