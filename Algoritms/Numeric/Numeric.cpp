@@ -1398,26 +1398,40 @@ namespace Numeric {
         return true;
     }
 
-    void Is_Array_Elements_Consecutive() {
+    bool _is_array_consecutive_3(const std::vector<int>& Numeric) {
+        std::set<int> tmp(Numeric.begin(), Numeric.end());
+        for (int first = *tmp.begin(), last = *std::prev(tmp.end()); first < last; ++first) {
+            if (tmp.end() == tmp.find(first))
+                return false;
+        }
+        return true;
+    }
+
+    void Is_Array_Elements_Consecutive()
+    {
         {
             const std::vector<int> Numeric = { 1,2, 3 };
             std::cout << "\nIs Consecutive 1: " << std::boolalpha << _is_array_consecutive(Numeric) << std::endl;
             std::cout << "Is Consecutive 2: " << std::boolalpha << _is_array_consecutive_2(Numeric) << std::endl;
+            std::cout << "Is Consecutive 3: " << std::boolalpha << _is_array_consecutive_3(Numeric) << std::endl;
         }
         {
             const std::vector<int> Numeric = { -1, -2, -3, -4, -4, -6 };
             std::cout << "\nIs Consecutive 1: " << std::boolalpha << _is_array_consecutive(Numeric) << std::endl;
             std::cout << "Is Consecutive 2: " << std::boolalpha << _is_array_consecutive_2(Numeric) << std::endl;
+            std::cout << "Is Consecutive 3: " << std::boolalpha << _is_array_consecutive_3(Numeric) << std::endl;
         }
         {
             const std::vector<int> Numeric = { 1,2, 4 };
             std::cout << "\nIs Consecutive 1: " << std::boolalpha << _is_array_consecutive(Numeric) << std::endl;
             std::cout << "Is Consecutive 2: " << std::boolalpha << _is_array_consecutive_2(Numeric) << std::endl;
+            std::cout << "Is Consecutive 3: " << std::boolalpha << _is_array_consecutive_3(Numeric) << std::endl;
         }
         {
             const std::vector<int> Numeric = { 1,2,4,4,4};
             std::cout << "\nIs Consecutive 1: " << std::boolalpha << _is_array_consecutive(Numeric) << std::endl;
             std::cout << "Is Consecutive 2: " << std::boolalpha << _is_array_consecutive_2(Numeric) << std::endl;
+            std::cout << "Is Consecutive 3: " << std::boolalpha << _is_array_consecutive_3(Numeric) << std::endl;
         }
     }
 
@@ -2868,7 +2882,7 @@ void Numeric::TEST_ALL()
     // Numeric::FindLongestSubArray();
     // Numeric::SplitArrayToPieces_FindNumber_ByExample();
     // Numeric::Sum_Of_ConsecutiveNumeric();
-    // Numeric::Is_Array_Elements_Consecutive();
+    Numeric::Is_Array_Elements_Consecutive();
     // Numeric::MiniMaxSum_Of4();
     // Numeric::Find_Sum_All_Numeric();
     // Numeric::Find_Multiplier_Pair();

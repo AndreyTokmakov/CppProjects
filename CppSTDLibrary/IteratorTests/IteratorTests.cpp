@@ -19,14 +19,11 @@
 #include <memory>
 #include <deque>
 #include <map>
-#include <set>
+#include <list>
 #include <cassert>
-
-using String = std::string;
-using CString = const String&;
+#include "../Integer/Integer.h"
 
 #include "IteratorTests.h"
-
 
 namespace IteratorTests::ReverseIterators {
 
@@ -200,21 +197,6 @@ namespace IteratorTests {
             for (int n: numbers)
                 std::cout << n << ' ';
         }
-    }
-
-    void Move_Iterator() {
-        std::vector<std::string> strings = {"this", "is", "an", "example"};
-        std::for_each(strings.begin(), strings.end(), [](const auto &str) -> void { std::cout << '"' << str << "\" "; });
-
-        using iter_t = std::vector<std::string>::iterator;
-        std::string concat = std::accumulate(std::move_iterator<iter_t>(strings.begin()),
-                                             std::move_iterator<iter_t>(strings.end()),
-                                             std::string());  // Can be simplified with std::make_move_iterator
-
-        std::cout << "\nConcatenated as string: " << concat << '\n' << "New contents of the vector: ";
-
-        std::for_each(strings.begin(), strings.end(), [](const auto &str) -> void { std::cout << '"' << str << "\" "; });
-        std::cout << std::endl;
     }
 
     void Back_Insert_Iterator() {
@@ -753,6 +735,43 @@ namespace IteratorTests::CustomIterator_IntIterator
     }
 }
 
+namespace IteratorTests
+{
+    void Move_Iterator_0()
+    {
+        std::vector<std::unique_ptr<Integer>> src;
+        std::generate_n(std::back_inserter(src), 5, []{
+            return std::make_unique<Integer>();
+        });
+
+        // Wouldn't compile: incompatible type
+        // std::list<std::unique_ptr<MyClass>> dst1(std::move(src));
+
+        // Wouldn't compile: std::unique_ptr is not copyable
+        // std::list<std::unique_ptr<MyClass>> dst2(src.begin(), src.end());
+
+        // OK
+        std::list<std::unique_ptr<Integer>> dst3(std::move_iterator(src.begin()),std::move_iterator(src.end()));
+    }
+
+
+
+    void Move_Iterator() {
+        std::vector<std::string> strings = {"this", "is", "an", "example"};
+        std::for_each(strings.begin(), strings.end(), [](const auto &str) -> void { std::cout << '"' << str << "\" "; });
+
+        using iter_t = std::vector<std::string>::iterator;
+        std::string concat = std::accumulate(std::move_iterator<iter_t>(strings.begin()),
+                                             std::move_iterator<iter_t>(strings.end()),
+                                             std::string());  // Can be simplified with std::make_move_iterator
+
+        std::cout << "\nConcatenated as string: " << concat << '\n' << "New contents of the vector: ";
+
+        std::for_each(strings.begin(), strings.end(), [](const auto &str) -> void { std::cout << '"' << str << "\" "; });
+        std::cout << std::endl;
+    }
+}
+
 
 ///////////////////////////////////////////////////////////////////////////////////
 
@@ -766,6 +785,7 @@ void IteratorTests::TestAll() {
 	// FrotInserver();
 	// Front_Insert_Iterator();
 
+	Move_Iterator_0();
 	// Move_Iterator();
 
 	// Base::Test1();
@@ -786,7 +806,7 @@ void IteratorTests::TestAll() {
 	// CustomIterator2::Test();
 	// CustomIterator3::Test();
 
-    CustomIterator_IntIterator::Test();
+    // CustomIterator_IntIterator::Test();
 
 	// Files::ReadFile();
 	// Files::ReadFile2();

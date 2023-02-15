@@ -35,6 +35,7 @@
 #include <array>
 #include <version>
 #include <concepts>
+#include <span>
 
 #include "Algorithms/Algorithms.h"
 #include "Geometry/PointsAndLines.h"
@@ -735,7 +736,7 @@ int main([[maybe_unused]] int argc,
     // ConstexprMap::TestAll()
     // DebugLogger::TestAll();
     // UniquePtr_Size::SizeTest();
-    CollectionsTests::TestAll();
+    // CollectionsTests::TestAll();
     // Templates::TestAll();
     // ExpressionTemplates::TestAll();
     // CopyElision_RVO::TestAll();
@@ -752,6 +753,7 @@ int main([[maybe_unused]] int argc,
     // OOP::VirtualMethodTests();
     // OOP::MoveTest();
     // OOP::TestClassConversationOperatorCall();
+
 
 
     // InvokeTest::Test();

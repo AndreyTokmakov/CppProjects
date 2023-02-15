@@ -278,10 +278,10 @@ int main(int argc, char** argv)
     // DateAndTime::TestAll();
     // EnumTests::TestAll();
     // StrongTypes::TestAll();
-    InitializerList::TestAll();
+    // InitializerList::TestAll();
     // InlineVariables::TestAll();
     // Initialization::TestAll();
-    // IteratorTests::TestAll();
+    IteratorTests::TestAll();
     // FilesStreams::TestAll();
     // Filesystem::TestAll();
     // Format::TestAll();
