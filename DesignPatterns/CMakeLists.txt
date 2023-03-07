@@ -56,6 +56,6 @@ add_executable(DesignPatterns
 		LazyInitialization/LazyInitialization.cpp
 		LazyInitialization/LazyInitialization.h
 		ChainOfResponsibility/Example2.cpp
-		Command/Command_MethodPtr.cpp Iterator/RangeIterator.cpp Mediator/ChatMediator.cpp Observer/ObserverBasic.cpp TemplateMethod/TemplateMethod_ExampleTwo.cpp TemplateMethod/TemplateMethod_ExampleThree.cpp Visitor/DynamicComponentsVisitor.cpp Visitor/DynamicComponentsVisitor.cpp Visitor/DynamicComponentsVisitor.cpp Observer/ObserverSubject.cpp Visitor/CarVisitor.cpp)
+		Command/Command_MethodPtr.cpp Iterator/RangeIterator.cpp Mediator/ChatMediator.cpp Observer/ObserverBasic.cpp TemplateMethod/TemplateMethod_ExampleTwo.cpp TemplateMethod/TemplateMethod_ExampleThree.cpp Visitor/DynamicComponentsVisitor.cpp Visitor/DynamicComponentsVisitor.cpp Visitor/DynamicComponentsVisitor.cpp Observer/ObserverSubject.cpp Visitor/CarVisitor.cpp PImpl/PImpl.cpp PImpl/PImpl.h Monostate/Monostate.cpp Monostate/Monostate.h)
 
 TARGET_LINK_LIBRARIES(DesignPatterns pthread)

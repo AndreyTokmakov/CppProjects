@@ -18,6 +18,10 @@
 #include <iomanip>
 #include <locale>
 #include <limits>
+#include <map>
+#include <array>
+#include <ranges>
+// #include <format>
 
 #include "ConsoleInOut.h"
 
@@ -274,6 +278,61 @@ namespace ConsoleInOut
     }
 }
 
+namespace ConsoleInOut
+{
+    constexpr size_t Rows = 5;
+    const std::map<std::string, std::array<double, Rows>> productOrders
+    {
+        { "apples", {100, 200, 50.5, 30, 10}},
+        { "bananas", {80, 10, 100, 120, 70}},
+        { "carrots", {130, 75, 25, 64.5, 128}},
+        { "tomatoes", {70, 100, 170, 80, 90}}
+    };
+
+    template <typename T>
+    constexpr size_t MaxKeyLength(const std::map<std::string, T>& tbl) {
+        size_t maxLen = 0;
+        for (const auto& [key, val] : tbl)
+            if (key.length() > maxLen)
+                maxLen = key.length();
+        return maxLen;
+    }
+
+    const int32_t colLength = static_cast<int32_t>(MaxKeyLength(productOrders) + 2);
+
+    void PrintTable()
+    {
+        // headers:
+        for (const auto& [key, val] : productOrders)
+            std::cout << std::setw(colLength) << key;
+        std::cout << '\n';
+
+        // values:
+        for (size_t i = 0; i < Rows; ++i) {
+            for (const auto& [key, val] : productOrders)
+                std::cout << std::setw(colLength) << std::fixed << std::setprecision(2) << val[i];
+            std::cout << '\n';
+        }
+    }
+
+    void PrintTable2() // FORMAT
+    {
+        /*
+        for (const auto& name : std::views::keys(productOrders))
+            std::cout << std::format("{:*>{}}", name, colLength);
+        std::cout << '\n';
+
+        for (size_t i = 0; i < NumRows; ++i) {
+            for (const auto& values : std::views::values(productsToOrders)) {
+                std::cout << std::format("{:>{}.2f}", values[i], ColLength);
+            }
+            std::cout << '\n';
+        }
+        */
+    }
+}
+
+
 /** TEST **/
 void ConsoleInOut::TestAll()
 {
@@ -287,7 +346,7 @@ void ConsoleInOut::TestAll()
 
     // Padding_With_Zeros();
 
-	PrintHex();
+	// PrintHex();
     // PrintInt_asHEX_asOCT();
 
 	// SetPrecision();
@@ -304,8 +363,10 @@ void ConsoleInOut::TestAll()
     // FillLeftSideWithDots();
     // FillWithSpaces_RightAdjusted();
 
-    Time_And_Money();
+    // Time_And_Money();
 
+    ConsoleInOut::PrintTable();
+    // ConsoleInOut::PrintTable2();
 
     // TEST();
 };

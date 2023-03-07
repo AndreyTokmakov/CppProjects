@@ -67,6 +67,7 @@
 #include "Streams/Streams.h"
 #include "String/String.h"
 #include "Span/Span.h"
+#include "StarshipOperator/StarshipOperator.h"
 #include "StringStream/StringStreamTests.h"
 #include "StringView/StringViewTests.h"
 #include "StructuredBinding/StructuredBinding.h"
@@ -170,33 +171,6 @@ namespace Multithreading {
     }
 }
 
-namespace Strings {
-
-    void Parse_Automodeling_StepFileName() {
-        const std::string fileName {"2878_lower_ellipse_res023.stl"};
-
-        auto pos = fileName.find("_res");
-        if (std::string::npos == pos)
-            return;
-
-        pos += 4;
-        auto pos1 = fileName.find(".stl", pos);
-        if (std::string::npos == pos1)
-            return;
-
-        std::cout << fileName.substr(pos, pos1 - pos) << std::endl;
-    }
-
-}
-
-struct S
-{
-    int a {};
-    std::vector<int> v1;
-    std::vector<int> v2;
-};
-
-
 namespace StdAlgoritms
 {
     void Unique() {
@@ -240,14 +214,7 @@ namespace Files {
     }
 }
 
-namespace {
-    constexpr std::string_view TEST_DATA_DIR{
-            R"(/home/andtokm/mlpack/tests/mlpack/src/data/german.csv)"};
-}
 
-namespace PointTests {
-
-}
 
 int main(int argc, char** argv)
 {
@@ -281,7 +248,7 @@ int main(int argc, char** argv)
     // InitializerList::TestAll();
     // InlineVariables::TestAll();
     // Initialization::TestAll();
-    IteratorTests::TestAll();
+    // IteratorTests::TestAll();
     // FilesStreams::TestAll();
     // Filesystem::TestAll();
     // Format::TestAll();
@@ -301,6 +268,7 @@ int main(int argc, char** argv)
     // PolymorphicMemoryResources::TestAll();
     // Random::TestAll();
     // ReferenceWrapper::TestAll();
+    // StarshipOperator::TestAll();
     // Streams::TestAll();
     // String::TestAll();
     // StringStream::TestAll();
@@ -317,7 +285,7 @@ int main(int argc, char** argv)
     // Templates::TestAll();
     // Utilities::TestAll();
     // UniquePtr_Tests::TestAll();
-    // Variant::TestAll();
+    Variant::TestAll();
     // WeakPtr::TestAll();
 
     return EXIT_SUCCESS;

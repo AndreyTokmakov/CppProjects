@@ -18,6 +18,10 @@ Description : DesignPatterns
 #include <variant>
 #include <optional>
 #include <sstream>
+#include <future>
+#include <thread>
+
+
 
 namespace DesignPatterns::Singleton
 {
@@ -1015,6 +1019,77 @@ namespace DesignPatterns::Builder
     }
 };
 
+
+namespace Monostate
+{
+    /*
+    struct MonoConfig
+    {
+        MonoConfig() {
+            // ensure a single initialization outside of the static chain if we don't
+            // need multi-threaded safety we can downgrade to a boolean flag
+            std::call_once(onceFlag, initialize);
+        }
+
+        // Interface to access the monostate
+        static uint32_t getValue() {
+            return value;
+        }
+
+        static const std::string& getName() {
+            return name;
+        }
+
+    private:
+
+        static void initialize()
+        {
+            value = UINT32_C(42);
+            name.assign("Hello World");
+        }
+
+        static inline std::once_flag onceFlag;
+        static inline uint32_t value {0};
+        static inline std::string name;
+    };
+    */
+
+    // When combined with the PIMPL pattern we can mock/fake the global state:
+    struct ImplIface {};
+
+    struct Actual : ImplIface {
+        static std::unique_ptr<ImplIface> make() {
+            return std::make_unique<Actual>();
+        }
+    };
+
+    struct Testing : ImplIface {
+        static std::unique_ptr<ImplIface> make() {
+            return std::make_unique<Testing>();
+        }
+    };
+
+    // Switch active type based on testing/production
+    using ActiveType = Testing;
+
+    struct MonoPIMPL
+    {
+        MonoPIMPL() {
+            std::call_once(flag, [] { impl = ActiveType::make(); });
+        }
+        /* expose ImplIface as any other PIMPL */
+    private:
+        static inline std::once_flag flag;
+        static inline std::unique_ptr<ImplIface> impl;
+    };
+
+
+    void test()
+    {
+        MonoPIMPL x;
+    }
+}
+
 void DesignPatterns::TestAll()
 {
     // Singleton::Test();
@@ -1033,5 +1108,7 @@ void DesignPatterns::TestAll()
     // State::Test();
     // State_Visitor::Test();
 
-    Builder::Test_User();
+    // Builder::Test_User();
+
+    Monostate::test();
 }

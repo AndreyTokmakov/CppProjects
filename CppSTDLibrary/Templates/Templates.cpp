@@ -1,11 +1,11 @@
-//============================================================================
-// Name        : TemplatesTests.cpp
-// Created on  : 
-// Author      : Tokmakov Andrey
-// Version     : 1.0
-// Copyright   : Your copyright notice
-// Description : Templates src
-//============================================================================
+/**============================================================================
+Name        : Templates.cpp
+Created on  :
+Author      : Andrei Tokmakov
+Version     : 1.0
+Copyright   : Your copyright notice
+Description : Templates src
+============================================================================**/
 
 #include <iostream>
 #include <string>
@@ -13,13 +13,11 @@
 #include <list>
 #include <array>
 #include <algorithm>
+#include <concepts>
 // #include <format>
 
 #include "../Integer/Integer.h"
 #include "Templates.h"
-
-using String = std::string;
-using CString = const String&;
 
 namespace Templates {
 
@@ -396,6 +394,64 @@ namespace Templates::PartialSpecialization {
         // Use case 3 ----------------------------------------------------------
         // Pair<int> p3;         // Not OK: Number of argument should be same as Primary template
 
+    }
+}
+
+
+namespace Templates::PartialSpecialization_WithConcepts
+{
+    template<typename T>
+    concept BasicAddable = requires(T a, T b) {
+        a + b;
+    };
+
+    template<typename T>
+    concept Addable = BasicAddable<T> && requires(T a, T b) {
+        { a + b } -> std::convertible_to<T>;
+    };
+
+
+    template<typename T>
+    void sink(T v) {
+        std::cout << "Default\n";
+    }
+
+    template<typename T>
+    void sink(T v) requires BasicAddable<T>{
+        std::cout << "BasicAddable\n";
+    }
+
+    template<typename T>
+    void sink(T v) requires Addable<T>{
+        std::cout << "Addable\n";
+    }
+
+    void Test() {
+        int v = 10;
+        sink(v);
+    }
+
+    //---------------------------------------
+
+    template<typename ... Args>
+    void handleMultipleValues(Args... params) {
+        std::cout << "Default\n";
+    }
+
+    template<typename ... Args>
+    void handleMultipleValues(Args... params) requires (sizeof ... (Args) == 1) {
+        std::cout << "For single element\n";
+    }
+
+    template<typename ... Args>
+    void handleMultipleValues(Args... params) requires (sizeof ... (Args) % 2 == 0) {
+        std::cout << "For even number of elements\n";
+    }
+
+    void DependingOf_NumberOfParameters() {
+        handleMultipleValues(1,2,3);
+        handleMultipleValues(1);
+        handleMultipleValues(1, 2);
     }
 }
 
@@ -2669,7 +2725,10 @@ void Templates::TestAll()
     // PartialSpecialization::Test();
     // PartialSpecialization::Test2();
 
-    ClassSpecialization_RawArrays::Specialize_ForRawArrays();
+    // PartialSpecialization_WithConcepts::Test();
+    PartialSpecialization_WithConcepts::DependingOf_NumberOfParameters();
+
+    // ClassSpecialization_RawArrays::Specialize_ForRawArrays();
 
     // -------------------------------------------------------------------------------------------------
 

@@ -31,7 +31,7 @@ namespace TTLCache::Cache_ANY {
 			std::any value;
 			// std::string value;
 
-			Item(std::any&& value) : value(std::move(value)) {
+			explicit Item(std::any&& value) : value(std::move(value)) {
 			}
 
 			const time_t timestamp{
@@ -134,16 +134,16 @@ namespace TTLCache::Cache {
 	template<typename T>
 	class TTLCache;
 
-	template<typename _Type>
+	template<typename Type>
 	class Item {
 	private:
-		using data_type = _Type;
-		using data_reference = _Type&;
+		using data_type = Type;
+		using data_reference = data_type&;
 
 		static_assert(!std::is_same_v<data_type, void>,
 					  "Type of the data can not be void");
 
-		friend class TTLCache<_Type>;
+		friend class TTLCache<data_type>;
 
 		/* Data carrier: */
 		data_type storage;
@@ -173,12 +173,12 @@ namespace TTLCache::Cache {
 	// TODO:
 	// 1.  Extend ITEM lifetime when it accesses?
 
-	template<typename _Type>
+	template<typename Type>
 	class TTLCache final {
 	private:
-		using data_type = _Type;
-		using data_reference = std::reference_wrapper<_Type>;
-		using item_type = Item<_Type>;
+		using data_type = Type;
+		using data_reference = std::reference_wrapper<data_type>;
+		using item_type = Item<data_type>;
 
 		static_assert(!std::is_same_v<data_type, void>,
 					  "Type of the data can not be void");
@@ -227,7 +227,7 @@ namespace TTLCache::Cache {
 
 	public:
 		// Initializes with a given ttl (in seconds)
-		TTLCache(uint32_t ttl = DEFAULT_TTL) : ttlSeconds{ ttl } {
+		explicit TTLCache(uint32_t ttl = DEFAULT_TTL) : ttlSeconds{ ttl } {
 			invalidationThread = std::thread(&TTLCache::onTimer, this);
 		}
 

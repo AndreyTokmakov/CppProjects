@@ -909,6 +909,83 @@ namespace ConditionVariable::ResourceClass
     }
 }
 
+namespace ConditionVariable::PingPongGame
+{
+    struct Engine
+    {
+        static constexpr int MaxCountTimes {1'000'000};
+
+        std::condition_variable cv;
+        std::mutex mtx;
+        bool pingDone { false };
+        bool pongDone { false };
+
+        void ping()
+        {
+            int counter = 0;
+            while (counter <= MaxCountTimes)
+            {
+                {
+                    std::unique_lock lck { mtx };
+                    cv.wait(lck, [this]() {
+                        return pingDone;
+                    });
+                    pingDone = false;
+                    pongDone = true;
+                    ++counter;
+                }
+                cv.notify_one();
+            }
+        }
+
+        void pong()
+        {
+            int counter = 0;
+            while (counter<MaxCountTimes)
+            {
+                {
+                    std::unique_lock lck { mtx };
+                    cv.wait(lck, [this](){
+                        return pongDone;
+                    });
+                    pingDone = true;
+                    pongDone = false;
+                    ++counter;
+                }
+                cv.notify_one();
+            }
+        }
+
+        void start()
+        {
+            {
+                std::unique_lock lck { mtx };
+                pingDone = true;
+            }
+            cv.notify_one();
+        }
+    };
+
+
+    void Test()
+    {
+        Engine engine;
+        engine.start();
+
+        std::thread ping = std::thread(&Engine::ping, &engine);
+        std::thread pong = std::thread(&Engine::pong, &engine);
+
+        if (ping.joinable()) {
+            ping.join();
+        }
+        if (pong.joinable()) {
+            pong.join();
+        }
+
+        std::cout << "Done\n";
+    }
+}
+
 void ConditionVariable::TEST_ALL() {
     // Classic_Test::Test();
     // Classic_Test::Test_Predicate_0();
@@ -936,7 +1013,9 @@ void ConditionVariable::TEST_ALL() {
     // VariableAny::NotifyAll_CV_ANY();
     // VariableAny::NotifyAll_CV_not_Any();
 
-    ResourceClass::Consume_Produce();
+    // ResourceClass::Consume_Produce();
 
     // Experiments::Consumer_BlockingProducer();
+
+    PingPongGame::Test();
 };

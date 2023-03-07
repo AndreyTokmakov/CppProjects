@@ -283,6 +283,21 @@ namespace Algorithms::NonModifying {
 
     }
 
+    void Adjacent_Find_0() {
+        const std::vector<std::string> numbers {"zero", "one", "two", "three", "four", "four", "four", "four", "four",
+                                                "five", "six", "seven", "eight", "nine", "ten"};
+        std::cout <<"Initial vector: " << numbers << std::endl;
+
+        auto iter = std::adjacent_find(numbers.begin(), numbers.end());
+        if (iter == numbers.end()) {
+            std::cout << "no matching adjacent elements\n";
+        } else {
+            std::cout << "First adjacent pair of equal elements at: "
+                      << std::distance(numbers.begin(), iter) << ". {" << *iter << ", " << *(std::next(iter)) << "}"
+                      << std::endl;
+        }
+    }
+
     void Adjacent_Find() {
         const std::vector<int> numbers{ 0, 1, 2, 3, 4, 4, 4, 4, 4, 4, 41, 41, 35, 27,11, 5 };
         print_vector_ex(numbers, "Initial vector: ");
@@ -1576,6 +1591,7 @@ void Algorithms::TestAll() {
     // NonModifying::Find_First_Of();
     // NonModifying::Find_End();
     // NonModifying::Adjacent_Find();
+    NonModifying::Adjacent_Find_0();
     // NonModifying::Adjacent_Find_1();
     // NonModifying::Equal();
     // NonModifying::Equal_Applications(); // is_palindrom
@@ -1619,7 +1635,7 @@ void Algorithms::TestAll() {
     // Sorting::IsSorted_until();
     // Sorting::Sort();
     // Sorting::PartialSort();
-    Sorting::Nth_Element();
+    // Sorting::Nth_Element();
     // Sorting::Sort_Parralel();
 
 

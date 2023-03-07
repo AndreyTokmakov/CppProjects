@@ -31,7 +31,7 @@ add_compile_options(-c -Wall -Wextra -O3 -std=c++2a)
 # include all components
 add_executable(QT_Projects MACOSX_BUNDLE 
     main.cpp
-   Experiments/Experiments.cpp Experiments/Experiments.h Widgets/Widgets.cpp Widgets/Widgets.h)
+   Experiments/Experiments.cpp Experiments/Experiments.h Widgets/Widgets.cpp Widgets/Widgets.h Widgets/TextEditor/TextEditor.cpp Widgets/TextEditor/TextEditor.h)
 
 # The Qt5Widgets_LIBRARIES variable also includes QtGui and QtCore
 target_link_libraries(QT_Projects pthread ${Qt5Widgets_LIBRARIES})

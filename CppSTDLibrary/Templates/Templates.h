@@ -1,11 +1,11 @@
-//============================================================================
-// Name        : TemplatesTests.h
-// Created on  : 
-// Author      : Tokmakov Andrey
-// Version     : 1.0
-// Copyright   : Your copyright notice
-// Description : Templates src
-//============================================================================
+/**============================================================================
+Name        : Templates.h
+Created on  :
+Author      : Andrei Tokmakov
+Version     : 1.0
+Copyright   : Your copyright notice
+Description : Templates src
+============================================================================**/
 
 #ifndef TEMPLATES_TESTS__H_
 #define TEMPLATES_TESTS__H_

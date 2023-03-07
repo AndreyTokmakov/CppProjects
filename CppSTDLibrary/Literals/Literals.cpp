@@ -369,8 +369,37 @@ namespace Literals::RawStringLiterals {
 }
 
 
+namespace Literals::SimpleExample
+{
+    /*
+    struct Distance {
+        long double meters {0};
+
+        explicit operator long double() const {
+            return meters;
+        }
+    };
+
+    constexpr Distance operator "" _km(long double value) {
+        return Distance {.meters = value * 1000};
+    }
+    */
+
+    constexpr long double operator "" _km(long double value) {
+        return value * 1000;
+    }
+
+    void Test()
+    {
+        long double d = 1.03_km;
+        std::cout << "1.03_km = " << d << std::endl;
+    }
+}
+
 void Literals::TestAll()
 {
+    SimpleExample::Test();
+
 	// Custom_Literals_Tests::Test();
 	// Custom_Literals_Tests::Test2();
 

@@ -1409,30 +1409,16 @@ namespace Numeric {
 
     void Is_Array_Elements_Consecutive()
     {
+        std::vector<std::vector<int>> testData {
+            { 1,2, 3 }, { -1, -2, -3, -4, -4, -6 },{ 1,2, 4 }, { 1,2,4,4,4}
+        };
+        for (const std::vector<int>& data: testData)
         {
-            const std::vector<int> Numeric = { 1,2, 3 };
-            std::cout << "\nIs Consecutive 1: " << std::boolalpha << _is_array_consecutive(Numeric) << std::endl;
-            std::cout << "Is Consecutive 2: " << std::boolalpha << _is_array_consecutive_2(Numeric) << std::endl;
-            std::cout << "Is Consecutive 3: " << std::boolalpha << _is_array_consecutive_3(Numeric) << std::endl;
+            std::cout << "\nIs Consecutive 1: " << std::boolalpha << _is_array_consecutive(data) << std::endl;
+            std::cout << "Is Consecutive 2: " << std::boolalpha << _is_array_consecutive_2(data) << std::endl;
+            std::cout << "Is Consecutive 3: " << std::boolalpha << _is_array_consecutive_3(data) << std::endl;
         }
-        {
-            const std::vector<int> Numeric = { -1, -2, -3, -4, -4, -6 };
-            std::cout << "\nIs Consecutive 1: " << std::boolalpha << _is_array_consecutive(Numeric) << std::endl;
-            std::cout << "Is Consecutive 2: " << std::boolalpha << _is_array_consecutive_2(Numeric) << std::endl;
-            std::cout << "Is Consecutive 3: " << std::boolalpha << _is_array_consecutive_3(Numeric) << std::endl;
-        }
-        {
-            const std::vector<int> Numeric = { 1,2, 4 };
-            std::cout << "\nIs Consecutive 1: " << std::boolalpha << _is_array_consecutive(Numeric) << std::endl;
-            std::cout << "Is Consecutive 2: " << std::boolalpha << _is_array_consecutive_2(Numeric) << std::endl;
-            std::cout << "Is Consecutive 3: " << std::boolalpha << _is_array_consecutive_3(Numeric) << std::endl;
-        }
-        {
-            const std::vector<int> Numeric = { 1,2,4,4,4};
-            std::cout << "\nIs Consecutive 1: " << std::boolalpha << _is_array_consecutive(Numeric) << std::endl;
-            std::cout << "Is Consecutive 2: " << std::boolalpha << _is_array_consecutive_2(Numeric) << std::endl;
-            std::cout << "Is Consecutive 3: " << std::boolalpha << _is_array_consecutive_3(Numeric) << std::endl;
-        }
+
     }
 
     //--------------------------------------------------------------------------------------//
@@ -2925,7 +2911,7 @@ void Numeric::TEST_ALL()
 
     // Numeric::Missmatch_Sorted_Vectors();
     // Numeric::Missmatch_Tests();
-    // Numeric::IsPermutation();
+    Numeric::IsPermutation();
     // Numeric::IsReversedEquals();
     // Numeric::ReverseToMakeEqual();
     // Numeric::MaxSum_of_NonConsecutive_Elements_In_Array();

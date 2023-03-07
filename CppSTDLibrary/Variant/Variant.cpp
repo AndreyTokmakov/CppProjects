@@ -1021,7 +1021,12 @@ void Variant::TestAll()
 	// VisitTests::Polymorphism_Test();
 	// VisitTests::VizitTest();
 	// VisitTests::Vizit_With_Overloads();
-	VisitTests::Vizit_Multiple_Variants();
+	// VisitTests::Vizit_Multiple_Variants();
+
+
+
+    // Variant_InitAndGetValue_Tests_1();
+    // Variant_InitAndGetValue_Tests_2();
 
 
 
@@ -1032,4 +1037,5 @@ void Variant::TestAll()
     // Experiments_DNS_Response::Tests();
 
 	// Experiments::Map_Variant_Keys();
+
 };

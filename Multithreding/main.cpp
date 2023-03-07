@@ -42,6 +42,7 @@
 #include "LockFreeDataStructures/LockFreeQueue.h"
 #include "SynchStream_Custom/SynchStream_Custom.h"
 #include "SynchStream/SynchStream.h"
+#include "PerformanceExperiments/PerformanceExperiments.h"
 
 
 int main([[maybe_unused]] int argc,
@@ -71,11 +72,13 @@ int main([[maybe_unused]] int argc,
 
     // ThreadPools::TEST_ALL();
     // ThreadPoolBlocking::TEST_ALL();
-    //ThreadPoolBlocking::TEST_ALL();
-    ThreadPoolLimited::TestAll();
+    // ThreadPoolBlocking::TEST_ALL();
+    // ThreadPoolLimited::TestAll();
 
     // Threads::TEST_ALL();
     // JThreads::TEST_ALL();
+
+    PerformanceExperiments::TestAll();
 
     return EXIT_SUCCESS;
 }

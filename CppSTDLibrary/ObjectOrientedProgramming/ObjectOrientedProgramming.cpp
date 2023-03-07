@@ -1822,8 +1822,45 @@ namespace ObjectOrientedProgramming::Classes_Structs_Sizeof_Tests {
 	class C : virtual public A, virtual public B {
 	};
 
+    namespace Virtual_FuncDiffClass
+    {
+        struct A {
+            virtual void a() = 0;
+        };
 
-	/////////////////////////////////////////////////////////////////////////////////////////////////
+        struct B {
+            virtual void b() = 0;
+        };
+
+        struct C {
+            virtual void b() = 0;
+        };
+
+        struct D {
+            virtual void d1() = 0;
+            virtual void d2() = 0;
+            virtual void d3() = 0;
+        };
+
+        struct Clazz1 : A { /** **/ };
+        struct Clazz2 : A, B { /** **/ };
+        struct Clazz3 : A, B, C { /** **/ };
+
+        struct Clazz4 : D { /** **/ };
+        struct Clazz5 : A, D { /** **/ };
+
+        void VirtualMethodTests()
+        {
+            std::cout << "--------------------- Depending of number VTBL ---------------------------------\n";
+            std::cout << sizeof(Clazz1) << std::endl;
+            std::cout << sizeof(Clazz2) << std::endl;
+            std::cout << sizeof(Clazz3) << std::endl << std::endl;
+            std::cout << sizeof(Clazz4) << std::endl;
+            std::cout << sizeof(Clazz5) << std::endl;
+        }
+
+    }
+
 
 	void StructSizeTest() {
 		std::cout << "Size string: " << sizeof(std::string) << std::endl;
@@ -1847,9 +1884,11 @@ namespace ObjectOrientedProgramming::Classes_Structs_Sizeof_Tests {
 		std::cout << "Size DerivedClassWitVirtInhereance: " << sizeof(DerivedClassWitVirtInhereance) << std::endl;
 		std::cout << "Size DerivedClassWitVirtInhereanceAndFunc: " << sizeof(DerivedClassWitVirtInhereanceAndFunc) << std::endl;
 		std::cout << "Size C: " << sizeof(C) << std::endl;
+
+        Virtual_FuncDiffClass::VirtualMethodTests();
 	}
 
-	/////////////////////////////////////////////////////////////////////////////////////////////////
+	//---------------------------------------------------------------------------------------------------//
 
 
 	namespace VitrtInheritanceTests {
@@ -2800,12 +2839,12 @@ void ObjectOrientedProgramming::TestAll()
 	// ReturnValueOptimization::Create_NoCopyConstructor2();
 
 	// Operator_Overload_Tests::Inherit_Copy_Assignment_Operator();
-	OperatorOverloading::Tests();
+	// OperatorOverloading::Tests();
 	
 	// Static_Members_Inheritance::Test();
 	// AggregateInitialization::InitTest();
 
-	// Classes_Structs_Sizeof_Tests::StructSizeTest();
+	Classes_Structs_Sizeof_Tests::StructSizeTest();
 	// Classes_Structs_Sizeof_Tests::VitrtInheritanceTests::Test();
 
 	// LocalClasses::Test();

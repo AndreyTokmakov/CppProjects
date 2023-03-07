@@ -214,20 +214,30 @@ namespace Strings {
 	//--------------------------------------------------------------------------------------//
 
 	void _rearrange_string(std::string& text) {
-		int chars[256] = { 0 };
+		uint32_t chars[256] { 0 };
 		for (char c : text) {
-			//if (c >= 'A' && 'z' >= c) {
+			// if (c >= 'A' && 'z' >= c) { .... }
             chars[(int8_t)(c)]++;
-			//}
 		}
 
-		size_t pos = 0;
-		for (size_t i = 0; i < 256; i++) {
+		for (size_t i = 0, pos = 0; i < 256; ++i) {
 			while (chars[i]--) {
 				text[pos++] = (char)i;
 			}
 		}
 	}
+
+    void _rearrange_string1(std::string& text) {
+        int chars[256] { 0 };
+        for (char c : text)
+            chars[(int8_t)(c)]++;
+
+        for (int i = 0, pos = 0; i < 256; ++i) {
+            std::fill_n(text.begin() + pos, chars[i], (char)i);
+            pos += chars[i];
+        }
+    }
+
 
 	void _rearrange_string2(std::string& text) {
 		int chars[256]{ 0 };
@@ -247,23 +257,14 @@ namespace Strings {
 		}
 	}
 
-	void RearrangeString() {
-		{
-			std::string str = "FNYaJGNMHSWUzAGQLADQUaYMYSGQRxPCAXU";
-
-
-			std::cout << str << std::endl;
-            _rearrange_string(str);
-			std::cout << str << std::endl;
-		}
-		{
-			std::string str = "FNYaJGNMHSWUzAGQLADQUaYMYSGQRxPCAXU";
-
-
-			std::cout << str << std::endl;
-            _rearrange_string2(str);
-			std::cout << str << std::endl;
-		}
+	void RearrangeString()
+    {
+        for (const std::string& str: {"FNYaJGNMHSWUzAGQLADQUaYMYSGQRxPCAXU"})
+        {
+            { std::string s {str}; std::cout << s << " --> "; _rearrange_string(s);  std::cout << s << '\n';}
+            { std::string s {str}; std::cout << s << " --> "; _rearrange_string1(s); std::cout << s << '\n';}
+            { std::string s {str}; std::cout << s << " --> "; _rearrange_string2(s); std::cout << s << '\n';}
+        }
 	}
 
 	//--------------------------------------------------------------------------------------//
@@ -414,30 +415,23 @@ namespace Strings {
 		text.resize(index);
 	}
 
+    void _removeDuplicates3(std::string& text) {
+        size_t index = 0;
+        for (char tmp[256] { 0 }; char c : text)
+            if (0 == tmp[c]++)
+                text[index++] = c;
+        text.resize(index);
+    }
+
 
 	void RemoveDuplicates()
     {
+        for (const std::string& str: {"aaaaabbbbbb", "abcabcabcabcabc"})
         {
-            std::string s = "aaaaabbbbbb";
-
-            std::cout << s << "  --->  ";
-            _removeDuplicates(s);
-            std::cout << s << std::endl;
+            { std::string s {str}; std::cout << s << " --> "; _removeDuplicates(s); std::cout << s << '\n';}
+            { std::string s {str}; std::cout << s << " --> "; _removeDuplicates2(s); std::cout << s << '\n';}
+            { std::string s {str}; std::cout << s << " --> "; _removeDuplicates3(s); std::cout << s << '\n';}
         }
-		{
-			std::string s = "aaaaabbbbbb";
-
-			std::cout << s << "  --->  ";
-            _removeDuplicates2(s);
-			std::cout << s << std::endl;
-		}
-		{
-			std::string s = "abcabcabcabcabc";
-
-			std::cout << s << "  --->  ";
-            _removeDuplicates2(s);
-			std::cout << s << std::endl;
-		}
 	}
 	//--------------------------------------------------------------------------------------//
 
@@ -506,23 +500,25 @@ namespace Strings {
 
 	//--------------------------------------------------------------------------------------//
 
-	void __moveAtEnd1(std::string str, unsigned int i, unsigned int l) {
+	void _moveAtEnd1(std::string str,
+                     unsigned int i,
+                     unsigned int l,
+                     const char char_to_move = 'x') {
 		if (i >= l)
 			return;
 
 		char curr = str[i];
-		if (curr != 'x')
+		if (curr != char_to_move)
 			std::cout << curr;
-		__moveAtEnd1(str, i + 1, l);
-		if (curr == 'x')
+		_moveAtEnd1(str, i + 1, l, char_to_move);
+		if (curr == char_to_move)
 			std::cout << curr;
-		return;
 	}
 
-	void __moveAtEnd2(const std::string& str) {
+	void _moveAtEnd2(const std::string& str, const char char_to_move = 'x') {
 		int count = str.length();
 		for (auto c : str) {
-			if ('x' != c) {
+			if (char_to_move != c) {
 				count--;
 				std::cout << c;
 			}
@@ -532,11 +528,23 @@ namespace Strings {
 		std::cout << std::endl;
 	}
 
-	void MoveCharsToEnd() {
-		std::string text = "geekxsforgexxeksxx";
-		__moveAtEnd1(text, 0, text.length());
-		std::cout << std::endl;
-		__moveAtEnd2(text);
+    void _moveAtEnd3_GOOD(const std::string& str, const char char_to_move = 'x') {
+        std::string strLocal {str};
+        for (size_t pos = 0; char& c: strLocal)
+            if (char_to_move != c)
+                std::swap(strLocal[pos++], c);
+        std::cout << strLocal << std::endl;
+    }
+
+	void MoveCharsToEnd()
+    {
+        for (const std::string& testStr: {"geekxsforgexxeksxx"})
+        {
+            std::string text {testStr};
+            _moveAtEnd1(text, 0, text.length(), 'x'); std::cout << std::endl;
+            _moveAtEnd2(text, 'x');
+            _moveAtEnd3_GOOD(text, 'x');
+        }
 	}
 
 
@@ -557,18 +565,16 @@ namespace Strings {
                 std::swap(str[pos++], c);
     }
 
-	void MoveZerosToEnd() {
-		std::string text = "a0b0c0d0e";
-
+	void MoveZerosToEnd()
+    {
+        for (const std::string& testStr: {"a0b0c0d0e"})
         {
-            std::string input {text};
-            _move_zeros_to_end(input);
-            std::cout << text << " --> "<< input << std::endl;
-        }
-        {
-            std::string input {text};
-            _move_zeros_to_end_EX(input);
-            std::cout << text << " --> "<< input << std::endl;
+            {
+                auto s { testStr}; _move_zeros_to_end(s); std::cout << testStr << " --> " << s << '\n';
+            }
+            {
+                auto s { testStr}; _move_zeros_to_end_EX(s); std::cout << testStr << " --> " << s << '\n';
+            }
         }
 	}
 
@@ -1422,6 +1428,75 @@ namespace Strings {
 	}
 };
 
+
+namespace Strings
+{
+    using namespace std::string_literals;
+    using namespace std::string_view_literals;
+
+    std::string_view minimum_substring(std::string_view s,
+                                       std::string_view t)
+    {
+        // Initialize the minimum substring to empty string.
+        auto min_b = s.begin(), min_e = s.begin();
+        auto b = s.begin(), e = s.begin();
+
+        // Frequency of characters in the target string.
+        std::unordered_map<char,int> freq;
+        for (auto c : t)
+            ++freq[c];
+
+        long matches = std::ssize(t);
+        while (e != s.end()) {
+            // Expand to the right until we have all characters.
+            while (e != s.end() && matches > 0) {
+                auto it = freq.find(*e); // Lookup current character.
+                if (it == freq.end()) {                // Ignore characters that are not in the target string.
+                    ++e;
+                    continue;
+                }
+
+                --it->second;          // Decrease the number of instances of this character (can go negative).
+                if (it->second >= 0)   // Keep track of the number of characters still missing in the window.
+                    --matches;
+                ++e;
+            }
+
+            // Shrink from left until we no longer have all the characters.
+            while (b < e && matches == 0) {
+                auto it = freq.find(*b);  // Lookup current character.
+                if (it == freq.end()) {                 // Ignore characters that are not in the target string.
+                    ++b;
+                    continue;
+                }
+                // We are guaranteed to have all characters, check if this is better than the current minimum.
+                if (min_e == s.begin() || (e - b < min_e - min_b)) {
+                    min_b = b;
+                    min_e = e;
+                }
+
+                ++it->second;         // Since we are removing a character, increase the number of instances.
+                if (it->second > 0)   // Keep track of the number of characters still missing in the window.
+                    ++matches;
+                ++b;
+            }
+        }
+        return {min_b,min_e};
+    }
+
+    /// Given two strings (as std::string_view), find the minimum substring of the
+    /// first string that contains all letters (with duplicates) from the second string.
+    void Minimum_Substring()
+    {
+        std::cout << ((minimum_substring("a","aa") == "") ? "OK"sv : "Failed"sv) << std::endl;
+        std::cout << ((minimum_substring("aaaa","aa") == "aa") ? "OK"sv : "Failed"sv) << std::endl;
+        std::cout << ((minimum_substring("abcabc","abc") == "abc") ? "OK"sv : "Failed"sv) << std::endl;
+        std::cout << ((minimum_substring("abxcba","abc") == "cba") ? "OK"sv : "Failed"sv) << std::endl;
+        std::cout << ((minimum_substring("bbxaxxaaxaaaxabb","ababa") == "aaxabb") ? "OK"sv : "Failed"sv) << std::endl;
+        std::cout << ((minimum_substring("aaaaaaxxxaaaaaa","xxx") == "xxx") ? "OK"sv : "Failed"sv) << std::endl;
+    }
+}
+
 void Strings::TEST_ALL()
 {
 	// Strings::LongestSubstringWithoutRepeatingCharacters();
@@ -1474,4 +1549,6 @@ void Strings::TEST_ALL()
     // Strings::CheckIfTwoStringsArePermutation();
 	// Strings::AreAnagrams();
 	// Strings::MakeAnagrams_CountDeletions();
+
+    Strings::Minimum_Substring();
 };

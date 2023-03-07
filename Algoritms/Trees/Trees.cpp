@@ -1796,7 +1796,7 @@ void Trees::TEST_ALL()
 	// BinTreeTests::Check_Is_Trees_Identical();
 
 	// BinTreeTests::Inorder_Walkthrough();
-	BinTreeTests::Inorder_Walkthrough_NonRecursion();
+	// BinTreeTests::Inorder_Walkthrough_NonRecursion();
 	// BinTreeTests::Backwards_Walkthrough();
 	// BinTreeTests::Print_Top_View();
 	// BinTreeTests::Level_Order_Traversal();

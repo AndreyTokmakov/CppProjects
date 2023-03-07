@@ -18,6 +18,7 @@
 #include <chrono>
 #include <future>
 #include <cassert>
+#include <syncstream>
 
 #include "../ThreadHelperUtilities/ThreadHelperUtilities.h"
 
@@ -575,6 +576,68 @@ namespace Atomic::Cpp_20_Features {
     }
 }
 
+namespace Atomic::PingPongGame
+{
+    struct Engine
+    {
+        static constexpr int MaxCountTimes {1'000'000};
+        std::atomic_flag pass;
+        std::atomic_int counter;
+
+        void ping()
+        {
+            int counterLocal = 0;
+            while (counterLocal <= MaxCountTimes) {
+                pass.wait(false);
+                pass.clear();
+                counterLocal++;
+                counter++;
+                pass.notify_one();
+                // std::osyncstream {std::cout}  << "ping: " << counterLocal << std::endl;
+            }
+            // std::osyncstream {std::cout} << "ping: done!!!" << std::endl;
+        }
+
+        void pong()
+        {
+            int counterLocal = 0;
+            while (counterLocal < MaxCountTimes) {
+                pass.wait(true);
+                pass.test_and_set();
+                counterLocal++;
+                pass.notify_one();
+                // std::osyncstream {std::cout}  << "pong: " << counterLocal << std::endl;
+            }
+            // std::osyncstream {std::cout} << "pong: done!!!" << std::endl;
+        }
+
+        void start()
+        {
+            pass.test_and_set();
+            pass.notify_one();
+        }
+    };
+
+
+    void Test()
+    {
+        Engine engine;
+        engine.start();
+
+        std::thread ping = std::thread(&Engine::ping, &engine);
+        std::thread pong = std::thread(&Engine::pong, &engine);
+
+        if (ping.joinable()) {
+            ping.join();
+        }
+        if (pong.joinable()) {
+            pong.join();
+        }
+
+        std::cout << "Done\n";
+    }
+}
+
 void Atomic::TEST_ALL()
 {
     // AtomicFlag::Spinlock_Test();
@@ -599,7 +662,7 @@ void Atomic::TEST_ALL()
     // Atomic_SharedPtr::Test_BAD();
 
     // AtomicRef::NoAtomicIncrement();
-    AtomicRef::AtomicIncrement();
+    // AtomicRef::AtomicIncrement();
 
     // Compare::CompareExchangeWeak();
     // Compare::CompareExchangeStrong();
@@ -607,4 +670,6 @@ void Atomic::TEST_ALL()
     // Cpp_20_Features::Wait();
     // Cpp_20_Features::Notify_One();
     // Cpp_20_Features::Notify_All();
+
+    PingPongGame::Test();
 }

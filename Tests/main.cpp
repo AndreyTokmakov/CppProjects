@@ -36,6 +36,8 @@
 #include <version>
 #include <concepts>
 #include <span>
+#include <cmath>
+#include <stack>
 
 #include "Algorithms/Algorithms.h"
 #include "Geometry/PointsAndLines.h"
@@ -47,6 +49,7 @@
 #include "ExpressionTemplates/ExpressionTemplates.h"
 #include "DataStructures/LRUCache.h"
 #include "DataStructures/EventLoop.h"
+#include "DataStructures/MaxStack.h"
 #include "DebugLogger/DebugLogger.h"
 #include "Collections/CollectionsTests.h"
 #include "ObjectOrientedExperimetns/RAIIWrapper.h"
@@ -59,6 +62,7 @@
 #include "Strings/Strings.h"
 #include "CopyElision_RVO/CopyElision_RVO.h"
 #include "Performance/Performance.h"
+#include "Memory/Memory.h"
 
 
 
@@ -289,66 +293,12 @@ std::string FormatString(std::string s) {
     return result;
 }
 
-namespace OOP {
-
-
-
-    void Test() {
-        Helpers::Long l1 {1}, l2 { 2 };
-
-        l1 = l2;
-    }
-
-    //-----------------------------------------------------------------------------------------
-
-    struct A {
-        virtual void a() = 0;
-    };
-
-    struct B {
-        virtual void b() = 0;
-    };
-
-    struct C_A: A {
-        void a() override {
-            std::cout << "C::a()\n";
-        }
-    };
-
-    struct C: A, B {
-        void a() override {
-            std::cout << "C::a()\n";
-        }
-
-        void b() override {
-            std::cout << "C::b()\n";
-        }
-    };
-
-    void VirtualMethodTests()
-    {
-        /*
-        std::unique_ptr<A> ptr = std::make_unique<C>();
-
-        ptr->a();
-        dynamic_cast<B*>(ptr.get())->b();
-        */
-
-        C c;
-        C_A c_a;
-
-        std::cout << sizeof(c_a) << std::endl;
-        std::cout << sizeof(c) << std::endl;
-    }
-
-    //----------------------------------------------------------------
-
+namespace OOP
+{
     void MoveTest() {
         Helpers::Long l1 {111};
         // Long l2 = std::move(l1);
-
     }
-
 
     struct Base {
         Base() {
@@ -465,7 +415,8 @@ namespace RecursiveLambda {
 class StaticInitObject
 {
     static inline const int x = []{
-        std::cout << "This wil call once... Even without the object" << std::endl;
+        // std::cout << "This wil call once... Even without the object" << std::endl;
+        std::operator<<(std::cout, "This wil call once... Even without the object\n");
         return 1;
     }();
 
@@ -477,54 +428,7 @@ public:
 
 
 
-namespace Memory
-{
-    struct Object
-    {
-        Object() { std::cout << "Object()" << std::endl; }
-        ~Object() { std::cout << "~Object()" << std::endl; }
 
-        Object(const Object&) { std::cout << "Object(const Object& obj)" << std::endl; }
-        Object(Object&&) noexcept { std::cout << "Object(Object&& obj) noexcept" << std::endl; }
-
-        Object& operator==(const Object&) {
-            std::cout << "Object& operator==(const Object&)" << std::endl;
-            return *this;
-        }
-
-        Object& operator==(Object&&) noexcept {
-            std::cout << "Object& operator==(Object&&) noexcept" << std::endl;
-            return *this;
-        }
-    };
-
-    class BadClass
-    {
-    private:
-        Memory::Object* obj = new Object();
-        // std::unique_ptr<Memory::Object> obj { std::make_unique<Memory::Object>() };
-
-    public:
-
-        BadClass() {
-            throw 1;
-        }
-
-        ~BadClass() {
-            delete obj;
-        }
-    };
-
-    void Test()
-    {
-        try {
-            BadClass b;
-        }
-        catch (...) {
-            std::cout << "Ops" << std::endl;
-        }
-    }
-}
 
 namespace Templates
 {
@@ -600,47 +504,6 @@ namespace Templates
     }
 }
 
-
-namespace Memory
-{
-    using session = int;
-
-    auto session_factory(int id) {
-        return std::make_shared<session>(id);
-    }
-
-    // https://ibob.bg/blog/2023/01/01/tracking-shared-ptr-leaks/
-    void SharedPtrLeak()
-    {
-        std::shared_ptr<session> leak;
-
-        std::vector<std::weak_ptr<session>> registry;
-
-        constexpr int N = 20;
-        srand(unsigned(std::time(nullptr)));
-        auto i_to_leak = rand() % (2 * N);
-
-        // std::cout << "i_to_leak = " << i_to_leak << std::endl;
-
-        for (int i = 0; i < N; ++i) {
-            auto sptr = session_factory(i);
-            registry.push_back(sptr);
-            if (i == i_to_leak) {
-                leak = sptr;
-                // std::cout << "Expect " << leak << " to leak\n";
-            }
-        }
-
-        for (auto& w : registry) {
-            if (w.use_count()) {
-                std::cout << "found a leak in " << w.lock() << "\n";
-            }
-        }
-
-        std::cout << "Done\n";
-    }
-}
-
 namespace InvokeTest {
 
     template<typename F>
@@ -708,32 +571,64 @@ namespace InvokeTest {
         DataBuilder data;
         auto obj = data.getSelf();
 
-
         // data.invokeInfo();
         // BuilderBase<Data>{}.When(&Data::getInfo, 6);
-
-
-
     }
 }
 
 
+namespace Memory
+{
+    struct Base {
+        virtual void info() const noexcept {
+            std::cout << "Base::info()\n";
+        }
+
+        virtual ~Base() = default;
+    };
+
+    struct Derived : Base {
+        void info() const noexcept override {
+            std::cout << "Derived::info()\n";
+        }
+    };
+
+    struct Parent
+    {
+        virtual std::unique_ptr<Base> make() {
+            return std::make_unique<Base>();
+        }
+    };
+
+    struct Child : Parent
+    {
+        std::unique_ptr<Base> make() override {
+            return std::make_unique<Derived>();
+        }
+    };
+
+    void test()
+    {
+        Parent{}.make()->info();
+        Child{}.make()->info();
+    }
+}
 
 int main([[maybe_unused]] int argc,
          [[maybe_unused]] char** argv)
 {
     const std::vector<std::string_view> args(argv + 1, argv + argc);
 
-
     // Experiments::Test({20, 40, 60});
-    // DesignPatterns::TestAll();
     // Multithreading::TestAll();
-    // Memory::Test();
+    // Memory::TestAll();
     // Strings::TestAll();
     // Iterators::TestAll();
     // Algorithms::TestAll();
     // Files::TestAll();
     // ConstexprMap::TestAll()
+    // DesignPatterns::TestAll();
+    MaxStack::TestAll();
     // DebugLogger::TestAll();
     // UniquePtr_Size::SizeTest();
     // CollectionsTests::TestAll();
@@ -749,17 +644,16 @@ int main([[maybe_unused]] int argc,
     // Convertaion_UTF8_UTF32::TestAll();    // Encoding
     // Performance::TestAll();
 
-    // OOP::Test();
-    // OOP::VirtualMethodTests();
+
+    // Memory::test();
+
+
     // OOP::MoveTest();
     // OOP::TestClassConversationOperatorCall();
 
 
 
     // InvokeTest::Test();
-
-
-    // Memory::SharedPtrLeak();
 
     // Templates::Test();
     // Templates::Test2();

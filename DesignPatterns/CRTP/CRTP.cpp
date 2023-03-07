@@ -10,7 +10,7 @@ Description : CRTP src
 #include <iostream>
 #include "CRTP.h"
 #include "ObjectCounter.h"
-
+#include <memory>
 
 namespace CRTP {
 	
@@ -53,12 +53,62 @@ namespace CRTP {
 		}
 	};
 
+    void test1()
+    {
+        // Triangle().info();
+        // Square().info();
+    }
+}
+
+namespace CRTP::Cloneable
+{
+    struct ICloneable {
+        virtual ~ICloneable() = default;
+
+        [[nodiscard]]
+        virtual std::unique_ptr<ICloneable> clone() const = 0;
+    };
+
+    template <typename Self>
+    class clone_inherit: public ICloneable
+    {
+    public:
+        [[nodiscard]]
+        std::unique_ptr<ICloneable> clone() const override {
+            return std::unique_ptr<Self>(static_cast<Self*>(this->clone_impl()));
+        }
+
+    private:
+
+        virtual clone_inherit* clone_impl() const {
+            return new Self(*this);
+        }
+    };
+
+
+    /*
+    class cloneable
+    {
+    public:
+        virtual ~cloneable() = default;
+
+        [[nodiscard]]
+        virtual std::unique_ptr<cloneable> clone() const = 0;
+
+    private:
+
+        [[nodiscard]]
+        virtual cloneable * clone_impl() const = 0;
+    };
+
+    class concrete: public clone_inherit<concrete, cloneable>
+    {
+    };
+    */
 }
 
 void CRTP::Test()
 {
-	// Triangle().info();
-	// Square().info();
-
+    // test1();
     ObjectCounter::Test();
 }

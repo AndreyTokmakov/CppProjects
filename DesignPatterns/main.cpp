@@ -23,6 +23,7 @@
 #include "Flyweight/Flyweight.h"
 #include "Facade//Facade.h"
 #include "Bridge/Bridge.h"
+#include "PImpl/PImpl.h"
 #include "Command/Command.h"
 #include "ChainOfResponsibility/ChainOfResponsibility.h"
 #include "Decorator/Decorator.h"
@@ -34,6 +35,7 @@
 #include "State/State.h"
 #include "Mediator/Mediator.h"
 #include "Memento/Memento.h"
+#include "Monostate/Monostate.h"
 #include "Strategy/Strategy.h"
 #include "Visitor/Visitor.h"
 #include "Named_Parameter_Idiom/NamedParameter.h"
@@ -58,6 +60,7 @@ int main([[maybe_unused]]  int argc,
     // FabricMethod::TestAll();
     // Prototype::Test();
     // Singleton::TEST_ALL();;
+    // Monostate::TestAll();;
     // ObjectPools::SimpleTest();
     // ObjectPools::ExtentedTest();
     /// Dependency_injection ???
@@ -66,6 +69,7 @@ int main([[maybe_unused]]  int argc,
     /** Structural patterns: **/
     // Adapter::TestAll();
     // Bridge::TestAll();
+    // PImpl::TestAll();
     // Composite::Test();
     // Facade::Test();
     // Decorator::Test();
@@ -86,11 +90,11 @@ int main([[maybe_unused]]  int argc,
     // Observer::TestAll();
     // State::TestAll();
     // TemplateMethod::TestAll();
-    Visitor::test();
+    // Visitor::test();
     /// NULL OBJECT
 
     /** C++ IDIOMS: **/
-    // CRTP::Test();
+    CRTP::Test();
     // TypeErasure::Test();
     // RAII::Test();
     // CopyAndSwap::TEST_ALL();   ---- TESTs

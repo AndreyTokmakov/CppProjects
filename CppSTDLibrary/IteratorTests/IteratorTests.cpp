@@ -726,12 +726,96 @@ namespace IteratorTests::CustomIterator_IntIterator
         }
     };
 
-    void Test() {
+    void Test()
+    {
         auto first = IntIterator{12}; // Start at 12
         auto last = IntIterator{16}; // Stop when equal to 16
         for (auto it = first; it != last; ++it) {
             std::cout << (*it) << " ";
         }
+    }
+}
+
+namespace IteratorTests::CustomIterator_RangeIterator
+{
+    class Generator
+    {
+        int begin_ {0};
+        int end_ {0};
+
+    public:
+        Generator(int begin, int end) : begin_{begin}, end_{end} {
+        }
+
+        class Iterator
+        {
+            using value_type  = int;
+            using pointer     = int*;
+
+            value_type value {0};
+
+        public:
+            explicit Iterator(value_type pos) : value {pos} {
+            }
+
+            value_type operator*() const noexcept {
+                return value;
+            }
+
+            pointer operator->() noexcept {
+                return &value;
+            }
+
+            Iterator& operator++() {
+                ++value;
+                return *this;
+            }
+
+            Iterator operator++(int) {
+                Iterator tmp = *this;
+                ++(*this);
+                return tmp;
+            }
+
+            bool operator==(const Iterator &other) const noexcept {
+                return value == other.value;
+            }
+
+            bool operator!=(const Iterator& other) const noexcept {
+                return value != other.value;
+            }
+
+            /*
+            friend bool operator==(const Iterator& fir, const Iterator& sec) {
+                return fir.value_ == sec.value_;
+            }
+            friend bool operator!=(const Iterator& fir, const Iterator& sec) {
+                return fir.value_ != sec.value_;
+            }
+            */
+        };
+
+        [[nodiscard]]
+        Iterator begin() const noexcept {
+            return Iterator {begin_};
+        }
+
+        [[nodiscard]]
+        Iterator end() const noexcept {
+            return Iterator {end_};
+        }
+    };
+
+    void Test()
+    {
+        const Generator gen{1, 10};
+        for (auto v : gen)
+            std::cout << v << " ";
+
+        std::cout << "\nsum:  " << std::accumulate(std::begin(gen), std::end(gen), 0);
+
+        std::cout << "\nprod: " << std::accumulate(gen.begin(), gen.end(), 1,
+                                                 [](int fir, int sec){ return fir * sec; });
     }
 }
 
@@ -785,7 +869,7 @@ void IteratorTests::TestAll() {
 	// FrotInserver();
 	// Front_Insert_Iterator();
 
-	Move_Iterator_0();
+	// Move_Iterator_0();
 	// Move_Iterator();
 
 	// Base::Test1();
@@ -805,8 +889,8 @@ void IteratorTests::TestAll() {
     // CustomIterator::Test();
 	// CustomIterator2::Test();
 	// CustomIterator3::Test();
-
     // CustomIterator_IntIterator::Test();
+    CustomIterator_RangeIterator::Test();
 
 	// Files::ReadFile();
 	// Files::ReadFile2();
