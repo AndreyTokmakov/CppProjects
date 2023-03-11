@@ -783,7 +783,7 @@ namespace Variant::VisitTests {
 	template <class ...Ts>
 	overload(Ts&&...)->overload<std::remove_reference_t<Ts>...>;
 
-	void Vizit_With_Overloads() {
+	void Visit_With_Overloads() {
 		auto int_visit = [](int) { std::cout << "int()\n"; };
 		auto float_visit = [](float) { std::cout << "float()\n"; };
 
@@ -803,6 +803,37 @@ namespace Variant::VisitTests {
 			), variant);
 		}
 	}
+
+    // Helper relying on CTAD. Inherits from constructor arguments and exposes their call operator.
+    template <typename ...Ts>
+    struct overloaded : Ts... {
+        using Ts::operator()...;
+    };
+
+    void Visit_With_Overloads_2()
+    {
+        std::variant<int,double,std::string> v = "hello world!";
+
+        // Generic visit, will instantiate the generic lambda for each type:
+        std::visit([](auto&& x) {
+            std::cout << x << "\n";
+        }, v);
+
+        v = 2.4;
+        // Create a new type by inheriting from lambdas that handle each type:
+        std::visit(overloaded{
+                [](int& x) {
+                    std::cout << "Contains 'int', value: " << x << "\n";
+                },
+                [](double& x) {
+                    std::cout << "Contains 'double', value: " << x << "\n";
+                },
+                [](std::string& x) {
+                    std::cout << "Contains 'std::string', value: " << x << "\n";
+                }
+        }, v);
+
+    }
 
     void Vizit_Multiple_Variants()
     {
@@ -1020,7 +1051,8 @@ void Variant::TestAll()
 	// VisitTests::Simple_Visit();
 	// VisitTests::Polymorphism_Test();
 	// VisitTests::VizitTest();
-	// VisitTests::Vizit_With_Overloads();
+	// VisitTests::Visit_With_Overloads();
+	VisitTests::Visit_With_Overloads_2();
 	// VisitTests::Vizit_Multiple_Variants();
 
 

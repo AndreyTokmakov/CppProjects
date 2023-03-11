@@ -144,8 +144,8 @@ namespace ARPTester::Tests
 
 #define ON_WORK true
 #ifdef ON_WORK
-    constexpr std::string_view interfaceName { "wlp0s20f3" };
-    constexpr std::string_view interfaceIP { "192.168.57.54" };
+    constexpr std::string_view interfaceName { "enp2s0" };
+    constexpr std::string_view interfaceIP { "192.168.100.0" };
 #elif
     constexpr std::string_view interfaceName { "wlp4s0" };
     constexpr std::string_view interfaceIP { "192.168.0.184" };
@@ -184,7 +184,7 @@ namespace ARPTester::Tests
         // arpHeader->SetTargetAddress("192.168.57.1");
 
         // The MAC addr for this IP we want to find out: CommsSleeve IP address
-        arpHeader->SetTargetAddress("192.168.1.5");
+        arpHeader->SetTargetAddress("192.168.100.82");
 
         Utilities::SocketScoped socket = createSocket();
         enableBroadcast(socket);
@@ -356,11 +356,11 @@ void ARPTester::TestAll()
     Utilities::checkRunningUnderRoot();
 
     // Tests::TestSocket();
-    // Tests::SendRequest();
+    Tests::SendRequest();
     // Tests::ARP_ScanRange();
     // Tests::SendReply();
     // Tests::PoisoningTest();
 
-    std::cout << sizeof(ARPHeader) << std::endl;
+    // std::cout << sizeof(ARPHeader) << std::endl;
 
 }

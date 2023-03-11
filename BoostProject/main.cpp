@@ -42,7 +42,7 @@
 #include "Timer/Timer.h"
 #include "Threads/Threads.h"
 #include "DateTime/DateTime.h"
-
+#include "Serial/Serial.h"
 
 #include "ProgramOptions/ProgramOptions.h"
 
@@ -270,7 +270,9 @@ int main([[maybe_unused]] int argc,
 
     // Threads::TestAll();
 
-    DateTime::TestAll();
+    // DateTime::TestAll();
+
+    Serial::TestAll();
 
     /*
     MD5::Test1();

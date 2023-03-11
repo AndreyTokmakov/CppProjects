@@ -227,7 +227,7 @@ int main(int argc, char** argv)
 
     // Files::ReadFile();
     // AggregateInitialization::TestAll();
-    // Algorithms::TestAll();
+    Algorithms::TestAll();
     // Alignment::TestAll();
     // Any::TestAll();
     // Arrays::TestAll();
@@ -285,7 +285,7 @@ int main(int argc, char** argv)
     // Templates::TestAll();
     // Utilities::TestAll();
     // UniquePtr_Tests::TestAll();
-    Variant::TestAll();
+    // Variant::TestAll();
     // WeakPtr::TestAll();
 
     return EXIT_SUCCESS;

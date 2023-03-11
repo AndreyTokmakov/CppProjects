@@ -104,6 +104,6 @@ void DateTime::TestAll()
     // DateFrom_String();
     // Date_Duration();
     // Specialized_Duration();
-    Period();
+    // Period();
 
 };

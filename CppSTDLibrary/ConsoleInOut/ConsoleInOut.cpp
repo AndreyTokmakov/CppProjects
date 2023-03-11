@@ -332,6 +332,33 @@ namespace ConsoleInOut
     }
 }
 
+namespace ConsoleInOut::Experiments
+{
+    void ReadInputTestData()
+    {
+        std::string line;
+        std::getline(std::cin, line);
+        int counter = atoi(line.data());
+
+        std::string_view stringView;
+        while (counter--) {
+            std::getline(std::cin, line);
+            stringView = line;
+
+            auto pos = stringView.find(' ');
+            if (std::string::npos == pos)
+                continue;
+
+            int a = atoi(stringView.substr(0, pos).data());
+            int b = atoi(stringView.substr(pos + 1, stringView.size() - pos - 1).data());
+
+            // std::cout << a << " " << b << std::endl;
+            std::cout << a + b << std::endl;
+        }
+
+    }
+}
+
 
 /** TEST **/
 void ConsoleInOut::TestAll()
@@ -365,9 +392,11 @@ void ConsoleInOut::TestAll()
 
     // Time_And_Money();
 
-    ConsoleInOut::PrintTable();
+    // ConsoleInOut::PrintTable();
     // ConsoleInOut::PrintTable2();
 
     // TEST();
+
+    Experiments::ReadInputTestData();
 };
 

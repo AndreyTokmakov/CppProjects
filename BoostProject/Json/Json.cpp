@@ -18,8 +18,8 @@
 #include <boost/foreach.hpp>
 
 // Eigen includes:
-#include <Core>
-#include <Dense>
+// #include <Core>
+// #include <Dense>
 
 // NOTE: To be able to change the string comparison implementation
 #define EQUAL(str1, str2) (str1 == str2)

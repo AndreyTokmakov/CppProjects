@@ -614,6 +614,28 @@ namespace Memory
     }
 }
 
+namespace RTTI
+{
+    class NonPolyBase {};
+
+    class NonPolyDerived : public NonPolyBase {};
+
+    class PolyBase {
+    public:
+        virtual ~PolyBase() = default;
+    };
+
+    class PolyDerived : public PolyBase {};
+
+    void test() {
+        NonPolyBase* p1 = new NonPolyDerived{};
+        PolyBase* p2 = new PolyDerived{};
+
+        std::cout << typeid(*p1).name() << '\n';
+        std::cout << typeid(*p2).name() << '\n';
+    }
+}
+
 int main([[maybe_unused]] int argc,
          [[maybe_unused]] char** argv)
 {
@@ -628,7 +650,7 @@ int main([[maybe_unused]] int argc,
     // Files::TestAll();
     // ConstexprMap::TestAll()
     // DesignPatterns::TestAll();
-    MaxStack::TestAll();
+    // MaxStack::TestAll();
     // DebugLogger::TestAll();
     // UniquePtr_Size::SizeTest();
     // CollectionsTests::TestAll();
@@ -644,19 +666,18 @@ int main([[maybe_unused]] int argc,
     // Convertaion_UTF8_UTF32::TestAll();    // Encoding
     // Performance::TestAll();
 
-
     // Memory::test();
-
 
     // OOP::MoveTest();
     // OOP::TestClassConversationOperatorCall();
 
-
-
     // InvokeTest::Test();
-
     // Templates::Test();
     // Templates::Test2();
+
+
+    RTTI::test();
+
 
     // StaticInitObject a, b;
     // Concepts_Experiments::TestConcepts();

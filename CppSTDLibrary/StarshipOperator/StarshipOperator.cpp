@@ -44,11 +44,83 @@ namespace StarshipOperator
         // r3 == false, NaN is unordered
         std::cout << std::boolalpha << "r3 == " << r3 << "\n";
     }
-
 };
+
+namespace StarshipOperator
+{
+    struct Custom
+    {
+        int v;   // Default operator==, also provides operator!=
+
+        friend bool operator==(const Custom&, const Custom&) = default;
+        // Same as: bool operator==(const Custom&) const = default;
+    };
+
+    struct Point
+    {
+        int x;
+        int y;
+
+        // Default three-way comparison, also defaults operator== if none is declared:
+        friend auto operator<=>(const Point&, const Point&) = default;
+
+        // Same as: auto operator <=>(const Point&) const = default;
+    };
+
+    void CompareCustomTypes()
+    {
+        Point a{3,2}, b{1,3};
+        std::cout << std::boolalpha << (a > b) << "\n";
+
+        Custom c{4}, d{5};
+        std::cout << std::boolalpha << (c != d) << "\n";
+    }
+}
+
+
+namespace StarshipOperator::Inheritance
+{
+    struct Base
+    {
+        int id;
+
+        std::strong_ordering operator<=>(const Base&) const = default;
+    };
+
+    struct Derived : Base {
+        std::string data;
+
+        // Default spaceship operator:
+        std::strong_ordering operator<=> (const Derived&) const = default;
+
+        /*  Manual implementation with the same semantics:
+        auto operator<=>(const Derived& other) const {
+            auto cmp = (const Base&)*this <=> (const Base&)other;
+            if (std::is_neq(cmp)) // id != other.id
+                return cmp;
+            return this->data <=> other.data;
+        }
+        */
+    };
+
+    void test()
+    {
+        Base b1 {2 }, b2 {1 };
+        std::cout << std::boolalpha << (b1 > b2) << "\n";
+
+
+        Derived d1 {2,"hello"}, d2 {2,"bye"};
+        std::cout << std::boolalpha << (d1 > d2) << "\n";
+    }
+}
 
 void StarshipOperator::TestAll()
 {
-    OrderingTests();
+    // OrderingTests();
+
+    // CompareCustomTypes();
+
+    Inheritance::test();
+
 };
 

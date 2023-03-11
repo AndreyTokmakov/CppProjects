@@ -1163,6 +1163,45 @@ namespace Algorithms::ModifyingSequenceOperations {
         }
     }
 
+    void Transform_Reduce_1()
+    {
+        std::vector v {1, 2, 3, 4, 5};
+
+        auto reduce =  [](int l, int r) {
+            // std::cout << "reduce(" << l << ", " << r << ")\n";
+            return l + r;
+        };
+        auto transform = [](int v) {
+            std::cout << "transform(" << v << ")\n";
+            return v * v;
+        };
+
+        auto result = std::transform_reduce(v.begin(), v.end(), 0, reduce, transform);
+
+        std::cout << "Result = " << result << std::endl;
+    }
+    void Transform_Reduce_2()
+    {
+        std::vector v1 {1, 2, 3, 4, 5};
+        std::vector v2 {10, 20, 30, 40, 50};
+
+        auto reduce =  [](int l, int r) {
+            std::cout << "reduce(" << l << ", " << r << ")\n";
+            return l + r;
+        };
+        auto transform = [](int f, int s) {
+            std::cout << "transform(" << f << ", " << s << ")\n";
+            return f*s;
+        };
+
+        auto result = std::transform_reduce(v1.begin(),v1.end(),
+                                            v2.begin(), 0,
+                                            reduce,
+                                            transform);
+
+        std::cout << "\nresult = " << result << std::endl;
+    }
+
     void Reverse()
     {
         {
@@ -1591,7 +1630,7 @@ void Algorithms::TestAll() {
     // NonModifying::Find_First_Of();
     // NonModifying::Find_End();
     // NonModifying::Adjacent_Find();
-    NonModifying::Adjacent_Find_0();
+    // NonModifying::Adjacent_Find_0();
     // NonModifying::Adjacent_Find_1();
     // NonModifying::Equal();
     // NonModifying::Equal_Applications(); // is_palindrom
@@ -1611,6 +1650,8 @@ void Algorithms::TestAll() {
     // ModifyingSequenceOperations::Fill();
     // ModifyingSequenceOperations::Fill_N();
     // ModifyingSequenceOperations::Transform();
+    ModifyingSequenceOperations::Transform_Reduce_1();
+    // ModifyingSequenceOperations::Transform_Reduce_2();
     // ModifyingSequenceOperations::Reverse();
     // ModifyingSequenceOperations::Reverse_Copy();
     // ModifyingSequenceOperations::Remove();
