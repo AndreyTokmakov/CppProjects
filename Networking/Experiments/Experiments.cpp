@@ -110,7 +110,7 @@ void BindTwoSocketsOnTheSamePort()
     constexpr std::string_view hostAddress { "0.0.0.0" };
 
     const sockaddr_in server { PF_INET, htons(port) ,
-                               {.s_addr = inet_addr(hostAddress.data())}};
+                               {.s_addr = inet_addr(hostAddress.data())}, {}};
 
     if (SOCKET_ERROR == ::bind(udpSocket, reinterpret_cast<const sockaddr*>(&server), sizeof(server))) {
         std::cerr << "Failed to bind UDP socket. Error = " << errno << std::endl;

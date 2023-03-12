@@ -67,6 +67,8 @@ namespace Templates {
     void PassingFunction_to_ClassTemplateArgument()
     {
         auto logged_add = make_logger(add, "Add");
+
+        [[maybe_unused]]
         auto result = logged_add(2, 3);
     }
 }

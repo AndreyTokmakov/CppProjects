@@ -1,11 +1,13 @@
 /**============================================================================
 Name        : ContikiDCube.cpp
-Created on  : 15.09.2021
-Author      : Tokmakov Andrei
+Created on  : 12.03.2023
+Author      : Andrei Tokmakov
 Version     : 1.0
 Copyright   : Your copyright notice
-Description : TContikiDCube
+Description : ContikiDCube
 ============================================================================**/
+
+#include "ContikiDCube.h"
 
 #include <iostream>
 #include <string_view>
@@ -16,7 +18,7 @@ namespace {
     constexpr size_t TB_NUM_PATTERN = 1;
 }
 
-namespace Configuration
+namespace ContikiDCube::Configuration
 {
     struct Pattern
     {
@@ -33,7 +35,7 @@ namespace Configuration
         uint32_t aperiodic_upper_bound { 0 };           // Upper bound for aperiodic traffic in ms
         uint32_t aperiodic_lower_bound { 0 };           // Lower bound for aperiodic traffic in ms
 #if 1 //CONTIKI_TARGET_NRF52840
-        uint32_t delta;                                  // The delay bound delta in ms
+        uint32_t delta {};                              // The delay bound delta in ms
 #endif
     };
 
@@ -81,7 +83,7 @@ namespace Configuration
         // Config cfg {1, {{1, {0,1}, {0, 0, 1}}}};
 
         Config cfg {3,{
-            {2,
+                {2,
                  {3,0,0,0},
                  {1,2,4,0},
                  8,
@@ -97,14 +99,7 @@ namespace Configuration
     }
 }
 
-
-int main([[maybe_unused]] int argc,
-         [[maybe_unused]] char** argv)
+void ContikiDCube::TestAll([[maybe_unused]] const std::vector<std::string_view>& params)
 {
-    const std::vector<std::string_view> args(argv + 1, argv + argc);
-
     Configuration::Test();
-
-
-    return EXIT_SUCCESS;
 }

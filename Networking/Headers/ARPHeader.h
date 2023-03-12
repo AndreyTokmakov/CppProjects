@@ -13,7 +13,7 @@ Description : ARPHeader
 #include "EthernetHeader.h"
 
 
-struct ARPHeader final
+struct ARPHeader
 {
     uint16_t htype {0};
     uint16_t ptype {0};

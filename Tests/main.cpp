@@ -538,7 +538,7 @@ namespace InvokeTest {
 
     struct DataBuilder: BuilderBase<DataBuilder>
     {
-        void getInfo(int v) {
+        void getInfo(int) {
             std::cout << "Data::getInfo()" << std::endl;
         }
 
@@ -569,6 +569,8 @@ namespace InvokeTest {
     void Test()
     {
         DataBuilder data;
+
+        [[maybe_unused]]
         auto obj = data.getSelf();
 
         // data.invokeInfo();
@@ -612,29 +614,270 @@ namespace Memory
         Parent{}.make()->info();
         Child{}.make()->info();
     }
-}
 
-namespace RTTI
-{
-    class NonPolyBase {};
 
-    class NonPolyDerived : public NonPolyBase {};
+    struct ARPHeader
+    {
+        uint16_t htype {0};
+        uint16_t ptype {0};
+        uint8_t  hlen {};
+        uint8_t  plen {};
+        uint16_t opcode {0};
+        uint8_t  sender_mac[6]{};
+        uint32_t sender_ip {};
+        uint8_t  target_mac[6]{};
+        uint32_t target_ip {};
 
-    class PolyBase {
     public:
-        virtual ~PolyBase() = default;
-    };
+        [[nodiscard]]
+        bool SetSenderMACAddress([[maybe_unused]] std::string_view mac) const {
+            return htype != 0;
+        }
 
-    class PolyDerived : public PolyBase {};
+    } __attribute__((packed, aligned(1))) ;
 
-    void test() {
-        NonPolyBase* p1 = new NonPolyDerived{};
-        PolyBase* p2 = new PolyDerived{};
 
-        std::cout << typeid(*p1).name() << '\n';
-        std::cout << typeid(*p2).name() << '\n';
+    void initMemset(ARPHeader* arpHeader)
+    {
+        memset(arpHeader, 0, sizeof(ARPHeader));
+    }
+
+    void initAssignment(ARPHeader* arpHeader)
+    {
+        *arpHeader = {};
+    }
+
+    void Memset_vs_Assignment()
+    {
+        std::unique_ptr<ARPHeader> apr { std::make_unique<ARPHeader>()};
+
+        apr->target_ip = 12345;
+        std::cout << apr->target_ip << std::endl;
+
+        // initMemset(apr.get());
+        initAssignment(apr.get());
+
+        std::cout << apr->target_ip << std::endl;
+    }
+
+    void Memset_vs_Assignment_Perf()
+    {
+        std::unique_ptr<ARPHeader> apr { std::make_unique<ARPHeader>()};
+        constexpr size_t iterCount {1'000'00};
+
+        {
+            auto start = std::chrono::high_resolution_clock::now();
+
+            for (size_t i = 0; i < iterCount; ++i)
+            {
+                for (int n = 0; n < iterCount; n++)
+                {
+                    initAssignment(apr.get());
+                    // initMemset(apr.get());
+                }
+            }
+
+            auto end = std::chrono::high_resolution_clock::now();
+            auto duration = std::chrono::duration_cast<std::chrono::microseconds>(end - start).count();
+            std::cout << "Result: " << duration << " microseconds" << std::endl;
+        }
+
+        {
+            auto start = std::chrono::high_resolution_clock::now();
+
+            for (size_t i = 0; i < iterCount; ++i)
+            {
+                for (int n = 0; n < iterCount; n++)
+                {
+                    // initAssignment(apr.get());
+                    initMemset(apr.get());
+                }
+            }
+
+            auto end = std::chrono::high_resolution_clock::now();
+            auto duration = std::chrono::duration_cast<std::chrono::microseconds>(end - start).count();
+            std::cout << "Result: " << duration << " microseconds" << std::endl;
+        }
     }
 }
+
+
+namespace Decorator {
+    struct Money {
+        uint64_t value{};
+    };
+
+    template<typename T>
+    requires std::is_arithmetic_v<T>
+    Money operator*(Money money, T factor) {
+        return Money{static_cast<uint64_t>( money.value * factor )};
+    }
+
+    constexpr Money operator+(Money lhs, Money rhs) noexcept {
+        return Money{lhs.value + rhs.value};
+    }
+
+    std::ostream &operator<<(std::ostream &stream, const Money &money) {
+        stream << money.value;
+        return stream;
+    }
+
+
+    class Item {
+    public:
+        template<typename T>
+        explicit Item(T item): pimpl{std::make_unique<Model < T>>(std::move(item))} {
+        }
+
+        Item(const Item &item) : pimpl{item.pimpl->clone()} {
+        }
+
+        Item &operator=(Item const &item) {
+            pimpl = item.pimpl->clone();
+            return *this;
+        }
+
+        ~Item() = default;
+
+        Item(Item &&) = default;
+
+        Item &operator=(Item &&item) = default;
+
+        [[nodiscard]]
+        Money price() const {
+            return pimpl->price();
+        }
+
+    private:
+        struct IConcept {
+            virtual ~IConcept() = default;
+
+            [[nodiscard]]
+            virtual Money price() const = 0;
+
+            [[nodiscard]]
+            virtual std::unique_ptr<IConcept> clone() const = 0;
+        };
+
+        template<typename T>
+        struct Model : public IConcept {
+            explicit Model(T const &item) : item{item} {}
+
+            explicit Model(T &&item) : item{std::move(item)} {}
+
+            [[nodiscard]]
+            Money price() const override {
+                return item.price();
+            }
+
+            [[nodiscard]]
+            std::unique_ptr<IConcept> clone() const override {
+                return std::make_unique<Model<T>>(*this);
+            }
+
+            T item;
+        };
+
+        std::unique_ptr<IConcept> pimpl;
+    };
+
+    template<typename T>
+    concept PricedItem = requires(T item) {
+        { item.price() } -> std::same_as<Money>;
+    };
+
+    template<int taxRate, PricedItem Item>
+    class Taxed : private Item {
+    public:
+        template<typename... Args>
+        explicit Taxed(Args &&... args): Item{std::forward<Args>(args)...} {
+            // ....
+        }
+
+        [[nodiscard]]
+        Money price() const override {
+            return Item::price() * (1.0 + (taxRate / 100));
+        }
+    };
+
+
+    template<int discount, PricedItem Item>
+    class Discounted {
+    public:
+        template<typename... Args>
+        explicit Discounted(Args &&... args): item{std::forward<Args>(args)...} {
+            // ....
+        }
+
+        [[nodiscard]]
+        Money price() const {
+            return item.price() * (1.0 - (discount / 100));
+        }
+
+    private:
+        Item item;
+    };
+
+
+    class ConferenceTicket
+    {
+    public:
+        ConferenceTicket( std::string name, Money price ):
+                name_{ std::move(name) } , price_{ price } {
+            // ....
+        }
+
+        [[nodiscard]]
+        const std::string& name() const {
+            return name_;
+        }
+
+        [[nodiscard]]
+        Money price() const {
+            return price_;
+        }
+
+    private:
+        std::string name_;
+        Money price_;
+    };
+
+
+    class CppBook
+    {
+    public:
+        CppBook( std::string name, Money price )
+                : name_{ std::move(name) }
+                , price_{ price }
+        {}
+
+        [[nodiscard]]
+        std::string const& name() const {
+            return name_;
+        }
+
+        [[nodiscard]] Money price() const {
+            return price_;
+        }
+
+    private:
+        std::string name_;
+        Money price_;
+    };
+
+
+    void test()
+    {
+        Taxed<15,Discounted<20,ConferenceTicket>> item{ "Core C++", Money{499} };
+        Taxed<16,Discounted<21,ConferenceTicket>> item2{ "Core C++", Money{499} };
+        Taxed<17,Discounted<22,CppBook>> item3{ "Core C++", Money{499} };
+
+        Money const totalPrice = item.price();  // Results in 459.08
+        Money const totalPrice2 = item2.price();
+        Money const totalPrice3 = item3.price();
+    }
+}
+
 
 int main([[maybe_unused]] int argc,
          [[maybe_unused]] char** argv)
@@ -667,6 +910,8 @@ int main([[maybe_unused]] int argc,
     // Performance::TestAll();
 
     // Memory::test();
+    // Memory::Memset_vs_Assignment();
+    Memory::Memset_vs_Assignment_Perf();
 
     // OOP::MoveTest();
     // OOP::TestClassConversationOperatorCall();
@@ -674,9 +919,6 @@ int main([[maybe_unused]] int argc,
     // InvokeTest::Test();
     // Templates::Test();
     // Templates::Test2();
-
-
-    RTTI::test();
 
 
     // StaticInitObject a, b;

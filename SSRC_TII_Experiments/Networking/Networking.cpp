@@ -250,6 +250,7 @@ namespace Networking::WiFi
         memset(icmpHeader, 0, sizeof(ICMPHeader));
 
         constexpr uint16_t payloadLength = sizeof(IPv4Header) + 8;
+        [[maybe_unused]]
         uint8_t payload[payloadLength] {};
         const uint16_t icmpType = 8, icmpCode = 0;
 
@@ -410,7 +411,8 @@ namespace Networking::Batman
         uint16_t tvlvLength  { 0 };
     };
 
-    void InspectPacket(const uint8_t* packet, ssize_t size)
+    void InspectPacket(const uint8_t* packet,
+                       [[maybe_unused]] ssize_t size)
     {
         constexpr uint16_t batmanProtocolId = 1347;
 

@@ -290,6 +290,7 @@ namespace PunycodeFinal
             return inRange<0, 127>((0xF0 | ((u32>>18) & 0x07)), (0x80 | ((u32>>12) & 0x3F)),
                                    (0x80 | ((u32>>6) & 0x3F)), (0x80 | (u32&0x3F)));
         }
+        return true; // FIXME
     }
 
     bool isASCIIStrUTF32(const std::u32string& input, size_t from, size_t until) noexcept {

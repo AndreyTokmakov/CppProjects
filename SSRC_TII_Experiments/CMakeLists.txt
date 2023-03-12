@@ -35,7 +35,7 @@ add_executable(SSRC_TII_Experiments MACOSX_BUNDLE
         LibSerial/LibSerial.h LibPcap/LibPcapExperiments.cpp
         LibPcap/LibPcapExperiments.h
         LibPcap/config.h
-        WiFi/WiFiScanner.cpp WiFi/WiFiScanner.h)
+        WiFi/WiFiScanner.cpp WiFi/WiFiScanner.h ContikiDCube/ContikiDCube.cpp ContikiDCube/ContikiDCube.h)
 
 # Link pthread library
 TARGET_LINK_LIBRARIES(SSRC_TII_Experiments

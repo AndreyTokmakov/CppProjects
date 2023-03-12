@@ -143,6 +143,8 @@ namespace Tests
 
         initEthernetHeader(reinterpret_cast<EthernetHeader*>(packet), device,
                            "01:01:00:00:00:01");
+
+        [[maybe_unused]]
         IPv4Header* ipHeader = initIPv4Header(reinterpret_cast<IPv4Header*>((packet + sizeof(EthernetHeader))),
                                               IPPROTO_ICMP,
                                               sizeof(IPv4Header) + sizeof(ICMPHeader),

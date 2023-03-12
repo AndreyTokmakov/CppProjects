@@ -52,6 +52,7 @@ namespace UDPClient
 
         for (int i = 0; i < 1000; ++i)
         {
+            [[maybe_unused]]
             const long bytesSend = ::sendto(socketHandle, data.data(), data.size(), MSG_CONFIRM,
                                             reinterpret_cast<const sockaddr *>(&server), sizeof(sockaddr_in));
 

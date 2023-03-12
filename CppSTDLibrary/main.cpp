@@ -227,7 +227,7 @@ int main(int argc, char** argv)
 
     // Files::ReadFile();
     // AggregateInitialization::TestAll();
-    Algorithms::TestAll();
+    // Algorithms::TestAll();
     // Alignment::TestAll();
     // Any::TestAll();
     // Arrays::TestAll();
@@ -263,7 +263,7 @@ int main(int argc, char** argv)
     // Memory::TestAll();
     // Metaprogramming::TestAll();
     // NumericLimits::TestAll();
-    // ObjectOrientedProgramming::TestAll();
+    ObjectOrientedProgramming::TestAll();
     // Optional::TestAll();
     // PolymorphicMemoryResources::TestAll();
     // Random::TestAll();

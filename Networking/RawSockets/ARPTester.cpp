@@ -80,7 +80,7 @@ namespace ARPTester
     }
 
     ARPHeader* initARPHeader_Reply(ARPHeader* arpHeader,
-                                   const sockaddr_ll& device,
+                                   [[maybe_unused]] const sockaddr_ll& device,
                                    std::string_view targetMac)
     {
         memset(arpHeader, 0, sizeof(ARPHeader));

@@ -36,7 +36,7 @@ int main([[maybe_unused]] int argc,
     // DNS_ResponseParser::TestAll();
 
     // RawSocketsTests::TestAll();
-    ARPTester::TestAll();
+    // ARPTester::TestAll();
     // BuildAndSendPacketsTests::TestAll();
 
     // Experiments::Tests();
@@ -46,7 +46,7 @@ int main([[maybe_unused]] int argc,
 
     // Networking::Utilities::TestAll();
 
-    // TestWebServer::Tests();
+    TestWebServer::Tests();
 
     return EXIT_SUCCESS;
 }

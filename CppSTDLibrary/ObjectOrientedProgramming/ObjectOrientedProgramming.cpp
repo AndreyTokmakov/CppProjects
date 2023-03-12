@@ -2756,7 +2756,36 @@ namespace ObjectOrientedProgramming::InheritanceAndTemplates {
 }
 
 
-//////////////////////////////// TESTS /////////////////////////////////////////////
+namespace ObjectOrientedProgramming::Ref_Qualifiers_Class_Members
+{
+    struct MyClass
+    {
+        void operation() & {
+            std::cout << "mutable l-value\n";
+        }
+        void operation() && {
+            std::cout << "pr_value or xvalue\n";
+        }
+        void operation() const & {
+            std::cout << "const l-value\n";
+        }
+    };
+
+    void test()
+    {
+        const MyClass objConst;
+        MyClass obj;
+
+        objConst.operation();       // const l-value
+
+        obj.operation();            // mutable l-value
+
+        std::move(obj).operation(); // pr_value or xvalue
+
+        MyClass{}.operation();      // pr_value or xvalue
+    }
+}
+
 
 void ObjectOrientedProgramming::TestAll()
 {
@@ -2844,7 +2873,7 @@ void ObjectOrientedProgramming::TestAll()
 	// Static_Members_Inheritance::Test();
 	// AggregateInitialization::InitTest();
 
-	Classes_Structs_Sizeof_Tests::StructSizeTest();
+	// Classes_Structs_Sizeof_Tests::StructSizeTest();
 	// Classes_Structs_Sizeof_Tests::VitrtInheritanceTests::Test();
 
 	// LocalClasses::Test();
@@ -2864,4 +2893,6 @@ void ObjectOrientedProgramming::TestAll()
 	// PolymorthismWithoutPointers::Test();
 
 	// InheritanceAndTemplates::Test();
+
+    Ref_Qualifiers_Class_Members::test();
 }

@@ -1495,7 +1495,7 @@ namespace Punycode::Decoding
 
 
         // char buf[64] {};
-        size_t prev { start }, length {0};
+        [[maybe_unused]]  size_t prev { start }, length {0};
         for (size_t size = last, idx = start; idx < size; ++idx) {
             if ('.' == input[idx])
             {

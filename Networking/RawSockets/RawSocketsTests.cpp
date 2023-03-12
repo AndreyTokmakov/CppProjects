@@ -147,6 +147,6 @@ void RawSocketsTests::TestAll()
     if (-1 == socket)
         std::cout << "Failed to create socket. Error = " << errno << std::endl;
 
+    [[maybe_unused]]
     sockaddr_ll device = yResolveInterfaceAddress("enp6s0");
-
 };

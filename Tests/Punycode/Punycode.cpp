@@ -357,7 +357,9 @@ namespace Punycode
                 (input.data() + start), (input.data() + last));
 
         for (auto& c: s32) {
-            //c = std::tolower(c);
+
+            [[maybe_unused]]
+            auto ch = std::tolower(c);
             //std::cout << to_utf8(std::u32string(1, c)) << std::endl;
         }
 

@@ -86,10 +86,8 @@ namespace TestWebServer
 
         [[nodiscard]]
         bool Bind(std::string_view host, unsigned short port) const {
-            sockaddr_in server{PF_INET, htons(port)};
-            server.sin_addr.s_addr = inet_addr(host.data());
-
-            if (SOCKET_ERROR == ::bind(serverSocket, reinterpret_cast<sockaddr *>(&server), sizeof(server))) {
+            sockaddr_in server { PF_INET, htons(port),{.s_addr = inet_addr(host.data())}, {}};
+            if (SOCKET_ERROR == ::bind(serverSocket, reinterpret_cast<sockaddr*>(&server), sizeof(server))) {
                 std::cout << "Failed to bind socket. Error = " << errno << std::endl;
                 return false;
             }
@@ -223,6 +221,7 @@ namespace TestWebServer
                 HandleConnectionEvent(&readset);
                 HandleReceiveDataEvent(&readset);
             }
+            return true;
         }
     };
 

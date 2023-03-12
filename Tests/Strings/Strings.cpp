@@ -14,7 +14,7 @@ Description : Strings texts and experiments
 
 namespace Strings
 {
-    constexpr size_t getLength(const char* str)
+    constexpr size_t getLength(const char*)
     {
         return 2;
     }
@@ -71,7 +71,8 @@ namespace Strings::Literals
         return l1.mLen == l2.mLen;
     }
 
-    void Insert(Literal str, size_t len) {}
+    void Insert([[maybe_unused]] Literal str,
+                [[maybe_unused]] size_t len) {}
 
     void Test()
     {

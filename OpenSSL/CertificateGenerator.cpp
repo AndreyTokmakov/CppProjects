@@ -476,7 +476,8 @@ namespace {
 
     int dh_key_size = 1024;
 
-    void * generateDhParamThread(std::string_view filePath)
+    [[maybe_unused]]
+    void *generateDhParamThread(std::string_view filePath)
     {
 
         int g=2;//dh parameters

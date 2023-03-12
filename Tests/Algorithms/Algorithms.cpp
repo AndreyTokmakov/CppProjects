@@ -152,7 +152,7 @@ namespace Algorithms
     Given inputs (vector<int> &ships, int n) print the least amount of moves it takes to make all ships contain equal
     amounts of cargo. Print -1 if it’s not possible'
     */
-    int calcMinMoves(const std::vector<int> &ships, int n)
+    int calcMinMoves(const std::vector<int> &ships, [[maybe_unused]] int n)
     {
         const int unitsTotal = std::accumulate(ships.cbegin(), ships.cend(), 0);
         if (unitsTotal % 2)

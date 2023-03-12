@@ -151,7 +151,8 @@ namespace StringUtils::Tests
         std::cout << to_utf8(utf32)  << std::endl;
         std::cout << sizeof(utf32.front())  << std::endl;
 
-       const char32_t* pts = utf32.data();
+        [[maybe_unused]]
+        const char32_t* pts = utf32.data();
     }
 
     void Build_U32_String_Manualy()

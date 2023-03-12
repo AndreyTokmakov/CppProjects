@@ -244,9 +244,9 @@ namespace DesignPatterns::Strategy_Text
 
     struct ListStrategy
     {
-        virtual void add_list_item(std::ostringstream& oss, const std::string& item) { };
-        virtual void start(std::ostringstream& oss) { };
-        virtual void end(std::ostringstream& oss) { };
+        virtual void add_list_item(std::ostringstream&, const std::string&) { };
+        virtual void start(std::ostringstream&) { };
+        virtual void end(std::ostringstream&) { };
 
         virtual ~ListStrategy() = default;
     };
@@ -915,7 +915,7 @@ namespace DesignPatterns::Builder
             std::cout << "User::User(const User&)" << std::endl;
         }
 
-        User& operator=(const User& u)
+        User& operator=(const User&)
         {
             std::cout << "User operator=(const User& u)" << std::endl;
             //
@@ -930,7 +930,7 @@ namespace DesignPatterns::Builder
             std::cout << "User::User(User&&)" << std::endl;
         }
 
-        User& operator=(User&& u) noexcept
+        User& operator=(User&&) noexcept
         {
             std::cout << "User operator=(User&& u) noexcept" << std::endl;
             //

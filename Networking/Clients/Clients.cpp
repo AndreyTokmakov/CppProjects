@@ -39,10 +39,7 @@ namespace ClientsTests
             return;
         }
 
-        sockaddr_in server { PF_INET, htons(port), {} };
-        server.sin_addr.s_addr = inet_addr(host.data());
-
-        // Connect to server.
+        const sockaddr_in server {PF_INET, htons(port), {.s_addr = inet_addr(host.data())}, {}};
         std::cout << "Connecting to server..." << std::endl;
         int error = ::connect(socket, (sockaddr*)&server, sizeof(server));
         if (error == SOCKET_ERROR) {
@@ -120,10 +117,7 @@ namespace HTTP {
             return;
         }
 
-        sockaddr_in server{ PF_INET , htons(port) };
-        server.sin_addr.s_addr = inet_addr(host.data());
-
-        std::cout << "Connecting to server. . . ";
+        const sockaddr_in server {PF_INET, htons(port), {.s_addr = inet_addr(host.data())}, {}};
         int error = ::connect(socket, (sockaddr*)&server, sizeof(server));
         if (error == SOCKET_ERROR) {
             std::cout << "Failed. Error =  " << errno << std::endl;
@@ -216,7 +210,7 @@ namespace Clients::ClickHouse
             return;
         }
 
-        const sockaddr_in server { PF_INET, htons(port) , {.s_addr = inet_addr(host.data())}};
+        const sockaddr_in server { PF_INET, htons(port) , {.s_addr = inet_addr(host.data())}, {}};
 
         std::cout << "Connecting to server..." << std::endl;
         int error = ::connect(socket, (sockaddr*)&server, sizeof(server));
@@ -258,7 +252,7 @@ namespace Clients::ClickHouse
             return;
         }
 
-        const sockaddr_in server { PF_INET, htons(port) , {.s_addr = inet_addr(host.data())} };
+        const sockaddr_in server {PF_INET, htons(port), {.s_addr = inet_addr(host.data())}, {}};
 
         std::cout << "Connecting to server..." << std::endl;
         int error = ::connect(socket, (sockaddr*)&server, sizeof(server));
@@ -308,7 +302,7 @@ namespace Clients::ClickHouse
             return;
         }
 
-        const sockaddr_in server { PF_INET, htons(port) , {.s_addr = inet_addr(host.data())}};
+        const sockaddr_in server { PF_INET, htons(port),{.s_addr = inet_addr(host.data())}, {}};
 
         std::cout << "Connecting to server..." << std::endl;
         int error = ::connect(socket, (sockaddr*)&server, sizeof(server));
