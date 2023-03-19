@@ -321,6 +321,7 @@ namespace Observer::Parsons
 
 void ObserverBasic_Test();    /// ObserverBasic.cpp
 void SubjectObserver_Test();  /// ObserverSubject.cpp
+void LambdaObserverTest();    /// LambdaObserverTest.cpp
 
 void Observer::TestAll()
 {
@@ -330,5 +331,7 @@ void Observer::TestAll()
 
     // ObserverBasic_Test();
 
-    SubjectObserver_Test();
+    // SubjectObserver_Test();
+
+    LambdaObserverTest();
 }

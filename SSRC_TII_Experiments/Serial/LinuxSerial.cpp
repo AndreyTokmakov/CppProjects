@@ -29,7 +29,7 @@ namespace Tests
 
         // Write some ASCII data
         serialPort.Write("ps axf");
-        serialPort.SetTimeout(1000); // Block when reading for 1000ms
+        // serialPort.SetTimeout(1000); // Block when reading for 1000ms
 
         // Read some data back (will block until at least 1 byte is received due to the SetTimeout(-1) call above)
         std::string readData;

@@ -396,9 +396,57 @@ namespace Literals::SimpleExample
     }
 }
 
+
+namespace Literals::SimpleExample_2
+{
+    namespace file_size_literals
+    {
+        unsigned long long operator""_KiB(unsigned long long value)
+        {
+            return value * 1'024;
+        }
+
+        unsigned long long operator""_MiB(unsigned long long value)
+        {
+            return value * 1'024 * 1_KiB;
+        }
+    }
+
+    void Test()
+    {
+
+        using namespace file_size_literals;
+
+        std::cout << 10_KiB << std::endl;
+        std::cout << 22_MiB << std::endl;
+    }
+}
+
+
+namespace Literals::Degrees2Radians
+{
+    // used as conversion from degrees (input param) to radians (returned output)
+    constexpr long double operator""_deg_to_rad(long double deg)
+    {
+        long double radians = deg * std::numbers::pi_v<long double> / 180;
+        return radians;
+    }
+
+
+    void Test()
+    {
+        double x_rad = 90.0_deg_to_rad;
+        std::cout << std::fixed << x_rad << '\n';
+
+    }
+}
+
 void Literals::TestAll()
 {
-    SimpleExample::Test();
+    // SimpleExample::Test();
+    // SimpleExample_2::Test();
+
+    Degrees2Radians::Test();
 
 	// Custom_Literals_Tests::Test();
 	// Custom_Literals_Tests::Test2();

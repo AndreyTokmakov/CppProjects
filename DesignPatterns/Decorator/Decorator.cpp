@@ -10,6 +10,8 @@ Description : Decorator src
 
 #include "Decorator.h"
 #include "ShapeDecorator.h"
+#include "MoneyTaxesDecoratorOne.h"
+#include "MoneyTaxesDecoratorTwo.h"
 
 #include <iostream>
 #include <memory>
@@ -69,5 +71,8 @@ void Decorator::Test()
 	obj.operation();
     */
 
-    ShapeDecorator::Test();
+    // ShapeDecorator::Test();
+
+    // MoneyTaxesDecoratorOne::Test();
+    MoneyTaxesDecoratorTwo::Test();
 }

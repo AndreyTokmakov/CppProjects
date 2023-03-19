@@ -76,9 +76,9 @@ int main([[maybe_unused]] int argc,
     // ThreadPoolLimited::TestAll();
 
     // Threads::TEST_ALL();
-    // JThreads::TEST_ALL();
+    JThreads::TEST_ALL();
 
-    PerformanceExperiments::TestAll();
+    // PerformanceExperiments::TestAll();
 
     return EXIT_SUCCESS;
 }

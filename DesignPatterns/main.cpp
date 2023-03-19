@@ -87,14 +87,14 @@ int main([[maybe_unused]]  int argc,
     // Interpreter::Test();
     // Mediator::TestAll();
     // Memento::TestAll();
-    // Observer::TestAll();
+    Observer::TestAll();
     // State::TestAll();
     // TemplateMethod::TestAll();
     // Visitor::test();
     /// NULL OBJECT
 
     /** C++ IDIOMS: **/
-    CRTP::Test();
+    // CRTP::Test();
     // TypeErasure::Test();
     // RAII::Test();
     // CopyAndSwap::TEST_ALL();   ---- TESTs

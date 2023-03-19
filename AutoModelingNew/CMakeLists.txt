@@ -9,7 +9,7 @@ include_directories(/home/andtokm/DiskS/ProjectsUbuntu/third_party/Eigen/Eigen)
 
 find_package(VTK COMPONENTS
         vtkCommonColor
-        vtkCommonCore
+
         vtkCommonDataModel
         vtkFiltersCore
         vtkIOParallel

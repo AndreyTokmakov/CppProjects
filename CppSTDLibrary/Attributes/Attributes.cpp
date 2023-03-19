@@ -226,9 +226,9 @@ namespace Attributes:: Deprecated { //[[deprecated]]
     }
 }
 
-namespace Attributes::NoUniqueAddress
-{
-    struct Empty {}; // empty class
+namespace Attributes::NoUniqueAddress {
+    struct Empty {
+    }; // empty class
 
     struct X {
         int i;
@@ -250,8 +250,7 @@ namespace Attributes::NoUniqueAddress
         [[no_unique_address]] Empty e1, e2;
     };
 
-    void Test()
-    {
+    void Test() {
         // the size of any object of empty class type is at least 1
         static_assert(sizeof(Empty) >= 1);
 
@@ -271,10 +270,77 @@ namespace Attributes::NoUniqueAddress
         // c[0] and the other with c[1]
         std::cout << "sizeof(W) == 2 is " << (sizeof(W) == 2) << '\n';
     }
+
+    //--------------------------------------------------------------
+
+    template<typename T, typename Deleter>
+    class UniquePtrBad {
+        T *pointer = nullptr;
+        Deleter deleter {};
+
+    public:
+        /** Some logic **/
+
+        ~UniquePtrBad() {
+            deleter(pointer);
+        }
+    };
+
+    template<typename T, typename Deleter>
+    class UniquePtrGood {
+        T *pointer = nullptr;
+
+        [[no_unique_address]]
+        Deleter deleter {};
+
+    public:
+        /** Some logic **/
+
+        ~UniquePtrGood() {
+            deleter(pointer);
+        }
+    };
+
+    template<typename T>
+    struct Deleter {
+        void operator()(T *ptr) {
+            delete ptr;
+        }
+    };
+
+    template<typename T>
+    struct DeleterNotEmpty {
+        int value {0};
+
+        void operator()(T *ptr) {
+            delete ptr;
+        }
+    };
+
+
+    void Test2()
+    {
+        using Type = std::string;
+        using Deleter = Deleter<Type>;
+        using DeleterNotEmpty = DeleterNotEmpty<Type>;
+
+        UniquePtrBad<Type, Deleter> ptrBad1;
+        UniquePtrBad<Type, DeleterNotEmpty> ptrBad2;
+
+        UniquePtrGood<Type, Deleter> ptrGood1;
+        UniquePtrGood<Type, DeleterNotEmpty> ptrGood2;
+
+        static_assert(sizeof(ptrBad1) == 2 * sizeof(Type*));
+        static_assert(sizeof(ptrBad2) == 2 * sizeof(Type*));
+
+        static_assert(sizeof(ptrGood1) == sizeof(Type*));     /// <--- Here is the profit
+        static_assert(sizeof(ptrGood2) == 2 * sizeof(Type*));
+    }
 }
 
 
-void Attributes::TestAll() {
+void Attributes::TestAll()
+{
 
     // Fallthrough::Fallthrough_Test();
 
@@ -293,4 +359,5 @@ void Attributes::TestAll() {
     // Deprecated::Enum();
 
     NoUniqueAddress::Test();
+    NoUniqueAddress::Test2();
 };

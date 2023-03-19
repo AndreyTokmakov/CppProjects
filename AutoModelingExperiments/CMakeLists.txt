@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.20)
+cmake_minimum_required(VERSION 3.21)
 project(AutoModelingExperiments)
 
 set(CMAKE_CXX_STANDARD 23)
@@ -6,7 +6,7 @@ SET(CMAKE_C_FLAGS_RELEASE "${CMAKE_C_FLAGS_RELEASE} -pthread")
 
 find_package(VTK COMPONENTS
         vtkCommonColor
-        vtkCommonCore
+        vtkCommonCore4
         vtkCommonDataModel
         vtkFiltersCore
         vtkIOParallel
@@ -88,7 +88,7 @@ add_executable(AutoModelingExperiments
         TreatmentPlan/TreatmentPlan.cpp
         TreatmentPlan/TreatmentPlan_Tests.cpp
         TreatmentPlan/TreatmentPlan_UnitTests.cpp
-        Preprocessing.cpp Preprocessing.h)
+        Preprocessing.cpp Preprocessing.h main.cpp main.cpp)
 
 target_link_libraries(AutoModelingExperiments PRIVATE ${VTK_LIBRARIES})
 vtk_module_autoinit(TARGETS AutoModelingExperiments MODULES ${VTK_LIBRARIES})

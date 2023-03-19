@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.20)
 project(VTK_Experiments)
 
-set(CMAKE_CXX_STANDARD 23)
+# set(CMAKE_CXX_STANDARD 23)
 SET(CMAKE_C_FLAGS_RELEASE "${CMAKE_C_FLAGS_RELEASE} -pthread")
 
 include_directories(/home/andtokm/DiskS/ProjectsUbuntu/third_party/Eigen/Eigen)
@@ -65,7 +65,7 @@ find_package(Boost REQUIRED COMPONENTS
 
 add_executable(VTK_Experiments
         main.cpp
-        Utilities/Utilities.cpp Utilities/Utilities.h Types.cpp Types.h Intersection/IntersectionTests.cpp Intersection/IntersectionTests.h VtkMatrices/VtkMatrices.cpp VtkMatrices/VtkMatrices.h VtkHeaders.h Curvatures/Curvatures.cpp Curvatures/Curvatures.h Text/Text.cpp Text/Text.h OBBTreeTests/OBBTreeTests.cpp OBBTreeTests/OBBTreeTests.h BoundsAndBorders/BoundsAndBorders.cpp BoundsAndBorders/BoundsAndBorders.h CovnexHull/CovnexHull.cpp CovnexHull/CovnexHull.h Holes/Holes.cpp Holes/Holes.h Lines/Lines.cpp Lines/Lines.h Edges/Edges.cpp Edges/Edges.h Isosurface/Isosurface.cpp Isosurface/Isosurface.h Cutters/Cutters.cpp Cutters/Cutters.h Splitter/Splitter.cpp Splitter/Splitter.h TestsAndExperiments/TestsAndExperiments.cpp TestsAndExperiments/TestsAndExperiments.h Distances/Distances.cpp Distances/Distances.h GeometricFigures/GeometricFigures.cpp GeometricFigures/GeometricFigures.h Rotation/Rotation.cpp Rotation/Rotation.h Objects_Geometry/PointsAndLines.cpp Objects_Geometry/PointsAndLines.h)
+        Utilities/Utilities.cpp Utilities/Utilities.h Types.cpp Types.h Intersection/IntersectionTests.cpp Intersection/IntersectionTests.h VtkMatrices/VtkMatrices.cpp VtkMatrices/VtkMatrices.h VtkHeaders.h Curvatures/Curvatures.cpp Curvatures/Curvatures.h Text/Text.cpp Text/Text.h OBBTreeTests/OBBTreeTests.cpp OBBTreeTests/OBBTreeTests.h BoundsAndBorders/BoundsAndBorders.cpp BoundsAndBorders/BoundsAndBorders.h CovnexHull/CovnexHull.cpp CovnexHull/CovnexHull.h Holes/Holes.cpp Holes/Holes.h Lines/Lines.cpp Lines/Lines.h Edges/Edges.cpp Edges/Edges.h Isosurface/Isosurface.cpp Isosurface/Isosurface.h Cutters/Cutters.cpp Cutters/Cutters.h Splitter/Splitter.cpp Splitter/Splitter.h TestsAndExperiments/TestsAndExperiments.cpp TestsAndExperiments/TestsAndExperiments.h Distances/Distances.cpp Distances/Distances.h GeometricFigures/GeometricFigures.cpp GeometricFigures/GeometricFigures.h Rotation/Rotation.cpp Rotation/Rotation.h Objects_Geometry/PointsAndLines.cpp Objects_Geometry/PointsAndLines.h main.cpp)
 
 target_link_libraries(VTK_Experiments PRIVATE ${VTK_LIBRARIES})
 vtk_module_autoinit(TARGETS VTK_Experiments MODULES ${VTK_LIBRARIES})

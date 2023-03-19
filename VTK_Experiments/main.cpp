@@ -9,7 +9,7 @@
 
 #include <string_view>
 #include <vector>
-#include <vtkParametricSpline.h>
+// #include <vtkParametricSpline.h>
 
 #include "VtkHeaders.h"
 #include "Intersection/IntersectionTests.h"

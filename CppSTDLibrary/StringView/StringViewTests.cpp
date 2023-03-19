@@ -257,7 +257,15 @@ namespace StringView::Tests {
 		std::cout << s1 << std::endl;
 		std::cout << s2 << std::endl;
 	}
+
+    void Contains()
+    {
+        std::string_view text { "123_456_789" };
+
+        std::cout << std::boolalpha << text.contains("456") << std::endl;
+    }
 }
+
 
 void StringView::TestAll() {
 	// Create();
@@ -268,6 +276,8 @@ void StringView::TestAll() {
 	// ToString();
 	// ReturnSrting();
 
+    Tests::Contains();
+
 	// Various_Tests();
 
 	// GlobalConstVar();
@@ -277,7 +287,7 @@ void StringView::TestAll() {
 
 	// Tests::Test_Append();
 
-	const std::string rootFolder { R"(/home/andtokm/mlpack/tests/mlpack/src/data/)" };
-	const std::string filePath{ rootFolder  + "  "};
+	// const std::string rootFolder { R"(/home/andtokm/mlpack/tests/mlpack/src/data/)" };
+	// const std::string filePath{ rootFolder  + "  "};
 
 }

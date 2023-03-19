@@ -29,7 +29,7 @@ add_executable(Networking MACOSX_BUNDLE
         Headers/ICMPHeader.h
         Experiments/Experiments.cpp Experiments/Experiments.h
         NetLink/NetLink.cpp NetLink/NetLink.h
-        Utilities/Utilities.cpp Utilities/Utilities.h RawSockets/BuildAndSendPacketsTests.cpp RawSockets/BuildAndSendPacketsTests.h Servers/TestWebServer.cpp Servers/TestWebServer.h Headers/ICMPHeader.h Experiments/UtilitiesTests.cpp Experiments/UtilitiesTests.h Clients/UDPClient.cpp Clients/UDPClient.h RawSockets/ARPTester.cpp RawSockets/ARPTester.h Headers/ARPHeader.h)
+        Utilities/Utilities.cpp Utilities/Utilities.h RawSockets/BuildAndSendPacketsTests.cpp RawSockets/BuildAndSendPacketsTests.h Servers/TestWebServer.cpp Servers/TestWebServer.h Headers/ICMPHeader.h Experiments/UtilitiesTests.cpp Experiments/UtilitiesTests.h Clients/UDPClient.cpp Clients/UDPClient.h RawSockets/ARPTester.cpp RawSockets/ARPTester.h Headers/ARPHeader.h Servers/SimpleServerSelect.cpp Servers/SimpleServerSelect.h Servers/SocketTCPServer.cpp Servers/SocketTCPServer.h)
 
  # Link phread library
 TARGET_LINK_LIBRARIES(Networking pthread)

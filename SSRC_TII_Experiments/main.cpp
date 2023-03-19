@@ -24,12 +24,12 @@ int main([[maybe_unused]] int argc,
 {
     const std::vector<std::string_view> args(argv + 1, argv + argc);
 
-    Networking::TestAll();
+    // Networking::TestAll();
 
     // LibPcapExperiments::TestAll();
     // WiFiScanner::TestAll();
 
-    // LinuxSerial::TestAll();
+    LinuxSerial::TestAll();
     // LibSerial::TestAll();
 
     return EXIT_SUCCESS;

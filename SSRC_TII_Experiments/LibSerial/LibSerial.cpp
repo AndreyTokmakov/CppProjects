@@ -33,18 +33,19 @@ namespace LibSerialTests
         // my_serial_stream.Bit(LibSerial::StopBits::STOP_BITS_1);
 
         // You can easily write strings.
-        std::string cmd = "pwd";
-        my_serial_stream << cmd << std::endl ;
+        std::string cmd = "ls -lar\n";
+        my_serial_stream << cmd;
 
         // Read a whole array of data from the serial port.
-        const int BUFFER_SIZE = 256;
-        char buffer[BUFFER_SIZE];
+        constexpr uint32_t BUFFER_SIZE = 256;
+        char buffer[BUFFER_SIZE] {};
 
-        my_serial_stream.read(buffer, BUFFER_SIZE);
-        std::cout << buffer << std::endl;
+        for (int i = 0; i < 10; ++i)
+        {
+            my_serial_stream.read(buffer, BUFFER_SIZE);
+            std::cout << buffer;
+        }
 
-        my_serial_stream.read(buffer, BUFFER_SIZE);
-        std::cout << buffer << std::endl;
 
         my_serial_stream.Close();
         std::cout << "Closed\n";

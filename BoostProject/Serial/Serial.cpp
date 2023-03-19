@@ -17,7 +17,6 @@ Description : C++ serial
 #include <string>
 #include <thread>
 
-
 #include "Serial.h"
 
 namespace Serial
@@ -97,7 +96,7 @@ namespace Serial
         void openSerialPort(const std::string &device)
         {
             m_port.open(device);
-            m_port.set_option(asio::serial_port::baud_rate(9600));
+            m_port.set_option(asio::serial_port::baud_rate(115200));
             readLine();
         }
 
@@ -140,6 +139,8 @@ namespace Serial
                 value = std::min(64U, (value >> 4) + 1); // map 0-1023 to 1-64
                 std::string boxes;
                 boxes.assign(value, graphicDiamond);
+
+                // FIXME: Performance
                 std::cout << rowCol(12, 10) + graphicCharSet + boxes + normalCharSet + clearEol;
             }
 
@@ -154,9 +155,52 @@ namespace Serial
         int m_charCount{};
     };
 
+    void getConsoleInput(Service &svc)
+    {
+        static const int CTRL_C = 3;
+
+        while (true)
+        {
+            int c = getchar();
+            if (c == CTRL_C)
+            {
+                break;
+            }
+
+            svc.input(static_cast<char>(c));
+        }
+    }
+
 }
 
 void Serial::TestAll()
 {
+    try
+    {
+        asio::io_context ctx;
+        Service svc(ctx);
+        svc.openSerialPort("/dev/ttyUSB0");
 
+        std::thread thread(
+                [&svc]
+                {
+                    getConsoleInput(svc);
+                    svc.stop();
+                });
+
+        ctx.run();
+        thread.join();
+    }
+    catch (const std::exception &bang)
+    {
+        std::cout << rowCol(24, 1);
+        std::cerr << bang.what() << '\n';
+    }
+    catch (...)
+    {
+        std::cout << rowCol(24, 1);
+        std::cerr << "Unknown error\n";
+    }
+
+    std::cout << rowCol(24, 1);
 }

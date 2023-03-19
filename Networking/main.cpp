@@ -22,7 +22,9 @@
 #include "Experiments/UtilitiesTests.h"
 #include "NetLink/NetLink.h"
 #include "Utilities/Utilities.h"
-#include "Servers//TestWebServer.h"
+#include "Servers/TestWebServer.h"
+#include "Servers/SimpleServerSelect.h"
+#include "Servers/SocketTCPServer.h"
 
 
 int main([[maybe_unused]] int argc,
@@ -46,7 +48,9 @@ int main([[maybe_unused]] int argc,
 
     // Networking::Utilities::TestAll();
 
-    TestWebServer::Tests();
+    // TestWebServer::Tests();
+    // SimpleServerSelect::Tests();
+    SocketTCPServer::Tests();
 
     return EXIT_SUCCESS;
 }

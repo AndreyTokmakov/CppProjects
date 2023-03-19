@@ -561,6 +561,51 @@ namespace Concepts::Custom_Concepts {
         }
 
     }
+
+    //-------------------------------------------------------------
+
+    struct Money
+    {
+        double value {};
+    };
+
+    template<typename T>
+    concept PricedItem = requires(T item) {
+        { item.price() } -> std::same_as<Money>;
+    };
+
+    template<int taxRate, PricedItem Item>
+    class Taxed : private Item {
+    public:
+        template<typename... Args>
+        explicit Taxed(Args&& ... args): Item {std::forward<Args>(args)...} {
+            /** .... **/
+        }
+
+        [[nodiscard]]
+        Money price() const {
+            return Item::price() * (1.0 + (taxRate / 100));
+        }
+    };
+
+    struct Ticket {
+        [[nodiscard]] Money price() const {
+            return Money {10.0f};
+        }
+    };
+
+    struct SomethingPriceless {
+        [[nodiscard]] std::string name() const {
+            return {"sdsdsd"};
+        }
+    };
+
+    void Check_BaseType_ContainsMethod_ReturnValue()
+    {
+        Taxed<10, Ticket> ticket {};
+
+        // Taxed<10, SomethingPriceless> bad {};
+    }
 };
 
 
@@ -850,6 +895,24 @@ namespace Concepts::Requires {
         _accept_char_only('c');
     }
 
+    //-----------------------------------------------------------------------------------------//
+
+    struct Money {
+        uint64_t value{};
+    };
+
+
+    template<typename T> requires std::is_arithmetic_v<T>
+    [[nodiscard]]
+    Money operator*(const Money& money, T factor) {
+        return Money {static_cast<uint64_t>( money.value * factor )};
+    }
+
+    void CheckOperatorArgument_IsArithmetic()
+    {
+        Money val {13};
+        auto res = val * 10;
+    }
 }
 
 
@@ -2138,6 +2201,8 @@ namespace Concepts::Regular
     }
 }
 
+
+
 void Concepts::TestAll()
 {
     // MovableTest();
@@ -2158,6 +2223,7 @@ void Concepts::TestAll()
     // Custom_Concepts::Custom_Concept_IsBaseOf();
     // Custom_Concepts::CheckCollection_HasPushBack_Method();
     // Custom_Concepts::CheckCollection_HasPushBack_Method_2(); // not working
+    // Custom_Concepts::Check_BaseType_ContainsMethod_ReturnValue();
 
 
 
@@ -2178,6 +2244,7 @@ void Concepts::TestAll()
     // Requires::Test_Destructor_NoExcept();
     // Requires::Complex_Concepts_Tests();
     // Requires::Test_is_Character();
+    Requires::CheckOperatorArgument_IsArithmetic();
 
 
     // Requires_With_Constexpr::Vector_vs_Array();
@@ -2208,8 +2275,8 @@ void Concepts::TestAll()
 
     // CheckFunctionOverloadExists::TryCallFunction();
 
-    Regular::IsSemirRegular();
-    Regular::IsRegular();
+    // Regular::IsSemirRegular();
+    // Regular::IsRegular();
 
 
     // Containers::Test();
@@ -2232,6 +2299,6 @@ void Concepts::TestAll()
     // Tests::LAMBDA_CONCEPT();
     // Tests::Printable_Test();
 
-    // Static_Asserts::TestClassMethods();
+    Static_Asserts::TestClassMethods();
     // Static_Asserts::StaticAssert_Conects();
 };

@@ -233,7 +233,7 @@ int main(int argc, char** argv)
     // Arrays::TestAll();
     // Asserts::TestAll();
     // Atomic::TestAll();
-    // Attributes::TestAll();
+    Attributes::TestAll();
     // Auto::TestAll();
     // BitSet::TestAll();
     // BitwiseOperation::TestAll();
@@ -263,7 +263,7 @@ int main(int argc, char** argv)
     // Memory::TestAll();
     // Metaprogramming::TestAll();
     // NumericLimits::TestAll();
-    ObjectOrientedProgramming::TestAll();
+    // ObjectOrientedProgramming::TestAll();
     // Optional::TestAll();
     // PolymorphicMemoryResources::TestAll();
     // Random::TestAll();

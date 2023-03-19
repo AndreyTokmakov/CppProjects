@@ -1017,16 +1017,27 @@ namespace Algorithms::ModifyingSequenceOperations {
         }
     }
 
-    void Copy_If() {
-        const auto is_even = [](int v) { return 0 == v % 2; };
-        std::vector<int> values{ 1,2,3,4,5,6,7,8,9,10 };
+    void Copy_If()
+    {
+        const std::vector<int> values { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 };
 
-        std::vector<int> dest(std::count_if(values.begin(), values.end(), is_even));
-        std::copy_if(values.begin(), values.end(), dest.begin(), is_even);
-        std::cout << dest << std::endl;
+        const auto is_even = [](int v) { return 0 == v % 2; };
+
+        {
+            std::vector<int> dst(std::count_if(values.begin(), values.end(), is_even));
+            std::copy_if(values.begin(), values.end(), dst.begin(), is_even);
+            std::cout << dst << std::endl;
+        }
+
+        {
+            std::vector<int> dst;
+            std::copy_if(values.begin(), values.end(),std::back_inserter(dst), is_even);
+            std::cout << dst << std::endl;
+        }
     }
 
-    void Copy_N() {
+    void Copy_N()
+    {
         std::string src = "1234567890", dst = "";
 
         std::cout << src << '\n';
@@ -1314,6 +1325,18 @@ namespace Algorithms::ModifyingSequenceOperations {
         for (std::vector<int>::iterator it = myvector.begin(); it != myvector.end(); ++it)
             std::cout << ' ' << *it;
         std::cout << '\n';
+    }
+
+    void Remove_Copy_If()
+    {
+        const std::vector<int> data {1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
+
+        {
+            std::vector<int> dst;
+            const auto is_even = [](int v) { return 0 == v % 2; };
+            std::remove_copy_if(data.begin(), data.end(), std::back_inserter(dst), is_even);
+            std::cout << dst << std::endl; // 1 3 5 7 9
+        }
     }
 
     void Unique() {
@@ -1650,7 +1673,7 @@ void Algorithms::TestAll() {
     // ModifyingSequenceOperations::Fill();
     // ModifyingSequenceOperations::Fill_N();
     // ModifyingSequenceOperations::Transform();
-    ModifyingSequenceOperations::Transform_Reduce_1();
+    // ModifyingSequenceOperations::Transform_Reduce_1();
     // ModifyingSequenceOperations::Transform_Reduce_2();
     // ModifyingSequenceOperations::Reverse();
     // ModifyingSequenceOperations::Reverse_Copy();
@@ -1658,6 +1681,7 @@ void Algorithms::TestAll() {
     // ModifyingSequenceOperations::Remove_SharedPtr();
     // ModifyingSequenceOperations::Remove_If();
     // ModifyingSequenceOperations::Remove_Copy();
+    ModifyingSequenceOperations::Remove_Copy_If();
     // ModifyingSequenceOperations::Rotate();
     // ModifyingSequenceOperations::Unique();
     // ModifyingSequenceOperations::UniqueCopy();

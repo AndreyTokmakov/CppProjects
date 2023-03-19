@@ -699,21 +699,38 @@ namespace Memory
             std::cout << "Result: " << duration << " microseconds" << std::endl;
         }
     }
+
+    void Double_Delete_Nullptr()
+    {
+        int* iPtr = new int(100500);
+
+        std::cout << *iPtr << " at " << iPtr << std::endl;
+
+        {
+            delete iPtr;
+            iPtr = nullptr;
+        }
+
+        delete iPtr;
+    }
 }
 
 
-namespace Decorator {
+namespace Decorator
+{
     struct Money {
         uint64_t value{};
     };
 
-    template<typename T>
-    requires std::is_arithmetic_v<T>
-    Money operator*(Money money, T factor) {
-        return Money{static_cast<uint64_t>( money.value * factor )};
+
+    template<typename T> requires std::is_arithmetic_v<T>
+    [[nodiscard]]
+    Money operator*(const Money& money, T factor) {
+        return Money {static_cast<uint64_t>( money.value * factor )};
     }
 
-    constexpr Money operator+(Money lhs, Money rhs) noexcept {
+    [[nodiscard]]
+    constexpr Money operator+(const Money& lhs, const Money& rhs) noexcept {
         return Money{lhs.value + rhs.value};
     }
 
@@ -723,63 +740,6 @@ namespace Decorator {
     }
 
 
-    class Item {
-    public:
-        template<typename T>
-        explicit Item(T item): pimpl{std::make_unique<Model < T>>(std::move(item))} {
-        }
-
-        Item(const Item &item) : pimpl{item.pimpl->clone()} {
-        }
-
-        Item &operator=(Item const &item) {
-            pimpl = item.pimpl->clone();
-            return *this;
-        }
-
-        ~Item() = default;
-
-        Item(Item &&) = default;
-
-        Item &operator=(Item &&item) = default;
-
-        [[nodiscard]]
-        Money price() const {
-            return pimpl->price();
-        }
-
-    private:
-        struct IConcept {
-            virtual ~IConcept() = default;
-
-            [[nodiscard]]
-            virtual Money price() const = 0;
-
-            [[nodiscard]]
-            virtual std::unique_ptr<IConcept> clone() const = 0;
-        };
-
-        template<typename T>
-        struct Model : public IConcept {
-            explicit Model(T const &item) : item{item} {}
-
-            explicit Model(T &&item) : item{std::move(item)} {}
-
-            [[nodiscard]]
-            Money price() const override {
-                return item.price();
-            }
-
-            [[nodiscard]]
-            std::unique_ptr<IConcept> clone() const override {
-                return std::make_unique<Model<T>>(*this);
-            }
-
-            T item;
-        };
-
-        std::unique_ptr<IConcept> pimpl;
-    };
 
     template<typename T>
     concept PricedItem = requires(T item) {
@@ -790,12 +750,12 @@ namespace Decorator {
     class Taxed : private Item {
     public:
         template<typename... Args>
-        explicit Taxed(Args &&... args): Item{std::forward<Args>(args)...} {
+        explicit Taxed(Args&& ... args): Item {std::forward<Args>(args)...} {
             // ....
         }
 
         [[nodiscard]]
-        Money price() const override {
+        Money price() const {
             return Item::price() * (1.0 + (taxRate / 100));
         }
     };
@@ -805,7 +765,7 @@ namespace Decorator {
     class Discounted {
     public:
         template<typename... Args>
-        explicit Discounted(Args &&... args): item{std::forward<Args>(args)...} {
+        explicit Discounted(Args&& ... args): item{std::forward<Args>(args)...} {
             // ....
         }
 
@@ -819,11 +779,9 @@ namespace Decorator {
     };
 
 
-    class ConferenceTicket
+    struct Ticket
     {
-    public:
-        ConferenceTicket( std::string name, Money price ):
-                name_{ std::move(name) } , price_{ price } {
+        Ticket(std::string name, Money price ): name_{ std::move(name) } , price_{ price } {
             // ....
         }
 
@@ -843,12 +801,9 @@ namespace Decorator {
     };
 
 
-    class CppBook
+    struct Book
     {
-    public:
-        CppBook( std::string name, Money price )
-                : name_{ std::move(name) }
-                , price_{ price }
+        Book(std::string name, Money price ): name_{ std::move(name) }, price_{ price }
         {}
 
         [[nodiscard]]
@@ -868,18 +823,74 @@ namespace Decorator {
 
     void test()
     {
-        Taxed<15,Discounted<20,ConferenceTicket>> item{ "Core C++", Money{499} };
-        Taxed<16,Discounted<21,ConferenceTicket>> item2{ "Core C++", Money{499} };
-        Taxed<17,Discounted<22,CppBook>> item3{ "Core C++", Money{499} };
+        Taxed<15, Discounted<20, Ticket>> item1 { "Core C++", Money{499} };
+        Taxed<16, Discounted<21, Ticket>> item2 { "Core C++", Money{499} };
+        Taxed<17, Discounted<22, Book>> item3 { "Core C++", Money{499} };
 
-        Money const totalPrice = item.price();  // Results in 459.08
-        Money const totalPrice2 = item2.price();
-        Money const totalPrice3 = item3.price();
+        const Money totalPrice1 = item1.price();  // Results in 459.08
+        const Money totalPrice2 = item2.price();
+        const Money totalPrice3 = item3.price();
+    }
+}
+
+namespace Date_Time
+{
+    using namespace std::chrono;
+
+    std::ostream& operator<<(std::ostream& stream,
+                             const std::chrono::year_month_day& ymd)
+    {
+        stream << static_cast<int>(ymd.year()) << " / "
+               << static_cast<unsigned>(ymd.month()) << " / "
+               << static_cast<unsigned>(ymd.day()) ;
+
+        return stream;
+    }
+
+    void ChronoTests()
+    {
+        using namespace std::chrono;
+        using namespace std::chrono_literals;
+
+        std::chrono::year_month_day startDay = std::chrono::day {1} / 2 / 2023;
+        std::cout << startDay << std::endl;
+
+
+        std::chrono::year_month_day d2 { year {2023}, month {3}, day{14}};
+        std::cout << d2 << std::endl;
+
+        /*
+        for (auto d = startDay; d.month() == startDay.month(); d += std::chrono::months{1}) {
+            std::cout << d << '\n';
+        }*/
+    }
+
+    void Test2()
+    {
+        std::cout << "USA switching to summer time on "
+                  << year_month_day{2023y/March/Sunday[2]} << "\n";
+        std::cout << "Europe switching to summer time on "
+                  << year_month_day{2023y/March/Sunday[last]} << "\n\n";
+
+    }
+}
+
+namespace file_size_literals
+{
+    unsigned long long operator""_KiB(unsigned long long value)
+    {
+        return value * 1'024;
+    }
+
+    unsigned long long operator""_MiB(unsigned long long value)
+    {
+        return value * 1'024 * 1_KiB;
     }
 }
 
 
 int main([[maybe_unused]] int argc,
+
          [[maybe_unused]] char** argv)
 {
     const std::vector<std::string_view> args(argv + 1, argv + argc);
@@ -911,7 +922,8 @@ int main([[maybe_unused]] int argc,
 
     // Memory::test();
     // Memory::Memset_vs_Assignment();
-    Memory::Memset_vs_Assignment_Perf();
+    // Memory::Memset_vs_Assignment_Perf();
+    // Memory::Double_Delete_Nullptr();
 
     // OOP::MoveTest();
     // OOP::TestClassConversationOperatorCall();
@@ -919,6 +931,9 @@ int main([[maybe_unused]] int argc,
     // InvokeTest::Test();
     // Templates::Test();
     // Templates::Test2();
+    
+    /// Date_Time::ChronoTests();
+    Date_Time::Test2();
 
 
     // StaticInitObject a, b;

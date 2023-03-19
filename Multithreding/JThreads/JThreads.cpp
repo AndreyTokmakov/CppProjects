@@ -22,6 +22,7 @@
 #include <semaphore>
 #include <future>         // std::async, std::future
 #include <chrono>
+#include <syncstream>
 
 #include "JThreads.h"
 
@@ -141,12 +142,33 @@ namespace JThreads
         sleepy_worker.join();
         Debug("Sleepy worker joined");
     }
+
+
+    void Request_Stop_2()
+    {
+        bool done = false;
+
+        std::jthread job([&done] (std::stop_token token) {
+            while (!token.stop_requested()) {
+                std::this_thread::sleep_for(std::chrono::milliseconds(100));
+            }
+            done = true;
+        });
+
+        std::osyncstream {std::cout} << "Tread stopped: " << std::boolalpha << done << std::endl;
+
+        job.request_stop();
+        std::this_thread::sleep_for(std::chrono::milliseconds(250));
+
+        std::osyncstream {std::cout} << "Tread stopped: " << std::boolalpha << done << std::endl;
+    }
 }
 
 void JThreads::TEST_ALL()
 {
     // Start_and_Stop_Thread();
-    Stop_Thread_2();
+    // Stop_Thread_2();
 
     // Request_Stop();
+    Request_Stop_2();
 }
