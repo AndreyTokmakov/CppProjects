@@ -233,13 +233,13 @@ int main(int argc, char** argv)
     // Arrays::TestAll();
     // Asserts::TestAll();
     // Atomic::TestAll();
-    Attributes::TestAll();
+    // Attributes::TestAll();
     // Auto::TestAll();
     // BitSet::TestAll();
     // BitwiseOperation::TestAll();
     // Byte::TestAll();
     // Chrono::TestAll();
-    // Concepts::TestAll();
+    Concepts::TestAll();
     // ConsoleInOut::TestAll();
     // CopyElision::TestAll();
     // DateAndTime::TestAll();

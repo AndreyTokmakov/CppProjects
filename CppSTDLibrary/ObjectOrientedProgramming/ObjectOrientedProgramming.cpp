@@ -2368,7 +2368,7 @@ namespace ObjectOrientedProgramming::Virtual_Constructor_DestructorTests {
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-namespace ObjectOrientedProgramming::Destructor_Tests {
+namespace ObjectOrientedProgramming::Destructors {
 
 	class Object {
 	private:
@@ -2411,6 +2411,62 @@ namespace ObjectOrientedProgramming::Destructor_Tests {
 			objects[i].~Object();
 		operator delete[](memBlock);
 	}
+
+    namespace MultipleDestructors::before_cpp_17
+    {
+        class Wrapper_Trivial {
+        public:
+            // ~Wrapper() = default;
+            ~Wrapper_Trivial() {
+                std::cout << "Trivial\n";
+            }
+        };
+
+        class Wrapper_NonTrivial {
+        public:
+            ~Wrapper_NonTrivial() {
+                std::cout << "Not trivial\n";
+            }
+        };
+
+        template<typename T>
+        class Wrapper : public std::conditional_t<std::is_trivially_destructible_v<T>, Wrapper_Trivial, Wrapper_NonTrivial> {
+            T t;
+        };
+
+        void test() {
+            Wrapper<int> wrappedInt;
+            Wrapper<std::string> wrappedString;
+        }
+    }
+
+    namespace MultipleDestructors::after_cpp_17
+    {
+        template<typename T>
+        class Wrapper {
+            T t;
+        public:
+            ~Wrapper() requires (!std::is_trivially_destructible_v<T>) {
+                std::cout << "Not trivial\n";
+            }
+
+            // ~Wrapper() = default;
+            ~Wrapper() {
+                std::cout << "Trivial\n";
+            }
+        };
+
+        void test() {
+            Wrapper<int> wrappedInt;
+            Wrapper<std::string> wrappedString;
+        }
+    }
+
+    void MultipleDestructorsTests()
+    {
+        MultipleDestructors::before_cpp_17::test();
+        MultipleDestructors::after_cpp_17::test();
+    }
 }
 
 
@@ -2826,7 +2882,14 @@ void ObjectOrientedProgramming::TestAll()
 	// TestUseVirtualFuncsDestructor::Test();
 
 
-	// ******************************** OVERLOAD & OVERRIDE: *********************************//
+    // ******************************** DESTRUCTORS ********************************* //
+
+    // Destructors::Call_Destructor_Manually();
+    Destructors::Call_Destructor_Manually_NewPlacement();
+    // Destructors::MultipleDestructorsTests();
+
+
+    // ******************************** OVERLOAD & OVERRIDE: *********************************//
 
 	// Overloaded_Methods_InDerivedClass::Test();
 	// Overloaded_Methods_InDerivedClass::Test_AccessHidenMethods();
@@ -2842,10 +2905,6 @@ void ObjectOrientedProgramming::TestAll()
 
 	// ClassVariables::ClassInlineVariables();
 
-
-	
-	// Destructor_Tests::Call_Destructor_Manually();
-	// Destructor_Tests::Call_Destructor_Manually_NewPlacement();
 
 	// PureVirtualException::Test();
 	// PureVirtualException::Test1();
@@ -2894,5 +2953,5 @@ void ObjectOrientedProgramming::TestAll()
 
 	// InheritanceAndTemplates::Test();
 
-    Ref_Qualifiers_Class_Members::test();
+    // Ref_Qualifiers_Class_Members::test();
 }

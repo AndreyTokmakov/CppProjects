@@ -165,6 +165,58 @@ namespace std {
     };
 }
 
+
+namespace Concepts::STDConcepts
+{
+    // copyable
+
+    struct NonMovable {
+        NonMovable() = default;
+        ~NonMovable() = default;
+
+        NonMovable(const NonMovable&) = default;
+        NonMovable& operator=(const NonMovable&) = default;
+
+        NonMovable(NonMovable&&) = delete;
+        NonMovable& operator=(NonMovable&&) = delete;
+    };
+
+    struct NonCopyableType {
+        NonCopyableType() = default;
+        ~NonCopyableType() = default;
+
+        NonCopyableType(const NonCopyableType&) = default;
+        NonCopyableType& operator=(const NonCopyableType&) = default;
+
+        NonCopyableType(NonCopyableType&&) = delete;
+        NonCopyableType& operator=(NonCopyableType&&) = delete;
+    };
+
+    struct CopyableType {
+        CopyableType() = default;
+        ~CopyableType() = default;
+
+        CopyableType(const CopyableType&) = default;
+        CopyableType& operator=(const CopyableType&) = default;
+
+        CopyableType(CopyableType&&) = default;
+        CopyableType& operator=(CopyableType&&) = default;
+    };
+
+
+    template <typename T>
+    void fun(T t) requires std::copyable<T> {
+        std::cout << typeid(t).name() << " is copyable\n";
+    }
+
+    void Copyable()
+    {
+        // fun(NonMovable{});         // ERROR
+        // fun(NonCopyableType{});    // ERROR
+        fun(CopyableType{});
+    }
+}
+
 namespace Concepts::Custom_Concepts {
 
     namespace Simple {
@@ -609,6 +661,42 @@ namespace Concepts::Custom_Concepts {
 };
 
 
+namespace Concepts::NestedConcepts
+{
+    struct Droid {
+        Droid clone(){
+            return Droid{};
+        }
+    };
+
+    struct DroidV2 {
+        Droid clones(){
+            return Droid{};
+        }
+    };
+
+    template<typename C>
+    concept Clonable = requires (C clonable) {
+        clonable.clone();
+        requires std::same_as<C, decltype(clonable.clone())>;
+    };
+
+    template<typename C>
+    concept Clonable2 = requires (C clonable) {
+        { clonable.clone() } -> std::same_as<C>;
+    };
+
+
+    void CheckMethodReturnType()
+    {
+        Clonable auto c = Droid{};
+        Clonable2 auto c2 = Droid{};
+
+        // NOTE: nested requirement 'same_as<C, decltype (clonable.clone())>' is not satisfied
+        // Clonable auto c3 = DroidV2{};
+        // Clonable2 auto c4 = DroidV2{};
+    }
+}
 
 namespace Concepts::Concepts_With_Auto
 {
@@ -2213,6 +2301,10 @@ void Concepts::TestAll()
 
     // It_Not_Void_Test();
 
+
+    // STDConcepts::Copyable();
+
+
     // Custom_Concepts::SimpleTest();
     // Custom_Concepts::IsPointer();
     // Custom_Concepts::Hashable_Test();
@@ -2244,13 +2336,17 @@ void Concepts::TestAll()
     // Requires::Test_Destructor_NoExcept();
     // Requires::Complex_Concepts_Tests();
     // Requires::Test_is_Character();
-    Requires::CheckOperatorArgument_IsArithmetic();
-
+    // Requires::CheckOperatorArgument_IsArithmetic();
 
     // Requires_With_Constexpr::Vector_vs_Array();
     // Requires_With_Constexpr::Constexpr_Check_Method();
-
     // RequiresSequence::Test1();
+
+
+
+    NestedConcepts::CheckMethodReturnType();
+
+
 
     // SFINAE::ChooseOverloadedFunc_WithRequire();
 

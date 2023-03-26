@@ -63,6 +63,7 @@
 #include "CopyElision_RVO/CopyElision_RVO.h"
 #include "Performance/Performance.h"
 #include "Memory/Memory.h"
+#include "BinaryAnalyzer/BinaryAnalyzer.h"
 
 
 
@@ -919,21 +920,26 @@ int main([[maybe_unused]] int argc,
     // StringUtils::TestAll();               // Encoding
     // Convertaion_UTF8_UTF32::TestAll();    // Encoding
     // Performance::TestAll();
+    // BinaryAnalyzer::TestAll();
+
 
     // Memory::test();
     // Memory::Memset_vs_Assignment();
     // Memory::Memset_vs_Assignment_Perf();
     // Memory::Double_Delete_Nullptr();
 
+
     // OOP::MoveTest();
     // OOP::TestClassConversationOperatorCall();
+
 
     // InvokeTest::Test();
     // Templates::Test();
     // Templates::Test2();
-    
-    /// Date_Time::ChronoTests();
-    Date_Time::Test2();
+
+
+    // Date_Time::ChronoTests();
+    // Date_Time::Test2();
 
 
     // StaticInitObject a, b;
