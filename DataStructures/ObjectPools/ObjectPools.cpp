@@ -433,6 +433,7 @@ namespace ObjectPools::GoodPools_Tests {
 		std::vector<pointer> available;
 
 		static constexpr size_type DEFAULT_CHUNK_SIZE { 5 };
+		static constexpr size_type GROWTH_STRATEGY { 2 };
 
 		size_type _new_block_size { DEFAULT_CHUNK_SIZE };
 		size_type _size { 0 };
@@ -449,7 +450,7 @@ namespace ObjectPools::GoodPools_Tests {
 			std::iota(std::begin(available), std::end(available), newBlock);
 
 			_capacity += _new_block_size;
-			_new_block_size *= 2;
+			_new_block_size *= GROWTH_STRATEGY;
 		}
 
 		// The allocator to use for allocating and deallocating chunks.
@@ -487,7 +488,7 @@ namespace ObjectPools::GoodPools_Tests {
 			size_t chunkSize{ DEFAULT_CHUNK_SIZE };
 			for (auto* chunk : pool) {
 				m_allocator.deallocate(chunk, chunkSize);
-				chunkSize *= 2;
+				chunkSize *= GROWTH_STRATEGY;
 			}
 		}
 
@@ -510,11 +511,11 @@ namespace ObjectPools::GoodPools_Tests {
 			}
 
 			// Get a free object.
-			pointer objectPtr { available.back() };
+			const pointer objectPtr { available.back() };
 
 			// Initialize, i.e. construct, an instance of T in an uninitialized block of memory
 			// using placement new, and perfectly forward any provided arguments to the constructor.
-			new(objectPtr) object_type { std::forward<Args>(args)... };
+			new (objectPtr) object_type { std::forward<Args>(args)... };
 
 			// Remove the object from the list of free objects.
 			available.pop_back();
@@ -524,11 +525,13 @@ namespace ObjectPools::GoodPools_Tests {
 			return std::unique_ptr<object_type, Deleter> { objectPtr, Deleter{this}};
 		}
 
-		size_type size() const noexcept {
+		[[nodiscard]]
+        size_type size() const noexcept {
 			return _size;
 		}
 
-		size_type capacity() const noexcept {
+		[[nodiscard]]
+        size_type capacity() const noexcept {
 			return _capacity;
 		}
 	};

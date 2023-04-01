@@ -27,6 +27,9 @@
 #include "Servers/SimpleServerSelect.h"
 #include "Servers/SocketTCPServer.h"
 #include "Servers/EPollTCPServer.h"
+#include "Servers/EPollTCPServerTwo.h"
+#include "Servers/EPollTCPServerEx.h"
+
 
 int main([[maybe_unused]] int argc,
          [[maybe_unused]] char** argv)
@@ -52,7 +55,9 @@ int main([[maybe_unused]] int argc,
     // TestWebServer::Tests();
     // SimpleServerSelect::Tests();
     // SocketTCPServer::Tests();
-    EPollTCPServer::Tests();
+    // EPollTCPServer::Tests();
+    // EPollTCPServerTwo::Tests();
+    EPollTCPServerEx::Tests();
 
     return EXIT_SUCCESS;
 }

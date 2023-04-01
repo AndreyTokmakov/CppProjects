@@ -889,12 +889,34 @@ namespace file_size_literals
     }
 }
 
+template<typename T, typename Deleter>
+struct Guard
+{
+    const T handle;
+    Deleter deleter;
+
+    explicit Guard(T v): handle {v} { }
+    explicit operator T() { return handle; }
+
+    ~Guard() {
+        deleter(handle);
+    }
+};
 
 int main([[maybe_unused]] int argc,
 
          [[maybe_unused]] char** argv)
 {
     const std::vector<std::string_view> args(argv + 1, argv + argc);
+
+    auto cleaner = [](int v){
+        std::cout << "CleanUp(" << v << ")" << std::endl;
+    };
+
+
+    int socket = 123;
+    Guard<int, decltype(cleaner)> c {socket};
+
 
     // Experiments::Test({20, 40, 60});
     // Multithreading::TestAll();

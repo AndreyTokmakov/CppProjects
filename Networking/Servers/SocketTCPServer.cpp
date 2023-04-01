@@ -16,27 +16,28 @@ Description : SocketTCPServer
 #include <arpa/inet.h>
 #include <netinet/in.h>
 
-#define INVALID_SOCKET (-1)
-#define SOCKET_ERROR   (-1)
-
 namespace SocketTCPServer
 {
+    constexpr int INVALID_SOCKET { -1 };
+    constexpr int SOCKET_ERROR { -1 };
 
-    struct SocketGuard {
+    struct SocketGuard
+    {
         int sock { INVALID_SOCKET };
 
         explicit SocketGuard(int s): sock {s} {
+
         }
 
         ~SocketGuard() {
-            std::cout << "Closing socket (" << sock  << ")\n";
+            // std::cout << "Closing socket (" << sock  << ")\n";
             ::close(sock);
         }
     };
 
     int Error(std::string_view text)
     {
-        std::cout << text << ". Error = " << errno << std::endl;
+        std::cerr << text << ". Error = " << errno << std::endl;
         return errno;
     }
 
@@ -57,7 +58,7 @@ namespace SocketTCPServer
             Error("Failed to bind socket");
         }
 
-        constexpr uint16_t backlog{10};
+        constexpr uint16_t backlog { 10 };
         if (SOCKET_ERROR == ::listen(socket, backlog)) {
             Error("Failed to Listen the socket.");
         }
