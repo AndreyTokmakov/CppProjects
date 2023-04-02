@@ -889,19 +889,6 @@ namespace file_size_literals
     }
 }
 
-template<typename T, typename Deleter>
-struct Guard
-{
-    const T handle;
-    Deleter deleter;
-
-    explicit Guard(T v): handle {v} { }
-    explicit operator T() { return handle; }
-
-    ~Guard() {
-        deleter(handle);
-    }
-};
 
 int main([[maybe_unused]] int argc,
 
@@ -909,13 +896,9 @@ int main([[maybe_unused]] int argc,
 {
     const std::vector<std::string_view> args(argv + 1, argv + argc);
 
-    auto cleaner = [](int v){
-        std::cout << "CleanUp(" << v << ")" << std::endl;
-    };
 
-
-    int socket = 123;
-    Guard<int, decltype(cleaner)> c {socket};
+    std::cout << sizeof(size_t) << std::endl;
+    std::cout << sizeof(uint32_t) << std::endl;
 
 
     // Experiments::Test({20, 40, 60});

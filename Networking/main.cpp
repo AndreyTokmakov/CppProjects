@@ -29,6 +29,7 @@
 #include "Servers/EPollTCPServer.h"
 #include "Servers/EPollTCPServerTwo.h"
 #include "Servers/EPollTCPServerEx.h"
+#include "Servers/EPollTCPServerDebug.h"
 
 
 int main([[maybe_unused]] int argc,
@@ -57,7 +58,8 @@ int main([[maybe_unused]] int argc,
     // SocketTCPServer::Tests();
     // EPollTCPServer::Tests();
     // EPollTCPServerTwo::Tests();
-    EPollTCPServerEx::Tests();
+    // EPollTCPServerEx::Tests();
+    EPollTCPServerDebug::Tests();
 
     return EXIT_SUCCESS;
 }
