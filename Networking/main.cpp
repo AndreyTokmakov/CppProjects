@@ -30,6 +30,7 @@
 #include "Servers/EPollTCPServerTwo.h"
 #include "Servers/EPollTCPServerEx.h"
 #include "Servers/EPollTCPServerDebug.h"
+#include "Servers/EPollTCPServerMultithreaded.h"
 
 
 int main([[maybe_unused]] int argc,
@@ -59,7 +60,8 @@ int main([[maybe_unused]] int argc,
     // EPollTCPServer::Tests();
     // EPollTCPServerTwo::Tests();
     // EPollTCPServerEx::Tests();
-    EPollTCPServerDebug::Tests();
+    // EPollTCPServerDebug::Tests();
+    EPollTCPServerMultithreaded::Tests();
 
     return EXIT_SUCCESS;
 }

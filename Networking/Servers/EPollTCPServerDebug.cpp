@@ -322,6 +322,10 @@ namespace EPollTCPServerDebug::New
                     {  // TODO: handle EPOLL_CTL_DEL
                         debug("Closing connection. Socket = ", clientSock);
                         ::close(clientSock);
+
+                        if (SOCKET_ERROR == epoll_ctl(epollFd, EPOLL_CTL_DEL, clientSock, nullptr)) {
+                            Error("***** ERROR *****: epoll_ctl() failed. (EPOLL_CTL_DEL)");
+                        }
                     }
                     else if (events & EPOLLIN)
                     {

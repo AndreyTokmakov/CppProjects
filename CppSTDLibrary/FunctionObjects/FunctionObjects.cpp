@@ -187,6 +187,41 @@ namespace FunctionObjects {
 	}
 }
 
+namespace FunctionObjects::FunctionPointers
+{
+    struct S
+    {
+        int value {1};
+
+        explicit S(int val): value {val} { std::cout << "S::S(" << value << ")" << std::endl; }
+        ~S() { std::cout << "S::~S()" << std::endl; }
+
+        [[nodiscard]] constexpr int getValueOne() { return value; }
+        [[nodiscard]] constexpr int getValueTwo() { return value * 2; }
+    };
+
+    void functionPointer_Type_Test()
+    {
+        /** Defining type **/
+        using fun_ptr_t = int (S::*)();
+        S s {1};
+
+        fun_ptr_t getValOne = &S::getValueOne;
+
+        {
+            auto v = (s.*getValOne)();
+            std::cout << v << std::endl;
+        }
+
+        getValOne = &S::getValueTwo;
+
+        {
+            auto v = (s.*getValOne)();
+            std::cout << v << std::endl;
+        }
+    }
+}
+
 namespace FunctionObjects::BindTests {
 
 	class Utilities {
@@ -760,8 +795,11 @@ namespace FunctionObjects::PassTounction {
 	}
 }
 
-void FunctionObjects::TestAll() {
+void FunctionObjects::TestAll()
+{
 	// Auto::Return_Type_Hint();
+
+    FunctionPointers::functionPointer_Type_Test();
 
 	// BindTests::FuncPtr_Tests();
 	// BindTests::Bind_Test_1();
@@ -801,7 +839,7 @@ void FunctionObjects::TestAll() {
 	// Function::Swap();
 	// Function::TargetType();
 	// Function::Lambda_To_Function();
-	Function::Function_VS_Lambda_Performance();
+	// Function::Function_VS_Lambda_Performance();
 
 	// PassTounction::PassLambdaAsInput();
 	// PassTounction::PassObject();

@@ -876,18 +876,6 @@ namespace Date_Time
     }
 }
 
-namespace file_size_literals
-{
-    unsigned long long operator""_KiB(unsigned long long value)
-    {
-        return value * 1'024;
-    }
-
-    unsigned long long operator""_MiB(unsigned long long value)
-    {
-        return value * 1'024 * 1_KiB;
-    }
-}
 
 
 int main([[maybe_unused]] int argc,
@@ -896,9 +884,6 @@ int main([[maybe_unused]] int argc,
 {
     const std::vector<std::string_view> args(argv + 1, argv + argc);
 
-
-    std::cout << sizeof(size_t) << std::endl;
-    std::cout << sizeof(uint32_t) << std::endl;
 
 
     // Experiments::Test({20, 40, 60});

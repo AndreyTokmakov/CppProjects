@@ -239,7 +239,7 @@ int main(int argc, char** argv)
     // BitwiseOperation::TestAll();
     // Byte::TestAll();
     // Chrono::TestAll();
-    Concepts::TestAll();
+    // Concepts::TestAll();
     // ConsoleInOut::TestAll();
     // CopyElision::TestAll();
     // DateAndTime::TestAll();
@@ -252,7 +252,7 @@ int main(int argc, char** argv)
     // FilesStreams::TestAll();
     // Filesystem::TestAll();
     // Format::TestAll();
-    // FunctionObjects::TestAll();
+    FunctionObjects::TestAll();
     // Hashing::TestAll();
     // Lambdas::TestAll();
     // Locale::TestAll();
