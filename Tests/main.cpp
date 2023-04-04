@@ -885,6 +885,12 @@ int main([[maybe_unused]] int argc,
     const std::vector<std::string_view> args(argv + 1, argv + argc);
 
 
+    std::string buf {"111111111111111111111111111111111111111111111111111111111111111"};
+
+    std::cout << buf.capacity() << " "  << buf.size() << std::endl;
+    buf.clear();
+    std::cout << buf.capacity() << " "  << buf.size() << std::endl;
+
 
     // Experiments::Test({20, 40, 60});
     // Multithreading::TestAll();

@@ -35,7 +35,6 @@ Description : EPollTCPServerDebug
 
 namespace EPollTCPServerMultithreaded::Utilities
 {
-
     template<typename T>
     auto addSpace(const T& arg) -> decltype(auto) {
         std::cout << ' ';
@@ -44,10 +43,8 @@ namespace EPollTCPServerMultithreaded::Utilities
 
     template<typename ...Args>
     void debug(Args&&... args) {
-#if 0
         std::cout << "DEBUG ";
         (std::cout << ... << addSpace(std::forward<Args>(args))) << std::endl;
-#endif
     }
 }
 
@@ -64,16 +61,9 @@ namespace EPollTCPServerMultithreaded
         static inline constexpr size_t   BUFFER_SIZE { 1024 * 4 };
 
         // TODO: Choose different value?
-        static inline constexpr uint32_t EPOLL_WAIT_TIMEOUT { 10 };  // epoll wait timeout 10 ms
+        static constexpr uint32_t kEpollWaitTime { 10 };  // epoll wait timeout 10 ms
         // TODO: Refactor ?
-        static inline constexpr uint32_t EVENTS_MAX { 1024 };    // epoll wait return max size
-
-        /** Maximum number of request handler workers: **/
-        static inline const size_t THREADS_COUNT { std::thread::hardware_concurrency() };
-
-        static inline const std::chrono::duration<int64_t, std::ratio<1, 1000>> QUEUE_TIMEOUT {
-                std::chrono::milliseconds(2000)
-        };
+        static constexpr uint32_t kMaxEvents { 1024 };    // epoll wait return max size
 
         using handleType = int32_t;
 
@@ -91,6 +81,12 @@ namespace EPollTCPServerMultithreaded
         std::atomic_bool run { true };
         std::vector<std::jthread> workers {};
 
+        /** Maximum number of request handler workers: **/
+        static inline const size_t THREADS_COUNT { std::thread::hardware_concurrency() };
+
+        static inline const std::chrono::duration<int64_t, std::ratio<1, 1000>> TIMEOUT {
+                std::chrono::milliseconds(2000)
+        };
 
         template<class Rep, class Period>
         bool wait_for_and_pop(handleType &task,
@@ -106,33 +102,13 @@ namespace EPollTCPServerMultithreaded
             return true;
         }
 
-        [[noreturn]]
-        void processRequest()
-        {
-            std::array<char, BUFFER_SIZE> buffer {};
-            ssize_t bytes {0}, total {0};
-            std::string message, reply;
-            handleType clientSock { INVALID_SOCKET };
-
-            while (run)
-            {
-                if (bool result = wait_for_and_pop(clientSock, QUEUE_TIMEOUT); result)
-                {
-                    message.clear();
-                    total = 0;
-
-                    while ((bytes = ::read(clientSock, buffer.data(), buffer.size())) > 0) {
-                        message.append(buffer.data(), bytes);
-                        total += bytes;
-                    }
-
-                    debug(total, "bytes received:", message, "Tid:", std::this_thread::get_id());
-
-                    if (0 != bytes) {
-                        reply.assign("Reply:" + message);
-                        bytes = ::send(clientSock, reply.data(), reply.length(), 0);
-                        debug(bytes, "bytes send");
-                    }
+        // TODO: Rename
+        void worker_thread() {
+            // TODO: Move 'handleClientRequest' here ?
+            handleType obj { -1 };
+            while (run) {
+                if (auto result = wait_for_and_pop(obj, TIMEOUT); result) {
+                    handleClientRequest(obj);
                 }
             }
         }
@@ -192,15 +168,41 @@ namespace EPollTCPServerMultithreaded
             return 0;
         }
 
+
+        // TODO: return True/False?
+        [[nodiscard]]
+        handleType handleClientRequest(handleType clientSock) const
+        {
+            std::array<char, BUFFER_SIZE> buffer {};
+            ssize_t bytes {0}, total {0};
+            std::string message, reply;
+
+            while ((bytes = ::read(clientSock, buffer.data(), buffer.size())) > 0) {
+                message.append(buffer.data(), bytes);
+                total += bytes;
+            }
+
+            debug(total, "bytes received:", message);
+
+            if (0 != bytes)
+            {
+                reply.assign("Reply:" + message);
+                bytes = ::send(clientSock, reply.data(), reply.length(), 0);
+                debug(bytes, "bytes send");
+            }
+
+            return 0;
+        }
+
         void eventsPoller()
         {
-            std::array<epoll_event, EVENTS_MAX> epollEvents {};
+            std::array<epoll_event, kMaxEvents> epollEvents {};
             auto [clientSock, events] = std::make_pair<int32_t, uint32_t>(0,0);
 
             while (true)
             {   // TODO: Check TimeOut for performance
                 // TODO: Check num != -1
-                const int num = epoll_wait(epollFd, epollEvents.data(), EVENTS_MAX, EPOLL_WAIT_TIMEOUT);
+                const int num = epoll_wait(epollFd, epollEvents.data(), kMaxEvents, kEpollWaitTime);
 
                 for (int i = 0; i < num; ++i) // TODO: Refactor
                 {
@@ -232,7 +234,7 @@ namespace EPollTCPServerMultithreaded
                 hostAddress { std::move(address) }, listenPort {port} {
             try {
                 for (size_t i = 0; i < THREADS_COUNT; ++i) {
-                    workers.emplace_back(&TCPServer::processRequest, this);
+                    workers.emplace_back(&TCPServer::worker_thread, this);
                 }
             } catch (...) {
                 run = false;
