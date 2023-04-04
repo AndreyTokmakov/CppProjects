@@ -29,6 +29,8 @@ Description : EPollTCPServerDebug
 #include <functional>
 #include <utility>
 #include <thread>
+#include <deque>
+#include <condition_variable>
 
 
 namespace EPollTCPServerMultithreaded::Utilities
@@ -45,6 +47,83 @@ namespace EPollTCPServerMultithreaded::Utilities
         (std::cout << ... << addSpace(std::forward<Args>(args))) << std::endl;
     }
 }
+
+namespace EPollTCPServerMultithreaded::Pool
+{
+    struct thread_pool
+    {
+        using data_type = int32_t;
+        mutable std::mutex mutex;
+        std::deque<data_type> queue;
+        std::condition_variable updated;
+        std::atomic_bool run { true };
+        std::vector<std::jthread> workers {};
+
+        /** Maximum number of request handler workers: **/
+        // static inline const size_t THREADS_COUNT { std::thread::hardware_concurrency() };
+        static inline const size_t THREADS_COUNT { 3 };
+
+        static inline const std::chrono::duration<int64_t, std::ratio<1, 1000>> TIMEOUT =
+                std::chrono::milliseconds(2000);
+
+    private:
+
+        template<class Rep, class Period>
+        bool wait_for_and_pop(data_type &task,
+                              const std::chrono::duration<Rep, Period> &timeout) noexcept {
+            {
+                std::unique_lock<std::mutex> lock(mutex);
+                if (!updated.wait_for(lock, timeout, [this] { return !queue.empty(); }))
+                    return false;
+                task = queue.front();
+                queue.pop_front();
+            }
+            updated.notify_all();
+            return true;
+        }
+
+    private:
+
+        void worker_thread()
+        {
+            data_type obj { -1 };
+            while (run) {
+                if (auto result = wait_for_and_pop(obj, TIMEOUT); result) {
+                    // task();
+                    // TODO: Handle event
+                }
+            }
+        }
+
+    public:
+        thread_pool()
+        {
+            try {
+                for (size_t i = 0; i < THREADS_COUNT; ++i) {
+                    workers.emplace_back(&thread_pool::worker_thread, this);
+                }
+            } catch (...) {
+                run = false;
+                throw;
+            }
+        }
+
+        ~thread_pool() {
+            run = false;
+        }
+
+        void submit(data_type new_value) noexcept
+        {
+            {
+                std::lock_guard<std::mutex> lock(mutex);
+                queue.push_back(new_value);
+            }
+            updated.notify_one();
+        }
+    };
+}
+
+
 
 namespace EPollTCPServerMultithreaded
 {
@@ -87,22 +166,58 @@ namespace EPollTCPServerMultithreaded
             return 0;
         }
 
-        // TODO: Rename to subscribe ?
-        static int32_t setEpollEvents(int efd, int op, int handle, uint32_t events)
+        // TODO: Rename to subscribe | return True/False??
+        [[nodiscard]]
+        int32_t addEpollEvent(int32_t handle, uint32_t events) const
         {
             epoll_event event { events, {.fd = handle} };
-            if (SOCKET_ERROR == epoll_ctl(efd, op, handle, &event)) {
-                return Error("epoll_ctl() failed. (F_SETFL && O_NONBLOCK)");
+            if (SOCKET_ERROR == ::epoll_ctl(epollFd, EPOLL_CTL_ADD, handle, &event)) {
+                return Error("epoll_ctl(EPOLL_CTL_ADD) failed");
             }
+            return 0;
+        }
+
+        // TODO: return True/False?
+        [[nodiscard]]
+        int32_t closeClientConnection(int32_t handle) const
+        {
+            if (SOCKET_ERROR == ::epoll_ctl(epollFd, EPOLL_CTL_DEL, handle, nullptr)) {
+                return Error("epoll_ctl(EPOLL_CTL_DEL) failed");
+            }
+            if (SOCKET_ERROR == ::close(handle)) {
+                return Error("close failed");
+            }
+            return 0;
+        }
+
+        // TODO: return True/False?
+        [[nodiscard]]
+        int32_t handleClientRequest(int32_t clientSock) const
+        {
+            std::array<char, BUFFER_SIZE> buffer {};
+            ssize_t bytes {0}, total {0};
+            std::string message, reply;
+
+            while ((bytes = ::read(clientSock, buffer.data(), buffer.size())) > 0) {
+                message.append(buffer.data(), bytes);
+                total += bytes;
+            }
+
+            debug(total, "bytes received:", message);
+
+            if (0 != bytes)
+            {
+                reply.assign("Reply:" + message);
+                bytes = ::send(clientSock, reply.data(), reply.length(), 0);
+                debug(bytes, "bytes send");
+            }
+
             return 0;
         }
 
         void eventsPoller()
         {
-            std::array<epoll_event, kMaxEvents>  epollEvents {};
-            std::array<char, BUFFER_SIZE> buffer {};
-            ssize_t bytes {0}, total {0};
-            std::string message, reply;
+            std::array<epoll_event, kMaxEvents> epollEvents {};
             auto [clientSock, events] = std::make_pair<int32_t, uint32_t>(0,0);
 
             while (true)
@@ -110,49 +225,23 @@ namespace EPollTCPServerMultithreaded
                 // TODO: Check num != -1
                 const int num = epoll_wait(epollFd, epollEvents.data(), kMaxEvents, kEpollWaitTime);
 
-                for (int i = 0; i < num; ++i)
-                {   // TODO: Refactor
+                for (int i = 0; i < num; ++i) // TODO: Refactor
+                {
                     clientSock = epollEvents[i].data.fd;
                     events = epollEvents[i].events;
 
-                    if ((events & EPOLLERR) || (events & EPOLLHUP))
-                    {   // TODO: handle EPOLL_CTL_DEL
+                    if ((events & EPOLLERR) || (events & EPOLLHUP)) {
                         debug("Closing connection. Socket = ", clientSock, "[epoll_wait error]");
-                        ::close(clientSock);
-
-                        if (SOCKET_ERROR == epoll_ctl(epollFd, EPOLL_CTL_DEL, clientSock, nullptr)) {
-                            Error("***** ERROR *****: epoll_ctl() failed. (EPOLL_CTL_DEL)");
-                        }
+                        closeClientConnection(clientSock);
                     }
-                    else if (events & EPOLLRDHUP)
-                    {  // TODO: handle EPOLL_CTL_DEL
+                    else if (events & EPOLLRDHUP) {
                         debug("Closing connection. Socket = ", clientSock);
-                        ::close(clientSock);
-
-                        if (SOCKET_ERROR == epoll_ctl(epollFd, EPOLL_CTL_DEL, clientSock, nullptr)) {
-                            Error("***** ERROR *****: epoll_ctl() failed. (EPOLL_CTL_DEL)");
-                        }
+                        closeClientConnection(clientSock);
                     }
-                    else if (events & EPOLLIN)
-                    {
-                        total = 0;
-                        message.clear();
-
-                        while ((bytes = ::read(clientSock, buffer.data(), buffer.size())) > 0) {
-                            message.append(buffer.data(), bytes);
-                            total += bytes;
-                        }
-
-                        debug(total, "bytes received: ", message, "| events: ", events);
-                        if (0 != bytes)
-                        {
-                            reply.assign("Reply:" + message);
-                            bytes = ::send(clientSock, reply.data(), reply.length(), 0);
-                            debug(bytes, "bytes send");
-                        }
+                    else if (events & EPOLLIN) {
+                        handleClientRequest(clientSock);
                     }
-                    else if (events & EPOLLOUT)
-                    {   // TODO: handle EPOLL_CTL_DEL
+                    else if (events & EPOLLOUT) {
                         debug("Socket(", clientSock, ") is valid for writing");
                     }
                 }
@@ -215,7 +304,7 @@ namespace EPollTCPServerMultithreaded
                     break;
 
                 // TODO: Need to use EPOLL_CTL_DEL on delete event
-                if (SOCKET_ERROR == setEpollEvents(epollFd, EPOLL_CTL_ADD, clientSocket, EPOLLIN | EPOLLRDHUP | EPOLLET)) {
+                if (SOCKET_ERROR == addEpollEvent(clientSocket, EPOLLIN | EPOLLRDHUP | EPOLLET)) {
                     // if something goes wrong, close this new socket
                     Error("epoll_ctl() failed");
                     break;
@@ -234,5 +323,5 @@ namespace EPollTCPServerMultithreaded
 
 void EPollTCPServerMultithreaded::Tests()
 {
-
+    startSerer();
 };
