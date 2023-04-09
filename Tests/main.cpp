@@ -15,6 +15,7 @@
 #include <fstream>
 #include <filesystem>
 #include <tuple>
+#include <ranges>
 
 #include <exception>
 #include <thread>
@@ -65,6 +66,8 @@
 #include "Memory/Memory.h"
 #include "BinaryAnalyzer/BinaryAnalyzer.h"
 
+// C++ 23:
+// #include <expected>
 
 
 namespace CurveCalcData {
@@ -877,6 +880,30 @@ namespace Date_Time
 }
 
 
+namespace NTTP
+{
+    template<auto Func>
+    struct PersonalBudget {
+        double compute(std::uint32_t amt) {
+            return Func(amt);
+        }
+    };
+
+    void test()
+    {
+
+        auto Savings1 = [](int amt) -> decltype(auto) {
+            return static_cast<double>(0.75*amt);
+        };
+
+        PersonalBudget<Savings1> Savingsbudget{};
+
+        auto savings = Savingsbudget.compute(2300);
+        std::cout << "Estimated Savings: " << savings << std::endl;
+
+    }
+}
+
 
 int main([[maybe_unused]] int argc,
 
@@ -884,13 +911,7 @@ int main([[maybe_unused]] int argc,
 {
     const std::vector<std::string_view> args(argv + 1, argv + argc);
 
-
-    std::string buf {"111111111111111111111111111111111111111111111111111111111111111"};
-
-    std::cout << buf.capacity() << " "  << buf.size() << std::endl;
-    buf.clear();
-    std::cout << buf.capacity() << " "  << buf.size() << std::endl;
-
+    NTTP::test();
 
     // Experiments::Test({20, 40, 60});
     // Multithreading::TestAll();

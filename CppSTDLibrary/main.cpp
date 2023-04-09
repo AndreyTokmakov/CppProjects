@@ -252,7 +252,7 @@ int main(int argc, char** argv)
     // FilesStreams::TestAll();
     // Filesystem::TestAll();
     // Format::TestAll();
-    FunctionObjects::TestAll();
+    // FunctionObjects::TestAll();
     // Hashing::TestAll();
     // Lambdas::TestAll();
     // Locale::TestAll();

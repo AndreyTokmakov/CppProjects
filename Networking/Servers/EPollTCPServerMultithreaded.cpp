@@ -16,7 +16,6 @@ Description : EPollTCPServerDebug
 #include <cerrno>
 #include <fcntl.h>
 #include <netinet/in.h>
-#include <cstdlib>
 #include <sys/epoll.h>
 #include <sys/socket.h>
 #include <unistd.h>
@@ -28,7 +27,6 @@ Description : EPollTCPServerDebug
 #include <memory>
 #include <functional>
 #include <utility>
-#include <thread>
 #include <deque>
 #include <condition_variable>
 
@@ -93,15 +91,14 @@ namespace EPollTCPServerMultithreaded
 
 
         template<class Rep, class Period>
-        bool wait_for_and_pop(handleType &task,
-                              const std::chrono::duration<Rep, Period> &timeout) noexcept {
-            {
-                std::unique_lock<std::mutex> lock(mutex);
-                if (!gotClientRequest.wait_for(lock, timeout, [this] { return !queue.empty(); }))
-                    return false;
-                task = queue.front();
-                queue.pop_front();
-            }
+        bool getClientRequestHandle(handleType &task,
+                                    const std::chrono::duration<Rep, Period> &timeout) noexcept {
+            std::unique_lock<std::mutex> lock { mutex };
+            if (!gotClientRequest.wait_for(lock, timeout, [this] { return !queue.empty(); }))
+                return false;
+            task = queue.front();
+            queue.pop_front();
+            lock.unlock();
             gotClientRequest.notify_all();
             return true;
         }
@@ -116,7 +113,7 @@ namespace EPollTCPServerMultithreaded
 
             while (run)
             {
-                if (bool result = wait_for_and_pop(clientSock, QUEUE_TIMEOUT); result)
+                if (bool result = getClientRequestHandle(clientSock, QUEUE_TIMEOUT); result)
                 {
                     message.clear();
                     total = 0;
@@ -195,7 +192,7 @@ namespace EPollTCPServerMultithreaded
         void eventsPoller()
         {
             std::array<epoll_event, EVENTS_MAX> epollEvents {};
-            auto [clientSock, events] = std::make_pair<int32_t, uint32_t>(0,0);
+            auto [clientSock, events] = std::make_pair<handleType, uint32_t>(0,0);
 
             while (true)
             {   // TODO: Check TimeOut for performance
@@ -244,6 +241,7 @@ namespace EPollTCPServerMultithreaded
             run = false;
         }
 
+        [[nodiscard("Do not forget to check result")]]
         bool createSockets()
         {
             epollFd = epoll_create1(0);
