@@ -28,7 +28,7 @@ namespace ReferenceWrapper
         explicit ReferenceWrapper(reference t) noexcept : m_ptr(&t) {
         }
 
-        operator reference () const noexcept {
+        operator reference() const noexcept {
             return *m_ptr;
         }
 

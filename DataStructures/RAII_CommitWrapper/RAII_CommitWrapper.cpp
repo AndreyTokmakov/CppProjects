@@ -11,8 +11,9 @@
 
 #include <iostream>
 #include <functional>
+#include <memory>
 
-namespace RAII_CommitWrapper
+namespace RAII_CommitWrapper::One
 {
     struct Connection {
         std::string name {};
@@ -87,7 +88,7 @@ namespace RAII_CommitWrapper
         // close();
     }
 
-    void Test1() {
+    void Test() {
         try {
             OpenConnection1();
         } catch (...) {
@@ -104,7 +105,54 @@ namespace RAII_CommitWrapper
     }
 }
 
-void RAII_CommitWrapper::TEST_ALL() {
-    Test1();
+
+namespace RAII_CommitWrapper::Two
+{
+    template <typename Ret1, typename Ret2, class Type>
+    class ExecuteAdapter {
+    public:
+        ExecuteAdapter(std::unique_ptr<Type> obj, Ret1(Type::*method1)(), Ret2(Type::*method2)()):
+                object { std::move(obj) }, inCaseOfSuccess { method1 }, inCaseOfFailure { method2 } {
+        }
+
+        ~ExecuteAdapter()
+        {
+            std::invoke(inCaseOfSuccess, object);
+            std::invoke(inCaseOfFailure, object);
+        }
+
+    private:
+        std::unique_ptr<Type> object { nullptr };
+        Ret1 (Type::*inCaseOfSuccess)();
+        Ret2 (Type::*inCaseOfFailure)();
+
+        bool ok {false};
+    };
+
+    class Foo {
+    public:
+        ~Foo() {
+            std::cout << "~Foo::Foo()" << std::endl;
+        }
+
+        void func1() {
+            std::cout << "Foo::func1()" << std::endl;
+        }
+
+        void func2() {
+            std::cout << "Foo::func2()" << std::endl;
+        }
+    };
+
+    void Test()
+    {
+        ExecuteAdapter<void, void, Foo> adapter {std::make_unique<Foo>(), &Foo::func1, &Foo::func2};
+    }
+}
+
+void RAII_CommitWrapper::TEST_ALL()
+{
+    // One::Test();
+    Two::Test();
 }
 

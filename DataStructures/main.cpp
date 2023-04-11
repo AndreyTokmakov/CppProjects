@@ -50,7 +50,7 @@ int main([[maybe_unused]] int argc,
     // BitSet::TEST_ALL();
     // CategoryTree::TEST_ALL();
     // CircularBuffers::TEST_ALL();
-    // CustomVector::TestAll();
+    CustomVector::TestAll();
     // ExecutorAdapter::TestAll();
     // ExecutorAdapter2::TestAll();
     // Function::Test();

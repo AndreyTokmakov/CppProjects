@@ -456,9 +456,10 @@ namespace ObjectPools::GoodPools_Tests {
 		// The allocator to use for allocating and deallocating chunks.
 		Allocator m_allocator;
 
-	protected:
+    protected:
 
-		struct Deleter {
+		struct Deleter final
+        {
 			ObjectPool* pool {nullptr};
 
 			void operator()(pointer object) const noexcept
@@ -470,6 +471,9 @@ namespace ObjectPools::GoodPools_Tests {
 				--pool->_size;
 			}
 		};
+
+    public:
+        using ObjectPtr = std::unique_ptr<object_type, Deleter>;
 
 	public:
 		ObjectPool() = default;
@@ -540,36 +544,37 @@ namespace ObjectPools::GoodPools_Tests {
 
 	void SimpleTest()
 	{
-
 		using TestType = TestTypes::TypeLarge;
 		// using TestType = TestTypes::TypeMedium;
-		ObjectPool<TestType> pool{};
+
+		ObjectPool<TestType> pool {};
+        using ObjectPtr = ObjectPool<TestType>::ObjectPtr;
 
 		std::cout << "Pool address = " << &pool << std::endl;
 		std::cout << "Capacity = " << pool.capacity() << std::endl;
 
-		auto object1{ pool.acquireObject() };
-		auto object2{ pool.acquireObject() };
-		auto object3{ pool.acquireObject() };
+        ObjectPtr object1 { pool.acquireObject() };
+        ObjectPtr object2 { pool.acquireObject() };
+        ObjectPtr object3 { pool.acquireObject() };
 
 		std::cout << "Capacity = " << pool.capacity() << ". Size = " << pool.size() << std::endl;
 
-		auto object4{ pool.acquireObject() };
-		auto object5{ pool.acquireObject() };
-		auto object6{ pool.acquireObject() };
+        ObjectPtr object4 { pool.acquireObject() };
+        ObjectPtr object5 { pool.acquireObject() };
+        ObjectPtr object6 { pool.acquireObject() };
 
 		std::cout << "Capacity = " << pool.capacity() << ". Size = " << pool.size() << std::endl;
 
-		auto object7{ pool.acquireObject() };
-		auto object8{ pool.acquireObject() };
-		auto object9{ pool.acquireObject() };
+        ObjectPtr object7 { pool.acquireObject() };
+        ObjectPtr object8 { pool.acquireObject() };
+        ObjectPtr object9 { pool.acquireObject() };
 
 		std::cout << "Capacity = " << pool.capacity() << ". Size = " << pool.size() << std::endl;
 
 		{
-			auto obj1 { pool.acquireObject() };
-			auto obj2 { pool.acquireObject() };
-			auto obj3 { pool.acquireObject() };
+            ObjectPtr obj1 { pool.acquireObject() };
+            ObjectPtr obj2 { pool.acquireObject() };
+            ObjectPtr obj3 { pool.acquireObject() };
 			std::cout << "Capacity = " << pool.capacity() << ". Size = " << pool.size() << std::endl;
 		}
 

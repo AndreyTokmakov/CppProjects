@@ -152,9 +152,11 @@ namespace CustomVector {
         {
             capacity *= growthFactor;
             pointer newData { allocator.allocate(capacity) };
+
             // std::move(data, data + size, newData);
             std::uninitialized_move_n(data, size, newData);
             std::swap(data, newData);
+
             std::destroy_n(newData, size);
             allocator.deallocate(newData, capacity);
         }

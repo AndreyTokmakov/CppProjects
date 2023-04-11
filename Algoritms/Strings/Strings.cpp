@@ -723,12 +723,11 @@ namespace Strings {
         return result;
     }
 
-    void Atoi() {
-        std::cout << _atoi("123") <<  "    " << _atoi2("123") << std::endl;
-        std::cout << _atoi("1203") <<  "    " << _atoi2("1203") << std::endl;
-        std::cout << _atoi("931aa") <<  "    " << _atoi2("931aa") << std::endl;
-
-
+    void Atoi()
+    {
+        for (const auto& str: {"123", "1203", "931aa"}) {
+            std::cout << _atoi(str) <<  "    " << _atoi2(str) << std::endl;
+        }
     }
 
 	//--------------------------------------------------------------------------------------//
