@@ -730,6 +730,29 @@ namespace Strings {
         }
     }
 
+    //--------------------------------------------------------------------------------------//
+
+    size_t _str_len(const char* str)
+    {
+        size_t count = 0;
+        while (*str != '\0')
+        {
+            ++str;
+            ++count;
+        }
+        return count;
+    }
+
+    void StrLen()
+    {
+        for (const auto& [str, len]: std::vector<std::pair<std::string, size_t>>{
+            {"12345", 5}, {"qwerty123456", 12}
+        })
+        {
+            std::cout << len << " = " <<  _str_len(str.data()) << std::endl;
+        }
+    }
+
 	//--------------------------------------------------------------------------------------//
 
 	void __printDistinctSubStrs__(const std::string& str) {
@@ -1206,11 +1229,11 @@ namespace Strings {
 		if (str1.length() != str2.length())
 			return false;
 
-		int chars[256] = { 0 };
+		int32_t chars[256] = { 0 };
 		for (char c : str1)
 			chars[c]++;
 		for (char c : str2)
-			if (1 > chars[c]--)
+			if (0 > --chars[c])
 				return false;
 		return true;
 	}
@@ -1502,6 +1525,7 @@ void Strings::TEST_ALL()
 	// Strings::LongestConsecutiveCharacters();
 	// Strings::AnalogClockAngles();
 	// Strings::Atoi();
+	Strings::StrLen();
 
 	// Strings::RotateString();
 	// Strings::CheckIfStrings_RotareRotateEquals();
@@ -1549,5 +1573,5 @@ void Strings::TEST_ALL()
 	// Strings::AreAnagrams();
 	// Strings::MakeAnagrams_CountDeletions();
 
-    Strings::Minimum_Substring();
+    // Strings::Minimum_Substring();
 };

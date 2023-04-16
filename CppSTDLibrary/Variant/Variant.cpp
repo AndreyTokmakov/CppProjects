@@ -946,14 +946,55 @@ namespace Variant::DynamicPolymorphism {
 		}
 	}
 
-	void Polimorph_Visit() {
-		std::vector<Type> objects;
-		objects.push_back(Circle{});
-		objects.push_back(Square{});
-		objects.push_back(Square{});
-
+	void Polimorph_Visit()
+    {
+		std::vector<Type> objects {Circle{}, Square{}, Square{}};
 		PrintElements(objects);
 	}
+}
+
+namespace Variant::DynamicPolymorphism
+{
+    struct Element {
+        std::string name {};
+    };
+
+    std::vector<Element> getElements() {
+        return {
+                Element{"ElementOne"},
+                Element{"ElementTwo"},
+                Element{"ElementThree"},
+                Element{"ElementFour"},
+                Element{"ElementFive"}
+        };
+    }
+
+    struct HandlerA {
+        void handle(const Element &element) const {
+            std::cout << "HandlerA: " << element.name << std::endl;
+        }
+    };
+
+    struct HandlerB {
+        void handle(const Element &element) const {
+            std::cout << "HandlerB: " << element.name << std::endl;
+        }
+    };
+
+    std::variant<HandlerA, HandlerB> getHandler()
+    {
+        return HandlerA{};
+    }
+
+    void ProcessElementsList()
+    {
+        const auto handler = getHandler();
+        const std::vector<Element> elements = getElements();
+        std::visit([&elements](const auto& h){
+            for (const Element& el: elements)
+                h.handle(el);
+        }, handler);
+    }
 }
 
 namespace Variant::Experiments {
@@ -1052,22 +1093,19 @@ void Variant::TestAll()
 	// VisitTests::Polymorphism_Test();
 	// VisitTests::VizitTest();
 	// VisitTests::Visit_With_Overloads();
-	VisitTests::Visit_With_Overloads_2();
+	// VisitTests::Visit_With_Overloads_2();
 	// VisitTests::Vizit_Multiple_Variants();
-
 
 
     // Variant_InitAndGetValue_Tests_1();
     // Variant_InitAndGetValue_Tests_2();
 
 
-
 	// DynamicPolymorphism::Classic_Usage();
 	// DynamicPolymorphism::Visit();
-	// DynamicPolymorphism::Polimorph_Visit();
+	DynamicPolymorphism::Polimorph_Visit();
+	// DynamicPolymorphism::ProcessElementsList();
 
     // Experiments_DNS_Response::Tests();
-
 	// Experiments::Map_Variant_Keys();
-
 };

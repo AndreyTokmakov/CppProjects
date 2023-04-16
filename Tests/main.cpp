@@ -39,6 +39,7 @@
 #include <span>
 #include <cmath>
 #include <stack>
+#include <variant>
 
 #include "Algorithms/Algorithms.h"
 #include "Geometry/PointsAndLines.h"
@@ -905,13 +906,153 @@ namespace NTTP
 }
 
 
+namespace OOP_Test
+{
+    struct Element {
+        std::string name {};
+    };
+
+    std::vector<Element> getElements() {
+        return {
+            Element{"ElementOne"},
+            Element{"ElementTwo"},
+            Element{"ElementThree"},
+            Element{"ElementFour"},
+            Element{"ElementFive"}
+        };
+    }
+
+    namespace ExampleTwo
+    {
+        struct HandlerBase
+        {
+            void handle(std::span<Element> elements) {
+                for (Element el: elements)
+                    handle(std::move(el));
+            }
+
+            virtual void handle(Element element) = 0;
+            virtual ~HandlerBase() = default;
+        };
+
+        struct HandlerA: HandlerBase {
+            void handle(Element element) override {
+                std::cout << "HandlerA: " << element.name << std::endl;
+            }
+        };
+
+        struct HandlerB: HandlerBase {
+            void handle(Element element) override {
+                std::cout << "HandlerA: " << element.name << std::endl;
+            }
+        };
+
+        std::unique_ptr<HandlerBase> getHandler()
+        {
+            return std::make_unique<HandlerA>();
+        }
+
+        void test()
+        {
+            const auto handler = getHandler();
+            std::vector<Element> elements = getElements();
+            handler->handle(elements);
+        }
+    }
+
+    namespace ExampleThree
+    {
+        struct HandlerBase
+        {
+            virtual void handle(std::span<Element> elements) = 0;
+            virtual ~HandlerBase() = default;
+        };
+
+        template<class Derived>
+        struct Handler: HandlerBase {
+            void handle(std::span<Element> elements) {
+                for (Element el: elements)
+                    d.handle(std::move(el));
+            }
+
+            Derived d {};
+        };
+
+        struct HandlerA {
+            void handle(Element element) {
+                std::cout << "HandlerA: " << element.name << std::endl;
+            }
+        };
+
+        struct HandlerB {
+            void handle(Element element) {
+                std::cout << "HandlerA: " << element.name << std::endl;
+            }
+        };
+
+        std::unique_ptr<HandlerBase> getHandler()
+        {
+            return std::make_unique<Handler<HandlerA>>();
+        }
+
+        void test()
+        {
+            const auto handler = getHandler();
+            std::vector<Element> elements = getElements();
+            handler->handle(elements);
+        }
+    }
+}
+
+namespace Math
+{
+
+    int calc(int val)
+    {
+        int count = 0;
+        while (val > 1) {
+            val /= 2;
+            ++count;
+        }
+        return count;
+    }
+
+    void Log2Test()
+    {
+        calc(59218);
+    }
+}
+
+unsigned int strLen(const char *str)
+{
+    unsigned int count = 0;
+    while (*str != '\0')
+    {
+        ++str;
+        ++count;
+    }
+    return count;
+}
+
+
 int main([[maybe_unused]] int argc,
 
          [[maybe_unused]] char** argv)
 {
     const std::vector<std::string_view> args(argv + 1, argv + argc);
 
-    NTTP::test();
+    std::vector<int> numbers {1,2,3,4,5,6,7,8,9};
+
+    std::cout << strLen("12345") << std::endl;
+
+
+
+    // NTTP::test();
+
+    // Math::Log2Test();
+
+    // OOP_Test::ExampleTwo::test();
+    // OOP_Test::ExampleThree::test();
 
     // Experiments::Test({20, 40, 60});
     // Multithreading::TestAll();

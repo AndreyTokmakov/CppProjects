@@ -52,7 +52,42 @@ namespace Map {
 		print_map(dictionary);
 	}
 
-	void emplace_test()
+    void emplace_duplicate_entry()
+    {
+        std::map<std::string, std::string> dict {
+            {"One", "I"}, {"Two", "II"}, {"Three", "III"},
+        };
+
+        auto [iter, ok] = dict.emplace("Four", "IV");
+        std::cout << "Result: [{" << iter->first << ", " << iter->second << "}, " << std::boolalpha << ok << "]\n\n";
+
+        std::cout << dict << std::endl;
+
+        std::tie(iter, ok) = dict.emplace("Four", "4");
+        std::cout << "Result: [{" << iter->first << ", " << iter->second << "}, " << std::boolalpha << ok << "]\n\n";
+
+        std::cout << dict << std::endl;
+    }
+
+    void try_emplace_duplicate_entry()
+    {
+        std::map<std::string, std::string> dict {
+                {"One", "I"}, {"Two", "II"}, {"Three", "III"},
+        };
+
+        auto [iter, ok] = dict.try_emplace("Four", "IV");
+        std::cout << "Result: [{" << iter->first << ", " << iter->second << "}, " << std::boolalpha << ok << "]\n\n";
+
+        std::cout << dict << std::endl;
+
+        std::tie(iter, ok) = dict.try_emplace("Four", "4");
+        std::cout << "Result: [{" << iter->first << ", " << iter->second << "}, " << std::boolalpha << ok << "]\n\n";
+
+        std::cout << dict << std::endl;
+    }
+
+
+    void emplace_test()
 	{
 		std::map<std::string, std::string> m;
 
@@ -926,6 +961,9 @@ namespace Map::Test {
 void Map::TEST_ALL()
 {
 	// test_loops();
+
+    // emplace_duplicate_entry();
+    try_emplace_duplicate_entry();
 
 	// emplace_test();
 	// emplace_test1();
