@@ -1525,7 +1525,7 @@ void Strings::TEST_ALL()
 	// Strings::LongestConsecutiveCharacters();
 	// Strings::AnalogClockAngles();
 	// Strings::Atoi();
-	Strings::StrLen();
+	// Strings::StrLen();
 
 	// Strings::RotateString();
 	// Strings::CheckIfStrings_RotareRotateEquals();

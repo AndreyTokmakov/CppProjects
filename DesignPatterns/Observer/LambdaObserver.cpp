@@ -55,27 +55,24 @@ namespace LambdaObserver
                 , surname_{ std::move(surname) }
         {}
 
-        bool attach( PersonObserver* observer )
+        bool attach(PersonObserver* observer)
         {
-            auto [pos,success] = observers_.insert( observer );
+            auto [pos,success] = observers.insert( observer );
             return success;
         }
 
-        bool detach( PersonObserver* observer )
+        bool detach(PersonObserver* observer)
         {
-            return ( observers_.erase( observer ) > 0U );
+            return observers.erase(observer) > 0U;
         }
 
-        void notify( StateChange property )
+        void notify(StateChange property)
         {
-            for( auto iter=begin(observers_); iter!=end(observers_); )
-            {
-                auto const pos = iter++;
-                (*pos)->update(*this,property);
-            }
+            for (const auto observer: observers)
+                observer->update(*this, property);
         }
 
-        void forename(std::string newForename)
+        void setForename(std::string newForename)
         {
             forename_ = std::move(newForename);
             notify( forenameChanged );
@@ -87,7 +84,7 @@ namespace LambdaObserver
             notify( surnameChanged );
         }
 
-        void address(std::string newAddress )
+        void setAddress(std::string newAddress )
         {
             address_ = std::move(newAddress);
             notify( addressChanged );
@@ -113,7 +110,7 @@ namespace LambdaObserver
         std::string surname_;
         std::string address_;
 
-        std::set<PersonObserver*> observers_;
+        std::set<PersonObserver*> observers;
     };
 
     void propertyChangedHandler(const Person& person,
@@ -126,7 +123,7 @@ namespace LambdaObserver
     }
 }
 
-void LambdaObserver_Test()
+void LambdaObserverTest()
 {
     using namespace LambdaObserver;
     using PersonObserver = Observer<Person,Person::StateChange>;
@@ -134,8 +131,7 @@ void LambdaObserver_Test()
     PersonObserver nameObserver(propertyChangedHandler);
 
     PersonObserver addressObserver([](const Person & person, Person::StateChange property){
-        if (Person::addressChanged == property)
-        {
+        if (Person::addressChanged == property) {
             std::cout << "addressObserver: Address --> " << person.address() << std::endl;
         }
     });
@@ -151,13 +147,13 @@ void LambdaObserver_Test()
 
 
     // Updating information on Homer Simpson
-    homer.forename( "Homer Jay");
+    homer.setForename( "Homer Jay");
 
     // Updating information on Marge Simpson
-    marge.address( "712 Red Bark Lane, Henderson, Clark County, Nevada 89011" );
+    marge.setAddress( "712 Red Bark Lane, Henderson, Clark County, Nevada 89011" );
 
     // Updating information on Montgomery Burns
-    monty.address( "Springfield Nuclear Power Plant" );
+    monty.setAddress( "Springfield Nuclear Power Plant" );
 
     // Detaching observers
     homer.detach( &nameObserver );

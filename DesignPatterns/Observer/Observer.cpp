@@ -325,7 +325,7 @@ void LambdaObserverTest();    /// LambdaObserverTest.cpp
 
 void Observer::TestAll()
 {
-    // Test1::Test();
+    Test1::Test();
     // Test2::Test();
     // Parsons::Test();
 
@@ -333,5 +333,5 @@ void Observer::TestAll()
 
     // SubjectObserver_Test();
 
-    LambdaObserverTest();
+    // LambdaObserverTest();
 }
