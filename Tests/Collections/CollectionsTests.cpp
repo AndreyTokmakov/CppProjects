@@ -17,6 +17,7 @@ Description : CollectionsTests
 #include <vector>
 #include <array>
 
+#include <memory>
 #include <chrono>
 
 namespace CollectionsTests::CustomArrayTest {
@@ -317,6 +318,63 @@ namespace CollectionsTests::Arrays
     }
 }
 
+namespace CollectionsTests::Trie
+{
+    class Trie
+    {
+        struct TrieNode {
+            std::array<std::unique_ptr<TrieNode>, 26> children{};
+            bool isEndOfWord{false};
+        };
+
+        std::unique_ptr<TrieNode> root{};
+
+
+    public:
+        Trie() : root{std::make_unique<TrieNode>()} {
+        }
+
+        void insert(std::string_view word)
+        {
+            TrieNode *currNode = root.get();
+            for (const char c: word)
+            {
+                const int index = c - 'a';
+                if (nullptr == currNode->children[index]) {
+                    currNode->children[index] = std::make_unique<TrieNode>();
+                }
+                currNode = currNode->children[index].get();
+            }
+            currNode->isEndOfWord = true;
+        }
+
+        [[nodiscard]]
+        bool search(std::string_view word) const
+        {
+            TrieNode *currNode = root.get();
+            for (const char c: word)
+            {
+                const int index = c - 'a';
+                if (nullptr == currNode->children[index])
+                    return false;
+                currNode = currNode->children[index].get();
+            }
+            return currNode->isEndOfWord;
+        }
+    };
+
+    void test()
+    {
+        Trie t;
+
+        constexpr std::string_view text { "12345" };
+
+        std::cout << t.search(text) << std::endl;
+        t.insert(text);
+        std::cout << t.search(text) << std::endl;
+    }
+}
+
 
 void CollectionsTests::TestAll()
 {
@@ -329,5 +387,5 @@ void CollectionsTests::TestAll()
 
     // Arrays::PrintArrayTest();
 
-
+    Trie::test();
 };

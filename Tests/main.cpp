@@ -1006,7 +1006,6 @@ namespace OOP_Test
 
 namespace Math
 {
-
     int calc(int val)
     {
         int count = 0;
@@ -1023,27 +1022,11 @@ namespace Math
     }
 }
 
-unsigned int strLen(const char *str)
-{
-    unsigned int count = 0;
-    while (*str != '\0')
-    {
-        ++str;
-        ++count;
-    }
-    return count;
-}
-
-
 int main([[maybe_unused]] int argc,
 
          [[maybe_unused]] char** argv)
 {
     const std::vector<std::string_view> args(argv + 1, argv + argc);
-
-    std::vector<int> numbers {1,2,3,4,5,6,7,8,9};
-
-    std::cout << strLen("12345") << std::endl;
 
 
 
@@ -1066,7 +1049,7 @@ int main([[maybe_unused]] int argc,
     // MaxStack::TestAll();
     // DebugLogger::TestAll();
     // UniquePtr_Size::SizeTest();
-    // CollectionsTests::TestAll();
+    CollectionsTests::TestAll();
     // Templates::TestAll();
     // ExpressionTemplates::TestAll();
     // CopyElision_RVO::TestAll();

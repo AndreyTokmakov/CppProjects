@@ -41,22 +41,22 @@ namespace CRTP {
 
 	class Triangle : public Base<Triangle> {
 	public:
-		void info_impl() {
+		void info_impl() override {
 			std::cout << "Triangle::info_impl()\n";
 		}
 	};
 
 	class Square : public Base<Square> {
 	public:
-		void info_impl() {
+		void info_impl() override {
 			std::cout << "Square::info_impl()\n";
 		}
 	};
 
     void test1()
     {
-        // Triangle().info();
-        // Square().info();
+        Triangle().info();
+        Square().info();
     }
 }
 
@@ -109,6 +109,6 @@ namespace CRTP::Cloneable
 
 void CRTP::Test()
 {
-    // test1();
-    ObjectCounter::Test();
+    test1();
+    // ObjectCounter::Test();
 }

@@ -47,6 +47,8 @@
 #include "VirtualConstructor/VirtualConstructor.h"
 #include "TemplateMethod/TemplateMethod.h"
 #include "LazyInitialization/LazyInitialization.h"
+#include "MVC/ModelViewController.h"
+
 
 
 int main([[maybe_unused]]  int argc,
@@ -77,6 +79,7 @@ int main([[maybe_unused]]  int argc,
     // Proxy::CarTest();
     // Proxy::DocumentTest();
     // Proxy::SubjectTest();
+    ModelViewController::TestAll();
 
     /** Behaviour patterns **/
     // Strategy::Test();
@@ -87,7 +90,7 @@ int main([[maybe_unused]]  int argc,
     // Interpreter::Test();
     // Mediator::TestAll();
     // Memento::TestAll();
-    Observer::TestAll();
+    // Observer::TestAll();
     // State::TestAll();
     // TemplateMethod::TestAll();
     // Visitor::test();
