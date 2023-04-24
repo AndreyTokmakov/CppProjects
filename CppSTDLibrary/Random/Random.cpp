@@ -74,13 +74,14 @@ namespace Random::DiscardBlockEngine {
 
 namespace Random::Strings {
 
-	std::string randomString(int size = 16) {
+	std::string randomString(int size = 16)
+    {
 		std::random_device rd{};
 		auto mtgen = std::mt19937 {rd()};
-		auto ud = std::uniform_int_distribution<> {(int)'A', (int)'z'};
+		auto ud = std::uniform_int_distribution<> {(int)'A', (int)'Z'};
 
 		std::string str;
-		str.reserve(16);
+		str.reserve(size);
 		while (size-- > 0)
 			str.push_back(static_cast<char>(ud(mtgen)));
 		return str;
@@ -116,8 +117,8 @@ void Random::TestAll()
 
 	// UniformRealDistribution::test();
 
-	// Strings::Test();
+	Strings::Test();
 
-    GenerateNumbersInRange();
+    // GenerateNumbersInRange();
 
 }

@@ -19,6 +19,24 @@ Description : CollectionsTests
 
 #include <memory>
 #include <chrono>
+#include <random>
+#include <unordered_set>
+
+namespace CollectionsTests::Utils
+{
+    std::string randomString(size_t size = 16)
+    {
+        std::random_device rd{};
+        std::mt19937 generator = std::mt19937 {rd()};
+        auto ud = std::uniform_int_distribution<> {(int)'a', (int)'z'};
+
+        std::string str;
+        str.reserve(size);
+        while (size-- > 0)
+            str.push_back(static_cast<char>(ud(generator)));
+        return str;
+    }
+}
 
 namespace CollectionsTests::CustomArrayTest {
 
@@ -349,6 +367,21 @@ namespace CollectionsTests::Trie
         }
 
         [[nodiscard]]
+        bool search(const std::string& word) const
+        {
+            TrieNode *currNode = root.get();
+            for (const char c: word)
+            {
+                const int index = c - 'a';
+                if (nullptr == currNode->children[index])
+                    return false;
+                currNode = currNode->children[index].get();
+            }
+            return currNode->isEndOfWord;
+        }
+
+        /*
+        [[nodiscard]]
         bool search(std::string_view word) const
         {
             TrieNode *currNode = root.get();
@@ -361,17 +394,71 @@ namespace CollectionsTests::Trie
             }
             return currNode->isEndOfWord;
         }
+         */
     };
 
     void test()
     {
         Trie t;
 
-        constexpr std::string_view text { "12345" };
+        const std::string text { "12345" };
 
         std::cout << t.search(text) << std::endl;
         t.insert(text);
         std::cout << t.search(text) << std::endl;
+    }
+
+    void PerformanceTests()
+    {
+        constexpr size_t samplesCount { 1'000'000 }, strLen { 64 }, testsCount { 1 };
+        std::vector<std::string> samples;
+        samples.reserve(samplesCount);
+
+        for (size_t idx = 0; idx < samplesCount; ++idx) {
+            samples.push_back(Utils::randomString(strLen));
+        }
+
+        Trie trie;
+        std::unordered_set<std::string> set;
+        for (const std::string& str: samples){
+            set.insert(str);
+            trie.insert(str);
+        }
+
+        {
+            auto start = std::chrono::high_resolution_clock::now();
+
+            for (size_t idx = 0; idx < testsCount; ++idx) {
+                for (const std::string& str: samples)
+                {
+                    if (set.find(str) == set.end())
+                    {
+                        std::cout << "ERROR\n";
+                    }
+                }
+            }
+
+            auto end = std::chrono::high_resolution_clock::now();
+            auto duration = std::chrono::duration_cast<std::chrono::microseconds>(end - start).count();
+			std::cout << "Result: " << duration << " microseconds" << std::endl;
+        }
+
+        {
+            auto start = std::chrono::high_resolution_clock::now();
+
+            for (size_t idx = 0; idx < testsCount; ++idx) {
+                for (const std::string& str: samples) {
+                    if (!trie.search(str))
+                    {
+                        std::cout << "ERROR\n";
+                    }
+                }
+            }
+
+            auto end = std::chrono::high_resolution_clock::now();
+            auto duration = std::chrono::duration_cast<std::chrono::microseconds>(end - start).count();
+            std::cout << "Result: " << duration << " microseconds" << std::endl;
+        }
     }
 }
 
@@ -387,5 +474,6 @@ void CollectionsTests::TestAll()
 
     // Arrays::PrintArrayTest();
 
-    Trie::test();
+    // Trie::test();
+    Trie::PerformanceTests();
 };
