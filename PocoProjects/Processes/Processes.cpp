@@ -19,7 +19,8 @@
 
 namespace Processes {
 
-    void RunSimpleProcess() {
+    void RunSimpleProcess()
+    {
         std::string cmd("/bin/ps");
         std::vector<std::string> params;
         params.emplace_back("-ax");

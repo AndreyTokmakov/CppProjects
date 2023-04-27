@@ -1,17 +1,17 @@
 /**============================================================================
-Name        : Networking.h
-Created on  : 25.04.2022
-Author      : Tokmakov Andrey
+Name        : Environment.h
+Created on  : 25.04.2023
+Author      : Andrei Tokmakov
 Version     : 1.0
 Copyright   : Your copyright notice
-Description : Networking
+Description : Environment
 ============================================================================**/
 
-#ifndef CPPPROJECTS_NETWORKING_H
-#define CPPPROJECTS_NETWORKING_H
+#ifndef CPPPROJECTS_ENVIRONMENT_H
+#define CPPPROJECTS_ENVIRONMENT_H
 
-namespace Networking {
+namespace Environment {
     void TestAll();
 }
 
-#endif //CPPPROJECTS_NETWORKING_H
+#endif //CPPPROJECTS_ENVIRONMENT_H

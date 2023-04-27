@@ -7,7 +7,6 @@
 // Description : PocoProjects C++
 //============================================================================
 
-#include <iostream>
 #include <string_view>
 #include <vector>
 
@@ -15,7 +14,9 @@
 #include "Foundation/Events.h"
 #include "Processes/Processes.h"
 #include "Networking/Networking.h"
-
+#include "Environment/Environment.h"
+#include "Random/Random.h"
+#include "Cryptography/Cryptography.h"
 
 
 int main([[maybe_unused]] int argc,
@@ -26,7 +27,10 @@ int main([[maybe_unused]] int argc,
     // Timer::TestAll();
     // Events::TestAll();
     // Processes::TestAll();
-    Networking::TestAll();
+    // Networking::TestAll();
+    // Environment::TestAll();
+    // Random::TestAll();
+    Cryptography::TestAll();
 
 
     return EXIT_SUCCESS;

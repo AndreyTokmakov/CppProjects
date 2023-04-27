@@ -24,7 +24,8 @@ using Poco::Net::HostEntry;
 
 namespace Networking
 {
-    void ResolveDnsName() {
+    void ResolveDnsName()
+    {
         const Poco::Net::HostEntry& entry = Poco::Net::DNS::hostByName("www.appinf.com");
         std::cout << "Canonical Name: " << entry.name() << std::endl;
         const Poco::Net::HostEntry::AliasList& aliases = entry.aliases();
@@ -55,8 +56,9 @@ namespace Networking::Server
     void runServer()
     {
         Poco::Net::ServerSocket srv(8080); // does bind + listen
-        for (;;)
+        while (true)
         {
+            std::cout << "Got some\n";
             Poco::Net::StreamSocket ss = srv.acceptConnection();
             Poco::Net::SocketStream str(ss);
             str << "HTTP/1.0 200 OK\r\n"

@@ -49,7 +49,7 @@ int main([[maybe_unused]] int argc,
          [[maybe_unused]] char** argv)
 {
     // AsyncLaunch::TEST_ALL();
-    // Atomic::TEST_ALL();
+    Atomic::TEST_ALL();
     // Barrier::TEST_ALL();
     // CallOnce::TEST_ALL();
     // ConditionVariable::TEST_ALL();
@@ -76,7 +76,7 @@ int main([[maybe_unused]] int argc,
     // ThreadPoolLimited::TestAll();
 
     // Threads::TEST_ALL();
-    JThreads::TEST_ALL();
+    // JThreads::TEST_ALL();
 
     // PerformanceExperiments::TestAll();
 
