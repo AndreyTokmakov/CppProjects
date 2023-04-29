@@ -48,7 +48,7 @@
 #include "TemplateMethod/TemplateMethod.h"
 #include "LazyInitialization/LazyInitialization.h"
 #include "MVC/ModelViewController.h"
-
+#include "DependencyInjection/DependencyInjection.h"
 
 
 int main([[maybe_unused]]  int argc,
@@ -65,7 +65,7 @@ int main([[maybe_unused]]  int argc,
     // Monostate::TestAll();;
     // ObjectPools::SimpleTest();
     // ObjectPools::ExtentedTest();
-    /// Dependency_injection ???
+    DependencyInjection::TestAll();
     // LazyInitialization::TestAll();
 
     /** Structural patterns: **/
@@ -79,7 +79,7 @@ int main([[maybe_unused]]  int argc,
     // Proxy::CarTest();
     // Proxy::DocumentTest();
     // Proxy::SubjectTest();
-    ModelViewController::TestAll();
+    // ModelViewController::TestAll();
 
     /** Behaviour patterns **/
     // Strategy::Test();

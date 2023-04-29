@@ -16,9 +16,6 @@
 #include "DaVinchiTest/DaVinchiTest.h"
 #include "DaVinchiTest/DaVinchiTest_LinkedList.h"
 
-
-
-
 #include <iostream>
 #include <fstream>
 #include <vector>
@@ -28,20 +25,29 @@
 #include <charconv>
 #include <chrono>
 
-namespace TestAssignment
+
+namespace Utilities
 {
+    inline constexpr char delimiter { ';' };
+    inline constexpr size_t partsCount { 7 };
+
     [[nodiscard]]
-    static std::array<std::string, 7> splitOrder(std::string_view str) {
-        std::array<std::string, 7> parts {};
+    static std::array<std::string, partsCount> split(const std::string& str)
+    {
+        std::array<std::string, partsCount> parts {};
         size_t pos = 0, prev = 0, idx = 0;
-        while ((pos = str.find(';', prev)) != std::string::npos) {
+        while ((pos = str.find(delimiter, prev)) != std::string::npos) {
             parts[idx++].assign(str, prev, pos - prev);
             prev = pos + 1;
         }
         parts[idx++].assign(str, prev, str.length() - prev);
         return parts;
     }
+}
 
+
+namespace TestAssignment
+{
     enum class OrderSide : char {
         Buy,
         Sell
@@ -105,7 +111,7 @@ namespace TestAssignment
     };
 
     Order parseOrder(const std::string& rawOrder) {
-        std::array<std::string, 7> params = splitOrder(rawOrder);
+        std::array<std::string, 7> params = Utilities::split(rawOrder);
         return {
                 std::move(params[0]),
                 std::move(params[1]),
@@ -216,17 +222,33 @@ namespace TestAssignment
     };
 }
 
+
+namespace Tests
+{
+    void splitTest()
+    {
+        std::string line = "14:17:21.877391;DVAM1;00000001;I;BUY;100;12.5";
+        const auto params = Utilities::split(line);
+
+        for (const std::string& p: params)
+            std::cout << p << std::endl;
+    }
+}
+
+
 int main([[maybe_unused]] int argc,
          [[maybe_unused]] char** argv)
 {
     const std::vector<std::string_view> args(argv + 1, argv + argc);
 
-    TestAssignment::SimpleOrderBook book;
-    book.readAndProcessOrders(args.front());
+    // TestAssignment::SimpleOrderBook book;
+    // book.readAndProcessOrders(args.front());
 
     // book.OrderCounts();
     // book.BiggestBuyOrders("TEST8");
     // book.BestSellAtTime("TEST8", "15:38");
+
+    Tests::splitTest();
 
     return EXIT_SUCCESS;
 }

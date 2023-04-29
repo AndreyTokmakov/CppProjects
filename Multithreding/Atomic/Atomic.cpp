@@ -22,7 +22,8 @@
 
 #include "../ThreadHelperUtilities/ThreadHelperUtilities.h"
 
-namespace Atomic::Atomic_INT {
+namespace Atomic::Atomic_INT
+{
 
     void Test1() {
         int v1 = 0;
@@ -47,6 +48,16 @@ namespace Atomic::Atomic_INT {
         };
 
         auto fut = std::async(add_v1);
+    }
+
+    void Fetch_Add_Test()
+    {
+        std::atomic<int> counter { 0 };
+        while (counter.load() < 10)
+        {
+            auto old = counter.fetch_add(1);
+            std::cout << old << " -> " << counter.load() << std::endl;
+        }
     }
 
     void Test_2_MemoryOrderRelaxed() {
@@ -638,6 +649,74 @@ namespace Atomic::PingPongGame
     }
 }
 
+
+namespace Atomic::ModificationOrder
+{
+    void Test_Default()
+    {
+        size_t counter {0};
+        std::atomic<int> var {0};
+
+        for (int n = 0; n < 100; ++n)
+        {
+            std::future<void> updater = std::async(std::launch::async, [&]{
+                for (int i = 0; i < 100; ++i) {
+                    var.fetch_add(1);  // A
+                    var.fetch_sub(1);  // B
+                    ++counter;
+                }
+            });
+
+            std::future<void> reader = std::async(std::launch::async, [&]{
+                for (int i = 0; i < 100; ++i) {
+                    int varLoc = var.load();
+                    if (0 != varLoc) {
+                        // Reader threads will never see a modification order with (B) before (A)
+                        std::cout << "Yoooo. varLoc = " << varLoc << std::endl;
+                    }
+                }
+            });
+
+            updater.wait();
+            reader.wait();
+        }
+
+        std::cout << "Var = " << var.load() << ". counter = " << counter << std::endl;
+    }
+
+    void Test_Relaxed()
+    {
+        size_t counter {0};
+        std::atomic<int> var {0};
+
+        for (int n = 0; n < 100; ++n)
+        {
+            std::future<void> updater = std::async(std::launch::async, [&]{
+                for (int i = 0; i < 100; ++i) {
+                    var.fetch_add(1, std::memory_order_relaxed);  // A
+                    var.fetch_sub(1, std::memory_order_relaxed);  // B
+                    ++counter;
+                }
+            });
+
+            std::future<void> reader = std::async(std::launch::async, [&]{
+                for (int i = 0; i < 100; ++i) {
+                    int varLoc = var.load();
+                    if (0 != varLoc) {
+                        // Reader threads will never see a modification order with (B) before (A)
+                        std::cout << "Yoooo. varLoc = " << varLoc << std::endl;
+                    }
+                }
+            });
+
+            updater.wait();
+            reader.wait();
+        }
+
+        std::cout << "Var = " << var.load() << ". counter = " << counter << std::endl;
+    }
+};
+
 void Atomic::TEST_ALL()
 {
     // AtomicFlag::Spinlock_Test();
@@ -649,6 +728,7 @@ void Atomic::TEST_ALL()
     // Atomic_Boolean::Consumer_Producer();
 
     // Atomic_INT::Test1();
+    // Atomic_INT::Fetch_Add_Test();
     // Atomic_INT::Test_2_MemoryOrderRelaxed();
     // Atomic_INT::Test3();
     // Atomic_INT::Test4();
@@ -671,5 +751,8 @@ void Atomic::TEST_ALL()
     // Cpp_20_Features::Notify_One();
     // Cpp_20_Features::Notify_All();
 
-    PingPongGame::Test();
+    // ModificationOrder::Test_Default();
+    ModificationOrder::Test_Relaxed();
+
+    // PingPongGame::Test();
 }

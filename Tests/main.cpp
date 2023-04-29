@@ -1028,6 +1028,9 @@ int main([[maybe_unused]] int argc,
 {
     const std::vector<std::string_view> args(argv + 1, argv + argc);
 
+    auto lm = [][[nodiscard]]()->int { return 42; };
+
+    //
 
 
     // NTTP::test();
@@ -1049,7 +1052,7 @@ int main([[maybe_unused]] int argc,
     // MaxStack::TestAll();
     // DebugLogger::TestAll();
     // UniquePtr_Size::SizeTest();
-    CollectionsTests::TestAll();
+    // CollectionsTests::TestAll();
     // Templates::TestAll();
     // ExpressionTemplates::TestAll();
     // CopyElision_RVO::TestAll();
