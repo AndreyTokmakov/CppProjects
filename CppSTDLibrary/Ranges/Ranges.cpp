@@ -512,8 +512,9 @@ namespace Ranges::Algoritms {
     void Find_IF()
     {
         constexpr std::array<int, 6> data{ 6,5,4,3,2,1 };
-        auto is_six = [](int v) -> bool { return 6 == v; };
+        constexpr auto is_six = [](int v) -> bool { return 6 == v; };
 
+        /*
         {
             constexpr auto result = std::ranges::find_if(data, is_six);
             if constexpr (result != std::ranges::end(data)) {
@@ -533,6 +534,7 @@ namespace Ranges::Algoritms {
                 std::cout << "Not found" << std::endl;
             }
         }
+        */
     }
 
     void Sort_BackWards()

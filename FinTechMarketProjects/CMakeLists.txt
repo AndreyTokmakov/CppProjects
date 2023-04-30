@@ -15,6 +15,6 @@ add_executable(FinTechMarketProjects
     MatchingOrderBookEx/MatchingOrderBookEx.cpp MatchingOrderBookEx/MatchingOrderBookEx.h
     OrderBook/OrderBook.cpp OrderBook/OrderBook.h
     OrderBook2/OrderBook2.cpp OrderBook2/OrderBook2.h
-        OrderBook3/OrderBook3.cpp OrderBook3/OrderBook3.h Utilities/Utilities.cpp Utilities/Utilities.h DaVinchiTest/DaVinchiTest.cpp DaVinchiTest/DaVinchiTest.h DaVinchiTest/DaVinchiTest_LinkedList.cpp DaVinchiTest/DaVinchiTest_LinkedList.h)
+        OrderBook3/OrderBook3.cpp OrderBook3/OrderBook3.h Utilities/Utilities.cpp Utilities/Utilities.h DaVinchiTest/DaVinchiTest.cpp DaVinchiTest/DaVinchiTest.h DaVinchiTest/DaVinchiTest_LinkedList.cpp DaVinchiTest/DaVinchiTest_LinkedList.h TestTask_OrderBook/TestTask_OrderBook.cpp TestTask_OrderBook/TestTask_OrderBook.h)
 
 TARGET_LINK_LIBRARIES(FinTechMarketProjects pthread)

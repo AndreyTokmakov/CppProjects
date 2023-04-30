@@ -7,20 +7,12 @@
 // Description : Bitwise operation src
 //============================================================================
 
-#include <stdio.h>
 #include <iostream>
 #include <string>
-#include <string_view>
 #include <array>
-#include <functional>
-#include <algorithm>
-#include <ctime>
-#include <cctype>
 #include <numeric>
-#include <list>
-#include <vector>
 #include <bitset>
-#include <iterator>
+#include <cstdint>
 
 #include "../Integer/Integer.h"
 #include "BitwiseOperation.h"
@@ -159,7 +151,7 @@ namespace BitwiseOperation
         unsigned char c = 170;
         std::cout << 170 << " = "; showbit_char(c);
 
-        c = ~170;
+        c = static_cast<char>(~170);
         std::cout << "170 (swaped)" << " = "; showbit_char(c);
     }
 

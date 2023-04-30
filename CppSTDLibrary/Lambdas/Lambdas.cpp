@@ -19,11 +19,15 @@
 #include <algorithm> 
 #include <array>
 #include <string_view> 
-#include <type_traits>
-#include "../Integer/Integer.h"
+
 #include "Lambdas.h"
 #include <cassert>
 #include <variant>
+#include <memory>
+
+#include <type_traits>
+#include "../Integer/Integer.h"
+
 
 using namespace std::string_literals;
 

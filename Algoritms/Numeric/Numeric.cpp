@@ -520,6 +520,8 @@ namespace Numeric {
 
         auto degrees = std::abs(hours * 30  -  minutes * 6 + (30 * minutes) / 60);
         degrees = std::min(degrees, 360 - degrees);
+
+        [[maybe_unused]]
         const double radians = ( degrees * std::numbers::pi ) / 180;
 
         // std::cout << "degrees = " << degrees << std::endl;
@@ -1371,21 +1373,21 @@ namespace Numeric {
 
     //--------------------------------------------------------------------------------------//
 
-    bool _is_array_consecutive(const std::vector<int>& Numeric) { // Array shall not contain duplicaties
-        int result = 0, min = Numeric[0];
+    bool _is_array_consecutive(const std::vector<int>& array) { // Array shall not contain duplicaties
+        int result = 0, min = array[0];
         // Following loop is to:
         // 1. Determine min value
         // 2. Calculate difference between sum of all elements in range {1... length}
         //    and sum of all elements in the input array
-        for (size_t i = 0; i < Numeric.size(); result += i++) {
-            result -= Numeric[i];
-            min = std::min(min, Numeric[i]);
+        for (size_t i = 0; i < array.size(); result += i++) {
+            result -= array[i];
+            min = std::min(min, array[i]);
         }
 
         // Here we have to update 'result' value since the input array
         // could start not from 1 but from 100500 for example.
         // 'min' variable is the first value of the potential consecutive array
-        return 0 == (result + min * Numeric.size()) ? true : false;
+        return 0 == (result + min * array.size());
     }
 
     bool _is_array_consecutive_2(const std::vector<int>& Numeric) {
@@ -1410,7 +1412,7 @@ namespace Numeric {
     void Is_Array_Elements_Consecutive()
     {
         std::vector<std::vector<int>> testData {
-            { 1,2, 3 }, { -1, -2, -3, -4, -4, -6 },{ 1,2, 4 }, { 1,2,4,4,4}
+            { 1,2, 3 }, { -1, -2, -3, -4, -4, -6 },{ 1,2, 4 }, { 5,4,1,3,2}
         };
         for (const std::vector<int>& data: testData)
         {
@@ -2826,7 +2828,7 @@ void Numeric::TEST_ALL()
     // Numeric::isPowerOf2();
     // Numeric::GreatestCommonDivisor();
     // Numeric::LeastCommonMultiple();
-    // Numeric::LongestCommonSubsequence();
+    Numeric::LongestCommonSubsequence();
     // Numeric::FinabochiNumeric();
     // Numeric::LongestSubset_FinabochiNumeric();
     // Numeric::CountAndSaySequence_Generate();
@@ -2911,7 +2913,7 @@ void Numeric::TEST_ALL()
 
     // Numeric::Missmatch_Sorted_Vectors();
     // Numeric::Missmatch_Tests();
-    Numeric::IsPermutation();
+    // Numeric::IsPermutation();
     // Numeric::IsReversedEquals();
     // Numeric::ReverseToMakeEqual();
     // Numeric::MaxSum_of_NonConsecutive_Elements_In_Array();

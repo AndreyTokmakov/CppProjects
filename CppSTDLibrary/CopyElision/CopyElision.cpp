@@ -14,6 +14,7 @@
 #include <stdexcept>
 #include <algorithm>
 #include <array>
+#include <memory>
 
 #include "CopyElision.h"
 #include "../Integer/Integer.h"

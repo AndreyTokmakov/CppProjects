@@ -13,6 +13,7 @@
 #include <string_view>
 #include <cstring>
 #include <fstream>
+#include <functional>
 #include <filesystem>
 #include <tuple>
 #include <ranges>
@@ -22,6 +23,7 @@
 #include <future>
 #include <mutex>
 #include <syncstream>
+#include <utility>
 
 #include <numeric>
 
@@ -40,6 +42,7 @@
 #include <cmath>
 #include <stack>
 #include <variant>
+#include <chrono>
 
 #include "Algorithms/Algorithms.h"
 #include "Geometry/PointsAndLines.h"
@@ -1022,15 +1025,16 @@ namespace Math
     }
 }
 
+#include <experimental/socket>
+
 int main([[maybe_unused]] int argc,
 
          [[maybe_unused]] char** argv)
 {
     const std::vector<std::string_view> args(argv + 1, argv + argc);
 
-    auto lm = [][[nodiscard]]()->int { return 42; };
 
-    //
+
 
 
     // NTTP::test();

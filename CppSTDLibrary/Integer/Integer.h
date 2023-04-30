@@ -11,7 +11,7 @@
 #define INTEGER_INCLUDE_GUARD__H
 
 #include <iostream>
-#include <memory>
+#include <utility>
 
 /** Integet class. **/
 class Integer {

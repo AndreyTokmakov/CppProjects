@@ -15,6 +15,7 @@ Description : Observer pattern test
 #include <iostream>
 #include <string_view>
 #include <memory>
+#include <vector>
 
 namespace Observer::Test1 {
 

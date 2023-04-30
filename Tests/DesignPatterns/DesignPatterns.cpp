@@ -10,6 +10,7 @@ Description : DesignPatterns
 #include "DesignPatterns.h"
 
 #include <deque>
+#include <algorithm>
 #include <string>
 #include <iostream>
 #include <memory>

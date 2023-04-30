@@ -12,6 +12,7 @@
 #include <string_view>
 #include <vector>
 #include <algorithm>
+#include <memory>
 
 #include "../Integer/Integer.h"
 #include "WeakPtr.h"

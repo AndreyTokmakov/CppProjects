@@ -12,6 +12,7 @@
 #include <iostream>
 #include <array>
 #include <string>
+#include <cstdint>
 
 namespace EnumTests::EnumNewStyle {
 

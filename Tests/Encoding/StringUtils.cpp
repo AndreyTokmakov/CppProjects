@@ -16,6 +16,7 @@
 #include <array>
 #include <codecvt>
 #include <locale>
+#include <cstdint>
 
 namespace StringUtils
 {

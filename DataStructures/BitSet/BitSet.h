@@ -13,6 +13,7 @@
 #include <iostream>
 #include <vector>
 #include <array>
+#include <cstdint>
 
 namespace BitSet {
 

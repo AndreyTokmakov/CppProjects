@@ -16,6 +16,8 @@
 #include "DaVinchiTest/DaVinchiTest.h"
 #include "DaVinchiTest/DaVinchiTest_LinkedList.h"
 
+#include "TestTask_OrderBook/TestTask_OrderBook.h"
+
 #include <iostream>
 #include <fstream>
 #include <vector>
@@ -248,7 +250,9 @@ int main([[maybe_unused]] int argc,
     // book.BiggestBuyOrders("TEST8");
     // book.BestSellAtTime("TEST8", "15:38");
 
-    Tests::splitTest();
+    TestTask_OrderBook::TestAll();
+
+    // Tests::splitTest();
 
     return EXIT_SUCCESS;
 }

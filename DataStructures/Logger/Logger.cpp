@@ -24,6 +24,8 @@ Description : C++ Logging lib
 #include <mutex>
 #include <thread>
 #include <iomanip>
+#include <utility>
+
 
 namespace Logging {
 

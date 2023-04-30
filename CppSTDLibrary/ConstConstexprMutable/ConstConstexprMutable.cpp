@@ -14,11 +14,11 @@
 #include <string_view>
 #include <stdexcept>
 #include <numeric>
-#include <vector>
-#include <map>
 #include <iostream>
 #include <string>
 #include <cassert>
+#include <utility>
+#include <cstdint>
 
 namespace ConstConstexprMutable::Compile_Time_IF {
 

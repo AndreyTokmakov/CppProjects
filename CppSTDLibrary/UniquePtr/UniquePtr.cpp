@@ -11,6 +11,7 @@
 #include <string>
 #include <fstream>
 #include <string_view>
+#include <memory>
 
 #include "../Integer/Integer.h"
 #include "UniquePtr.h"

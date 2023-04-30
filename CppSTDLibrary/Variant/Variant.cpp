@@ -1,4 +1,3 @@
-#include "Variant.h"
 
 #include <iostream>
 #include <string>
@@ -7,12 +6,11 @@
 #include <algorithm>
 #include <vector>
 #include <unordered_map>
+#include <memory>
 
+#include "Variant.h"
 #include "../Integer/Integer.h"
-// #include "AlgorithmsTests.h"
 
-using String = std::string;
-using CString = const String&;
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //												      Variant_Tests :				              									    	      //
@@ -34,19 +32,19 @@ namespace Variant {
 
 	class TestUser_String {
 	protected:
-		String name;
+		std::string name;
 
 	public:
-		TestUser_String(CString name) {
+		TestUser_String(const std::string& name) {
 			this->name = name;
 			std::cout << "Test user created : " << this->name << std::endl;
 		}
 
-		const String getName() const {
+		const std::string getName() const {
 			return name;
 		}
 
-		void setName(CString name) {
+		void setName(const std::string& name) {
 			this->name = name;
 		}
 

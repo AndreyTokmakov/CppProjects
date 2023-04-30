@@ -12,6 +12,7 @@
 #include "Random.h"
 
 #include <iostream>
+#include <algorithm>
 #include <string>
 #include <random>
 #include <cassert>

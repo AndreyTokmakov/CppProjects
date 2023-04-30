@@ -46,7 +46,7 @@ add_executable(CppSTDLibrary
 		OptionalTests/OptionalTests.cpp OptionalTests/OptionalTests.h
 		PolymorphicMemoryResources/PolymorphicMemoryResources.cpp PolymorphicMemoryResources/PolymorphicMemoryResources.h
 		Random/Random.cpp Random/Random.h
-		# Ranges/Ranges.cpp Ranges/Ranges.h
+		Ranges/Ranges.cpp Ranges/Ranges.h
 		ReferenceWrapper/ReferenceWrapper.cpp ReferenceWrapper/ReferenceWrapper.h
 		SharedPtr/SharedPtrTests.cpp SharedPtr/SharedPtrTests.h
 		SourceLocation/SourceLocation.cpp SourceLocation/SourceLocation.h

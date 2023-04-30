@@ -10,6 +10,7 @@ Description : TemplateMethod
 #include "TemplateMethod.h"
 
 #include <iostream>
+#include <cstdint>
 
 namespace TemplateMethod::Game
 {

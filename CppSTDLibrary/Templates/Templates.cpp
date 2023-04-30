@@ -14,6 +14,10 @@ Description : Templates src
 #include <array>
 #include <algorithm>
 #include <concepts>
+#include <utility>
+#include <algorithm>
+#include <cstdint>
+#include <functional>
 // #include <format>
 
 #include "../Integer/Integer.h"

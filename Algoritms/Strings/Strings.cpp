@@ -25,6 +25,8 @@
 #include <map>
 #include <unordered_map>
 
+#include <cstdint>
+
 namespace Strings {
 
     bool _is_palindrome_1(const std::string& str) {

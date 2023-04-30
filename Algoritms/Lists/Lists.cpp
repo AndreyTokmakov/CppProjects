@@ -10,12 +10,15 @@
 #include <iostream>
 #include <algorithm>
 #include <string>
-#include <unordered_set>
 #include <cassert>
 #include <initializer_list>  // std::initializer_list
 #include <optional>
+
+#include <vector>
 #include <list>
 #include <forward_list>
+#include <unordered_set>
+
 
 #include "Lists.h"
 
@@ -172,9 +175,7 @@ namespace LinkedList {
 
 	template<typename T>
 	Node<T>* _reserve_sublists(Node<T>* head) {
-		Node<int>* previous = head, * next = head;
-
-		Node<int>* start = nullptr, * end = nullptr;
+		Node<int>* next = head;
 
 		while (nullptr != next) {
 			if (0 == next->data % 2) {
@@ -376,7 +377,6 @@ namespace LinkedList {
     }
 
     void findMiddle2(const Node<int>* root) {
-        size_t steps = 0;
         const Node<int>* slow = root, *fast = root;
         while (nullptr != fast && nullptr != fast->next) {
             fast = fast->next->next;

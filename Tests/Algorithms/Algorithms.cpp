@@ -13,6 +13,8 @@ Description : Algorithms
 #include <vector>
 #include <optional>
 #include <algorithm>
+#include <unordered_map>
+#include <array>
 #include <numeric>
 
 namespace Algorithms

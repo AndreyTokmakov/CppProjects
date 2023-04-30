@@ -11,6 +11,7 @@
 
 
 #include <iostream>
+#include <algorithm>
 #include <cassert>
 #include <sstream>
 #include <fstream>

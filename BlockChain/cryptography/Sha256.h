@@ -12,6 +12,7 @@
 
 #include <string>
 #include <array>
+#include <cstdint>
 
 class Sha256 final
 {

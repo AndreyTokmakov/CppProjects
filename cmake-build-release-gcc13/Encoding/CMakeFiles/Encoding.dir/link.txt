@@ -1,0 +1,1 @@
+/home/andtokm/DiskS/Utils/bin/gcc-13.1/bin/c++-13.1 -O3 -DNDEBUG CMakeFiles/Encoding.dir/main.cpp.o CMakeFiles/Encoding.dir/Base64/Base64.cpp.o CMakeFiles/Encoding.dir/URL/URLEncoding.cpp.o -o Encoding  -lpthread 

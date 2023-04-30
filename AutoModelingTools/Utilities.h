@@ -13,6 +13,8 @@
 #include <string>
 #include <array>
 #include <string_view>
+#include <algorithm>
+#include <cstdint>
 
 namespace Utilities {
     static constexpr size_t MAX_TEETH_COUNT { 32 };

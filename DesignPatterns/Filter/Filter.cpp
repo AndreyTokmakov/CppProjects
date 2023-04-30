@@ -9,6 +9,7 @@
 
 #include "Filter.h"
 
+#include <algorithm>
 #include <utility>
 
 

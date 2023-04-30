@@ -10,6 +10,7 @@
 #include "PriorityList.h"
 
 #include <iostream>
+#include <algorithm>
 #include <list>
 
 namespace PriorityList {
