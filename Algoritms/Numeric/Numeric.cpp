@@ -2828,12 +2828,12 @@ void Numeric::TEST_ALL()
     // Numeric::isPowerOf2();
     // Numeric::GreatestCommonDivisor();
     // Numeric::LeastCommonMultiple();
-    Numeric::LongestCommonSubsequence();
+    // Numeric::LongestCommonSubsequence();
     // Numeric::FinabochiNumeric();
     // Numeric::LongestSubset_FinabochiNumeric();
     // Numeric::CountAndSaySequence_Generate();
     // Numeric::CountAndSaySequence_Get_Kth_Token();
-    // Numeric::CountOrderedPairs();
+    Numeric::CountOrderedPairs();
     // Numeric::ReverseNumber();
     // Numeric::GetNumberOfDigit();
     // Numeric::RearangeArray();
@@ -2870,7 +2870,7 @@ void Numeric::TEST_ALL()
     // Numeric::FindLongestSubArray();
     // Numeric::SplitArrayToPieces_FindNumber_ByExample();
     // Numeric::Sum_Of_ConsecutiveNumeric();
-    Numeric::Is_Array_Elements_Consecutive();
+    // Numeric::Is_Array_Elements_Consecutive();
     // Numeric::MiniMaxSum_Of4();
     // Numeric::Find_Sum_All_Numeric();
     // Numeric::Find_Multiplier_Pair();

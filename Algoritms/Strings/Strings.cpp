@@ -582,6 +582,25 @@ namespace Strings {
 
 	//--------------------------------------------------------------------------------------//
 
+    int64_t longestUniqueSubstr_0(const std::string& s)
+    {
+        int64_t max_len = 0, left = -1;
+        // initial left border, before the start of the string
+        // storage for last instance of each character
+        std::vector<int64_t> arr(256,-1);
+        for (int64_t right = 0; right < std::ssize(s); ++right) {
+            // last seen is in between left and right
+            // this is a duplicate, move left to the duplicate
+            if (arr[unsigned(s[right])] > left)
+                left = arr[unsigned(s[right])];
+            // remember the new last seen
+            arr[unsigned(s[right])] = right;
+            // left to right, but not including the character at left
+            max_len = std::max(max_len, right-left);
+        }
+        return max_len;
+    }
+
 	std::string longestUniqueSubstr_1(const std::string& text) {
 		char duplicates[256] = { 0 };
 		size_t beg = 0, length = 0, maxlen = 0;
@@ -645,14 +664,19 @@ namespace Strings {
         return result;
     }
 
-	void LongestSubstringWithoutRepeatingCharacters() {
-		std::string text = "AAAAAbcdAEEE";
+	void LongestSubstringWithoutRepeatingCharacters()
+    {
+		for (const std::string& s: {"abcde", "abcbef", "aaaaaa", "aaabbbccc"})
+        {
+            std::cout << longestUniqueSubstr_0(s) << " "
+                      << longestUniqueSubstr_1(s) << " "
+                      << longestUniqueSubstr_2(s) << " "
+                      << longestUniqueSubstr_3_Map(s) << " "
+                      << longestUniqueSubstr_4_Tbl(s) << std::endl;
 
-		std::cout << longestUniqueSubstr_1(text) << std::endl;
-		std::cout << longestUniqueSubstr_2(text) << std::endl;
-		std::cout << longestUniqueSubstr_3_Map(text) << std::endl;
-		std::cout << longestUniqueSubstr_4_Tbl(text) << std::endl;
-		std::cout << longestUniqueSubstr_4_Tbl_Debug(text) << std::endl;
+        }
+
+        // std::cout << longestUniqueSubstr_4_Tbl_Debug(text) << std::endl;
 	}
 
 	//--------------------------------------------------------------------------------------//
@@ -1523,7 +1547,7 @@ namespace Strings
 
 void Strings::TEST_ALL()
 {
-	// Strings::LongestSubstringWithoutRepeatingCharacters();
+	Strings::LongestSubstringWithoutRepeatingCharacters();
 	// Strings::LongestConsecutiveCharacters();
 	// Strings::AnalogClockAngles();
 	// Strings::Atoi();

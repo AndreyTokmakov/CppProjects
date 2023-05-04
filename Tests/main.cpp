@@ -43,6 +43,7 @@
 #include <stack>
 #include <variant>
 #include <chrono>
+#include <random>
 
 #include "Algorithms/Algorithms.h"
 #include "Geometry/PointsAndLines.h"
@@ -1025,16 +1026,20 @@ namespace Math
     }
 }
 
-#include <experimental/socket>
+struct ieee80211_radiotap_header {
+    uint8_t it_version;
+    uint8_t it_pad;
+    uint16_t it_len;
+    uint32_t it_present;
+} __attribute__((packed, aligned(1)));
+
 
 int main([[maybe_unused]] int argc,
-
          [[maybe_unused]] char** argv)
 {
     const std::vector<std::string_view> args(argv + 1, argv + argc);
 
-
-
+    std::cout << sizeof(ieee80211_radiotap_header) << std::endl;
 
 
     // NTTP::test();

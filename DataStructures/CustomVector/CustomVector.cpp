@@ -73,11 +73,10 @@ namespace Utilities
     public:
         Integer() = default;
 
-        Integer(int v): value {v} {
+        explicit Integer(int v): value {v} {
         }
 
-        ~Integer() {
-        }
+        ~Integer() = default;
 
         Integer(const Integer &obj): value {obj.value} {
         }

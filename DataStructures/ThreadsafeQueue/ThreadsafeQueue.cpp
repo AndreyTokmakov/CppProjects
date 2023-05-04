@@ -35,7 +35,7 @@ namespace Queues::Multithreading
 {
 
 	void RunTest1() {
-		Queues_On_Condition_Variable::ThreadsafeQueue<Integer> queue;
+		Queues_On_Condition_Variable::ThreadSafeQueue<Integer> queue;
 
 		std::future<void> producer = std::async(std::launch::async, [&]()-> void {
 			THREAD_INFO << "Producer: started." << std::endl;
@@ -60,7 +60,7 @@ namespace Queues::Multithreading
 	}
 
 	void RunTest_WairFor() {
-		Queues_On_Condition_Variable::ThreadsafeQueue<Integer> queue;
+		Queues_On_Condition_Variable::ThreadSafeQueue<Integer> queue;
 
 		std::future<void> producer = std::async(std::launch::async, [&]()-> void {
 			THREAD_INFO << "Producer: started." << std::endl;
@@ -95,7 +95,7 @@ namespace Queues::Multithreading
 	}
 
 	void Perf_Test_1() {
-		Queues_On_Condition_Variable::ThreadsafeQueue<size_t> queue;
+		Queues_On_Condition_Variable::ThreadSafeQueue<size_t> queue;
 		std::vector<std::future<void>> workers;
 
 		constexpr size_t MAX_VALUE {10'000'000};

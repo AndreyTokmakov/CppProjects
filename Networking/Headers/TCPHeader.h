@@ -22,7 +22,7 @@ struct PseudoTCPHeader final
     uint8_t  useless;
     uint8_t  protocol;
     uint16_t totalLength;
-};
+} __attribute__((packed, aligned(1)));
 
 // TODO: Set alignment
 struct TCPHeader final

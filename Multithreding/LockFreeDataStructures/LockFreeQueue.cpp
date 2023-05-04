@@ -44,22 +44,27 @@
 
 #include "LockFreeQueue.h"
 
-namespace LockFreeQueue {
+namespace LockFreeQueue
+{
     template<class T, size_t N>
     class LockFreeQueue {
     public:
-        LockFreeQueue() : read_pos_{0}, write_pos_{0}, size_{0} {
-            //assert(size_.is_lock_free());
+        LockFreeQueue() :size_{0},  read_pos_{0}, write_pos_{0}
+        {
+            // assert(size_.is_lock_free());
             if (!size_.is_lock_free()) {
                 std::cout << "ERROR!\n";
             }
         }
 
-        auto size() const {
+        [[nodiscard]]
+        size_t size() const
+        {
             return size_.load();
         }
 
-        auto push(const T &t) {
+        auto push(const T &t)
+        {
             if (size_.load() >= N) {
                 throw std::overflow_error("Queue is full");
             }
@@ -68,7 +73,9 @@ namespace LockFreeQueue {
             size_.fetch_add(1);
         }
 
-        auto &front() const {
+        [[nodiscard]]
+        size_t& front() const
+        {
             const auto s = size_.load();
             if (s == 0) {
                 throw std::underflow_error("Queue is empty");
@@ -76,7 +83,8 @@ namespace LockFreeQueue {
             return buffer_[read_pos_];
         }
 
-        auto pop() {
+        auto pop()
+        {
             if (size_.load() == 0) {
                 throw std::underflow_error("Queue is empty");
             }

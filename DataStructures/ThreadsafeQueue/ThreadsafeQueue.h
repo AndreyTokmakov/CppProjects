@@ -20,16 +20,17 @@ namespace Queues::Multithreading {
 	namespace Queues_On_Condition_Variable {
 
 		template<typename T>
-		class ThreadsafeQueue {
+		class ThreadSafeQueue {
 		private:
 			mutable std::mutex mutex;
 			std::deque<T> queue;
 			std::condition_variable updated;
 
 		public:
-			ThreadsafeQueue() = default;
+            ThreadSafeQueue() = default;
 
-			void push(T&& new_value) noexcept {
+			void push(T&& new_value) noexcept
+            {
 				{
 					std::lock_guard<std::mutex> lock(mutex);
 					queue.push_back(std::move(new_value));
@@ -38,7 +39,8 @@ namespace Queues::Multithreading {
 			}
 
 			template <typename... Args>
-			void emplace(Args&& ... args) noexcept {
+			void emplace(Args&& ... args) noexcept
+            {
 				{
 					std::lock_guard<std::mutex> lock(mutex);
 					queue.emplace_back(std::forward<Args>(args)...);
@@ -52,7 +54,8 @@ namespace Queues::Multithreading {
 				(elements.push_back(args), ...);
 			}*/
 
-			void wait_and_pop(T& value) noexcept {
+			void wait_and_pop(T& value) noexcept
+            {
 				std::unique_lock<std::mutex> lock(mutex);
 				updated.wait(lock, [this] {
 					return false == queue.empty();
@@ -62,19 +65,22 @@ namespace Queues::Multithreading {
 			}
 
 			template<class _Rep, class _Period>
-			bool wait_for_and_pop(T& value, const std::chrono::duration<_Rep, _Period>& _Rel_time) noexcept {
+			bool wait_for_and_pop(T& value,
+                                  const std::chrono::duration<_Rep, _Period>& _Rel_time) noexcept
+            {
 				std::unique_lock<std::mutex> lock(mutex);
 				bool ok = updated.wait_for(lock, _Rel_time, [this] {
 					return false == queue.empty();
-					});
-				if (false == ok)
+                });
+				if (!ok)
 					return false;
 				value = std::move(queue.front());
 				queue.pop_front();
 				return true;
 			}
 
-			T&& wait_and_pop() noexcept {
+			T&& wait_and_pop() noexcept
+            {
 				std::unique_lock<std::mutex> lock(mutex);
 				updated.wait(lock, [this] {
 					return false == queue.empty();
