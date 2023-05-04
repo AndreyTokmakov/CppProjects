@@ -49,7 +49,7 @@ int main([[maybe_unused]] int argc,
          [[maybe_unused]] char** argv)
 {
     // AsyncLaunch::TEST_ALL();
-    Atomic::TEST_ALL();
+    // Atomic::TEST_ALL();
     // Barrier::TEST_ALL();
     // CallOnce::TEST_ALL();
     // ConditionVariable::TEST_ALL();
@@ -66,7 +66,7 @@ int main([[maybe_unused]] int argc,
     // ParallelExecutionAlgoritms::TEST_ALL();
     // FalseSharingExperiments::TEST_ALL();
     // Semaphore::TEST_ALL();
-    // Synchronization::TEST_ALL();
+    Synchronization::TEST_ALL();
     // SynchStream::TEST_ALL();
     // SynchStream_Custom::TEST_ALL();
 

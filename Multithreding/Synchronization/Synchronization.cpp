@@ -29,6 +29,7 @@
 #include <ctime>
 
 #include <optional>
+#include <syncstream>
 
 #include "Synchronization.h"
 #include "../ThreadHelperUtilities/ThreadHelperUtilities.h"
@@ -355,6 +356,35 @@ namespace Synchronization::SharedMutext {
         reader1 = std::thread(read, 3);
         reader1.join();
     }
+
+    void Read_Write_Test_Blocking()
+    {
+        std::shared_mutex mtx;
+        auto reader = [&mtx]()-> void {
+            while (true) {
+                {
+                    std::shared_lock lock(mtx);
+                    std::osyncstream{std::cout} << "Reader: entered" << std::endl;
+                    std::this_thread::sleep_for(std::chrono::seconds(2));
+                    std::osyncstream{std::cout} << "Reader: exited" << std::endl;
+                }
+                std::this_thread::sleep_for(std::chrono::milliseconds (100));
+            }
+        };
+
+        auto writer = [&mtx]()-> void {
+            while (true) {
+                std::lock_guard lock(mtx);
+                std::osyncstream {std::cout}  << "Writer: entered" << std::endl;
+                std::this_thread::sleep_for(std::chrono::seconds(10));
+                std::osyncstream {std::cout}  << "Writer: exited" << std::endl;
+            }
+        };
+
+
+        std::jthread writerThread1(writer);
+        std::jthread readerThread1(reader), readerThread2(reader), readerThread3(reader);
+    }
 }
 
 namespace Synchronization::SharedTimedMutext {
@@ -382,8 +412,8 @@ namespace Synchronization::SharedTimedMutext {
         }
     };
 
-
-    void Test() {
+    void Test()
+    {
         std::shared_timed_mutex m;
         int i = 10;
 
@@ -402,7 +432,8 @@ namespace Synchronization::SharedTimedMutext {
     }
 
 
-    void Read_Write_Test() {
+    void Read_Write_Test()
+    {
         DNSCache cache;
 
         auto reader = [&cache](const std::string& domain, int timeout)-> void {
@@ -601,7 +632,7 @@ namespace Synchronization::TimedMutex {
             if (!lock.owns_lock())
                 THREAD_INFO << "Failed to get lock." << std::endl;
             else
-                THREAD_INFO << "Got get lock." << std::endl;
+                THREAD_INFO << "Got the lock." << std::endl;
             return;
         };
 
@@ -842,7 +873,8 @@ namespace Synchronization::RecursiveMutex
     }
 }
 
-void Synchronization::TEST_ALL() {
+void Synchronization::TEST_ALL()
+{
     // Test_Unsynch();
 
     // Mutex_Lock_Test_1();
@@ -861,7 +893,7 @@ void Synchronization::TEST_ALL() {
 
     // SharedMutext::Test_NoShare();
     // SharedMutext::Synchronized_Read_Write_Test();
-
+    SharedMutext::Read_Write_Test_Blocking();
 
 
     // TimedMutex::TryLockFor();
@@ -869,7 +901,7 @@ void Synchronization::TEST_ALL() {
     // TimedMutex::TryLockUntil();
     // TimedMutex::TryLockUntil_1();
     // TimedMutex::TryLockUntil_1();
-    TimedMutex::LimitTime_Using_UniqueLock();
+    // TimedMutex::LimitTime_Using_UniqueLock();
 
 
 
