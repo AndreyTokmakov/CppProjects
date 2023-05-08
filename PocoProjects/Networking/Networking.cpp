@@ -50,6 +50,36 @@ namespace Networking
     }
 }
 
+namespace Networking::APITests
+{
+    void SendRequest()
+    {
+        Poco::Net::SocketAddress address {"0.0.0.0", 52525 };
+        Poco::Net::StreamSocket socket(address);
+        Poco::Net::SocketStream str(socket);
+        str << "GET / HTTP/1.1\r\n"
+               "Host: 0.0.0.0:52525\r\n"
+               "\r\n";
+        str.flush();
+        Poco::StreamCopier::copyStream(str, std::cout);
+    }
+
+
+    void SendRequestPost()
+    {
+        Poco::Net::SocketAddress address {"0.0.0.0", 52525 };
+        Poco::Net::StreamSocket socket(address);
+        Poco::Net::SocketStream str(socket);
+        str << "POST /api/entities?param1=value1&param2=value2 HTTP/1.1\r\n"
+               "Host: 0.0.0.0:52525\r\n"
+               "\r\n";
+        str.flush();
+        Poco::StreamCopier::copyStream(str, std::cout);
+    }
+}
+
+
+
 
 namespace Networking::Server
 {
@@ -76,6 +106,9 @@ void Networking::TestAll()
     // ResolveDnsName();
     // Test();
 
-    Server::runServer();
+    // APITests::SendRequest();
+    APITests::SendRequestPost();
+
+    // Server::runServer();
 }
 

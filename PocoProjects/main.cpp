@@ -36,10 +36,10 @@ int main([[maybe_unused]] int argc,
     // Timer::TestAll();
     // Events::TestAll();
     // Processes::TestAll();
-    // Networking::TestAll();
+    Networking::TestAll();
     // Environment::TestAll();
     // Random::TestAll();
-    Cryptography::TestAll();
+    // Cryptography::TestAll();
 
 
     return EXIT_SUCCESS;
