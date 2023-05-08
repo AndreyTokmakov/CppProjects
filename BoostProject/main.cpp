@@ -252,6 +252,75 @@ namespace  ThreadPool {
     }
 }
 
+
+#include <boost/array.hpp>
+#include <boost/asio.hpp>
+
+
+namespace Networking
+{
+    using boost::asio::ip::tcp;
+
+    std::string make_daytime_string()
+    {
+        std::time_t now = std::time(0);
+        return std::ctime(&now);
+    }
+
+    void server()
+    {
+        try
+        {
+            boost::asio::io_service io_service;
+            tcp::acceptor acceptor(io_service, tcp::endpoint(tcp::v4(), 52525));
+            for (;;)
+            {
+                tcp::socket socket(io_service);
+                acceptor.accept(socket);
+                std::string message = make_daytime_string();
+                boost::system::error_code ignored_error;
+                boost::asio::write(socket, boost::asio::buffer(message), ignored_error);
+            }
+        }
+        catch (std::exception& e)
+        {
+            std::cerr << e.what() << std::endl;
+        }
+    }
+
+    void client()
+    {
+        try
+        {
+            boost::asio::io_service io_service;
+            tcp::resolver resolver(io_service);
+
+            tcp::resolver::query query("0.0.0.0", "daytime");
+            tcp::resolver::iterator endpoint_iterator = resolver.resolve(query);
+
+            tcp::socket socket(io_service);
+            boost::asio::connect(socket, endpoint_iterator);
+
+            while (true) {
+                boost::array<char, 128> buf {};
+                boost::system::error_code error;
+
+                const size_t len = socket.read_some(boost::asio::buffer(buf), error);
+                if (error == boost::asio::error::eof)
+                    break; // Connection closed cleanly by peer.
+                else if (error)
+                    throw boost::system::system_error(error); // Some other error.
+
+                std::cout.write(buf.data(), len);
+            }
+        }
+        catch (std::exception& e)
+        {
+            std::cerr << e.what() << std::endl;
+        }
+    }
+}
+
 int main([[maybe_unused]] int argc, 
          [[maybe_unused]] char** argv) 
 {
@@ -272,7 +341,10 @@ int main([[maybe_unused]] int argc,
 
     // DateTime::TestAll();
 
-    Serial::TestAll();
+    // Serial::TestAll();
+
+    // Networking::server();
+    Networking::client();
 
     /*
     MD5::Test1();
