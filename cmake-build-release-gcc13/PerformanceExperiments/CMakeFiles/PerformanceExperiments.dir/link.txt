@@ -1,1 +1,0 @@
-/home/andtokm/DiskS/Utils/bin/gcc-13.1/bin/c++-13.1 -O3 -DNDEBUG CMakeFiles/PerformanceExperiments.dir/main.cpp.o CMakeFiles/PerformanceExperiments.dir/Integer.cpp.o CMakeFiles/PerformanceExperiments.dir/Collections.cpp.o -o PerformanceExperiments 

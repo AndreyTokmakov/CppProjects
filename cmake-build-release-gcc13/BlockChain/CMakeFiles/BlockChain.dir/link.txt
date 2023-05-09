@@ -1,1 +1,0 @@
-/home/andtokm/DiskS/Utils/bin/gcc-13.1/bin/c++-13.1 -O3 -DNDEBUG CMakeFiles/BlockChain.dir/main.cpp.o CMakeFiles/BlockChain.dir/cryptography/sha256_Original.cpp.o CMakeFiles/BlockChain.dir/cryptography/Sha256.cpp.o -o BlockChain 

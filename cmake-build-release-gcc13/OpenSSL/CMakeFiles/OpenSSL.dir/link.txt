@@ -1,1 +1,0 @@
-/home/andtokm/DiskS/Utils/bin/gcc-13.1/bin/c++-13.1 -O3 -DNDEBUG CMakeFiles/OpenSSL.dir/main.cpp.o CMakeFiles/OpenSSL.dir/CertificateGenerator.cpp.o -o OpenSSL  -lpthread -lrt -lcrypt -lcrypto -lssl 
