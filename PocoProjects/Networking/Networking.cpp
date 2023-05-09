@@ -57,8 +57,9 @@ namespace Networking::APITests
         Poco::Net::SocketAddress address {"0.0.0.0", 52525 };
         Poco::Net::StreamSocket socket(address);
         Poco::Net::SocketStream str(socket);
-        str << "GET / HTTP/1.1\r\n"
+        str << "GET /debug HTTP/1.1\r\n"
                "Host: 0.0.0.0:52525\r\n"
+               "Connection: close\r\n"
                "\r\n";
         str.flush();
         Poco::StreamCopier::copyStream(str, std::cout);
@@ -106,8 +107,8 @@ void Networking::TestAll()
     // ResolveDnsName();
     // Test();
 
-    // APITests::SendRequest();
-    APITests::SendRequestPost();
+    APITests::SendRequest();
+    // APITests::SendRequestPost();
 
     // Server::runServer();
 }
