@@ -65,7 +65,6 @@ namespace Networking::APITests
         Poco::StreamCopier::copyStream(str, std::cout);
     }
 
-
     void SendRequestPost()
     {
         Poco::Net::SocketAddress address {"0.0.0.0", 52525 };
@@ -78,8 +77,6 @@ namespace Networking::APITests
         Poco::StreamCopier::copyStream(str, std::cout);
     }
 }
-
-
 
 
 namespace Networking::Server
