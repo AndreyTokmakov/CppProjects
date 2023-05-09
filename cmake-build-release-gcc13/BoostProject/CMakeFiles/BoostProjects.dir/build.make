@@ -256,6 +256,8 @@ BoostProject/BoostProjects: /usr/lib/x86_64-linux-gnu/libboost_log_setup.so.1.71
 BoostProject/BoostProjects: /usr/lib/x86_64-linux-gnu/libboost_log.so.1.71.0
 BoostProject/BoostProjects: /usr/lib/x86_64-linux-gnu/libboost_filesystem.so.1.71.0
 BoostProject/BoostProjects: /usr/lib/x86_64-linux-gnu/libboost_program_options.so.1.71.0
+BoostProject/BoostProjects: /usr/lib/x86_64-linux-gnu/libssl.so
+BoostProject/BoostProjects: /usr/lib/x86_64-linux-gnu/libcrypto.so
 BoostProject/BoostProjects: /usr/lib/x86_64-linux-gnu/libboost_chrono.so.1.71.0
 BoostProject/BoostProjects: /usr/lib/x86_64-linux-gnu/libboost_date_time.so.1.71.0
 BoostProject/BoostProjects: /usr/lib/x86_64-linux-gnu/libboost_regex.so.1.71.0

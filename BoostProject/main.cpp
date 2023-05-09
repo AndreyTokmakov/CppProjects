@@ -34,6 +34,8 @@
 #include <boost/uuid/detail/md5.hpp>
 #include <boost/algorithm/hex.hpp>
 
+#include <boost/asio/ssl.hpp>
+
 #include "Math/BoostMathTests.h"
 #include "Json/Json.h"
 #include "Spirit/Spirit.h"
@@ -321,6 +323,81 @@ namespace Networking
     }
 }
 
+namespace Networking::HTTP
+{
+    constexpr std::string_view host { "0.0.0.0." };
+    constexpr std::string_view path { "/debug" };
+
+    void sendRequestGET()
+    {
+        try {
+            boost::asio::io_context io_context;
+
+            tcp::resolver resolver(io_context);
+            tcp::resolver::results_type endpoints = resolver.resolve(host, "52525");
+
+            tcp::socket socket(io_context);
+            boost::asio::connect(socket, endpoints);
+
+            boost::asio::streambuf request;
+            std::ostream request_stream(&request);
+            request_stream << "GET " << path << " HTTP/1.0\r\n"
+                           << "Host: " << host << "\r\n"
+                           << "Accept: */*\r\n"
+                           << "Connection: close\r\n\r\n";
+
+            // Send the request.
+            boost::asio::write(socket, request);
+
+            boost::asio::streambuf response;
+            boost::asio::read_until(socket, response, "\r\n");
+
+            std::istream response_stream(&response);
+
+            std::string http_version;
+            response_stream >> http_version;
+
+            unsigned int status_code;
+            response_stream >> status_code;
+
+            std::string status_message;
+            std::getline(response_stream, status_message);
+            if (!response_stream || http_version.substr(0, 5) != "HTTP/"){
+                std::cout << "Invalid response\n";
+                return;
+            }
+            else if (200 != status_code) {
+                std::cout << "Response returned with status code " << status_code << "\n";
+                return;
+            }
+
+            // Read the response headers, which are terminated by a blank line.
+            boost::asio::read_until(socket, response, "\r\n\r\n");
+
+            // Process the response headers.
+            std::string header;
+            while (std::getline(response_stream, header) && header != "\r")
+                std::cout << header << "\n";
+            std::cout << "\n";
+
+            // Write whatever content we already have to output.
+            if (response.size() > 0)
+                std::cout << &response;
+
+            // Read until EOF, writing data to output as we go.
+            boost::system::error_code error;
+            while (boost::asio::read(socket, response,boost::asio::transfer_at_least(1), error))
+                std::cout << &response;
+            if (error != boost::asio::error::eof)
+                throw boost::system::system_error(error);
+        }
+        catch (std::exception& e)
+        {
+            std::cout << "Exception: " << e.what() << "\n";
+        }
+    }
+}
+
 int main([[maybe_unused]] int argc, 
          [[maybe_unused]] char** argv) 
 {
@@ -344,7 +421,9 @@ int main([[maybe_unused]] int argc,
     // Serial::TestAll();
 
     // Networking::server();
-    Networking::client();
+    // Networking::client();
+
+    Networking::HTTP::sendRequestGET();
 
     /*
     MD5::Test1();
