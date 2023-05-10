@@ -23,24 +23,27 @@ namespace Command::Switch_ON_OFF_Light
     };
 
     // Receiver Class
-    struct Light {
+    struct Light
+    {
         virtual void on() {
-            std::cout << "The light is ON" << std::endl;
+            std::cout << "Light: The light is ON" << std::endl;
         }
 
         virtual void off() {
-            std::cout << "The light is OFF" << std::endl;
+            std::cout << "Light: The light is OFF" << std::endl;
         }
 
         virtual ~Light() = default;
     };
 
     // Command for turning on the light
-    struct LightOnCommand: ICommand {
+    struct LightOnCommand: ICommand
+    {
         explicit LightOnCommand(std::shared_ptr<Light> light) : mLight(std::move(light)) {
         }
 
         void execute() override {
+            std::cout << "LightOnCommand::execute()\n";
             this->mLight->on();
         }
 
@@ -49,11 +52,13 @@ namespace Command::Switch_ON_OFF_Light
     };
 
     // Command for turning off the light
-    struct LightOffCommand: ICommand {
+    struct LightOffCommand: ICommand
+    {
         explicit LightOffCommand(std::shared_ptr<Light> light) : mLight(std::move(light)) {
         }
 
         void execute() override {
+            std::cout << "LightOffCommand::execute()\n";
             this->mLight->off();
         }
 
@@ -98,7 +103,6 @@ void Test_MethodPtr();
 
 void Command::TestAll()
 {
-
-    // Switch_ON_OFF_Light::Test();
-    Test_MethodPtr();
+    // Test_MethodPtr();
+    Switch_ON_OFF_Light::Test();
 }

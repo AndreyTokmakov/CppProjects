@@ -65,7 +65,7 @@ int main([[maybe_unused]]  int argc,
     // Monostate::TestAll();;
     // ObjectPools::SimpleTest();
     // ObjectPools::ExtentedTest();
-    DependencyInjection::TestAll();
+    // DependencyInjection::TestAll();
     // LazyInitialization::TestAll();
 
     /** Structural patterns: **/
@@ -85,7 +85,7 @@ int main([[maybe_unused]]  int argc,
     // Strategy::Test();
     // Policy::Test();
     // ChainOfResponsibility::TestAll();
-    // Command::TestAll();
+    Command::TestAll();
     // Iterator::Test();
     // Interpreter::Test();
     // Mediator::TestAll();

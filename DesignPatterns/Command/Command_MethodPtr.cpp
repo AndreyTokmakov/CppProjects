@@ -40,10 +40,12 @@ namespace Command::MethodPtr
         Command<Person> cmd {};
 
     public:
-        /*
-        Person(std::string n, Command<Person> c): name { std::move(n) }, cmd(c) {
+
+        Person(std::string n): name { std::move(n) } {
         }
-        */
+
+        Person(std::string n, Command<Person>& c): name { std::move(n) }, cmd(c) {
+        }
 
         Person(std::string n, Command<Person>&& c): name { std::move(n) }, cmd(c) {
         }
@@ -73,9 +75,22 @@ namespace Command::MethodPtr
         }
     };
 
+
+    void Test_Commands()
+    {
+        Person wilma("Wilma" );
+        Command cmdListen = Command(&wilma, &Person::listen);
+        // cmdListen.execute();
+
+        Person betty("Betty", cmdListen);
+        Command cmdGossip = Command(&betty, &Person::gossip);
+
+        cmdGossip.execute();
+    }
+
     void Test()
     {
-        Person wilma("Wilma", Command<Person>());
+        Person wilma("Wilma");
 
         Person betty("Betty", Command(&wilma, &Person::listen));
         Person barney("Barney", Command(&betty, &Person::gossip));
@@ -87,6 +102,8 @@ namespace Command::MethodPtr
 
 void Test_MethodPtr()
 {
+    Command::MethodPtr::Test_Commands();
+    std::cout << "---------------------------------------\n";
     Command::MethodPtr::Test();
 }
 
