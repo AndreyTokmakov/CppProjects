@@ -18,6 +18,7 @@
 #include <algorithm>
 #include <chrono>
 #include <concepts>
+#include <memory>
 #include <utility>
 #include <functional>
 

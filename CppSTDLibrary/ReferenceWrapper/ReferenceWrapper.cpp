@@ -21,9 +21,6 @@
 #include "../TestSupport/TestSupport.h"
 #include "ReferenceWrapper.h"
 
-using String = std::string;
-using CString = const String&;
-
 namespace ReferenceWrapper {
 
 	void Random_Ints_List()

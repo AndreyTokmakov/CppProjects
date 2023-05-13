@@ -17,6 +17,7 @@
 #include <utility>
 #include <stdio.h>
 #include <stdlib.h>
+#include <functional>
 
 #include "../Integer/Integer.h"
 #include "OptionalTests.h"

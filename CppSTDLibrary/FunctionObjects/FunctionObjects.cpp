@@ -21,14 +21,12 @@
 #include <string_view> 
 #include <array>
 #include <type_traits>
+#include <memory>
 #include <cassert>
-
 
 #include "../Integer/Integer.h"
 #include "FunctionObjects.h"
 
-using String = std::string;
-using CString = const String&;
 
 namespace FunctionObjects {
 
@@ -244,13 +242,13 @@ namespace FunctionObjects::BindTests {
 		return x / y;
 	}
 
-	void printer(CString text) {
+	void printer(const std::string& text) {
 		std::cout << "Input text 2: " << text << std::endl;
 	}
 
 	class Object {
 	public:
-		void info(CString text) {
+		void info(const std::string& text) {
 			std::cout << "Input text: " << text << std::endl;
 		}
 	};

@@ -257,6 +257,17 @@ namespace Filesystem {
         std::cout << currentPath << std::endl;
     }
 
+
+    void GetCurrentDir()
+    {
+        std::filesystem::path local(".");
+        std::cout << "local: " << local << "\n";
+
+        std::filesystem::path from_root = absolute(local);
+        std::cout << "absolute: " << from_root << "\n";
+    }
+
+
     void Hard_Link_Count() {
         std::filesystem::path path = std::filesystem::current_path();
         std::cout << path << std::endl;
@@ -770,7 +781,9 @@ namespace Filesystem::Experiments {
 };
 
 
-void Filesystem::TestAll() {
+void Filesystem::TestAll()
+{
+
     // TempDirectoryPath();
     // StandartMethods();
     // StandartMethods2();
@@ -788,7 +801,8 @@ void Filesystem::TestAll() {
     // Is_Dir_Exists();
     // Is_Dir_Exists_ErrrCpde();
 
-    // CurrentPath();
+    CurrentPath();
+    GetCurrentDir();
 
     // Hard_Link_Count();
 
@@ -820,7 +834,7 @@ void Filesystem::TestAll() {
 
     // Experiments::CreateFile_and_GetTime();
     // Experiments::VARIOUS_TESTS();
-    Experiments::ListDirectory_GetModifiedTime();
+    // Experiments::ListDirectory_GetModifiedTime();
 
 
     // Attributes::Test();

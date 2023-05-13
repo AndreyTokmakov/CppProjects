@@ -15,9 +15,12 @@
 #include "Clients/Clients.h"
 #include "Clients/UDPClient.h"
 #include "DNS/DNS_ResponseParser.h"
+
 #include "RawSockets/RawSocketsTests.h"
 #include "RawSockets/BuildAndSendPacketsTests.h"
 #include "RawSockets/ARPTester.h"
+#include "RawSockets/CaptureTraffic.h"
+
 #include "Experiments/Experiments.h"
 #include "Experiments/UtilitiesTests.h"
 #include "NetLink/NetLink.h"
@@ -43,7 +46,8 @@ int main([[maybe_unused]] int argc,
 
     // DNS_ResponseParser::TestAll();
 
-    // RawSocketsTests::TestAll();
+    //RawSocketsTests::TestAll();
+    CaptureTraffic::TestAll();
     // ARPTester::TestAll();
     // BuildAndSendPacketsTests::TestAll();
 
@@ -61,7 +65,7 @@ int main([[maybe_unused]] int argc,
     // EPollTCPServerTwo::Tests();
     // EPollTCPServerEx::Tests();
     // EPollTCPServerDebug::Tests();
-    EPollTCPServerMultithreaded::Tests();
+    // EPollTCPServerMultithreaded::Tests();
 
     return EXIT_SUCCESS;
 }

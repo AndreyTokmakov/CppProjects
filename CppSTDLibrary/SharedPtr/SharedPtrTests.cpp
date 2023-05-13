@@ -20,12 +20,11 @@
 #include <mutex>
 #include <array>
 #include <vector>
+#include <memory>
 
 #include "../Integer/Integer.h"
 #include "SharedPtrTests.h"
 
-using String = std::string;
-using CString = const String&;
 
 namespace SharedPtr_Tests {
 
@@ -565,13 +564,13 @@ namespace SharedPtr_Tests::Enable_Shared_From_This {
 
 	class SharedString : public std::enable_shared_from_this<SharedString> {
 	private:
-		String value;
+		std::string value;
 
 	public:
 		SharedString() : value("") {
 			std::cout << "SharedString::SharedString(" << this->value << ")" << std::endl;
 		}
-		SharedString(CString val) : value(val) {
+		SharedString(const std::string& val) : value(val) {
 			std::cout << "SharedString::SharedString(" << this->value << ")" << std::endl;
 		}
 		SharedString(const SharedString& obj) {
@@ -593,7 +592,7 @@ namespace SharedPtr_Tests::Enable_Shared_From_This {
 
 	class SharedStringEx : public enable_shared_from_this_ex<SharedStringEx> {
 	private:
-		String value;
+        std::string value;
 
 	public:
 		template<typename... Args>

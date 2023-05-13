@@ -33,7 +33,6 @@
 #include <boost/thread.hpp>
 #include <boost/uuid/detail/md5.hpp>
 #include <boost/algorithm/hex.hpp>
-
 #include <boost/asio/ssl.hpp>
 
 #include "Math/BoostMathTests.h"
@@ -45,11 +44,12 @@
 #include "Threads/Threads.h"
 #include "DateTime/DateTime.h"
 #include "Serial/Serial.h"
+#include "Networking/Networking.h"
 
 #include "ProgramOptions/ProgramOptions.h"
 
 
-namespace Utilites {
+namespace Utilities {
 
     void PrintBoostVersion() 
     {
@@ -255,148 +255,6 @@ namespace  ThreadPool {
 }
 
 
-#include <boost/array.hpp>
-#include <boost/asio.hpp>
-
-
-namespace Networking
-{
-    using boost::asio::ip::tcp;
-
-    std::string make_daytime_string()
-    {
-        std::time_t now = std::time(0);
-        return std::ctime(&now);
-    }
-
-    void server()
-    {
-        try
-        {
-            boost::asio::io_service io_service;
-            tcp::acceptor acceptor(io_service, tcp::endpoint(tcp::v4(), 52525));
-            for (;;)
-            {
-                tcp::socket socket(io_service);
-                acceptor.accept(socket);
-                std::string message = make_daytime_string();
-                boost::system::error_code ignored_error;
-                boost::asio::write(socket, boost::asio::buffer(message), ignored_error);
-            }
-        }
-        catch (std::exception& e)
-        {
-            std::cerr << e.what() << std::endl;
-        }
-    }
-
-    void client()
-    {
-        try
-        {
-            boost::asio::io_service io_service;
-            tcp::resolver resolver(io_service);
-
-            tcp::resolver::query query("0.0.0.0", "daytime");
-            tcp::resolver::iterator endpoint_iterator = resolver.resolve(query);
-
-            tcp::socket socket(io_service);
-            boost::asio::connect(socket, endpoint_iterator);
-
-            while (true) {
-                boost::array<char, 128> buf {};
-                boost::system::error_code error;
-
-                const size_t len = socket.read_some(boost::asio::buffer(buf), error);
-                if (error == boost::asio::error::eof)
-                    break; // Connection closed cleanly by peer.
-                else if (error)
-                    throw boost::system::system_error(error); // Some other error.
-
-                std::cout.write(buf.data(), len);
-            }
-        }
-        catch (std::exception& e)
-        {
-            std::cerr << e.what() << std::endl;
-        }
-    }
-}
-
-namespace Networking::HTTP
-{
-    constexpr std::string_view host { "0.0.0.0." };
-    constexpr std::string_view path { "/debug" };
-
-    void sendRequestGET()
-    {
-        try {
-            boost::asio::io_context io_context;
-
-            tcp::resolver resolver(io_context);
-            tcp::resolver::results_type endpoints = resolver.resolve(host, "52525");
-
-            tcp::socket socket(io_context);
-            boost::asio::connect(socket, endpoints);
-
-            boost::asio::streambuf request;
-            std::ostream request_stream(&request);
-            request_stream << "GET " << path << " HTTP/1.0\r\n"
-                           << "Host: " << host << "\r\n"
-                           << "Accept: */*\r\n"
-                           << "Connection: close\r\n\r\n";
-
-            // Send the request.
-            boost::asio::write(socket, request);
-
-            boost::asio::streambuf response;
-            boost::asio::read_until(socket, response, "\r\n");
-
-            std::istream response_stream(&response);
-
-            std::string http_version;
-            response_stream >> http_version;
-
-            unsigned int status_code;
-            response_stream >> status_code;
-
-            std::string status_message;
-            std::getline(response_stream, status_message);
-            if (!response_stream || http_version.substr(0, 5) != "HTTP/"){
-                std::cout << "Invalid response\n";
-                return;
-            }
-            else if (200 != status_code) {
-                std::cout << "Response returned with status code " << status_code << "\n";
-                return;
-            }
-
-            // Read the response headers, which are terminated by a blank line.
-            boost::asio::read_until(socket, response, "\r\n\r\n");
-
-            // Process the response headers.
-            std::string header;
-            while (std::getline(response_stream, header) && header != "\r")
-                std::cout << header << "\n";
-            std::cout << "\n";
-
-            // Write whatever content we already have to output.
-            if (response.size() > 0)
-                std::cout << &response;
-
-            // Read until EOF, writing data to output as we go.
-            boost::system::error_code error;
-            while (boost::asio::read(socket, response,boost::asio::transfer_at_least(1), error))
-                std::cout << &response;
-            if (error != boost::asio::error::eof)
-                throw boost::system::system_error(error);
-        }
-        catch (std::exception& e)
-        {
-            std::cout << "Exception: " << e.what() << "\n";
-        }
-    }
-}
 
 namespace Callback
 {
@@ -452,7 +310,7 @@ int main([[maybe_unused]] int argc,
 
     // Uuid::TestAll();
 
-    Timer::TestAll();
+    // Timer::TestAll();
 
     // Threads::TestAll();
 
@@ -460,10 +318,7 @@ int main([[maybe_unused]] int argc,
 
     // Serial::TestAll();
 
-    // Networking::server();
-    // Networking::client();
-
-    // Networking::HTTP::sendRequestGET();
+    Networking::TestAll();
 
     // Callback::testCallback();
 

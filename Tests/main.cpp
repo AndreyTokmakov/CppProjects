@@ -1042,6 +1042,27 @@ int main([[maybe_unused]] int argc,
     std::cout << sizeof(ieee80211_radiotap_header) << std::endl;
 
 
+    if constexpr (std::endian::native == std::endian::little) {
+        std::cout << "This system is little-endian.\n";
+    } else if constexpr (std::endian::native == std::endian::big) {
+        std::cout << "This system is big-endian.\n";
+    }
+
+
+    // Construct a path for the local directory
+    std::filesystem::path local(".");
+    // local == "."
+
+    std::cout << "local == " << local << "\n";
+
+    // Get the absolute path, i.e. a path from root
+    std::filesystem::path from_root = absolute(local);
+
+    std::cout << from_root << std::endl;
+
+
+    // from_root == "/some/path/."
+
     // NTTP::test();
 
     // Math::Log2Test();
