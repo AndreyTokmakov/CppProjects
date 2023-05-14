@@ -374,8 +374,8 @@ namespace Networking::SSL2
     private:
 
         [[nodiscard]]
-        std::string get_password(std::size_t max_length,
-                                 asio::ssl::context::password_purpose purpose) const
+        std::string get_password([[maybe_unused]] std::size_t max_length,
+                                 [[maybe_unused]] asio::ssl::context::password_purpose purpose) const
         {
             return password;
         }
@@ -416,6 +416,20 @@ namespace Networking::SSL2
         std::atomic<bool> m_stop;
         asio::io_service m_ios;
     };
+
+    void runServer()
+    {
+        constexpr uint16_t portNum { 3333 };
+        try {
+            Server srv;
+            srv.start(portNum);
+            std::this_thread::sleep_for(std::chrono::seconds(60));
+            srv.stop();
+        }
+        catch (boost::system::system_error &e) {
+            std::cout << "Error occured! Error code = " << e.code() << ". Message: " << e.what();
+        }
+    }
 }
 
 
@@ -696,7 +710,7 @@ void Networking::TestAll()
 
     // Basics::createAcceptorSocket();
     // Basics::resolveDNS();
-    Basics::connectToSocket();
+    // Basics::connectToSocket();
 
     // Networking::server();
     // Networking::client();
@@ -711,6 +725,8 @@ void Networking::TestAll()
     // TCP::Echo::startServer();
     // TCP::Echo::client();
 
+
+    SSL2::runServer();
 
 
     /*
