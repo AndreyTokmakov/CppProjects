@@ -33,6 +33,7 @@
 #include "LockFreeDataStructures/LockFreeQueue.h"
 #include "RAII_CommitWrapper/RAII_CommitWrapper.h"
 #include "ObjectNumberLimiter/ObjectNumberLimiter.h"
+#include "Trie/Trie.h"
 
 
 // TODO:
@@ -50,7 +51,7 @@ int main([[maybe_unused]] int argc,
     // BitSet::TEST_ALL();
     // CategoryTree::TEST_ALL();
     // CircularBuffers::TEST_ALL();
-    CustomVector::TestAll();
+    // CustomVector::TestAll();
     // ExecutorAdapter::TestAll();
     // ExecutorAdapter2::TestAll();
     // Function::Test();
@@ -68,6 +69,8 @@ int main([[maybe_unused]] int argc,
     // ThreadPoolOne::TEST_ALL();
     // ThreadPoolTwo::TEST_ALL();
     // ThreadPoolLimited::TestAll();
+
+    Trie::TestAll();
 
     // ObjectNumberLimiter::TestAll();
 
