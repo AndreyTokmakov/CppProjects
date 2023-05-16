@@ -21,6 +21,8 @@
 #include "RawSockets/ARPTester.h"
 #include "RawSockets/CaptureTraffic.h"
 
+#include "PcapAnalyzer/PcapAnalyzer.h"
+
 #include "Experiments/Experiments.h"
 #include "Experiments/UtilitiesTests.h"
 #include "NetLink/NetLink.h"
@@ -46,8 +48,8 @@ int main([[maybe_unused]] int argc,
 
     // DNS_ResponseParser::TestAll();
 
-    //RawSocketsTests::TestAll();
-    CaptureTraffic::TestAll();
+    // RawSocketsTests::TestAll();
+    // CaptureTraffic::TestAll();
     // ARPTester::TestAll();
     // BuildAndSendPacketsTests::TestAll();
 
@@ -66,6 +68,8 @@ int main([[maybe_unused]] int argc,
     // EPollTCPServerEx::Tests();
     // EPollTCPServerDebug::Tests();
     // EPollTCPServerMultithreaded::Tests();
+
+    PcapAnalyzer::TestAll();
 
     return EXIT_SUCCESS;
 }

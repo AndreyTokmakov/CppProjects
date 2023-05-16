@@ -29,7 +29,23 @@ add_executable(Networking MACOSX_BUNDLE
         Headers/ICMPHeader.h
         Experiments/Experiments.cpp Experiments/Experiments.h
         NetLink/NetLink.cpp NetLink/NetLink.h
-        Utilities/Utilities.cpp Utilities/Utilities.h RawSockets/BuildAndSendPacketsTests.cpp RawSockets/BuildAndSendPacketsTests.h Servers/TestWebServer.cpp Servers/TestWebServer.h Headers/ICMPHeader.h Experiments/UtilitiesTests.cpp Experiments/UtilitiesTests.h Clients/UDPClient.cpp Clients/UDPClient.h RawSockets/ARPTester.cpp RawSockets/ARPTester.h Headers/ARPHeader.h Servers/SimpleServerSelect.cpp Servers/SimpleServerSelect.h Servers/SocketTCPServer.cpp Servers/SocketTCPServer.h Servers/EPollTCPServer.cpp Servers/EPollTCPServer.h Servers/EPollTCPServerTwo.cpp Servers/EPollTCPServerTwo.h Servers/EPollTCPServerEx.cpp Servers/EPollTCPServerEx.h Servers/EPollTCPServerDebug.cpp Servers/EPollTCPServerDebug.h Servers/EPollTCPServerMultithreaded.cpp Servers/EPollTCPServerMultithreaded.h RawSockets/CaptureTraffic.cpp RawSockets/CaptureTraffic.h)
+        Utilities/Utilities.cpp Utilities/Utilities.h
+        RawSockets/BuildAndSendPacketsTests.cpp RawSockets/BuildAndSendPacketsTests.h
+        Servers/TestWebServer.cpp Servers/TestWebServer.h
+        Headers/ICMPHeader.h
+        Experiments/UtilitiesTests.cpp
+        Experiments/UtilitiesTests.h
+        Clients/UDPClient.cpp
+        Clients/UDPClient.h
+        RawSockets/ARPTester.cpp
+        RawSockets/ARPTester.h Headers/ARPHeader.h Servers/SimpleServerSelect.cpp
+        Servers/SimpleServerSelect.h Servers/SocketTCPServer.cpp Servers/SocketTCPServer.h
+        Servers/EPollTCPServer.cpp Servers/EPollTCPServer.h Servers/EPollTCPServerTwo.cpp
+        Servers/EPollTCPServerTwo.h Servers/EPollTCPServerEx.cpp Servers/EPollTCPServerEx.h
+        Servers/EPollTCPServerDebug.cpp Servers/EPollTCPServerDebug.h
+        Servers/EPollTCPServerMultithreaded.cpp Servers/EPollTCPServerMultithreaded.h
+        RawSockets/CaptureTraffic.cpp
+        RawSockets/CaptureTraffic.h PcapAnalyzer/PcapAnalyzer.cpp PcapAnalyzer/PcapAnalyzer.h)
 
- # Link phread library
+# Link phread library
 TARGET_LINK_LIBRARIES(Networking pthread)
