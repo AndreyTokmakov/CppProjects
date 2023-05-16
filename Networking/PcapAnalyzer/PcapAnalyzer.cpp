@@ -18,14 +18,58 @@ Description : PcapAnalyzer
 
 namespace PcapAnalyzer::WiFi
 {
+    using namespace std::string_view_literals;
+
+    constexpr std::array<std::pair<std::string_view, uint16_t>, 32> presentFlagsBits {{
+        {"TSFT"sv, 0},
+        {"Flags"sv, 1},
+        {"Rate"sv, 2},
+        {"Channel"sv, 3},
+        {"FHSS"sv, 4},
+        {"Antenna signal"sv, 5},
+        {"Antenna noise"sv, 6},
+        {"Lock quality"sv, 7},
+        {"TX attenuation"sv, 8},
+        {"dB TX attenuation"sv, 9},
+        {"dBm TX power"sv, 10},
+        {"Antenna"sv, 11},
+        {"dB antenna signal"sv, 12},
+        {"dB antenna noise"sv, 13},
+        {"RX flags"sv, 14},
+        {"TX flags"sv, 15},
+        {"______"sv, 16},
+        {"______"sv, 17},
+        {"______"sv, 18},
+        {"MCS"sv, 19},
+        {"A-MPDU status"sv, 20},
+        {"VHT"sv, 21},
+        {"timestamp"sv, 22},
+        {"HE"sv, 23},
+        {"HE-MU"sv, 24},
+        {"HE-MU-other-user"sv, 25},
+        {"0-length-PSDU"sv, 26},
+        {"L-SIG"sv, 27},
+        {"TLV fields in radiotap"sv, 28},
+        {"Radiotap Namespace"sv, 29},
+        {"Vendor Namespace"sv, 30},
+        {"Unknown"sv, 31}
+     }};
+
+
     struct RadiotapHeader
     {
-        uint8_t it_version;
-        uint8_t it_pad;
-        uint16_t it_len;      /* entire length */
-        uint32_t it_present;  /* fields present */
+        uint8_t  version;
+        uint8_t  pad;
+        uint16_t length;        /* entire length */
+        uint32_t presentFlags;  /* fields present */
     } __attribute__((packed, aligned(1)));
 
+
+    bool isBitSet(const uint32_t value,
+                  const uint16_t bit)
+    {
+        return value & (1u << bit) ;
+    }
 
     std::string bin2hex(const std::vector<char> buffer)
     {
@@ -63,9 +107,15 @@ namespace PcapAnalyzer::WiFi
 
 
         const RadiotapHeader* radioTap = (RadiotapHeader*)(buffer.data());
-        std::cout << "Length  : " << radioTap->it_len << std::endl;
-        std::cout << "Pad     : " << htons(radioTap->it_pad) << std::endl;
-        std::cout << "Version : " << htons(radioTap->it_version) << std::endl;
+        std::cout << "Length  : " << radioTap->length << std::endl;
+        std::cout << "Pad     : " << htons(radioTap->pad) << std::endl;
+        std::cout << "Version : " << htons(radioTap->version) << std::endl;
+
+        for (const auto& [name, bit]: presentFlagsBits)
+        {
+            std::cout << '\t' << name << "    " << std::boolalpha
+                      << isBitSet(radioTap->presentFlags, bit) << std::endl;
+        }
 
 
 
