@@ -41,32 +41,35 @@ namespace Memory::SharedPtr
 
 
 	template<typename T, typename Deleter>
-	class my_shared_ptr;
+	class SharedPtr;
 
 	template<typename T, typename Deleter = DefaultDeleter<T>>
 	struct ControlBlock {
 	private:
+        using type = T;
+        using pointer = type*;
+
 		// Use count:
 		size_t use_count = 1;
 
 		/** Controlled data pointer: **/
-		T* raw_ptr = nullptr;
+        pointer raw_ptr = nullptr;
 
 		/** Deleter: **/
-		Deleter _deleter;
+		Deleter deleter;
 
 	public:
-		explicit ControlBlock(T* ptr) : raw_ptr(ptr) {
+		explicit ControlBlock(pointer ptr) : raw_ptr(ptr) {
 			// std::cout << __LINE__ << ":" << __FUNCTION__ << std::endl;
 		}
 
-		ControlBlock(T* ptr, Deleter&& deleter) : raw_ptr(ptr), _deleter(std::move(deleter)) {
+		ControlBlock(pointer ptr, Deleter&& deleter) : raw_ptr(ptr), deleter(std::move(deleter)) {
 			// std::cout << __LINE__ << ":" << __FUNCTION__ << std::endl;
 		}
 
 		~ControlBlock() {
 			if (this->raw_ptr)
-				this->_deleter(raw_ptr);
+				this->deleter(raw_ptr);
 		}
 
 		inline size_t increment_use_count() noexcept {
@@ -77,20 +80,22 @@ namespace Memory::SharedPtr
 			return --use_count;
 		}
 
-		friend class my_shared_ptr<T, Deleter>;
+		friend class SharedPtr<type , Deleter>;
 	};
 
-	
+
 	template<typename T, typename Deleter = DefaultDeleter<T>>
-	class my_shared_ptr {
+	class SharedPtr {
 	private:
-		ControlBlock<T, Deleter>* contr = nullptr;
+        using type = T;
+        using pointer = type*;
+
+		ControlBlock<type, Deleter> * contr = nullptr;
 
 	public:
-
-		explicit my_shared_ptr(T* ptr) {
+		explicit SharedPtr(pointer objectPtr) {
 			// std::cout << __LINE__ << ":" << __FUNCTION__ << std::endl;
-			this->contr = new ControlBlock<T, Deleter>(ptr);
+			this->contr = new ControlBlock<type, Deleter>(objectPtr);
 		}
 
 		/*
@@ -101,15 +106,15 @@ namespace Memory::SharedPtr
 		}
 		*/
 
-		my_shared_ptr(const T* ptr, Deleter&& deleter):
-            contr { new ControlBlock<T, Deleter>(ptr, std::move(deleter)) } {
+		SharedPtr(const pointer objectPtr, Deleter&& deleter):
+            contr { new ControlBlock<T, Deleter>(objectPtr, std::move(deleter)) } {
 		}
 
-		my_shared_ptr(const my_shared_ptr<T>& obj): contr { obj.contr } {
+		SharedPtr(const SharedPtr<type>& obj): contr { obj.contr } {
 			contr->increment_use_count();
 		}
 
-		my_shared_ptr& operator=(const my_shared_ptr& right) {
+		SharedPtr& operator=(const SharedPtr& right) {
 			if (&right != this) {
 				if (0 == contr->decrement_use_count())
                     delete std::exchange(contr, nullptr);
@@ -119,11 +124,11 @@ namespace Memory::SharedPtr
 			return *this;
 		}
 
-        explicit my_shared_ptr(my_shared_ptr<T>&& obj) noexcept:
+        explicit SharedPtr(SharedPtr<type>&& obj) noexcept:
                 contr { std::exchange(obj.contr, nullptr) } {
         }
 
-        my_shared_ptr& operator=(my_shared_ptr&& right) noexcept {
+        SharedPtr& operator=(SharedPtr&& right) noexcept {
             if (&right != this) {
                 if (0 == contr->decrement_use_count())
                     delete std::exchange(contr, nullptr);
@@ -133,11 +138,11 @@ namespace Memory::SharedPtr
         }
 
 		[[nodiscard]]
-        T* get() const noexcept {
+        pointer get() const noexcept {
 			return this->contr->raw_ptr;
 		}
 
-		T* operator*() const noexcept {
+        pointer operator*() const noexcept {
 			return this->contr->raw_ptr;
 		}
 
@@ -146,7 +151,7 @@ namespace Memory::SharedPtr
             return this->contr->use_count;
         }
 
-		~my_shared_ptr()
+		~SharedPtr()
         {
 			if (nullptr != contr && 0 == contr->decrement_use_count()) {
                 delete contr;
@@ -155,9 +160,9 @@ namespace Memory::SharedPtr
 	};
 
 
-	template<typename _Ty, typename ... _Types>
-	my_shared_ptr<_Ty> make_shared(_Types&& ... args) {
-		return my_shared_ptr<_Ty>(new _Ty(std::forward<_Types>(args)...));
+	template<typename Ty, typename ... ArgsTypes>
+	SharedPtr<Ty> make_shared(ArgsTypes&& ... args) {
+		return SharedPtr<Ty>(new Ty(std::forward<ArgsTypes>(args)...));
 	}
 
 }
@@ -166,7 +171,7 @@ namespace Memory::SharedPtr::Tests
 {
 
 	void Create_and_Destroy_Ptr() {
-		my_shared_ptr<Integer> int1(new Integer(11));
+		SharedPtr<Integer> int1(new Integer(11));
 	}
 
 
@@ -202,25 +207,25 @@ namespace Memory::SharedPtr::Tests
 	};
 
 	template<typename T>
-	void handle_shared_ptr(my_shared_ptr<T> ptr) {
+	void handle_shared_ptr(SharedPtr<T> ptr) {
 		ptr.get()->printInfo();
 	}
 
 	void DefaultDeleter_Test() {
-		my_shared_ptr<Integer> int1(new Integer(11));
+		SharedPtr<Integer> int1(new Integer(11));
 	}
 
 
 	void CopyConstructor_Test() {
-		my_shared_ptr<Integer> a1(new Integer(111));
-		my_shared_ptr<Integer> a2 = a1;
+		SharedPtr<Integer> a1(new Integer(111));
+		SharedPtr<Integer> a2 = a1;
 
 		std::cout << a1.get()->getValue() << std::endl;
 		std::cout << a2.get()->getValue() << std::endl;
 	}
 
     void CopyAssignment_Test() {
-        my_shared_ptr<Integer> a1(new Integer(111)), a2 (new Integer(222));
+        SharedPtr<Integer> a1(new Integer(111)), a2 (new Integer(222));
 
         a2 = a1;
 
@@ -248,10 +253,10 @@ namespace Memory::SharedPtr::Tests
         }
         std::cout << "-------------- my_shared_ptr<T>  (copy)  --------------------------\n";
         {
-            my_shared_ptr<Integer> ptr1 = make_shared<Integer>(111);
+            SharedPtr<Integer> ptr1 = make_shared<Integer>(111);
             std::cout << "use_count(1) = " << ptr1.UseCount() << std::endl;
 
-            my_shared_ptr<Integer> ptr2 = ptr1;
+            SharedPtr<Integer> ptr2 = ptr1;
             std::cout << "use_count(1) = " << ptr1.UseCount() << ", use_count(2) = " << ptr2.UseCount() << std::endl;
         }
 
@@ -265,10 +270,10 @@ namespace Memory::SharedPtr::Tests
 
         std::cout << "-------------- my_shared_ptr<T>  (move)  --------------------------\n";
         {
-            my_shared_ptr<Integer> ptr1 = make_shared<Integer>(111);
+            SharedPtr<Integer> ptr1 = make_shared<Integer>(111);
             std::cout << "use_count(1) = " << ptr1.UseCount() << std::endl;
 
-            my_shared_ptr<Integer> ptr2 = std::move(ptr1);
+            SharedPtr<Integer> ptr2 = std::move(ptr1);
             // std::cout << "use_count(1) = " << ptr1.UseCount() << ", use_count(2) = " << ptr2.UseCount() << std::endl;
             std::cout << "use_count(2) = " << ptr2.UseCount() << std::endl;
         }

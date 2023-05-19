@@ -64,13 +64,14 @@ int main([[maybe_unused]] int argc,
     // PriorityList::TEST_ALL();
     // RAII_CommitWrapper::TEST_ALL();
     // ReferenceWrapper::Test();
-    // Memory::Shared_Ptr_Tests();
+
+    Memory::Shared_Ptr_Tests();
 
     // ThreadPoolOne::TEST_ALL();
     // ThreadPoolTwo::TEST_ALL();
     // ThreadPoolLimited::TestAll();
 
-    Trie::TestAll();
+    // Trie::TestAll();
 
     // ObjectNumberLimiter::TestAll();
 

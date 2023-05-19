@@ -311,9 +311,9 @@ int main([[maybe_unused]] int argc,
     // Experiments::TestCertificate();
     // Experiments::TestCertificate_PEM();
     // Experiments::TestReadCertificate();
-    Experiments::GetSerialNumber();
+    // Experiments::GetSerialNumber();
 
-    // CertificateGenerator::TestAll();
+    CertificateGenerator::TestAll();
 
     // Keys::Generate_RSA_Keys();
 

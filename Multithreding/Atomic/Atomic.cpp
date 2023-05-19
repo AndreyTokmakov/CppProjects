@@ -719,7 +719,7 @@ namespace Atomic::ModificationOrder
 
 void Atomic::TEST_ALL()
 {
-    // AtomicFlag::Spinlock_Test();
+    AtomicFlag::Spinlock_Test();
     // AtomicFlag::Spinlock_Test_Guard();
     // AtomicFlag::Test_and_Set();
 
