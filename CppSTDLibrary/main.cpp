@@ -43,6 +43,7 @@
 #include "CopyElision/CopyElision.h"
 #include "Format/Format.h"
 #include "EnumTests/EnumTests.h"
+#include "Expected/Expected.h"
 #include "Hashing/Hashing.h"
 #include "InitializerList/InitializerList.h"
 #include "InlineVariables/InlineVariables.h"
@@ -244,13 +245,14 @@ int main(int argc, char** argv)
     // CopyElision::TestAll();
     // DateAndTime::TestAll();
     // EnumTests::TestAll();
+    Expected::TestAll();
     // StrongTypes::TestAll();
     // InitializerList::TestAll();
     // InlineVariables::TestAll();
     // Initialization::TestAll();
     // IteratorTests::TestAll();
     // FilesStreams::TestAll();
-    Filesystem::TestAll();
+    // Filesystem::TestAll();
     // Format::TestAll();
     // FunctionObjects::TestAll();
     // Hashing::TestAll();

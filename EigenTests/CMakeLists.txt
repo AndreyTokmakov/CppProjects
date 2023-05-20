@@ -6,7 +6,7 @@ add_compile_options(-c -Wall -Werror -Wextra -O3 -std=c++2a)
 SET(CMAKE_C_FLAGS_RELEASE "${CMAKE_C_FLAGS_RELEASE} -pthread")
 SET(PROJECT_VERSION 1.0.0.0)
 
-include_directories(/home/andtokm/DiskS/ProjectsUbuntu/third_party/Eigen/Eigen)
+include_directories(../../third_party/eigen/Eigen)
 project(${PROJECT_NAME} VERSION ${PROJECT_VERSION} LANGUAGES CXX)
 
 # include all components

@@ -7,15 +7,9 @@ project(${PROJECT_NAME} VERSION ${PROJECT_VERSION} LANGUAGES CXX)
 
 add_compile_options(-c -Wall -Wextra -O3 -std=c++2a)
 
-include_directories(/home/andtokm/DiskS/ProjectsUbuntu/Catch2/src)
-include_directories(/home/andtokm/DiskS/ProjectsUbuntu/Catch2/cmake-build-release/generated-includes)
-
-link_directories(/home/andtokm/DiskS/ProjectsUbuntu/Catch2/cmake-build-release/src)
-
-# add_subdirectory(/home/andtokm/DiskS/ProjectsUbuntu/Catch2)
-
-#
-
+include_directories(../../third_party/Catch2/src)
+include_directories(../../third_party/Catch2/build/generated-includes)
+link_directories(../../third_party/Catch2/build/src)
 
 # include all components
 add_executable(Catch2Tests

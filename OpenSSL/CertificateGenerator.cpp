@@ -670,14 +670,16 @@ namespace CertificateGenerator
         return result;
     }
 
+    /*
     std::unique_ptr<EVP_PKEY, decltype(&::EVP_PKEY_free)> generateKeyPair(int32_t bits) {
         std::unique_ptr<EVP_PKEY, decltype(&::EVP_PKEY_free)> key(EVP_RSA_gen(bits), ::EVP_PKEY_free);
-        return std::move(key);
-    }
+        return key;
+    }*/
 }
 
 void CertificateGenerator::TestAll()
 {
+    /*
     std::unique_ptr<X509, decltype(&::X509_free)> certificate(X509_new(), ::X509_free);
     if (certificate == nullptr) {
         std::cerr << "Failed to create certificate" << std::endl;
@@ -781,5 +783,6 @@ void CertificateGenerator::TestAll()
         std::cerr << "Failed to saveCertToPemFile" << std::endl;
         return;
     }
+    */
 };
 
