@@ -107,7 +107,7 @@ namespace Trie::Tests
 
     void PerformanceTests()
     {
-        constexpr size_t samplesCount { 1'000'000 }, strLen { 64 }, testsCount { 1 };
+        constexpr size_t samplesCount { 1'000'000 }, strLen { 8 }, testsCount { 1 };
         std::vector<std::string> samples;
         samples.reserve(samplesCount);
 

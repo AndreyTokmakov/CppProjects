@@ -1175,7 +1175,7 @@ namespace String::Performance {
 		{
 			auto start = std::chrono::high_resolution_clock::now();
 			for (int i = 0; i < TESTS_COUNT; ++i) {
-				src.find(HTTP_VERION_SEPARATOR_STR);
+				const auto _ = src.find(HTTP_VERION_SEPARATOR_STR);
 			}
 			auto end = std::chrono::high_resolution_clock::now();
 			auto duration = std::chrono::duration_cast<std::chrono::microseconds>(end - start).count();
@@ -1185,7 +1185,8 @@ namespace String::Performance {
 		{
 			auto start = std::chrono::high_resolution_clock::now();
 			for (int i = 0; i < TESTS_COUNT; ++i) {
-				src.find(HTTP_VERION_SEPARATOR);
+
+				auto _ = src.find(HTTP_VERION_SEPARATOR);
 			}
 			auto end = std::chrono::high_resolution_clock::now();
 			auto duration = std::chrono::duration_cast<std::chrono::microseconds>(end - start).count();

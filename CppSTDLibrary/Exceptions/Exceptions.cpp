@@ -462,7 +462,8 @@ namespace Exceptions::CurrentException {
 	{
 		std::exception_ptr eptr;
 		try {
-			std::string().at(1); // this generates an std::out_of_range
+			auto result = std::string().at(1); // this generates a std::out_of_range
+
 		}
 		catch (...) {
 			eptr = std::current_exception(); // capture

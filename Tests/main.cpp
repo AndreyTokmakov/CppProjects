@@ -1040,6 +1040,11 @@ int main([[maybe_unused]] int argc,
     const std::vector<std::string_view> args(argv + 1, argv + argc);
 
 
+    const char* const ptr = new char('s');
+
+    std::cout << *ptr << std::endl;
+    std::cout << sizeof(ptr) << std::endl;
+
     // NTTP::test();
 
     // Math::Log2Test();

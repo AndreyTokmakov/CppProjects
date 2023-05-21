@@ -245,7 +245,7 @@ int main(int argc, char** argv)
     // CopyElision::TestAll();
     // DateAndTime::TestAll();
     // EnumTests::TestAll();
-    Expected::TestAll();
+    // Expected::TestAll();
     // StrongTypes::TestAll();
     // InitializerList::TestAll();
     // InlineVariables::TestAll();
@@ -253,7 +253,7 @@ int main(int argc, char** argv)
     // IteratorTests::TestAll();
     // FilesStreams::TestAll();
     // Filesystem::TestAll();
-    // Format::TestAll();
+    Format::TestAll();
     // FunctionObjects::TestAll();
     // Hashing::TestAll();
     // Lambdas::TestAll();

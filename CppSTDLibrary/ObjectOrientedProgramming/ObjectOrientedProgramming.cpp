@@ -2753,8 +2753,8 @@ namespace ObjectOrientedProgramming::Nested_Classes {
         };
 
     public:
-        const static Builder& getBuilder() {
-            return Builder();
+        static Builder getBuilder() {
+            return {};
         }
 
         void info() {

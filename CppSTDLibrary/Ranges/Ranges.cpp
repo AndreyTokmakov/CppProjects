@@ -172,7 +172,7 @@ namespace Ranges {
         const std::vector<int> numbers{ 0,1,2,3,4,5,6,7,8,9 };
 
         auto is_even = [](int v) -> bool { return 0 == v % 2; };
-        auto print = [](int v) -> bool { std::cout << v << ' '; };
+        auto print = [](int v) -> void { std::cout << v << ' '; };
 
         //auto after_leading_event = std::ranges::drop_view(numbers, is_even);
         //std::ranges::for_each(after_leading_event, print);

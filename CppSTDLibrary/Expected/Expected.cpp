@@ -15,7 +15,7 @@ Description : Expected C++23 Library tests
 
 namespace Expected
 {
-    enum class parse_error {
+    enum class ParseError {
         InvalidChar,
         Overflow
     };
@@ -69,18 +69,47 @@ namespace Expected
     }
 
 
+    void Test_Error_2()
+    {
+        std::expected<double, ParseError> ex = std::unexpected(ParseError::InvalidChar);
+
+        if (!ex) {
+            if (ex == std::unexpected(ParseError::InvalidChar)) {
+                std::cout << "InvalidChar\n";
+            } else if (ex == std::unexpected(ParseError::InvalidChar)) {
+                std::cout << "Overflow\n";
+            }
+        }
+    }
+
+
     void Test_OK()
     {
         std::expected<double, int> ex = 3.14;
         isError(ex);
     }
+
+    void Emplace()
+    {
+        std::expected<double, int> ex;
+        basic_functions_tests(ex);
+
+        std::cout << "------------------- After emplace: 1 ------------------------\n";
+
+        ex.emplace(1);
+        basic_functions_tests(ex);
+    }
 };
 
 void Expected::TestAll()
 {
-    BasicFunctions();
+    // BasicFunctions();
 
     // Test_OK();
+
     // Test_Error();
+    // Test_Error_2();
+
+    Emplace();
 };
 

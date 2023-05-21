@@ -114,6 +114,23 @@ namespace Format
         std::format_to(std::back_inserter(path), format.data(), 1);
         std::cout << path << std::endl;
     }
+
+
+    void Formatted_Size()
+    {
+        using namespace std::literals::string_view_literals;
+
+        constexpr std::string_view formatter { "Value 1: {}, Value 2: {}, Value 3: {}"sv };
+
+        const auto min_buffer_size_1 = std::formatted_size(formatter, 1, 2, 3);
+        std::cout << min_buffer_size_1 << std::endl;
+
+        const auto min_buffer_size_2 = std::formatted_size(formatter, 1'000, 2'000, 3'000);
+        std::cout << min_buffer_size_2 << std::endl;
+
+        const auto min_buffer_size_3 = std::formatted_size(formatter, 1'000'000, 2'000'000, 3'000'000);
+        std::cout << min_buffer_size_3 << std::endl;
+    }
 };
 
 void Format::TestAll()
@@ -126,7 +143,9 @@ void Format::TestAll()
     // SimpleTest();
     // Test_2();
 
-    Make_Path();
+    // Make_Path();
+
+    Formatted_Size();
 
     // Experiments();
 }
