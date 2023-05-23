@@ -10,6 +10,7 @@
 #include "SynchStream.h"
 
 #include <iostream>
+#include <algorithm>
 #include <string_view>
 #include <vector>
 

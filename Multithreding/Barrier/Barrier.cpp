@@ -14,11 +14,87 @@
 #include <vector>
 #include <array>
 #include <syncstream>
+#include <random>
+#include <future>
+#include <iomanip>
 
 #include "Barrier.h"
 
 namespace Barrier
 {
+    int getRandomInteger(int from = 0, int to = 100)
+    {
+        std::random_device rd;
+        std::mt19937 gen(rd());
+        std::uniform_real_distribution<> distribution(from, to);
+        return static_cast<int>(distribution(gen));
+    }
+
+    std::string getCurrentTime() noexcept {
+        auto now = std::chrono::system_clock::now();
+        auto in_time_t = std::chrono::system_clock::to_time_t(now);
+        const auto nowMs = std::chrono::duration_cast<std::chrono::microseconds>(
+                now.time_since_epoch()) % 1000000;
+        std::stringstream ss;
+        ss << std::put_time(std::localtime(&in_time_t), "%a %b %d %Y %T")
+           << '.' << std::setfill('0') << std::setw(6) << nowMs.count();
+        return ss.str();
+    }
+
+    void Wait_To_All_Thread_Completed()
+    {
+        constexpr size_t threadsCount {5};
+        std::barrier barrier(threadsCount);
+
+        auto task = [&]() {
+            const int secondsToSleep = getRandomInteger(1, 10);
+            std::osyncstream {std::cout} << std::this_thread::get_id()<< " thread started. Sleep time = "
+                    << secondsToSleep << std::endl;
+
+            std::this_thread::sleep_for(std::chrono::seconds(secondsToSleep));
+            barrier.arrive();
+        };
+
+        std::cout << getCurrentTime() << " starting...\n";
+        std::vector<std::jthread> threads;
+        for (size_t idx = 0; idx < threadsCount; ++idx)
+            threads.emplace_back(task);
+
+        std::this_thread::sleep_for(std::chrono::milliseconds(100));
+
+        std::cout << getCurrentTime() << " waiting for all threads to finish...\n";
+        barrier.arrive_and_wait();
+        std::cout << getCurrentTime() << " done...\n";
+    }
+
+
+    void Run_CallBack_WhenAllDone()
+    {
+
+        auto on_completion = []() noexcept {
+            std::osyncstream {std::cout} << " **** ALL DONE at " << getCurrentTime()  << " ***\n";
+        };
+
+        constexpr size_t threadsCount {5};
+        std::barrier barrier(threadsCount, on_completion);
+
+        auto task = [&]() {
+            const int secondsToSleep = getRandomInteger(1, 4);
+            std::osyncstream {std::cout} << std::this_thread::get_id()<< " thread started. Sleep time = "
+                                         << secondsToSleep << std::endl;
+
+            std::this_thread::sleep_for(std::chrono::seconds(secondsToSleep));
+            barrier.arrive_and_wait();
+        };
+
+        std::cout << getCurrentTime() << " starting...\n";
+        std::vector<std::jthread> threads;
+        for (size_t idx = 0; idx < threadsCount; ++idx)
+            threads.emplace_back(task);
+    }
+
+
+
     void Test()
     {
         const auto workers = { "One", "Two", "Three" };
@@ -32,14 +108,13 @@ namespace Barrier
 
         std::barrier sync_point(std::ssize(workers), on_completion);
 
-        auto work = [&](std::string name) {
-            std::string product = "  " + name + " worked\n";
-            std::cout << product;  // ok, op<< call is atomic
+        auto work = [&](const std::string& name) {
+            std::cout << "  " + name + " worked\n";
 
             sync_point.arrive_and_wait();
 
-            product = "  " + name + " cleaned\n";
-            std::cout << product;
+            std::cout << "  " + name + " cleaned\n";;
+
             sync_point.arrive_and_wait();
         };
 
@@ -95,6 +170,11 @@ namespace Barrier
 void Barrier::TEST_ALL()
 {
     // Test();
+
+    // Wait_To_All_Thread_Completed();
+
+    Run_CallBack_WhenAllDone();
+
     // Barrier_With_Completion();
-    Check_Block_By_Barrier();
+    // Check_Block_By_Barrier();
 };

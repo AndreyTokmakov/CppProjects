@@ -12,6 +12,7 @@
 #include <string_view>
 #include <future>
 #include <vector>
+#include <algorithm>
 
 #include "Future.h"
 #include "../ThreadHelperUtilities/ThreadHelperUtilities.h"

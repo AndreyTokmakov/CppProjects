@@ -64,6 +64,7 @@
 #include "ObjectOrientedProgramming/ObjectOrientedProgramming.h"
 #include "OptionalTests/OptionalTests.h"
 #include "Random/Random.h"
+#include "Ranges/Ranges.h"
 #include "ReferenceWrapper/ReferenceWrapper.h"
 #include "Streams/Streams.h"
 #include "String/String.h"
@@ -253,7 +254,7 @@ int main(int argc, char** argv)
     // IteratorTests::TestAll();
     // FilesStreams::TestAll();
     // Filesystem::TestAll();
-    Format::TestAll();
+    // Format::TestAll();
     // FunctionObjects::TestAll();
     // Hashing::TestAll();
     // Lambdas::TestAll();
@@ -269,6 +270,7 @@ int main(int argc, char** argv)
     // Optional::TestAll();
     // PolymorphicMemoryResources::TestAll();
     // Random::TestAll();
+    Ranges::TestAll();
     // ReferenceWrapper::TestAll();
     // StarshipOperator::TestAll();
     // Streams::TestAll();

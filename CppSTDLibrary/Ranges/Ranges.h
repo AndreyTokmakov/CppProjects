@@ -11,7 +11,7 @@
 #define RANGES_TESTS_INCLUDE_GUARD_H_
 
 namespace Ranges {
-	void TEST_ALL();
+	void TestAll();
 };
 
 #endif /* RANGES_TESTS_INCLUDE_GUARD_H_ */

@@ -221,7 +221,8 @@ namespace Atomic::Atomic_Boolean {
     }
 }
 
-namespace Atomic::AtomicFlag {
+namespace Atomic::AtomicFlag
+{
 
     class spinlock_mutex {
     private:
@@ -287,7 +288,8 @@ namespace Atomic::AtomicFlag {
 
     //-----------------------------------------------------------------------------//
 
-    void Test_and_Set() {
+    void Test_and_Set()
+    {
         std::atomic_flag flag = ATOMIC_FLAG_INIT;
 
         auto handler = [&](size_t n)-> void {
@@ -305,6 +307,32 @@ namespace Atomic::AtomicFlag {
         for (const auto& fut : tasks)
             fut.wait();
         THREAD_INFO << "Test completed.\n";
+    }
+
+    void Wait_Notify()
+    {
+        std::vector<int> data {};
+        std::atomic_flag atomicFlag {};
+
+        auto prepare = [&]() {
+            data.insert(data.end(), {0, 1, 0, 3});
+            std::osyncstream {std::cout} << "Prepared" << std::endl;
+            atomicFlag.test_and_set();
+            atomicFlag.notify_one();
+        };
+
+        auto complete = [&] {
+            std::osyncstream {std::cout} << "Worker: Waiting for data." << std::endl;
+            atomicFlag.wait(false);
+            data[2] = 2;
+            std::osyncstream {std::cout} <<  "Waiter: Complete the work." << std::endl;
+            for (auto i: data)
+                std::cout << i << " ";
+            std::cout << std::endl;
+        };
+
+        std::jthread t1(prepare);
+        std::jthread t2(complete);
     }
 }
 
@@ -719,9 +747,10 @@ namespace Atomic::ModificationOrder
 
 void Atomic::TEST_ALL()
 {
-    AtomicFlag::Spinlock_Test();
+    // AtomicFlag::Spinlock_Test();
     // AtomicFlag::Spinlock_Test_Guard();
     // AtomicFlag::Test_and_Set();
+    AtomicFlag::Wait_Notify();
 
     // Atomic_Boolean::Bool_Load_Test();
     // Atomic_Boolean::SetValue();
@@ -752,7 +781,7 @@ void Atomic::TEST_ALL()
     // Cpp_20_Features::Notify_All();
 
     // ModificationOrder::Test_Default();
-    ModificationOrder::Test_Relaxed();
+    // ModificationOrder::Test_Relaxed();
 
     // PingPongGame::Test();
 }

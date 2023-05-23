@@ -74,7 +74,11 @@
 // C++ 23:
 #include <expected>
 #include <format>
-#include <stacktrace>
+
+// #include <stacktrace>
+// #include <flat_map>
+// #include <flat_set>
+
 
 namespace CurveCalcData {
 
@@ -1027,23 +1031,23 @@ namespace Math
     }
 }
 
-
-
+/*
 namespace StackTrace
 {
-
+    void foo() {
+        auto trace = std::stacktrace::current();
+        for (const auto& entry: trace) {
+            std::cout << std::to_string(entry) << '\n';
+        }
+    }
 }
+*/
 
 int main([[maybe_unused]] int argc,
          [[maybe_unused]] char** argv)
 {
     const std::vector<std::string_view> args(argv + 1, argv + argc);
 
-
-    const char* const ptr = new char('s');
-
-    std::cout << *ptr << std::endl;
-    std::cout << sizeof(ptr) << std::endl;
 
     // NTTP::test();
 

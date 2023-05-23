@@ -473,11 +473,15 @@ namespace Ranges::Transform {
     }
 }
 	
-namespace Ranges::Algoritms {
+namespace Ranges::Algorithms
+{
+    struct User {
+        int64_t id;
+        std::string name;
+    };
 
     auto is_even = [](int v) -> bool { return 0 == v % 2; };
     auto print = [](int v) { std::cout << v << ' '; };
-
 
     void For_Each() {
         const std::vector<int> numbers{ 0,1,2,3,4,5,6,7,8,9 };
@@ -497,6 +501,35 @@ namespace Ranges::Algoritms {
         std::for_each(numbers.begin(), numbers.end(), print);
         std::cout << std::endl;
     }
+
+    void Sort_ByID()
+    {
+        std::vector<User> users{
+                {37,"Eliana Green"},
+                {23, "Logan Sterling"},
+                {1, "Isla Bennett"},
+                {7, "Marcel Jones"}
+        };
+
+        std::ranges::sort(users, {}, &User::id);
+
+        for (const auto& u : users)
+            std::cout << u.id << ": " << u.name << "\n";
+    }
+
+
+    void Find_byName()
+    {
+        std::vector<User> users{
+            {37,"Eliana Green"}, {23, "Logan Sterling"},
+            {1, "Isla Bennett"}, {7, "Marcel Jones"}
+        };
+
+        auto it = std::ranges::find(users, std::string {"Eliana Green"}, &User::name);
+        // it->id == 37, it->name == "Eliana Green"
+        std::cout << it->id << ": " << it->name << "\n";
+    }
+
 
     void Unique() // ERROR!
     {
@@ -582,7 +615,7 @@ namespace Ranges::Algoritms {
     }
 }
 
-void Ranges::TEST_ALL()
+void Ranges::TestAll()
 {
     // For_Each();
 
@@ -596,15 +629,17 @@ void Ranges::TEST_ALL()
     // View_DropWhile(); // Not working
     // Join_View();
 
-    // Algoritms::For_Each();
-    // Algoritms::Find_IF();
-    // Algoritms::Sort();
-    // Algoritms::Unique();
-    // Algoritms::Sort_BackWards();
-    // Algoritms::Reverse();
-    // Algoritms::Reverse_Span_Part();
+    // Algorithms::For_Each();
+    // Algorithms::Find_IF();
+    Algorithms::Find_byName();
+    // Algorithms::Sort();
+    // Algorithms::Sort_ByID();
+    // Algorithms::Unique();
+    // Algorithms::Sort_BackWards();
+    // Algorithms::Reverse();
+    // Algorithms::Reverse_Span_Part();
 
-     Filters::Filter_Numbers();
+    // Filters::Filter_Numbers();
     // Filters::Filter_Numbers_2();
     // Filters::Filter_ForEach();
     // Filters::PrintRange();
