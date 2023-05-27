@@ -16,6 +16,68 @@ Description : PcapAnalyzer
 
 #include <arpa/inet.h>
 
+
+namespace PcapAnalyzer
+{
+    struct GlobalHeader final
+    {
+        uint32_t magicNumber {};    /* magic number */
+        uint16_t versionMajor {};   /* major version number */
+        uint16_t versionMinor {};   /* minor version number */
+        uint32_t thiszone {};       /* GMT to local correction */
+        uint32_t sigfigs {};        /* accuracy of timestamps */
+        uint32_t snaplen {};        /* max length of captured packets, in octets */
+        uint32_t network {};        /* data link type */
+    };
+
+    struct PacketHeader final
+    {
+        uint32_t ts_sec;         /* timestamp seconds */
+        uint32_t ts_usec;        /* timestamp microseconds */
+        uint32_t incl_len;       /* number of octets of packet saved in file */
+        uint32_t orig_len;       /* actual length of packet */
+    };
+
+    [[nodiscard]]
+    std::vector<uint8_t> readPcapFile(std::string_view path)
+    {
+        std::vector<uint8_t> buffer {};
+        if (std::ifstream file(path.data(), std::ios::ate | std::ios::binary); file.is_open() && file.good()) {
+            const size_t length = static_cast<size_t>(file.tellg());
+            buffer.resize(length);
+
+            file.seekg(0, std::ios_base::beg);
+            file.read(reinterpret_cast<char*>(buffer.data()), length);
+            // const auto bytesRead = static_cast<size_t>(file.gcount());
+        }
+
+        return buffer;
+    }
+
+
+    void testGlobalHeader()
+    {
+        constexpr std::string_view path { R"(/home/andtokm/DiskS/Temp/Dumps/auth_packetp.pcapng)"};
+        const std::vector<uint8_t> buffer { readPcapFile(path) };
+
+        std::cout << "GlobalHeader size = " << sizeof(GlobalHeader) << std::endl;
+        std::cout << "PacketHeader size = " << sizeof(PacketHeader) << std::endl;
+
+        const GlobalHeader* globalHeader = (GlobalHeader*)(buffer.data());
+        std::cout << "magicNumber      : " << htons(globalHeader->magicNumber) << std::endl;
+        std::cout << "versionMajor     : " << globalHeader->versionMajor << std::endl;
+        std::cout << "versionMinor     : " << globalHeader->versionMinor << std::endl;
+        std::cout << "snaplen          : " << htons(globalHeader->snaplen) << std::endl;
+        std::cout << "network          : " << htons(globalHeader->network) << std::endl;
+
+
+        const PacketHeader* pktHeader = (PacketHeader*)(buffer.data() + sizeof(GlobalHeader));
+        std::cout << "\nincl_len      : " << htons(pktHeader->incl_len) << std::endl;
+        std::cout << "orig_len      : " << htons(pktHeader->orig_len) << std::endl;
+
+    }
+}
+
 namespace PcapAnalyzer::WiFi
 {
     using namespace std::string_view_literals;
@@ -90,16 +152,7 @@ namespace PcapAnalyzer::WiFi
     {
         constexpr std::string_view path { R"(/home/andtokm/DiskS/Temp/Dumps/auth_packetp.pcapng)"};
 
-        // std::vector<uint8_t> buffer {};
-        std::vector<char> buffer {};
-        if (std::ifstream file(path.data(), std::ios::ate | std::ios::binary); file.is_open() && file.good()) {
-            const size_t length = static_cast<size_t>(file.tellg());
-            buffer.resize(length);
-
-            file.seekg(0, std::ios_base::beg);
-            file.read(reinterpret_cast<char*>(buffer.data()), length);
-            // const auto bytesRead = static_cast<size_t>(file.gcount());
-        }
+        std::vector<uint8_t> buffer { readPcapFile(path) };
 
         // TODO: 18 * 16 ?? Why we need this offset
         buffer.erase(buffer.begin(), buffer.begin() + 18 * 16);
@@ -118,7 +171,6 @@ namespace PcapAnalyzer::WiFi
         }
 
 
-
         /*
         if (std::ifstream file(path.data(), std::ios::binary); file.is_open() && file.good())
         {
@@ -135,5 +187,7 @@ namespace PcapAnalyzer::WiFi
 
 void PcapAnalyzer::TestAll()
 {
-    WiFi::ReadAndParseFile();
+    testGlobalHeader();
+
+    // WiFi::ReadAndParseFile();
 }

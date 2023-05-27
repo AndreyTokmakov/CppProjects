@@ -12,6 +12,7 @@ Description : Utilities
 
 #include <string>
 #include <linux/if_packet.h>
+#include <cstdint>
 
 
 namespace Utilities

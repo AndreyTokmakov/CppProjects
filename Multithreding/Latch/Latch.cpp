@@ -71,7 +71,7 @@ namespace Latch {
         int max_workers = 4;
         std::latch completion_latch(max_workers);
 
-        std::vector<std::thread> workers;
+        std::vector<std::jthread> workers;
         auto task = [&](unsigned int timeout)-> void {
             Utils::synch_stream{} << "Waiting for " << timeout << " seconds.\n";
             std::this_thread::sleep_for(std::chrono::seconds(timeout));
@@ -86,15 +86,6 @@ namespace Latch {
         Utils::synch_stream{} << "Block with latch.wait() until work is done.\n";
         completion_latch.wait();
         Utils::synch_stream{} << "\n ****** Latch.wait() done. ***** \n\n";
-
-
-        // Waiting for threads.
-        // We dont need it in case if 'std::latch' works as expected.
-        std::for_each(workers.begin(), workers.end(), [](auto& T) {
-            T.join();
-        });
-
-        Utils::synch_stream{}<< "Threads done." << std::endl;
     }
 
     void TryWait_Test()
@@ -102,41 +93,32 @@ namespace Latch {
         int max_workers = 4;
         std::latch completion_latch(max_workers);
 
-        std::vector<std::thread> workers;
+        std::vector<std::jthread> workers;
         auto task = [&](unsigned int timeout)-> void {
-            THREAD_INFO << "Waiting for " << timeout << " seconds.\n";
+            Utils::synch_stream{} << "Waiting for " << timeout << " seconds.\n";
             std::this_thread::sleep_for(std::chrono::seconds(timeout));
-            THREAD_INFO << "Thread done\n";
+            Utils::synch_stream{} << "Thread done\n";
             completion_latch.count_down();
 
         };
 
-        THREAD_INFO << "Starting threads....\n";
+        Utils::synch_stream{}<< "Starting threads....\n";
         while (max_workers--)
             workers.emplace_back(task, rand() % 8);
 
 
-        THREAD_INFO << "Block with latch.wait() until work is done.\n";
+        Utils::synch_stream{} << "Block with latch.wait() until work is done.\n";
 
         while (!completion_latch.try_wait()) {
             std::this_thread::sleep_for(std::chrono::microseconds(10));
             // std::cout << ".";
         }
-
-
-        THREAD_INFO << "Latch.wait() done.\n";
-
-        // Waiting for threads.
-        // We don't need it in case if 'std::latch' works as expected.
-        std::for_each(workers.begin(), workers.end(), [](auto& T) {
-            T.join();
-        });
-        THREAD_INFO << "OK\n";
+        Utils::synch_stream{} << "Done\n";
     }
 };
 
 void Latch::TEST_ALL()
 {
-    Wait_Test();
-    // TryWait_Test();
+    // Wait_Test();
+    TryWait_Test();
 }

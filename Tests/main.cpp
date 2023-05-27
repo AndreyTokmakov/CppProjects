@@ -1043,11 +1043,47 @@ namespace StackTrace
 }
 */
 
+
+namespace ReturnTypeCast
+{
+    struct Value
+    {
+        std::string value{"123.456"};
+
+         explicit operator int() {
+            std::cout << "Value::operator int()\n";
+            return 123;
+        }
+
+    // private:
+        operator double() {
+            std::cout << "Value::operator double()\n";
+            return 123.456f;
+        }
+    };
+
+
+    void tests()
+    {
+        Value val;
+        {
+            const int v = val;
+            std::cout << v << std::endl;
+        }
+        {
+            const double v = val;
+            std::cout << v << std::endl;
+        }
+    }
+}
+
+
 int main([[maybe_unused]] int argc,
          [[maybe_unused]] char** argv)
 {
     const std::vector<std::string_view> args(argv + 1, argv + argc);
 
+    ReturnTypeCast::tests();
 
     // NTTP::test();
 
