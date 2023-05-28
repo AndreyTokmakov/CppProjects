@@ -77,7 +77,7 @@ namespace Visitor::DynamicComponentsVisitor
         }
     };
 
-    void ClientCode(std::array<const IComponent*, 2> components, IVisitor* visitor) {
+    void ClientCode(std::vector<const IComponent*> components, IVisitor* visitor) {
         for (const IComponent *comp : components) {
             comp->Accept(visitor);
         }
@@ -90,7 +90,7 @@ void DynamicComponentsVisitorTest()
 {
     using namespace Visitor::DynamicComponentsVisitor;
 
-    std::array<const IComponent*, 2> components = {new ConcreteComponentA, new ConcreteComponentB};
+    std::vector<const IComponent*> components = {new ConcreteComponentA, new ConcreteComponentB};
     auto visitor1 = std::make_unique<ConcreteVisitor1>();
     ClientCode(components, visitor1.get());
 

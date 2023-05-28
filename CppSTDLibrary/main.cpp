@@ -251,7 +251,7 @@ int main(int argc, char** argv)
     // InitializerList::TestAll();
     // InlineVariables::TestAll();
     // Initialization::TestAll();
-    // IteratorTests::TestAll();
+    IteratorTests::TestAll();
     // FilesStreams::TestAll();
     // Filesystem::TestAll();
     // Format::TestAll();
@@ -270,7 +270,7 @@ int main(int argc, char** argv)
     // Optional::TestAll();
     // PolymorphicMemoryResources::TestAll();
     // Random::TestAll();
-    Ranges::TestAll();
+    // Ranges::TestAll();
     // ReferenceWrapper::TestAll();
     // StarshipOperator::TestAll();
     // Streams::TestAll();

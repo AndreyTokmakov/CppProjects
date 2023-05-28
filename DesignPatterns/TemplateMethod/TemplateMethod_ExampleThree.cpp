@@ -11,6 +11,7 @@ Description : TemplateMethod_ExampleThree
 
 #include <iostream>
 #include <memory>
+#include <array>
 
 namespace TemplateMethod::TemplateMethod_ExampleThree
 {

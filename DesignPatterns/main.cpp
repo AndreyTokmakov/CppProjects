@@ -85,7 +85,7 @@ int main([[maybe_unused]]  int argc,
     // Strategy::Test();
     // Policy::Test();
     // ChainOfResponsibility::TestAll();
-    Command::TestAll();
+    // Command::TestAll();
     // Iterator::Test();
     // Interpreter::Test();
     // Mediator::TestAll();
@@ -93,7 +93,7 @@ int main([[maybe_unused]]  int argc,
     // Observer::TestAll();
     // State::TestAll();
     // TemplateMethod::TestAll();
-    // Visitor::test();
+    Visitor::test();
     /// NULL OBJECT
 
     /** C++ IDIOMS: **/

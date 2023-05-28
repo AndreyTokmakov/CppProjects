@@ -38,6 +38,19 @@ namespace PcapAnalyzer
         uint32_t orig_len;       /* actual length of packet */
     };
 
+    // For PcapNG
+    struct SectionHeaderBlock final
+    {
+        uint32_t blockType {};
+        uint32_t blockTotalLength {};
+        uint32_t byteOrderMagic {};
+        uint16_t versionMajor {};   /* major version number */
+        uint16_t versionMinor {};   /* minor version number */
+        uint64_t sectionLength {};
+        // ????
+        uint64_t options {};
+    };
+
     [[nodiscard]]
     std::vector<uint8_t> readPcapFile(std::string_view path)
     {
@@ -54,29 +67,53 @@ namespace PcapAnalyzer
         return buffer;
     }
 
-
-    void testGlobalHeader()
+    void printGlobalHeader(const uint8_t* packetData)
     {
-        constexpr std::string_view path { R"(/home/andtokm/DiskS/Temp/Dumps/auth_packetp.pcapng)"};
-        const std::vector<uint8_t> buffer { readPcapFile(path) };
+        const GlobalHeader* globalHeader { reinterpret_cast<const GlobalHeader*>(packetData) };
 
-        std::cout << "GlobalHeader size = " << sizeof(GlobalHeader) << std::endl;
-        std::cout << "PacketHeader size = " << sizeof(PacketHeader) << std::endl;
+        std::cout << "GlobalHeader (size: " << sizeof(GlobalHeader) << ")\n";
+        std::cout << "\tmagicNumber  : " << globalHeader->magicNumber << std::endl;
+        std::cout << "\tversionMajor : " << globalHeader->versionMajor << std::endl;
+        std::cout << "\tversionMinor : " << globalHeader->versionMinor << std::endl;
+        std::cout << "\tsnaplen      : " << globalHeader->snaplen << std::endl;
+        std::cout << "\tnetwork      : " << globalHeader->network << std::endl;
+    }
 
-        const GlobalHeader* globalHeader = (GlobalHeader*)(buffer.data());
-        std::cout << "magicNumber      : " << htons(globalHeader->magicNumber) << std::endl;
-        std::cout << "versionMajor     : " << globalHeader->versionMajor << std::endl;
-        std::cout << "versionMinor     : " << globalHeader->versionMinor << std::endl;
-        std::cout << "snaplen          : " << htons(globalHeader->snaplen) << std::endl;
-        std::cout << "network          : " << htons(globalHeader->network) << std::endl;
+    void printPacketHeader(const uint8_t* ptr)
+    {
+        const PacketHeader* pktHeader { reinterpret_cast<const PacketHeader*>(ptr) };
 
-
-        const PacketHeader* pktHeader = (PacketHeader*)(buffer.data() + sizeof(GlobalHeader));
-        std::cout << "\nincl_len      : " << htons(pktHeader->incl_len) << std::endl;
-        std::cout << "orig_len      : " << htons(pktHeader->orig_len) << std::endl;
-
+        std::cout << "PacketHeader (size: " << sizeof(PacketHeader) << ")\n";
+        std::cout << "\tincl_len : " << pktHeader->incl_len << std::endl;
+        std::cout << "\torig_len : " << pktHeader->orig_len << std::endl;
     }
 }
+
+namespace PcapAnalyzer
+{
+    void handlePacket(const uint8_t* packetBytes,
+                      const PacketHeader& pktHeader)
+    {
+        std::cout << "Bytes captured: " << pktHeader.incl_len << std::endl;
+    }
+
+    void AnalyzePcapTest()
+    {
+        constexpr std::string_view path { R"(/home/andtokm/DiskS/Temp/Dumps/Xiaomi_WiFi_Authentiocation.pcap)"};
+        const std::vector<uint8_t> buffer { readPcapFile(path) };
+        const size_t dataBlockSize { buffer.size() - sizeof(GlobalHeader)};
+
+        const uint8_t* const packetBlockPtr { buffer.data() + sizeof(GlobalHeader) };
+        for (size_t nextBlockPos = 0; dataBlockSize > nextBlockPos; )
+        {
+            const PacketHeader *pktHeader { reinterpret_cast<const PacketHeader*>(packetBlockPtr + nextBlockPos) };
+            handlePacket(packetBlockPtr + nextBlockPos + sizeof(PacketHeader), *pktHeader);
+            nextBlockPos += sizeof(PacketHeader) + pktHeader->incl_len;
+        }
+    }
+}
+
+
 
 namespace PcapAnalyzer::WiFi
 {
@@ -150,16 +187,14 @@ namespace PcapAnalyzer::WiFi
 
     void ReadAndParseFile()
     {
-        constexpr std::string_view path { R"(/home/andtokm/DiskS/Temp/Dumps/auth_packetp.pcapng)"};
+        constexpr std::string_view path { R"(/home/andtokm/DiskS/Temp/Dumps/auth_packetp.pcap)"};
+        const std::vector<uint8_t> buffer { readPcapFile(path) };
 
-        std::vector<uint8_t> buffer { readPcapFile(path) };
+        // const GlobalHeader* globalHeader = (GlobalHeader*)(buffer.data());
+        // const PacketHeader* pktHeader = (PacketHeader*)(buffer.data() + sizeof(GlobalHeader));
+        const uint8_t* packetData = buffer.data() + sizeof(PacketHeader) + sizeof(GlobalHeader);
 
-        // TODO: 18 * 16 ?? Why we need this offset
-        buffer.erase(buffer.begin(), buffer.begin() + 18 * 16);
-        // std::cout << bin2hex(buffer) << std::endl;
-
-
-        const RadiotapHeader* radioTap = (RadiotapHeader*)(buffer.data());
+        const RadiotapHeader* radioTap = (RadiotapHeader*)(packetData);
         std::cout << "Length  : " << radioTap->length << std::endl;
         std::cout << "Pad     : " << htons(radioTap->pad) << std::endl;
         std::cout << "Version : " << htons(radioTap->version) << std::endl;
@@ -187,7 +222,7 @@ namespace PcapAnalyzer::WiFi
 
 void PcapAnalyzer::TestAll()
 {
-    testGlobalHeader();
+    AnalyzePcapTest();
 
     // WiFi::ReadAndParseFile();
 }

@@ -9,6 +9,7 @@ Description : Base
 
 #include "Adapter.h"
 #include <memory>
+#include <algorithm>
 
 namespace Adapter
 {
