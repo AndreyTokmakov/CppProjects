@@ -45,7 +45,7 @@ add_executable(Networking MACOSX_BUNDLE
         Servers/EPollTCPServerDebug.cpp Servers/EPollTCPServerDebug.h
         Servers/EPollTCPServerMultithreaded.cpp Servers/EPollTCPServerMultithreaded.h
         RawSockets/CaptureTraffic.cpp
-        RawSockets/CaptureTraffic.h PcapAnalyzer/PcapAnalyzer.cpp PcapAnalyzer/PcapAnalyzer.h)
+        RawSockets/CaptureTraffic.h PcapAnalyzer/PcapAnalyzer.cpp PcapAnalyzer/PcapAnalyzer.h WiFi/WiFiExperiments.cpp WiFi/WiFiExperiments.h)
 
 # Link phread library
 TARGET_LINK_LIBRARIES(Networking pthread)

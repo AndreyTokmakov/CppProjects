@@ -16,6 +16,8 @@ Description : PcapAnalyzer
 
 #include <arpa/inet.h>
 
+#include "../Utilities/Utilities.h"
+
 
 namespace PcapAnalyzer
 {
@@ -51,6 +53,27 @@ namespace PcapAnalyzer
         uint64_t options {};
     };
 
+    enum class LinkType
+    {
+        /**	BSD loopback encapsulation **/
+        Null = 0,
+
+        /** IEEE 802.3 Ethernet **/
+        Ethernet = 1,
+
+        /** AX.25 packet **/
+        Ax25 = 3,
+
+        /** IEEE 802.5 Token Ring **/
+        IEEE_802_5_TokenRing = 6,
+
+        /** IEEE 802.11 wireless LAN **/
+        IEEE_802_11_Wireless = 105,
+
+        /** Radiotap - followed by an 802.11 header **/
+        RadioTap = 127
+    };
+
     [[nodiscard]]
     std::vector<uint8_t> readPcapFile(std::string_view path)
     {
@@ -66,6 +89,10 @@ namespace PcapAnalyzer
 
         return buffer;
     }
+}
+
+namespace PcapAnalyzer
+{
 
     void printGlobalHeader(const uint8_t* packetData)
     {
@@ -87,11 +114,8 @@ namespace PcapAnalyzer
         std::cout << "\tincl_len : " << pktHeader->incl_len << std::endl;
         std::cout << "\torig_len : " << pktHeader->orig_len << std::endl;
     }
-}
 
-namespace PcapAnalyzer
-{
-    void handlePacket(const uint8_t* packetBytes,
+    void handlePacket([[maybe_unused]] const uint8_t* packetBytes,
                       const PacketHeader& pktHeader)
     {
         std::cout << "Bytes captured: " << pktHeader.incl_len << std::endl;
@@ -99,7 +123,7 @@ namespace PcapAnalyzer
 
     void AnalyzePcapTest()
     {
-        constexpr std::string_view path { R"(/home/andtokm/DiskS/Temp/Dumps/Xiaomi_WiFi_Authentiocation.pcap)"};
+        constexpr std::string_view path { R"(../../Networking/PcapAnalyzer/data/Xiaomi_WiFi_Authentiocation.pcap)"};
         const std::vector<uint8_t> buffer { readPcapFile(path) };
         const size_t dataBlockSize { buffer.size() - sizeof(GlobalHeader)};
 
@@ -111,6 +135,11 @@ namespace PcapAnalyzer
             nextBlockPos += sizeof(PacketHeader) + pktHeader->incl_len;
         }
     }
+
+    void AnalyzeHeader()
+    {
+
+    }
 }
 
 
@@ -118,6 +147,10 @@ namespace PcapAnalyzer
 namespace PcapAnalyzer::WiFi
 {
     using namespace std::string_view_literals;
+
+    constexpr std::string_view beacon0 { R"(../../Networking/PcapAnalyzer/data/beacon0.pcap)"};
+    constexpr std::string_view beacon1 { R"(../../Networking/PcapAnalyzer/data/beacon1.cap)"};
+    constexpr std::string_view beacon2 { R"(../../Networking/PcapAnalyzer/data/beacon2.cap)"};
 
     constexpr std::array<std::pair<std::string_view, uint16_t>, 32> presentFlagsBits {{
         {"TSFT"sv, 0},
@@ -163,6 +196,38 @@ namespace PcapAnalyzer::WiFi
         uint32_t presentFlags;  /* fields present */
     } __attribute__((packed, aligned(1)));
 
+    struct WiFiMACHeader
+    {
+        uint16_t control { 0 };
+        uint16_t duration { 0 };
+        uint8_t  da [6] {};
+        uint8_t  sa [6] {};
+        uint8_t  bss [6] {};
+        uint16_t sec { 0 };
+    } __attribute__((packed, aligned(1)));
+
+    struct BeaconFixedParams
+    {
+        // A value representing the time on the access point, which is the number of microseconds the AP has been active.
+        // When timestamp reach its max (2^64 microsecond or ~580,000 years) it will reset to 0.
+        // This field contain in Beacon Frame & Probe Response frame.
+        uint64_t timestamp {};
+
+        // Beacon Interval field represent the number of time units (TU) between  target beacon transmission times (TBTT).
+        // Default value is 100TU (102.4 milliseconds)
+        uint16_t beaconInterval {};
+
+        // This field contains number of subfields that are used to indicate requested or advertised optional capabilities.
+        uint16_t capabilityInfo {};
+    } __attribute__((packed, aligned(1)));
+
+    struct TagParams
+    {
+        uint8_t number {};
+        uint8_t length {};
+    } __attribute__((packed, aligned(1)));
+
+
 
     bool isBitSet(const uint32_t value,
                   const uint16_t bit)
@@ -187,7 +252,7 @@ namespace PcapAnalyzer::WiFi
 
     void ReadAndParseFile()
     {
-        constexpr std::string_view path { R"(/home/andtokm/DiskS/Temp/Dumps/auth_packetp.pcap)"};
+        constexpr std::string_view path { R"(../../Networking/PcapAnalyzer/data/auth_packet.pcap)"};
         const std::vector<uint8_t> buffer { readPcapFile(path) };
 
         // const GlobalHeader* globalHeader = (GlobalHeader*)(buffer.data());
@@ -204,25 +269,104 @@ namespace PcapAnalyzer::WiFi
             std::cout << '\t' << name << "    " << std::boolalpha
                       << isBitSet(radioTap->presentFlags, bit) << std::endl;
         }
+    }
 
+    // TODO: To study: https://mrncciew.com/2014/10/08/802-11-mgmt-beacon-frame/
+    void parseBacon(const uint8_t* packetBytes,
+                    const PacketHeader& pktHeader)
+    {
+        const size_t packetLenTotal { pktHeader.incl_len  };
+        std::cout << "Bytes captured: " << packetLenTotal << std::endl;
 
-        /*
-        if (std::ifstream file(path.data(), std::ios::binary); file.is_open() && file.good())
-        {
-            ptrdiff_t bytesRead {0}, bytesTotal {0};
-            std::string buffer(blockSize, '0');
-            while (0 < (bytesRead = file.read(buffer.data(), blockSize).gcount())) {
-                bytesTotal += bytesRead;
-            }
-            std::cout << "bytesTotal = " << bytesTotal << std::endl;
+        const WiFiMACHeader* macHeader { reinterpret_cast<const WiFiMACHeader*>(packetBytes) };
+        std::cout << "Destination address: "; Utilities::PrintMACAddress(macHeader->da); std::cout << std::endl;
+        std::cout << "Transmitter address: "; Utilities::PrintMACAddress(macHeader->sa); std::cout << std::endl;
+        std::cout << "BSS ID             : "; Utilities::PrintMACAddress(macHeader->bss); std::cout << std::endl;
+
+        const BeaconFixedParams* fixedParams { reinterpret_cast<const BeaconFixedParams*>(packetBytes + sizeof(WiFiMACHeader)) };
+
+        std::cout << "Timestamp          : " << fixedParams->timestamp << std::endl;
+        std::cout << "Beacon Interval    : " << fixedParams->beaconInterval << std::endl;
+        std::cout << "Capability Info    : " << fixedParams->capabilityInfo << std::endl;
+
+        std::cout << "================================= Tags ====================================================\n";
+
+        constexpr size_t tagsOffset { sizeof(WiFiMACHeader) + sizeof(BeaconFixedParams) };
+        const uint8_t* tagPtr { packetBytes + tagsOffset };
+        for (size_t offset = 0; packetLenTotal > (offset + tagsOffset + sizeof(TagParams)) ; /* ++idx */) {
+            const TagParams* tagInfo { reinterpret_cast<const TagParams*>(tagPtr + offset) };
+            offset += int(tagInfo->length) + sizeof(TagParams);
+
+            std::cout << "Tag: " << int(tagInfo->number) << ", Len " << int(tagInfo->length)
+                      << " | POS: " << offset  + tagsOffset << std::endl;
         }
-         */
+    }
+
+    void AnalyzeBeacons()
+    {
+        const std::vector<uint8_t> buffer { readPcapFile(beacon0) };
+        const size_t dataBlockSize { buffer.size() - sizeof(GlobalHeader)};
+
+        const uint8_t* const packetBlockPtr { buffer.data() + sizeof(GlobalHeader) };
+        for (size_t nextBlockPos = 0; dataBlockSize > nextBlockPos; )
+        {
+            const PacketHeader *pktHeader { reinterpret_cast<const PacketHeader*>(packetBlockPtr + nextBlockPos) };
+            parseBacon(packetBlockPtr + nextBlockPos + sizeof(PacketHeader), *pktHeader);
+            nextBlockPos += sizeof(PacketHeader) + pktHeader->incl_len;
+        }
     }
 };
 
 void PcapAnalyzer::TestAll()
 {
-    AnalyzePcapTest();
+    // AnalyzePcapTest();
 
     // WiFi::ReadAndParseFile();
+    WiFi::AnalyzeBeacons();
 }
+
+/** Management Frame Information Elements
+
+0   	- Service Set Identity (SSID)
+1   	- Supported Rates
+2   	- FH Parameter Set
+3   	- DS Parameter Set
+4   	- CF Parameter Set
+5   	- Traffic Indication Map (TIM)
+6   	- IBSS Parameter Set
+7  	 	- Country Information  (802.11d)
+8   	- Hopping Pattern Parameters (802.11d)
+9   	- Hopping Pattern Table  (802.11d)
+10  	- Request(802.11d)
+11 		- BSS Load
+12		- EDCA Parameter Set
+13      - TSPEC
+14 		- TCLAS
+15 		- IE Type: Schedule"
+16		- Challenge text
+17-31   - Reserved (formerly for challenge text extension, before 802.11 shared key authentication was discontinued)
+32 		- Power Constraint (802.11h)
+33		- Power Capability (802.11h)
+34 		- Transmit Power Control (TPC) Request (802.11h)
+35 		- TPC Report (802.11h)
+36 		- Supported Channels (802.11h)
+37		- Channel Switch Announcement (802.11h)
+38		- Measurement Request (802.11h)
+39		- Measurement Report (802.11h)
+40 		- Quiet (802.11h)
+41 		- IBSS DFS (802.11h)
+42		- ERP information (802.11h)
+43 		- TS Delay
+44 		- TCLAS Processing
+45		- HT Capabilities (802.11n)
+46 		- QoS Capabilit
+48 		- RSN Information | Robust Security Network (802.11i)
+50 		- Extended Supported Rates (802.11g)
+59 		- Supported Operating Classes
+61		- HT Information (802.11n)
+127		- Extended Capabilities
+221		- Vendor Specific
+32-255 	- Reserved; unused
+
+
+*/
