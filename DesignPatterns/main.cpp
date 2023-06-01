@@ -69,7 +69,7 @@ int main([[maybe_unused]]  int argc,
     // LazyInitialization::TestAll();
 
     /** Structural patterns: **/
-    // Adapter::TestAll();
+    Adapter::TestAll();
     // Bridge::TestAll();
     // PImpl::TestAll();
     // Composite::Test();
@@ -93,7 +93,7 @@ int main([[maybe_unused]]  int argc,
     // Observer::TestAll();
     // State::TestAll();
     // TemplateMethod::TestAll();
-    Visitor::test();
+    // Visitor::test();
     /// NULL OBJECT
 
     /** C++ IDIOMS: **/

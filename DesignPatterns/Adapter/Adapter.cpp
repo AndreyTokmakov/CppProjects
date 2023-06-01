@@ -111,7 +111,7 @@ namespace Adapter::PrivateInheritance {
 
 void BaseAdapterTest(); // from BaseAdapter.cpp file
 void GoodExample_Test(); // from GoodExample.cpp file
-
+void PhoneChargeAdapterTest();
 
 void Adapter::TestAll()
 {
@@ -121,5 +121,7 @@ void Adapter::TestAll()
 
     // BaseAdapterTest();
 
-    GoodExample_Test();
+    // GoodExample_Test();
+
+    PhoneChargeAdapterTest();
 }

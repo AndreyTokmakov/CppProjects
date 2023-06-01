@@ -72,8 +72,8 @@
 #include "BinaryAnalyzer/BinaryAnalyzer.h"
 
 // C++ 23:
-#include <expected>
-#include <format>
+// #include <expected>
+// #include <format>
 
 // #include <stacktrace>
 // #include <flat_map>
@@ -1083,7 +1083,17 @@ int main([[maybe_unused]] int argc,
 {
     const std::vector<std::string_view> args(argv + 1, argv + argc);
 
-    ReturnTypeCast::tests();
+    // ReturnTypeCast::tests();
+
+    if (args.empty())
+        return 0;
+
+    for (size_t idx = 0, max = atoi(args.front().data()); idx < max; ++idx)
+    {
+        std::cout << idx << std::endl;
+        std::this_thread::sleep_for(std::chrono::milliseconds (250));
+
+    }
 
     // NTTP::test();
 
