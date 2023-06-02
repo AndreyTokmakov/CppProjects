@@ -44,7 +44,7 @@ add_executable(DesignPatterns
     TypeErasure/TypeErasure.cpp TypeErasure/TypeErasure.h
     CopyAndSwap/CopyAndSwap.cpp CopyAndSwap/CopyAndSwap.h
     TagDispatching/TagDispatching.cpp TagDispatching/TagDispatching.h
-    Policy/Policy.cpp Policy/Policy.h
+    Policy/Policy.cpp Policy/Policy.cpp
     Iterator/Iterator.cpp Iterator/Iterator.h
     Builder/UserBuilder.cpp
     RAII/RAII.cpp RAII/RAII.h
@@ -65,6 +65,6 @@ add_executable(DesignPatterns
 		Decorator/MoneyTaxesDecoratorTwo.cpp Decorator/MoneyTaxesDecoratorTwo.h Observer/LambdaObserver.cpp
 		MVC/ModelViewController.cpp MVC/ModelViewController.h DependencyInjection/DependencyInjection.cpp
 		DependencyInjection/DependencyInjection.h
-		Adapter/ChargingPhoneAdapter.cpp Adapter/ChargingPhoneAdapter.cpp)
+		Adapter/ChargingPhoneAdapter.cpp Adapter/ChargingPhoneAdapter.cpp Decorator/WindowDecorator.cpp)
 
 TARGET_LINK_LIBRARIES(DesignPatterns pthread)

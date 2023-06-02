@@ -64,6 +64,8 @@ namespace Decorator
     };
 }
 
+void WindowDecoratorTest();
+
 void Decorator::Test()
 {
     /*
@@ -74,5 +76,7 @@ void Decorator::Test()
     // ShapeDecorator::Test();
 
     // MoneyTaxesDecoratorOne::Test();
-    MoneyTaxesDecoratorTwo::Test();
+    // MoneyTaxesDecoratorTwo::Test();
+
+    WindowDecoratorTest();
 }

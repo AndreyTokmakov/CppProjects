@@ -69,12 +69,12 @@ int main([[maybe_unused]]  int argc,
     // LazyInitialization::TestAll();
 
     /** Structural patterns: **/
-    Adapter::TestAll();
+    // Adapter::TestAll();
     // Bridge::TestAll();
     // PImpl::TestAll();
     // Composite::Test();
     // Facade::Test();
-    // Decorator::Test();
+    Decorator::Test();
     // Flyweight::Test();
     // Proxy::CarTest();
     // Proxy::DocumentTest();
