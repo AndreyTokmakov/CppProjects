@@ -71,15 +71,15 @@ int main([[maybe_unused]]  int argc,
     /** Structural patterns: **/
     // Adapter::TestAll();
     // Bridge::TestAll();
-    // PImpl::TestAll();
+    PImpl::TestAll();
     // Composite::Test();
     // Facade::Test();
-    Decorator::Test();
+    // Decorator::Test();
     // Flyweight::Test();
+    // ModelViewController::TestAll();
     // Proxy::CarTest();
     // Proxy::DocumentTest();
     // Proxy::SubjectTest();
-    // ModelViewController::TestAll();
 
     /** Behaviour patterns **/
     // Strategy::Test();

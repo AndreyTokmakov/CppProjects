@@ -35,8 +35,12 @@ namespace Proxy::CarProxy
         int driver_age_;
 
     public:
-        explicit ProxyCar(int driver_age) : driver_age_(driver_age) { /** **/ }
-        void DriveCar() noexcept override {
+        explicit ProxyCar(int driver_age) : driver_age_(driver_age) {
+            /** **/
+        }
+
+        void DriveCar() noexcept override
+        {
             if (this->driver_age_ > 16) {
                 this->real_car_->DriveCar();
             }
@@ -51,15 +55,7 @@ void Proxy::CarTest()
 {
     using namespace CarProxy;
 
-    {
-        std::unique_ptr<ICar> car = std::make_unique<ProxyCar>(14);
-        car->DriveCar();
-    }
-
+    std::make_unique<ProxyCar>(14)->DriveCar();
     std::cout << "\nAttempt 2: \n" << std::endl;
-
-    {
-        std::unique_ptr<ICar> car = std::make_unique<ProxyCar>(28);
-        car->DriveCar();
-    }
+    std::make_unique<ProxyCar>(28)->DriveCar();
 }

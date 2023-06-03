@@ -60,7 +60,9 @@ add_executable(DesignPatterns
 		Observer/ObserverBasic.cpp TemplateMethod/TemplateMethod_ExampleTwo.cpp
 		TemplateMethod/TemplateMethod_ExampleThree.cpp Visitor/DynamicComponentsVisitor.cpp
 		Visitor/DynamicComponentsVisitor.cpp Visitor/DynamicComponentsVisitor.cpp
-		Observer/ObserverSubject.cpp Visitor/CarVisitor.cpp PImpl/PImpl.cpp PImpl/PImpl.h Monostate/Monostate.cpp
+		Observer/ObserverSubject.cpp Visitor/CarVisitor.cpp
+		PImpl/PImpl.h PImpl/PImpl.cpp PImpl/PImplDemo2.cpp
+		Monostate/Monostate.cpp
 		Monostate/Monostate.h Decorator/MoneyTaxesDecoratorOne.cpp Decorator/MoneyTaxesDecoratorOne.h
 		Decorator/MoneyTaxesDecoratorTwo.cpp Decorator/MoneyTaxesDecoratorTwo.h Observer/LambdaObserver.cpp
 		MVC/ModelViewController.cpp MVC/ModelViewController.h DependencyInjection/DependencyInjection.cpp

@@ -120,8 +120,12 @@ namespace PImpl::DemoOne
     }
 }
 
+void Demo2();
+
 void PImpl::TestAll()
 {
-    DemoSimple::test();
+    // DemoSimple::test();
     // DemoOne::test();
+
+    Demo2();
 }
