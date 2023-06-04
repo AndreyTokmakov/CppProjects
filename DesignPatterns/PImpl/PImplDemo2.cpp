@@ -37,38 +37,50 @@ namespace PImpl::PImplDemo2
         }
     };
 
+    class MyClassImplEx: public Interface
+    {
+    public:
+        ~MyClassImplEx() override = default;
+
+        void DoSth() override {
+            std::cout << "MyClassImplEx::DoSth()\n";
+        }
+
+        void DoConst() const override {
+            std::cout << "MyClassImplEx::DoConst()\n";
+        }
+    };
+
+
     class MyClass
     {
     public:
-        MyClass(std::unique_ptr<Interface> impl) : m_pImpl { std::move(impl)} {
+        explicit MyClass(std::shared_ptr<Interface> impl) : m_pImpl { std::move(impl)} {
         }
 
         ~MyClass() = default;
 
-        MyClass(const MyClass& rhs) = default;
-        MyClass& operator=(const MyClass& rhs) = default;
+        // MyClass(const MyClass& rhs) = default;
+        // MyClass& operator=(const MyClass& rhs) = default;
 
         MyClass(MyClass &&) noexcept = default;
         MyClass& operator=(MyClass &&) noexcept = default;
 
-        /*
-        MyClass(const MyClass& rhs): m_pImpl(new Interface(*rhs.m_pImpl)) {
+        MyClass(const MyClass& rhs) {
+            m_pImpl = rhs.m_pImpl;
         }
 
         MyClass& operator=(const MyClass& rhs) {
             if (this != &rhs)
-                m_pImpl.reset(rhs.m_pImpl.release());
-
+                m_pImpl = rhs.m_pImpl;
             return *this;
-        }*/
+        }
 
-        void DoSth()
-        {
+        void DoSth() {
             Pimpl()->DoSth();
         }
 
-        void DoConst() const
-        {
+        void DoConst() const {
             Pimpl()->DoConst();
         }
 
@@ -82,7 +94,8 @@ namespace PImpl::PImplDemo2
             return m_pImpl.get();
         }
 
-        std::unique_ptr<Interface> m_pImpl;
+        // std::unique_ptr<Interface> m_pImpl;
+        std::shared_ptr<Interface> m_pImpl;
     };
 }
 
@@ -91,10 +104,20 @@ void Demo2()
 {
     using namespace PImpl::PImplDemo2;
 
-    std::unique_ptr<Interface> impl { std::make_unique<MyClassImpl>() };
+    std::shared_ptr<Interface> impl1 { std::make_shared<MyClassImpl>() };
+    std::shared_ptr<Interface> impl2 { std::make_shared<MyClassImplEx>() };
 
+    std::unique_ptr<MyClass> obj1 { std::make_unique<MyClass>(impl1)};
+    obj1->DoSth();
+    obj1->DoConst();
 
-    std::unique_ptr<MyClass> obj { std::make_unique<MyClass>(std::move(impl))};
-    obj->DoSth();
-    obj->DoConst();
+    std::unique_ptr<MyClass> obj2 { std::make_unique<MyClass>(impl2)};
+    obj2->DoSth();
+    obj2->DoConst();
+
+    /*
+    MyClass obj1 (*obj);
+    obj1.DoSth();
+    obj1.DoConst();
+    */
 }

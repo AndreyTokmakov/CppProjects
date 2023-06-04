@@ -1077,6 +1077,37 @@ namespace ReturnTypeCast
     }
 }
 
+namespace OOP_Test
+{
+    class Base1
+    {
+    public:
+        void info() {
+            std::cout << "Base::info()\n";
+        }
+
+        virtual ~Base1() = default;
+    };
+
+    class Derived : Base1 {
+
+    };
+
+    void inheritance()
+    {
+        // std::unique_ptr<Base1> obj = std::make_unique<Derived>();
+
+        // Base1* ptr = new Derived();
+        Derived* ptr = new Derived();
+        ptr->info();
+
+    }
+}
+
+
+
+
+
 
 int main([[maybe_unused]] int argc,
          [[maybe_unused]] char** argv)
@@ -1085,15 +1116,9 @@ int main([[maybe_unused]] int argc,
 
     // ReturnTypeCast::tests();
 
-    if (args.empty())
-        return 0;
+    OOP_Test::inheritance();
 
-    for (size_t idx = 0, max = atoi(args.front().data()); idx < max; ++idx)
-    {
-        std::cout << idx << std::endl;
-        std::this_thread::sleep_for(std::chrono::milliseconds (250));
 
-    }
 
     // NTTP::test();
 
