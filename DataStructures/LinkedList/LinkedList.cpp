@@ -324,11 +324,15 @@ namespace LinkedLists::Two
         using const_pointer = const object_type*;
 
 
-        struct Node {
+        struct Node
+        {
             object_type data {};
             Node *next {nullptr};
 
-            Node (object_type v, Node* nxt = nullptr): data {v}, next {nxt} {
+            explicit Node (object_type v): data {v}, next {nullptr} {
+            }
+
+            Node (object_type v, Node* nxt): data {v}, next {nxt} {
             }
         };
 

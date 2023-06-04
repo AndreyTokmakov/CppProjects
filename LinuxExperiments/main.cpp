@@ -179,14 +179,14 @@ int main([[maybe_unused]] int argc,
     const std::vector<std::string_view> params(argv + 1, argv + argc);
 
     // Files::TestAll();
-    // Processes::TestAll();
+    Processes::TestAll();
     // Logs::TestAll();
     // ShellCommands::TestAll();
     // Environment::TestAll();
 
     // OpenSSL::TestAll(params);
 
-    Users::TestAll();
+    // Users::TestAll();
 
     // Time::TestAll();
     // Timer::TestAll();

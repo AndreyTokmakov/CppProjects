@@ -12,8 +12,10 @@
 
 #include <iostream>
 #include <array>
+#include <algorithm>
 
-namespace Pipes {
+namespace Pipes
+{
 
     void ReportError(std::string_view errText) {
         std::cout << errText << ". Error = " << errno << std::endl;

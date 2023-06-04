@@ -13,6 +13,8 @@
 #include <string>
 #include <string_view>
 #include <array>
+#include <algorithm>
+#include <filesystem>
 
 #include <sys/types.h>
 #include <sys/stat.h>
@@ -20,6 +22,9 @@
 #include <fcntl.h>
 #include <unistd.h>
 #include <cerrno>
+#include <cstdint>
+#include <charconv>
+#include <vector>
 
 namespace Processes
 {
@@ -99,6 +104,27 @@ void test()
     }
 }
 
+void getProcessList()
+{
+    constexpr std::string_view dirPath { R"(/proc/)" };
+
+    std::vector<uint32_t> procIDs {};
+    for (const auto& entry : std::filesystem::directory_iterator(dirPath))
+    {
+        const std::string_view name { entry.path().filename().string() };
+        if (entry.is_directory()) {
+            uint32_t pid {0};
+            const auto [ptr, errCode] = std::from_chars(name.data(), name.data() + name.length(), pid);
+            if (errCode == std::errc()) {
+                procIDs.push_back(pid);
+            }
+        }
+    }
+
+    for (const uint32_t pid: procIDs)
+        std::cout << pid << std::endl;
+}
+
 void Processes::TestAll()
 {
     // Test();
@@ -107,5 +133,7 @@ void Processes::TestAll()
 
     // CreateProcess_Fork_2();
 
-    test();
+    // test();
+
+    getProcessList();
 };
