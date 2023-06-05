@@ -106,23 +106,35 @@ void test()
 
 void getProcessList()
 {
+    struct LinuxProcess
+    {
+        uint32_t ppid { 0 };
+        std::filesystem::path procPath {};
+        std::filesystem::path exePath {};
+    };
+
     constexpr std::string_view dirPath { R"(/proc/)" };
 
-    std::vector<uint32_t> procIDs {};
-    for (const auto& entry : std::filesystem::directory_iterator(dirPath))
+    std::vector<LinuxProcess> processList {};
+    for (uint32_t pid {0}; const auto& entry : std::filesystem::directory_iterator(dirPath))
     {
         const std::string_view name { entry.path().filename().string() };
         if (entry.is_directory()) {
-            uint32_t pid {0};
             const auto [ptr, errCode] = std::from_chars(name.data(), name.data() + name.length(), pid);
             if (errCode == std::errc()) {
-                procIDs.push_back(pid);
+                processList.emplace_back(pid, entry.path());
             }
         }
     }
 
-    for (const uint32_t pid: procIDs)
-        std::cout << pid << std::endl;
+    for (LinuxProcess& proc: processList)
+    {
+        const std::filesystem::path exePath { proc.procPath / "exe" };
+        if (std::filesystem::exists(exePath) && is_symlink(exePath)) {
+            proc.exePath = read_symlink(exePath);
+            std::cout << proc.ppid << "  " << read_symlink(exePath) << std::endl;
+        }
+    }
 }
 
 void Processes::TestAll()

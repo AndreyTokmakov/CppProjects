@@ -1774,6 +1774,36 @@ namespace Trees::Complete_Tree {
 		int max = pow(height, 2) - 1;
 		std::cout << "if tree height is " << height << " then it has [" << min << " - " << max << "] elements" << std::endl;
 	}
+
+    int __count(const BinTree::Node* root) {
+        return root == nullptr ? 0 : 1 + __count(root->left) + __count(root->right);
+    }
+
+    bool __is_complete(const BinTree::Node* root, int index, int n) {
+        // Null node - noop
+        if (root == nullptr)
+            return true;
+        // If the index of this node is beyond the range, we have a gap somewhere.
+        if (index >= n)
+            return false;
+        // Recurse to 2*i+1 and 2*i+2
+        return __is_complete(root->left, 2*index+1, n) &&
+                __is_complete(root->right, 2*index+2, n);
+    }
+
+    bool __is_complete_binary_tree(const BinTree::BinaryTree& tree) {
+        int cnt = __count(tree.getRoot());
+        return __is_complete(tree.getRoot(), 0, cnt);
+    }
+
+    void IsCompletedTree()
+    {
+        BinTree::BinaryTree tree1 { 33, 22, 85, 10 ,30, 54, 125 };
+        BinTree::BinaryTree tree2 { 33, 22, 85, 10 ,30, 54 };
+
+        std::cout << std::boolalpha << __is_complete_binary_tree(tree1) << std::endl;
+        std::cout << std::boolalpha << __is_complete_binary_tree(tree2) << std::endl;
+    }
 }
 
 
@@ -1835,4 +1865,5 @@ void Trees::TEST_ALL()
 
 	// Complete_Tree::Count_Levels();
 	// Complete_Tree::Count_Elements();
+	Complete_Tree::IsCompletedTree();               // FIXME: error
 }
