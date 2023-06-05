@@ -15,6 +15,7 @@
 #include <array>
 #include <algorithm>
 #include <filesystem>
+#include <fstream>
 
 #include <sys/types.h>
 #include <sys/stat.h>
@@ -109,6 +110,7 @@ void getProcessList()
     struct LinuxProcess
     {
         uint32_t ppid { 0 };
+        std::string cmdline;
         std::filesystem::path procPath {};
         std::filesystem::path exePath {};
     };
@@ -122,7 +124,7 @@ void getProcessList()
         if (entry.is_directory()) {
             const auto [ptr, errCode] = std::from_chars(name.data(), name.data() + name.length(), pid);
             if (errCode == std::errc()) {
-                processList.emplace_back(pid, entry.path());
+                processList.emplace_back(pid, std::string(), entry.path());
             }
         }
     }
@@ -132,8 +134,21 @@ void getProcessList()
         const std::filesystem::path exePath { proc.procPath / "exe" };
         if (std::filesystem::exists(exePath) && is_symlink(exePath)) {
             proc.exePath = read_symlink(exePath);
-            std::cout << proc.ppid << "  " << read_symlink(exePath) << std::endl;
         }
+
+        const std::filesystem::path cmdLinePath { proc.procPath / "cmdline" };
+        if (is_regular_file(cmdLinePath)) {
+            if (std::ifstream file(cmdLinePath.string().data()); file.is_open() && file.good())
+            {
+                std::getline(file, proc.cmdline);
+            }
+        }
+    }
+
+    for (const LinuxProcess& proc: processList) {
+        std::cout << proc.ppid << std::endl;
+        std::cout << '\t' << proc.exePath << std::endl;
+        std::cout << '\t' << proc.cmdline << std::endl;
     }
 }
 
@@ -148,4 +163,29 @@ void Processes::TestAll()
     // test();
 
     getProcessList();
+
+
+    /*
+    constexpr std::string_view dirPath { R"(/proc/136732/cmdline)" };
+    std::filesystem::path path { dirPath };
+
+    if (is_regular_file(path))
+    {
+        std::cout << path.string().data() << std::endl;
+        if (std::ifstream file(path.string().data()); file.is_open() && file.good())
+        {
+
+            // char buffer[64] {};
+            // file.read(buffer, 64);
+
+            // std::cout << buffer << std::endl;
+
+            std::string line;
+            std::getline(file, line);
+
+            std::cout << line << std::endl;
+
+        }
+    }
+     */
 };
