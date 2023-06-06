@@ -26,6 +26,8 @@
 #include <cstdint>
 #include <charconv>
 #include <vector>
+#include <format>
+
 
 namespace Processes
 {
@@ -113,6 +115,9 @@ void getProcessList()
         std::string cmdline;
         std::filesystem::path procPath {};
         std::filesystem::path exePath {};
+
+        // environ : Values of environment variables
+        // cwd     : working directory
     };
 
     constexpr std::string_view dirPath { R"(/proc/)" };
@@ -152,6 +157,44 @@ void getProcessList()
     }
 }
 
+
+namespace Processes::ProcessFilesystem
+{
+    void Read_CmdLine()
+    {
+        std::filesystem::path path { R"(/proc/145928/cmdline)" };
+
+        if (is_regular_file(path))
+        {
+            std::cout << path.string().data() << std::endl;
+            if (std::ifstream file(path.string().data()); file.is_open() && file.good())
+            {
+                std::string line;
+                std::getline(file, line);
+                std::cout << line << std::endl;
+            }
+        }
+    }
+
+    void Read_Status()
+    {
+        std::filesystem::path path { R"(/proc/145928/status)" };
+
+        if (is_regular_file(path))
+        {
+            std::cout << path.string().data() << std::endl;
+            if (std::ifstream file(path.string().data()); file.is_open() && file.good())
+            {
+                std::string line;
+                while (std::getline(file, line)) {
+                    std::cout << line << std::endl;
+
+                }
+            }
+        }
+    }
+}
+
 void Processes::TestAll()
 {
     // Test();
@@ -162,30 +205,8 @@ void Processes::TestAll()
 
     // test();
 
-    getProcessList();
+    // getProcessList();
 
-
-    /*
-    constexpr std::string_view dirPath { R"(/proc/136732/cmdline)" };
-    std::filesystem::path path { dirPath };
-
-    if (is_regular_file(path))
-    {
-        std::cout << path.string().data() << std::endl;
-        if (std::ifstream file(path.string().data()); file.is_open() && file.good())
-        {
-
-            // char buffer[64] {};
-            // file.read(buffer, 64);
-
-            // std::cout << buffer << std::endl;
-
-            std::string line;
-            std::getline(file, line);
-
-            std::cout << line << std::endl;
-
-        }
-    }
-     */
+    // ProcessFilesystem::Read_CmdLine();
+    ProcessFilesystem::Read_Status();
 };
