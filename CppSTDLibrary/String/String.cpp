@@ -1376,10 +1376,47 @@ namespace String::SSO
         std::string s1 { "0123456789" };
         std::string s2 { "01234567890123456789"};
     }
+}
+
+
+namespace String::CheckSymbols
+{
+    void IsDigit()
+    {
+        constexpr std::string_view text { "qwert123456"};
+
+        for (char c: text)
+        {
+            std::cout << "isdigit(" << c << ") = " << std::isdigit(c) << std::endl;
+            std::cout << "isalnum(" << c << ") = " << std::isalnum(c) << std::endl;
+            std::cout << "isalpha(" << c << ") = " << std::isalpha(c) << std::endl;
+            std::cout << std::endl;
+        }
+    }
 
 }
 
-void String::TestAll(){
+
+namespace String::ParsingTests
+{
+
+    void GetNumericPart()
+    {
+        const std::string text { "    1234  ;"};
+
+        const size_t start = text.find_first_not_of(' ');
+        const auto end = std::find_if_not(text.cbegin() + start, text.cend(), [](char c) {
+            return std::isdigit(c);
+        });
+
+        std::cout << "'" << std::string_view {text.begin() + start, end} << "'\n";
+
+    }
+}
+
+
+void String::TestAll()
+{
 	// Create_Test();
 	// Create_FromStrings();
 	// Create_FromStrings2();
@@ -1467,9 +1504,11 @@ void String::TestAll(){
 	// Format::Test();
 
 	// SSO::Test();
-	SSO::AllocationTest();
+	// SSO::AllocationTest();
 
 	// WString::Create_Print();
+
+    // CheckSymbols::IsDigit();
 
 
 	// TESTS::Long_MultiLine_String();
@@ -1486,4 +1525,6 @@ void String::TestAll(){
     // Application_Examples::Split_String_Tests();
     // Application_Examples::TrimString();
     // Application_Examples::IsPalindrome();
+
+    ParsingTests::GetNumericPart();
 };

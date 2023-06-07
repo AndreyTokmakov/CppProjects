@@ -12,7 +12,6 @@
 #include <iostream>
 #include <string>
 #include <string_view>
-#include <array>
 #include <algorithm>
 #include <filesystem>
 #include <fstream>
@@ -25,8 +24,14 @@
 #include <cerrno>
 #include <cstdint>
 #include <charconv>
-#include <vector>
 #include <format>
+
+#include <array>
+#include <vector>
+#include <set>
+#include <unordered_set>
+#include <map>
+#include <unordered_map>
 
 
 namespace Processes
@@ -71,89 +76,154 @@ namespace Processes
     }
 };
 
-void test()
+namespace Processes
 {
-    std::array<int, 2> pipeFd {};
-    auto& [readFd, writeFd] = pipeFd;
+    using namespace std::string_view_literals;
+    using namespace std::string_literals;
 
-    constexpr std::string_view testData {"qwerty_12345"};
+    void test() {
+        std::array<int, 2> pipeFd{};
+        auto &[readFd, writeFd] = pipeFd;
 
-    if (pipe(pipeFd.data()) == -1) {
-        std::cout << "pipe() failed. Error = " << errno << std::endl;
-        return;
+        constexpr std::string_view testData{"qwerty_12345"};
+
+        if (pipe(pipeFd.data()) == -1) {
+            std::cout << "pipe() failed. Error = " << errno << std::endl;
+            return;
+        }
+
+        const pid_t procID = fork();
+        if (-1 == procID) {
+            std::cout << "fork() failed. Error = " << errno << std::endl;
+            std::for_each(pipeFd.begin(), pipeFd.end(), [](int fd) { ::close(fd); });
+            return;
+        }
+
+        char buf{};
+        if (procID == 0) {
+            close(writeFd);
+            while (read(readFd, &buf, 1) > 0)
+                write(STDOUT_FILENO, &buf, 1);
+            write(STDOUT_FILENO, "\n", 1);
+            close(readFd);
+            _exit(EXIT_SUCCESS);
+        } else {
+            close(readFd);
+            write(writeFd, testData.data(), testData.size());
+            close(writeFd);
+            wait(nullptr);
+            exit(EXIT_SUCCESS);
+        }
     }
 
-    const pid_t procID = fork();
-    if (-1 == procID) {
-        std::cout << "fork() failed. Error = " << errno << std::endl;
-        std::for_each(pipeFd.begin(), pipeFd.end(), [] (int fd) { ::close(fd); });
-        return;
-    }
-
-    char buf {};
-    if (procID == 0) {
-        close(writeFd);
-        while (read(readFd, &buf, 1) > 0)
-            write(STDOUT_FILENO, &buf, 1);
-        write(STDOUT_FILENO, "\n", 1);
-        close(readFd);
-        _exit(EXIT_SUCCESS);
-    } else {
-        close(readFd);
-        write(writeFd, testData.data(), testData.size());
-        close(writeFd);
-        wait(nullptr);
-        exit(EXIT_SUCCESS);
-    }
-}
-
-void getProcessList()
-{
-    struct LinuxProcess
-    {
+    struct LinuxProcess {
+        uint32_t pid { 0 };
         uint32_t ppid { 0 };
+        std::string name; // TODO: Initialize
         std::string cmdline;
         std::filesystem::path procPath {};
         std::filesystem::path exePath {};
 
         // environ : Values of environment variables
         // cwd     : working directory
+
+        std::vector<LinuxProcess>::iterator parent;
+
+        // std::vector<LinuxProcess*> children {};
+        std::vector<std::vector<LinuxProcess>::iterator> children {};
     };
 
-    constexpr std::string_view dirPath { R"(/proc/)" };
-
-    std::vector<LinuxProcess> processList {};
-    for (uint32_t pid {0}; const auto& entry : std::filesystem::directory_iterator(dirPath))
+    void printProcTree(const LinuxProcess& process,
+                       std::string padding = ""s)
     {
-        const std::string_view name { entry.path().filename().string() };
-        if (entry.is_directory()) {
-            const auto [ptr, errCode] = std::from_chars(name.data(), name.data() + name.length(), pid);
-            if (errCode == std::errc()) {
-                processList.emplace_back(pid, std::string(), entry.path());
-            }
+        std::cout << padding << process.pid << " [" << process.exePath << "]\n";
+        for (const auto child: process.children) {
+            printProcTree(*child, padding + "     ");
         }
     }
 
-    for (LinuxProcess& proc: processList)
+    void readProcessList()
     {
-        const std::filesystem::path exePath { proc.procPath / "exe" };
-        if (std::filesystem::exists(exePath) && is_symlink(exePath)) {
-            proc.exePath = read_symlink(exePath);
+        constexpr std::string_view dirPath{R"(/proc/)"};
+
+        std::vector<LinuxProcess> processList {};
+        for (uint32_t pid{0}; const auto &entry : std::filesystem::directory_iterator(dirPath))
+        {
+            const std::string_view name { entry.path().filename().string() };
+            if (entry.is_directory()) {
+                const auto [ptr, errCode] = std::from_chars(name.data(), name.data() + name.length(), pid);
+                if (errCode == std::errc()) {
+                    processList.emplace_back(pid, 0, ""s, ""s,
+                                             entry.path(), "", processList.end());
+                }
+            }
         }
 
-        const std::filesystem::path cmdLinePath { proc.procPath / "cmdline" };
-        if (is_regular_file(cmdLinePath)) {
-            if (std::ifstream file(cmdLinePath.string().data()); file.is_open() && file.good())
+        for (LinuxProcess &proc: processList)
+        {
+            const std::filesystem::path exePath { proc.procPath / "exe" };
+            if (std::filesystem::exists(exePath) && is_symlink(exePath)) {
+                proc.exePath = read_symlink(exePath);
+            }
+
+            const std::filesystem::path cmdLinePath { proc.procPath / "cmdline" };
+            if (is_regular_file(cmdLinePath)) {
+                if (std::ifstream file(cmdLinePath.string().data()); file.is_open() && file.good()) {
+                    std::getline(file, proc.cmdline);
+                }
+            }
+
+            const std::filesystem::path statusPath { proc.procPath / "status" };
+            if (is_regular_file(statusPath))
             {
-                std::getline(file, proc.cmdline);
+                if (std::ifstream file(statusPath.string().data()); file.is_open() && file.good())
+                {
+                    size_t start{0}, end{0};
+                    std::string line;
+                    while (std::getline(file, line)) {
+                        if (line.contains("PPid:")) {
+                            start = line.find_first_not_of(' ', 6);
+                            for (end = start; end < line.size(); ++end)
+                                if (!std::isdigit(line[end]))
+                                    break;
+
+                            const auto [ptr, errCode] = std::from_chars(line.data() + start, line.data() + end, proc.ppid);
+                            if (errCode != std::errc()) {
+                                // TODO: Handle error
+                            }
+
+                            break;
+                        }
+                    }
+                }
             }
         }
-    }
 
-    for (const LinuxProcess& proc: processList) {
-        std::cout << proc.ppid << std::endl;
-        std::cout << '\t' << proc.exePath << std::endl;
-        std::cout << '\t' << proc.cmdline << std::endl;
+        // std::unordered_set<uint32_t> ids { 1 };
+        // using TreeType = std::map<uint32_t, std::vector<LinuxProcess>::iterator>;
+        using TreeType = std::unordered_map<uint32_t, std::vector<LinuxProcess>::iterator>;
+        TreeType processTree {
+                {processList.begin()->pid, processList.begin() }
+        };
+
+        for (auto procIter = processList.begin() + 1; procIter != processList.end(); ++procIter)
+        {
+            auto parent = processTree.find(procIter->ppid);
+            if (processTree.end() == parent) {
+                // std::cout << "Error: [pid: " << procIter->pid << ", ppid: " << procIter->ppid << "]\n";
+                continue;
+            }
+
+            procIter->parent = parent->second;
+            parent->second->children.push_back(procIter);
+            processTree.emplace(procIter->pid, procIter);
+        }
+
+
+        auto process = processTree.find(1);
+        if (processTree.end() != process) {
+            printProcTree(*process->second);
+        }
     }
 }
 
@@ -178,17 +248,31 @@ namespace Processes::ProcessFilesystem
 
     void Read_Status()
     {
-        std::filesystem::path path { R"(/proc/145928/status)" };
+        std::filesystem::path path { R"(/proc/36361/status)" };
 
         if (is_regular_file(path))
         {
-            std::cout << path.string().data() << std::endl;
             if (std::ifstream file(path.string().data()); file.is_open() && file.good())
             {
+                size_t start { 0 }, end { 0 };
                 std::string line;
-                while (std::getline(file, line)) {
-                    std::cout << line << std::endl;
+                while (std::getline(file, line))
+                {
+                    if (line.contains("PPid:"))
+                    {
+                        start = line.find_first_not_of(' ', 6);
+                        for (end = start; end < line.size(); ++end)
+                            if (!std::isdigit(line[end]))
+                                break;
 
+                        int ppid = 0;
+                        const auto [ptr, errCode] = std::from_chars(line.data() + start, line.data() + end, ppid);
+                        if (errCode == std::errc()) {
+                            std::cout << "ppid = " << ppid << std::endl;
+                        }
+
+                        break;
+                    }
                 }
             }
         }
@@ -205,8 +289,8 @@ void Processes::TestAll()
 
     // test();
 
-    // getProcessList();
+    readProcessList();
 
     // ProcessFilesystem::Read_CmdLine();
-    ProcessFilesystem::Read_Status();
+    // ProcessFilesystem::Read_Status();
 };

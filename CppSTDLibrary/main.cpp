@@ -251,7 +251,7 @@ int main(int argc, char** argv)
     // InitializerList::TestAll();
     // InlineVariables::TestAll();
     // Initialization::TestAll();
-    IteratorTests::TestAll();
+    // IteratorTests::TestAll();
     // FilesStreams::TestAll();
     // Filesystem::TestAll();
     // Format::TestAll();
@@ -285,7 +285,7 @@ int main(int argc, char** argv)
     // VolatileTests::TestAll();
     // TypeTraits::TestAll();
     // Tuple::TestAll();
-    // TypeCast::TestAll();
+    TypeCast::TestAll();
     // Templates::TestAll();
     // Utilities::TestAll();
     // UniquePtr_Tests::TestAll();

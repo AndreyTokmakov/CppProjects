@@ -367,6 +367,41 @@ namespace TypeCast::StaticCastTests
 };
 
 
+namespace TypeCast::FromChars_Tests
+{
+    void ConstExprTests()
+    {
+        constexpr std::string_view text { "a123a456" };
+        int dest {0};
+
+        const auto result  = std::from_chars(text.begin(), text.end(), dest);
+        // static_assert(result.ec != std::errc());
+        if (result.ec == std::errc()) {
+            std::cout << "dest = " << dest << std::endl;
+        }
+    }
+
+
+    void InvalidNumericString()
+    {
+        constexpr std::string_view text { "123a456" };
+        int dest {0};
+
+        const auto [ptr, errCode]  = std::from_chars(text.begin(), text.end(), dest);
+        if (errCode == std::errc()) {
+            std::cout << "dest = " << dest << std::endl;
+        }
+
+        std::cout << dest << std::endl;
+
+        /*
+        if (errCode != std::errc::invalid_argument && errCode != std::errc::result_out_of_range) {
+            std::cout << "ERR" << std::endl;
+        }
+        */
+    }
+};
+
 void TypeCast::TestAll()
 {
 	// DynamicCastTests_0();
@@ -382,9 +417,12 @@ void TypeCast::TestAll()
 
 	// VectorTest();
 
-	TypyCastingCpp17Test();
+	// TypyCastingCpp17Test();
 	// ToChars_FromChars();
 
 	// Is_Const();
 	// As_Const();
+
+    // FromChars_Tests::ConstExprTests();
+    FromChars_Tests::InvalidNumericString();
 }

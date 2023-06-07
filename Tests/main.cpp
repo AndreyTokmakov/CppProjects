@@ -1077,35 +1077,6 @@ namespace ReturnTypeCast
     }
 }
 
-namespace OOP_Test
-{
-    class Base1
-    {
-    public:
-        void info() {
-            std::cout << "Base::info()\n";
-        }
-
-        virtual ~Base1() = default;
-    };
-
-    class Derived : Base1 {
-
-    };
-
-    void inheritance()
-    {
-        // std::unique_ptr<Base1> obj = std::make_unique<Derived>();
-
-        // Base1* ptr = new Derived();
-        Derived* ptr = new Derived();
-        ptr->info();
-
-    }
-}
-
-
-
 
 
 
@@ -1116,7 +1087,7 @@ int main([[maybe_unused]] int argc,
 
     // ReturnTypeCast::tests();
 
-    OOP_Test::inheritance();
+    std::cout << std::boolalpha << true << std::endl;
 
 
 
