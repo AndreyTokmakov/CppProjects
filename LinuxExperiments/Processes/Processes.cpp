@@ -134,11 +134,11 @@ namespace Processes
     };
 
     void printProcTree(const LinuxProcess& process,
-                       std::string padding = ""s)
+                       const std::string& padding = ""s)
     {
-        std::cout << padding << process.pid << " [" << process.exePath << "]\n";
+        std::cout << padding << process.pid << " [" << process.exePath << "] (" << process.name << ")\n";
         for (const auto child: process.children) {
-            printProcTree(*child, padding + "     ");
+            printProcTree(*child, padding + "       ");
         }
     }
 
@@ -180,8 +180,15 @@ namespace Processes
                 {
                     size_t start{0}, end{0};
                     std::string line;
-                    while (std::getline(file, line)) {
-                        if (line.contains("PPid:")) {
+                    while (std::getline(file, line))
+                    {
+                        if (line.contains("Name:"))
+                        {
+                            start = line.find_first_not_of(' ', 6);
+                            proc.name.assign(line.cbegin() + start, line.cend());
+                        }
+                        else if (line.contains("PPid:"))
+                        {
                             start = line.find_first_not_of(' ', 6);
                             for (end = start; end < line.size(); ++end)
                                 if (!std::isdigit(line[end]))
@@ -191,9 +198,9 @@ namespace Processes
                             if (errCode != std::errc()) {
                                 // TODO: Handle error
                             }
-
-                            break;
                         }
+
+                        // name
                     }
                 }
             }
@@ -248,7 +255,7 @@ namespace Processes::ProcessFilesystem
 
     void Read_Status()
     {
-        std::filesystem::path path { R"(/proc/36361/status)" };
+        std::filesystem::path path { R"(/proc/4780/status)" };
 
         if (is_regular_file(path))
         {
@@ -258,7 +265,14 @@ namespace Processes::ProcessFilesystem
                 std::string line;
                 while (std::getline(file, line))
                 {
-                    if (line.contains("PPid:"))
+                    // std::cout << line << std::endl;
+                    if (line.contains("Name:"))
+                    {
+                        start = line.find_first_not_of(' ', 6);
+                        std::string name(line.cbegin() + start, line.cend());
+                        std::cout << "name = " << name << std::endl;
+                    }
+                    else if (line.contains("PPid:"))
                     {
                         start = line.find_first_not_of(' ', 6);
                         for (end = start; end < line.size(); ++end)
@@ -270,8 +284,6 @@ namespace Processes::ProcessFilesystem
                         if (errCode == std::errc()) {
                             std::cout << "ppid = " << ppid << std::endl;
                         }
-
-                        break;
                     }
                 }
             }
