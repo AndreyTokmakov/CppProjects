@@ -671,7 +671,13 @@ namespace Map {
 		}
 		std::cout << "-------------------------------- Test 2: --------------------------------\n" << std::endl;
 		{
-			std::map<int, std::string> map = { {1, "one"}, {2, "two"}, {3, "three"}, {4, "four"}, {5, "five"} };
+			std::map<int, std::string> map = {
+                    {1, "one"},
+                    {2, "two"},
+                    {3, "three"},
+                    {4, "four"},
+                    {5, "five"}
+            };
 
 			auto lower = map.lower_bound(3);
 			std::cout << "Lower bound (3): [" << lower->first << "," << lower->second << "]" << std::endl;
@@ -683,7 +689,12 @@ namespace Map {
 
 	void UpperBound() {
 		{
-			std::map<int, std::string> map = { {1, "one"}, {2, "two"}, {3, "three"}, {4, "four"}, {5, "five"} };
+			std::map<int, std::string> map = {
+                    {1, "one"},
+                    //{2, "two"},
+                    //{3, "three"},
+                    //{4, "four"},
+                    {5, "five"} };
 
 			auto upper = map.upper_bound(2);
 			std::cout << "Upper bound (2): [" << upper->first << "," << upper->second << "]" << std::endl;
@@ -859,6 +870,33 @@ namespace Map {
 			std::cout << k << " = " << v << std::endl;
 		}
 	}
+
+
+    void Erase_Interval() {
+        std::map<int, char> map {
+            {0, 'a'}, {1, 'b'}, {2, 'v'}, {3, 'd'}, {4, 'e'},
+            {5, 'f'}, {6, 'g'}, {7, 'h'}, {8, 'k'}, {9, 'z'},
+        };
+
+        for (const auto&[k, v] : map)
+            std::cout << k << " = " << v << std::endl;
+
+        {
+            auto from = map.begin();
+            std::advance(from, 2);
+
+            auto end = map.begin();
+            std::advance(end, 6);
+
+            map.erase(from, end);
+        }
+
+        std::cout << "--------------------------------------------------\n";
+
+        for (const auto&[k, v] : map)
+            std::cout << k << " = " << v << std::endl;
+
+    }
 };
 
 namespace Map::Map_Of_Vectors {
@@ -963,7 +1001,7 @@ void Map::TEST_ALL()
 	// test_loops();
 
     // emplace_duplicate_entry();
-    try_emplace_duplicate_entry();
+    // try_emplace_duplicate_entry();
 
 	// emplace_test();
 	// emplace_test1();
@@ -1002,6 +1040,7 @@ void Map::TEST_ALL()
 
 	// Erase_ByVal();
 	// Erase();
+    // Erase_Interval();
 
 	// UpdateValue();
 	// ExtractValue();
@@ -1017,4 +1056,19 @@ void Map::TEST_ALL()
 
 	// Test::ForEach_Test();
 	// Test::Iterators_Invalidation();
+
+
+    std::map<int, std::string> map {
+            {1, "1"},
+            {10, "10"}
+    };
+
+
+    auto [it, ok] = map.insert({15, "15"});
+
+    if (std::next(it) == map.end()) {
+        std::cout << "LAst" << std::endl;
+    }
+
+
 }
