@@ -48,6 +48,7 @@
 #include "InitializerList/InitializerList.h"
 #include "InlineVariables/InlineVariables.h"
 #include "Integer/Integer.h"
+#include "Types//Int.h"
 #include "Initialization/Initialization.h"
 #include "FilesStreams/FilesStreams.h"
 #include "Filesystem/Filesystem.h"
@@ -285,7 +286,8 @@ int main(int argc, char** argv)
     // VolatileTests::TestAll();
     // TypeTraits::TestAll();
     // Tuple::TestAll();
-    TypeCast::TestAll();
+    // TypeCast::TestAll();
+    Int::TestAll();
     // Templates::TestAll();
     // Utilities::TestAll();
     // UniquePtr_Tests::TestAll();

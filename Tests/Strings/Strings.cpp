@@ -11,6 +11,7 @@ Description : Strings texts and experiments
 
 #include <iostream>
 #include <string>
+#include <algorithm>
 
 namespace Strings
 {
@@ -88,12 +89,12 @@ void Strings::TestAll()
 
     // std::cout << sizeof(std::string) << std::endl;
 
-    std::string str { "123456789" };
+    std::string  buffer {};
+    // buffer.reserve(32);
+    buffer.append(128, '\0');
 
-    std::cout << str.size() << std::endl;
+    // strcpy(buffer.data(), "qwerty", 6);
+    std::copy_n( "qwerty", 6, buffer.data());
 
-    auto x = std::move(str);
-
-    std::cout << str.size() << std::endl;
-
+    std::cout << buffer << std::endl;
 };

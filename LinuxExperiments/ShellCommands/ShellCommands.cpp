@@ -19,19 +19,19 @@
 
 namespace ShellCommands
 {
-    std::string ExecuteShellCommand(std::string_view command) {
-        FILE* pipe = ::popen(command.data(), "r");
+    std::string ExecuteShellCommand(std::string_view command)
+    {
+        const std::unique_ptr<FILE, decltype(&::pclose)> pipe(popen(command.data(), "r"), ::pclose);
         if (!pipe)
-            return std::string {"ERROR"};
-        char buffer[128];
+            return std::string {};
+
+        std::array<char, 128> buffer {};
         std::string result;
-        while (!feof(pipe)) {
-            if (fgets(buffer, sizeof(buffer), pipe) != nullptr)
-                result.append(buffer);
-        }
-        ::pclose(pipe);
+        while (fgets(buffer.data(), buffer.size(), pipe.get()))
+            result.append(buffer.data());
         return result;
     }
+
 
     std::string exec(std::string_view command) {
         std::unique_ptr<FILE, decltype(&pclose)> pipe(popen(command.data(), "r"), pclose);
@@ -50,10 +50,11 @@ namespace ShellCommands
         auto output1 = ExecuteShellCommand("ls -la");
         std::cout << output1 << std::endl;
 
-        std::cout << "------------------------------------------------\n";
 
+        /*
         auto output2 = exec("ls -la");
         std::cout << output2 << std::endl;
+        */
     }
 };
 

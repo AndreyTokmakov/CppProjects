@@ -116,20 +116,17 @@ namespace Processes
         }
     }
 
-    struct LinuxProcess {
+    struct LinuxProcess
+    {
         uint32_t pid { 0 };
         uint32_t ppid { 0 };
-        std::string name; // TODO: Initialize
+        std::string name;
         std::string cmdline;
         std::filesystem::path procPath {};
         std::filesystem::path exePath {};
-
         // environ : Values of environment variables
         // cwd     : working directory
-
         std::vector<LinuxProcess>::iterator parent;
-
-        // std::vector<LinuxProcess*> children {};
         std::vector<std::vector<LinuxProcess>::iterator> children {};
     };
 

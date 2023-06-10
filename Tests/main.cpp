@@ -1077,7 +1077,52 @@ namespace ReturnTypeCast
     }
 }
 
+namespace OperatorCall_ExplicitTypeSpecialization
+{
+    struct Data1 {
+    };
 
+    template<typename T>
+    struct StorageOptions
+    {
+        void ignore_missing(bool ignore) {
+            // Some logic
+        }
+    };
+
+    struct StorageLoader
+    {
+        template<typename DataType>
+        DataType operator()(const StorageOptions<DataType>* options)
+        {
+            return DataType{};
+        }
+    };
+
+    void Test()
+    {
+        StorageLoader storageLoader;
+
+        {
+            StorageOptions<Data1> dataOptions;
+            dataOptions.ignore_missing(true);
+
+            auto data = storageLoader(&dataOptions);
+            std::cout << typeid(data).name() << std::endl;
+        }
+
+        {
+            auto data = storageLoader.operator()<Data1>(nullptr);
+            std::cout << typeid(data).name() << std::endl;
+        }
+
+        {
+            Data1 obj;
+            auto data = storageLoader.operator()<decltype(obj)>(nullptr);
+            std::cout << typeid(data).name() << std::endl;
+        }
+    }
+}
 
 
 int main([[maybe_unused]] int argc,
@@ -1085,11 +1130,10 @@ int main([[maybe_unused]] int argc,
 {
     const std::vector<std::string_view> args(argv + 1, argv + argc);
 
+    OperatorCall_ExplicitTypeSpecialization::Test();
+
+
     // ReturnTypeCast::tests();
-
-    std::cout << std::boolalpha << true << std::endl;
-
-
 
     // NTTP::test();
 
