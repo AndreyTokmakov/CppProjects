@@ -13,14 +13,16 @@
 
 #include "Experiments/Experiments.h"
 #include "Widgets/Widgets.h"
+#include "Constrols/Controls.h"
 
 int main([[maybe_unused]] int argc,
          [[maybe_unused]] char** argv)
 {
     const std::vector<std::string_view> args(argv + 1, argv + argc);
 
-    Experiments::TestAll(argc, argv);
+    // Experiments::TestAll(argc, argv);
     // Widgets::TestAll(argc, argv);
+    Controls::TestAll(argc, argv);
 
 
     return EXIT_SUCCESS;

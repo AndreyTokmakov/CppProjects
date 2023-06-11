@@ -1,0 +1,173 @@
+//============================================================================
+// Name        : LinuxProcessManager.cpp
+// Created on  : 11.06.2023
+// Author      : Andrei Tokmakov
+// Version     : 1.0
+// Copyright   : Your copyright notice
+// Description : LinuxProcessManager C++ project
+//============================================================================
+
+#include <optional>
+#include <iostream>
+#include <string>
+#include <string_view>
+#include <cstring>
+#include <fstream>
+#include <functional>
+#include <filesystem>
+#include <tuple>
+#include <ranges>
+
+#include <exception>
+#include <thread>
+#include <future>
+#include <mutex>
+#include <syncstream>
+#include <utility>
+
+#include <numeric>
+
+#include <utility>
+#include <vector>
+#include <any>
+#include <list>
+#include <forward_list>
+#include <deque>
+#include <map>
+#include <algorithm>
+#include <array>
+#include <version>
+#include <concepts>
+#include <span>
+#include <cmath>
+#include <stack>
+#include <variant>
+#include <chrono>
+
+#include <QtCore>
+#include <QWidget>
+#include <QApplication>
+#include <QPushButton>
+#include <QVBoxLayout>
+#include <QMainWindow>
+#include <QMessageBox>
+#include <QStatusBar>
+#include <QDebug>
+#include <QFrame>
+#include <QIcon>
+#include <QMenu>
+#include <QMenuBar>
+#include <QStyle>
+#include <QStandardItem>
+#include <QHeaderView>
+#include <QTreeView>
+
+
+namespace ProcessManager
+{
+    class Window : public QMainWindow
+    {
+    public:
+
+        Window()
+        {
+            /** Init TreeView:: **/
+            layout.addWidget(&treeView1);
+
+            auto rootNode = new QStandardItem("Root");
+            model.appendRow(rootNode);
+            auto firstNode = new QStandardItem("First");
+            rootNode->appendRow(firstNode);
+            firstNode->appendRow(new QStandardItem("Second"));
+            firstNode->appendRow(new QStandardItem("Third"));
+            auto fourthNode = new QStandardItem("Fourth");
+            rootNode->appendRow(fourthNode);
+            fourthNode->appendRow(new QStandardItem("Fifth"));
+            fourthNode->appendRow(new QStandardItem("Sixth"));
+            fourthNode->appendRow(new QStandardItem("Seventh"));
+
+            treeView1.setHeaderHidden(true);
+            treeView1.setModel(&model);
+            treeView1.expandAll();
+
+            /** Add status bar: **/
+            QStatusBar* statusBar = this->statusBar();
+            statusBar->showMessage("Status bar...");
+
+
+            QMenu* menuFile = menuBar()->addMenu("&File");
+            menuFile->addAction(style()->standardIcon(QStyle::StandardPixmap::SP_FileIcon), "&New", this, &Window::OnMenuFileNewClick, QKeySequence(Qt::CTRL + Qt::Key_N));
+            menuFile->addAction(style()->standardIcon(QStyle::StandardPixmap::SP_DirOpenIcon), "&Open", this, &Window::OnMenuFileOpenClick, QKeySequence(Qt::CTRL + Qt::Key_O));
+            menuFile->addSeparator();
+            menuFile->addAction(style()->standardIcon(QStyle::StandardPixmap::SP_DialogSaveButton), "&Save", this, &Window
+            ::OnMenuFileSaveClick, QKeySequence(Qt::CTRL + Qt::Key_S));
+            menuFile->addAction("Save &As...", this, &Window::OnMenuFileSaveAsClick);
+            menuFile->addSeparator();
+            menuFile->addAction("&Exit", this, &Window::OnMenuFileCloseClick, QKeySequence(Qt::ALT + Qt::Key_F4));
+
+            QMenu* menuEdit = menuBar()->addMenu("&Edit");
+            menuEdit->addAction("&Undo", this, &Window::OnMenuEditUndoClick, QKeySequence(Qt::CTRL + Qt::Key_Z));
+            menuEdit->addAction("&Redo", this, &Window::OnMenuEditRedoClick, QKeySequence(Qt::CTRL + Qt::Key_Y));
+            menuEdit->addSeparator();
+            menuEdit->addAction(QIcon::fromTheme("edit-cut"), "&Cut", this, &Window::OnMenuEditCutClick, QKeySequence(Qt::CTRL + Qt::Key_X));
+            menuEdit->addAction(QIcon::fromTheme("edit-copy"), "&Copy", this, &Window::OnMenuEditCopyClick, QKeySequence(Qt::CTRL + Qt::Key_C));
+            menuEdit->addAction(QIcon::fromTheme("edit-paste"), "&Paste", this, &Window::OnMenuEditPasteClick, QKeySequence(Qt::CTRL + Qt::Key_V));
+            menuEdit->addSeparator();
+            menuEdit->addAction("Select &All", this, &Window::OnMenuEditSelectAllClick, QKeySequence(Qt::CTRL + Qt::Key_A));
+
+            QMenu* menuHelp = menuBar()->addMenu("&Help");
+            menuHelp->addAction("&About", this, &Window::OnMenuHelpAboutClick);
+
+
+            setCentralWidget(&frame);
+            setWindowTitle("Tree view example");
+            resize(300, 300);
+        }
+    private:
+        void OnMenuFileNewClick() {qDebug() << "MainMenu/File/New";}
+        void OnMenuFileOpenClick() {qDebug() << "MainMenu/File/Open";}
+        void OnMenuFileSaveClick() {qDebug() << "MainMenu/File/Save";}
+        void OnMenuFileSaveAsClick() {qDebug() << "MainMenu/File/SaveAs";}
+        void OnMenuFileCloseClick() {qDebug() << "MainMenu/File/Close";}
+        void OnMenuEditUndoClick() {qDebug() << "MainMenu/Edit/Undo";}
+        void OnMenuEditRedoClick() {qDebug() << "MainMenu/Edit/Redo";}
+        void OnMenuEditCutClick() {qDebug() << "MainMenu/Edit/Cut";}
+        void OnMenuEditCopyClick() {qDebug() << "MainMenu/Edit/Copy";}
+        void OnMenuEditPasteClick() {qDebug() << "MainMenu/Edit/Paste";}
+        void OnMenuEditSelectAllClick() {qDebug() << "MainMenu/Edit/SelectAll";}
+        void OnMenuHelpAboutClick() {QMessageBox::about(this, "About", "MainMenu example.\nVersion 1.0.0\n\n@ 2020 by Gammasoft.");}
+
+
+
+    private:
+        QFrame frame;
+        QVBoxLayout layout{&frame};
+        QTreeView treeView1;
+        QStandardItemModel model;
+    };
+
+    void test(int argc, char **argv)
+    {
+        QApplication application(argc, argv);
+        Window window;
+        window.resize(1200, 800);
+        window.show();
+        QApplication::exec();
+    }
+}
+
+
+int main([[maybe_unused]] int argc,
+         [[maybe_unused]] char** argv)
+{
+    const std::vector<std::string_view> args(argv + 1, argv + argc);
+
+    // TreeView::test(argc, argv);
+    // MenusBarTests::test(argc, argv);
+    // StatusBarTests::test(argc, argv);
+
+    ProcessManager::test(argc, argv);
+
+
+    return EXIT_SUCCESS;
+}
