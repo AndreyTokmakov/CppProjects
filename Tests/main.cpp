@@ -1547,7 +1547,7 @@ int main([[maybe_unused]] int argc,
 
     // OperatorCall_ExplicitTypeSpecialization::Test();
 
-    ThinkCell::IntervalMapTest();
+    // ThinkCell::IntervalMapTest();
 
 
     // ReturnTypeCast::tests();

@@ -130,16 +130,13 @@ namespace Processes
         std::vector<std::vector<LinuxProcess>::iterator> children {};
     };
 
-    void printProcTree(const LinuxProcess& process,
-                       const std::string& padding = ""s)
+    struct LinuxProcesses
     {
-        std::cout << padding << process.pid << " [" << process.exePath << "] (" << process.name << ")\n";
-        for (const auto child: process.children) {
-            printProcTree(*child, padding + "       ");
-        }
-    }
+        std::vector<LinuxProcess> processList;
+        std::unordered_map<uint32_t, std::vector<LinuxProcess>::iterator> processMap;
+    };
 
-    void readProcessList()
+    std::vector<LinuxProcess> GetProcessList()
     {
         constexpr std::string_view dirPath{R"(/proc/)"};
 
@@ -203,18 +200,21 @@ namespace Processes
             }
         }
 
-        // std::unordered_set<uint32_t> ids { 1 };
-        // using TreeType = std::map<uint32_t, std::vector<LinuxProcess>::iterator>;
-        using TreeType = std::unordered_map<uint32_t, std::vector<LinuxProcess>::iterator>;
-        TreeType processTree {
-                {processList.begin()->pid, processList.begin() }
-        };
+        return processList;
+    }
 
-        for (auto procIter = processList.begin() + 1; procIter != processList.end(); ++procIter)
+    LinuxProcesses getProcessTree()
+    {
+        LinuxProcesses procs { .processList = GetProcessList() };
+        procs.processMap.insert( {procs.processList.begin()->pid, procs.processList.begin() });
+
+        std::vector<LinuxProcess>& procList = procs.processList;
+        std::unordered_map<uint32_t, std::vector<LinuxProcess>::iterator>& processTree = procs.processMap;
+        for (auto procIter = procList.begin() + 1; procIter != procList.end(); ++procIter)
         {
             auto parent = processTree.find(procIter->ppid);
             if (processTree.end() == parent) {
-                // std::cout << "Error: [pid: " << procIter->pid << ", ppid: " << procIter->ppid << "]\n";
+                // TODO: handle
                 continue;
             }
 
@@ -223,9 +223,25 @@ namespace Processes
             processTree.emplace(procIter->pid, procIter);
         }
 
+        return procs;
+    }
 
-        auto process = processTree.find(1);
-        if (processTree.end() != process) {
+    void printProcTree(const LinuxProcess& process,
+                       const std::string& padding = ""s)
+    {
+        std::cout << padding << process.pid << " [" << process.exePath << "] (" << process.name << ")\n";
+        for (const auto child: process.children) {
+            printProcTree(*child, padding + "       ");
+        }
+    }
+
+    void readProcessListTest()
+    {
+        const auto processTree = getProcessTree();
+
+        auto process = processTree.processMap.find(1);
+        if (processTree.processMap.end() != process)
+        {
             printProcTree(*process->second);
         }
     }
@@ -298,7 +314,7 @@ void Processes::TestAll()
 
     // test();
 
-    readProcessList();
+    readProcessListTest();
 
     // ProcessFilesystem::Read_CmdLine();
     // ProcessFilesystem::Read_Status();
