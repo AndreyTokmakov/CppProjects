@@ -47,10 +47,13 @@
 #include <sys/inotify.h>
 
 #include "Files/Files.h"
-#include "Processes/Processes.h"
 #include "Logs/Logs.h"
 #include "ShellCommands/ShellCommands.h"
 #include "Environment/Environment.h"
+
+#include "Processes/Processes.h"
+#include "Processes/ProcessManager.h"
+
 
 #include "TestsAndExperiments/TestAndExperiments.h"
 #include "TestsAndExperiments/FindProcessForTCPConnection.h"
@@ -179,10 +182,12 @@ int main([[maybe_unused]] int argc,
     const std::vector<std::string_view> params(argv + 1, argv + argc);
 
     // Files::TestAll();
-    Processes::TestAll();
     // Logs::TestAll();
     // ShellCommands::TestAll();
     // Environment::TestAll();
+
+    // Processes::TestAll();
+    ProcessManager::TestAll();
 
     // OpenSSL::TestAll(params);
 
