@@ -376,9 +376,9 @@ void ProcessManager::TestAll()
     // VectorAndMapDemo::readProcessListTest();
 
     // ProcessTree::getProcesses();
-    ProcessTree::printProcTree();
+    // ProcessTree::printProcTree();
     // ProcessTree::printProcTree_Chromium();
-    // ProcessTree::killChromium();
+    ProcessTree::killChromium();
 
     // ProcessFilesystem::Read_CmdLine();
     // ProcessFilesystem::Read_Status();

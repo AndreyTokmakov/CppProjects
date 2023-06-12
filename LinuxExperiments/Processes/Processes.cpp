@@ -117,10 +117,7 @@ namespace Processes
 void Processes::TestAll()
 {
     // Test();
-
     // CreateProcess_Fork();
-
     // CreateProcess_Fork_2();
-
     test();
 };

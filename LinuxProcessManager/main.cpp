@@ -52,7 +52,7 @@
 #include <QMainWindow>
 #include <QMessageBox>
 #include <QStatusBar>
-#include <QDebug>
+// #include <QDebug>
 #include <QFrame>
 #include <QIcon>
 #include <QMenu>
@@ -91,59 +91,61 @@ namespace ProcessManager
             treeView1.expandAll();
 
             /** Add status bar: **/
-            QStatusBar* statusBar = this->statusBar();
-            statusBar->showMessage("Status bar...");
+            status->showMessage("Status bar...");
 
+            QMenu* menuFile = menu->addMenu("&File");
+            menuFile->addAction(style()->standardIcon(QStyle::StandardPixmap::SP_FileIcon),"&New",this, &Window::OnMenuItemClick);
+            menuFile->addAction(style()->standardIcon(QStyle::StandardPixmap::SP_DirOpenIcon), "&Open",this, &Window::OnMenuItemClick);
 
-            QMenu* menuFile = menuBar()->addMenu("&File");
-            menuFile->addAction(style()->standardIcon(QStyle::StandardPixmap::SP_FileIcon), "&New", this, &Window::OnMenuFileNewClick, QKeySequence(Qt::CTRL + Qt::Key_N));
-            menuFile->addAction(style()->standardIcon(QStyle::StandardPixmap::SP_DirOpenIcon), "&Open", this, &Window::OnMenuFileOpenClick, QKeySequence(Qt::CTRL + Qt::Key_O));
             menuFile->addSeparator();
-            menuFile->addAction(style()->standardIcon(QStyle::StandardPixmap::SP_DialogSaveButton), "&Save", this, &Window
-            ::OnMenuFileSaveClick, QKeySequence(Qt::CTRL + Qt::Key_S));
-            menuFile->addAction("Save &As...", this, &Window::OnMenuFileSaveAsClick);
+
+            menuFile->addAction(style()->standardIcon(QStyle::StandardPixmap::SP_DialogSaveButton),"&Save", this, &Window::OnMenuItemClick);
+            menuFile->addAction("Save &As...", this,&Window::OnMenuItemClick);
+
             menuFile->addSeparator();
-            menuFile->addAction("&Exit", this, &Window::OnMenuFileCloseClick, QKeySequence(Qt::ALT + Qt::Key_F4));
 
-            QMenu* menuEdit = menuBar()->addMenu("&Edit");
-            menuEdit->addAction("&Undo", this, &Window::OnMenuEditUndoClick, QKeySequence(Qt::CTRL + Qt::Key_Z));
-            menuEdit->addAction("&Redo", this, &Window::OnMenuEditRedoClick, QKeySequence(Qt::CTRL + Qt::Key_Y));
-            menuEdit->addSeparator();
-            menuEdit->addAction(QIcon::fromTheme("edit-cut"), "&Cut", this, &Window::OnMenuEditCutClick, QKeySequence(Qt::CTRL + Qt::Key_X));
-            menuEdit->addAction(QIcon::fromTheme("edit-copy"), "&Copy", this, &Window::OnMenuEditCopyClick, QKeySequence(Qt::CTRL + Qt::Key_C));
-            menuEdit->addAction(QIcon::fromTheme("edit-paste"), "&Paste", this, &Window::OnMenuEditPasteClick, QKeySequence(Qt::CTRL + Qt::Key_V));
-            menuEdit->addSeparator();
-            menuEdit->addAction("Select &All", this, &Window::OnMenuEditSelectAllClick, QKeySequence(Qt::CTRL + Qt::Key_A));
+            menuFile->addAction("&Exit", this,&Window::OnMenuItemClick);
 
-            QMenu* menuHelp = menuBar()->addMenu("&Help");
+            QMenu* menuEdit = menu->addMenu("&Edit");
+            menuEdit->addAction("&Undo", this,&Window::OnMenuItemClick);
+            menuEdit->addAction("&Redo", this,&Window::OnMenuItemClick);
+
+            menuEdit->addSeparator();
+
+            menuEdit->addAction(QIcon::fromTheme("edit-cut"), "&Cut",this, &Window::OnMenuItemClick);
+            menuEdit->addAction(QIcon::fromTheme("edit-copy"), "&Copy",this, &Window::OnMenuItemClick);
+            menuEdit->addAction(QIcon::fromTheme("edit-paste"), "&Paste",this, &Window::OnMenuItemClick);
+
+            menuEdit->addSeparator();
+
+            menuEdit->addAction("Select &All", this,&Window::OnMenuItemClick);
+
+            QMenu* menuHelp = menu->addMenu("&Help");
             menuHelp->addAction("&About", this, &Window::OnMenuHelpAboutClick);
 
 
             setCentralWidget(&frame);
             setWindowTitle("Tree view example");
-            resize(300, 300);
+            //resize(300, 300);
         }
+
     private:
-        void OnMenuFileNewClick() {qDebug() << "MainMenu/File/New";}
-        void OnMenuFileOpenClick() {qDebug() << "MainMenu/File/Open";}
-        void OnMenuFileSaveClick() {qDebug() << "MainMenu/File/Save";}
-        void OnMenuFileSaveAsClick() {qDebug() << "MainMenu/File/SaveAs";}
-        void OnMenuFileCloseClick() {qDebug() << "MainMenu/File/Close";}
-        void OnMenuEditUndoClick() {qDebug() << "MainMenu/Edit/Undo";}
-        void OnMenuEditRedoClick() {qDebug() << "MainMenu/Edit/Redo";}
-        void OnMenuEditCutClick() {qDebug() << "MainMenu/Edit/Cut";}
-        void OnMenuEditCopyClick() {qDebug() << "MainMenu/Edit/Copy";}
-        void OnMenuEditPasteClick() {qDebug() << "MainMenu/Edit/Paste";}
-        void OnMenuEditSelectAllClick() {qDebug() << "MainMenu/Edit/SelectAll";}
-        void OnMenuHelpAboutClick() {QMessageBox::about(this, "About", "MainMenu example.\nVersion 1.0.0\n\n@ 2020 by Gammasoft.");}
+        void OnMenuItemClick() {
+            status->showMessage("Status bar...wwwww");
+        }
 
-
+        void OnMenuHelpAboutClick() {
+            QMessageBox::about(this, "About", "MainMenu example.\nVersion 1.0.0\n\n@ 2020 by Gammasoft.");
+        }
 
     private:
         QFrame frame;
         QVBoxLayout layout{&frame};
         QTreeView treeView1;
         QStandardItemModel model;
+
+        const std::unique_ptr<QStatusBar> status { statusBar() };
+        const std::unique_ptr<QMenuBar> menu { menuBar() };
     };
 
     void test(int argc, char **argv)
