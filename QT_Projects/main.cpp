@@ -14,6 +14,8 @@
 #include "Experiments/Experiments.h"
 #include "Widgets/Widgets.h"
 #include "Constrols/Controls.h"
+#include "TabWidget/TabWidget.h"
+#include "DarkMode/DarkMode.h"
 
 int main([[maybe_unused]] int argc,
          [[maybe_unused]] char** argv)
@@ -22,7 +24,9 @@ int main([[maybe_unused]] int argc,
 
     // Experiments::TestAll(argc, argv);
     // Widgets::TestAll(argc, argv);
-    Controls::TestAll(argc, argv);
+    // Controls::TestAll(argc, argv);
+    // TabWidget::TestAll(argc, argv);
+    DarkMode::TestAll(argc, argv);
 
 
     return EXIT_SUCCESS;

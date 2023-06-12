@@ -51,7 +51,7 @@ namespace TreeView {
         QStandardItemModel model;
     };
 
-    void test1(int argc, char **argv)
+    void test(int argc, char **argv)
     {
         QApplication application(argc, argv);
         Window window;
@@ -62,5 +62,5 @@ namespace TreeView {
 
 void TreeView::TestAll(int argc, char **argv)
 {
-    test1(argc, argv);
+    test(argc, argv);
 }
