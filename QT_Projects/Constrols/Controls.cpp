@@ -11,9 +11,11 @@ Description : QT Controls C++ Experiments
 
 #include "TreeView/TreeView.h"
 #include "TreeWidget/TreeWidget.h"
+#include "ProgressBar/ProgressBar.h"
 
 void Controls::TestAll(int argc, char **argv)
 {
     // TreeView::TestAll(argc, argv);
-    TreeWidget::TestAll(argc, argv);
+    // TreeWidget::TestAll(argc, argv);
+    ProgressBar::TestAll(argc, argv);
 }
