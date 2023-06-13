@@ -22,11 +22,11 @@ int main([[maybe_unused]] int argc,
 {
     const std::vector<std::string_view> args(argv + 1, argv + argc);
 
-    // Experiments::TestAll(argc, argv);
+    Experiments::TestAll(argc, argv);
     // Widgets::TestAll(argc, argv);
     // Controls::TestAll(argc, argv);
     // TabWidget::TestAll(argc, argv);
-    DarkMode::TestAll(argc, argv);
+    // DarkMode::TestAll(argc, argv);
 
 
     return EXIT_SUCCESS;

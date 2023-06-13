@@ -9,6 +9,8 @@ Description : QT Experiments
 
 #include "Experiments.h"
 
+#include <iostream>
+
 #include <QtCore>
 #include <QWidget>
 #include <QApplication>
@@ -271,6 +273,32 @@ namespace MenusBarTests
 }
 
 
+namespace Experiments::Threads
+{
+    class MyThread : public QThread
+    {
+    private:
+        void run() override
+        {
+            for (int i = 0; i < 10; ++i)
+            {
+                // std::this_thread::sleep_for(std::chrono::seconds(1));
+                std::cout << i << std::endl;
+            }
+        }
+    };
+
+    void SimpleThread()
+    {
+        MyThread* thread = new MyThread();
+        thread->start();    // starts a new thread which calls run()
+        thread->wait();     // waits for the thread to finish
+
+        delete thread;
+    }
+
+}
+
 
 void Experiments::TestAll(int argc, char **argv)
 {
@@ -287,5 +315,7 @@ void Experiments::TestAll(int argc, char **argv)
 
     // StatusBarTests::TestStatusBar(argc, argv);
 
-    MenusBarTests::MenusBarTest(argc, argv);
+    // MenusBarTests::MenusBarTest(argc, argv);
+
+    Threads::SimpleThread();
 }
