@@ -65,6 +65,48 @@
 
 namespace ProcessManager
 {
+    class Application : public QApplication
+    {
+    public:
+        Application(int &argc, char **argv) : QApplication(argc, argv) {
+            enableDarkMode();
+        }
+
+    private:
+        void enableDarkMode()
+        {
+#ifndef Q_OS_MACOS
+            qApp->setStyle("Fusion");
+            QPalette darkPalette = QPalette();
+            const QColor darkColor = QColor(65, 65, 65);
+            const QColor baseColor = QColor(48,48,48);
+            const QColor disabledColor = QColor(127,127,127);
+
+            darkPalette.setColor(QPalette::Window, darkColor);
+            darkPalette.setColor(QPalette::WindowText, Qt::white);
+            darkPalette.setColor(QPalette::Base, baseColor);
+            darkPalette.setColor(QPalette::AlternateBase, darkColor);
+            darkPalette.setColor(QPalette::ToolTipBase, Qt::white);
+            darkPalette.setColor(QPalette::ToolTipText, Qt::white);
+            darkPalette.setColor(QPalette::Text, Qt::white);
+            darkPalette.setColor(QPalette::Disabled, QPalette::Text, disabledColor);
+            darkPalette.setColor(QPalette::Button, darkColor);
+            darkPalette.setColor(QPalette::ButtonText, Qt::white);
+            darkPalette.setColor(QPalette::Disabled, QPalette::ButtonText, disabledColor);
+            darkPalette.setColor(QPalette::BrightText, Qt::red);
+            darkPalette.setColor(QPalette::Link, QColor(42, 130, 218));
+            darkPalette.setColor(QPalette::Highlight, QColor(42, 130, 218));
+            darkPalette.setColor(QPalette::HighlightedText, Qt::black);
+            darkPalette.setColor(QPalette::Disabled, QPalette::HighlightedText, disabledColor);
+
+            qApp->setPalette(darkPalette);
+            qApp->setStyleSheet("QToolTip { color: #ffffff; background-color: #2a82da; border: 1px solid white; }");
+#endif
+        }
+    };
+
+
+
     class Window : public QMainWindow
     {
     public:
@@ -150,7 +192,7 @@ namespace ProcessManager
 
     void test(int argc, char **argv)
     {
-        QApplication application(argc, argv);
+        Application application(argc, argv);
         Window window;
         window.resize(1200, 800);
         window.show();

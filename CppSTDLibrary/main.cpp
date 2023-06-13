@@ -282,12 +282,12 @@ int main(int argc, char** argv)
     // StrongTypes::TestAll();
     // Span::TestAll();
     // SourceLocation::TestAll();
-    // SharedPtr_Tests::TestAll();
+    SharedPtr_Tests::TestAll();
     // VolatileTests::TestAll();
     // TypeTraits::TestAll();
     // Tuple::TestAll();
     // TypeCast::TestAll();
-    Int::TestAll();
+    // Int::TestAll();
     // Templates::TestAll();
     // Utilities::TestAll();
     // UniquePtr_Tests::TestAll();

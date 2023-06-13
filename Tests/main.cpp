@@ -594,142 +594,6 @@ namespace InvokeTest {
 }
 
 
-namespace Memory
-{
-    struct Base {
-        virtual void info() const noexcept {
-            std::cout << "Base::info()\n";
-        }
-
-        virtual ~Base() = default;
-    };
-
-    struct Derived : Base {
-        void info() const noexcept override {
-            std::cout << "Derived::info()\n";
-        }
-    };
-
-    struct Parent
-    {
-        virtual std::unique_ptr<Base> make() {
-            return std::make_unique<Base>();
-        }
-    };
-
-    struct Child : Parent
-    {
-        std::unique_ptr<Base> make() override {
-            return std::make_unique<Derived>();
-        }
-    };
-
-    void test()
-    {
-        Parent{}.make()->info();
-        Child{}.make()->info();
-    }
-
-
-    struct ARPHeader
-    {
-        uint16_t htype {0};
-        uint16_t ptype {0};
-        uint8_t  hlen {};
-        uint8_t  plen {};
-        uint16_t opcode {0};
-        uint8_t  sender_mac[6]{};
-        uint32_t sender_ip {};
-        uint8_t  target_mac[6]{};
-        uint32_t target_ip {};
-
-    public:
-        [[nodiscard]]
-        bool SetSenderMACAddress([[maybe_unused]] std::string_view mac) const {
-            return htype != 0;
-        }
-
-    } __attribute__((packed, aligned(1))) ;
-
-
-    void initMemset(ARPHeader* arpHeader)
-    {
-        memset(arpHeader, 0, sizeof(ARPHeader));
-    }
-
-    void initAssignment(ARPHeader* arpHeader)
-    {
-        *arpHeader = {};
-    }
-
-    void Memset_vs_Assignment()
-    {
-        std::unique_ptr<ARPHeader> apr { std::make_unique<ARPHeader>()};
-
-        apr->target_ip = 12345;
-        std::cout << apr->target_ip << std::endl;
-
-        // initMemset(apr.get());
-        initAssignment(apr.get());
-
-        std::cout << apr->target_ip << std::endl;
-    }
-
-    void Memset_vs_Assignment_Perf()
-    {
-        std::unique_ptr<ARPHeader> apr { std::make_unique<ARPHeader>()};
-        constexpr size_t iterCount {1'000'00};
-
-        {
-            auto start = std::chrono::high_resolution_clock::now();
-
-            for (size_t i = 0; i < iterCount; ++i)
-            {
-                for (int n = 0; n < iterCount; n++)
-                {
-                    initAssignment(apr.get());
-                    // initMemset(apr.get());
-                }
-            }
-
-            auto end = std::chrono::high_resolution_clock::now();
-            auto duration = std::chrono::duration_cast<std::chrono::microseconds>(end - start).count();
-            std::cout << "Result: " << duration << " microseconds" << std::endl;
-        }
-
-        {
-            auto start = std::chrono::high_resolution_clock::now();
-
-            for (size_t i = 0; i < iterCount; ++i)
-            {
-                for (int n = 0; n < iterCount; n++)
-                {
-                    // initAssignment(apr.get());
-                    initMemset(apr.get());
-                }
-            }
-
-            auto end = std::chrono::high_resolution_clock::now();
-            auto duration = std::chrono::duration_cast<std::chrono::microseconds>(end - start).count();
-            std::cout << "Result: " << duration << " microseconds" << std::endl;
-        }
-    }
-
-    void Double_Delete_Nullptr()
-    {
-        int* iPtr = new int(100500);
-
-        std::cout << *iPtr << " at " << iPtr << std::endl;
-
-        {
-            delete iPtr;
-            iPtr = nullptr;
-        }
-
-        delete iPtr;
-    }
-}
-
 
 namespace Decorator
 {
@@ -1149,7 +1013,7 @@ int main([[maybe_unused]] int argc,
 
     // Experiments::Test({20, 40, 60});
     // Multithreading::TestAll();
-    // Memory::TestAll();
+    Memory::TestAll();
     // Strings::TestAll();
     // Iterators::TestAll();
     // Algorithms::TestAll();
@@ -1173,12 +1037,6 @@ int main([[maybe_unused]] int argc,
     // Performance::TestAll();
     // BinaryAnalyzer::TestAll();
     // ThinkCell::IntervalMapTest();
-
-
-    // Memory::test();
-    // Memory::Memset_vs_Assignment();
-    // Memory::Memset_vs_Assignment_Perf();
-    // Memory::Double_Delete_Nullptr();
 
 
     // OOP::MoveTest();

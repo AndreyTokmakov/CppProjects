@@ -674,7 +674,8 @@ namespace SharedPtr_Tests::Enable_Shared_From_This {
 	}
 }
 
-namespace SharedPtr_Tests::Allocation {
+namespace SharedPtr_Tests::Allocation
+{
 
 	template <class T>
 	class CustomAllocator {
@@ -747,6 +748,60 @@ namespace SharedPtr_Tests::Allocation {
 		myAllocator.deallocate(str, 3);
 	}
 	*/
+
+    template<class T>
+    struct TracingAllocator
+    {
+        using value_type = T;
+        using pointer = value_type*;
+
+        TracingAllocator() = default;
+
+        template<class U>
+        constexpr explicit TracingAllocator(const TracingAllocator<U>&) noexcept {
+        }
+
+        [[nodiscard]]
+        pointer allocate(std::size_t n)
+        {
+            if (n > std::numeric_limits<std::size_t>::max() / sizeof(value_type))
+                throw std::bad_array_new_length();
+
+            if (pointer ptr = static_cast<pointer>(std::malloc(n * sizeof(value_type))))
+            {
+                trace(ptr, n);
+                return ptr;
+            }
+
+            throw std::bad_alloc();
+        }
+
+        void deallocate(pointer ptr, std::size_t n) noexcept
+        {
+            trace(ptr, n, 0);
+            std::free(ptr);
+        }
+
+    private:
+
+        void trace(pointer ptr, std::size_t n, bool alloc = true) const
+        {
+            std::cout << (alloc ? "Alloc: " : "Dealloc: ") << sizeof(value_type) * n
+                      << " bytes at " << std::hex << std::showbase
+                      << reinterpret_cast<void*>(ptr) << std::dec << '\n';
+        }
+    };
+
+
+    void AllocateShared_And_Trace()
+    {
+        TracingAllocator<int> traceAllocator;
+        auto deleter = [&traceAllocator](int* ptr){
+            traceAllocator.deallocate(ptr, 1);
+        };
+
+        std::shared_ptr<int> sharedInt (traceAllocator.allocate(1), deleter, traceAllocator);
+    }
 
 }
 
@@ -986,21 +1041,20 @@ namespace SharedPtr_Tests::Atomic {
 	}
 }
 
-namespace SharedPtr_Tests::Aliasing {
-
-	struct Object {
+namespace SharedPtr_Tests::Aliasing
+{
+	struct Object
+    {
 		int value{0};
 
-		Object(int v) : value{ v } {
-			std::cout << "Object(" << value << ")\n";
+		explicit Object(int v) : value{ v } {
+            std::cout << "Object(" << value << ")\n";
 		}
 
 		~Object() {
 			std::cout << "~Object(" << value << ")\n";
 		}
 	};
-
-
 
 	struct Base {
 		Object m_data;
@@ -1012,19 +1066,32 @@ namespace SharedPtr_Tests::Aliasing {
 		
 	};
 
+	void Test()
+    {
+		std::shared_ptr<Base> obj (new Base(1));
+		std::shared_ptr<Object> aliasing (obj,&obj->m_data);
 
-	void Test() {
-		std::shared_ptr<Base> obj1 { std::make_shared<Base>(42) };
-		std::shared_ptr<Object> aliasing {std::shared_ptr<Object> { obj1, &obj1->m_data }};
+        std::cout << obj->m_data.value << " <-> " << aliasing->value << std::endl;
 
-		std::cout << obj1.get()->m_data.value << std::endl;
-		std::cout << aliasing->value << std::endl;
+        obj->m_data.value = 2;
 
-		obj1.get()->m_data.value = 123;
-
-		std::cout << obj1.get()->m_data.value << std::endl;
-		std::cout << aliasing->value << std::endl;
+        std::cout << obj->m_data.value << " <-> " << aliasing->value << std::endl;
 	}
+
+    void Test_UseCount()
+    {
+        std::shared_ptr<Base> obj (new Base(1));
+        std::cout << "'obj' use count = " << obj.use_count() << std::endl;
+
+        std::shared_ptr<Object> aliasing (obj,&obj->m_data);
+        std::cout << "'obj' use count = " << obj.use_count() << std::endl;
+
+        std::cout << obj->m_data.value << " <-> " << aliasing->value << std::endl;
+
+        obj->m_data.value = 2;
+
+        std::cout << obj->m_data.value << " <-> " << aliasing->value << std::endl;
+    }
 }
 
 namespace SharedPtr_Tests::Arrays {
@@ -1075,7 +1142,8 @@ namespace SharedPtr_Tests::CreateSharedPtr_PrivateConstructor {
 }
 
 
-void SharedPtr_Tests::TestAll() {
+void SharedPtr_Tests::TestAll()
+{
 	// Simple_Test_0();
 	// Simple_Test_1();
 	// Simple_Test_2();
@@ -1116,7 +1184,8 @@ void SharedPtr_Tests::TestAll() {
 
 	// Allocator_Test_DEPRECATED();
 	// Allocation::Allocate_Shared();
-	// Allocation::Allocate_Shared_Integer();
+	//Allocation::Allocate_Shared_Integer();
+    // Allocation::AllocateShared_And_Trace();
 
 	// PrivateConstructor::CreatePtrWithPrivateCtor();
 	// PrivateConstructor::TryCallPrivateConstructor();
@@ -1131,11 +1200,12 @@ void SharedPtr_Tests::TestAll() {
 	// Atomic::Test();
 
 	// Aliasing::Test();
+	Aliasing::Test_UseCount();
 
 	// TESTS::Test();
 	// TESTS::EmplaceToVector();
 	// TESTS::Assign_Test();
 	// TESTS::Size_Test();
 
-    CreateSharedPtr_PrivateConstructor::Test();
+    // CreateSharedPtr_PrivateConstructor::Test();
 }

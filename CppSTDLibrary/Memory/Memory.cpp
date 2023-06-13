@@ -160,6 +160,61 @@ namespace Memory::Allocators {
 		for (auto i : numbers)
 			std::cout << i << std::endl;
 	}
+
+
+    template<class T>
+    struct TracingAllocator
+    {
+        using value_type = T;
+        using pointer = value_type*;
+
+        TracingAllocator() = default;
+
+        template<class U>
+        constexpr explicit TracingAllocator(const TracingAllocator<U>&) noexcept {
+        }
+
+        [[nodiscard]]
+        pointer allocate(std::size_t n)
+        {
+            if (n > std::numeric_limits<std::size_t>::max() / sizeof(value_type))
+                throw std::bad_array_new_length();
+
+            if (pointer ptr = static_cast<pointer>(std::malloc(n * sizeof(value_type))))
+            {
+                trace(ptr, n);
+                return ptr;
+            }
+
+            throw std::bad_alloc();
+        }
+
+        void deallocate(pointer ptr, std::size_t n) noexcept
+        {
+            trace(ptr, n, 0);
+            std::free(ptr);
+        }
+
+    private:
+
+        void trace(pointer ptr, std::size_t n, bool alloc = true) const
+        {
+            std::cout << (alloc ? "Alloc: " : "Dealloc: ") << sizeof(value_type) * n
+                      << " bytes at " << std::hex << std::showbase
+                      << reinterpret_cast<void*>(ptr) << std::dec << '\n';
+        }
+    };
+
+
+    void AllocateShared_And_Trace()
+    {
+        TracingAllocator<int> traceAllocator;
+        auto deleter = [&traceAllocator](int* ptr){
+            traceAllocator.deallocate(ptr, 1);
+        };
+
+        std::shared_ptr<int> sharedInt (traceAllocator.allocate(1), deleter, traceAllocator);
+    }
 }
 
 namespace Memory::Allocators_Vector {
@@ -1619,7 +1674,7 @@ void Memory::TestAll() {
 	// New_Placement::Test3();
 	// New_Placement::Good_Example();
 
-	AlignmentTests::Alignment_Of_Tests();
+	// AlignmentTests::Alignment_Of_Tests();
 	// AlignmentTests::AlignOf();
 	// AlignmentTests::Alignas();
 	// AlignmentTests::Test();
@@ -1672,6 +1727,7 @@ void Memory::TestAll() {
 	// Allocators::Basic_STD_Allocator();
 	// Allocators::SimpleTest();
 	// Allocators::StackAllocatorTests();
+	Allocators::AllocateShared_And_Trace();
 
 	// Allocators_Vector::Emplace_CustomType_1();
 	// Allocators_Vector::Emplace_CustomType_2();

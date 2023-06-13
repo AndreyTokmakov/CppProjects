@@ -13,10 +13,12 @@ Description : C++ Memory test
 #include <memory>
 #include <vector>
 #include <chrono>
+#include <cstring>
 
 #include "../Helpers/Utilities.h"
 #include "../Helpers/Long.h"
 #include "../Helpers/Object.h"
+
 
 namespace Memory
 {
@@ -130,11 +132,231 @@ namespace Memory::UniquePtrExperiments
     }
 }
 
+namespace Memory
+{
+    struct Base {
+        virtual void info() const noexcept {
+            std::cout << "Base::info()\n";
+        }
+
+        virtual ~Base() = default;
+    };
+
+    struct Derived : Base {
+        void info() const noexcept override {
+            std::cout << "Derived::info()\n";
+        }
+    };
+
+    struct Parent
+    {
+        virtual std::unique_ptr<Base> make() {
+            return std::make_unique<Base>();
+        }
+    };
+
+    struct Child : Parent
+    {
+        std::unique_ptr<Base> make() override {
+            return std::make_unique<Derived>();
+        }
+    };
+
+    void test()
+    {
+        Parent{}.make()->info();
+        Child{}.make()->info();
+    }
+
+
+    struct ARPHeader
+    {
+        uint16_t htype {0};
+        uint16_t ptype {0};
+        uint8_t  hlen {};
+        uint8_t  plen {};
+        uint16_t opcode {0};
+        uint8_t  sender_mac[6]{};
+        uint32_t sender_ip {};
+        uint8_t  target_mac[6]{};
+        uint32_t target_ip {};
+
+    public:
+        [[nodiscard]]
+        bool SetSenderMACAddress([[maybe_unused]] std::string_view mac) const {
+            return htype != 0;
+        }
+
+    } __attribute__((packed, aligned(1))) ;
+
+
+    void initMemset(ARPHeader* arpHeader)
+    {
+        memset(arpHeader, 0, sizeof(ARPHeader));
+    }
+
+    void initAssignment(ARPHeader* arpHeader)
+    {
+        *arpHeader = {};
+    }
+
+    void Memset_vs_Assignment()
+    {
+        std::unique_ptr<ARPHeader> apr { std::make_unique<ARPHeader>()};
+
+        apr->target_ip = 12345;
+        std::cout << apr->target_ip << std::endl;
+
+        // initMemset(apr.get());
+        initAssignment(apr.get());
+
+        std::cout << apr->target_ip << std::endl;
+    }
+
+    void Memset_vs_Assignment_Perf()
+    {
+        std::unique_ptr<ARPHeader> apr { std::make_unique<ARPHeader>()};
+        constexpr size_t iterCount {1'000'00};
+
+        {
+            auto start = std::chrono::high_resolution_clock::now();
+
+            for (size_t i = 0; i < iterCount; ++i)
+            {
+                for (int n = 0; n < iterCount; n++)
+                {
+                    initAssignment(apr.get());
+                    // initMemset(apr.get());
+                }
+            }
+
+            auto end = std::chrono::high_resolution_clock::now();
+            auto duration = std::chrono::duration_cast<std::chrono::microseconds>(end - start).count();
+            std::cout << "Result: " << duration << " microseconds" << std::endl;
+        }
+
+        {
+            auto start = std::chrono::high_resolution_clock::now();
+
+            for (size_t i = 0; i < iterCount; ++i)
+            {
+                for (int n = 0; n < iterCount; n++)
+                {
+                    // initAssignment(apr.get());
+                    initMemset(apr.get());
+                }
+            }
+
+            auto end = std::chrono::high_resolution_clock::now();
+            auto duration = std::chrono::duration_cast<std::chrono::microseconds>(end - start).count();
+            std::cout << "Result: " << duration << " microseconds" << std::endl;
+        }
+    }
+
+    void Double_Delete_Nullptr()
+    {
+        int* iPtr = new int(100500);
+
+        std::cout << *iPtr << " at " << iPtr << std::endl;
+
+        {
+            delete iPtr;
+            iPtr = nullptr;
+        }
+
+        delete iPtr;
+    }
+
+    void SharedPtr_BadUsage_DoubleDelete()
+    {
+        std::shared_ptr<int> i(new int(2));
+        {
+            std::shared_ptr<int> i2(i.get());
+        }
+    }
+
+    void SharedPtr_BadUsage_DoubleDelete_FIX_EmptyDeleter()
+    {
+        std::shared_ptr<int> i(new int(2));
+        {
+            auto empty_deleter = [](int* ptr){
+                std::cout << "Doing nothing with " << ptr << std::endl;
+            };
+            std::shared_ptr<int> i2(i.get(), empty_deleter);
+        }
+        // Now OK
+    }
+
+    template<class T>
+    struct TracingAllocator
+    {
+        using value_type = T;
+        using pointer = value_type*;
+
+        TracingAllocator() = default;
+
+        template<class U>
+        constexpr explicit TracingAllocator(const TracingAllocator<U>&) noexcept {
+        }
+
+        [[nodiscard]]
+        pointer allocate(std::size_t n)
+        {
+            if (n > std::numeric_limits<std::size_t>::max() / sizeof(value_type))
+                throw std::bad_array_new_length();
+
+            if (pointer ptr = static_cast<pointer>(std::malloc(n * sizeof(value_type))))
+            {
+                trace(ptr, n);
+                return ptr;
+            }
+
+            throw std::bad_alloc();
+        }
+
+        void deallocate(pointer ptr, std::size_t n) noexcept
+        {
+            trace(ptr, n, 0);
+            std::free(ptr);
+        }
+
+    private:
+
+        void trace(pointer ptr, std::size_t n, bool alloc = true) const
+        {
+            std::cout << (alloc ? "Alloc: " : "Dealloc: ") << sizeof(value_type) * n
+                      << " bytes at " << std::hex << std::showbase
+                      << reinterpret_cast<void*>(ptr) << std::dec << '\n';
+        }
+    };
+
+
+    void AllocateShared_And_Trace()
+    {
+        TracingAllocator<int> traceAllocator;
+        auto deleter = [&traceAllocator](int* ptr){
+            traceAllocator.deallocate(ptr, 1);
+        };
+
+        std::shared_ptr<int> sharedInt (traceAllocator.allocate(1), deleter, traceAllocator);
+    }
+}
+
 void Memory::TestAll()
 {
 
     // CleanUP_Exception_Test();
     // SharedPtrLeak();
 
-    UniquePtrExperiments::PointerToObjectOnStack();
+    // UniquePtrExperiments::PointerToObjectOnStack();
+
+    // Memset_vs_Assignment();
+    // Memset_vs_Assignment_Perf();
+    // Double_Delete_Nullptr();
+
+    // SharedPtr_BadUsage_DoubleDelete();
+    // SharedPtr_BadUsage_DoubleDelete_FIX_EmptyDeleter();
+
+    AllocateShared_And_Trace();
+
 }
