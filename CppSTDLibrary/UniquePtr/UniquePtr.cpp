@@ -456,10 +456,53 @@ namespace UniquePtr_Tests::Deleters {
 	void FabricMethod_WithDeleter() {
 		auto integer = getObject_UniquePtr<Integer>(1);
 	}
+
+    //----------------------------------------------------------------------------------
+
+
+    template <typename T>
+    struct CustomDeleter {
+        CustomDeleter() = default;
+        CustomDeleter(const CustomDeleter&) = default;
+        CustomDeleter(CustomDeleter&) = default;
+        CustomDeleter(CustomDeleter&&)  noexcept = default;
+        void operator()(T* p) const { delete p; };
+    };
+
+    void CustomDeleterTests()
+    {
+        {
+            std::cout << "Example 1\n";
+            std::unique_ptr<int, CustomDeleter<int>> foo_unique(new int(), CustomDeleter<int>()); // move CustomDeleter
+            std::unique_ptr<int, CustomDeleter<int>> f2 = std::move(foo_unique); // move CustomDeleter
+        }
+
+        {
+            std::cout << "Example 2\n";
+            CustomDeleter<int> deleter;
+            std::unique_ptr<int, CustomDeleter<int> &> f3(new int(), deleter); // reference CustomDeleter
+
+            std::unique_ptr<int, CustomDeleter<int> &> f4 = std::move(f3); // reference CustomDeleter
+            // std::unique_ptr<int, CustomDeleter<int>&&> f41 = std::move(f4); // Won't compile
+
+            std::unique_ptr<int, CustomDeleter<int>> f5 = std::move(f4); // non-const copy CustomDeleter
+            // std::unique_ptr<Foo, CustomDeleter<int>&> f6 = std::move(f5); // Won't compile
+        }
+
+        {
+            std::cout << "Example 3\n";
+            CustomDeleter<int> deleter;
+
+            std::unique_ptr<int, const CustomDeleter<int> &> f7(new int(), deleter); // reference CustomDeleter
+            std::unique_ptr<int, CustomDeleter<int>> f8 = std::move(f7); // copy CustomDeleter
+            //std::unique_ptr<int, CustomDeleter<int>&> f9 = std::move(f8); // Won't compile
+        }
+    }
 }
 
 
-namespace UniquePtr_Tests::Arrays {
+namespace UniquePtr_Tests::Arrays
+{
 
 	void UniquePtr_Array() {
 		std::unique_ptr<Integer[]> numbers = std::make_unique<Integer[]>(10);
@@ -492,7 +535,8 @@ namespace UniquePtr_Tests::TESTS
 }
 
 
-namespace UniquePtr_Tests::Size_Depending_of_Params {
+namespace UniquePtr_Tests::Size_Depending_of_Params
+{
 
     struct Deleter {
         void operator()(std::FILE* f) {
@@ -521,7 +565,8 @@ namespace UniquePtr_Tests::Size_Depending_of_Params {
 
 
 
-void UniquePtr_Tests::TestAll(){
+void UniquePtr_Tests::TestAll()
+{
 	// UniquePtr_Test1();
 
 	// Swap_Test_1();
@@ -551,6 +596,7 @@ void UniquePtr_Tests::TestAll(){
 	// Deleters::Get_Deleter_Test();
 	// Deleters::MakeUnique_ObjectRequirements();
 
+    Deleters::CustomDeleterTests();
 
 	// Deleters::FabricMethod_Shared_WithDeleter();
 	// Deleters::FabricMethod_WithDeleter();

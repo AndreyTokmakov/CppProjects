@@ -110,28 +110,6 @@ namespace Memory
     }
 }
 
-namespace Memory::UniquePtrExperiments
-{
-    using namespace Helpers;
-
-    void PointerToObjectOnStack()
-    {
-        auto longDeleter = [](Long* ptr) {
-            std::cout << "Skip deletion for Long(" << ptr << ")\n";
-            //delete ptr;
-        };
-
-        Long l1(10);
-
-        {
-            std::unique_ptr<Long, decltype(longDeleter)> lPtr{&l1, longDeleter};
-        }
-
-        std::cout << "Done\n";
-
-    }
-}
-
 namespace Memory
 {
     struct Base {
@@ -340,6 +318,85 @@ namespace Memory
 
         std::shared_ptr<int> sharedInt (traceAllocator.allocate(1), deleter, traceAllocator);
     }
+
+
+    void Shared_Weak_UsageCount()
+    {
+        // shard_counter = 1, weak_counter = 0
+        std::shared_ptr<int> sharedInt = std::make_shared<int>();
+        
+        std::cout << "shared use count: " << sharedInt.use_count() << std::endl;
+
+        // shard_counter = 1, weak_counter = 1
+        std::weak_ptr<int> weakInt = sharedInt;
+
+        std::cout << "shared use count: " << sharedInt.use_count()
+                  << " | weak use count: " << weakInt.use_count() << std::endl;
+    }
+}
+
+
+
+namespace Memory::UniquePtrExperiments
+{
+    using namespace Helpers;
+
+    void PointerToObjectOnStack()
+    {
+        auto longDeleter = [](Long* ptr) {
+            std::cout << "Skip deletion for Long(" << ptr << ")\n";
+            //delete ptr;
+        };
+
+        Long l1(10);
+
+        {
+            std::unique_ptr<Long, decltype(longDeleter)> lPtr{&l1, longDeleter};
+        }
+
+        std::cout << "Done\n";
+
+    }
+
+    template <typename T>
+    struct CustomDeleter {
+        CustomDeleter() = default;
+        CustomDeleter(const CustomDeleter&) = default;
+        CustomDeleter(CustomDeleter&) = default;
+        CustomDeleter(CustomDeleter&&)  noexcept = default;
+        void operator()(T* p) const { delete p; };
+    };
+
+    void CustomDeleterTests()
+    {
+
+        {
+            std::cout << "Example 1\n";
+            std::unique_ptr<int, CustomDeleter<int>> foo_unique(new int(), CustomDeleter<int>()); // move CustomDeleter
+            std::unique_ptr<int, CustomDeleter<int>> f2 = std::move(foo_unique); // move CustomDeleter
+        }
+
+        {
+            std::cout << "Example 2\n";
+            CustomDeleter<int> deleter;
+            std::unique_ptr<int, CustomDeleter<int> &> f3(new int(), deleter); // reference CustomDeleter
+
+            std::unique_ptr<int, CustomDeleter<int> &> f4 = std::move(f3); // reference CustomDeleter
+            // std::unique_ptr<int, CustomDeleter<int>&&> f41 = std::move(f4); // Won't compile
+
+            std::unique_ptr<int, CustomDeleter<int>> f5 = std::move(f4); // non-const copy CustomDeleter
+            // std::unique_ptr<Foo, CustomDeleter<int>&> f6 = std::move(f5); // Won't compile
+        }
+
+        {
+            std::cout << "Example 3\n";
+            CustomDeleter<int> deleter;
+
+            std::unique_ptr<int, const CustomDeleter<int> &> f7(new int(), deleter); // reference CustomDeleter
+            std::unique_ptr<int, CustomDeleter<int>> f8 = std::move(f7); // copy CustomDeleter
+            //std::unique_ptr<int, CustomDeleter<int>&> f9 = std::move(f8); // Won't compile
+        }
+    }
 }
 
 void Memory::TestAll()
@@ -349,6 +406,7 @@ void Memory::TestAll()
     // SharedPtrLeak();
 
     // UniquePtrExperiments::PointerToObjectOnStack();
+    // UniquePtrExperiments::CustomDeleterTests();
 
     // Memset_vs_Assignment();
     // Memset_vs_Assignment_Perf();
@@ -356,7 +414,8 @@ void Memory::TestAll()
 
     // SharedPtr_BadUsage_DoubleDelete();
     // SharedPtr_BadUsage_DoubleDelete_FIX_EmptyDeleter();
+    Shared_Weak_UsageCount();
 
-    AllocateShared_And_Trace();
+    // AllocateShared_And_Trace();
 
 }
