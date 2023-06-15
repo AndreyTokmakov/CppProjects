@@ -989,7 +989,60 @@ namespace OperatorCall_ExplicitTypeSpecialization
     }
 }
 
+namespace CallFunctionByName
+{
+    struct my_class
+    {
+        void function_a() const { std::cout << "my_class::function_a\n"; }
+        void function_b() const { std::cout << "my_class::function_b\n"; }
+        void function_c() const { std::cout << "my_class::function_c\n"; }
 
+        void function_d(int v) const { std::cout << "my_class::function_d: params: " << v << "\n"; }
+    };
+
+    class my_class_functions_collection {
+    private:
+        using my_class_func_t = void(my_class::*)() const;
+
+    public:
+        explicit my_class_functions_collection(my_class *my_class_ptr) : mc_ptr(my_class_ptr) {
+            funcMapping = {
+                    {"function_a", &my_class::function_a},
+                    {"function_b", &my_class::function_b},
+                    {"function_c", &my_class::function_c},
+            };
+        }
+
+        void call_function(std::string &&func_name) {
+            // (mc_ptr->*(functions_collection.at(func_name)) )();
+            std::invoke(funcMapping.at(func_name) , mc_ptr);
+        }
+
+        template<typename... Args>
+        void call_function_ex(std::string &&func_name, Args&&... params)
+        {
+            std::invoke(funcMapping.at(func_name) , mc_ptr, std::forward<Args>(params)...);
+        }
+
+
+    private:
+        std::unordered_map<std::string, my_class_func_t> funcMapping {};
+        my_class *mc_ptr;
+    };
+
+
+    void Test()
+    {
+        my_class mc;
+        my_class_functions_collection mc_functions(&mc);
+
+        mc_functions.call_function("function_a");
+        mc_functions.call_function("function_b");
+        mc_functions.call_function("function_c");
+        mc_functions.call_function_ex("function_c");
+
+    }
+}
 
 
 int main([[maybe_unused]] int argc,
@@ -999,7 +1052,7 @@ int main([[maybe_unused]] int argc,
 
     // OperatorCall_ExplicitTypeSpecialization::Test();
 
-
+    CallFunctionByName::Test();
 
 
     // ReturnTypeCast::tests();
@@ -1013,7 +1066,7 @@ int main([[maybe_unused]] int argc,
 
     // Experiments::Test({20, 40, 60});
     // Multithreading::TestAll();
-    Memory::TestAll();
+    // Memory::TestAll();
     // Strings::TestAll();
     // Iterators::TestAll();
     // Algorithms::TestAll();
