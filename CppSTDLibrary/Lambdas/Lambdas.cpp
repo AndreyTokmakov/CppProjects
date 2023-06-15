@@ -31,6 +31,137 @@
 
 using namespace std::string_literals;
 
+
+namespace Lambdas::Capture
+{
+
+    struct my_struct
+    {
+        my_struct() = default;
+        my_struct(const my_struct &) {
+            std::cout << "Copy" << std::endl;
+        } // Called during this->func();
+
+        void func() {
+            [*this]() { std::cout << "* * * call copy constructor * * * " << std::endl; } ();
+            [this]()  { std::cout << "* * * doesn't call copy constructor * * *" << std::endl; } ();
+        }
+    };
+
+    void Capture_This()
+    {
+        my_struct ms;
+        ms.func();
+    }
+
+
+    void Capture_Modes()
+    {
+        std::cout << "\n------------------------------------------ Test1: ------------------------\n" << std::endl;
+        {
+            std::string value{ "Some_Text_value" };
+            auto function = [&value]() {
+                value = "Some_Text_value_NEW";
+                std::cout << value << std::endl;
+            };
+            function();
+            std::cout << value << std::endl;
+        }
+        std::cout << "\n------------------------------------------ Test2: ------------------------\n" << std::endl;
+        {
+            std::string value{ "Some_Text_value" };
+            auto function = [=]() {
+                // value = "Some_Text_value_NEW";
+                std::cout << value << std::endl;
+            };
+            function();
+            std::cout << value << std::endl;
+        }
+        std::cout << "\n------------------------------------------ Test3: ------------------------\n" << std::endl;
+        {
+            std::string value{ "Some_Text_value" };
+            auto function = [value]() {
+                // value = "Some_Text_value_NEW";
+                std::cout << value << std::endl;
+            };
+            function();
+            std::cout << value << std::endl;
+        }
+        std::cout << "\n------------------------------------------ Test3: ------------------------\n" << std::endl;
+        {
+            std::unique_ptr<Integer> integer = std::make_unique<Integer>(22);
+            auto function = [integer = std::move(integer)]() {
+                std::cout << integer->getValue() << std::endl;
+            };
+            function();
+        }
+    }
+
+    void Capture_Variable_Copy()
+    {
+        std::vector<std::function<void()>> handlers;
+
+        {
+            int value = 123;
+            handlers.emplace_back([&value]() { std::cout << "Value: " << value << std::endl; });
+        }
+
+        auto func = handlers.front();
+        func();
+    }
+
+
+    template<typename... Args>
+    void _print_copy(Args&&... params)
+    {
+        auto printLambda = [params ...]() {
+            (std::cout << ... << params) << std::endl;
+        };
+        printLambda();
+    }
+
+    template<typename... Args>
+    void _print_move(Args... args)
+    {
+        auto printLambda = [...params = std::move(args)]() {
+            (std::cout << ... << params) << std::endl;
+        };
+        printLambda();
+    }
+
+    template<typename... Args>
+    void _print_ref(Args... args)
+    {
+        auto printLambda = [&...params = args]() {
+            (std::cout << ... << params) << std::endl;
+        };
+        printLambda();
+    }
+
+    void myPrint(std::string_view s) {
+        std::cout << s << std::endl;
+    }
+
+    template<typename Callable, typename... Types>
+    auto createCallable(Callable func, Types... args)
+    {
+        return [func, ...params = std::move(args)] () -> decltype(auto) {
+            return func(params...);
+        };
+    }
+
+    void Capturing_Parameter_Packs() {
+        _print_copy(1, " + ", 2, " = ", 3);
+        _print_move(1, " + ", 2, " = ", 3);
+        _print_ref( 1, " + ", 2, " = ", 3);
+
+        auto f = createCallable(myPrint, "Hello");
+        f();
+    }
+}
+
+
+
 namespace Lambdas {
 
 	class SomeClass {
@@ -117,47 +248,7 @@ namespace Lambdas {
 		std::for_each(vect.begin(), vect.end(), print);
 	}
 
-	void Capture_Modes()
-	{
-		std::cout << "\n------------------------------------------ Test1: ------------------------\n" << std::endl;
-		{
-			std::string value{ "Some_Text_value" };
-			auto function = [&value]() {
-				value = "Some_Text_value_NEW";
-				std::cout << value << std::endl;
-			};
-			function();
-			std::cout << value << std::endl;
-		}
-		std::cout << "\n------------------------------------------ Test2: ------------------------\n" << std::endl;
-		{
-			std::string value{ "Some_Text_value" };
-			auto function = [=]() {
-				// value = "Some_Text_value_NEW";
-				std::cout << value << std::endl;
-			};
-			function();
-			std::cout << value << std::endl;
-		}
-		std::cout << "\n------------------------------------------ Test3: ------------------------\n" << std::endl;
-		{
-			std::string value{ "Some_Text_value" };
-			auto function = [value]() {
-				// value = "Some_Text_value_NEW";
-				std::cout << value << std::endl;
-			};
-			function();
-			std::cout << value << std::endl;
-		}
-		std::cout << "\n------------------------------------------ Test3: ------------------------\n" << std::endl;
-		{
-			std::unique_ptr<Integer> integer = std::make_unique<Integer>(22);
-			auto function = [integer = std::move(integer)]() {
-				std::cout << integer->getValue() << std::endl;
-			};
-			function();
-		}
-	}
+
 
 
 	//////////////////////
@@ -285,70 +376,6 @@ namespace Lambdas {
 		};
 
 		std::cout << lambda(1) << " " << lambda(1.0) << " " << lambda(1) << std::endl;
-	}
-
-	//-------------------------------------------------------------------------------------------//
-
-	void Capture_Variable_Copy() {
-		std::vector<std::function<void()>> handlers;
-
-		{
-			int value = 123;
-			handlers.emplace_back([&value]() { std::cout << "Value: " << value << std::endl; });
-		}
-
-		auto func = handlers.front();
-		func();
-	}
-
-	//-------------------------------------------------------------------------------------------//
-
-	template<typename... Args>
-	void _print_copy(Args&&... params)
-	{
-		auto printLambda = [params ...]() {
-			(std::cout << ... << params) << std::endl;
-		};
-		printLambda();
-	}
-
-	template<typename... Args>
-	void _print_move(Args... args)
-	{
-		auto printLambda = [...params = std::move(args)]() {
-			(std::cout << ... << params) << std::endl;
-		};
-		printLambda();
-	}
-
-	template<typename... Args>
-	void _print_ref(Args... args)
-	{
-		auto printLambda = [&...params = args]() {
-			(std::cout << ... << params) << std::endl;
-		};
-		printLambda();
-	}
-
-	template<typename Callable, typename... Types>
-	auto createCallable(Callable func, Types... args)
-	{
-		return [func, ...params = std::move(args)] () -> decltype(auto) {
-			return func(params...);
-		};
-	}
-
-	void myPrint(std::string_view s) {
-		std::cout << s << std::endl;
-	}
-
-	void Capturing_Parameter_Packs() {
-		_print_copy(1, " + ", 2, " = ", 3);
-		_print_move(1, " + ", 2, " = ", 3);
-		_print_ref( 1, " + ", 2, " = ", 3);
-
-		auto f = createCallable(myPrint, "Hello");
-		f();
 	}
 
 	//----------------------------------------------------------------------------------------//
@@ -712,6 +739,29 @@ namespace Lambdas {
 	}
 };
 
+namespace Lambdas::Lambda_With_Concepts
+{
+
+    template <typename T>
+    concept PlusOperator = requires(T type) {
+        { type + type };
+    };
+
+    void PlusFunction()
+    {
+        using namespace std::string_literals;
+        auto plus = [] <PlusOperator T, PlusOperator ...Args> (T first, Args ...args)
+                requires ( std::is_same_v<T, Args> && ... ) {
+            return (first + ... + args);
+        };
+
+        std::cout << plus(1) << std::endl; // Prints: 1
+        std::cout << plus(1, 4, 5) << std::endl; // Prints: 10
+        std::cout << plus(2.3, 4.5, 5.6) << std::endl; // Prints: 12.4
+        std::cout << plus("Template"s, " "s, "Lambda"s, " "s, "Expression"s) << std::endl;
+    }
+}
+
 
 namespace Lambdas::High_Order_Function {
 
@@ -910,9 +960,10 @@ void Lambdas::TestAll()
 	// Lambdas::Test1();
 	// Lambdas::Pass_THIS_to_Lambda();
 
-	// Lambdas::Capture_Modes();
-	// Lambdas::Capture_Variable_Copy();
-	// Lambdas::Capturing_Parameter_Packs();  // By REF, MOVE and COPY
+	// Capture::Capture_Modes();
+    // Capture::Capture_Variable_Copy();
+	// Capture::Capturing_Parameter_Packs();  // By REF, MOVE and COPY
+    // Capture::Capture_This();
 
 	// Lambdas::Lambda_With_Params_Initialization();
 	// Lambdas::Lambda_Struct();
@@ -943,8 +994,8 @@ void Lambdas::TestAll()
 
 	// Lambdas::Get_Lambda_Return_Type();
 
-	Lambdas::Recursive_Lambda();
-	Lambdas::Recursive_Lambda2();
+	// Lambdas::Recursive_Lambda();
+	// Lambdas::Recursive_Lambda2();
 
 	// Lambdas::Get_Lambda_Type();
 
@@ -959,4 +1010,6 @@ void Lambdas::TestAll()
 
 	// Constexpr_Constevel_Lambda::ConstexprLambda();
 	// Constexpr_Constevel_Lambda::Constevel_Lambda();
+
+    Lambda_With_Concepts::PlusFunction();
 }

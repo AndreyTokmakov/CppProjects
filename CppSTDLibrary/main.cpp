@@ -258,7 +258,7 @@ int main(int argc, char** argv)
     // Format::TestAll();
     // FunctionObjects::TestAll();
     // Hashing::TestAll();
-    // Lambdas::TestAll();
+    Lambdas::TestAll();
     // Locale::TestAll();
     // Literals::TestAll();
     // MoveSemantics_RuleOfFive::TestAll();
@@ -290,7 +290,7 @@ int main(int argc, char** argv)
     // Int::TestAll();
     // Templates::TestAll();
     // Utilities::TestAll();
-    UniquePtr_Tests::TestAll();
+    // UniquePtr_Tests::TestAll();
     // Variant::TestAll();
     // WeakPtr::TestAll();
 
