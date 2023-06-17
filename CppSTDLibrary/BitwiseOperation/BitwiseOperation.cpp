@@ -378,11 +378,21 @@ namespace BitwiseOperation
     }
 
 
-    void Popcount() {
+    void Popcount()
+    {
         for (std::uint8_t i : { 0, 0b11111111, 0b00011101 }) {
             std::cout << "popcount(0b" << std::bitset<8>(i) << ") = " << std::popcount(i) << '\n';
         }
     }
+
+    void Count_Set_Bits()
+    {
+        for (const uint32_t mask: {0u,1u , 0b1111'0000u})
+        {
+            std::cout << mask << " --> " << std::popcount(mask) << std::endl;
+        }
+    }
+
 
     void Count_Zeros() {
         for (std::uint8_t i : { 0, 0b11100111, 0b00011100 }) {
@@ -441,6 +451,8 @@ void BitwiseOperation::TestAll() {
 
 
     // Bitset::Popcount();
+    Count_Set_Bits();
+
     // Count_Zeros();
     // Count_One_s();
 };

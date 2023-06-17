@@ -65,6 +65,25 @@
 
 namespace ProcessManager
 {
+    class MyThread : public QThread
+    {
+    public:
+        explicit MyThread(QString s) : name(std::move(s)) {
+        }
+
+        void run() override
+        {
+            for(int i = 1; i <= 5; ++i) {
+                qDebug() << this->name << " " << i;
+                //std::cout << this->name.toStdString() << " " << i << std::endl;
+            }
+        }
+
+    private:
+        QString name;
+    };
+
+
     class Application : public QApplication
     {
     public:
@@ -169,6 +188,9 @@ namespace ProcessManager
             setCentralWidget(&frame);
             setWindowTitle("Tree view example");
             //resize(300, 300);
+
+            thread.start();
+            // thread.wait();
         }
 
     private:
@@ -185,6 +207,8 @@ namespace ProcessManager
         QVBoxLayout layout{&frame};
         QTreeView treeView1;
         QStandardItemModel model;
+
+        MyThread thread {" A"};
 
         const std::unique_ptr<QStatusBar> status { statusBar() };
         const std::unique_ptr<QMenuBar> menu { menuBar() };

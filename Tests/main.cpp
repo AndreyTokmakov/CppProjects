@@ -991,6 +991,8 @@ namespace OperatorCall_ExplicitTypeSpecialization
 
 namespace CallFunctionByName
 {
+    using namespace std::string_view_literals;
+
     struct my_class
     {
         void function_a() const { std::cout << "my_class::function_a\n"; }
@@ -1006,14 +1008,9 @@ namespace CallFunctionByName
 
     public:
         explicit my_class_functions_collection(my_class *my_class_ptr) : mc_ptr(my_class_ptr) {
-            funcMapping = {
-                    {"function_a", &my_class::function_a},
-                    {"function_b", &my_class::function_b},
-                    {"function_c", &my_class::function_c},
-            };
         }
 
-        void call_function(std::string &&func_name) {
+        void call_function(std::string_view func_name) {
             // (mc_ptr->*(functions_collection.at(func_name)) )();
             std::invoke(funcMapping.at(func_name) , mc_ptr);
         }
@@ -1024,9 +1021,12 @@ namespace CallFunctionByName
             std::invoke(funcMapping.at(func_name) , mc_ptr, std::forward<Args>(params)...);
         }
 
-
     private:
-        std::unordered_map<std::string, my_class_func_t> funcMapping {};
+        const std::unordered_map<std::string_view, my_class_func_t> funcMapping {
+                {"function_a"sv, &my_class::function_a},
+                {"function_b"sv, &my_class::function_b},
+                {"function_c"sv, &my_class::function_c},
+        };
         my_class *mc_ptr;
     };
 
@@ -1052,7 +1052,12 @@ int main([[maybe_unused]] int argc,
 
     // OperatorCall_ExplicitTypeSpecialization::Test();
 
-    CallFunctionByName::Test();
+    // CallFunctionByName::Test();
+
+    for (const uint32_t mask: {0u,1u , 0b1111'0000u})
+    {
+        std::cout << mask << " --> " << std::popcount(mask) << std::endl;
+    }
 
 
     // ReturnTypeCast::tests();

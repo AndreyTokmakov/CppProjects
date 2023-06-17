@@ -10,13 +10,14 @@ Description : TreeWidget
 #include "TreeWidget.h"
 
 #include <QApplication>
+#include <QDialog>
 #include <QFrame>
 #include <QMainWindow>
 #include <QTreeWidget>
 #include <QTreeWidgetItem>
 #include <QVBoxLayout>
 
-namespace TreeWidget
+namespace TreeWidget::DemoOne
 {
     class Window : public QMainWindow
     {
@@ -60,7 +61,19 @@ namespace TreeWidget
     }
 }
 
+namespace TreeWidget::DemoTwo
+{
+
+    void test(int argc, char **argv)
+    {
+        QApplication application(argc, argv);
+        // Window window;
+        // window.show();
+        QApplication::exec();
+    }
+}
 void TreeWidget::TestAll(int argc, char **argv)
 {
-    test(argc, argv);
+    // DemoOne::test(argc, argv);
+    DemoTwo::test(argc, argv);
 }

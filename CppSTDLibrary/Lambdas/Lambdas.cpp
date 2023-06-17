@@ -138,6 +138,32 @@ namespace Lambdas::Capture
         printLambda();
     }
 
+    template<typename... Args>
+    void _print_forward(Args&&... args)
+    {
+        auto printLambda = [...params = std::forward<Args>(args)]() {
+            (std::cout << ... << params) << std::endl;
+        };
+        printLambda();
+    }
+
+    template<typename... Args>
+    void _print_ref_forward(Args&&... args)
+    {
+        auto printLambda = [&...params = std::forward<Args>(args)]() {
+            (std::cout << ... << params) << std::endl;
+        };
+        printLambda();
+    }
+
+    template <typename... Args>
+    auto f(Args&&... args){
+        // BY VALUE:
+        return [...args = std::forward<Args>(args)] {
+            // ...
+        };
+    }
+
     void myPrint(std::string_view s) {
         std::cout << s << std::endl;
     }
@@ -154,6 +180,11 @@ namespace Lambdas::Capture
         _print_copy(1, " + ", 2, " = ", 3);
         _print_move(1, " + ", 2, " = ", 3);
         _print_ref( 1, " + ", 2, " = ", 3);
+
+        int a = 1, b = 2, c = 3;
+
+        _print_forward( 1, " + ", 2, " = ", 3);
+        _print_ref_forward( a, " + ", b, " = ", c);
 
         auto f = createCallable(myPrint, "Hello");
         f();
@@ -962,7 +993,7 @@ void Lambdas::TestAll()
 
 	// Capture::Capture_Modes();
     // Capture::Capture_Variable_Copy();
-	// Capture::Capturing_Parameter_Packs();  // By REF, MOVE and COPY
+	Capture::Capturing_Parameter_Packs();  // By REF, MOVE and COPY
     // Capture::Capture_This();
 
 	// Lambdas::Lambda_With_Params_Initialization();
@@ -1011,5 +1042,5 @@ void Lambdas::TestAll()
 	// Constexpr_Constevel_Lambda::ConstexprLambda();
 	// Constexpr_Constevel_Lambda::Constevel_Lambda();
 
-    Lambda_With_Concepts::PlusFunction();
+    // Lambda_With_Concepts::PlusFunction();
 }

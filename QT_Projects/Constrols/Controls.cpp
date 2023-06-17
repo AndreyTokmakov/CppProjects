@@ -16,6 +16,6 @@ Description : QT Controls C++ Experiments
 void Controls::TestAll(int argc, char **argv)
 {
     // TreeView::TestAll(argc, argv);
-    // TreeWidget::TestAll(argc, argv);
-    ProgressBar::TestAll(argc, argv);
+    TreeWidget::TestAll(argc, argv);
+    // ProgressBar::TestAll(argc, argv);
 }

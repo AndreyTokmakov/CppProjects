@@ -21,7 +21,6 @@ Description : QT Experiments
 #include <QMainWindow>
 #include <QMessageBox>
 #include <QStatusBar>
-
 #include <QAction>
 #include <QDebug>
 #include <QFrame>
@@ -30,6 +29,7 @@ Description : QT Experiments
 #include <QMenuBar>
 #include <QLabel>
 #include <QStyle>
+#include <utility>
 
 namespace Experiments
 {
@@ -277,28 +277,35 @@ namespace Experiments::Threads
 {
     class MyThread : public QThread
     {
-    private:
+    public:
+        explicit MyThread(QString s) : name(std::move(s)) {
+        }
+
         void run() override
         {
-            for (int i = 0; i < 10; ++i)
-            {
-                // std::this_thread::sleep_for(std::chrono::seconds(1));
-                std::cout << i << std::endl;
+            for(int i = 1; i <= 5; ++i) {
+                qDebug() << this->name << " " << i;
+                //std::cout << this->name.toStdString() << " " << i << std::endl;
             }
         }
+
+    private:
+        QString name;
     };
 
-    void SimpleThread()
+    int SimpleThread(int argc, char *argv[])
     {
-        MyThread* thread = new MyThread();
-        thread->start();    // starts a new thread which calls run()
-        thread->wait();     // waits for the thread to finish
+        QCoreApplication a(argc, argv);
+        std::array<MyThread, 3> workers { MyThread {"A" }, MyThread {"B" }, MyThread {"C" }};
 
-        delete thread;
+        for (auto& T: workers)
+            T.start();
+        for (auto& T: workers)
+            T.wait();
+
+        return QCoreApplication::exec();
     }
-
 }
-
 
 void Experiments::TestAll(int argc, char **argv)
 {
@@ -317,5 +324,5 @@ void Experiments::TestAll(int argc, char **argv)
 
     // MenusBarTests::MenusBarTest(argc, argv);
 
-    Threads::SimpleThread();
+    Threads::SimpleThread(argc, argv);
 }

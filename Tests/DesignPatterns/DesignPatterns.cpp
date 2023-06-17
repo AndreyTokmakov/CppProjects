@@ -22,6 +22,7 @@ Description : DesignPatterns
 #include <sstream>
 #include <future>
 #include <thread>
+#include <initializer_list>
 
 
 
@@ -1238,7 +1239,6 @@ namespace DesignPatterns::Observer
         // Detaching observers
         homer.detach( &nameObserver );
     }
-
 }
 
 void DesignPatterns::TestAll()
@@ -1263,5 +1263,5 @@ void DesignPatterns::TestAll()
 
     // Monostate::test();
 
-    Observer::test();
+    // Observer::test();
 }
