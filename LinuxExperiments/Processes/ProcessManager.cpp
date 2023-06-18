@@ -21,7 +21,8 @@ Description : Linux ProcessManager C++ experiments
 #include <unordered_map>
 
 #include <charconv>
-#include <format>
+
+// #include <format>
 
 namespace ProcessManager
 {
@@ -190,9 +191,19 @@ namespace ProcessManager::ProcessTree
         std::list<std::shared_ptr<LinuxProcess>> children{};
 
         explicit operator std::string() const noexcept {
+            return  std::string {"Process (id: "}.append(std::to_string(pid))
+                .append(", parent: ").append(std::to_string(ppid))
+                .append(", name: ").append(name)
+                .append(", cmdline: ").append(cmdline)
+                .append(", exePath: ").append(exePath.filename().string()).append(")");
+        }
+
+        /*
+        explicit operator std::string() const noexcept {
             return std::format("Process (id: {}, parent: {}, name: {}, cmdline: {}, exePath: {})",
                                pid, ppid, name, cmdline, exePath.filename().string());
         }
+        */
     };
 
     std::map<uint32_t, std::shared_ptr<LinuxProcess>> getProcesses()
@@ -308,7 +319,8 @@ namespace ProcessManager::ProcessTree
         for (const auto& [pid, process]: processTree)
         {
             if (process->name.contains("chrome") && !process->parent->name.contains("chrome")) {
-                ExecuteShellCommand(std::format("kill -9 {}", process->pid));
+                // ExecuteShellCommand(std::format("kill -9 {}", process->pid));
+                ExecuteShellCommand(std::string {"kill -9 "}.append(std::to_string(process->pid)));
                 break;
             }
         }

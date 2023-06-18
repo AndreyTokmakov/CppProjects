@@ -1045,19 +1045,31 @@ namespace CallFunctionByName
 }
 
 
+
+std::string toString(int value)
+{
+#ifdef __has_include
+#  if __has_include(<format>)
+        return std::format("value: {}", value);
+#  else
+        return std::string{"value: "}.append(std::to_string(value));
+#  endif
+#endif
+}
+
 int main([[maybe_unused]] int argc,
          [[maybe_unused]] char** argv)
 {
     const std::vector<std::string_view> args(argv + 1, argv + argc);
 
     // OperatorCall_ExplicitTypeSpecialization::Test();
-
     // CallFunctionByName::Test();
 
-    for (const uint32_t mask: {0u,1u , 0b1111'0000u})
-    {
-        std::cout << mask << " --> " << std::popcount(mask) << std::endl;
-    }
+
+    const std::string str = toString(1);
+
+    std::cout << str << std::endl;
+
 
 
     // ReturnTypeCast::tests();

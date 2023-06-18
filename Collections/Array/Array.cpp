@@ -131,6 +131,28 @@ namespace Array {
 		delete[] data;
 	}
 
+    void ToArray()
+    {
+        {
+            // returns `std::array<char, 4>`
+            const std::array data = std::to_array("foo");
+            std::cout << "std::array<" << typeid(data.front()).name() << ", " << data.size() << ">\n";
+        }
+
+        {
+            // returns `std::array<int, 3>`
+            const std::array data = std::to_array<int>({1, 2, 3});
+            std::cout << "std::array<" << typeid(data.front()).name() << ", " << data.size() << ">\n";
+        }
+
+        {
+            // returns `std::array<int, 3>`
+            int a[] = {1, 2, 3};
+            const std::array data = std::to_array(a);
+            std::cout << "std::array<" << typeid(data.front()).name() << ", " << data.size() << ">\n";
+        }
+    }
+
 	void TEST_ALL()
 	{
 		// MultidimentionalArrays();
@@ -144,6 +166,8 @@ namespace Array {
 
 		// Array::Sort();
 
-		Array::Compare();
+		// Array::Compare();
+
+        ToArray();
 	}
 }
