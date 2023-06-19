@@ -189,6 +189,38 @@ namespace Lambdas::Capture
         auto f = createCallable(myPrint, "Hello");
         f();
     }
+
+    //-------------------------------------------------------------------------
+
+    int globalVar = 0;
+
+    int factory() {
+        return ++globalVar * 10;
+    }
+
+    void Capture_FunctionCallResult_Global()
+    {
+        {
+            auto func = [x = factory()]() -> int { return x; };
+
+            for (int i = 0; i < 3; ++i)
+                std::cout << func() << std::endl;
+        }
+
+        globalVar = 0;
+        std::cout << "-----------------------------------------------------------------\n";
+
+        {
+            auto func1 = [x = factory()]() -> int { return x; };
+            auto func2 = [x = factory()]() -> int { return x; };
+            auto func3 = [x = factory()]() -> int { return x; };
+
+            std::cout << func1() << std::endl;
+            std::cout << func2() << std::endl;
+            std::cout << func3() << std::endl;
+        }
+    }
+
 }
 
 
@@ -985,6 +1017,8 @@ namespace Lambdas::Constexpr_Constevel_Lambda {
 	}
 }
 
+
+
 void Lambdas::TestAll()
 {
 	// Lambdas::FindIF_Lambda_Test();
@@ -993,8 +1027,9 @@ void Lambdas::TestAll()
 
 	// Capture::Capture_Modes();
     // Capture::Capture_Variable_Copy();
-	Capture::Capturing_Parameter_Packs();  // By REF, MOVE and COPY
+	// Capture::Capturing_Parameter_Packs();  // By REF, MOVE and COPY
     // Capture::Capture_This();
+    Capture::Capture_FunctionCallResult_Global();
 
 	// Lambdas::Lambda_With_Params_Initialization();
 	// Lambdas::Lambda_Struct();
