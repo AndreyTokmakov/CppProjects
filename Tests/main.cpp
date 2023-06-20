@@ -1044,6 +1044,37 @@ namespace CallFunctionByName
     }
 }
 
+namespace Algorithmss
+{
+    size_t longestUniqueSubstr(const std::string& text) {
+        size_t result = 0, indexes[256] {0};
+        for (size_t fastIdx = 0, slow = 0; const char c: text) {
+            slow = std::max(slow, indexes[c] + 1);
+            indexes[c] = fastIdx++;
+            // std::cout << c << "  |  " << indexes[c] << "  |  " << fastIdx << "  |  " << slow << std::endl;
+            result = std::max(result, fastIdx - slow);
+        }
+
+        for (const char c: text) {
+            const size_t charInt = static_cast<size_t>(c);
+            // std::cout << "indexes[" << charInt << "] = " << indexes[charInt] << std::endl;
+            std::cout << "indexes[" << c << "] = " << indexes[charInt] << std::endl;
+        }
+
+
+        return result;
+    }
+
+    void LongestSubstringWithoutRepeatingCharacters()
+    {
+        for (const std::string& s: {"abcdeabcd"})
+        {
+            std::cout << longestUniqueSubstr(s) << std::endl;
+
+        }
+    }
+}
+
 
 
 int main([[maybe_unused]] int argc,
@@ -1054,7 +1085,7 @@ int main([[maybe_unused]] int argc,
     // OperatorCall_ExplicitTypeSpecialization::Test();
     // CallFunctionByName::Test();
 
-    Lambda::test();
+    Algorithmss::LongestSubstringWithoutRepeatingCharacters();
 
 
     // ReturnTypeCast::tests();

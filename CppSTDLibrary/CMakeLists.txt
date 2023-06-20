@@ -66,5 +66,5 @@ add_executable(CppSTDLibrary
 		Utilities/Utilities.cpp Utilities/Utilities.h
 		Variant/Variant.cpp Variant/Variant.h
 		WeakPtr/WeakPtr.cpp WeakPtr/WeakPtr.h
-        Volatile/VolatileTests.cpp Volatile/VolatileTests.h Hashing/Hashing.cpp Hashing/Hashing.h Metaprogramming/Metaprogramming.cpp Metaprogramming/Metaprogramming.h Alignment/Alignment.cpp Alignment/Alignment.h StarshipOperator/StarshipOperator.cpp StarshipOperator/StarshipOperator.h Expected/Expected.cpp Expected/Expected.h Types/Int.cpp Types/Int.h)
+        Volatile/VolatileTests.cpp Volatile/VolatileTests.h Hashing/Hashing.cpp Hashing/Hashing.h Metaprogramming/Metaprogramming.cpp Metaprogramming/Metaprogramming.h Alignment/Alignment.cpp Alignment/Alignment.h StarshipOperator/StarshipOperator.cpp StarshipOperator/StarshipOperator.h Expected/Expected.cpp Expected/Expected.h Types/Int.cpp Types/Int.h NameSpaces/InlineNamespaces.cpp NameSpaces/InlineNamespaces.h)
 target_link_libraries(CppSTDLibrary PUBLIC pthread)

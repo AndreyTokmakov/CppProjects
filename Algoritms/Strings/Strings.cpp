@@ -675,7 +675,6 @@ namespace Strings {
                       << longestUniqueSubstr_4_Tbl(s) << std::endl;
 
         }
-
         // std::cout << longestUniqueSubstr_4_Tbl_Debug(text) << std::endl;
 	}
 
@@ -1547,14 +1546,14 @@ namespace Strings
 
 void Strings::TEST_ALL()
 {
-	Strings::LongestSubstringWithoutRepeatingCharacters();
+	// Strings::LongestSubstringWithoutRepeatingCharacters();
 	// Strings::LongestConsecutiveCharacters();
 	// Strings::AnalogClockAngles();
 	// Strings::Atoi();
 	// Strings::StrLen();
 
 	// Strings::RotateString();
-	// Strings::CheckIfStrings_RotareRotateEquals();
+	Strings::CheckIfStrings_RotareRotateEquals();
 
 	// Strings::MoveCharsToEnd();
     // Strings::MoveZerosToEnd();

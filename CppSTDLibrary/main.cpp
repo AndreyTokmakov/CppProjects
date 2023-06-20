@@ -1,28 +1,15 @@
 
 #include <iostream>
 #include <memory>
-#include <math.h>
 #include <algorithm>
-#include <filesystem>
-
 #include <thread>
 #include <future>
-
 #include <vector>
-#include <algorithm>
-#include <array>
 #include <fstream>
-#include <set>
-#include <list>
 #include <string>
-#include <iomanip>
-#include <sstream>
-#include <mutex>
 #include <atomic>
-#include <numeric>
 
 #include "Types.h"
-
 #include "AggregateInitialization/AggregateInitialization.h"
 #include "Algorithms/Algorithms.h"
 #include "Alignment/Alignment.h"
@@ -60,6 +47,7 @@
 #include "Math/Math.h"
 #include "PolymorphicMemoryResources/PolymorphicMemoryResources.h"
 #include "MoveSemantics_RuleOfFive/MoveSemantics_RuleOfFive.h"
+#include "NameSpaces/InlineNamespaces.h"
 #include "Numbers/Numbers.h"
 #include "NumericLimits/NumericLimits.h"
 #include "ObjectOrientedProgramming/ObjectOrientedProgramming.h"
@@ -266,6 +254,7 @@ int main(int argc, char** argv)
     // Math::TestAll();
     // Memory::TestAll();
     // Metaprogramming::TestAll();
+    InlineNamespaces::TestAll();
     // NumericLimits::TestAll();
     // ObjectOrientedProgramming::TestAll();
     // Optional::TestAll();
@@ -288,7 +277,7 @@ int main(int argc, char** argv)
     // Tuple::TestAll();
     // TypeCast::TestAll();
     // Int::TestAll();
-    Templates::TestAll();
+    // Templates::TestAll();
     // Utilities::TestAll();
     // UniquePtr_Tests::TestAll();
     // Variant::TestAll();
