@@ -8,6 +8,7 @@
 //============================================================================
 
 #include <iostream>          // std::cout
+#include <numeric>
 #include <string>            // std::string
 #include <sstream>           // std::stringstream
 #include <initializer_list>  // std::initializer_list
@@ -64,6 +65,25 @@ namespace InitializerList::Experiments
     }
 }
 
+
+namespace InitializerList::InitializerList_FoldExpr
+{
+    template <typename First, typename... Args>
+    auto sum(const First first, const Args... args) -> decltype(first) {
+        const auto values = { first, args... };
+        std::cout << typeid(values).name() << std::endl;
+        return std::accumulate(values.begin(), values.end(), First{0});
+    }
+
+    void test()
+    {
+        int result = sum(1, 2, 3, 4, 5);
+        std::cout << result << std::endl;
+    }
+
+}
+
+
 void InitializerList::TestAll()
 {
     // PrintTest();
@@ -75,6 +95,7 @@ void InitializerList::TestAll()
         std::cout << v << std::endl;
     }*/
 
+    InitializerList_FoldExpr::test();
 
-    Experiments::BAD();
+    // Experiments::BAD();
 };

@@ -399,6 +399,23 @@ namespace Templates::PartialSpecialization {
         // Pair<int> p3;         // Not OK: Number of argument should be same as Primary template
 
     }
+
+
+    template <size_t Base, size_t N>
+    struct pow {
+        static constexpr long long val = Base * pow<Base, N - 1>::val;
+    };
+
+    template <size_t Base>
+    struct pow<Base, 0> { // Partial specialized class
+        static constexpr long long val = 1;
+    };
+
+    void Pow_Test_Static()
+    {
+        static_assert(16 == pow<2, 4>::val);
+        static_assert(27 == pow<3, 3>::val);
+    }
 }
 
 
@@ -2748,7 +2765,7 @@ void Templates::TestAll()
 
     // ------------------------------- Templates <Typename T> ------------------------------------------
 
-    TemplateTypename::GetDataTest();
+    // TemplateTypename::GetDataTest();
 
     // ------------------------------- Templates Specialization --------------------------------------
 
@@ -2760,6 +2777,7 @@ void Templates::TestAll()
 
     // PartialSpecialization::Test();
     // PartialSpecialization::Test2();
+    PartialSpecialization::Pow_Test_Static();
 
     // PartialSpecialization_WithConcepts::Test();
     // PartialSpecialization_WithConcepts::DependingOf_NumberOfParameters();

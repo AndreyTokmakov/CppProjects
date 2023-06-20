@@ -1044,39 +1044,6 @@ namespace CallFunctionByName
     }
 }
 
-namespace Lambda
-{
-    int globalVar = 0;
-
-    int factory() {
-        return ++globalVar * 10;
-    }
-
-
-    void test()
-    {
-        {
-            auto func = [x = factory()]() -> int { return x; };
-
-            for (int i = 0; i < 3; ++i)
-                std::cout << func() << std::endl;
-        }
-
-        globalVar = 0;
-        std::cout << "-----------------------------------------------------------------\n";
-
-        {
-            auto func1 = [x = factory()]() -> int { return x; };
-            auto func2 = [x = factory()]() -> int { return x; };
-            auto func3 = [x = factory()]() -> int { return x; };
-
-            std::cout << func1() << std::endl;
-            std::cout << func2() << std::endl;
-            std::cout << func3() << std::endl;
-        }
-    }
-
-}
 
 
 int main([[maybe_unused]] int argc,
