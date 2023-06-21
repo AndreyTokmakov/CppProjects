@@ -2833,7 +2833,7 @@ void Numeric::TEST_ALL()
     // Numeric::LongestSubset_FinabochiNumeric();
     // Numeric::CountAndSaySequence_Generate();
     // Numeric::CountAndSaySequence_Get_Kth_Token();
-    Numeric::CountOrderedPairs();
+    // Numeric::CountOrderedPairs();
     // Numeric::ReverseNumber();
     // Numeric::GetNumberOfDigit();
     // Numeric::RearangeArray();
@@ -2897,7 +2897,7 @@ void Numeric::TEST_ALL()
     // Numeric::Find_Repeating_And_Missing();
     // Numeric::Find_All_Symmetric_Pairs_InArray();
 
-    // Numeric::Find_Elements_Occured_Once();
+     Numeric::Find_Elements_Occured_Once();
     // Numeric::Find_ONE_Element_Occured_Once();
     // Numeric::Find_First_Element_Occured_Once();
     // Numeric::CountDistinctPairs_WithDifference_K();

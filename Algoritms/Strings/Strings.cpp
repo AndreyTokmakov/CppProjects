@@ -731,6 +731,39 @@ namespace Strings {
 
     //--------------------------------------------------------------------------------------//
 
+    // Необходимо найти максимальную длину подстроки
+    // такой что бы в ней было не более чем K уникальных элементов
+    size_t findLenWithMax_K_UniqueChars(const std::string& str, const size_t K)
+    {
+        size_t indexes[256] {};
+        size_t substrStart { 0 }, result { 0 };
+
+        for (size_t idx = 0, uniq = 0; idx < str.length(); ++idx)
+        {
+            const char c = str[idx];
+            if (0 == indexes[c]++)
+                ++uniq;
+
+            while (uniq > K) {
+                const char ch = str[substrStart++];
+                if (0 == --indexes[ch])
+                    --uniq;
+            }
+            result = std::max(result, idx - substrStart + 1);
+        }
+        return result;
+    }
+
+    void MaxSubstringLength_Of_K_max_Unique_Elements()
+    {
+        std::cout << findLenWithMax_K_UniqueChars("aba", 2) << std::endl;
+        std::cout << findLenWithMax_K_UniqueChars("ababaaab", 2) << std::endl;
+        std::cout << findLenWithMax_K_UniqueChars("ababaaacb", 2) << std::endl;
+        std::cout << findLenWithMax_K_UniqueChars("ababaaacb", 3) << std::endl;
+    }
+
+    //--------------------------------------------------------------------------------------//
+
     unsigned int _atoi(const char* str) {
         unsigned int result {0};
         char c = *str;
@@ -937,17 +970,7 @@ namespace Strings {
 		return pos;
 	}
 
-	int find_minimum_index_of_repeating_element_3(const std::vector<int>& numbers) {
-		std::unordered_set<int> dup{ numbers.begin(), numbers.end() };
-		int pos = -1;
-		for (int i = numbers.size() - 1; i > 0; i--) {
-			if (dup.end() != dup.find(numbers[i]))
-				pos = i;
-		}
-		return pos;
-	}
-
-	int find_minimum_index_of_repeating_element_2(const std::vector<int>& numbers) {
+	int find_minimum_index_of_repeating_element_GOOD(const std::vector<int>& numbers) {
 		std::unordered_map<int, int> dup;
 		int pos = numbers.size();
 		for (size_t i = 0; i < numbers.size(); i++) {
@@ -957,10 +980,20 @@ namespace Strings {
 		return pos == numbers.size() ? -1 : pos;
 	}
 
+    int find_minimum_index_of_repeating_element_3(const std::vector<int>& numbers) {
+        std::unordered_set<int> dup{ numbers.begin(), numbers.end() };
+        int pos = -1;
+        for (int i = numbers.size() - 1; i > 0; i--) {
+            if (dup.end() != dup.find(numbers[i]))
+                pos = i;
+        }
+        return pos;
+    }
+
 	void Find_Minimum_Index_Of_RepeatingElement() {
 		std::vector<int> numbers = { 5,6,3,4,3,6,4 };
 		std::cout << "Result = " << find_minimum_index_of_repeating_element(numbers) << std::endl;
-		std::cout << "Result = " << find_minimum_index_of_repeating_element_2(numbers) << std::endl;
+		std::cout << "Result = " << find_minimum_index_of_repeating_element_GOOD(numbers) << std::endl;
 		std::cout << "Result = " << find_minimum_index_of_repeating_element_3(numbers) << std::endl;
 	}
 
@@ -1548,12 +1581,14 @@ void Strings::TEST_ALL()
 {
 	// Strings::LongestSubstringWithoutRepeatingCharacters();
 	// Strings::LongestConsecutiveCharacters();
+	// Strings::MaxSubstringLength_Of_K_max_Unique_Elements();
+    
 	// Strings::AnalogClockAngles();
 	// Strings::Atoi();
 	// Strings::StrLen();
 
 	// Strings::RotateString();
-	Strings::CheckIfStrings_RotareRotateEquals();
+	// Strings::CheckIfStrings_RotareRotateEquals();
 
 	// Strings::MoveCharsToEnd();
     // Strings::MoveZerosToEnd();

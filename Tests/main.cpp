@@ -1044,37 +1044,39 @@ namespace CallFunctionByName
     }
 }
 
-namespace Algorithmss
+namespace Algorithms
 {
-    size_t longestUniqueSubstr(const std::string& text) {
-        size_t result = 0, indexes[256] {0};
-        for (size_t fastIdx = 0, slow = 0; const char c: text) {
-            slow = std::max(slow, indexes[c] + 1);
-            indexes[c] = fastIdx++;
-            // std::cout << c << "  |  " << indexes[c] << "  |  " << fastIdx << "  |  " << slow << std::endl;
-            result = std::max(result, fastIdx - slow);
+    // Необходимо найти максимальную длину подстроки
+    // такой что бы в ней было не более чем K уникальных элементов
+    size_t findLenWithMax_K_UniqueChars(const std::string& str, const size_t K)
+    {
+        size_t indexes[256] {};
+        size_t substrStart { 0 }, result { 0 };
+
+        for (size_t idx = 0, uniq = 0; idx < str.length(); ++idx)
+        {
+            const char c = str[idx];
+            if (0 == indexes[c]++)
+                ++uniq;
+
+            while (uniq > K) {
+                const char ch = str[substrStart++];
+                if (0 == --indexes[ch])
+                    --uniq;
+            }
+            result = std::max(result, idx - substrStart + 1);
         }
-
-        for (const char c: text) {
-            const size_t charInt = static_cast<size_t>(c);
-            // std::cout << "indexes[" << charInt << "] = " << indexes[charInt] << std::endl;
-            std::cout << "indexes[" << c << "] = " << indexes[charInt] << std::endl;
-        }
-
-
         return result;
     }
 
-    void LongestSubstringWithoutRepeatingCharacters()
+    void MaxSubstringLength_Of_K_max_Unique_Elements()
     {
-        for (const std::string& s: {"abcdeabcd"})
-        {
-            std::cout << longestUniqueSubstr(s) << std::endl;
-
-        }
+        std::cout << findLenWithMax_K_UniqueChars("aba", 2) << std::endl;
+        std::cout << findLenWithMax_K_UniqueChars("ababaaab", 2) << std::endl;
+        std::cout << findLenWithMax_K_UniqueChars("ababaaacb", 2) << std::endl;
+        std::cout << findLenWithMax_K_UniqueChars("ababaaacb", 3) << std::endl;
     }
 }
-
 
 
 int main([[maybe_unused]] int argc,
@@ -1085,7 +1087,7 @@ int main([[maybe_unused]] int argc,
     // OperatorCall_ExplicitTypeSpecialization::Test();
     // CallFunctionByName::Test();
 
-    Algorithmss::LongestSubstringWithoutRepeatingCharacters();
+    Algorithms::Test();
 
 
     // ReturnTypeCast::tests();
