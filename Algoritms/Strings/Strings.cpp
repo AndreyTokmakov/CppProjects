@@ -813,7 +813,7 @@ namespace Strings {
 
 	//--------------------------------------------------------------------------------------//
 
-	void __printDistinctSubStrs__(const std::string& str) {
+	void __printDistinctSubStrs__len2(const std::string& str) {
 		std::unordered_map<std::string, unsigned int> pairs;
 		for (size_t i = 0; i < str.size() - 1; i++)
 			pairs[str.substr(i, 2)]++;
@@ -823,11 +823,27 @@ namespace Strings {
 			std::cout << it.first << "-" << it.second << std::endl;
 	}
 
-	void Print_Distinct_SubStrings()
+	void Print_Distinct_SubStrings_Len2()
 	{
 		std::string str = "abcacdcacabacaassddssklac";
-		__printDistinctSubStrs__(str);
-	}
+        __printDistinctSubStrs__len2(str);
+    }
+
+    //--------------------------------------------------------------------------------------//
+
+    void __printDistinctSubStrs__(const std::string& str)
+    {
+        for (size_t size = str.size(), i = 0; i < size; ++i) {
+            for (size_t n = i + 1; n < size; ++n)
+                std::cout << std::string_view(str.data() + i, n - i) << std::endl;
+        }
+    }
+
+    void Print_Distinct_SubStrings()
+    {
+        std::string str = "abcde";
+        __printDistinctSubStrs__(str);
+    }
 
 	//--------------------------------------------------------------------------------------//
 
@@ -1596,7 +1612,8 @@ void Strings::TEST_ALL()
 	// Strings::RemoveDuplicates();
     // Strings::RemoveCharsOfOneString_FromAnother();
 
-	// Strings::Print_Distinct_SubStrings();
+	// Strings::Print_Distinct_SubStrings_Len2();
+	Strings::Print_Distinct_SubStrings();
 	// Strings::Print_1_0_Instead_Wildcards();
 	// Strings::Print_1_0_Instead_Wildcards_2();
 
