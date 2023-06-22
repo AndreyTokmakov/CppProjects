@@ -1044,39 +1044,6 @@ namespace CallFunctionByName
     }
 }
 
-namespace Algorithms
-{
-    // Необходимо найти максимальную длину подстроки
-    // такой что бы в ней было не более чем K уникальных элементов
-    size_t findLenWithMax_K_UniqueChars(const std::string& str, const size_t K)
-    {
-        size_t indexes[256] {};
-        size_t substrStart { 0 }, result { 0 };
-
-        for (size_t idx = 0, uniq = 0; idx < str.length(); ++idx)
-        {
-            const char c = str[idx];
-            if (0 == indexes[c]++)
-                ++uniq;
-
-            while (uniq > K) {
-                const char ch = str[substrStart++];
-                if (0 == --indexes[ch])
-                    --uniq;
-            }
-            result = std::max(result, idx - substrStart + 1);
-        }
-        return result;
-    }
-
-    void MaxSubstringLength_Of_K_max_Unique_Elements()
-    {
-        std::cout << findLenWithMax_K_UniqueChars("aba", 2) << std::endl;
-        std::cout << findLenWithMax_K_UniqueChars("ababaaab", 2) << std::endl;
-        std::cout << findLenWithMax_K_UniqueChars("ababaaacb", 2) << std::endl;
-        std::cout << findLenWithMax_K_UniqueChars("ababaaacb", 3) << std::endl;
-    }
-}
 
 
 int main([[maybe_unused]] int argc,
@@ -1084,11 +1051,11 @@ int main([[maybe_unused]] int argc,
 {
     const std::vector<std::string_view> args(argv + 1, argv + argc);
 
+
+
+
     // OperatorCall_ExplicitTypeSpecialization::Test();
     // CallFunctionByName::Test();
-
-    Algorithms::Test();
-
 
     // ReturnTypeCast::tests();
 

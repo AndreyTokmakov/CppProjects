@@ -1582,7 +1582,7 @@ void Strings::TEST_ALL()
 	// Strings::LongestSubstringWithoutRepeatingCharacters();
 	// Strings::LongestConsecutiveCharacters();
 	// Strings::MaxSubstringLength_Of_K_max_Unique_Elements();
-    
+
 	// Strings::AnalogClockAngles();
 	// Strings::Atoi();
 	// Strings::StrLen();
