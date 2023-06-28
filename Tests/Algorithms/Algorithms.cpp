@@ -16,6 +16,7 @@ Description : Algorithms
 #include <unordered_map>
 #include <array>
 #include <numeric>
+#include <cassert>
 
 namespace Algorithms
 {
@@ -333,9 +334,157 @@ namespace Algorithms
 
         std::cout << longestUniqueSubstr_TEST(text) << std::endl;
     }
-
 }
 
+namespace Algorithms::BoundedSubArrays {
+    // Given an array of integers and two boundary values, A and B, return the number of (contiguous) subarrays
+    // for which the value A is the minimum and value B is the maximum of the subarray.
+
+    /* Solution:
+    If we only have values from the range [A, B], we can calculate
+    the number of subarrays ending in each index.
+
+    For example A==2,B==4: {3,3,2,4} the number of instances is three,
+    which is std::min(a_idx,b_idx)+1: {3,3,2,4},{3,2,4},{2,4}.
+
+    If we add another A, we can the also omit the previous instace of A:
+    {3,3,2,4,2}, the previous three instances + four new instances:
+    {3,3,2,4,2},{3,2,4,2},{2,4,2},{4,2}, again std::min(a_idx,b_idx)+1.
+
+    The only complication are values outside of the range [A,B].
+
+    However, these values simply create a boundary, meaning that instead
+    of calculating the number of subarrays against the start of the array
+    we are now calculating the number against the last boundary.
+    */
+
+    int64_t boundedSubArrays(const std::vector<int64_t> &nums,
+                             const int64_t min, const int64_t max) {
+        int64_t count = 0, rightmostMin = -1, rightmostMax = -1, rightmostBlocker = -1;
+
+        for (int64_t i = 0; i < std::ssize(nums); ++i) {
+            // If we observe a value outside of the range, move the left boundary.
+            if (nums[i] < min || nums[i] > max) {
+                rightmostBlocker = i;
+                continue; // optional
+            }
+
+            // It is possible that min == max
+            if (nums[i] == min)
+                rightmostMin = i;
+            if (nums[i] == max)
+                rightmostMax = i;
+
+            // Implicit + 1 because we are deducting an index.
+            int64_t subarrays = std::min(rightmostMin, rightmostMax)
+                                - rightmostBlocker;
+            // Instead of resetting the rightmostMin and rightmostMax when we see a boundary we simply rely
+            // on the fact that subarrays will end up negative if min < rightmostBlocker.
+            count += std::max(int64_t{0}, subarrays);
+        }
+        return count;
+    }
+
+    size_t boundedSubArraysEx(const std::vector<int64_t> &values,
+                              const int64_t min, const int64_t max) {
+
+        size_t count { 0 }, len {0};
+        bool hasMix = false, hasMax = false;
+        for (const auto& value: values)
+        {
+            if (max >= value && value >= min)
+            {
+                ++len;
+                if (min == value) hasMix = true;
+                if (max == value) hasMax = true;
+                if (hasMix && hasMax)
+                    count += len - 1;
+
+
+                std::cout << value  << " | " << std::boolalpha << (bool)(hasMix && hasMax)
+                          << " | " << len << " | " << count << std::endl;
+
+            } else {
+                len = 0;
+                hasMix = hasMax = false;
+            }
+        }
+        return count;
+    }
+
+    // UNFINISHED
+    size_t boundedSubArrays2(const std::vector<int64_t> &values,
+                             const int64_t min, const int64_t max) {
+
+        size_t count { 0 }, minCount { 0 }, maxCount { 0 }, start = 0;
+        for (size_t idx = 0; idx < values.size(); ++idx)
+        {
+            if (const auto value = values[idx]; max >= value && value >= min)
+            {
+                if (min == value)
+                    ++minCount;
+                if (max == value)
+                    ++maxCount;
+            }
+            else {
+                if (minCount && maxCount)
+                {
+                    size_t left = start, right = idx;
+                    while (minCount && maxCount)
+                    {
+                        if (min == values[left++]) {
+                            ++count;
+                            //++left;
+                            --minCount;
+                        }
+                        if (max == values[right]) {
+                            ++count;
+                            --right;
+                            --maxCount;
+                        }
+                    }
+                }
+
+                maxCount = minCount = 0;
+                start = idx + 1;
+            }
+        }
+
+        if (minCount && maxCount)
+        {
+            for (size_t i = start; i < values.size(); ++i)
+                std::cout << values[i] << " ";
+            std::cout << std::endl;
+        }
+
+        return count;
+    }
+
+
+    void Tests()
+    {
+        const std::vector<std::pair<std::vector<int64_t>, std::pair<int64_t,int64_t>>> testDatasource
+        {
+            // {{2,3,3,2,4}, {2, 4}},  // --> 4
+            //{{3,3,2,4,4}, {2, 4}},  // --> 7
+            // {{3,3,2,4,2,3}, {2, 4}},  // --> 7
+            {{3,2,4, 1,  2,3,4}, {2, 4}},
+        };
+
+        for (const auto& testData: testDatasource) {
+            std::cout
+                    // << boundedSubArrays(testData.first,testData.second.first, testData.second.second)
+                    // << " - "
+                    // << boundedSubArraysEx(testData.first,testData.second.first, testData.second.second)
+                    << boundedSubArrays2(testData.first,testData.second.first, testData.second.second)
+                    << std::endl;
+        }
+
+
+
+
+    }
+}
 
 void Algorithms::TestAll()
 {
@@ -353,6 +502,8 @@ void Algorithms::TestAll()
     // CalcParentheses_3_BRacket();
 
 
-    LongestSubstringWithoutRepeatingCharacters();
+    // LongestSubstringWithoutRepeatingCharacters();
+
+    BoundedSubArrays::Tests();
 };
 

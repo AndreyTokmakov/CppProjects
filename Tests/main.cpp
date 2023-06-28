@@ -1045,6 +1045,103 @@ namespace CallFunctionByName
 }
 
 
+namespace TablePrintFormatter
+{
+
+    // TODO:
+    //  1. AddHeader()
+    //     - Should have priority over columns number (if greater)
+    //     - Should support [name, length]
+    //  2. Support word-wrap inside one cell
+    //  3. Support colors
+    struct TablePrintFormatter
+    {
+        using ParamType = std::string;
+        using Line = std::vector<ParamType>;
+        using ColumntInfo = std::pair<std::string, size_t>;
+        using Table = std::vector<Line>;
+
+        std::vector<ColumntInfo> headers {};
+
+        // TODO: replace with 'headers' ???
+        std::vector<size_t> columnWidths {};
+        Table table;
+        size_t tableWidth {0};
+
+        void addLine(const Line& line)
+        {
+            // TODO: emplace ??? use return value
+            table.push_back(line);
+
+            columnWidths.resize(std::max(columnWidths.size(), line.size()));
+            for (size_t idx = 0; idx < line.size(); ++idx)
+            {
+                const auto& value { line[idx] };
+                columnWidths[idx] = std::max(columnWidths[idx], value.length());
+            }
+        }
+
+        // TODO: Place to center
+        void printRow(const Line& line) const
+        {
+            std::cout << "| ";
+            for (size_t colID = 0; colID < columnWidths.size(); ++colID)
+            {
+                std::cout.width(columnWidths[colID]);
+                const std::string value = line.size() > colID ? line[colID] : std::string{};
+                std::cout << value;
+                std::cout << " | ";
+            }
+            std::cout << "\n";
+        }
+
+        void printSeparatorLine() const noexcept
+        {
+            std::cout.width(tableWidth);
+            std::cout.fill('-');
+            std::cout << '-' << '\n';
+            std::cout.fill(' ');
+        };
+
+        // TODO: Remove function
+        void _printWidths() const noexcept
+        {
+            for (const auto w: columnWidths)
+                std::cout << w << " ";
+            std::cout << std::endl;
+            std::cout << "tableWidth = " << tableWidth << std::endl;
+        }
+
+        void print()
+        {
+            tableWidth = 1;
+            for (const size_t columnWidth: columnWidths)
+                tableWidth += columnWidth + 3;
+
+            printSeparatorLine();
+            std::for_each(table.cbegin(), table.cend(), [this](const Line& line) {
+                printRow(line);
+            });
+            printSeparatorLine();
+        }
+    };
+
+
+    void print()
+    {
+
+        TablePrintFormatter tbl;
+        tbl.addLine({"Jonh", "Dow", "Male", "31", "1", "2"});
+        tbl.addLine({"Jonheee", "Dow", "Male", "31"});
+        tbl.addLine({"Jon", "Dowrr", "Male"});
+        tbl.addLine({"Jon", "Dowrr", "Male", "2323232", "One", "Two"});
+
+
+        tbl.print();
+    }
+}
+
+
 
 int main([[maybe_unused]] int argc,
          [[maybe_unused]] char** argv)
@@ -1052,6 +1149,7 @@ int main([[maybe_unused]] int argc,
     const std::vector<std::string_view> args(argv + 1, argv + argc);
 
 
+    TablePrintFormatter::print();
 
 
     // OperatorCall_ExplicitTypeSpecialization::Test();

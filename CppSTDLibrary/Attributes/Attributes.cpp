@@ -65,7 +65,8 @@ namespace Attributes::Fallthrough {
 };
 
 
-namespace Attributes::Nodiscard {
+namespace Attributes::Nodiscard
+{
 
     [[nodiscard]]
     unsigned short GetResultCode() {
@@ -108,7 +109,7 @@ namespace Attributes::Nodiscard {
         return Base();
     }
 
-    void NoDiscardTest2(void) {
+    void NoDiscardTest2() {
         /*
         auto mem = allocate_memory();
         std::cout << mem << std::endl;
@@ -117,29 +118,53 @@ namespace Attributes::Nodiscard {
         allocate_memory();
     }
 
-    void NoDiscard_Class(void) {
+    struct [[nodiscard("Please check error code")]] Error {
+    };
+
+    Error function() {
+        return {};
+    }
+
+
+    void NoDiscard_Class() {
         getBaseObject();
     }
 
-    void NoDiscard_Class2(void) {
+    void NoDiscard_Class2() {
         Base();
     }
 
-
+    void NoDiscard_Class_IgnoreError() {
+        function(); // // Warning, ignoring return value marked with nodiscard
+    }
 
 
     auto getObject() {
         return Object();
     }
 
-    void NoDiscard_Constructor(void) {
+    void acquire_resource() {}
+    void release_resource() {}
+
+    struct ResourceHandle
+    {
+        [[nodiscard("Memory leak")]]
+        ResourceHandle() { acquire_resource(); };
+        ~ResourceHandle() { release_resource(); }
+    };
+
+    void NoDiscard_Constructor() {
         Object();
     }
 
-    void NoDiscard_Constructor2(void) {
+    void NoDiscard_Constructor2() {
         getObject();
     }
 
+    void NoDiscard_Constructor3() {
+                          // Warning, ignoring constructor declared with nodiscard
+        ResourceHandle{}; // resource acquired and immediately released
+    }
 
     void MyBeUnused() {
         // We should get the 'Unused variable' WARNING here
@@ -173,8 +198,7 @@ namespace Attributes::Nodiscard {
 
 namespace Attributes::MyBeUnused {
 
-    void foo(int val,
-             [[maybe_unused]] std::string msg)
+    void foo(int val, [[maybe_unused]] std::string msg)
     {
 #ifdef DEBUG
         log(msg);
@@ -349,15 +373,17 @@ void Attributes::TestAll()
 
     // Nodiscard::NoDiscard_Class();
     // Nodiscard::NoDiscard_Class2();
+    Nodiscard::NoDiscard_Class_IgnoreError();
 
     // Nodiscard::NoDiscard_Constructor();
     // Nodiscard::NoDiscard_Constructor2();
+    // Nodiscard::NoDiscard_Constructor3();
 
     // Nodiscard::Test_Discard_Enum_Return_Value();
 
     // Deprecated::Namespace();
     // Deprecated::Enum();
 
-    NoUniqueAddress::Test();
-    NoUniqueAddress::Test2();
+    // NoUniqueAddress::Test();
+    // NoUniqueAddress::Test2();
 };

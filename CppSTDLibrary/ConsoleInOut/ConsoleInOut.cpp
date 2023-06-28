@@ -138,8 +138,12 @@ namespace ConsoleInOut
 	}
 
 	void OutputFormat() {
-		std::cout << std::setw(5) << 0.2 << std::setw(10) << 123456 << std::endl;
-		std::cout << std::setw(5) << 0.12 << std::setw(10) << 123456789 << std::endl;
+		std::cout << std::setw(5) << 0.2 << std::setw(15) << 123456 << std::endl;
+		std::cout << std::setw(6) << 0.2 << std::setw(14) << 123456 << std::endl;
+		std::cout << std::setw(7) << 0.2 << std::setw(13) << 123456 << std::endl;
+
+
+		std::cout << std::setw(5) << 0.12 << std::setw(15) << 123456789 << std::endl;
 	}
 
 	void OutputFormat2()
@@ -164,6 +168,83 @@ namespace ConsoleInOut
 			//<< std::setw(12) << std::put_money(123, true) << '\n';
 			*/
 	}
+
+    void FormatTable()
+    {
+        using namespace std::string_view_literals;
+
+        auto str_time = [](int year, int mon, int day)
+        {
+            constexpr std::array<const std::string_view , 7> week_day {{
+                "Sunday"sv, "Monday"sv, "Tuesday"sv, "Wednesday"sv, "Thursday"sv, "Friday"sv, "Saturday"sv
+            }};
+
+            std::tm tm {.tm_mday = day, .tm_mon = mon - 1, .tm_year = year - 1900};
+
+            day += mon < 3 ? year-- : year - 2;
+            tm.tm_wday = (23 * mon / 9 + day + 4 + year / 4 - year / 100 + year / 400) % 7;
+
+            std::ostringstream out;
+            out << week_day[tm.tm_wday] << ", " << std::put_time(&tm, "%B %d, %Y");
+            return out.str();
+        };
+
+        constexpr int column_size = 4;
+        using table_t = std::array<std::string, column_size>;
+
+        table_t headers { { "Name", "Birthdate", "Death date", "Language Created" } };
+
+        std::array<table_t, 5> data{ {
+            { { "Dennis Ritchie", str_time(1941, 9, 9), str_time(2011, 10, 12), "C" } },
+            { { "Bjarne Stroustrup", str_time(1950, 12, 30), "", "C++" } },
+            { { "Anders Hejlsberg", str_time(1960, 12, 2), "", "C#" } },
+            { { "Guido van Rossum", str_time(1956, 1, 31), "", "Python" } },
+            { { "Brendan Eich", str_time(1961, 7, 4), "", "Javascript" } }
+        } };
+
+        constexpr int name_wid  = 20;
+        constexpr int birth_wid = 30;
+        constexpr int death_wid = 30;
+        constexpr int lang_wid  = 18;
+
+        auto print_line = [](table_t const &tbl)
+        {
+
+            auto const &[Name, Birthdate, DeathDate, LanguageCreated] = tbl;
+
+            std::cout.width(name_wid);
+            std::cout << ("| " + Name) << '|';
+
+            std::cout.width(birth_wid);
+            std::cout << (' ' + Birthdate) << '|';
+
+            std::cout.width(death_wid);
+            std::cout << (' ' + DeathDate) << '|';
+
+            std::cout.width(lang_wid);
+            std::cout << (' ' + LanguageCreated) << '|';
+
+            std::cout << '\n';
+        };
+
+        constexpr int total_wid = name_wid + birth_wid + death_wid + lang_wid + column_size;
+
+        auto print_break = []
+        {
+            std::cout.width(total_wid);
+            std::cout.fill('-');
+            std::cout << '-' << '\n';
+            std::cout.fill(' ');
+        };
+
+        std::cout.setf(std::ios::left, std::ios::adjustfield);
+        print_break();
+        print_line(headers);
+        print_break();
+        for (auto const &entry : data)
+            print_line(entry);
+        print_break();
+    }
 
 	void Fill() {
 
@@ -359,6 +440,34 @@ namespace ConsoleInOut::Experiments
     }
 }
 
+namespace ConsoleInOut::Table
+{
+    constexpr size_t widthTotal = 128;
+
+
+    void print_break()
+    {
+        std::cout.width(widthTotal);
+        std::cout.fill('-');
+        std::cout << '-' << '\n';
+        std::cout.fill(' ');
+    };
+
+    void print()
+    {
+        /*
+        int width = 12;
+        std::string value = "John Dow";
+
+        std::cout.width(width);
+        std::cout << ("| " + value) << '|';
+        */
+
+        print_break();
+
+    }
+}
+
 
 /** TEST **/
 void ConsoleInOut::TestAll()
@@ -381,6 +490,7 @@ void ConsoleInOut::TestAll()
 
 	// OutputFormat();
 	// OutputFormat2();
+    // FormatTable();
 
 	// Showpos();
 
@@ -397,6 +507,8 @@ void ConsoleInOut::TestAll()
 
     // TEST();
 
-    Experiments::ReadInputTestData();
+    // Experiments::ReadInputTestData();
+
+    Table::print();
 };
 

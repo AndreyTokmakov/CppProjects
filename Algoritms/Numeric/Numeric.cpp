@@ -92,10 +92,12 @@ namespace Numeric {
         return num && !(num & (num - 1));
     }
 
-    void isPowerOf2() {
-        std::cout << std::boolalpha << __isPowerOf2(8) << std::endl;
-        std::cout << std::boolalpha << __isPowerOf2(64) << std::endl;
-        std::cout << std::boolalpha << __isPowerOf2(61) << std::endl;
+    void isPowerOf2()
+    {
+        for (const int32_t value: {8, 64, 61})
+        {
+            std::cout << value << " -> " << std::boolalpha << __isPowerOf2(value) << std::endl;
+        }
     }
 
     //------------------------------------------------------
@@ -2825,7 +2827,7 @@ namespace Numeric::Intervals {
 
 void Numeric::TEST_ALL()
 {
-    // Numeric::isPowerOf2();
+    Numeric::isPowerOf2();
     // Numeric::GreatestCommonDivisor();
     // Numeric::LeastCommonMultiple();
     // Numeric::LongestCommonSubsequence();
@@ -2897,7 +2899,7 @@ void Numeric::TEST_ALL()
     // Numeric::Find_Repeating_And_Missing();
     // Numeric::Find_All_Symmetric_Pairs_InArray();
 
-     Numeric::Find_Elements_Occured_Once();
+    // Numeric::Find_Elements_Occured_Once();
     // Numeric::Find_ONE_Element_Occured_Once();
     // Numeric::Find_First_Element_Occured_Once();
     // Numeric::CountDistinctPairs_WithDifference_K();

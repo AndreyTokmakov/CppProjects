@@ -31,9 +31,9 @@ int main([[maybe_unused]] int argc,
 	// Queues::TEST_ALL();
 	// Stack::TEST_ALL();
 	// Sorting::TEST_ALL();
-	Strings::TEST_ALL();
+	// Strings::TEST_ALL();
 	// Interviews::TEST_ALL();
-    // Numeric::TEST_ALL();
+    Numeric::TEST_ALL();
 
 	return EXIT_SUCCESS;
 }

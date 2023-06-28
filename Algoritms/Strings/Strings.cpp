@@ -217,10 +217,8 @@ namespace Strings {
 
 	void _rearrange_string(std::string& text) {
 		uint32_t chars[256] { 0 };
-		for (char c : text) {
-			// if (c >= 'A' && 'z' >= c) { .... }
+		for (char c : text)
             chars[(int8_t)(c)]++;
-		}
 
 		for (size_t i = 0, pos = 0; i < 256; ++i) {
 			while (chars[i]--) {
@@ -1613,7 +1611,7 @@ void Strings::TEST_ALL()
     // Strings::RemoveCharsOfOneString_FromAnother();
 
 	// Strings::Print_Distinct_SubStrings_Len2();
-	Strings::Print_Distinct_SubStrings();
+	// Strings::Print_Distinct_SubStrings();
 	// Strings::Print_1_0_Instead_Wildcards();
 	// Strings::Print_1_0_Instead_Wildcards_2();
 
@@ -1621,7 +1619,7 @@ void Strings::TEST_ALL()
 	// Strings::RearrangeString_WithNumbers();
 	// Strings::RearrangeString_NoAdjacent();
 
-	// Strings::Find_K_MostFrequentCharacter();
+	Strings::Find_K_MostFrequentCharacter();
 	// Strings::Find_K_MostFrequentCharacter_2();
 
 	// Strings::Find_First_Char_Occured_Once();
