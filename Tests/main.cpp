@@ -1048,6 +1048,18 @@ namespace CallFunctionByName
 namespace TablePrintFormatter
 {
 
+    struct ColumnInfo
+    {
+        std::string name {};
+        size_t width {0};
+
+        ColumnInfo() = default;
+
+        ColumnInfo(std::string n, size_t w = 0): name { std::move(n) }, width {w}
+        {
+        }
+    };
+
     // TODO:
     //  1. AddHeader()
     //     - Should have priority over columns number (if greater)
@@ -1058,26 +1070,23 @@ namespace TablePrintFormatter
     {
         using ParamType = std::string;
         using Line = std::vector<ParamType>;
-        using ColumntInfo = std::pair<std::string, size_t>;
         using Table = std::vector<Line>;
 
-        std::vector<ColumntInfo> headers {};
-
-        // TODO: replace with 'headers' ???
-        std::vector<size_t> columnWidths {};
-        Table table;
+        // std::vector<ColumnInfo> headers {};
+        std::vector<ColumnInfo> columns {};
+        Table tableData;
         size_t tableWidth {0};
 
         void addLine(const Line& line)
         {
             // TODO: emplace ??? use return value
-            table.push_back(line);
+            tableData.push_back(line);
 
-            columnWidths.resize(std::max(columnWidths.size(), line.size()));
+            columns.resize(std::max(columns.size(), line.size()));
             for (size_t idx = 0; idx < line.size(); ++idx)
             {
                 const auto& value { line[idx] };
-                columnWidths[idx] = std::max(columnWidths[idx], value.length());
+                columns[idx].width = std::max(columns[idx].width, value.length());
             }
         }
 
@@ -1085,9 +1094,9 @@ namespace TablePrintFormatter
         void printRow(const Line& line) const
         {
             std::cout << "| ";
-            for (size_t colID = 0; colID < columnWidths.size(); ++colID)
+            for (size_t colID = 0; colID < columns.size(); ++colID)
             {
-                std::cout.width(columnWidths[colID]);
+                std::cout.width(columns[colID].width);
                 const std::string value = line.size() > colID ? line[colID] : std::string{};
                 std::cout << value;
                 std::cout << " | ";
@@ -1106,8 +1115,8 @@ namespace TablePrintFormatter
         // TODO: Remove function
         void _printWidths() const noexcept
         {
-            for (const auto w: columnWidths)
-                std::cout << w << " ";
+            for (const ColumnInfo& column: columns)
+                std::cout << column.width << " ";
             std::cout << std::endl;
             std::cout << "tableWidth = " << tableWidth << std::endl;
         }
@@ -1115,11 +1124,11 @@ namespace TablePrintFormatter
         void print()
         {
             tableWidth = 1;
-            for (const size_t columnWidth: columnWidths)
-                tableWidth += columnWidth + 3;
+            for (const ColumnInfo& column: columns)
+                tableWidth += column.width + 3;
 
             printSeparatorLine();
-            std::for_each(table.cbegin(), table.cend(), [this](const Line& line) {
+            std::for_each(tableData.cbegin(), tableData.cend(), [this](const Line& line) {
                 printRow(line);
             });
             printSeparatorLine();
@@ -1136,8 +1145,9 @@ namespace TablePrintFormatter
         tbl.addLine({"Jon", "Dowrr", "Male"});
         tbl.addLine({"Jon", "Dowrr", "Male", "2323232", "One", "Two"});
 
-
+        std::cout << std::endl;
         tbl.print();
+        std::cout << std::endl;
     }
 }
 
