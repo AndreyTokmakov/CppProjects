@@ -1055,8 +1055,8 @@ namespace TablePrintFormatter
 
         ColumnInfo() = default;
 
-        ColumnInfo(std::string n, size_t w = 0): name { std::move(n) }, width {w}
-        {
+        ColumnInfo(std::string n, size_t w = 0):
+                name { std::move(n) }, width {w} {
         }
     };
 
@@ -1072,10 +1072,24 @@ namespace TablePrintFormatter
         using Line = std::vector<ParamType>;
         using Table = std::vector<Line>;
 
-        // std::vector<ColumnInfo> headers {};
+        std::vector<ColumnInfo> headers {};
         std::vector<ColumnInfo> columns {};
         Table tableData;
-        size_t tableWidth {0};
+
+        void setHeader(const Line& header)
+        {
+            headers.reserve(header.size());
+            for (const ParamType& param: header)
+                headers.emplace_back(param);
+        }
+
+        void setHeader(const std::vector<ColumnInfo>& header) {
+            headers = header;
+        }
+
+        void setHeader(std::vector<ColumnInfo>&& header) {
+            headers = std::move(header);
+        }
 
         void addLine(const Line& line)
         {
@@ -1091,10 +1105,12 @@ namespace TablePrintFormatter
         }
 
         // TODO: Place to center
-        void printRow(const Line& line) const
+        void printRow(const Line& line,
+                      const size_t colCount) const
+
         {
             std::cout << "| ";
-            for (size_t colID = 0; colID < columns.size(); ++colID)
+            for (size_t colID = 0; colID < colCount; ++colID)
             {
                 std::cout.width(columns[colID].width);
                 const std::string value = line.size() > colID ? line[colID] : std::string{};
@@ -1104,54 +1120,101 @@ namespace TablePrintFormatter
             std::cout << "\n";
         }
 
-        void printSeparatorLine() const noexcept
+        void printSeparatorLine(const size_t length) const noexcept
         {
-            std::cout.width(tableWidth);
+            std::cout.width(length);
             std::cout.fill('-');
             std::cout << '-' << '\n';
             std::cout.fill(' ');
         };
 
         // TODO: Remove function
-        void _printWidths() const noexcept
+        void debugPrint() const noexcept
         {
+            const size_t columnCount = headers.empty() ? tableData.size() : headers.size();
+            std::cout << "columnCount: " << columnCount << std::endl;
+
+            /*
             for (const ColumnInfo& column: columns)
                 std::cout << column.width << " ";
             std::cout << std::endl;
-            std::cout << "tableWidth = " << tableWidth << std::endl;
+            */
+
+            std::cout << std::endl;
         }
 
         void print()
         {
-            tableWidth = 1;
+            const size_t columnToPrint = headers.empty() ? columns.size() : headers.size();
+
+            // TODO: Refactor
+            //  1. Calc 'columnToPrint' inside {} block ??
+            if (!headers.empty())
+            {
+                if (headers.size() > columns.size())
+                    columns.resize(headers.size());
+                for (size_t idx = 0; idx < headers.size(); ++idx)
+                    if (0 != headers[idx].width)
+                        columns[idx].width = 0 != headers[idx].width;
+            }
+
+            size_t tableWidth {1};
             for (const ColumnInfo& column: columns)
                 tableWidth += column.width + 3;
 
-            printSeparatorLine();
-            std::for_each(tableData.cbegin(), tableData.cend(), [this](const Line& line) {
-                printRow(line);
-            });
-            printSeparatorLine();
+            // FIXME:
+            printSeparatorLine(tableWidth);
+            for (const auto& row: tableData)
+            {
+                printRow(row, columnToPrint);
+            }
+            printSeparatorLine(tableWidth);
         }
-    };
 
+    };
 
     void print()
     {
 
         TablePrintFormatter tbl;
+
         tbl.addLine({"Jonh", "Dow", "Male", "31", "1", "2"});
         tbl.addLine({"Jonheee", "Dow", "Male", "31"});
         tbl.addLine({"Jon", "Dowrr", "Male"});
         tbl.addLine({"Jon", "Dowrr", "Male", "2323232", "One", "Two"});
 
+        tbl.setHeader(TablePrintFormatter::Line{"First name", "Second name"});
+        // tbl.setHeader(std::vector<ColumnInfo>{{"First name", 20}, {"Second name", 20}});
+
+        // return tbl.debugPrint();
+
         std::cout << std::endl;
         tbl.print();
         std::cout << std::endl;
     }
+
+    void experiments()
+    {
+        constexpr size_t maxLen { 8 };
+        std::string text { "1111111122222222333333334" };
+
+        std::vector<std::string> parts;
+        size_t start = 0;
+        while (true)
+        {
+            if ((start + maxLen) < text.size())
+                parts.emplace_back(text, start, maxLen);
+            else {
+                parts.emplace_back(text, start, text.size() - start);
+                break;
+            }
+            start += maxLen;
+        }
+
+        for (const std::string& str: parts)
+            std::cout << str << std::endl;
+    }
 }
-
-
 
 int main([[maybe_unused]] int argc,
          [[maybe_unused]] char** argv)
@@ -1160,6 +1223,7 @@ int main([[maybe_unused]] int argc,
 
 
     TablePrintFormatter::print();
+    // TablePrintFormatter::experiments();
 
 
     // OperatorCall_ExplicitTypeSpecialization::Test();
