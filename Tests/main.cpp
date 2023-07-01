@@ -1146,21 +1146,17 @@ namespace TablePrintFormatter
         void print()
         {
             const size_t columnToPrint = headers.empty() ? columns.size() : headers.size();
-
-            // TODO: Refactor
-            //  1. Calc 'columnToPrint' inside {} block ??
+            size_t tableWidth {1};
             if (!headers.empty())
             {
                 if (headers.size() > columns.size())
                     columns.resize(headers.size());
                 for (size_t idx = 0; idx < headers.size(); ++idx)
-                    if (0 != headers[idx].width)
-                        columns[idx].width = 0 != headers[idx].width;
+                {
+                    columns[idx].width = headers[idx].width ? headers[idx].width : headers[idx].name.size();
+                    tableWidth += columns[idx].width + 3;
+                }
             }
-
-            size_t tableWidth {1};
-            for (const ColumnInfo& column: columns)
-                tableWidth += column.width + 3;
 
             // FIXME:
             printSeparatorLine(tableWidth);
@@ -1183,8 +1179,8 @@ namespace TablePrintFormatter
         tbl.addLine({"Jon", "Dowrr", "Male"});
         tbl.addLine({"Jon", "Dowrr", "Male", "2323232", "One", "Two"});
 
-        tbl.setHeader(TablePrintFormatter::Line{"First name", "Second name"});
-        // tbl.setHeader(std::vector<ColumnInfo>{{"First name", 20}, {"Second name", 20}});
+        // tbl.setHeader(TablePrintFormatter::Line{"First name", "Second name"});
+        tbl.setHeader(std::vector<ColumnInfo>{{"First name", 20}, {"Second name", 20}});
 
         // return tbl.debugPrint();
 
