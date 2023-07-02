@@ -1114,8 +1114,7 @@ namespace TablePrintFormatter
             {
                 std::cout.width(columns[colID].width);
                 const std::string value = line.size() > colID ? line[colID] : std::string{};
-                std::cout << value;
-                std::cout << " | ";
+                std::cout << value << " | ";
             }
             std::cout << "\n";
         }
@@ -1146,7 +1145,7 @@ namespace TablePrintFormatter
         void print()
         {
             const size_t columnToPrint = headers.empty() ? columns.size() : headers.size();
-            size_t tableWidth {1};
+            size_t tableWidth { 1 };
             if (!headers.empty())
             {
                 if (headers.size() > columns.size())
@@ -1156,6 +1155,17 @@ namespace TablePrintFormatter
                     columns[idx].width = headers[idx].width ? headers[idx].width : headers[idx].name.size();
                     tableWidth += columns[idx].width + 3;
                 }
+
+                printSeparatorLine(tableWidth);
+
+                // TODO: Refactor ???
+                std::cout << "| ";
+                for (size_t colID = 0; const ColumnInfo& hdr: headers)
+                {
+                    std::cout.width(columns[colID++].width);
+                    std::cout << hdr.name << " | ";
+                }
+                std::cout << "\n";
             }
 
             // FIXME:
@@ -1166,27 +1176,24 @@ namespace TablePrintFormatter
             }
             printSeparatorLine(tableWidth);
         }
-
     };
 
     void print()
     {
-
         TablePrintFormatter tbl;
 
         tbl.addLine({"Jonh", "Dow", "Male", "31", "1", "2"});
         tbl.addLine({"Jonheee", "Dow", "Male", "31"});
-        tbl.addLine({"Jon", "Dowrr", "Male"});
-        tbl.addLine({"Jon", "Dowrr", "Male", "2323232", "One", "Two"});
+        tbl.addLine({"Jon", "Dowr1", "Male"});
+        tbl.addLine({"Jon", "Dowr2", "Male", "2323232", "One", "Two"});
 
-        // tbl.setHeader(TablePrintFormatter::Line{"First name", "Second name"});
-        tbl.setHeader(std::vector<ColumnInfo>{{"First name", 20}, {"Second name", 20}});
+        tbl.setHeader(TablePrintFormatter::Line{"First name", "Second name"});
+        // tbl.setHeader(std::vector<ColumnInfo>{{"First name", 20}, {"Second name", 20}});
 
         // return tbl.debugPrint();
 
         std::cout << std::endl;
         tbl.print();
-        std::cout << std::endl;
     }
 
     void experiments()
