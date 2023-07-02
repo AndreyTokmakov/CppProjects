@@ -54,7 +54,7 @@ int main([[maybe_unused]] int argc,
 	// TEST(Deque);
 	// TEST(Stack);
 	// TEST(Heap);
-	// TEST(Vector);
+	TEST(Vector);
 	// TEST(Valarray);
 	// TEST(Map);
 	// TEST(MultiMap);

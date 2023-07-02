@@ -914,8 +914,9 @@ namespace Vector::Allocators {
 	}
 }
 
-void Vector::TEST_ALL() {
-    // Constructors_Tests();
+void Vector::TEST_ALL()
+{
+    Constructors_Tests();
 
 	// Resize_Capacity_Tests();
 	// Resize_Capacity_Tests_2();
@@ -931,7 +932,7 @@ void Vector::TEST_ALL() {
     // Erase_Tests_2();
 	// Erase_Tests_Loop();
 
-    Erase_IF();
+    // Erase_IF();
 
 	// Emplace_Back_SimpleTest();
 	// Emplace_Back_SimpleTest1();

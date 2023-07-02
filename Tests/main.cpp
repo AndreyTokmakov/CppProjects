@@ -71,6 +71,7 @@
 #include "Memory/Memory.h"
 #include "BinaryAnalyzer/BinaryAnalyzer.h"
 #include "ThinkCell/ThinkCell.h"
+#include "TableFormatter/TableFormatter.h"
 
 // C++ 23:
 // #include <expected>
@@ -1030,7 +1031,6 @@ namespace CallFunctionByName
         my_class *mc_ptr;
     };
 
-
     void Test()
     {
         my_class mc;
@@ -1040,193 +1040,17 @@ namespace CallFunctionByName
         mc_functions.call_function("function_b");
         mc_functions.call_function("function_c");
         mc_functions.call_function_ex("function_c");
-
     }
 }
 
 
-namespace TablePrintFormatter
-{
-
-    struct ColumnInfo
-    {
-        std::string name {};
-        size_t width {0};
-
-        ColumnInfo() = default;
-
-        ColumnInfo(std::string n, size_t w = 0):
-                name { std::move(n) }, width {w} {
-        }
-    };
-
-    // TODO:
-    //  1. AddHeader()
-    //     - Should have priority over columns number (if greater)
-    //     - Should support [name, length]
-    //  2. Support word-wrap inside one cell
-    //  3. Support colors
-    struct TablePrintFormatter
-    {
-        using ParamType = std::string;
-        using Line = std::vector<ParamType>;
-        using Table = std::vector<Line>;
-
-        std::vector<ColumnInfo> headers {};
-        std::vector<ColumnInfo> columns {};
-        Table tableData;
-
-        void setHeader(const Line& header)
-        {
-            headers.reserve(header.size());
-            for (const ParamType& param: header)
-                headers.emplace_back(param);
-        }
-
-        void setHeader(const std::vector<ColumnInfo>& header) {
-            headers = header;
-        }
-
-        void setHeader(std::vector<ColumnInfo>&& header) {
-            headers = std::move(header);
-        }
-
-        void addLine(const Line& line)
-        {
-            // TODO: emplace ??? use return value
-            tableData.push_back(line);
-
-            columns.resize(std::max(columns.size(), line.size()));
-            for (size_t idx = 0; idx < line.size(); ++idx)
-            {
-                const auto& value { line[idx] };
-                columns[idx].width = std::max(columns[idx].width, value.length());
-            }
-        }
-
-        // TODO: Place to center
-        void printRow(const Line& line,
-                      const size_t colCount) const
-
-        {
-            std::cout << "| ";
-            for (size_t colID = 0; colID < colCount; ++colID)
-            {
-                std::cout.width(columns[colID].width);
-                const std::string value = line.size() > colID ? line[colID] : std::string{};
-                std::cout << value << " | ";
-            }
-            std::cout << "\n";
-        }
-
-        void printSeparatorLine(const size_t length) const noexcept
-        {
-            std::cout.width(length);
-            std::cout.fill('-');
-            std::cout << '-' << '\n';
-            std::cout.fill(' ');
-        };
-
-        // TODO: Remove function
-        void debugPrint() const noexcept
-        {
-            const size_t columnCount = headers.empty() ? tableData.size() : headers.size();
-            std::cout << "columnCount: " << columnCount << std::endl;
-
-            /*
-            for (const ColumnInfo& column: columns)
-                std::cout << column.width << " ";
-            std::cout << std::endl;
-            */
-
-            std::cout << std::endl;
-        }
-
-        void print()
-        {
-            const size_t columnToPrint = headers.empty() ? columns.size() : headers.size();
-            size_t tableWidth { 1 };
-            if (!headers.empty())
-            {
-                if (headers.size() > columns.size())
-                    columns.resize(headers.size());
-                for (size_t idx = 0; idx < headers.size(); ++idx)
-                {
-                    columns[idx].width = headers[idx].width ? headers[idx].width : headers[idx].name.size();
-                    tableWidth += columns[idx].width + 3;
-                }
-
-                printSeparatorLine(tableWidth);
-
-                // TODO: Refactor ???
-                std::cout << "| ";
-                for (size_t colID = 0; const ColumnInfo& hdr: headers)
-                {
-                    std::cout.width(columns[colID++].width);
-                    std::cout << hdr.name << " | ";
-                }
-                std::cout << "\n";
-            }
-
-            // FIXME:
-            printSeparatorLine(tableWidth);
-            for (const auto& row: tableData)
-            {
-                printRow(row, columnToPrint);
-            }
-            printSeparatorLine(tableWidth);
-        }
-    };
-
-    void print()
-    {
-        TablePrintFormatter tbl;
-
-        tbl.addLine({"Jonh", "Dow", "Male", "31", "1", "2"});
-        tbl.addLine({"Jonheee", "Dow", "Male", "31"});
-        tbl.addLine({"Jon", "Dowr1", "Male"});
-        tbl.addLine({"Jon", "Dowr2", "Male", "2323232", "One", "Two"});
-
-        tbl.setHeader(TablePrintFormatter::Line{"First name", "Second name"});
-        // tbl.setHeader(std::vector<ColumnInfo>{{"First name", 20}, {"Second name", 20}});
-
-        // return tbl.debugPrint();
-
-        std::cout << std::endl;
-        tbl.print();
-    }
-
-    void experiments()
-    {
-        constexpr size_t maxLen { 8 };
-        std::string text { "1111111122222222333333334" };
-
-        std::vector<std::string> parts;
-        size_t start = 0;
-        while (true)
-        {
-            if ((start + maxLen) < text.size())
-                parts.emplace_back(text, start, maxLen);
-            else {
-                parts.emplace_back(text, start, text.size() - start);
-                break;
-            }
-            start += maxLen;
-        }
-
-        for (const std::string& str: parts)
-            std::cout << str << std::endl;
-    }
-}
 
 int main([[maybe_unused]] int argc,
          [[maybe_unused]] char** argv)
 {
     const std::vector<std::string_view> args(argv + 1, argv + argc);
 
-
-    TablePrintFormatter::print();
-    // TablePrintFormatter::experiments();
+    TableFormatter::TestAll();
 
 
     // OperatorCall_ExplicitTypeSpecialization::Test();
