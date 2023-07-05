@@ -1050,7 +1050,7 @@ int main([[maybe_unused]] int argc,
 {
     const std::vector<std::string_view> args(argv + 1, argv + argc);
 
-    TableFormatter::TestAll();
+    // TableFormatter::TestAll();
 
 
     // OperatorCall_ExplicitTypeSpecialization::Test();
@@ -1080,7 +1080,7 @@ int main([[maybe_unused]] int argc,
     // CollectionsTests::TestAll();
     // Templates::TestAll();
     // ExpressionTemplates::TestAll();
-    // CopyElision_RVO::TestAll();
+    CopyElision_RVO::TestAll();
     // ObjectOrientedExperiments::RAIIWrapper::TestAll();
     // LRUCache::TestAll();
     // EventLoop::TestAll();

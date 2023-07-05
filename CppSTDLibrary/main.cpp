@@ -231,8 +231,8 @@ int main(int argc, char** argv)
     // Byte::TestAll();
     // Chrono::TestAll();
     // Concepts::TestAll();
-    ConsoleInOut::TestAll();
-    // CopyElision::TestAll();
+    // ConsoleInOut::TestAll();
+    CopyElision::TestAll();
     // DateAndTime::TestAll();
     // EnumTests::TestAll();
     // Expected::TestAll();

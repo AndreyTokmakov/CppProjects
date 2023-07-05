@@ -12,6 +12,7 @@ Description : CopyElision_RVO
 #include <iostream>
 #include <memory>
 #include <utility>
+#include <format>
 
 namespace CopyElision_RVO::SimpleExample {
 
@@ -222,13 +223,101 @@ namespace CopyElision_RVO::Tests
     }
 }
 
+
+namespace CopyElision_RVO::NotDeclaredMoveConstructor
+{
+    class MyClass
+    {
+    public:
+        std::string name {};
+
+        explicit MyClass(std::string n): name { std::move(n) }  {
+            std::cout << std::format("Destroying MyClass::MyClass({})", name) << std::endl;
+        }
+
+        ~MyClass()  {
+            std::cout << std::format("Destroying MyClass::~MyClass({})", name) << std::endl;
+        }
+
+        // Not copyable and ot assignable.
+        MyClass(const MyClass&) = delete;
+        MyClass& operator=(const MyClass&) = delete;
+
+        // Movable only for NRVO purposes (and RVO in C++11).
+        // Never implemented.
+
+        MyClass(MyClass&& rhs);
+
+        /*
+        MyClass(MyClass&& rhs): name { std::move(rhs.name) } {
+            std::cout << std::format("Move constructor: MyClass::~MyClass(MyClass&&) ({})", name) << std::endl;
+        }
+
+        MyClass& operator=(MyClass&& rhs) noexcept {
+            std::cout << std::format("Move assignment: MyClass::~MyClass(MyClass&&)") << std::endl;
+            name = std::move(rhs.name);
+            return *this;
+        }
+        */
+    };
+
+    MyClass test1()
+    {
+        return MyClass("RNV Test");
+    }
+
+    // NOTE: This will COMPILE and LINK since we have 'MyClass(MyClass&& rhs);'
+    //       even without IMPLEMENTATION
+    MyClass test2()
+    {
+        MyClass c {"NRVO Test"};
+        return c;
+    }
+
+    constexpr bool someSondition() {
+        return true;
+    }
+
+    // NOTE: This will not LINK since 'MyClass(MyClass&& rhs);' NOT IMPLEMENTED
+    /*
+    MyClass test3()
+    {
+        MyClass c("C"), d("D");
+        if (someSondition()) {
+            return c;
+        } else {
+            return d;
+        }
+    }
+    */
+
+    void testAll()
+    {
+        {
+            MyClass obj = test1();
+        }
+
+        {
+            MyClass obj = test2();
+        }
+
+        /*
+        {
+            MyClass obj = test3();
+        }
+        */
+    }
+}
+
 void CopyElision_RVO::TestAll()
 {
-    SimpleExample::Test();
+    // SimpleExample::Test();
 
     // Tests::CreateTest();
 
     // Tests::UsingBuilder();
     // Tests::UsingBuilder2();
     // Tests::UsingBuilder3();
+
+    NotDeclaredMoveConstructor::testAll();
 }

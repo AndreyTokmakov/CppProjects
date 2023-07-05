@@ -256,6 +256,14 @@ namespace TableFormatter
     }
 }
 
+// TODO:
+//  1. AddHeader()
+//     - Should have priority over columns number (if greater)
+//     - Should support [name, length]
+//  2. Support word-wrap inside one cell
+//  3. Support colors
+//  4. Print line numbers ??
+
 void TableFormatter::TestAll()
 {
     TableFormatter::print();
