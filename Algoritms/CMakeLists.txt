@@ -20,7 +20,7 @@ add_executable(Algoritms MACOSX_BUNDLE
 	Strings/Strings.cpp Strings/Strings.h
 	Trees/Trees.cpp Trees/Trees.h
 	Numeric/Numeric.cpp Numeric/Numeric.h
-)
+        MultiThreading/MultiThreading.cpp MultiThreading/MultiThreading.h)
 
  # Link phread library
 TARGET_LINK_LIBRARIES(Algoritms pthread)

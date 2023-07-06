@@ -20,6 +20,7 @@
 #include "Strings/Strings.h"
 #include "Interviews/Interviews.h"
 #include "Numeric/Numeric.h"
+#include "MultiThreading/MultiThreading.h"
 
 int main([[maybe_unused]] int argc,
 		 [[maybe_unused]] char** argv)
@@ -33,7 +34,8 @@ int main([[maybe_unused]] int argc,
 	// Sorting::TEST_ALL();
 	// Strings::TEST_ALL();
 	// Interviews::TEST_ALL();
-    Numeric::TEST_ALL();
+    // Numeric::TEST_ALL();
+    MultiThreading::TestAll();
 
 	return EXIT_SUCCESS;
 }

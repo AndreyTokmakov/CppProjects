@@ -1066,7 +1066,7 @@ int main([[maybe_unused]] int argc,
     // OOP_Test::ExampleThree::test();
 
     // Experiments::Test({20, 40, 60});
-    // Multithreading::TestAll();
+    Multithreading::TestAll();
     // Memory::TestAll();
     // Strings::TestAll();
     // Iterators::TestAll();
@@ -1080,7 +1080,7 @@ int main([[maybe_unused]] int argc,
     // CollectionsTests::TestAll();
     // Templates::TestAll();
     // ExpressionTemplates::TestAll();
-    CopyElision_RVO::TestAll();
+    // CopyElision_RVO::TestAll();
     // ObjectOrientedExperiments::RAIIWrapper::TestAll();
     // LRUCache::TestAll();
     // EventLoop::TestAll();
