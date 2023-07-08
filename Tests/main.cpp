@@ -72,10 +72,14 @@
 #include "BinaryAnalyzer/BinaryAnalyzer.h"
 #include "ThinkCell/ThinkCell.h"
 #include "TableFormatter/TableFormatter.h"
+#include "Coroutines/Coroutines.h"
+
+
+#include <format>
+#include <coroutine>
 
 // C++ 23:
 // #include <expected>
-// #include <format>
 
 // #include <stacktrace>
 // #include <flat_map>
@@ -707,8 +711,13 @@ namespace Decorator
         Taxed<16, Discounted<21, Ticket>> item2 { "Core C++", Money{499} };
         Taxed<17, Discounted<22, Book>> item3 { "Core C++", Money{499} };
 
+        [[maybe_unused]]
         const Money totalPrice1 = item1.price();  // Results in 459.08
+
+        [[maybe_unused]]
         const Money totalPrice2 = item2.price();
+
+        [[maybe_unused]]
         const Money totalPrice3 = item3.price();
     }
 }
@@ -951,7 +960,7 @@ namespace OperatorCall_ExplicitTypeSpecialization
     template<typename T>
     struct StorageOptions
     {
-        void ignore_missing(bool ignore) {
+        void ignore_missing([[maybe_unused]] bool ignore) {
             // Some logic
         }
     };
@@ -959,7 +968,7 @@ namespace OperatorCall_ExplicitTypeSpecialization
     struct StorageLoader
     {
         template<typename DataType>
-        DataType operator()(const StorageOptions<DataType>* options)
+        DataType operator()(const StorageOptions<DataType>*)
         {
             return DataType{};
         }
@@ -1043,8 +1052,6 @@ namespace CallFunctionByName
     }
 }
 
-
-
 int main([[maybe_unused]] int argc,
          [[maybe_unused]] char** argv)
 {
@@ -1052,6 +1059,7 @@ int main([[maybe_unused]] int argc,
 
     // TableFormatter::TestAll();
 
+    Coroutines::TestAll();
 
     // OperatorCall_ExplicitTypeSpecialization::Test();
     // CallFunctionByName::Test();
@@ -1066,7 +1074,7 @@ int main([[maybe_unused]] int argc,
     // OOP_Test::ExampleThree::test();
 
     // Experiments::Test({20, 40, 60});
-    Multithreading::TestAll();
+    // Multithreading::TestAll();
     // Memory::TestAll();
     // Strings::TestAll();
     // Iterators::TestAll();

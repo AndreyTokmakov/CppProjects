@@ -28,6 +28,6 @@ add_executable(LinuxExperiments
         TimeAndDate/Time.cpp TimeAndDate/Time.h
         TimeAndDate/Timer.cpp TimeAndDate/Timer.h
         Modules/Modules.cpp Modules/Modules.h
-        OpenSSL/OpenSSL.cpp OpenSSL/OpenSSL.h Networking/Utilities.cpp Networking/Utilities.h TestsAndExperiments/TestAndExperiments.cpp TestsAndExperiments/TestAndExperiments.h TestsAndExperiments/FindProcessForTCPConnection.cpp TestsAndExperiments/FindProcessForTCPConnection.h Processes/ProcessManager.cpp Processes/ProcessManager.h)
+        OpenSSL/OpenSSL.cpp OpenSSL/OpenSSL.h Networking/Utilities.cpp Networking/Utilities.h TestsAndExperiments/TestAndExperiments.cpp TestsAndExperiments/TestAndExperiments.h TestsAndExperiments/FindProcessForTCPConnection.cpp TestsAndExperiments/FindProcessForTCPConnection.h Processes/ProcessManager.cpp Processes/ProcessManager.h ModulesKernel/ModulesKernel.cpp ModulesKernel/ModulesKernel.h)
 
 TARGET_LINK_LIBRARIES(LinuxExperiments pthread rt crypt crypto ssl)

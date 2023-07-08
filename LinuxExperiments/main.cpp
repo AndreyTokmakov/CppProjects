@@ -71,6 +71,7 @@
 #include "Users/Users.h"
 #include "TimeAndDate/Time.h"
 #include "TimeAndDate/Timer.h"
+#include "ModulesKernel/ModulesKernel.h"
 #include "Modules/Modules.h"
 #include "OpenSSL/OpenSSL.h"
 
@@ -187,7 +188,7 @@ int main([[maybe_unused]] int argc,
     // Environment::TestAll();
 
     // Processes::TestAll();
-    ProcessManager::TestAll();
+    // ProcessManager::TestAll();
 
     // OpenSSL::TestAll(params);
 
@@ -199,6 +200,7 @@ int main([[maybe_unused]] int argc,
     // SystemInformation::TestAll();
 
     // Modules::TestAll();
+    ModulesKernel::TestAll();
 
     // Servers::TestAll();
     // WebServerSimple::TestAll();
