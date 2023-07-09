@@ -942,19 +942,34 @@ namespace LinkedList {
 	}
 
     template<typename T>
-    Node<int>* __move_all_occurrences_to_th_end_3(Node<T>* root, const T value)
+    Node<int>* __move_all_occurrences_to_th_end_GOOD_BEST(Node<T>* root, const T value)
     {
-        // TODO: Check not empty
-
-        Node<T> *node { root->data != value ? root->next : nullptr  }, *list1 { root->data != value ? root : nullptr };
-        while (node->next && node->next->data != value) {
-            node = node->next;
+        Node<T> *node1 {nullptr}, *start { nullptr }, *node2 {nullptr}, *tail {  nullptr };
+        while (root)
+        {
+            if (value != root->data) {
+                if (!node1)
+                    start = node1 = root;
+                else {
+                    node1->next = root;
+                    node1 = node1->next;
+                }
+            }
+            else {
+                if (!node2)
+                    tail = node2 = root;
+                else {
+                    node2->next = root;
+                    node2 = node2->next;
+                }
+            }
+            root = root->next;
         }
 
-        node->next = nullptr;
-        PrintList(list1);
+        node2->next = nullptr;
+        node1->next = tail;
 
-        return root;
+        return start;
     }
 
 
@@ -1034,11 +1049,12 @@ namespace LinkedList {
 		}
         */
 
+        /** Best solution so far**/
         {
-            Node<int>* list = InitList({1,1,1,2,2,2,1,1,1});
-            //PrintList(list);
-            Node<int>* result = __move_all_occurrences_to_th_end_3(list, 2);
-            //PrintList(result);
+            Node<int>* list = InitList({2,2,2,1,1});
+            PrintList(list);
+            Node<int>* result = __move_all_occurrences_to_th_end_GOOD_BEST(list, 2);
+            PrintList(result);
         }
 
 
