@@ -232,7 +232,7 @@ int main(int argc, char** argv)
     // Chrono::TestAll();
     // Concepts::TestAll();
     // ConsoleInOut::TestAll();
-    CopyElision::TestAll();
+    // CopyElision::TestAll();
     // DateAndTime::TestAll();
     // EnumTests::TestAll();
     // Expected::TestAll();
@@ -272,6 +272,7 @@ int main(int argc, char** argv)
     // Span::TestAll();
     // SourceLocation::TestAll();
     // SharedPtr_Tests::TestAll();
+    Variant::TestAll();
     // VolatileTests::TestAll();
     // TypeTraits::TestAll();
     // Tuple::TestAll();
@@ -280,7 +281,7 @@ int main(int argc, char** argv)
     // Templates::TestAll();
     // Utilities::TestAll();
     // UniquePtr_Tests::TestAll();
-    // Variant::TestAll();
+
     // WeakPtr::TestAll();
 
     return EXIT_SUCCESS;

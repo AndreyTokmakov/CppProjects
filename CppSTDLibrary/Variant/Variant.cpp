@@ -951,6 +951,90 @@ namespace Variant::DynamicPolymorphism {
 	}
 }
 
+namespace Variant::DynamicPolymorphism_Demo2
+{
+    struct Shape {
+        virtual double area() const = 0;
+        virtual ~Shape() {}
+    };
+
+    struct CircleShape: public Shape {
+        double radius;
+        explicit CircleShape(double radius): radius{radius} {}
+        double area() const override { return 3.14 * radius * radius; }
+    };
+
+    struct RectangleShape: public Shape {
+        double height, width;
+        explicit RectangleShape(double height, double width): height{height}, width{width} {}
+        double area() const override { return height * width; }
+    };
+
+    struct SquareShape: public Shape {
+        double side;
+        explicit SquareShape(double side): side{side} {}
+        double area() const override { return side * side; }
+    };
+
+    void classicPointerDispatch()
+    {
+        std::vector<std::unique_ptr<Shape>> shapes;
+        {
+            shapes.push_back(std::make_unique<CircleShape>(3.));
+            shapes.push_back(std::make_unique<RectangleShape>(4., 5.));
+            shapes.push_back(std::make_unique<SquareShape>(6.));
+        }
+
+        double sum = 0.0f;
+        for (const auto& shape : shapes) {
+            sum += shape->area();
+        }
+
+        std::cout << "sum: " << sum << std::endl;
+    }
+
+
+    //---------------------------------------------------------------------------------
+
+    struct Circle final {
+        double radius;
+        double area() const { return 3.14 * radius * radius; }
+    };
+
+    struct Rectangle final {
+        double height, width;
+        double area() const { return height * width; }
+    };
+
+    struct Square final {
+        double side;
+        double area() const { return side * side; }
+    };
+
+    void variantVisitDispatch()
+    {
+        std::vector<std::variant<Circle, Rectangle, Square>> shapes;
+        {
+            shapes.emplace_back(Circle{3.});
+            shapes.emplace_back(Rectangle{4., 5.});
+            shapes.emplace_back(Square{6.});
+        }
+
+        double sum = 0.0f;
+        for (const auto& shape : shapes) {
+            std::visit([&sum](const auto& shape) { sum += shape.area(); }, shape);
+        }
+
+        std::cout << "sum: " << sum << std::endl;
+    }
+
+    void Visit_Vs_Pointer()
+    {
+        classicPointerDispatch();
+        variantVisitDispatch();
+    }
+}
+
 namespace Variant::DynamicPolymorphism
 {
     struct Element {
@@ -1101,8 +1185,10 @@ void Variant::TestAll()
 
 	// DynamicPolymorphism::Classic_Usage();
 	// DynamicPolymorphism::Visit();
-	DynamicPolymorphism::Polimorph_Visit();
+	// DynamicPolymorphism::Polimorph_Visit();
 	// DynamicPolymorphism::ProcessElementsList();
+	DynamicPolymorphism_Demo2::Visit_Vs_Pointer();
+
 
     // Experiments_DNS_Response::Tests();
 	// Experiments::Map_Variant_Keys();

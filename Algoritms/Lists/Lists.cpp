@@ -941,6 +941,24 @@ namespace LinkedList {
 		return start;
 	}
 
+    template<typename T>
+    Node<int>* __move_all_occurrences_to_th_end_3(Node<T>* root, const T value)
+    {
+        // TODO: Check not empty
+
+        Node<T> *node { root->data != value ? root->next : nullptr  }, *list1 { root->data != value ? root : nullptr };
+        while (node->next && node->next->data != value) {
+            node = node->next;
+        }
+
+        node->next = nullptr;
+        PrintList(list1);
+
+        return root;
+    }
+
+
+
 	template<typename T>
 	Node<int>* __move_all_occurrences_to_th_end_2(Node<T>* root, T value) {
 		assert(nullptr != root);
@@ -1005,8 +1023,8 @@ namespace LinkedList {
         return root;
     }
 
-	void MoveAllOccurrencesToTheEnd() {
-
+	void MoveAllOccurrencesToTheEnd()
+    {
         /*
 		{
 			Node<int>* list = InitList({ 2,2,2,2,3,4,5,6,7,2,2,2,8,9,10 });
@@ -1014,14 +1032,23 @@ namespace LinkedList {
 			Node<int>* result = __move_all_occurrences_to_th_end(list, 2);
 			PrintList(result);
 		}
+        */
+
+        {
+            Node<int>* list = InitList({1,1,1,2,2,2,1,1,1});
+            //PrintList(list);
+            Node<int>* result = __move_all_occurrences_to_th_end_3(list, 2);
+            //PrintList(result);
+        }
+
+
+        /*
 		{
 			Node<int>* list = InitList({ 2,2,2,2,3,4,5,6,7,2,2,2,8,9,10 });
 			PrintList(list);
 			Node<int>* result = __move_all_occurrences_to_th_end_2(list, 2);
 			PrintList(result);
 		}
-        */
-
         {
             Node<int>* list = InitList({ 2,2,2,2,3,4,5,6,7,2,2,2,8,9,10 });
             //PrintList(list);
@@ -1029,6 +1056,7 @@ namespace LinkedList {
             PrintList(result);
 
         }
+        */
 	}
 }
 
@@ -1164,7 +1192,7 @@ void LinkedList::TEST_ALL()
     // LinkedList::FindMiddleElement();
     // LinkedList::Remove_N_Node_From_End();
     // LinkedList::Find_Nth_Element_FromTheEnd();
-	// LinkedList::MoveAllOccurrencesToTheEnd();
+	LinkedList::MoveAllOccurrencesToTheEnd();
 
 	// LinkedList::Reverse_Even_Subarrays();
 

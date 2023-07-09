@@ -12,13 +12,11 @@
 #include <any>
 #include <functional>
 #include <memory>
+#include <variant>
 
 #include "ObjectOrientedProgramming.h"
 #include "../Integer/Integer.h"
 
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-//                                       Constructor Invoke Order                                                               //
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 namespace ObjectOrientedProgramming::Constructors {
 
@@ -2577,11 +2575,140 @@ namespace ObjectOrientedProgramming::ObjectsLifeTime {
         auto longObj = get_Long();
         std::cout << "OK!!" << std::endl;
     }
-
 }
 
-namespace ObjectOrientedProgramming::PolymorthismWithoutPointers {
+namespace ObjectOrientedProgramming::Polymorphism_With_Variant
+{
+    struct Shape {
+        virtual double area() const = 0;
+        virtual ~Shape() {}
+    };
 
+    struct CircleShape: public Shape {
+        double radius;
+        explicit CircleShape(double radius): radius{radius} {}
+        double area() const override { return 3.14 * radius * radius; }
+    };
+
+    struct RectangleShape: public Shape {
+        double height, width;
+        explicit RectangleShape(double height, double width): height{height}, width{width} {}
+        double area() const override { return height * width; }
+    };
+
+    struct SquareShape: public Shape {
+        double side;
+        explicit SquareShape(double side): side{side} {}
+        double area() const override { return side * side; }
+    };
+
+    void classicPointerDispatch()
+    {
+        std::vector<std::unique_ptr<Shape>> shapes;
+        {
+            shapes.push_back(std::make_unique<CircleShape>(3.));
+            shapes.push_back(std::make_unique<RectangleShape>(4., 5.));
+            shapes.push_back(std::make_unique<SquareShape>(6.));
+        }
+
+        double sum = 0.0f;
+        for (const auto& shape : shapes) {
+            sum += shape->area();
+        }
+
+        std::cout << "sum: " << sum << std::endl;
+    }
+
+
+    //---------------------------------------------------------------------------------
+
+    struct Circle final {
+        double radius;
+        double area() const { return 3.14 * radius * radius; }
+    };
+
+    struct Rectangle final {
+        double height, width;
+        double area() const { return height * width; }
+    };
+
+    struct Square final {
+        double side;
+        double area() const { return side * side; }
+    };
+
+    void variantVisitDispatch()
+    {
+        std::vector<std::variant<Circle, Rectangle, Square>> shapes;
+        {
+            shapes.emplace_back(Circle{3.});
+            shapes.emplace_back(Rectangle{4., 5.});
+            shapes.emplace_back(Square{6.});
+        }
+
+        double sum = 0.0f;
+        for (const auto& shape : shapes) {
+            std::visit([&sum](const auto& shape) { sum += shape.area(); }, shape);
+        }
+
+        std::cout << "sum: " << sum << std::endl;
+    }
+}
+
+namespace ObjectOrientedProgramming::Polymorphism_With_PolymorphicVectors
+{
+    struct Circle final {
+        double radius;
+        double area() const { return 3.14 * radius * radius; }
+    };
+
+    struct Rectangle final {
+        double height, width;
+        double area() const { return height * width; }
+    };
+
+    struct Square final {
+        double side;
+        double area() const { return side * side; }
+    };
+
+    template <typename ...Ts>
+    class PolyVector {
+        std::tuple<std::vector<Ts>...> tupleOfVectors;
+    public:
+        PolyVector()  = default;
+
+        template <typename T>
+        void push_back(T&& t) {
+            std::get<std::vector<T>>(tupleOfVectors).push_back(std::forward<T>(t));
+        }
+
+        template <typename F>
+        void for_each(F&& f) {
+            std::apply([&f](auto&& ...args) {
+                (std::for_each(begin(args), end(args), std::forward<F>(f)),...);
+            }, tupleOfVectors);
+        }
+    };
+
+    void Test()
+    {
+        PolyVector<Circle, Rectangle, Square> shapes;
+        {
+            shapes.push_back(Circle{3.});
+            shapes.push_back(Rectangle{4., 5.});
+            shapes.push_back(Square{6.});
+        }
+
+        double sum = 0.;
+        shapes.for_each([&sum](const auto& shape) mutable { sum += shape.area(); });
+
+        std::cout << "sum: " << sum << std::endl;
+    }
+}
+
+namespace ObjectOrientedProgramming::Polymorphism_Without_Pointers
+{
     struct ICalculator {
         virtual int compute(int input) const = 0;
         virtual void log(int input, int output) const = 0;
@@ -2927,7 +3054,7 @@ void ObjectOrientedProgramming::TestAll()
 
     // ******************************** Initialization Lists: *********************************//
 
-    InitializationLists::InitVariableWithList_Once();
+    // InitializationLists::InitVariableWithList_Once();
 
 
     // ******************************** DESTRUCTORS ********************************* //
@@ -2996,8 +3123,14 @@ void ObjectOrientedProgramming::TestAll()
     // MultipleInheritance::TEST();
     // CallBaseClassMembers::Test();
 
+    // ******************************** Polymorphism: *********************************//
 
-    // PolymorthismWithoutPointers::Test();
+    // Polymorphism_Without_Pointers::Test();
+    Polymorphism_With_Variant::classicPointerDispatch();
+    Polymorphism_With_Variant::variantVisitDispatch();
+    Polymorphism_With_PolymorphicVectors::Test();
+
+
 
     // InheritanceAndTemplates::Test();
 
