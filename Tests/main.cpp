@@ -1052,6 +1052,7 @@ namespace CallFunctionByName
     }
 }
 
+
 int main([[maybe_unused]] int argc,
          [[maybe_unused]] char** argv)
 {
@@ -1059,7 +1060,7 @@ int main([[maybe_unused]] int argc,
 
     // TableFormatter::TestAll();
 
-    Coroutines::TestAll();
+    // Coroutines::TestAll();
 
     // OperatorCall_ExplicitTypeSpecialization::Test();
     // CallFunctionByName::Test();

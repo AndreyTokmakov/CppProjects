@@ -462,11 +462,33 @@ namespace Bit_Flags_Enums {
 			std::cout << static_cast<int>(current) << std::endl;
 		}
 	}
-
 }
 
 
-void EnumTests::TestAll() {
+namespace EnumTests::UsingEmum_ClassScope
+{
+    enum struct Color {
+        red,
+        green,
+        blue
+    };
+
+    struct Something
+    {
+        using enum Color;
+    };
+
+    void accessEnum_FromClassInstance()
+    {
+        Something s;
+        const Color color = s.red;
+    }
+}
+
+
+
+void EnumTests::TestAll()
+{
 	// EnumClassTests::PrintColor();
 
 	// EnumNewStyle::EnumsStictType_Test();
@@ -488,5 +510,7 @@ void EnumTests::TestAll() {
 
 	// Underlying_Type::Uniform_Initialization_Tests();
 
-	Bit_Flags_Enums::Test();
+	// Bit_Flags_Enums::Test();
+
+    UsingEmum_ClassScope::accessEnum_FromClassInstance();
 };
