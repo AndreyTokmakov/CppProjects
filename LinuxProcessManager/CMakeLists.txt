@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.16 FATAL_ERROR)
+cmake_minimum_required(VERSION 3.25 FATAL_ERROR)
 
 project(LinuxProcessManager)
 set(CMAKE_C_FLAGS_RELEASE "${CMAKE_C_FLAGS_RELEASE} -pthread")
@@ -6,6 +6,8 @@ set(PROJECT_VERSION 1.0.0.0)
 project(${PROJECT_NAME} VERSION ${PROJECT_VERSION} LANGUAGES CXX)
 
 set(CMAKE_AUTOMOC ON)
+set(CMAKE_AUTORCC ON)
+set(CMAKE_AUTOUIC ON)
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
 # Widgets finds its own dependencies.
@@ -18,13 +20,16 @@ include_directories(${Qt5Widgets_INCLUDES})
 # We need add -DQT_WIDGETS_LIB when using QtWidgets in Qt 5.
 add_definitions(${Qt5Widgets_DEFINITIONS})
 
-
 set(CMAKE_CXX_FLAGS "${Qt5Widgets_EXECUTABLE_COMPILE_FLAGS}")
-
 add_compile_options(-c -Wall -Wextra -O3 -std=c++23)
-# include all components
+
+qt5_generate_moc(ProcessManager.cpp ProcessManager.moc)
+
 add_executable(LinuxProcessManager 
-    main.cpp
+        main.cpp
+        ProcessManager.cpp ProcessManager.h ProcessManager.moc
 )
 
 TARGET_LINK_LIBRARIES(LinuxProcessManager pthread ${Qt5Widgets_LIBRARIES})
+
+
