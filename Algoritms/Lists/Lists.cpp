@@ -1188,7 +1188,7 @@ void LinkedList::TEST_ALL()
 	// LinkedList::Check_If_Palindrom();
 
 	// LinkedList::Merge_Two_Lists();
-	// LinkedList::Merge_Two_Lists_2();
+	LinkedList::Merge_Two_Lists_2();
 
 	// LinkedList::Insert_Into_Sorted_List();
 	// LinkedList::Insert_Into_Sorted_List_2();
@@ -1208,7 +1208,7 @@ void LinkedList::TEST_ALL()
     // LinkedList::FindMiddleElement();
     // LinkedList::Remove_N_Node_From_End();
     // LinkedList::Find_Nth_Element_FromTheEnd();
-	LinkedList::MoveAllOccurrencesToTheEnd();
+	// LinkedList::MoveAllOccurrencesToTheEnd();
 
 	// LinkedList::Reverse_Even_Subarrays();
 

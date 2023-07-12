@@ -64,25 +64,41 @@ Description : v
 #include <QStandardItem>
 #include <QHeaderView>
 #include <QTreeView>
+#include <QLabel>
+#include <QProgressBar>
 
-
-class MyThread : public QThread
+/*
+class ClockThread : public QThread
 {
-public:
-    explicit MyThread(QString s) : name(std::move(s)) {
-    }
-
-    void run() override
-    {
-        for(int i = 1; i <= 5; ++i) {
-            qDebug() << this->name << " " << i;
-            //std::cout << this->name.toStdString() << " " << i << std::endl;
-        }
-    }
+Q_OBJECT
+signals:
+    void sendTime(QString time);
 
 private:
-    QString name;
+    void run() override
+    {
+        QTimer timer;
+        connect(&timer, SIGNAL(timeout()), this, SLOT(timerHit()), Qt::DirectConnection);
+        timer.setInterval(10);
+        timer.start();   // puts one event in the threads event queue
+        exec();
+        timer.stop();
+    }
+
+    QString m_lastTime;
+
+private slots:
+
+    void timerHit()
+    {
+        QString newTime = QDateTime::currentDateTime().toString("ddd MMMM d yy, hh:mm:ss");
+        if (m_lastTime != newTime ){
+            m_lastTime = newTime;
+            emit sendTime(newTime) ;
+        }
+    }
 };
+*/
 
 
 class Application : public QApplication
@@ -152,8 +168,17 @@ public:
         treeView1.setModel(&model);
         treeView1.expandAll();
 
+        // TODO: Refactor this
+        QLabel *statusLabel =  new QLabel(this);
+        QProgressBar *statusProgressBar = new QProgressBar(this);
+
+        statusLabel->setText("Status Label");
+
         /** Add status bar: **/
-        status->showMessage("Status bar...");
+        // status->showMessage("Status bar...");
+        status->addPermanentWidget(statusLabel);
+        status->addPermanentWidget(statusProgressBar);
+
 
         QMenu* menuFile = menu->addMenu("&File");
         menuFile->addAction(style()->standardIcon(QStyle::StandardPixmap::SP_FileIcon),"&New",this, &Window::OnMenuItemClick);
@@ -190,7 +215,7 @@ public:
         setWindowTitle("Tree view example");
         //resize(300, 300);
 
-        thread.start();
+        // thread.start();
         // thread.wait();
     }
 
@@ -209,7 +234,7 @@ private:
     QTreeView treeView1;
     QStandardItemModel model;
 
-    MyThread thread {" A"};
+    // MyThread thread {" A"};
 
     const std::unique_ptr<QStatusBar> status { statusBar() };
     const std::unique_ptr<QMenuBar> menu { menuBar() };
