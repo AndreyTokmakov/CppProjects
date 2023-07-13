@@ -169,8 +169,19 @@ public:
         treeView1.expandAll();
 
         // TODO: Refactor this
-        QLabel *statusLabel =  new QLabel(this);
+        QLabel *statusLabel = new QLabel(this);
+
         QProgressBar *statusProgressBar = new QProgressBar(this);
+
+        // statusProgressBar->move(50, 110);
+        // statusProgressBar->resize(100, 25);
+        statusProgressBar->setMinimum(0);
+        statusProgressBar->setMaximum(100);
+        statusProgressBar->setValue(50);
+        statusProgressBar->setTextVisible(false);
+        statusProgressBar->setToolTip(QString("Blah-Blah-Blah"));
+
+        //statusProgressBar->setStyleSheet(QString("QStatusBar::item{border: 0px}"));
 
         statusLabel->setText("Status Label");
 

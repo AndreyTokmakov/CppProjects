@@ -1820,7 +1820,7 @@ void Trees::TEST_ALL()
 	// BinTreeTests::FindLowestCommonAncestor();
 	// BinTreeTests::FindLowestCommonAncestor2();
 
-	// BinTreeTests::CheckIs_BTS();
+	BinTreeTests::CheckIs_BTS();
 	// BinTreeTests::CheckIs_BTS_2();
 	// BinTreeTests::CheckIs_BTS_NonRecursive();
 	// BinTreeTests::IsFullBinaryTree();

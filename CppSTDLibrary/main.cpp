@@ -234,7 +234,7 @@ int main(int argc, char** argv)
     // ConsoleInOut::TestAll();
     // CopyElision::TestAll();
     // DateAndTime::TestAll();
-    EnumTests::TestAll();
+    // EnumTests::TestAll();
     // Expected::TestAll();
     // StrongTypes::TestAll();
     // InitializerList::TestAll();
@@ -256,7 +256,7 @@ int main(int argc, char** argv)
     // Metaprogramming::TestAll();
     // InlineNamespaces::TestAll();
     // NumericLimits::TestAll();
-    // ObjectOrientedProgramming::TestAll();
+    ObjectOrientedProgramming::TestAll();
     // Optional::TestAll();
     // PolymorphicMemoryResources::TestAll();
     // Random::TestAll();

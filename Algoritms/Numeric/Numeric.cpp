@@ -1812,7 +1812,7 @@ namespace Numeric {
 
     //--------------------------------------------------------------------------------------//
 
-    int __SmallestMissingPositiveNumber(std::vector<int> &A) {
+    int __SmallestMissingPositiveNumber(const std::vector<int> &A) {
         const auto minmax = std::minmax_element(A.begin(), A.end());
         int min = *minmax.first, max = *minmax.second;
         if (1 > max || min > 1)
@@ -1826,7 +1826,7 @@ namespace Numeric {
         return max + 1;
     }
 
-    int __SmallestMissingPositiveNumber2(std::vector<int> &A) {
+    int __SmallestMissingPositiveNumber2(const std::vector<int> &A) {
         std::unordered_set<int> set;
         int min = std::numeric_limits<int>::max(), max = std::numeric_limits<int>::min();
         for (int i : A) {
@@ -1847,21 +1847,33 @@ namespace Numeric {
         return max + 1;
     }
 
-    void Find_Smallest_Missing_Positive_Number() {
-        std::vector<int> v = { -1, 0, 1 };
-        std::cout << __SmallestMissingPositiveNumber(v) << std::endl;
+    int __SmallestMissingPositiveNumber_FAST(std::vector<int> A)
+    {
+        const int size = std::ssize(A);
+        for (int i = 0; i < size; ++i) {
+            while(A[i] >= 1 && A[i] <= size && A[i] != A[A[i]-1])
+                std::swap(A[i], A[A[i] - 1]);
+        }
 
-        std::vector<int> v1 = { 1, 3, 6, 4, 1, 2 };
-        std::cout << __SmallestMissingPositiveNumber(v1) << std::endl;
-        std::cout << __SmallestMissingPositiveNumber2(v1) << std::endl;
+        for(int i = 0; i < size; ++ i)
+            if(A[i] != i + 1)
+                return i + 1;
 
-        std::vector<int> v2 = { 3,4,5,6 };
-        std::cout << __SmallestMissingPositiveNumber(v2) << std::endl;
-        std::cout << __SmallestMissingPositiveNumber2(v2) << std::endl;
+        return size + 1;
 
-        std::vector<int> v3 = { -999999,4,9999999,6 };
-        std::cout << __SmallestMissingPositiveNumber(v3) << std::endl;
-        std::cout << __SmallestMissingPositiveNumber2(v3) << std::endl;
+    }
+
+    void Find_Smallest_Missing_Positive_Number()
+    {
+        for (const std::vector<int>& numbers: std::vector<std::vector<int>> {
+                { -1, 0, 1 }, { 1, 3, 6, 4, 1, 2 }, { 3,4,5,6 }, { -999999,4,9999999,6 }
+        })
+        {
+            std::cout << __SmallestMissingPositiveNumber(numbers) << " "
+                      << __SmallestMissingPositiveNumber2(numbers)  << " "
+                      << __SmallestMissingPositiveNumber_FAST(numbers)
+                      << std::endl;
+        }
     }
 
     //--------------------------------------------------------------------------------------//
@@ -2827,7 +2839,7 @@ namespace Numeric::Intervals {
 
 void Numeric::TEST_ALL()
 {
-    Numeric::isPowerOf2();
+    // Numeric::isPowerOf2();
     // Numeric::GreatestCommonDivisor();
     // Numeric::LeastCommonMultiple();
     // Numeric::LongestCommonSubsequence();
@@ -2895,7 +2907,7 @@ void Numeric::TEST_ALL()
     // Numeric::FindTheMissingNumber_Unsorted_AnyRange();
     // Numeric::Find_K_MissingNumber_Sorted();
     // Numeric::Find_K_MissingNumber();
-    // Numeric::Find_Smallest_Missing_Positive_Number();
+    Numeric::Find_Smallest_Missing_Positive_Number();
     // Numeric::Find_Repeating_And_Missing();
     // Numeric::Find_All_Symmetric_Pairs_InArray();
 
