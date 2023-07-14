@@ -662,6 +662,30 @@ namespace Strings {
         return result;
     }
 
+    // 1. Цикл в котором инкрементируем количество встреченных символов по их ISCI коду в таблице
+    //    и тут рассчитываем максимальную длину как разницу между left и right + 1
+    // 2. Как только количество встреч данного символа в рамках (cтрока от left до right) более чем один выполняем
+    //    while цикл в котором двигаем left право пока количество встреч символа по индексу right не станет равным == 1
+
+    size_t longestUniqueSubstr_UnFinished(const std::string& text)
+    {
+        size_t maxLen = 0, table[256] {0};
+        for (size_t left = 0, right = 0, size = text.size(); right < size; ++right)
+        {
+            const size_t charIdx = static_cast<size_t>(text[right]);
+            if (++table[charIdx] == 1) { // Its a first occurrence of the char == text[right]
+                maxLen = std::max(maxLen, right - left + 1);
+            } else {
+                while (table[charIdx] > 1) {
+                    --table[text[left]];
+                    ++left;
+                }
+            }
+        }
+        return maxLen;
+    }
+
+
 	void LongestSubstringWithoutRepeatingCharacters()
     {
 		for (const std::string& s: {"abcde", "abcbef", "aaaaaa", "aaabbbccc"})
@@ -670,10 +694,14 @@ namespace Strings {
                       << longestUniqueSubstr_1(s) << " "
                       << longestUniqueSubstr_2(s) << " "
                       << longestUniqueSubstr_3_Map(s) << " "
-                      << longestUniqueSubstr_4_Tbl(s) << std::endl;
+                      << longestUniqueSubstr_4_Tbl(s) << " "
+                      << longestUniqueSubstr_UnFinished(s) << std::endl;
 
         }
-        // std::cout << longestUniqueSubstr_4_Tbl_Debug(text) << std::endl;
+
+
+        //std::cout << longestUniqueSubstr_4_Tbl("aaabbb") << std::endl;
+        // std::cout << longestUniqueSubstr_UnFinished("abcbef") << std::endl;
 	}
 
 	//--------------------------------------------------------------------------------------//
@@ -1593,7 +1621,8 @@ namespace Strings
 
 void Strings::TEST_ALL()
 {
-	// Strings::LongestSubstringWithoutRepeatingCharacters();
+	Strings::LongestSubstringWithoutRepeatingCharacters();
+
 	// Strings::LongestConsecutiveCharacters();
 	// Strings::MaxSubstringLength_Of_K_max_Unique_Elements();
 
@@ -1619,7 +1648,7 @@ void Strings::TEST_ALL()
 	// Strings::RearrangeString_WithNumbers();
 	// Strings::RearrangeString_NoAdjacent();
 
-	Strings::Find_K_MostFrequentCharacter();
+	// Strings::Find_K_MostFrequentCharacter();
 	// Strings::Find_K_MostFrequentCharacter_2();
 
 	// Strings::Find_First_Char_Occured_Once();
