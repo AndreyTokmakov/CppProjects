@@ -485,6 +485,48 @@ namespace EnumTests::UsingEmum_ClassScope
     }
 }
 
+namespace EnumTests::EnumConversationTest
+{
+    enum class Color {
+        red,
+        green,
+        blue
+    };
+
+    struct kEnumToStringViewBimap
+    {
+        static constexpr std::string_view operator[](Color color) noexcept
+        {
+            switch(color) {
+                case Color::red: return "red";
+                case Color::green: return "green";
+                case Color::blue: return "blue";
+            }
+        }
+
+        static constexpr Color operator[](std::string_view color) noexcept
+        {
+            if (color == "red") {
+                return Color::red;
+            } else if (color == "green") {
+                return Color::green;
+            } else if (color == "blue") {
+                return Color::blue;
+            }
+        }
+    };
+
+    void Test()
+    {
+        static_assert(kEnumToStringViewBimap{}["red"] == Color::red);
+        static_assert(kEnumToStringViewBimap{}["green"] == Color::green);
+        static_assert(kEnumToStringViewBimap{}["blue"] == Color::blue);
+
+        static_assert(kEnumToStringViewBimap{}[Color::red] == "red");
+        static_assert(kEnumToStringViewBimap{}[Color::green] == "green");
+        static_assert(kEnumToStringViewBimap{}[Color::blue] == "blue");
+    }
+}
 
 
 void EnumTests::TestAll()
@@ -512,5 +554,7 @@ void EnumTests::TestAll()
 
 	// Bit_Flags_Enums::Test();
 
-    UsingEmum_ClassScope::accessEnum_FromClassInstance();
+    EnumConversationTest::Test(); /** static constexpr functions **/
+
+    // UsingEmum_ClassScope::accessEnum_FromClassInstance();
 };

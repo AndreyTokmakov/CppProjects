@@ -1052,12 +1052,114 @@ namespace CallFunctionByName
     }
 }
 
+namespace Experiments_Gcc23
+{
+
+    template <class T>
+    int foo() {
+        if constexpr (std::is_same_v<T, int>) {
+            return 42;
+        } else if constexpr (std::is_same_v<T, float>) {
+            return 24;
+        } else {
+            static_assert(false, "T should be an int or a float");
+        }
+    }
+
+    void Test()
+    {
+        foo<int>();
+        // foo<std::string>();
+    }
+
+    struct S {
+        static constexpr bool operator() (int x, int y) {
+            return x < y;
+        }
+    };
+
+    void g()
+    {
+        constexpr S s;
+        static_assert (s (1, 2));
+
+        constexpr bool result = S::operator()(1, 2);  // OK in C++23
+        std::cout << std::boolalpha << result << std::endl;
+    }
+
+    int&& g(int&& x)
+    {
+        return x;
+    }
+
+    void test2()
+    {
+        [[maybe_unused]]
+        const char arr[] = u8"hi";
+    }
+
+    /*
+    struct Array
+    {
+        static constexpr std::array<int, 10> data{
+                1, 2, 3, 4, 5, 6, 7, 8, 9, 10
+        };
+
+        int operator[](int idx, int = 5)
+        {
+            return data[idx];
+        }
+    };
+
+    void Array_Operator_Default_Value()
+    {
+        Array array {};
+        std::cout << array[5] << std::endl;
+    }
+    */
+
+    struct A
+    {
+        int value { 123 };
+
+
+        A& operator=(int v) {
+            value = v;
+            return *this;
+        }
+
+        explicit operator bool() {
+            return true;
+        }
+    };
+
+    void Wparentheses()
+    {
+        A a;
+        if (a = 0) { // Warning Here
+
+        }
+    }
+
+
+    struct T {};
+
+    T fn()
+    {
+        T t;
+        return std::move (T{});
+    }
+}
 
 int main([[maybe_unused]] int argc,
          [[maybe_unused]] char** argv)
 {
     const std::vector<std::string_view> args(argv + 1, argv + argc);
 
+    // Experiments_Gcc23::g();
+    // Experiments_Gcc23::test2();
+    // Experiments_Gcc23::Array_Operator_Default_Value();
+    Experiments_Gcc23::Wparentheses();
 
     // TableFormatter::TestAll();
 
