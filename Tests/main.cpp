@@ -26,6 +26,7 @@
 #include <utility>
 
 #include <numeric>
+#include <queue>
 
 #include <utility>
 #include <vector>
@@ -605,6 +606,53 @@ namespace Experiments_Gcc23
 }
 
 
+namespace HeapTest_PriorityQueue
+{
+    template<typename T>
+    std::ostream& operator<<(std::ostream & stream,
+                              const std::vector<T>& collection)
+    {
+        for (const T& v: collection)
+            stream << v << ' ';
+        return stream;
+    }
+
+    template<typename T>
+    std::ostream& operator<<(std::ostream & stream,
+                             const std::priority_queue<T>& queue)
+    {
+        std::priority_queue<T> queueCopy = queue;
+        while (false == queueCopy.empty()) {
+            stream << queueCopy.top()  << ' ';
+            queueCopy.pop();
+        }
+        return stream;
+    }
+
+    void MaxHeapTest()
+    {
+        std::vector<int> values {3, 2, 4, 1, 5, 9};
+        std::make_heap(values.begin(), values.end());
+
+        std::cout << values << std::endl;
+    }
+
+    void MinHeapTest()
+    {
+        std::vector<int> values {3, 2, 4, 1, 5, 9};
+        std::make_heap(values.begin(), values.end(), std::greater{});
+
+        std::cout << values << std::endl;
+    }
+
+    void MaxPriorityQueue()
+    {
+        std::vector<int> values {3, 2, 4, 1, 5, 9};
+        std::priority_queue<int> q1 (values.data(), values.data() + values.size()); // Max priority queue
+
+        std::cout << q1 << std::endl;
+    }
+}
 
 int main([[maybe_unused]] int argc,
         [[maybe_unused]] char** argv)
@@ -625,9 +673,10 @@ int main([[maybe_unused]] int argc,
 
     // ReturnTypeCast::tests();
 
+    // HeapTest_PriorityQueue::MaxHeapTest();
+    // HeapTest_PriorityQueue::MinHeapTest();
+    HeapTest_PriorityQueue::MaxPriorityQueue();
 
-    // OOP_Test::ExampleTwo::test();
-    // OOP_Test::ExampleThree::test();
 
     // Experiments::Test({20, 40, 60});
     // Multithreading::TestAll();
@@ -647,7 +696,7 @@ int main([[maybe_unused]] int argc,
     // ExpressionTemplates::TestAll();
     // CopyElision_RVO::TestAll();
     // ObjectOrientedExperiments::RAIIWrapper::TestAll();
-    ObjectOrientedExperiments::OOP_Experiments::TestAll();
+    // ObjectOrientedExperiments::OOP_Experiments::TestAll();
     // Optional::TestAll();
     // Math::TestAll();
     // LRUCache::TestAll();
