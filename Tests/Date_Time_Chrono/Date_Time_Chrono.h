@@ -1,17 +1,17 @@
 /**============================================================================
-Name        : DebugLogger.h
-Created on  : 11.07.2022
+Name        : Date_Time_Chrono.h
+Created on  : 16.07.2022.
 Author      : Tokmakov Andrei
 Version     : 1.0
 Copyright   : Your copyright notice
-Description : DebugLogger
+Description : Date_Time_Chrono
 ============================================================================**/
 
-#ifndef CPPPROJECTS_DEBUGLOGGER_H
-#define CPPPROJECTS_DEBUGLOGGER_H
+#ifndef CPPPROJECTS_DATE_TIME_CHRONO_H
+#define CPPPROJECTS_DATE_TIME_CHRONO_H
 
-namespace DebugLogger {
+namespace Date_Time_Chrono{
     void TestAll();
-}
+};
 
-#endif //CPPPROJECTS_DEBUGLOGGER_H
+#endif //CPPPROJECTS_DATE_TIME_CHRONO_H

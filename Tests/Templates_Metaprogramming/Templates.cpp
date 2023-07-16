@@ -14,15 +14,18 @@
 #include <algorithm>
 #include <functional>
 #include <utility>
+#include <cstdint>
 
-namespace Templates {
+namespace Templates::FoldExpressions
+{
 
     template <typename R, typename ... Ts>
     constexpr auto matches(const R& range, Ts ... ts) -> decltype(auto) {
         return (std::count(std::begin(range), std::end(range), ts) + ...);
     }
 
-    void MathingTests() {
+    void MatchingTests()
+    {
         static_assert(3 == matches("abcdefg", 'a', 'd', 'f'));
 #if 0
         static_assert(3 == matches("abcdefg", 'a', 'd', 'F'));
@@ -74,8 +77,107 @@ namespace Templates {
     }
 }
 
+
+namespace Templates::NTTP
+{
+    struct Config
+    {
+        int v{12};
+    };
+
+    template<Config config>
+    struct Task
+    {
+        void submit() {
+            std::cout << config.v << std::endl;
+        }
+    };
+
+    template<auto Func>
+    struct PersonalBudget {
+        double compute(std::uint32_t amt) {
+            return Func(amt);
+        }
+    };
+
+
+
+    void testConfig() {
+        Task<Config{}>().submit();
+    }
+
+    void testPersonalBudget ()
+    {
+        auto savings = [](int amt) -> decltype(auto) {
+            return static_cast<double>(0.75*amt);
+        };
+
+        PersonalBudget<savings> savingsBudget{};
+
+        auto saveResult = savingsBudget.compute(2300);
+        std::cout << "Estimated Savings: " << saveResult << std::endl;
+    }
+}
+
+
+namespace Templates
+{
+    /*
+    template<typename T, typename ... Args>
+    T (*Func)(Args ...) = [](Args ... args) {
+        return (args + ... + 0);
+    };
+    */
+
+    class Customer
+    {
+    private:
+        std::string name;
+    public:
+        explicit Customer(std::string n) : name(std::move(n)) {
+        }
+
+        [[nodiscard]]
+        std::string getName() const { return name; }
+    };
+
+    struct CustomerEq {
+        bool operator() (Customer const& c1, Customer const& c2) const {
+            std::cout << "CustomerEq() called" << std::endl;
+            return c1.getName() == c2.getName();
+        }
+    };
+
+    struct CustomerHash {
+        std::size_t operator() (Customer const& c) const {
+            std::cout << "CustomerHash() called" << std::endl;
+            return std::hash<std::string>()(c.getName());
+        }
+    };
+
+    template<typename... Bases>
+    struct Overloader : Bases...
+    {
+        using Bases::operator()...; // OK since C++17
+    };
+
+    void Test2()
+    {
+        using CustomerOP = Overloader<CustomerHash,CustomerEq>;
+
+        const Customer c1 {"one"}, c2 { "two"};
+
+        CustomerOP{}(c1);
+        CustomerOP{}(c1, c2);
+    }
+}
+
+
 void Templates::TestAll()
 {
-    // MathingTests();
-    PassingFunction_to_ClassTemplateArgument();
+    // FoldExpressions::MatchingTests();
+    // FoldExpressions::PassingFunction_to_ClassTemplateArgument();
+
+    NTTP::testConfig();
+    NTTP::testPersonalBudget();
 }

@@ -47,22 +47,26 @@
 
 #include "Algorithms/Algorithms.h"
 #include "Geometry/PointsAndLines.h"
-#include "Templates_Metaprogramming/Templates.h"
 #include "Encoding/Unicode.h"
 #include "Encoding/Punycode.h"
 #include "Encoding/StringUtils.h"
 #include "Encoding/Convertaion_UTF8_UTF32.h"
 #include "ExpressionTemplates/ExpressionTemplates.h"
+#include "Templates_Metaprogramming/Templates.h"
 #include "DataStructures/LRUCache.h"
 #include "DataStructures/EventLoop.h"
 #include "DataStructures/MaxStack.h"
 #include "DebugLogger/DebugLogger.h"
+#include "Date_Time_Chrono/Date_Time_Chrono.h"
 #include "Collections/CollectionsTests.h"
 #include "ObjectOrientedExperimetns/RAIIWrapper.h"
+#include "ObjectOrientedExperimetns/OOP_Experiments.h"
+#include "Optional/Optional.h"
 #include "ConstexprMap/ConstexprMap.h"
 #include "Multithreading/Multithreading.h"
 #include "DesignPatterns/DesignPatterns.h"
 #include "Iterators/Iterators.h"
+#include "Math/Math.h"
 #include "Files_Filesystem/Files.h"
 #include "Helpers/Utilities.h"
 #include "Strings/Strings.h"
@@ -73,7 +77,6 @@
 #include "ThinkCell/ThinkCell.h"
 #include "TableFormatter/TableFormatter.h"
 #include "Coroutines/Coroutines.h"
-
 
 #include <format>
 #include <coroutine>
@@ -86,67 +89,6 @@
 // #include <flat_set>
 
 
-namespace CurveCalcData {
-
-    // TODO: OffSet as enum Upper, Lower?
-    template<typename T, size_t OffSet = 0, size_t Capacity = 16>
-    class TeethArray: public std::array<T, Capacity> {
-    private:
-        using value_type = T;
-        using reference = value_type&;
-        using size_type = std::size_t;
-
-        // Add static_asserts for type
-
-        static inline constexpr size_type _offset { 11 };
-
-        [[nodiscard]]
-        inline constexpr size_type _toothId2ArrayIndex(size_type id) const noexcept {
-            if ((id + OffSet) > 20)
-                id -= 2;
-            return id - OffSet - _offset;
-        }
-
-    public:
-        reference operator[](size_type index) noexcept {
-            return std::array<value_type, Capacity>::operator[](_toothId2ArrayIndex(index));
-        }
-
-        const reference operator[](size_type index) const noexcept {
-            return std::array<value_type, Capacity>::operator[](_toothId2ArrayIndex(index));
-        }
-
-        reference get(size_type index) noexcept {
-            return std::array<value_type, Capacity>::operator[](_toothId2ArrayIndex(index));
-        }
-
-        const reference get(size_type index) const noexcept {
-            return std::array<value_type, Capacity>::operator[](_toothId2ArrayIndex(index));
-        }
-    };
-
-    void TeethArrayTest() {
-        TeethArray<int> teeth {};
-
-        teeth[11] = 11;
-        teeth[18] = 18;
-        teeth[21] = 21;
-        teeth[28] = 28;
-
-        for (auto x: teeth)
-            std::cout << x << " ";
-    }
-}
-
-// TODO: Add UNICODE src
-
-
-
-namespace Conv
-{
-
-}
-
 template<auto ...P>
 struct Printer {
     inline static std::tuple data = std::tuple(P...);
@@ -157,7 +99,8 @@ struct Printer {
     }
 };
 
-void Funny_Tuple_Test () {
+void Funny_Tuple_Test ()
+{
     static char str1[] = "answer1";
     static char str2[] = "answer2";
     static char str3[] = {'A', 'B', 0};
@@ -167,25 +110,6 @@ void Funny_Tuple_Test () {
     std::cout << x.get<0>() << std::endl;
     std::cout << x.get<1>() << std::endl;
     std::cout << x.get<2>() << std::endl;
-
-}
-
-
-
-namespace FriendTests {
-
-    class A {
-        int v {0};
-
-        friend class B;
-    };
-
-    class B {
-    public:
-        void foo(A& a) {
-            a.v = 10;
-        }
-    };
 }
 
 std::vector<std::string> split(std::string_view input,
@@ -224,7 +148,6 @@ std::string bin2hex(const std::string& input)
     return res;
 }
 
-
 class Graph
 {
 public:
@@ -258,24 +181,7 @@ public:
 };
 
 
-
-namespace Chrono {
-
-    using namespace std::literals;
-
-    void Test1() {
-
-        std::chrono::year_month_day ymd{2021y/2/2d};
-
-        // std::cout << first << std::endl;
-
-    }
-}
-
-
-
-
-inline const Utilities::Object make() {
+inline Utilities::Object make() {
     return Utilities::Object {};
 }
 
@@ -288,7 +194,7 @@ struct Path: std::vector<T> {
     }
 };
 
-std::string FormatString(std::string s) {
+std::string FormatString(const std::string& s) {
     std::string result;
     result.reserve(s.size());
 
@@ -312,44 +218,6 @@ std::string FormatString(std::string s) {
 
     return result;
 }
-
-namespace OOP
-{
-    void MoveTest() {
-        Helpers::Long l1 {111};
-        // Long l2 = std::move(l1);
-    }
-
-    struct Base {
-        Base() {
-            std::cout << "Base::Base()" << std::endl;
-        }
-
-        operator short() const {
-            std::cout << "operator Base::short()" << std::endl;
-            return 1;
-        }
-    };
-
-    struct Derived: Base {
-        Derived() {
-            std::cout << "Derived::Derived()" << std::endl;
-        }
-    };
-
-    void count(int) {
-
-    }
-
-    void TestClassConversationOperatorCall()
-    {
-        const Derived object;
-        count(object);
-    }
-}
-
-
-
 
 namespace Tuples {
 
@@ -377,24 +245,7 @@ namespace Tuples {
     }
 }
 
-template<typename T>
-struct Optional {
-    T v {};
 
-    /*
-    template<class Type>
-    void set(Type&& newVal) {
-        v.~T();
-        v = std::forward<Type>(newVal);
-    }
-    */
-
-    template<class Type>
-    void set(Type&& newVal) {
-        //v.~T();
-        std::exchange(v, std::forward<Type>(newVal));
-    }
-};
 
 
 namespace RecursiveLambda {
@@ -429,9 +280,6 @@ namespace RecursiveLambda {
 }
 
 
-
-
-
 class StaticInitObject
 {
     static inline const int x = []{
@@ -448,81 +296,6 @@ public:
 
 
 
-
-
-namespace Templates
-{
-    /*
-    template<typename T, typename ... Args>
-    T (*Func)(Args ...) = [](Args ... args) {
-        return (args + ... + 0);
-    };
-    */
-
-    //------------------------------------------------------------------------------
-
-    struct Config
-    {
-        int v{12};
-    };
-
-    template<Config config>
-    struct Task
-    {
-        void submit() {
-            std::cout << config.v << std::endl;
-        }
-    };
-
-    void Test()
-    {
-        Task<Config{}>().submit();
-    }
-
-    //------------------------------------------------------------------------------
-
-    class Customer
-    {
-    private:
-        std::string name;
-    public:
-        explicit Customer(std::string n) : name(std::move(n)) {
-        }
-
-        [[nodiscard]]
-        std::string getName() const { return name; }
-    };
-
-    struct CustomerEq {
-        bool operator() (Customer const& c1, Customer const& c2) const {
-            std::cout << "CustomerEq() called" << std::endl;
-            return c1.getName() == c2.getName();
-        }
-    };
-
-    struct CustomerHash {
-        std::size_t operator() (Customer const& c) const {
-            std::cout << "CustomerHash() called" << std::endl;
-            return std::hash<std::string>()(c.getName());
-        }
-    };
-
-    template<typename... Bases>
-    struct Overloader : Bases...
-    {
-        using Bases::operator()...; // OK since C++17
-    };
-
-    void Test2()
-    {
-        using CustomerOP = Overloader<CustomerHash,CustomerEq>;
-
-        const Customer c1 {"one"}, c2 { "two"};
-
-        CustomerOP{}(c1);
-        CustomerOP{}(c1, c2);
-    }
-}
 
 namespace InvokeTest {
 
@@ -599,338 +372,18 @@ namespace InvokeTest {
 }
 
 
-
-namespace Decorator
-{
-    struct Money {
-        uint64_t value{};
-    };
-
-
-    template<typename T> requires std::is_arithmetic_v<T>
-    [[nodiscard]]
-    Money operator*(const Money& money, T factor) {
-        return Money {static_cast<uint64_t>( money.value * factor )};
-    }
-
-    [[nodiscard]]
-    constexpr Money operator+(const Money& lhs, const Money& rhs) noexcept {
-        return Money{lhs.value + rhs.value};
-    }
-
-    std::ostream &operator<<(std::ostream &stream, const Money &money) {
-        stream << money.value;
-        return stream;
-    }
-
-
-
-    template<typename T>
-    concept PricedItem = requires(T item) {
-        { item.price() } -> std::same_as<Money>;
-    };
-
-    template<int taxRate, PricedItem Item>
-    class Taxed : private Item {
-    public:
-        template<typename... Args>
-        explicit Taxed(Args&& ... args): Item {std::forward<Args>(args)...} {
-            // ....
-        }
-
-        [[nodiscard]]
-        Money price() const {
-            return Item::price() * (1.0 + (taxRate / 100));
-        }
-    };
-
-
-    template<int discount, PricedItem Item>
-    class Discounted {
-    public:
-        template<typename... Args>
-        explicit Discounted(Args&& ... args): item{std::forward<Args>(args)...} {
-            // ....
-        }
-
-        [[nodiscard]]
-        Money price() const {
-            return item.price() * (1.0 - (discount / 100));
-        }
-
-    private:
-        Item item;
-    };
-
-
-    struct Ticket
-    {
-        Ticket(std::string name, Money price ): name_{ std::move(name) } , price_{ price } {
-            // ....
-        }
-
-        [[nodiscard]]
-        const std::string& name() const {
-            return name_;
-        }
-
-        [[nodiscard]]
-        Money price() const {
-            return price_;
-        }
-
-    private:
-        std::string name_;
-        Money price_;
-    };
-
-
-    struct Book
-    {
-        Book(std::string name, Money price ): name_{ std::move(name) }, price_{ price }
-        {}
-
-        [[nodiscard]]
-        std::string const& name() const {
-            return name_;
-        }
-
-        [[nodiscard]] Money price() const {
-            return price_;
-        }
-
-    private:
-        std::string name_;
-        Money price_;
-    };
-
-
-    void test()
-    {
-        Taxed<15, Discounted<20, Ticket>> item1 { "Core C++", Money{499} };
-        Taxed<16, Discounted<21, Ticket>> item2 { "Core C++", Money{499} };
-        Taxed<17, Discounted<22, Book>> item3 { "Core C++", Money{499} };
-
-        [[maybe_unused]]
-        const Money totalPrice1 = item1.price();  // Results in 459.08
-
-        [[maybe_unused]]
-        const Money totalPrice2 = item2.price();
-
-        [[maybe_unused]]
-        const Money totalPrice3 = item3.price();
-    }
-}
-
-namespace Date_Time
-{
-    using namespace std::chrono;
-
-    std::ostream& operator<<(std::ostream& stream,
-                             const std::chrono::year_month_day& ymd)
-    {
-        stream << static_cast<int>(ymd.year()) << " / "
-               << static_cast<unsigned>(ymd.month()) << " / "
-               << static_cast<unsigned>(ymd.day()) ;
-
-        return stream;
-    }
-
-    void ChronoTests()
-    {
-        using namespace std::chrono;
-        using namespace std::chrono_literals;
-
-        std::chrono::year_month_day startDay = std::chrono::day {1} / 2 / 2023;
-        std::cout << startDay << std::endl;
-
-
-        std::chrono::year_month_day d2 { year {2023}, month {3}, day{14}};
-        std::cout << d2 << std::endl;
-
-        /*
-        for (auto d = startDay; d.month() == startDay.month(); d += std::chrono::months{1}) {
-            std::cout << d << '\n';
-        }*/
-    }
-
-    void Test2()
-    {
-        std::cout << "USA switching to summer time on "
-                  << year_month_day{2023y/March/Sunday[2]} << "\n";
-        std::cout << "Europe switching to summer time on "
-                  << year_month_day{2023y/March/Sunday[last]} << "\n\n";
-
-    }
-}
-
-
-namespace NTTP
-{
-    template<auto Func>
-    struct PersonalBudget {
-        double compute(std::uint32_t amt) {
-            return Func(amt);
-        }
-    };
-
-    void test()
-    {
-
-        auto Savings1 = [](int amt) -> decltype(auto) {
-            return static_cast<double>(0.75*amt);
-        };
-
-        PersonalBudget<Savings1> Savingsbudget{};
-
-        auto savings = Savingsbudget.compute(2300);
-        std::cout << "Estimated Savings: " << savings << std::endl;
-
-    }
-}
-
-
-namespace OOP_Test
-{
-    struct Element {
-        std::string name {};
-    };
-
-    std::vector<Element> getElements() {
-        return {
-            Element{"ElementOne"},
-            Element{"ElementTwo"},
-            Element{"ElementThree"},
-            Element{"ElementFour"},
-            Element{"ElementFive"}
-        };
-    }
-
-    namespace ExampleTwo
-    {
-        struct HandlerBase
-        {
-            void handle(std::span<Element> elements) {
-                for (Element el: elements)
-                    handle(std::move(el));
-            }
-
-            virtual void handle(Element element) = 0;
-            virtual ~HandlerBase() = default;
-        };
-
-        struct HandlerA: HandlerBase {
-            void handle(Element element) override {
-                std::cout << "HandlerA: " << element.name << std::endl;
-            }
-        };
-
-        struct HandlerB: HandlerBase {
-            void handle(Element element) override {
-                std::cout << "HandlerA: " << element.name << std::endl;
-            }
-        };
-
-        std::unique_ptr<HandlerBase> getHandler()
-        {
-            return std::make_unique<HandlerA>();
-        }
-
-        void test()
-        {
-            const auto handler = getHandler();
-            std::vector<Element> elements = getElements();
-            handler->handle(elements);
-        }
-    }
-
-    namespace ExampleThree
-    {
-        struct HandlerBase
-        {
-            virtual void handle(std::span<Element> elements) = 0;
-            virtual ~HandlerBase() = default;
-        };
-
-        template<class Derived>
-        struct Handler: HandlerBase {
-            void handle(std::span<Element> elements) {
-                for (Element el: elements)
-                    d.handle(std::move(el));
-            }
-
-            Derived d {};
-        };
-
-        struct HandlerA {
-            void handle(Element element) {
-                std::cout << "HandlerA: " << element.name << std::endl;
-            }
-        };
-
-        struct HandlerB {
-            void handle(Element element) {
-                std::cout << "HandlerA: " << element.name << std::endl;
-            }
-        };
-
-        std::unique_ptr<HandlerBase> getHandler()
-        {
-            return std::make_unique<Handler<HandlerA>>();
-        }
-
-        void test()
-        {
-            const auto handler = getHandler();
-            std::vector<Element> elements = getElements();
-            handler->handle(elements);
-        }
-    }
-}
-
-namespace Math
-{
-    int calc(int val)
-    {
-        int count = 0;
-        while (val > 1) {
-            val /= 2;
-            ++count;
-        }
-        return count;
-    }
-
-    void Log2Test()
-    {
-        calc(59218);
-    }
-}
-
-/*
-namespace StackTrace
-{
-    void foo() {
-        auto trace = std::stacktrace::current();
-        for (const auto& entry: trace) {
-            std::cout << std::to_string(entry) << '\n';
-        }
-    }
-}
-*/
-
-
 namespace ReturnTypeCast
 {
     struct Value
     {
         std::string value{"123.456"};
 
-         explicit operator int() {
+        explicit operator int() {
             std::cout << "Value::operator int()\n";
             return 123;
         }
 
-    // private:
+        // private:
         operator double() {
             std::cout << "Value::operator double()\n";
             return 123.456f;
@@ -1151,15 +604,17 @@ namespace Experiments_Gcc23
     }
 }
 
+
+
 int main([[maybe_unused]] int argc,
-         [[maybe_unused]] char** argv)
+        [[maybe_unused]] char** argv)
 {
     const std::vector<std::string_view> args(argv + 1, argv + argc);
 
     // Experiments_Gcc23::g();
     // Experiments_Gcc23::test2();
     // Experiments_Gcc23::Array_Operator_Default_Value();
-    Experiments_Gcc23::Wparentheses();
+    // Experiments_Gcc23::Wparentheses();
 
     // TableFormatter::TestAll();
 
@@ -1170,9 +625,6 @@ int main([[maybe_unused]] int argc,
 
     // ReturnTypeCast::tests();
 
-    // NTTP::test();
-
-    // Math::Log2Test();
 
     // OOP_Test::ExampleTwo::test();
     // OOP_Test::ExampleThree::test();
@@ -1186,6 +638,7 @@ int main([[maybe_unused]] int argc,
     // Files::TestAll();
     // ConstexprMap::TestAll()
     // DesignPatterns::TestAll();
+    // Date_Time_Chrono::TestAll();
     // MaxStack::TestAll();
     // DebugLogger::TestAll();
     // UniquePtr_Size::SizeTest();
@@ -1194,6 +647,9 @@ int main([[maybe_unused]] int argc,
     // ExpressionTemplates::TestAll();
     // CopyElision_RVO::TestAll();
     // ObjectOrientedExperiments::RAIIWrapper::TestAll();
+    ObjectOrientedExperiments::OOP_Experiments::TestAll();
+    // Optional::TestAll();
+    // Math::TestAll();
     // LRUCache::TestAll();
     // EventLoop::TestAll();
     // Iterators::TestAll();
@@ -1204,44 +660,23 @@ int main([[maybe_unused]] int argc,
     // BinaryAnalyzer::TestAll();
     // ThinkCell::IntervalMapTest();
 
-
-    // OOP::MoveTest();
     // OOP::TestClassConversationOperatorCall();
 
-
     // InvokeTest::Test();
-    // Templates::Test();
-    // Templates::Test2();
-
-
-    // Date_Time::ChronoTests();
-    // Date_Time::Test2();
-
 
     // StaticInitObject a, b;
     // Concepts_Experiments::TestConcepts();
 
     // OrderBook::TestAll();
     // OrderBook2::TestAll();
-
     // MatchingOrderBook::TestAll();
     // MatchingOrderBookEx::TestAll();
 
     // TestDataGenerator::GenerateData();
 
     // CacheLineTests::Test();
-
-    // Optional<Utilities::Long> opt;
-    // opt.set(Utilities::Long {2});
-
     // Funny_Tuple_Test();
-
-
     // Tuples::IterateTest();
-
-    // CurveCalcData::TeethArrayTest();
-
-    // Templates::TestAll();
     // PointsAndLines::TestAll();
 
 #if 0

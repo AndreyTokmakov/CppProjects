@@ -1,11 +1,11 @@
-//============================================================================
-// Name        : DebugLogger.h
-// Created on  : 11.07.2022
-// Author      : Tokmakov Andrei
-// Version     : 1.0
-// Copyright   : Your copyright notice
-// Description : DebugLogger
-//============================================================================
+/*============================================================================
+Name        : DebugLogger.h
+Created on  : 11.07.2022
+Author      : Tokmakov Andrei
+Version     : 1.0
+Copyright   : Your copyright notice
+Description : DebugLogger
+============================================================================**/
 
 #include "DebugLogger.h"
 

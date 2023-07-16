@@ -1241,6 +1241,129 @@ namespace DesignPatterns::Observer
     }
 }
 
+
+namespace DesignPatterns::Decorator
+{
+    struct Money {
+        uint64_t value{};
+    };
+
+
+    template<typename T> requires std::is_arithmetic_v<T>
+    [[nodiscard]]
+    Money operator*(const Money& money, T factor) {
+        return Money {static_cast<uint64_t>( money.value * factor )};
+    }
+
+    [[nodiscard]]
+    constexpr Money operator+(const Money& lhs, const Money& rhs) noexcept {
+        return Money{lhs.value + rhs.value};
+    }
+
+    std::ostream &operator<<(std::ostream &stream, const Money &money) {
+        stream << money.value;
+        return stream;
+    }
+
+
+
+    template<typename T>
+    concept PricedItem = requires(T item) {
+        { item.price() } -> std::same_as<Money>;
+    };
+
+    template<int taxRate, PricedItem Item>
+    class Taxed : private Item {
+    public:
+        template<typename... Args>
+        explicit Taxed(Args&& ... args): Item {std::forward<Args>(args)...} {
+            // ....
+        }
+
+        [[nodiscard]]
+        Money price() const {
+            return Item::price() * (1.0 + (taxRate / 100));
+        }
+    };
+
+
+    template<int discount, PricedItem Item>
+    class Discounted {
+    public:
+        template<typename... Args>
+        explicit Discounted(Args&& ... args): item{std::forward<Args>(args)...} {
+            // ....
+        }
+
+        [[nodiscard]]
+        Money price() const {
+            return item.price() * (1.0 - (discount / 100));
+        }
+
+    private:
+        Item item;
+    };
+
+
+    struct Ticket
+    {
+        Ticket(std::string name, Money price ): name_{ std::move(name) } , price_{ price } {
+            // ....
+        }
+
+        [[nodiscard]]
+        const std::string& name() const {
+            return name_;
+        }
+
+        [[nodiscard]]
+        Money price() const {
+            return price_;
+        }
+
+    private:
+        std::string name_;
+        Money price_;
+    };
+
+
+    struct Book
+    {
+        Book(std::string name, Money price ): name_{ std::move(name) }, price_{ price }
+        {}
+
+        [[nodiscard]]
+        std::string const& name() const {
+            return name_;
+        }
+
+        [[nodiscard]] Money price() const {
+            return price_;
+        }
+
+    private:
+        std::string name_;
+        Money price_;
+    };
+
+
+    void test()
+    {
+        Taxed<15, Discounted<20, Ticket>> item1 { "Core C++", Money{499} };
+        Taxed<16, Discounted<21, Ticket>> item2 { "Core C++", Money{499} };
+        Taxed<17, Discounted<22, Book>> item3 { "Core C++", Money{499} };
+
+        [[maybe_unused]]
+        const Money totalPrice1 = item1.price();  // Results in 459.08
+
+        [[maybe_unused]]
+        const Money totalPrice2 = item2.price();
+
+        [[maybe_unused]]
+        const Money totalPrice3 = item3.price();
+    }
+}
+
 void DesignPatterns::TestAll()
 {
     // Singleton::Test();
@@ -1264,4 +1387,6 @@ void DesignPatterns::TestAll()
     // Monostate::test();
 
     // Observer::test();
+
+    Decorator::test();
 }

@@ -1,17 +1,17 @@
 /**============================================================================
-Name        : DebugLogger.h
-Created on  : 11.07.2022
+Name        : Optional.cpp
+Created on  : 16.07.2022.
 Author      : Tokmakov Andrei
 Version     : 1.0
 Copyright   : Your copyright notice
-Description : DebugLogger
+Description : Optional
 ============================================================================**/
 
-#ifndef CPPPROJECTS_DEBUGLOGGER_H
-#define CPPPROJECTS_DEBUGLOGGER_H
+#ifndef CPPPROJECTS_OPTIONAL_H
+#define CPPPROJECTS_OPTIONAL_H
 
-namespace DebugLogger {
+namespace Optional {
     void TestAll();
-}
+};
 
-#endif //CPPPROJECTS_DEBUGLOGGER_H
+#endif //CPPPROJECTS_OPTIONAL_H
