@@ -654,15 +654,58 @@ namespace HeapTest_PriorityQueue
     }
 }
 
+namespace AutoTests
+{
+    struct Object
+    {
+        Object() { std::cout << "Object::Object()" << std::endl; }
+        ~Object() { std::cout << "~Object::Object()" << std::endl; }
+
+        Object(const Object&) { std::cout << "Object::Object(const Object&)" << std::endl; }
+        Object(Object&&) noexcept { std::cout << "Object::Object(Object&&)" << std::endl; }
+
+        Object& operator=(const Object&) {
+            std::cout << "Object::Object(const Object&)" << std::endl;
+            return *this;
+        }
+
+        Object& operator=(Object&&) noexcept {
+            std::cout << "Object::Object(Object&&)" << std::endl;
+            return *this;
+        }
+    };
+
+    Object tmp;
+
+    Object& getObject() {
+        return tmp;
+    }
+
+    void Test_GetReference()
+    {
+        Object& obj = getObject();
+    }
+
+    void Test_LoseReference_Copy()
+    {
+        auto obj = getObject();
+    }
+}
+
 int main([[maybe_unused]] int argc,
         [[maybe_unused]] char** argv)
 {
     const std::vector<std::string_view> args(argv + 1, argv + argc);
 
+    // AutoTests::Test_GetReference();
+    // AutoTests::Test_LoseReference_Copy();
+
     // Experiments_Gcc23::g();
     // Experiments_Gcc23::test2();
     // Experiments_Gcc23::Array_Operator_Default_Value();
     // Experiments_Gcc23::Wparentheses();
+
+    // Experiments::Test({20, 40, 60});
 
     // TableFormatter::TestAll();
 
@@ -675,15 +718,13 @@ int main([[maybe_unused]] int argc,
 
     // HeapTest_PriorityQueue::MaxHeapTest();
     // HeapTest_PriorityQueue::MinHeapTest();
-    HeapTest_PriorityQueue::MaxPriorityQueue();
+    // HeapTest_PriorityQueue::MaxPriorityQueue();
 
-
-    // Experiments::Test({20, 40, 60});
+    Algorithms::TestAll();
     // Multithreading::TestAll();
     // Memory::TestAll();
     // Strings::TestAll();
     // Iterators::TestAll();
-    // Algorithms::TestAll();
     // Files::TestAll();
     // ConstexprMap::TestAll()
     // DesignPatterns::TestAll();

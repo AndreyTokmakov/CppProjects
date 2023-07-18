@@ -236,103 +236,18 @@ namespace Algorithms
         }
     }
 
-    //--------------------------------------------------------------------------------------//
 
-    std::string longestUniqueSubstr_1(const std::string& text) {
-        char duplicates[256] = { 0 };
-        size_t beg = 0, length = 0, maxlen = 0;
-        for (size_t index = 0; index < text.length(); index++) {
-            const char c = text[index];
-            if (1 == duplicates[c]) {
-                length = 1;
-                std::fill_n(duplicates, std::size(duplicates), 0);
-            }
-            else {
-                if (++length > maxlen) {
-                    maxlen = length;
-                    beg = index - length + 1;
-                }
-            }
-            duplicates[text[index]] = 1;
-        }
-        return text.substr(beg, maxlen);
-    }
+    /** ======================================================================================= **/
 
-    size_t longestUniqueSubstr_2(const std::string& text) {
-        size_t maxLength = 0, repeat_count = 0, indexes[256] = { 0 };
-        for (size_t idx = 0; char c: text) {
-            repeat_count = std::max(repeat_count, indexes[c] + 1);
-            maxLength = std::max(maxLength, idx - repeat_count + 1);
-            indexes[c] = idx++;
-        }
-        return maxLength;
-    }
+    // Smallest window in a String containing all characters of other String
+    // Given two strings, string and pattern, the task is to find the smallest substring in string
+    // containing all characters of pattern.
 
-    size_t longestUniqueSubstr_3_Map(const std::string& text) {
-        std::unordered_map<char, size_t> seen;
-        size_t result = 0;
-        for (size_t fast = 0, slow = 0; fast < text.size(); ++fast) {
-            if (seen.count(text[fast]) != 0)
-                slow = std::max(slow, seen[text[fast]] + 1);
-            seen[text[fast]] = fast;
-            result = std::max(result, fast - slow + 1);
-        }
-        return result;
-    }
-
-    size_t longestUniqueSubstr_4_Tbl(const std::string& text) {
-        size_t result = 0, indexes[256] {0};
-        for (size_t fastIdx = 0, slow = 0; const char c: text) {
-            slow = std::max(slow, indexes[c] + 1);
-            indexes[c] = fastIdx++;
-            result = std::max(result, fastIdx - slow);
-        }
-        return result;
-    }
-
-    size_t longestUniqueSubstr_TEST(const std::string& text)
+    void smallest_substring_containing_all_chars()
     {
-        /*
-        size_t indexes[256] {0};
-        for (size_t idx = 0, slow = 0; idx < text.size(); ++idx)
-        {
-            const char c = text[idx];
-            slow = std::max(slow, indexes[c] + 1);
-            std::cout << idx << " | " <<  c << " = " << slow<< std::endl;
+        const std::string str = "this is a test string",  pattern = "tist";
 
-            indexes[c] = idx;
-
-            std::cout << c << " = " << indexes[c] << std::endl;
-        }
-        return 0;
-         */
-
-        size_t maxLen = 0, indexes[256] {0};
-        for (size_t idx = 0, slow = 0; const char c: text) {
-            slow = std::max(slow, indexes[c] + 1);
-
-            std::cout << idx << " | " << c << " | " << slow << " | " <<  indexes[c] ;
-
-            indexes[c] = idx++;
-            maxLen = std::max(maxLen, idx - slow);
-
-            std::cout << " -->  " << maxLen << std::endl;
-        }
-        return maxLen;
-    }
-
-    void LongestSubstringWithoutRepeatingCharacters() {
-        std::string text = "abcadbgt";
-
-        /*
-        std::cout << longestUniqueSubstr_1(text) << std::endl;
-        std::cout << longestUniqueSubstr_2(text) << std::endl;
-        std::cout << longestUniqueSubstr_3_Map(text) << std::endl;
-        std::cout << longestUniqueSubstr_4_Tbl(text) << std::endl;
-        std::cout << longestUniqueSubstr_4_Tbl_Debug(text) << std::endl;
-         */
-
-        std::cout << longestUniqueSubstr_TEST(text) << std::endl;
+        
     }
 }
 
@@ -479,10 +394,6 @@ namespace Algorithms::BoundedSubArrays {
                     << boundedSubArrays2(testData.first,testData.second.first, testData.second.second)
                     << std::endl;
         }
-
-
-
-
     }
 }
 
@@ -496,14 +407,10 @@ void Algorithms::TestAll()
 
     // Contains();
 
-    // int m = calcMinMoves({2,3,4,5,6}, 1);
-    // std::cout << m << std::endl;
-
     // CalcParentheses_3_BRacket();
 
+    smallest_substring_containing_all_chars();
 
-    // LongestSubstringWithoutRepeatingCharacters();
-
-    BoundedSubArrays::Tests();
+    // BoundedSubArrays::Tests();
 };
 

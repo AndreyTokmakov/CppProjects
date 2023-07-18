@@ -777,34 +777,36 @@ namespace Strings {
     //--------------------------------------------------------------------------------------//
 
     // Необходимо найти максимальную длину подстроки
-    // такой что бы в ней было не более чем K уникальных элементов
-    size_t findLenWithMax_K_UniqueChars(const std::string& str, const size_t K)
+    // такой что бы в ней было не более чем 'K' уникальных элементов
+    size_t findLenWithMax_K_UniqueChars(const std::string& text,
+                                        const size_t K)
     {
-        size_t indexes[256] {};
-        size_t substrStart { 0 }, result { 0 };
-
-        for (size_t idx = 0, uniq = 0; idx < str.length(); ++idx)
+        size_t result { 0 }, indexes[256] {};
+        for (size_t right = 0, left = 0, uniqCount = 0; right < text.length(); ++right)
         {
-            const char c = str[idx];
+            const char c = text[right];
             if (0 == indexes[c]++)
-                ++uniq;
+                ++uniqCount;
 
-            while (uniq > K) {
-                const char ch = str[substrStart++];
+            while (uniqCount > K) {
+                const char ch = text[left++];
                 if (0 == --indexes[ch])
-                    --uniq;
+                    --uniqCount;
             }
-            result = std::max(result, idx - substrStart + 1);
+            result = std::max(result, right - left + 1);
         }
         return result;
     }
 
     void MaxSubstringLength_Of_K_max_Unique_Elements()
     {
-        std::cout << findLenWithMax_K_UniqueChars("aba", 2) << std::endl;
-        std::cout << findLenWithMax_K_UniqueChars("ababaaab", 2) << std::endl;
-        std::cout << findLenWithMax_K_UniqueChars("ababaaacb", 2) << std::endl;
-        std::cout << findLenWithMax_K_UniqueChars("ababaaacb", 3) << std::endl;
+        std::cout << findLenWithMax_K_UniqueChars("aba", 2) << std::endl;         // 3
+        std::cout << findLenWithMax_K_UniqueChars("ababaaab", 2) << std::endl;    // 8
+        std::cout << findLenWithMax_K_UniqueChars("ababaaacb", 2) << std::endl;   // 7
+        std::cout << findLenWithMax_K_UniqueChars("ababaaacb", 3) << std::endl;   // 9
+        std::cout << findLenWithMax_K_UniqueChars("aabbcc", 1) << std::endl;      // 2
+        std::cout << findLenWithMax_K_UniqueChars("aabbcc", 2) << std::endl;      // 4
+        std::cout << findLenWithMax_K_UniqueChars("aabbcc", 3) << std::endl;      // 6
     }
 
     //--------------------------------------------------------------------------------------//
@@ -1642,8 +1644,8 @@ void Strings::TEST_ALL()
 {
 	// Strings::LongestSubstringWithoutRepeatingCharacters();
 
-	Strings::LongestConsecutiveCharacters();
-	// Strings::MaxSubstringLength_Of_K_max_Unique_Elements();
+	// Strings::LongestConsecutiveCharacters();
+	Strings::MaxSubstringLength_Of_K_max_Unique_Elements();
 
 	// Strings::AnalogClockAngles();
 	// Strings::Atoi();
