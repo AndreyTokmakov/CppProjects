@@ -2065,19 +2065,8 @@ namespace Numeric {
         return data.size() == xx ? std::nullopt : std::make_optional<T>(result);
     }
 
-    template<typename T>
-    // std::optional<T>
-    void __Find_First_Element_Occured_Odd_Times_EX_0(const std::vector<T>& data) { // UNIMPLAMENTED
-        std::unordered_set<T> set;
-        for (auto iter = data.crbegin(); data.crend() != iter; ++iter) {
-            if (auto [it, ok] = set.insert(*iter); false == ok) {
-
-            }
-        }
-    }
 
     template<typename T>
-    // std::optional<T>
     void __Find_First_Element_Occured_Odd_Times_EX(const std::vector<T>& data) {
         std::unordered_map<T, size_t> map;
         for (T i : data)
@@ -2093,6 +2082,30 @@ namespace Numeric {
         const std::vector<int> Numeric { 77, 1,2,12, 3,4,5,1,2,3,33,4,5, 1,2,3,12, 33, 12, 4,5 };
         //std::cout << __Find_First_Element_Occured_Odd_Times(Numeric).value_or(-1) << std::endl;
         __Find_First_Element_Occured_Odd_Times_EX(Numeric);
+    }
+
+    //--------------------------------------------------------------------------------------//
+
+    template<typename T>
+    std::optional<T> _find_first_repeating_element(const std::vector<T>& data)
+    {
+        int minIdx = -1;
+        std::unordered_set<T> set;
+        for (int idx = data.size() - 1; idx >= 0; --idx)
+        {
+            if (!set.insert(data[idx]).second)
+                minIdx = idx;
+        }
+        return -1 == minIdx ? std::nullopt : std::make_optional<int>(data[minIdx]);
+    }
+
+    void Find_First_Repeating_Element()
+    {
+        std::vector<int> data {10, 5, 3, 4, 3, 5, 6};
+        // std::vector<int> data {1,2,3};
+        std::optional<int> res = _find_first_repeating_element(data);
+
+        std::cout << res.value_or(-1) << std::endl;
     }
 
     //--------------------------------------------------------------------------------------//
@@ -2563,15 +2576,15 @@ namespace Numeric {
 
     //---------------------------------------------------------------------------//
 
-
-    void Find_SubArrays_WithGivenSum() {
+    void Find_SubArrays_WithGivenSum()
+    {
         {
-            std::vector<int> Numeric = {2,3,4,5,6,7};
-            int X = 11;
+            // std::pair<std::vector<int>, int> data { std::vector<int>{2,3,4,5,6,7}, 11};
+            const std::pair<std::vector<int>, int> data { std::vector<int> { 1, 4, 20, 3, 10, 5, 11}, 33};
 
-            auto [success, borders] = _Subarray_With_Given_Sum(Numeric, X);
+            auto [success, borders] = _Subarray_With_Given_Sum(data.first, data.second);
             if (success) {
-                print_vector(Numeric, borders.first, borders.second);
+                print_vector(data.first, borders.first, borders.second);
             }
         }
 
@@ -2894,36 +2907,43 @@ void Numeric::TEST_ALL()
     // Numeric::Find_DifferentPairs_SumK();
     // Numeric::Find_3_Elements_SumX_Sorted();
 
+
     // Numeric::RemoveElement();
     // Numeric::RemoveDuplicates();
     // Numeric::RemoveDuplicates_SortedArray();
     // Numeric::DeleteFromArray();
 
+
     // Numeric::Find_SubArrays_SumZero();
     // Numeric::Find_SubArrays_WithGivenSum();
+    // Numeric::SmallestSubarrayWithSumGreaterX();
+    // Numeric::LargestSubarrayWithSumGreaterX();   /**  UNIMPLEMENTED  **/
+    // Numeric::Greatest_Subarray_AllElements_Greater_K();
+    // Numeric::Smallest_Subarray_AllElements_Greater_K();
+    // Numeric::Subarrays_WithCurrentMaxElement();
+
 
     // Numeric::FindTheMissingNumber_SortedArray();
     // Numeric::FindTheMissingNumber_Unsorted();
     // Numeric::FindTheMissingNumber_Unsorted_AnyRange();
     // Numeric::Find_K_MissingNumber_Sorted();
     // Numeric::Find_K_MissingNumber();
-    Numeric::Find_Smallest_Missing_Positive_Number();
+    // Numeric::Find_Smallest_Missing_Positive_Number();
     // Numeric::Find_Repeating_And_Missing();
     // Numeric::Find_All_Symmetric_Pairs_InArray();
+
 
     // Numeric::Find_Elements_Occured_Once();
     // Numeric::Find_ONE_Element_Occured_Once();
     // Numeric::Find_First_Element_Occured_Once();
+    Numeric::Find_First_Repeating_Element();
+
+
     // Numeric::CountDistinctPairs_WithDifference_K();
     // Numeric::GroupElements_ByFirstOccurance();
 
     // Numeric::Add_One_To_Integer_ArrayTest();
     // Numeric::Product_Of_All_Numeric_Exept_N();
-    // Numeric::SmallestSubarrayWithSumGreaterX();
-    // Numeric::LargestSubarrayWithSumGreaterX();   /**  UNIMPLEMENTED  **/
-    // Numeric::Greatest_Subarray_AllElements_Greater_K();
-    // Numeric::Smallest_Subarray_AllElements_Greater_K();
-    // Numeric::Subarrays_WithCurrentMaxElement();
 
     // Numeric::Missmatch_Sorted_Vectors();
     // Numeric::Missmatch_Tests();

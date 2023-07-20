@@ -697,6 +697,8 @@ int main([[maybe_unused]] int argc,
 {
     const std::vector<std::string_view> args(argv + 1, argv + argc);
 
+    // static_assert(false == std::equality_comparable_with<std::unique_ptr<int>, nullptr_t>);
+
     // AutoTests::Test_GetReference();
     // AutoTests::Test_LoseReference_Copy();
 

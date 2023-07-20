@@ -245,9 +245,31 @@ namespace Algorithms
 
     void smallest_substring_containing_all_chars()
     {
-        const std::string str = "this is a test string",  pattern = "tist";
+        const std::string str = "aaaa this is a test string",  pattern = "tist";
+        const std::array<int16_t, 256> map = [&pattern]()
+        {
+            std::array<int16_t, 256> tmp {};
+            for (char c: pattern)
+                ++tmp[c];
+            return tmp;
+        }();
 
-        
+        size_t left = 0;
+        for (; left < str.size()  && 0 == map[str[left]]; ++left) { }
+
+        std::array<int16_t, 256> tmp (map);
+        size_t right = left;
+        for (size_t count = pattern.length(); right < str.size(); ++right) {
+            if (tmp[str[right]]-- > 0)
+                if (0 == --count)
+                    break;
+        }
+
+
+
+        for (size_t idx = left; idx <= right; ++idx)
+            std::cout << str[idx];
+        std::cout << std::endl;
     }
 }
 
@@ -403,14 +425,15 @@ void Algorithms::TestAll()
     // Algorithms::BinarySearch();
     // Algorithms::PrintAllSubArraysTest();
 
-    // Algorithms::Sqrt();
+    // Algorithms::Sqrt();sdsd
 
     // Contains();
 
     // CalcParentheses_3_BRacket();
 
-    smallest_substring_containing_all_chars();
+    // smallest_substring_containing_all_chars();
 
     // BoundedSubArrays::Tests();
+
 };
 
