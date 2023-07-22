@@ -2110,6 +2110,73 @@ namespace Numeric {
 
     //--------------------------------------------------------------------------------------//
 
+    int binarySearch(const std::vector<int>& numbers,
+                     const int left,
+                     const int right,
+                     const int x)
+    {
+        if (right < left)
+            return -1;
+        const int mid = left + (right - left) / 2;
+
+        if (numbers[mid] == x)
+            return mid;
+        if (numbers[mid] > x)
+            return binarySearch(numbers, left, mid - 1, x);
+
+        return binarySearch(numbers, mid + 1, right, x);
+    }
+
+    template<typename T>
+    int binary_search(const std::vector<T>& numbers,
+                      const T value) {
+        size_t left = 0, right = numbers.size() - 1, idxMid = 0;
+        while (right > (left + 1)) {
+            idxMid = (left + right) / 2;
+            if (value == numbers[idxMid])
+                return numbers[idxMid];
+            if (numbers[idxMid] > value)
+                right = idxMid;
+            else
+                left = idxMid;
+        }
+        return -1;
+    }
+
+    int countOccurrences(const std::vector<int>& numbers,
+                         const int x)
+    {
+        // const int index = binarySearch(numbers, 0, numbers.size() - 1, x);
+        const int index = binary_search(numbers, x);
+        if (-1 == index)
+            return 0;
+
+        // Count elements on left side.
+        int count = 1;
+        int left = index - 1;
+        while (left >= 0 && numbers[left] == x)
+            count++, left--;
+
+        // Count elements on right side.
+        int right = index + 1;
+        while (right < numbers.size() && numbers[right] == x)
+            count++, right++;
+
+        return count;
+    }
+
+    // Count number of occurrences (or frequency) in a sorted array
+
+    void Count_Number_tOccurrences_SortedArray()
+    {
+        const std::vector<int> numbers { 1, 2, 2, 2, 2, 3, 4, 7, 8, 8 };
+        const int result = countOccurrences(numbers, 2);
+
+        std::cout << result << std::endl;
+    }
+
+    //--------------------------------------------------------------------------------------//
+
     size_t __smallest_subarray_with_sum_greater_X(const std::vector<int>& Numeric, const size_t X) {
         size_t min_len = Numeric.size(), sum ;
         for (size_t i = 0; i < Numeric.size(); i++) {
@@ -2936,7 +3003,9 @@ void Numeric::TEST_ALL()
     // Numeric::Find_Elements_Occured_Once();
     // Numeric::Find_ONE_Element_Occured_Once();
     // Numeric::Find_First_Element_Occured_Once();
-    Numeric::Find_First_Repeating_Element();
+    // Numeric::Find_First_Repeating_Element();
+
+    Numeric::Count_Number_tOccurrences_SortedArray();
 
 
     // Numeric::CountDistinctPairs_WithDifference_K();

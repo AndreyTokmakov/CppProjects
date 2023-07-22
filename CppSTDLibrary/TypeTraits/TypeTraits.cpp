@@ -14,9 +14,7 @@
 #include <vector>
 #include <utility>
 #include <cstdint>
-
-// #include <type_traits>
-
+#include <typeindex>
 #include "../TestSupport/TestSupport.h"
 #include "../TypeTraits/TypeTraits.h"
 
@@ -80,24 +78,6 @@ namespace TypeTraits::IsArray {
 		std::cout << typeid(std::enable_if_t<std::is_array_v<T>, T>).name() << std::endl;
 	}
 };
-
-namespace TypeTraits::TypeID {
-	void TypeID_Tests() {
-
-		int int_var;
-		std::cout << typeid(int_var).name() << std::endl;
-
-		TestSupport::FirstType fObj("Test");
-		std::cout << typeid(fObj).name() << std::endl;
-
-		TestSupport::FirstType* ptr = new TestSupport::FirstType("TEST");
-		std::cout << typeid(ptr).name() << std::endl;
-
-		std::cout << "\n------------------ String: -----------------------" << std::endl;
-		std::string str("TEST");
-		std::cout << typeid(str).name() << std::endl;
-	}
-}
 
 namespace TypeTraits::Is_Base_Of {
 	struct A { };
@@ -648,6 +628,58 @@ namespace TypeTraits::Invoke_Result {
 	}
 }
 
+
+namespace TypeTraits::TypeID
+{
+    void TypeID_Tests() {
+
+        int int_var;
+        std::cout << typeid(int_var).name() << std::endl;
+
+        TestSupport::FirstType fObj("Test");
+        std::cout << typeid(fObj).name() << std::endl;
+
+        TestSupport::FirstType* ptr = new TestSupport::FirstType("TEST");
+        std::cout << typeid(ptr).name() << std::endl;
+
+        std::cout << "\n------------------ String: -----------------------" << std::endl;
+        std::string str("TEST");
+        std::cout << typeid(str).name() << std::endl;
+    }
+
+    struct A
+    {
+        virtual void fun() {}
+    };
+
+    struct B : A {};
+
+    std::unordered_map<std::type_index, std::string> names;
+
+    void inspector(A& a) {
+        std::cout << names[typeid(a)] << "\n";
+    }
+
+    void MapOf_TypeIDs()
+    {
+        names[typeid(A)] = "Base";
+        names[typeid(B)] = "Derived";
+        names[typeid(int)] = "int";
+        names[typeid(double)] = "double";
+
+        int x = 20;
+        double y = 2.4;
+        std::cout << names[typeid(x)] << "\n";    // prints: "int"
+        std::cout << names[typeid(y)] << "\n";    // prints: "double"
+
+        A a;
+        B b;
+
+        inspector(a);  // prints: "Base"
+        inspector(b);  // prints: "Derived"
+    }
+}
+
 void TypeTraits::TestAll()
 {
 	// IsClass::Test();
@@ -658,8 +690,9 @@ void TypeTraits::TestAll()
 	// IsArray::Enable_If_Test();
 
 	// TypeID::TypeID_Tests();
+	TypeID::MapOf_TypeIDs();
 
-	Is_Function::Test();
+	// Is_Function::Test();
 	// Is_Lvalue_Reference::Test();
 	// Is_Member_Function_Pointer::Test();
 	// Is_Abstract::Test();
