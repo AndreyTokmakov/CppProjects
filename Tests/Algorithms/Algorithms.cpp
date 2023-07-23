@@ -325,12 +325,10 @@ namespace Algorithms::BoundedSubArrays {
     size_t boundedSubArraysEx(const std::vector<int64_t> &values,
                               const int64_t min, const int64_t max) {
 
-        size_t count { 0 }, len {0};
+        size_t count{0}, len{0};
         bool hasMix = false, hasMax = false;
-        for (const auto& value: values)
-        {
-            if (max >= value && value >= min)
-            {
+        for (const auto &value: values) {
+            if (max >= value && value >= min) {
                 ++len;
                 if (min == value) hasMix = true;
                 if (max == value) hasMax = true;
@@ -338,7 +336,7 @@ namespace Algorithms::BoundedSubArrays {
                     count += len - 1;
 
 
-                std::cout << value  << " | " << std::boolalpha << (bool)(hasMix && hasMax)
+                std::cout << value << " | " << std::boolalpha << (bool) (hasMix && hasMax)
                           << " | " << len << " | " << count << std::endl;
 
             } else {
@@ -353,22 +351,17 @@ namespace Algorithms::BoundedSubArrays {
     size_t boundedSubArrays2(const std::vector<int64_t> &values,
                              const int64_t min, const int64_t max) {
 
-        size_t count { 0 }, minCount { 0 }, maxCount { 0 }, start = 0;
-        for (size_t idx = 0; idx < values.size(); ++idx)
-        {
-            if (const auto value = values[idx]; max >= value && value >= min)
-            {
+        size_t count{0}, minCount{0}, maxCount{0}, start = 0;
+        for (size_t idx = 0; idx < values.size(); ++idx) {
+            if (const auto value = values[idx]; max >= value && value >= min) {
                 if (min == value)
                     ++minCount;
                 if (max == value)
                     ++maxCount;
-            }
-            else {
-                if (minCount && maxCount)
-                {
+            } else {
+                if (minCount && maxCount) {
                     size_t left = start, right = idx;
-                    while (minCount && maxCount)
-                    {
+                    while (minCount && maxCount) {
                         if (min == values[left++]) {
                             ++count;
                             //++left;
@@ -387,8 +380,7 @@ namespace Algorithms::BoundedSubArrays {
             }
         }
 
-        if (minCount && maxCount)
-        {
+        if (minCount && maxCount) {
             for (size_t i = start; i < values.size(); ++i)
                 std::cout << values[i] << " ";
             std::cout << std::endl;
@@ -398,24 +390,59 @@ namespace Algorithms::BoundedSubArrays {
     }
 
 
-    void Tests()
-    {
-        const std::vector<std::pair<std::vector<int64_t>, std::pair<int64_t,int64_t>>> testDatasource
-        {
-            // {{2,3,3,2,4}, {2, 4}},  // --> 4
-            //{{3,3,2,4,4}, {2, 4}},  // --> 7
-            // {{3,3,2,4,2,3}, {2, 4}},  // --> 7
-            {{3,2,4, 1,  2,3,4}, {2, 4}},
-        };
+    void Tests() {
+        const std::vector<std::pair<std::vector<int64_t>, std::pair<int64_t, int64_t>>> testDatasource
+                {
+                        // {{2,3,3,2,4}, {2, 4}},  // --> 4
+                        //{{3,3,2,4,4}, {2, 4}},  // --> 7
+                        // {{3,3,2,4,2,3}, {2, 4}},  // --> 7
+                        {{3, 2, 4, 1, 2, 3, 4}, {2, 4}},
+                };
 
-        for (const auto& testData: testDatasource) {
+        for (const auto &testData: testDatasource) {
             std::cout
                     // << boundedSubArrays(testData.first,testData.second.first, testData.second.second)
                     // << " - "
                     // << boundedSubArraysEx(testData.first,testData.second.first, testData.second.second)
-                    << boundedSubArrays2(testData.first,testData.second.first, testData.second.second)
+                    << boundedSubArrays2(testData.first, testData.second.first, testData.second.second)
                     << std::endl;
         }
+    }
+}
+
+namespace Algorithms
+{
+
+    void findCommon(const std::vector<int>& ar1,
+                    const std::vector<int>& ar2,
+                    const std::vector<int>& ar3)
+    {
+        for (size_t i = 0, j = 0, k = 0; i < ar1.size() && j < ar2.size()  && k < ar3.size(); /** **/)
+        {
+            if (ar1[i] == ar2[j] && ar2[j] == ar3[k]) { // If x = y and y = z, print any of them and move ahead in all arrays
+                std::cout << ar1[i] << " ";
+                ++i; ++j; ++k;
+            }
+
+            else if (ar1[i] < ar2[j])  // x < y
+                i++;
+            else if (ar2[j] < ar3[k])  // y < z
+                j++;
+            else                       // We reach here when x > y and z < y, i.e., z is smallest
+                k++;
+        }
+    }
+
+
+    // Find common elements in three sorted arrays
+    void FindCommonElements_3_SortedArrays()
+    {
+        std::vector<int> array1 { 1, 5, 10, 20, 40, 80 };
+        std::vector<int> array2 { 6, 7, 20, 80, 100 };
+        std::vector<int> array3 { 3, 4, 15, 20, 30, 70, 80, 120 };
+
+        std::cout << "Common Elements are ";
+        findCommon(array1, array2, array3);
     }
 }
 
@@ -435,5 +462,6 @@ void Algorithms::TestAll()
 
     // BoundedSubArrays::Tests();
 
+    FindCommonElements_3_SortedArrays();
 };
 
