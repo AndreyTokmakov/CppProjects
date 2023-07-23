@@ -2703,12 +2703,43 @@ namespace Numeric {
         }
     }
 
+    //----------------------------------------------------------------------------------------------------------
+
     void Find_SubArrays_SumZero() {
         // const std::vector<int> Numeric = { 3,4,-7,3,1,3,1,-4,-2,-2};
         const std::vector<int> Numeric = { 1,3,2,-5, 3 };
         _find_subArrays_sum_zero(Numeric);
         std::cout << std::endl;
         _find_subArrays_sum_zero_SLOW(Numeric);
+    }   void findCommon(const std::vector<int>& ar1,
+                        const std::vector<int>& ar2,
+                        const std::vector<int>& ar3)
+    {
+        for (size_t i = 0, j = 0, k = 0; i < ar1.size() && j < ar2.size()  && k < ar3.size(); /** **/)
+        {
+            if (ar1[i] == ar2[j] && ar2[j] == ar3[k]) { // If x = y and y = z, print any of them and move ahead in all arrays
+                std::cout << ar1[i] << " ";
+                ++i; ++j; ++k;
+            }
+
+            else if (ar1[i] < ar2[j])  // x < y
+                i++;
+            else if (ar2[j] < ar3[k])  // y < z
+                j++;
+            else                       // We reach here when x > y and z < y, i.e., z is smallest
+                k++;
+        }
+    }
+
+    // Find common elements in three sorted arrays
+    void FindCommonElements_3_SortedArrays()
+    {
+        std::vector<int> array1 { 1, 5, 10, 20, 40, 80 },
+                         array2 { 6, 7, 20, 80, 100 },
+                         array3 { 3, 4, 15, 20, 30, 70, 80, 120 };
+
+        std::cout << "Common Elements are ";
+        findCommon(array1, array2, array3);
     }
 
     //---------------------------------------------------------------------------//
@@ -2989,6 +3020,8 @@ void Numeric::TEST_ALL()
     // Numeric::Smallest_Subarray_AllElements_Greater_K();
     // Numeric::Subarrays_WithCurrentMaxElement();
 
+    Numeric::FindCommonElements_3_SortedArrays();
+
 
     // Numeric::FindTheMissingNumber_SortedArray();
     // Numeric::FindTheMissingNumber_Unsorted();
@@ -3005,7 +3038,7 @@ void Numeric::TEST_ALL()
     // Numeric::Find_First_Element_Occured_Once();
     // Numeric::Find_First_Repeating_Element();
 
-    Numeric::Count_Number_tOccurrences_SortedArray();
+    // Numeric::Count_Number_tOccurrences_SortedArray();
 
 
     // Numeric::CountDistinctPairs_WithDifference_K();
