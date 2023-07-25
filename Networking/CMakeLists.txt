@@ -5,8 +5,11 @@ set(CMAKE_C_FLAGS_RELEASE "${CMAKE_C_FLAGS_RELEASE} -pthread")
 set(PROJECT_VERSION 1.0.0.0)
 project(${PROJECT_NAME} VERSION ${PROJECT_VERSION} LANGUAGES CXX)
 
-
 add_compile_options(-c -Wall -Wextra -O3 -std=c++2a)
+
+include_directories(/home/andtokm/DiskS/ProjectsUbuntu/third_party/libssh2/include)
+include_directories(/home/andtokm/DiskS/ProjectsUbuntu/third_party/libssh2/build/src)
+link_directories(/home/andtokm/DiskS/ProjectsUbuntu/third_party/libssh2/build/src)
 
 # include all components
 add_executable(Networking MACOSX_BUNDLE
@@ -45,7 +48,7 @@ add_executable(Networking MACOSX_BUNDLE
         Servers/EPollTCPServerDebug.cpp Servers/EPollTCPServerDebug.h
         Servers/EPollTCPServerMultithreaded.cpp Servers/EPollTCPServerMultithreaded.h
         RawSockets/CaptureTraffic.cpp
-        RawSockets/CaptureTraffic.h PcapAnalyzer/PcapAnalyzer.cpp PcapAnalyzer/PcapAnalyzer.h WiFi/WiFiExperiments.cpp WiFi/WiFiExperiments.h)
+        RawSockets/CaptureTraffic.h PcapAnalyzer/PcapAnalyzer.cpp PcapAnalyzer/PcapAnalyzer.h WiFi/WiFiExperiments.cpp WiFi/WiFiExperiments.h ssh/SshExperiments.cpp ssh/SshExperiments.h)
 
 # Link phread library
-TARGET_LINK_LIBRARIES(Networking pthread)
+TARGET_LINK_LIBRARIES(Networking pthread -lssh2)

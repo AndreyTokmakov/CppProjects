@@ -37,6 +37,9 @@
 #include "Servers/EPollTCPServerDebug.h"
 #include "Servers/EPollTCPServerMultithreaded.h"
 
+#include "ssh/SshExperiments.h"
+
+
 
 int main([[maybe_unused]] int argc,
          [[maybe_unused]] char** argv)
@@ -69,7 +72,9 @@ int main([[maybe_unused]] int argc,
     // EPollTCPServerDebug::Tests();
     // EPollTCPServerMultithreaded::Tests();
 
-    PcapAnalyzer::TestAll();
+    // PcapAnalyzer::TestAll();
+
+    SshExperiments::TestAll(argc, argv);
 
     return EXIT_SUCCESS;
 }
