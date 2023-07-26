@@ -225,7 +225,7 @@ int main(int argc, char** argv)
     // Asserts::TestAll();
     // Atomic::TestAll();
     // Attributes::TestAll();
-    // Auto::TestAll();
+    Auto::TestAll();
     // BitSet::TestAll();
     // BitwiseOperation::TestAll();
     // Byte::TestAll();
@@ -274,7 +274,7 @@ int main(int argc, char** argv)
     // SharedPtr_Tests::TestAll();
     // Variant::TestAll();
     // VolatileTests::TestAll();
-    TypeTraits::TestAll();
+    // TypeTraits::TestAll();
     // Tuple::TestAll();
     // TypeCast::TestAll();
     // Int::TestAll();

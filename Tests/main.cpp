@@ -78,16 +78,12 @@
 #include "ThinkCell/ThinkCell.h"
 #include "TableFormatter/TableFormatter.h"
 #include "Coroutines/Coroutines.h"
+#include "Cpp23_Features/Cpp23_Features.h"
+#include "Auto/AutoTests.h"
+
+
 
 #include <format>
-#include <coroutine>
-
-// C++ 23:
-// #include <expected>
-
-// #include <stacktrace>
-// #include <flat_map>
-// #include <flat_set>
 
 
 template<auto ...P>
@@ -506,106 +502,6 @@ namespace CallFunctionByName
     }
 }
 
-namespace Experiments_Gcc23
-{
-
-    template <class T>
-    int foo() {
-        if constexpr (std::is_same_v<T, int>) {
-            return 42;
-        } else if constexpr (std::is_same_v<T, float>) {
-            return 24;
-        } else {
-            static_assert(false, "T should be an int or a float");
-        }
-    }
-
-    void Test()
-    {
-        foo<int>();
-        // foo<std::string>();
-    }
-
-    struct S {
-        static constexpr bool operator() (int x, int y) {
-            return x < y;
-        }
-    };
-
-    void g()
-    {
-        constexpr S s;
-        static_assert (s (1, 2));
-
-        constexpr bool result = S::operator()(1, 2);  // OK in C++23
-        std::cout << std::boolalpha << result << std::endl;
-    }
-
-    int&& g(int&& x)
-    {
-        return x;
-    }
-
-    void test2()
-    {
-        [[maybe_unused]]
-        const char arr[] = u8"hi";
-    }
-
-    /*
-    struct Array
-    {
-        static constexpr std::array<int, 10> data{
-                1, 2, 3, 4, 5, 6, 7, 8, 9, 10
-        };
-
-        int operator[](int idx, int = 5)
-        {
-            return data[idx];
-        }
-    };
-
-    void Array_Operator_Default_Value()
-    {
-        Array array {};
-        std::cout << array[5] << std::endl;
-    }
-    */
-
-    struct A
-    {
-        int value { 123 };
-
-
-        A& operator=(int v) {
-            value = v;
-            return *this;
-        }
-
-        explicit operator bool() {
-            return true;
-        }
-    };
-
-    void Wparentheses()
-    {
-        A a;
-        if (a = 0) { // Warning Here
-
-        }
-    }
-
-
-    struct T {};
-
-    T fn()
-    {
-        T t;
-        return std::move (T{});
-    }
-}
-
-
 namespace HeapTest_PriorityQueue
 {
     template<typename T>
@@ -654,42 +550,12 @@ namespace HeapTest_PriorityQueue
     }
 }
 
-namespace AutoTests
+
+
+
+void foo(const int& __restrict ref)
 {
-    struct Object
-    {
-        Object() { std::cout << "Object::Object()" << std::endl; }
-        ~Object() { std::cout << "~Object::Object()" << std::endl; }
 
-        Object(const Object&) { std::cout << "Object::Object(const Object&)" << std::endl; }
-        Object(Object&&) noexcept { std::cout << "Object::Object(Object&&)" << std::endl; }
-
-        Object& operator=(const Object&) {
-            std::cout << "Object::Object(const Object&)" << std::endl;
-            return *this;
-        }
-
-        Object& operator=(Object&&) noexcept {
-            std::cout << "Object::Object(Object&&)" << std::endl;
-            return *this;
-        }
-    };
-
-    Object tmp;
-
-    Object& getObject() {
-        return tmp;
-    }
-
-    void Test_GetReference()
-    {
-        Object& obj = getObject();
-    }
-
-    void Test_LoseReference_Copy()
-    {
-        auto obj = getObject();
-    }
 }
 
 int main([[maybe_unused]] int argc,
@@ -698,14 +564,6 @@ int main([[maybe_unused]] int argc,
     const std::vector<std::string_view> args(argv + 1, argv + argc);
 
     // static_assert(false == std::equality_comparable_with<std::unique_ptr<int>, nullptr_t>);
-
-    // AutoTests::Test_GetReference();
-    // AutoTests::Test_LoseReference_Copy();
-
-    // Experiments_Gcc23::g();
-    // Experiments_Gcc23::test2();
-    // Experiments_Gcc23::Array_Operator_Default_Value();
-    // Experiments_Gcc23::Wparentheses();
 
     // Experiments::Test({20, 40, 60});
 
@@ -722,7 +580,9 @@ int main([[maybe_unused]] int argc,
     // HeapTest_PriorityQueue::MinHeapTest();
     // HeapTest_PriorityQueue::MaxPriorityQueue();
 
-    Algorithms::TestAll();
+    // Cpp23_Features::TestAll();
+    AutoTests::TestAll();
+    // Algorithms::TestAll();
     // Multithreading::TestAll();
     // Memory::TestAll();
     // Strings::TestAll();

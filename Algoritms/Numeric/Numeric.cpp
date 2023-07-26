@@ -1884,30 +1884,31 @@ namespace Numeric {
         int dif = 0, iter = 0, dup = 0;
         for (auto i : Numeric) {
             dif += ++iter - i;
-            if (0 == dup && false == nums.insert(i).second)
+            if (0 == dup && !nums.insert(i).second)
                 dup = i;
         }
         std::cout << "Reaping symbol: " << dup << ", Missing: " << dup + dif << std::endl;
     }
 
 
-    void _find_repeating_and_missing_ex(const std::vector<int>& Numeric) {
+    void _find_repeating_and_missing_ex(const std::vector<int>& values) {
         std::unordered_set<int> nums;
         int sum = 0, dup = 0, min = std::numeric_limits<int>::max();
-        for (auto i : Numeric) {
-            min = std::min(i, min);
-            sum += i;
-            if (0 == dup && false == nums.insert(i).second)
-                dup = i;
+        for (const int val : values) {
+            min = std::min(val, min);
+            sum += val;
+            if (0 == dup && false == nums.insert(val).second)
+                dup = val;
         }
 
-        auto size = Numeric.size();
+        auto size = values.size();
         auto sum_expected = (size * (size + 1)) / 2 + size * (min - 1);
 
         std::cout << "Reaping symbol: " << dup << ", Missing: " << dup + sum_expected  - sum << std::endl;
     }
 
-    void Find_Repeating_And_Missing() {
+    void Find_Repeating_And_Missing()
+    {
         {
             std::vector<int> Numeric = { 8,7,7,4,5,6,2,1 };
             _find_repeating_and_missing(Numeric);
@@ -2703,15 +2704,17 @@ namespace Numeric {
         }
     }
 
-    //----------------------------------------------------------------------------------------------------------
-
     void Find_SubArrays_SumZero() {
         // const std::vector<int> Numeric = { 3,4,-7,3,1,3,1,-4,-2,-2};
         const std::vector<int> Numeric = { 1,3,2,-5, 3 };
         _find_subArrays_sum_zero(Numeric);
         std::cout << std::endl;
         _find_subArrays_sum_zero_SLOW(Numeric);
-    }   void findCommon(const std::vector<int>& ar1,
+    }
+
+    //----------------------------------------------------------------------------------------------------------
+
+    void findCommon(const std::vector<int>& ar1,
                         const std::vector<int>& ar2,
                         const std::vector<int>& ar3)
     {
@@ -3020,7 +3023,7 @@ void Numeric::TEST_ALL()
     // Numeric::Smallest_Subarray_AllElements_Greater_K();
     // Numeric::Subarrays_WithCurrentMaxElement();
 
-    Numeric::FindCommonElements_3_SortedArrays();
+    // Numeric::FindCommonElements_3_SortedArrays();
 
 
     // Numeric::FindTheMissingNumber_SortedArray();
@@ -3029,7 +3032,9 @@ void Numeric::TEST_ALL()
     // Numeric::Find_K_MissingNumber_Sorted();
     // Numeric::Find_K_MissingNumber();
     // Numeric::Find_Smallest_Missing_Positive_Number();
-    // Numeric::Find_Repeating_And_Missing();
+    Numeric::Find_Repeating_And_Missing();
+
+
     // Numeric::Find_All_Symmetric_Pairs_InArray();
 
 
