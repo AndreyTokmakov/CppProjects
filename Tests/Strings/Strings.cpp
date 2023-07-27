@@ -10,8 +10,27 @@ Description : Strings texts and experiments
 #include "Strings.h"
 
 #include <iostream>
-#include <string>
+#include <string_view>
+#include <vector>
+#include <list>
 #include <algorithm>
+
+namespace
+{
+    template<typename T>
+    std::ostream &operator<<(std::ostream &ostr, const std::vector<T> &list) {
+        for (const auto &i: list)
+            ostr << i << ' ';
+        return ostr;
+    }
+
+    template<typename T>
+    std::ostream &operator<<(std::ostream &ostr, const std::list<T> &list) {
+        for (const auto &i: list)
+            ostr << " " << i;
+        return ostr;
+    }
+}
 
 namespace Strings
 {
@@ -82,19 +101,38 @@ namespace Strings::Literals
     }
 }
 
+namespace Strings::SplitTests
+{
+    std::vector<std::string> split(std::string_view input,
+                                   std::string_view delims = " ")
+    {
+        std::vector<std::string> output;
+        for (size_t first = 0; first < input.size(); ) {
+            const auto second = input.find_first_of(delims, first);
+            if (first != second)
+                output.emplace_back(input.substr(first, second - first));
+            if (second == std::string_view::npos)
+                break;
+            first = second + 1;
+        }
+        return output;
+    }
+
+
+    void split_test_1()
+    {
+        const std::string text { "11_22_33_44" };
+        const std::vector<std::string> parts = split(text, "_");
+
+        std::cout << parts << std::endl;
+    }
+
+}
 
 void Strings::TestAll()
 {
     // GetStringLengthAsCompileTime();
-
     // std::cout << sizeof(std::string) << std::endl;
 
-    std::string  buffer {};
-    // buffer.reserve(32);
-    buffer.append(128, '\0');
-
-    // strcpy(buffer.data(), "qwerty", 6);
-    std::copy_n( "qwerty", 6, buffer.data());
-
-    std::cout << buffer << std::endl;
+    SplitTests::split_test_1();
 };

@@ -1,11 +1,11 @@
-//============================================================================
-// Name        : Tests.cpp
-// Created on  : 15.09.2021
-// Author      : Tokmakov Andrey
-// Version     : 1.0
-// Copyright   : Your copyright notice
-// Description : Tests C++ project
-//============================================================================
+/**============================================================================
+Name        : Tests.cpp
+Created on  : 15.09.2021
+Author      : Tokmakov Andrey
+Version     : 1.0
+Copyright   : Your copyright notice
+Description : Tests C++ project
+============================================================================**/
 
 #include <optional>
 #include <iostream>
@@ -45,6 +45,8 @@
 #include <variant>
 #include <chrono>
 #include <random>
+#include <format>
+
 
 #include "Algorithms/Algorithms.h"
 #include "Geometry/PointsAndLines.h"
@@ -80,48 +82,6 @@
 #include "Coroutines/Coroutines.h"
 #include "Cpp23_Features/Cpp23_Features.h"
 #include "Auto/AutoTests.h"
-
-
-
-#include <format>
-
-
-template<auto ...P>
-struct Printer {
-    inline static std::tuple data = std::tuple(P...);
-
-    template<int idx>
-    static auto get() {
-        return std::get<idx>(data);
-    }
-};
-
-void Funny_Tuple_Test ()
-{
-    static char str1[] = "answer1";
-    static char str2[] = "answer2";
-    static char str3[] = {'A', 'B', 0};
-
-    auto x = Printer<str1, str2, str3>();
-
-    std::cout << x.get<0>() << std::endl;
-    std::cout << x.get<1>() << std::endl;
-    std::cout << x.get<2>() << std::endl;
-}
-
-std::vector<std::string> split(std::string_view input,
-                               std::string_view delims = " ") {
-    std::vector<std::string> output;
-    for (size_t first = 0; first < input.size(); ) {
-        const auto second = input.find_first_of(delims, first);
-        if (first != second)
-            output.emplace_back(input.substr(first, second - first));
-        if (second == std::string_view::npos)
-            break;
-        first = second + 1;
-    }
-    return output;
-}
 
 
 struct AnyBase {
@@ -216,33 +176,6 @@ std::string FormatString(const std::string& s) {
     return result;
 }
 
-namespace Tuples {
-
-    template <size_t Index, typename Tuple, typename Functor>
-    auto tuple_at(const Tuple& tpl, const Functor& func) -> void {
-        const auto& v = std::get<Index>(tpl);
-        func(v);
-    }
-
-    template<typename Tuple, typename Functor, size_t Index = 0>
-    auto tuple_for_each(const Tuple &tpl, const Functor &f) -> void {
-        constexpr auto tuple_size = std::tuple_size_v<Tuple>;
-        if constexpr(Index < tuple_size) {
-            tuple_at<Index>(tpl, f);
-            tuple_for_each<Tuple, Functor, Index + 1>(tpl, f);
-        }
-    }
-
-    void IterateTest()
-    {
-        auto tpl = std::make_tuple(1, true, std::string{"Jedi"});
-        tuple_for_each(tpl, [](const auto& v) {
-            std::cout << v << " ";
-        });
-    }
-}
-
-
 
 
 namespace RecursiveLambda {
@@ -290,8 +223,6 @@ public:
         std::cout << "StaticInitObject::ObjectX()!!" << std::endl;
     }
 };
-
-
 
 
 namespace InvokeTest {
@@ -551,8 +482,6 @@ namespace HeapTest_PriorityQueue
 }
 
 
-
-
 void foo(const int& __restrict ref)
 {
 
@@ -567,8 +496,6 @@ int main([[maybe_unused]] int argc,
 
     // Experiments::Test({20, 40, 60});
 
-    // TableFormatter::TestAll();
-
     // Coroutines::TestAll();
 
     // OperatorCall_ExplicitTypeSpecialization::Test();
@@ -581,11 +508,10 @@ int main([[maybe_unused]] int argc,
     // HeapTest_PriorityQueue::MaxPriorityQueue();
 
     // Cpp23_Features::TestAll();
-    AutoTests::TestAll();
+    // AutoTests::TestAll();
     // Algorithms::TestAll();
     // Multithreading::TestAll();
     // Memory::TestAll();
-    // Strings::TestAll();
     // Iterators::TestAll();
     // Files::TestAll();
     // ConstexprMap::TestAll()
@@ -605,12 +531,14 @@ int main([[maybe_unused]] int argc,
     // LRUCache::TestAll();
     // EventLoop::TestAll();
     // Iterators::TestAll();
+    // Convertaion_UTF8_UTF32::TestAll();    // Encoding
     // Unicode::TestAll();                   // Encoding
     // StringUtils::TestAll();               // Encoding
-    // Convertaion_UTF8_UTF32::TestAll();    // Encoding
+    // Strings::TestAll();
     // Performance::TestAll();
     // BinaryAnalyzer::TestAll();
     // ThinkCell::IntervalMapTest();
+    // TableFormatter::TestAll();
 
     // OOP::TestClassConversationOperatorCall();
 
@@ -627,8 +555,6 @@ int main([[maybe_unused]] int argc,
     // TestDataGenerator::GenerateData();
 
     // CacheLineTests::Test();
-    // Funny_Tuple_Test();
-    // Tuples::IterateTest();
     // PointsAndLines::TestAll();
 
 #if 0

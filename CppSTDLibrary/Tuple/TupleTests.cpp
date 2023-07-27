@@ -177,9 +177,10 @@ namespace Tuple {
 	}
 }
 
-namespace Tuple::Make_Tuples {
-	 
-	class Foo{
+namespace Tuple::Make_Tuples
+{
+	class Foo
+	{
 	private:
 		int first;
 		float second;
@@ -270,8 +271,84 @@ namespace Tuple::Make_Tuples {
 	}
 }
 
-void Tuple::TestAll() {
-	 CreateTupleTest();
+
+namespace Tuple::PrintValues
+{
+
+	template<auto ...P>
+	struct Printer {
+		inline static std::tuple data = std::tuple(P...);
+
+		template<int idx>
+		static auto get() {
+			return std::get<idx>(data);
+		}
+	};
+
+	void Funny_Tuple_Test ()
+	{
+		static char str1[] = "answer1";
+		static char str2[] = "answer2";
+		static char str3[] = {'A', 'B', 0};
+
+		auto x = Printer<str1, str2, str3>();
+
+		std::cout << x.get<0>() << std::endl;
+		std::cout << x.get<1>() << std::endl;
+		std::cout << x.get<2>() << std::endl;
+	}
+}
+
+namespace Tuple::IterateValues
+{
+	template <size_t Index, typename Tuple, typename Functor>
+	constexpr void tuple_at(const Tuple& tpl, const Functor& func) {
+		const auto& v = std::get<Index>(tpl);
+		func(v);
+	}
+
+	template<typename Tuple, typename Functor, size_t Index = 0>
+	auto tuple_for_each(const Tuple &tpl, const Functor &f) -> void {
+		constexpr auto tuple_size = std::tuple_size_v<Tuple>;
+		if constexpr(Index < tuple_size) {
+			tuple_at<Index>(tpl, f);
+			tuple_for_each<Tuple, Functor, Index + 1>(tpl, f);
+		}
+	}
+
+	void IterateTest()
+	{
+		auto tpl = std::make_tuple(1, true, std::string{"Jedi"});
+		tuple_for_each(tpl, [](const auto& v) {
+			std::cout << v << " ";
+		});
+	}
+}
+
+namespace Tuple::IterateValues2
+{
+	template<typename Tuple, typename Functor, size_t Index = 0>
+	constexpr void tuple_for_each(const Tuple &tpl, const Functor &func) {
+		constexpr size_t tuple_size = std::tuple_size_v<Tuple>;
+		if constexpr(Index < tuple_size) {
+			//func(std::get<Index>(tpl));
+			func(std::forward<decltype(std::get<Index>(tpl))>(std::get<Index>(tpl)));
+			tuple_for_each<Tuple, Functor, Index + 1>(tpl, func);
+		}
+	}
+
+	void IterateTest()
+	{
+		std::tuple tpl = std::make_tuple(1, true, std::string{"Jedi"});
+		tuple_for_each(tpl, [](const auto& v) {
+			std::cout << v << " ";
+		});
+	}
+}
+
+void Tuple::TestAll()
+{
+	// CreateTupleTest();
 
 	// TupleTest2();
 
@@ -288,4 +365,8 @@ void Tuple::TestAll() {
 	// Make_Tuples::Test();
 	// Make_Tuples::Test2();
 
+	// PrintValues::Funny_Tuple_Test();
+
+	// IterateValues::IterateTest();
+	IterateValues2::IterateTest();
 };
