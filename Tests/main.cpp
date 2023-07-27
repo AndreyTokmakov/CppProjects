@@ -509,7 +509,7 @@ int main([[maybe_unused]] int argc,
 
     // Cpp23_Features::TestAll();
     // AutoTests::TestAll();
-    // Algorithms::TestAll();
+    Algorithms::TestAll();
     // Multithreading::TestAll();
     // Memory::TestAll();
     // Iterators::TestAll();

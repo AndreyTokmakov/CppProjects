@@ -446,6 +446,27 @@ namespace Algorithms
     }
 }
 
+namespace Algorithms::Strings
+{
+    void __find_common_prefix_and_postfix(const std::string& str)
+    {
+        const int mid = str.size() / 2;
+        int left = mid - 1, right = mid + str.size() % 2;
+
+        while (left >= 0 && right <= str.size())
+        {
+            std::cout << str[left--] << " " << str[right++] << std::endl;
+
+        }
+    }
+
+    void FindCommon_PrefixAndPostfix()
+    {
+        // __find_common_prefix_and_postfix("aabMNdaa");
+        __find_common_prefix_and_postfix("123X456");
+    }
+}
+
 void Algorithms::TestAll()
 {
     // Algorithms::Devide_SubArray();
@@ -462,6 +483,8 @@ void Algorithms::TestAll()
 
     // BoundedSubArrays::Tests();
 
-    FindCommonElements_3_SortedArrays();
+    // FindCommonElements_3_SortedArrays();
+
+    Strings::FindCommon_PrefixAndPostfix();
 };
 

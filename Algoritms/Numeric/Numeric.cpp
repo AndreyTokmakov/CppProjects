@@ -1879,17 +1879,19 @@ namespace Numeric {
     //--------------------------------------------------------------------------------------//
 
     // Note: Sequence should start from 1
-    void _find_repeating_and_missing(const std::vector<int>& Numeric) {
+    void _find_repeating_and_missing(const std::vector<int>& values)
+    {
         std::unordered_set<int> nums;
-        int dif = 0, iter = 0, dup = 0;
-        for (auto i : Numeric) {
-            dif += ++iter - i;
-            if (0 == dup && !nums.insert(i).second)
-                dup = i;
+        int dif = 0, dup_idx = -1;
+        for (size_t idx = 0; idx < values.size(); ++idx) {
+            dif += idx - values[idx] + 1;
+            if (-1 == dup_idx && !nums.insert(values[idx]).second)
+                dup_idx = idx;
         }
+
+        const int dup = values[dup_idx];
         std::cout << "Reaping symbol: " << dup << ", Missing: " << dup + dif << std::endl;
     }
-
 
     void _find_repeating_and_missing_ex(const std::vector<int>& values) {
         std::unordered_set<int> nums;
