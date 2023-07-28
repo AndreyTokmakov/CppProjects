@@ -135,7 +135,8 @@ namespace Strings {
 		return str.substr(start, end - start + 1);
 	}
 
-	void Longest_Palindrome_2() {
+	void Longest_Palindrome_2()
+    {
 		assert(longestPalindrome2("11111") == "11111");
 		assert(longestPalindrome2("12345543211234") == "1234554321");
 		assert(longestPalindrome2("123456789123456789aaaaa1111") == "aaaaa");
@@ -1640,12 +1641,117 @@ namespace Strings
     }
 }
 
+namespace Strings
+{
+
+    size_t find_common_prefix_and_postfix(const std::string& str)
+    {
+        size_t maxLen = 0;
+        /** idx = (str.size() + 1) / 2 ---> starting from the center + 1 **/
+        /** (str.size() + 1) / 2    <==>  str.size() / 2 + str.size() % 2  **/
+        for (size_t idx = (str.size() + 1) / 2; idx < str.size(); ++idx)
+        {
+            if (size_t left = 0, right = idx, len = 1; str[left] == str[right])
+            {
+                while (str[++left] == str[++right]) {
+                    ++len;
+                }
+                maxLen = std::max(maxLen, len);
+            }
+        }
+        return maxLen;
+    }
+
+    // https://www.geeksforgeeks.org/longest-prefix-also-suffix/
+    // Efficient Solution: The idea is to use the preprocessing algorithm KMP search.
+    // In the preprocessing algorithm, we build lps array which stores the following values.
+    size_t find_common_prefix_and_postfix_efficient(const std::string& str)
+    {
+        const size_t size = str.size();
+        std::vector<size_t> lps(size);
+
+        // length of the previous longest prefix suffix , the loop calculates lps[i] for i = 1 to n-1
+        for (size_t idx = (size + 1) / 2, length = 0; idx < size; /** **/)
+        {
+            if (str[idx] == str[length])
+            {
+                length++;
+                lps[idx] = length;
+                idx++;
+            }
+            else // (pat[i] != pat[len])
+            {
+                // This is tricky. Consider the example. AAACAAAA and i = 7. The idea is similar to search step.
+                if (length != 0)
+                {
+                    length = lps[length - 1]; // Also, note that we do not increment i here
+                }
+                else // if (len == 0)
+                {
+                    lps[idx] = 0;
+                    idx++;
+                }
+            }
+        }
+
+        // Since we are looking for non overlapping parts.
+        return lps[size - 1];
+    }
+
+    int64_t find_common_prefix_and_postfix_efficient2(const std::string& str)
+    {
+        const int64_t size = std::ssize(str);
+        if (str.empty())
+            return 0;
+
+        int64_t endSuffix = size - 1, endPrefix = size/2 - 1;
+        while (endPrefix >= 0)
+        {
+            if (str[endPrefix] != str[endSuffix])
+            {
+                if (endSuffix != size - 1) {
+                    endSuffix = size - 1;
+                }
+                else{
+                    --endPrefix;
+                }
+            }
+            else{
+                --endSuffix;
+                --endPrefix;
+            }
+        }
+
+        return size - endSuffix - 1;
+    }
+
+
+    /**
+    Given a string s, find the length of the longest prefix, which is also a suffix. The prefix and suffix should not overlap.
+    aabcdaabc --> 4 [The string "aabc" is the longest]
+    abcab     --> 2 [The string "ab" is the longest]
+    aaaa      --> 2 [The string "aa" is the longest]
+    **/
+
+    void FindCommon_PrefixAndPostfix()
+    {
+
+        for (const std::string& str: {"123X412", "aaaa", "aabaa", "aabcaa", "aacbaac", "aabcdaabc"})
+        {
+            std::cout << find_common_prefix_and_postfix(str) << "  "
+                      << find_common_prefix_and_postfix_efficient(str) << "  "
+                      << find_common_prefix_and_postfix_efficient2(str)
+                      << std::endl;
+        }
+    }
+}
+
 void Strings::TEST_ALL()
 {
 	// Strings::LongestSubstringWithoutRepeatingCharacters();
 
 	// Strings::LongestConsecutiveCharacters();
-	Strings::MaxSubstringLength_Of_K_max_Unique_Elements();
+	// Strings::MaxSubstringLength_Of_K_max_Unique_Elements();
 
 	// Strings::AnalogClockAngles();
 	// Strings::Atoi();
@@ -1653,6 +1759,8 @@ void Strings::TEST_ALL()
 
 	// Strings::RotateString();
 	// Strings::CheckIfStrings_RotareRotateEquals();
+
+    Strings::FindCommon_PrefixAndPostfix();
 
 	// Strings::MoveCharsToEnd();
     // Strings::MoveZerosToEnd();
@@ -1679,7 +1787,7 @@ void Strings::TEST_ALL()
 
 	// Strings::Palindrome_Test();
 	// Strings::Longest_Palindrome_1();
-	// Strings::Longest_Palindrome_2();
+	Strings::Longest_Palindrome_2();
 
 	// Strings::Find_If_KPalindrome();
 	// Strings::Find_All_Palindrome_In_String();
