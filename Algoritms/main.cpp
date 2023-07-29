@@ -28,13 +28,13 @@ int main([[maybe_unused]] int argc,
 	// Graphs::TEST_ALL();
 	// LinkedList::TEST_ALL();
 	// Heap_Algoritms::TEST_ALL();
-    // Trees::TEST_ALL();
+    Trees::TEST_ALL();
 	// Queues::TEST_ALL();
 	// Stack::TEST_ALL();
 	// Sorting::TEST_ALL();
 	// Strings::TEST_ALL();
 	// Interviews::TEST_ALL();
-    Numeric::TEST_ALL();
+    // Numeric::TEST_ALL();
     // MultiThreading::TestAll();
 
 	return EXIT_SUCCESS;
