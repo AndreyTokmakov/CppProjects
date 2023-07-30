@@ -23,6 +23,46 @@
 #include <cmath>
 #include <unordered_set>
 
+namespace
+{
+    template<typename T>
+    std::ostream &operator<<(std::ostream &ostr, const std::vector<T> &list) {
+        for (const auto &i: list)
+            ostr << " " << i;
+        return ostr;
+    }
+
+#if 0
+    template<typename T>
+    std::ostream &operator<<(std::ostream &ostr, const std::list<T> &list) {
+        for (const auto &i: list)
+            ostr << " " << i;
+        return ostr;
+    }
+
+    template<typename T>
+    std::ostream &operator<<(std::ostream &ostr, const std::set<T> &set) {
+        for (const auto &i: set)
+            ostr << " " << i;
+        return ostr;
+    }
+#endif
+
+    template<typename T>
+    std::ostream &operator<<(std::ostream &ostr, const std::deque<T> &list) {
+        for (const auto &i: list)
+            ostr << " " << i;
+        return ostr;
+    }
+
+    template<typename T>
+    void print_vector(const std::vector<T> &vector, size_t start, size_t end) {
+        for (size_t i = start; i <= end; i++)
+            std::cout << vector[i] << " ";
+        std::cout << std::endl;
+    }
+}
+
 namespace BinTree_Bad {
 
     template<typename T = int>
@@ -1119,147 +1159,6 @@ namespace BinTreeTests {
 
     ///////////////////////////////////////////////////////////////////////////////////////////////////
 
-    // Prints the n-ary tree level wise
-    void __Level_Order_Traversal(const BinTree::Node* node, std::multimap<size_t, int>& lvls, size_t level) {
-        if (nullptr == node)
-            return;
-        lvls.insert({ level, node->getData() });
-        __Level_Order_Traversal(node->left, lvls, level + 1);
-        __Level_Order_Traversal(node->right, lvls, level + 1);
-    }
-
-    void __LevelOrderTraversal_Map(const BinTree::Node* node) {
-        std::multimap<size_t, int> lvls;
-        __Level_Order_Traversal(node, lvls, 1);
-
-
-        for (size_t level = 1; const auto& [k, v] : lvls) {
-            if (k > level) {
-                std::cout << std::endl;
-                level = k;
-            }
-            std::cout << v << " ";
-        }
-    }
-
-    void __LevelOrderTraversal_Queue(BinTree::Node* root) {
-        if (nullptr == root)
-            return;
-        std::queue< BinTree::Node*> queue;
-        queue.push(root);
-
-        while (false == queue.empty()) { // Print front of queue and remove it from queue
-            BinTree::Node* node = queue.front();
-            std::cout << node->getData() << " ";
-            queue.pop();
-
-            if (nullptr != node->left) /* Enqueue left child: */
-                queue.push(node->left);
-            if (nullptr != node->right) /* Enqueue right child: */
-                queue.push(node->right);
-        }
-    }
-
-    bool printLevel(BinTree::Node* node, int level) {
-        if (node == nullptr)
-            return false;
-        else if (level == 1) {
-            std::cout << node->data << " ";
-            return true;
-        }
-
-        bool left = printLevel(node->left, level - 1);
-        bool right = printLevel(node->right, level - 1);
-        return left || right;
-    }
-
-    void __levelOrderTraversal3(BinTree::Node* root) {
-        int level = 1;                  // start from level 1 -- till height of the tree
-        while (printLevel(root, level)) // run till printLevel() returns false
-            level++;
-    }
-
-    void Level_Order_Traversal() {
-        {
-            BinTree::BinaryTree tree{ 40,22,85 ,10,30,54,125 ,5,12 ,25,32 ,45,60, 120,130,4,7,11,15,24,28,31,35,42,50,55,65,100,122,127 };
-            __LevelOrderTraversal_Map(tree.getRoot());
-        }
-        return;
-
-        std::cout << std::endl;
-        {
-            BinTree::BinaryTree tree{ 40,22,85 ,10,30,54,125 ,5,12 ,25,32 ,45,60, 120,130,4,7,11,15,24,28,31,35,42,50,55,65,100,122,127 };
-            __LevelOrderTraversal_Queue(tree.getRoot());
-        }
-        std::cout << std::endl;
-        {
-            BinTree::BinaryTree tree{ 40,22,85 ,10,30,54,125 ,5,12 ,25,32 ,45,60, 120,130,4,7,11,15,24,28,31,35,42,50,55,65,100,122,127 };
-            __levelOrderTraversal3(tree.getRoot());
-        }
-    }
-
-    ///////////////////////////////////////////////////////////////////////////////////////////////////
-
-    void __LevelOrderTraversal_Vector(const BinTree::Node* node, std::vector<std::vector<int>>& lvls, size_t level = 0) {
-        if (nullptr == node)
-            return;
-
-        if ((level + 1) > lvls.size())
-            lvls.push_back({ node->data });
-        else
-            lvls[level].push_back(node->data);
-
-        __LevelOrderTraversal_Vector(node->left, lvls, level + 1);
-        __LevelOrderTraversal_Vector(node->right, lvls, level + 1);
-    }
-
-    void LevelOrderTraversal_Vector(const BinTree::Node* node) {
-        std::vector<std::vector<int>> lvls;
-        __LevelOrderTraversal_Vector(node, lvls);
-
-        for (const auto& level : lvls) {
-            for (const auto& v : level)
-                std::cout << v << " ";
-            std::cout << std::endl;
-        }
-    }
-
-    void Level_Order_Traversal_2() {
-        BinTree::BinaryTree tree{ 40,22,85 ,10,30,54,125 ,5,12 ,25,32 ,45,60, 120,130,4,7,11,15,24,28,31,35,42,50,55,65,100,122,127 };
-        LevelOrderTraversal_Vector(tree.getRoot());
-    }
-
-    ///////////////////////////////////////////////////////////////////////////////////////////////////
-
-    void __Level_Order_Traversal_Map(const BinTree::Node* node,
-                                     std::map<int, std::vector<int>>& lvls,
-                                     size_t level = 0) {
-        if (nullptr == node)
-            return;
-
-        lvls[level].push_back(node->data);
-        __Level_Order_Traversal_Map(node->left, lvls, level + 1);
-        __Level_Order_Traversal_Map(node->right, lvls, level + 1);
-    }
-
-    void __Level_Order_Traversal_Map(const BinTree::Node* node) {
-        std::map<int, std::vector<int>> lvls;
-        __Level_Order_Traversal_Map(node, lvls);
-
-        for (const auto& [key, values] : lvls) {
-            for (const auto& v : values)
-                std::cout << v << " ";
-            std::cout << std::endl;
-        }
-    }
-
-    void Level_Order_Traversal_3() {
-        BinTree::BinaryTree tree{ 40,22,85 ,10,30,54,125 ,5,12 ,25,32 ,45,60, 120,130,4,7,11,15,24,28,31,35,42,50,55,65,100,122,127 };
-        __Level_Order_Traversal_Map(tree.getRoot());
-    }
-
-    ///////////////////////////////////////////////////////////////////////////////////////////////////
-
     void _reverse_tree(BinTree::Node* node) {
         if (nullptr == node)
             return;
@@ -1884,6 +1783,219 @@ namespace Trees::Arrays_2_Trees
     }
 }
 
+namespace Trees::Level_Order
+{
+
+    // Prints the n-ary tree level wise
+    void __Level_Order_Traversal(const BinTree::Node* node, std::multimap<size_t, int>& lvls, size_t level) {
+        if (nullptr == node)
+            return;
+        lvls.insert({ level, node->getData() });
+        __Level_Order_Traversal(node->left, lvls, level + 1);
+        __Level_Order_Traversal(node->right, lvls, level + 1);
+    }
+
+    void __LevelOrderTraversal_Map(const BinTree::Node* node) {
+        std::multimap<size_t, int> lvls;
+        __Level_Order_Traversal(node, lvls, 1);
+
+
+        for (size_t level = 1; const auto& [k, v] : lvls) {
+            if (k > level) {
+                std::cout << std::endl;
+                level = k;
+            }
+            std::cout << v << " ";
+        }
+    }
+
+    void __LevelOrderTraversal_Queue(BinTree::Node* root) {
+        if (nullptr == root)
+            return;
+        std::queue< BinTree::Node*> queue;
+        queue.push(root);
+
+        while (false == queue.empty()) { // Print front of queue and remove it from queue
+            BinTree::Node* node = queue.front();
+            std::cout << node->getData() << " ";
+            queue.pop();
+
+            if (nullptr != node->left) /* Enqueue left child: */
+                queue.push(node->left);
+            if (nullptr != node->right) /* Enqueue right child: */
+                queue.push(node->right);
+        }
+    }
+
+    bool printLevel(BinTree::Node* node, int level) {
+        if (node == nullptr)
+            return false;
+        else if (level == 1) {
+            std::cout << node->data << " ";
+            return true;
+        }
+
+        bool left = printLevel(node->left, level - 1);
+        bool right = printLevel(node->right, level - 1);
+        return left || right;
+    }
+
+    void __levelOrderTraversal3(BinTree::Node* root) {
+        int level = 1;                  // start from level 1 -- till height of the tree
+        while (printLevel(root, level)) // run till printLevel() returns false
+            level++;
+    }
+
+    void Level_Order_Traversal()
+    {
+        {
+            BinTree::BinaryTree tree{ 40,22,85 ,10,30,54,125 ,5,12 ,25,32 ,45,60, 120,130,4,7,11,15,24,28,31,35,42,50,55,65,100,122,127 };
+            __LevelOrderTraversal_Map(tree.getRoot());
+        }
+        return;
+
+        std::cout << std::endl;
+        {
+            BinTree::BinaryTree tree{ 40,22,85 ,10,30,54,125 ,5,12 ,25,32 ,45,60, 120,130,4,7,11,15,24,28,31,35,42,50,55,65,100,122,127 };
+            __LevelOrderTraversal_Queue(tree.getRoot());
+        }
+        std::cout << std::endl;
+        {
+            BinTree::BinaryTree tree{ 40,22,85 ,10,30,54,125 ,5,12 ,25,32 ,45,60, 120,130,4,7,11,15,24,28,31,35,42,50,55,65,100,122,127 };
+            __levelOrderTraversal3(tree.getRoot());
+        }
+    }
+
+    //---------------------------------------------------------------------------------------------
+
+    void level_order_traversal_vector(const BinTree::Node* node,
+                                      std::vector<std::vector<int>>& levels,
+                                      size_t level)
+    {
+        if (nullptr == node)
+            return;
+
+        std::vector<int> & lvl = (level + 1) > levels.size() ? levels.emplace_back() : levels[level];
+        lvl.push_back(node->data);
+
+        level_order_traversal_vector(node->left, levels, level + 1);
+        level_order_traversal_vector(node->right, levels, level + 1);
+    }
+
+    void level_order_traversal_vector(const BinTree::Node* node)
+    {
+        std::vector<std::vector<int>> levels;
+        level_order_traversal_vector(node, levels, 0);
+
+        for (const auto& level : levels) {
+            for (const auto& v : level)
+                std::cout << v << " ";
+            std::cout << std::endl;
+        }
+    }
+
+    void Level_Order_Traversal_Vector()
+    {
+        const BinTree::BinaryTree tree { 40,22,85 ,10,30,54,125 ,5,12 ,25,32 ,45,60,120,
+                                         130, 4,7,11,15,24,28,31,35,42,50,55,65,100,122,127 };
+        level_order_traversal_vector(tree.getRoot());
+    }
+
+    //-----------------------------------------------------------------------------------------
+
+    void level_order_traversal_map(const BinTree::Node* node,
+                                   std::map<size_t, std::vector<int>>& lvls,
+                                   size_t level) {
+        if (!node)
+            return;
+
+        lvls[level].push_back(node->data);
+        level_order_traversal_map(node->left, lvls, level + 1);
+        level_order_traversal_map(node->right, lvls, level + 1);
+    }
+
+    void level_order_traversal_map(const BinTree::Node* node) {
+        std::map<size_t, std::vector<int>> lvls;
+        level_order_traversal_map(node, lvls, 0);
+
+        for (const auto& [key, values] : lvls) {
+            for (const auto& v : values)
+                std::cout << v << " ";
+            std::cout << std::endl;
+        }
+    }
+
+    void Level_Order_Traversal_MAP()
+    {
+        BinTree::BinaryTree tree{ 40,22,85 ,10,30,54,125 ,5,12 ,25,32 ,45,60, 120,130,4,7,11,15,24,28,31,35,42,50,55,65,100,122,127 };
+        level_order_traversal_map(tree.getRoot());
+    }
+
+
+    //---------------------------------------------------------------------------------------------
+
+    void largest_value_in_each_level(const BinTree::Node* node,
+                                     std::vector<int>& levels,
+                                     size_t level)
+    {
+        if (nullptr == node)
+            return;
+
+        int& maxElement = (level + 1) > levels.size() ? levels.emplace_back(std::numeric_limits<int>::min()) : levels[level];
+        maxElement = std::max(maxElement, node->data);
+
+        largest_value_in_each_level(node->left, levels, level + 1);
+        largest_value_in_each_level(node->right, levels, level + 1);
+    }
+
+    void largest_value_in_each_level(const BinTree::Node* node)
+    {
+        std::vector<int> levels;
+        largest_value_in_each_level(node, levels, 0);
+
+        for (const int val : levels) {
+                std::cout << val << " ";
+            std::cout << std::endl;
+        }
+    }
+
+    std::vector<int> largest_values(const BinTree::Node* root)
+    {
+        std::vector<int> res;
+        if (!root)
+            return res;
+
+        std::queue<const BinTree::Node*> q ({root});
+        while (!q.empty()) {
+            const size_t size = q.size();
+            int maxVal = std::numeric_limits<int>::min();
+
+            for (size_t i = 0; i < size; i++) {
+                const BinTree::Node* node = q.front();
+                q.pop();
+
+                maxVal = std::max(maxVal, node->data);
+
+                if (node->left)
+                    q.push(node->left);
+                if (node->right)
+                    q.push(node->right);
+            }
+            res.push_back(maxVal);
+        }
+        return res;
+    }
+
+    void Largest_Value_In_Each_Level()
+    {
+        const BinTree::BinaryTree tree {10, 5, 15, 3, 7, 12};
+        largest_value_in_each_level(tree.getRoot());  // 10 15 12
+
+        const std::vector<int> maximums = largest_values(tree.getRoot());  // 10 15 12
+        std::cout << maximums << std::endl;
+    }
+}
+
 void Trees::TEST_ALL()
 {
     // BinTree_Bad::TEST();
@@ -1894,7 +2006,13 @@ void Trees::TEST_ALL()
     // Check_Is_BST::IsFullBinaryTree();
 
     // Arrays_2_Trees::Sorted_Array_To_Tree();
-    Arrays_2_Trees::Sorted_Array_To_Tree_NonRecur();
+    // Arrays_2_Trees::Sorted_Array_To_Tree_NonRecur();
+
+
+    // Level_Order::Level_Order_Traversal();
+    // Level_Order::Level_Order_Traversal_Vector();
+    // Level_Order::Level_Order_Traversal_MAP();
+    Level_Order::Largest_Value_In_Each_Level();
 
 
     // BinTreeTests::Check_Is_Trees_Identical();
@@ -1911,9 +2029,6 @@ void Trees::TEST_ALL()
     // BinTreeTests::Inorder_Walkthrough_NonRecursion();
     // BinTreeTests::Backwards_Walkthrough();
     // BinTreeTests::Print_Top_View();
-    // BinTreeTests::Level_Order_Traversal();
-    // BinTreeTests::Level_Order_Traversal_2();
-    // BinTreeTests::Level_Order_Traversal_3();
     // BinTreeTests::ReverseTree();
 
 

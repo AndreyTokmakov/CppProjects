@@ -91,6 +91,30 @@ struct AnyBase {
     virtual ~AnyBase() = default;
 };
 
+namespace
+{
+    template<typename T>
+    std::ostream& operator<<(std::ostream & stream,
+                             const std::vector<T>& collection)
+    {
+        for (const T& v: collection)
+            stream << v << ' ';
+        return stream;
+    }
+
+    template<typename T>
+    std::ostream& operator<<(std::ostream & stream,
+                             const std::priority_queue<T>& queue)
+    {
+        std::priority_queue<T> queueCopy = queue;
+        while (false == queueCopy.empty()) {
+            stream << queueCopy.top()  << ' ';
+            queueCopy.pop();
+        }
+        return stream;
+    }
+}
+
 std::string bin2hex(const std::string& input)
 {
     std::string res;
@@ -435,27 +459,6 @@ namespace CallFunctionByName
 
 namespace HeapTest_PriorityQueue
 {
-    template<typename T>
-    std::ostream& operator<<(std::ostream & stream,
-                              const std::vector<T>& collection)
-    {
-        for (const T& v: collection)
-            stream << v << ' ';
-        return stream;
-    }
-
-    template<typename T>
-    std::ostream& operator<<(std::ostream & stream,
-                             const std::priority_queue<T>& queue)
-    {
-        std::priority_queue<T> queueCopy = queue;
-        while (false == queueCopy.empty()) {
-            stream << queueCopy.top()  << ' ';
-            queueCopy.pop();
-        }
-        return stream;
-    }
-
     void MaxHeapTest()
     {
         std::vector<int> values {3, 2, 4, 1, 5, 9};
@@ -482,9 +485,18 @@ namespace HeapTest_PriorityQueue
 }
 
 
-void foo(const int& __restrict ref)
+namespace STD_Algorithms
 {
+    void SwapRanges()
+    {
+        std::vector<int> data{ 1, 2, 3, 4, 5, 6, 7, 8, 9};
 
+        std::cout << data << std::endl;
+
+        std::swap_ranges(data.begin(), data.begin()+3, data.rbegin());
+
+        std::cout << data << std::endl;
+    }
 }
 
 int main([[maybe_unused]] int argc,
@@ -498,6 +510,8 @@ int main([[maybe_unused]] int argc,
 
     // Coroutines::TestAll();
 
+    STD_Algorithms::SwapRanges();
+
     // OperatorCall_ExplicitTypeSpecialization::Test();
     // CallFunctionByName::Test();
 
@@ -509,7 +523,7 @@ int main([[maybe_unused]] int argc,
 
     // Cpp23_Features::TestAll();
     // AutoTests::TestAll();
-    Algorithms::TestAll();
+    // Algorithms::TestAll();
     // Multithreading::TestAll();
     // Memory::TestAll();
     // Iterators::TestAll();
