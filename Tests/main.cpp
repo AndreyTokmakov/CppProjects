@@ -504,13 +504,19 @@ int main([[maybe_unused]] int argc,
 {
     const std::vector<std::string_view> args(argv + 1, argv + argc);
 
+    std::vector v {33,22,85,10,30,54,125,5,8,25,32,45,60,120,130};
+    std::sort(v.begin(), v.end());
+
+    std::cout << v << std::endl;
+
+
     // static_assert(false == std::equality_comparable_with<std::unique_ptr<int>, nullptr_t>);
 
     // Experiments::Test({20, 40, 60});
 
     // Coroutines::TestAll();
 
-    STD_Algorithms::SwapRanges();
+    // STD_Algorithms::SwapRanges();
 
     // OperatorCall_ExplicitTypeSpecialization::Test();
     // CallFunctionByName::Test();

@@ -720,108 +720,6 @@ namespace BinTreeTests {
             std::cout << it.second.first << " ";
     }
 
-    ///////////////////////////////////////////////////////////////
-
-    int __get_min_element(BinTree::Node* node) {
-        if (nullptr == node->left)
-            return node->data;
-        else return __get_min_element(node->left);
-    }
-
-    int __get_max_element(BinTree::Node* node) {
-        return nullptr == node->right ? node->data : __get_max_element(node->right);
-    }
-
-    void Find_MIN_and_MAX_Element() {
-        BinTree::BinaryTree tree{ 33,22,85,10,30,54,125 };
-
-        std::cout << "Min: " << __get_min_element(tree.getRoot())
-                  << ", Max: " << __get_max_element(tree.getRoot()) << std::endl;
-    }
-
-    ///////////////////////////////////////////////////////////////
-
-    BinTree::Node* __get_min_Nth_element_X(BinTree::Node* node, size_t k, size_t& counter) {
-        if (nullptr == node)
-            return nullptr;
-        BinTree::Node* result = __get_min_Nth_element_X(node->left, k, counter);
-        if (nullptr != result)
-            return result;
-        if (++counter == k)
-            return node;
-        return __get_min_Nth_element_X(node->right, k, counter);
-    }
-
-    BinTree::Node* __get_min_Nth_element_GOOD(BinTree::Node* node, size_t& k) {
-        if (nullptr == node)
-            return nullptr;
-        BinTree::Node* result = __get_min_Nth_element_GOOD(node->left, k);
-        if (nullptr != result)
-            return result;
-        if (0 == --k)
-            return node;
-        return __get_min_Nth_element_GOOD(node->right, k);
-    }
-
-    BinTree::Node* __get_min_Nth_element(BinTree::Node* node, size_t k) {
-        static size_t counter = 0;
-        if (nullptr == node)
-            return nullptr;
-        BinTree::Node* result = __get_min_Nth_element(node->left, k);
-        if (nullptr != result)
-            return result;
-        if (++counter == k)
-            return node;
-        return __get_min_Nth_element(node->right, k);
-    }
-
-    void Find_N_th_MinElement() {
-        BinTree::BinaryTree tree{ 33,22,85,10,30,54,125,5,8,25,32,45,60,120,130 };
-
-        size_t K = 4;
-
-        std::cout << std::endl;
-        std::cout << __get_min_Nth_element(tree.getRoot(), K)->data << std::endl;
-
-        size_t counter1 = 0;
-        std::cout << __get_min_Nth_element_X(tree.getRoot(), K, counter1)->data << std::endl;
-
-        [[maybe_unused]]
-        size_t counter2 = 0;
-        std::cout << __get_min_Nth_element_GOOD(tree.getRoot(), K)->data << std::endl;
-    }
-
-    //------------------------------------------------------------------------------------------------
-
-    BinTree::Node* __get_min_Nth_element_NonRecur(BinTree::Node* node, size_t k) {
-        std::vector<BinTree::Node*> stack {};
-        BinTree::Node *curr = node;
-
-        while (nullptr != curr || !stack.empty()) {
-            while (nullptr != curr) {
-                stack.push_back(curr);
-                curr = curr->left;
-            }
-
-            curr = stack.back();
-            stack.pop_back();
-
-            if (0 == --k)
-                return curr;
-            else
-                curr = curr->right;
-        }
-        return nullptr;
-    }
-
-    void Find_N_th_MinElement_NonRecur() {
-        BinTree::BinaryTree tree{ 33,22,85,10,30,54,125,5,8,25,32,45,60,120,130 };
-
-        size_t K = 4;
-        auto res = __get_min_Nth_element_NonRecur(tree.getRoot(), K);
-        std::cout << res->data << std::endl;
-    }
-
     //////////////////////////////////////////////////////////////////////////////////////////////////
 
     std::optional<BinTree::Node*> FindElement(const BinTree::Node* root, const int value) {
@@ -1996,6 +1894,157 @@ namespace Trees::Level_Order
     }
 }
 
+namespace Trees::Min_and_Max_Elements
+{
+
+    int __get_min_element(BinTree::Node* node) {
+        if (nullptr == node->left)
+            return node->data;
+        else return __get_min_element(node->left);
+    }
+
+    int __get_max_element(BinTree::Node* node) {
+        return nullptr == node->right ? node->data : __get_max_element(node->right);
+    }
+
+    void Find_MIN_and_MAX_Element() {
+        BinTree::BinaryTree tree{ 33,22,85,10,30,54,125 };
+
+        std::cout << "Min: " << __get_min_element(tree.getRoot())
+                  << ", Max: " << __get_max_element(tree.getRoot()) << std::endl;
+    }
+
+    ///////////////////////////////////////////////////////////////
+
+    BinTree::Node* __get_min_Nth_element_X(BinTree::Node* node, size_t k, size_t& counter) {
+        if (nullptr == node)
+            return nullptr;
+        BinTree::Node* result = __get_min_Nth_element_X(node->left, k, counter);
+        if (nullptr != result)
+            return result;
+        if (++counter == k)
+            return node;
+        return __get_min_Nth_element_X(node->right, k, counter);
+    }
+
+    BinTree::Node* __get_min_Nth_element_GOOD(BinTree::Node* node, size_t& k) {
+        if (nullptr == node)
+            return nullptr;
+        BinTree::Node* result = __get_min_Nth_element_GOOD(node->left, k);
+        if (nullptr != result)
+            return result;
+        if (0 == --k)
+            return node;
+        return __get_min_Nth_element_GOOD(node->right, k);
+    }
+
+    BinTree::Node* __get_min_Nth_element(BinTree::Node* node, size_t k) {
+        static size_t counter = 0;
+        if (nullptr == node)
+            return nullptr;
+        BinTree::Node* result = __get_min_Nth_element(node->left, k);
+        if (nullptr != result)
+            return result;
+        if (++counter == k)
+            return node;
+        return __get_min_Nth_element(node->right, k);
+    }
+
+    void Find_N_th_MinElement() {
+        BinTree::BinaryTree tree{ 33,22,85,10,30,54,125,5,8,25,32,45,60,120,130 };
+
+        size_t K = 4;
+
+        std::cout << std::endl;
+        std::cout << __get_min_Nth_element(tree.getRoot(), K)->data << std::endl;
+
+        size_t counter1 = 0;
+        std::cout << __get_min_Nth_element_X(tree.getRoot(), K, counter1)->data << std::endl;
+
+        [[maybe_unused]]
+        size_t counter2 = 0;
+        std::cout << __get_min_Nth_element_GOOD(tree.getRoot(), K)->data << std::endl;
+    }
+
+    //------------------------------------------------------------------------------------------------
+
+    BinTree::Node* __get_min_Nth_element_NonRecur(BinTree::Node* node, size_t k) {
+        std::vector<BinTree::Node*> stack {};
+        BinTree::Node *curr = node;
+
+        while (nullptr != curr || !stack.empty())
+        {
+            while (nullptr != curr) {
+                stack.push_back(curr);
+                curr = curr->left;
+            }
+
+            curr = stack.back();
+            stack.pop_back();
+
+            if (0 == --k)
+                return curr;
+            else
+                curr = curr->right;
+        }
+        return nullptr;
+    }
+
+    void Find_N_th_MinElement_NonRecur() {
+        BinTree::BinaryTree tree{ 33,22,85,10,30,54,125,5,8,25,32,45,60,120,130 };
+
+        size_t K = 4;
+        auto res = __get_min_Nth_element_NonRecur(tree.getRoot(), K);
+        std::cout << res->data << std::endl;
+    }
+
+    //--------------------------------------------------------------------------
+
+    BinTree::Node* KthLargestUsingMorrisTraversal(BinTree::Node* root, size_t k)
+    {
+        BinTree::Node* curr = root, *Klargest = nullptr;
+
+        size_t count = 0;
+        while (curr) {
+            // if right child is NULL
+            if (nullptr == curr->right) {
+                // first increment count and check if count = k
+                if (++count == k)
+                    Klargest = curr;
+                // otherwise move to the left child
+                curr = curr->left;
+            }
+            else {
+                // find inorder successor of current Node
+                BinTree::Node* succ = curr->right;
+                while (succ->left && succ->left != curr)
+                    succ = succ->left;
+                if (succ->left == nullptr) {
+                    succ->left = curr;    // set left child of successor to the current Node
+                    curr = curr->right;   // move current to its right
+                }  // restoring the tree back to original binary search tree removing threaded links
+                else {
+                    succ->left = nullptr;
+                    if (++count == k)
+                        Klargest = curr;
+                    // move current to its left child
+                    curr = curr->left;
+                }
+            }
+        }
+        return Klargest;
+    }
+
+    void Find_N_th_Largest_MorrisTraversal()
+    {
+        BinTree::BinaryTree tree{ 33,22,85,10,30,54,125,5,8,25,32,45,60,120,130 };
+
+        size_t K = 4;
+        auto res = KthLargestUsingMorrisTraversal(tree.getRoot(), K);
+        std::cout << res->data << std::endl;
+    }
+}
+
 void Trees::TEST_ALL()
 {
     // BinTree_Bad::TEST();
@@ -2012,8 +2061,17 @@ void Trees::TEST_ALL()
     // Level_Order::Level_Order_Traversal();
     // Level_Order::Level_Order_Traversal_Vector();
     // Level_Order::Level_Order_Traversal_MAP();
-    Level_Order::Largest_Value_In_Each_Level();
+    // Level_Order::Largest_Value_In_Each_Level();
 
+
+    // Min_and_Max_Elements::Find_MIN_and_MAX_Element();
+    // Min_and_Max_Elements::Find_N_th_MinElement();
+    Min_and_Max_Elements::Find_N_th_MinElement_NonRecur();
+    Min_and_Max_Elements::Find_N_th_Largest_MorrisTraversal();
+
+
+    // BinTreeTests::Find_Element();
+    // BinTreeTests::Find_Element_Parent();
 
     // BinTreeTests::Check_Is_Trees_Identical();
     // BinTreeTests::Remove_Tests();
@@ -2031,12 +2089,6 @@ void Trees::TEST_ALL()
     // BinTreeTests::Print_Top_View();
     // BinTreeTests::ReverseTree();
 
-
-    // BinTreeTests::Find_MIN_and_MAX_Element();
-    // BinTreeTests::Find_N_th_MinElement();
-    // BinTreeTests::Find_N_th_MinElement_NonRecur();
-    // BinTreeTests::Find_Element();
-    // BinTreeTests::Find_Element_Parent();
 
     // BinTreeTests::Find_Max_Depth();
     // BinTreeTests::Find_Deepest_Node();
