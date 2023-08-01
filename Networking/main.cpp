@@ -53,7 +53,7 @@ int main([[maybe_unused]] int argc,
 
     // RawSocketsTests::TestAll();
     // CaptureTraffic::TestAll();
-    // ARPTester::TestAll();
+    ARPTester::TestAll();
     // BuildAndSendPacketsTests::TestAll();
 
     // Experiments::Tests();
@@ -74,7 +74,7 @@ int main([[maybe_unused]] int argc,
 
     // PcapAnalyzer::TestAll();
 
-    SshExperiments::TestAll(argc, argv);
+    // SshExperiments::TestAll(argc, argv);
 
     return EXIT_SUCCESS;
 }

