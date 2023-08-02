@@ -233,6 +233,7 @@ namespace RecursiveLambda {
     }
 }
 
+#if 0
 
 class StaticInitObject
 {
@@ -247,6 +248,8 @@ public:
         std::cout << "StaticInitObject::ObjectX()!!" << std::endl;
     }
 };
+
+#endif
 
 
 namespace InvokeTest {
@@ -499,15 +502,38 @@ namespace STD_Algorithms
     }
 }
 
+
+namespace RefTests
+{
+    using Helpers::Long;
+
+    void handleInteger(Long l) {
+        std::cout << l.value << std::endl;
+    }
+
+    void handleIntegerRef(Long& l) {
+        std::cout << l.value << std::endl;
+    }
+
+
+    void test()
+    {
+        Long val {123};
+        Long& valRef = val;
+
+        // handleIntegerRef(val);
+        // handleIntegerRef(valRef);
+
+        handleInteger(valRef);
+    }
+}
+
 int main([[maybe_unused]] int argc,
         [[maybe_unused]] char** argv)
 {
     const std::vector<std::string_view> args(argv + 1, argv + argc);
 
-    std::vector v {33,22,85,10,30,54,125,5,8,25,32,45,60,120,130};
-    std::sort(v.begin(), v.end());
-
-    std::cout << v << std::endl;
+    RefTests::test();
 
 
     // static_assert(false == std::equality_comparable_with<std::unique_ptr<int>, nullptr_t>);
