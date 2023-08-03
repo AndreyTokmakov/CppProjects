@@ -1243,10 +1243,11 @@ namespace Algorithms::ModifyingSequenceOperations {
         }
     }
 
-    void Remove() {
+    void Remove()
+    {
         std::cout << "--------------------------------------- Test1 ----------------------------------" << std::endl;
         {
-            std::vector<int> numbers = { 1,2,99,4,5,99,7,8,99,10 };
+            std::vector<int> numbers = { 1,2,99,3,4,5,99,6,7,99,8,9 };
 
             print_vector_ex(numbers, "");
             std::cout << std::endl;
@@ -1258,7 +1259,7 @@ namespace Algorithms::ModifyingSequenceOperations {
         }
         std::cout << "\n\n--------------------------------------- Test2 + Delete tail ----------------------------------" << std::endl;
         {
-            std::vector<int> numbers = { 1,2,99,4,5,99,7,8,99,10 };
+            std::vector<int> numbers = { 1,2,99,3,4,5,99,6,7,99,8,9 };
 
             print_vector_ex(numbers, "");
             std::cout << std::endl;
@@ -1634,12 +1635,11 @@ namespace Algorithms
         std::cout << std::boolalpha
                   << std::includes(v1.begin(), v1.end(), v2.begin(), v2.end())
                   << '\n';
-
     }
 }
 
-void Algorithms::TestAll() {
-
+void Algorithms::TestAll()
+{
     // NonModifying::All_Of();
     // NonModifying::Any_Of();
     // NonModifying::None_Of();
@@ -1662,7 +1662,6 @@ void Algorithms::TestAll() {
     // NonModifying::Is_Permutation();
 
 
-
     // ModifyingSequenceOperations::Copy();
     // ModifyingSequenceOperations::Copy_If();
     // ModifyingSequenceOperations::Copy_N();
@@ -1677,11 +1676,11 @@ void Algorithms::TestAll() {
     // ModifyingSequenceOperations::Transform_Reduce_2();
     // ModifyingSequenceOperations::Reverse();
     // ModifyingSequenceOperations::Reverse_Copy();
-    // ModifyingSequenceOperations::Remove();
+    ModifyingSequenceOperations::Remove();
     // ModifyingSequenceOperations::Remove_SharedPtr();
     // ModifyingSequenceOperations::Remove_If();
     // ModifyingSequenceOperations::Remove_Copy();
-    ModifyingSequenceOperations::Remove_Copy_If();
+    // ModifyingSequenceOperations::Remove_Copy_If();
     // ModifyingSequenceOperations::Rotate();
     // ModifyingSequenceOperations::Unique();
     // ModifyingSequenceOperations::UniqueCopy();
@@ -1718,7 +1717,6 @@ void Algorithms::TestAll() {
     // Sorted_Set_Operations::Set_Difference();
     // Sorted_Set_Operations::Set_Intersection();
     // Sorted_Set_Operations::Set_Union();
-
 
 
     // Functional::EqualTo();

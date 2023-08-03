@@ -15,8 +15,13 @@ namespace AutoTests
 {
     struct Object
     {
-        Object() { std::cout << "Object::Object()" << std::endl; }
-        ~Object() { std::cout << "~Object::Object()" << std::endl; }
+        Object() {
+            //std::cout << "Object::Object()" << std::endl;
+        }
+
+        ~Object() {
+            //std::cout << "~Object::Object()" << std::endl;
+        }
 
         Object(const Object&) { std::cout << "Object::Object(const Object&)" << std::endl; }
         Object(Object&&) noexcept { std::cout << "Object::Object(Object&&)" << std::endl; }

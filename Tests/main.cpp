@@ -503,38 +503,12 @@ namespace STD_Algorithms
 }
 
 
-namespace RefTests
-{
-    using Helpers::Long;
-
-    void handleInteger(Long l) {
-        std::cout << l.value << std::endl;
-    }
-
-    void handleIntegerRef(Long& l) {
-        std::cout << l.value << std::endl;
-    }
-
-
-    void test()
-    {
-        Long val {123};
-        Long& valRef = val;
-
-        // handleIntegerRef(val);
-        // handleIntegerRef(valRef);
-
-        handleInteger(valRef);
-    }
-}
 
 int main([[maybe_unused]] int argc,
         [[maybe_unused]] char** argv)
 {
     const std::vector<std::string_view> args(argv + 1, argv + argc);
-
-    RefTests::test();
-
+    
 
     // static_assert(false == std::equality_comparable_with<std::unique_ptr<int>, nullptr_t>);
 
