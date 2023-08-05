@@ -622,6 +622,185 @@ namespace ObjectPools::GoodPools_Tests {
 
 
 
+namespace ObjectPools::GoodPools_MultiThreaded
+{
+
+    template <typename Ty, typename Allocator = std::allocator<Ty>>
+    class ObjectPool final
+    {
+    private:
+        using object_type = Ty;
+        using pointer = object_type*;
+        using size_type = typename std::vector<pointer>::size_type;
+
+        static_assert(!std::is_same_v<object_type, void>,
+                      "Type of the Objects in the pool can not be void");
+
+    private:
+        std::vector<pointer> pool;
+        std::vector<pointer> available;
+
+        static constexpr size_type DEFAULT_CHUNK_SIZE { 5 };
+        static constexpr size_type GROWTH_STRATEGY { 2 };
+
+        size_type _new_block_size { DEFAULT_CHUNK_SIZE };
+        size_type _size { 0 };
+        size_type _capacity { 0 };
+
+        std::mutex mtx;
+
+        void addChunk()
+        {
+            // std::lock_guard<std::mutex> lock {mtx};
+
+            // Allocate a new chunk of uninitialized memory
+            pointer newBlock { m_allocator.allocate(_new_block_size) };
+
+            // Keep all allocated blocks in 'pool' to delete them later:
+            pool.push_back(newBlock);
+
+            available.resize(_new_block_size);
+            std::iota(std::begin(available), std::end(available), newBlock);
+
+            _capacity += _new_block_size;
+            _new_block_size *= GROWTH_STRATEGY;
+        }
+
+        // The allocator to use for allocating and deallocating chunks.
+        Allocator m_allocator;
+
+    protected:
+
+        struct Deleter final
+        {
+            ObjectPool* pool {nullptr};
+
+            void operator()(pointer object) const noexcept
+            {
+                std::destroy_at(object);
+
+                std::lock_guard<std::mutex> lock { pool->mtx };
+
+                // Return object mem pointer back to pool
+                pool->available.push_back(object);
+                --(pool->_size);
+            }
+        };
+
+    public:
+        using ObjectPtr = std::unique_ptr<object_type, Deleter>;
+
+    public:
+        ObjectPool() = default;
+
+        explicit ObjectPool(const Allocator& allocator) : m_allocator{ allocator } {
+            // Trivial
+        }
+
+        virtual ~ObjectPool() {
+            // Note: this implementation assumes that all objects handed out by this
+            // pool have been returned to the pool before the pool is destroyed.
+            // The following statement asserts if that is not the case.
+            assert(available.size() == DEFAULT_CHUNK_SIZE * (std::pow(2, pool.size()) - 1));
+
+            // Deallocate all allocated memory.
+            size_t chunkSize{ DEFAULT_CHUNK_SIZE };
+            for (auto* chunk : pool) {
+                m_allocator.deallocate(chunk, chunkSize);
+                chunkSize *= GROWTH_STRATEGY;
+            }
+        }
+
+        // Allow move construction and move assignment.
+        ObjectPool(ObjectPool&& src) noexcept = default;
+        ObjectPool& operator=(ObjectPool&& rhs) noexcept = default;
+
+        // Prevent copy construction and copy assignment.
+        ObjectPool(const ObjectPool& src) = delete;
+        ObjectPool& operator=(const ObjectPool& rhs) = delete;
+
+        // Reserves and returns an object from the pool. Arguments can be
+        // provided which are perfectly forwarded to a constructor of T.
+        template<typename... Args>
+        ObjectPtr acquireObject(Args... args)
+        {
+            pointer objectPtr {nullptr};
+
+            {
+                std::lock_guard<std::mutex> lock { mtx };
+                // If there are no free objects, allocate a new chunk.
+                if (available.empty()) {
+                    addChunk();
+                }
+
+                // Get a free object.
+                objectPtr = available.back();
+
+                // Remove the object from the list of free objects.
+                available.pop_back();
+                ++(_size);
+            }
+
+            // Initialize, i.e. construct, an instance of T in an uninitialized block of memory
+            // using placement new, and perfectly forward any provided arguments to the constructor.
+            new (objectPtr) object_type { std::forward<Args>(args)... };
+
+            // Wrap the initialized object and return it.
+            return ObjectPtr { objectPtr, Deleter { this } };
+        }
+
+        [[nodiscard]]
+        size_type size() const noexcept {
+            return _size;
+        }
+
+        [[nodiscard]]
+        size_type capacity() const noexcept {
+            return _capacity;
+        }
+    };
+
+    // ---------------------------------------------------------------------------
+
+    void PerformanceTests()
+    {
+        using TestType = TestTypes::TypeLarge;
+        constexpr size_t size = 256;
+        TestType* ints[size];
+        constexpr size_t MAX_COUNT = 64;
+
+        ObjectPool<TestType> pool{};
+        std::cout << " ======================== Using std::new(): =========================\n";
+
+        {
+            START_TIME_MEASURE;
+            for (size_t i = 0; i < MAX_COUNT; i++) {
+                for (size_t n = 0; n < MAX_COUNT; n++) {
+                    for (size_t k = 0; k < size; k++)
+                        ints[k] = new TestType;
+                    for (size_t k = 0; k < size; k++)
+                        delete ints[k];
+                }
+            }
+            STOP_TIME_MEASURE;
+        }
+
+        std::cout << " ======================== Using pool: =========================\n";
+
+        {
+            START_TIME_MEASURE;
+            for (size_t i = 0; i < MAX_COUNT; i++) {
+                for (size_t n = 0; n < MAX_COUNT; n++) {
+                    for (size_t k = 0; k < size; k++)
+                        auto object{ pool.acquireObject() };
+                }
+            }
+            STOP_TIME_MEASURE;
+        }
+    }
+}
+
+
 void ObjectPools::TEST_ALL() 
 {
 	// MyPools1::PerformanceTests();
@@ -630,6 +809,8 @@ void ObjectPools::TEST_ALL()
 	// GoodPools_Basic::SimpleTest();
 	// GoodPools_Basic::PerformanceTests();
 
-	GoodPools_Tests::SimpleTest();
+	// GoodPools_Tests::SimpleTest();
 	// GoodPools_Tests::PerformanceTests();
+
+    GoodPools_MultiThreaded::PerformanceTests();
 };

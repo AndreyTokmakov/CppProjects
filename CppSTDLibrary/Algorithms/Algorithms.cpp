@@ -29,11 +29,7 @@
 #include <execution>
 #include "../Integer/Integer.h"
 
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-//												      Algorithms_Tests :										     	    	                  //
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-namespace Algorithms {
+namespace {
 
     class Summ {
     public:
@@ -76,24 +72,24 @@ namespace Algorithms {
     }
 
     template<typename T>
-    std::ostream& operator<<(std::ostream& ostr, const std::list<T>& list) {
+    std::ostream& operator<<(std::ostream& stream, const std::list<T>& list) {
         for (const auto& i : list)
-            ostr << " " << i;
-        return ostr;
+            stream << " " << i;
+        return stream;
     }
 
     template<typename T>
-    std::ostream& operator<<(std::ostream& ostr, const std::vector<T>& list) {
-        for (const auto& i : list)
-            ostr << i << ' ';
-        return ostr;
+    std::ostream& operator<<(std::ostream& stream, const std::vector<T>& vect) {
+        for (const auto& i : vect)
+            stream << i << ' ';
+        return stream;
     }
 
     template<typename T, size_t Size>
-    std::ostream& operator<<(std::ostream& ostr, const std::array<T, Size>& array) {
+    std::ostream& operator<<(std::ostream& stream, const std::array<T, Size>& array) {
         for (const auto& i : array)
-            ostr << i << ' ';
-        return ostr;
+            stream << i << ' ';
+        return stream;
     }
 
     class A {};
@@ -182,10 +178,6 @@ namespace Algorithms {
     }
 };
 
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-//												      NonModifying :		       								     	    	                  //
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
 namespace Algorithms::NonModifying {
 
     void Find() {
@@ -210,14 +202,16 @@ namespace Algorithms::NonModifying {
     void Find_IF() {
         const std::vector<int> ints = { 1,2,3,4,5 };
 
-        if (auto iter = std::find_if(ints.begin(), ints.end(), [](int v) {return ((v % 2) == 0); }); iter != ints.end()) {
+        if (auto iter = std::find_if(ints.begin(), ints.end(), [](int v) {
+            return ((v % 2) == 0); }); iter != ints.end()) {
             std::cout << "The first EVEN value is " << *iter << std::endl;
         }
         else {
             std::cout << "Failed to find EVEN value" << std::endl;
         }
 
-        if (auto iter = std::find_if(ints.begin(), ints.end(), [](int v) {return ((v % 2) == 1); }); iter != ints.end()) {
+        if (auto iter = std::find_if(ints.begin(), ints.end(), [](int v) {
+            return ((v % 2) == 1); }); iter != ints.end()) {
             std::cout << "The first ODD is " << *iter << std::endl;
         }
         else {
@@ -228,13 +222,15 @@ namespace Algorithms::NonModifying {
     void Find_IF_Not() {
         const std::vector<int> ints = { 1,2,3,4,5 };
 
-        if (auto iter = std::find_if_not(ints.begin(), ints.end(), [](int v) {return ((v % 2) == 1); }); iter != ints.end()) {
+        if (auto iter = std::find_if_not(ints.begin(), ints.end(), [](int v) {
+            return ((v % 2) == 1); }); iter != ints.end()) {
             std::cout << "The first NOT ODD is " << *iter << std::endl;
         } else {
             std::cout << "Failed to find NOT ODD value" << std::endl;
         }
 
-        if (auto iter = std::find_if(ints.begin(), ints.end(), [](int v) {return ((v % 2) == 0); }); iter != ints.end()) {
+        if (auto iter = std::find_if(ints.begin(), ints.end(), [](int v) {
+            return ((v % 2) == 0); }); iter != ints.end()) {
             std::cout << "The first EVEN value is " << *iter << std::endl;
         } else {
             std::cout << "Failed to find EVEN value" << std::endl;
@@ -242,13 +238,15 @@ namespace Algorithms::NonModifying {
 
         std::cout << "\n===============================================================\n";
 
-        if (auto iter = std::find_if_not(ints.begin(), ints.end(), [](int v) {return ((v % 2) == 0); }); iter != ints.end()) {
+        if (auto iter = std::find_if_not(ints.begin(), ints.end(), [](int v) {
+            return ((v % 2) == 0); }); iter != ints.end()) {
             std::cout << "The first NOT EVEN value is " << *iter << std::endl;
         } else {
             std::cout << "Failed to find NOT EVEN value" << std::endl;
         }
 
-        if (auto iter = std::find_if(ints.begin(), ints.end(), [](int v) {return ((v % 2) == 1); }); iter != ints.end()) {
+        if (auto iter = std::find_if(ints.begin(), ints.end(), [](int v) {
+            return ((v % 2) == 1); }); iter != ints.end()) {
             std::cout << "The first ODD is " << *iter << std::endl;
         } else {
             std::cout << "Failed to find ODD value" << std::endl;
@@ -272,13 +270,15 @@ namespace Algorithms::NonModifying {
         {
             const std::vector<int> data = { 1,2,3 };
             auto result = std::find_end(numbers.begin(), numbers.end(), data.begin(), data.end());
-            std::cout << "Last occurance of '{ 1,2,3 }' found at position = " << std::distance(numbers.begin(), result) << std::endl;
+            std::cout << "Last occurance of '{ 1,2,3 }' found at position = "
+            << std::distance(numbers.begin(), result) << std::endl;
         }
 
         {
             const std::vector<int> data = { 4,5,1 };
             auto result = std::find_end(numbers.begin(), numbers.end(), data.begin(), data.end());
-            std::cout << "Last occurance of '{ 4,5,1 }' found at position = " << std::distance(numbers.begin(), result) << std::endl;
+            std::cout << "Last occurance of '{ 4,5,1 }' found at position = "
+            << std::distance(numbers.begin(), result) << std::endl;
         }
 
     }
@@ -309,7 +309,8 @@ namespace Algorithms::NonModifying {
             }
             else {
                 std::cout << "the first adjacent pair of equal elements at: "
-                          << std::distance(numbers.begin(), iter) << ". {" << *iter << ", " << *(std::next(iter)) << "}" << std::endl;
+                          << std::distance(numbers.begin(), iter) <
+                          < ". {" << *iter << ", " << *(std::next(iter)) << "}" << std::endl;
             }
         }
 
@@ -320,7 +321,8 @@ namespace Algorithms::NonModifying {
             }
             else {
                 std::cout << "The last element in the non-decreasing subsequence is at: "
-                          << std::distance(numbers.begin(), iter) << ". {" << *iter << ", " << *(std::next(iter)) << "}" << std::endl;
+                          << std::distance(numbers.begin(), iter) << ". {" << *iter
+                          << ", " << *(std::next(iter)) << "}" << std::endl;
             }
         }
     }
@@ -408,7 +410,7 @@ namespace Algorithms::NonModifying {
             std::vector<int> v1{ 1,2,3,4,5,6,7,8,9 }, v2{ 1,2,3,4,5,6,7,8,9 };
             std::cout << std::boolalpha << std::equal(v1.begin(), v1.end(), v2.begin()) << std::endl;
         }
-        std::cout << "\n--------------------------------- Compare different vectors: ----------------------------------" << std::endl;
+        std::cout << "\n--------------------------------- Compare different vectors: -----------------------------" << std::endl;
         {
             std::vector<int> v1{ 1,2,3,4,5,6,7,8,9 }, v2{ 1,2,3,4,5 };
             std::cout << std::boolalpha << std::equal(v1.begin(), v1.end(), v2.begin()) << std::endl;
@@ -428,14 +430,14 @@ namespace Algorithms::NonModifying {
     }
 
     void Equal_Applications() {
-        std::cout << "\n--------------------------------- Compare palindrome strings: ----------------------------------" << std::endl; {
+        std::cout << "\n---------------------------- Compare palindrome strings: ------------------------" << std::endl; {
             std::cout << std::boolalpha << Is_Palindrome("radar") << std::endl;
         }
-        std::cout << "\n--------------------------------- Compare Not palindrome strings: ----------------------------------" << std::endl; {
+        std::cout << "\n-------------------------- Compare Not palindrome strings: ------------------" << std::endl; {
             std::cout << std::boolalpha << Is_Palindrome("hello") << std::endl;
         }
 
-        std::cout << "\n\n--------------------------------- Compare to reversed equals strings: ----------------------------------" << std::endl; {
+        std::cout << "\n\n------------------------ Compare to reversed equals strings: ------------------" << std::endl; {
             std::string str1("12345"), str2("54321");
             std::cout << str1 << " ??? " << str2 << " == ";
             std::cout << std::boolalpha << Is_Reversed_Equals(str1, str2) << std::endl;
@@ -499,7 +501,8 @@ namespace Algorithms::NonModifying {
         std::cout << "---------------------------------------- Test2 ---------------------------------------" << std::endl;
         {
 
-            auto size_equal_three = [val = 3](const std::string& str) { return str.size() == val; };
+            auto size_equal_three = [val = 3](const std::string& str) {
+                return str.size() == val; };
             std::vector<std::string> tokens{ "aaa", "bbb", "ccc", "ddd", "ss" };
             print_vector_ex(tokens);
 
@@ -514,7 +517,8 @@ namespace Algorithms::NonModifying {
             int data[] = {0,0,0,0,0,0,0,0,0,0,0,0};
 
 
-            auto result = std::all_of(std::begin(data), std::end(data), [](auto v) { return 0 == v; });
+            auto result = std::all_of(std::begin(data), std::end(data), [](auto v) {
+                return 0 == v; });
             std::cout << std::boolalpha << result << std::endl;
         }
     }
@@ -526,7 +530,8 @@ namespace Algorithms::NonModifying {
         std::copy(ints.cbegin(), ints.cend(), std::ostream_iterator<int>(std::cout, " "));
         std::cout << std::endl;
 
-        if (std::none_of(ints.cbegin(), ints.cend(), std::bind(std::modulus<int>(), std::placeholders::_1, 2))) {
+        if (std::none_of(ints.cbegin(), ints.cend(),
+                         std::bind(std::modulus<int>(), std::placeholders::_1, 2))) {
             std::cout << "None of them are odd" << std::endl;
         }
     }
@@ -542,13 +547,15 @@ namespace Algorithms::NonModifying {
         std::vector<int> numbers2 = { 10, 20, 80, 320, 1024 };
 
         // using default comparison:
-        auto [iterator1, iterator2] = std::mismatch(numbers1.begin(), numbers1.end(), numbers2.begin(), numbers2.end());
+        auto [iterator1, iterator2] =
+                std::mismatch(numbers1.begin(), numbers1.end(), numbers2.begin(), numbers2.end());
 
         std::cout << "Last matching element: " << *(iterator1 - 1) << std::endl;
         std::cout << "First mismatching elements: " << *iterator1 << " and " << *iterator2 << std::endl;
 
         // using predicate comparison:
-        auto [iterator3, iterator4] = std::mismatch(iterator1 + 1, numbers1.end(), iterator2 + 1, mypredicate);
+        auto [iterator3, iterator4] =
+                std::mismatch(iterator1 + 1, numbers1.end(), iterator2 + 1, mypredicate);
         std::cout << "Second mismatching elements: " << *iterator3 << " and " << *iterator4 << std::endl;
     }
 
@@ -559,7 +566,8 @@ namespace Algorithms::NonModifying {
 
 
         // using default comparison:
-        auto [iter1, iter2] = std::mismatch(numbers1.begin(), numbers1.end(), numbers2.begin(), tenTimeGreater);
+        auto [iter1, iter2] =
+                std::mismatch(numbers1.begin(), numbers1.end(), numbers2.begin(), tenTimeGreater);
         std::cout << "Last matching elements: {" << *(std::prev(iter1)) << ", " << *(std::prev(iter2)) << "} " << std::endl;
         std::cout << "First mismatching elements: " << *iter1 << " and " << *iter2 << std::endl;
     }
@@ -578,10 +586,6 @@ namespace Algorithms::NonModifying {
                   << std::is_permutation(v1.begin(), v1.end(), v3.begin()) << '\n';
     }
 }
-
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-//												         MinMax :		       	    							     	    	                  //
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 namespace Algorithms::MinMax {
 
@@ -709,14 +713,11 @@ namespace Algorithms::MinMax {
             std::cout << "larger of 1 and 9999: " << std::max(1, 9999) << '\n'
                       << "larger of 'a', and 'b': " << std::max('a', 'b') << '\n'
                       << "longest of \"foo\", \"bar\", and \"hello\": " <<
-                      std::max({ "foo", "bar", "hello" }, [](const std::string& s1, const std::string& s2) {return s1.size() < s2.size(); }) << '\n';
+                      std::max({ "foo", "bar", "hello" }, [](const std::string& s1, const std::string& s2) {
+                          return s1.size() < s2.size(); }) << '\n';
         }
     }
 }
-
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-//												     BinarySearch :		       	    							     	    	                  //
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 namespace Algorithms::BinarySearch {
 
@@ -812,7 +813,8 @@ namespace Algorithms::BinarySearch {
         {
             auto bounds = std::equal_range(numbers.begin(), numbers.end(), 20);
 
-            std::cout << "bounds at indexes " << (bounds.first - numbers.begin() - 1) << " and " << (bounds.second - numbers.begin() - 1) << ":  ";
+            std::cout << "bounds at indexes " << (bounds.first - numbers.begin() - 1) << " and "
+            << (bounds.second - numbers.begin() - 1) << ":  ";
             std::for_each(bounds.first, bounds.second, [](int v) {std::cout << v << " "; });
             std::cout << std::endl;
         }
@@ -822,16 +824,14 @@ namespace Algorithms::BinarySearch {
             auto valid = [](int a, int b)-> bool { return a > b; };
             auto bounds = std::equal_range(numbers.begin(), numbers.end(), 20,valid);
 
-            std::cout << "bounds at indexes " << (bounds.first - numbers.begin() - 1) << " and " << (bounds.second - numbers.begin() - 1) << ":  ";
+            std::cout << "bounds at indexes " << (bounds.first - numbers.begin() - 1) << " and "
+            << (bounds.second - numbers.begin() - 1) << ":  ";
             std::for_each(bounds.first, bounds.second, [](int v) {std::cout << v << " "; });
             std::cout << std::endl;
         }
 
     }
 }
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-//									              Set operations (on sorted ranges) :		       	             				                  //
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 namespace Algorithms::Sorted_Set_Operations {
 
@@ -863,16 +863,14 @@ namespace Algorithms::Sorted_Set_Operations {
         std::sort(second.begin(), second.end());
 
         std::vector<int> result(first.size() + second.size());
-        auto iter = std::set_union(first.begin(), first.end(), second.begin(), second.end(), result.begin());
+        auto iter =
+                std::set_union(first.begin(), first.end(), second.begin(), second.end(), result.begin());
 
         result.resize(iter - result.begin());     // {5 10 15 20 25 30 40 50  0  0}   ===>  {5 10 15 20 25 30 40 50}
         print_vector_ex(result);
     }
 }
 
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-//												       Sorting :		       	     							     	    	                  //
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 namespace Algorithms::Sorting {
 
@@ -995,13 +993,11 @@ namespace Algorithms::Sorting {
     }
 }
 
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-//										  Modifying sequence operations :		       	     							     	    	          //
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-namespace Algorithms::ModifyingSequenceOperations {
-
-    void Copy() {
+namespace Algorithms::ModifyingSequenceOperations
+{
+    void Copy()
+    {
         {
             int values[] = { 10,20,30,40,50,60,70 };
             std::vector<int> numbers(std::size(values));
@@ -1137,7 +1133,9 @@ namespace Algorithms::ModifyingSequenceOperations {
             std::string s("hello");
 
             std::cout << s << std::endl;
-            std::transform(s.begin(), s.end(), s.begin(), [](char c) { return c + CHAR_REGISTER_OFFSET; });
+            std::transform(s.begin(), s.end(), s.begin(), [](char c) {
+                return c + CHAR_REGISTER_OFFSET;
+            });
             std::cout << s << std::endl;
         }
 
@@ -1168,7 +1166,8 @@ namespace Algorithms::ModifyingSequenceOperations {
 
             std::cout << text << " ==> ";
 
-            std::transform(text.begin(), text.end(), text.begin(), [](int c) { return '/' == c ? '\\' : c; });
+            std::transform(text.begin(), text.end(), text.begin(), [](int c) {
+                return '/' == c ? '\\' : c; });
 
             std::cout << text << std::endl;
         }
@@ -1257,7 +1256,7 @@ namespace Algorithms::ModifyingSequenceOperations {
             print_range(numbers.begin(), iter, "[", "]");
             print_range(iter, numbers.end(), " [", "]");
         }
-        std::cout << "\n\n--------------------------------------- Test2 + Delete tail ----------------------------------" << std::endl;
+        std::cout << "\n\n--------------------------- Test2 + Delete tail --------------------------" << std::endl;
         {
             std::vector<int> numbers = { 1,2,99,3,4,5,99,6,7,99,8,9 };
 
@@ -1289,9 +1288,8 @@ namespace Algorithms::ModifyingSequenceOperations {
             i->printInfo();
         });
 
-        auto iter = remove_if(numbers.begin(), numbers.end(), [&integer5](const auto& ptr) {
-            return (ptr.get() == integer5.get());
-        });
+        auto iter = remove_if(numbers.begin(), numbers.end(),
+                              [&integer5](const auto& ptr) {return (ptr.get() == integer5.get());});
     }
 
     void Remove_If()  {
@@ -1340,6 +1338,22 @@ namespace Algorithms::ModifyingSequenceOperations {
         }
     }
 
+    void Erase()
+    {
+        std::vector<int> numbers {1,2,3,4,5,6,7,8,9,10};
+        std::erase(numbers, 3);
+        std::cout << numbers << std::endl;
+    }
+
+    void Erase_IF()
+    {
+        std::vector<int> numbers {1,2,3,4,5,6,7,8,9,10};
+        std::cout << numbers << " ==> " << std::endl;
+
+        std::erase_if(numbers, [](const auto v) { return v > 5; });
+        std::cout << numbers << std::endl;
+    }
+
     void Unique() {
         std::cout << "TEST1:" << std::endl;
         {
@@ -1357,7 +1371,7 @@ namespace Algorithms::ModifyingSequenceOperations {
             std::string s = "wanna go    to      space?";
             std::cout << "Before : " << s << std::endl;
 
-            auto end = std::unique(s.begin(), s.end(), [](unsigned char l, unsigned char r) {
+            auto end = std::unique(s.begin(), s.end(), [](auto l, auto r) {
                 return std::isspace(l) && std::isspace(r);
             });
             std::cout << "After  : "  << std::string(s.begin(), end) << std::endl;
@@ -1441,7 +1455,8 @@ namespace Algorithms::Functional {
 
 
         std::vector<int> foo { 10,20,30,40,50 }, bar {10,20,40,80,160 };
-        auto [start, end] = std::mismatch(foo.cbegin(), foo.cend(), bar.cbegin(), std::equal_to<int>());
+        auto [start, end] =
+                td::mismatch(foo.cbegin(), foo.cend(), bar.cbegin(), std::equal_to<int>());
         std::cout << "First mismatching pair is: " << *start << " and " << *end << '\n';
     }
 
@@ -1457,7 +1472,8 @@ namespace Algorithms::Functional {
         }
 
         const std::vector<int> numbers{ 10,10,10,20,20 };
-        auto pt = std::adjacent_find(numbers.cbegin(), numbers.cend(), std::not_equal_to<int>()) + 1;
+        auto pt =
+                std::adjacent_find(numbers.cbegin(), numbers.cend(), std::not_equal_to<int>()) + 1;
         std::cout << "The first different element is " << *pt << '\n';
     }
 }
@@ -1521,7 +1537,8 @@ namespace Algorithms::Numeric {
 
 
         std::vector<int> ints2 = { 1, -2, -3, 4 };
-        auto abs_Sum = std::accumulate(ints2.begin(), ints2.end(), 0, [](int a, int b) { return std::abs(a) + std::abs(b); });
+        auto abs_Sum = std::accumulate(ints2.begin(), ints2.end(), 0, [](int a, int b) {
+            return std::abs(a) + std::abs(b); });
         std::cout << abs_Sum << std::endl;
     }
 
@@ -1623,7 +1640,6 @@ namespace Algorithms::Partitioning {
     }
 }
 
-
 namespace Algorithms
 {
     void Includes()
@@ -1676,11 +1692,13 @@ void Algorithms::TestAll()
     // ModifyingSequenceOperations::Transform_Reduce_2();
     // ModifyingSequenceOperations::Reverse();
     // ModifyingSequenceOperations::Reverse_Copy();
-    ModifyingSequenceOperations::Remove();
+    // ModifyingSequenceOperations::Remove();
     // ModifyingSequenceOperations::Remove_SharedPtr();
     // ModifyingSequenceOperations::Remove_If();
     // ModifyingSequenceOperations::Remove_Copy();
     // ModifyingSequenceOperations::Remove_Copy_If();
+    // ModifyingSequenceOperations::Erase();
+    ModifyingSequenceOperations::Erase_IF();
     // ModifyingSequenceOperations::Rotate();
     // ModifyingSequenceOperations::Unique();
     // ModifyingSequenceOperations::UniqueCopy();

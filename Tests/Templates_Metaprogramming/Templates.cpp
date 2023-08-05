@@ -173,11 +173,49 @@ namespace Templates
 }
 
 
+namespace Templates::Specialization
+{
+    template<typename T1, typename T2>
+    struct Object {
+        Object() { std::cout << "Object<T1, T2>()" << std::endl; }
+    };
+
+    template<typename T>
+    struct Object<T, T> {
+        Object() { std::cout << "Object<T, T>()" << std::endl; }
+    };
+
+
+    template<typename T>
+    struct Object<T, int> {
+        Object() { std::cout << "Object<T, int>()" << std::endl; }
+    };
+
+    template<typename T1, typename T2>
+    struct Object<T1 *, T2 *> {
+        Object() { std::cout << "Object<T1*, T2*>()" << std::endl; }
+    };
+
+    void Test() {
+        Object<int, float> mif;    // uses Object<T1, T2>()
+        Object<float, float> mff;  // uses Object<T , T>()
+        Object<float, int> mfi;    // uses Object<T , int>()
+        Object<int *, float *> mp; // uses Object<T1*,T2*>()
+    }
+
+
+
+
+}
+
+
 void Templates::TestAll()
 {
     // FoldExpressions::MatchingTests();
     // FoldExpressions::PassingFunction_to_ClassTemplateArgument();
 
-    NTTP::testConfig();
-    NTTP::testPersonalBudget();
+    // NTTP::testConfig();
+    // NTTP::testPersonalBudget();
+
+    Specialization::Test();
 }

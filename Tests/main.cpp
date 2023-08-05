@@ -460,55 +460,12 @@ namespace CallFunctionByName
     }
 }
 
-namespace HeapTest_PriorityQueue
-{
-    void MaxHeapTest()
-    {
-        std::vector<int> values {3, 2, 4, 1, 5, 9};
-        std::make_heap(values.begin(), values.end());
-
-        std::cout << values << std::endl;
-    }
-
-    void MinHeapTest()
-    {
-        std::vector<int> values {3, 2, 4, 1, 5, 9};
-        std::make_heap(values.begin(), values.end(), std::greater{});
-
-        std::cout << values << std::endl;
-    }
-
-    void MaxPriorityQueue()
-    {
-        std::vector<int> values {3, 2, 4, 1, 5, 9};
-        std::priority_queue<int> q1 (values.data(), values.data() + values.size()); // Max priority queue
-
-        std::cout << q1 << std::endl;
-    }
-}
-
-
-namespace STD_Algorithms
-{
-    void SwapRanges()
-    {
-        std::vector<int> data{ 1, 2, 3, 4, 5, 6, 7, 8, 9};
-
-        std::cout << data << std::endl;
-
-        std::swap_ranges(data.begin(), data.begin()+3, data.rbegin());
-
-        std::cout << data << std::endl;
-    }
-}
-
-
 
 int main([[maybe_unused]] int argc,
         [[maybe_unused]] char** argv)
 {
     const std::vector<std::string_view> args(argv + 1, argv + argc);
-    
+
 
     // static_assert(false == std::equality_comparable_with<std::unique_ptr<int>, nullptr_t>);
 
@@ -516,16 +473,10 @@ int main([[maybe_unused]] int argc,
 
     // Coroutines::TestAll();
 
-    // STD_Algorithms::SwapRanges();
-
     // OperatorCall_ExplicitTypeSpecialization::Test();
     // CallFunctionByName::Test();
 
     // ReturnTypeCast::tests();
-
-    // HeapTest_PriorityQueue::MaxHeapTest();
-    // HeapTest_PriorityQueue::MinHeapTest();
-    // HeapTest_PriorityQueue::MaxPriorityQueue();
 
     // Cpp23_Features::TestAll();
     // AutoTests::TestAll();
