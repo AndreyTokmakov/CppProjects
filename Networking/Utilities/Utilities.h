@@ -13,6 +13,7 @@ Description : Utilities
 #include <string>
 #include <linux/if_packet.h>
 #include <cstdint>
+#include <utility>
 
 
 namespace Utilities
@@ -51,18 +52,19 @@ namespace Utilities
         }
 
         SocketScoped& operator=(int s) {
-            if (handle != s)
-                closeSocket(handle);
-
             handle = s;
             return *this;
         }
 
-        SocketScoped& operator=(const SocketScoped& sock) {
-            if (handle != sock.handle) {
-                closeSocket(handle);
-                handle = sock.handle;
-            }
+        SocketScoped(const SocketScoped& sock) = default;
+        SocketScoped& operator=(const SocketScoped& sock) = default;
+
+        SocketScoped(SocketScoped&& sock) noexcept :
+                handle { std::exchange(sock.handle, INVALID_HANDLE)}  {
+        }
+
+        SocketScoped& operator=(SocketScoped&& sock) noexcept {
+            handle = std::exchange(sock.handle, INVALID_HANDLE);
             return *this;
         }
 

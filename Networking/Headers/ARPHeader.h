@@ -17,13 +17,13 @@ struct ARPHeader
 {
     uint16_t htype {0};
     uint16_t ptype {0};
-    uint8_t  hlen {};
-    uint8_t  plen {};
+    uint8_t  hlen {0};
+    uint8_t  plen {0};
     uint16_t opcode {0};
-    uint8_t  sender_mac[6]{};
-    uint32_t sender_ip {};
-    uint8_t  target_mac[6]{};
-    uint32_t target_ip {};
+    uint8_t  sender_mac[6]{0};
+    uint32_t sender_ip {0};
+    uint8_t  target_mac[6]{0};
+    uint32_t target_ip {0};
 
 public:
     bool SetSenderMACAddress(std::string_view mac) {
@@ -55,6 +55,19 @@ public:
     void SetTargetAddress(uint32_t address) {
         target_ip = address;
     }
+
+    void clear() noexcept {
+        htype = 0;
+        ptype = 0;
+        hlen = 0;
+        plen = 0;
+        opcode = 0;
+        sender_ip = 0;
+        target_ip = 0;
+        std::fill_n(sender_mac, std::size(sender_mac), 0);
+        std::fill_n(target_mac, std::size(target_mac), 0);
+    }
+
 } __attribute__((packed, aligned(1))) ;;
 
 

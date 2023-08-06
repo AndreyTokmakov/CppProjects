@@ -12,8 +12,10 @@ Description : OOP_Experiments
 #include <iostream>
 #include <memory>
 #include <vector>
-#include <span>
+#include <chrono>
 #include "../Helpers/Utilities.h"
+
+#include <cstring>
 
 namespace OOP_Experiments::FriendTests
 {
@@ -170,6 +172,104 @@ namespace OOP_Test
     }
 }
 
+namespace ObjectOrientedExperiments::Clear_NonTrivial_Objects
+{
+
+    struct ARPHeader
+    {
+        uint16_t htype {0};
+        uint16_t ptype {0};
+        uint8_t  hlen {};
+        uint8_t  plen {};
+        uint16_t opcode {0};
+        uint8_t  sender_mac[6]{};
+        uint32_t sender_ip {};
+        uint8_t  target_mac[6]{};
+        uint32_t target_ip {};
+
+        void info() {
+            std::cout
+            << htype << ','
+            << ptype << ','
+            << static_cast<uint16_t>(hlen) << ','
+            << static_cast<uint16_t>(plen) << ','
+            << opcode << ','
+            << sender_mac << ','
+            << sender_ip << ','
+            << sender_ip << ','
+            << target_ip << '\n';
+        }
+
+        void init() {
+            htype = 1;
+            ptype = 1;
+            hlen = 1;
+            plen = 1;
+            opcode = 1;
+            sender_ip = 1;
+            target_ip = 1;
+        }
+
+    } __attribute__((packed, aligned(1)));
+
+    void clear_memset(ARPHeader* arpHeader)
+    {
+        memset(arpHeader, 0, sizeof(ARPHeader));
+    }
+
+    void clear(ARPHeader* arpHeader)
+    {
+        *arpHeader = {};
+    }
+
+    void clearTest()
+    {
+        ARPHeader header;
+
+        header.init();
+        clear_memset(&header);
+        header.info();
+
+        header.init();
+        clear(&header);
+        header.info();
+    }
+
+#pragma optimize( "", off )
+    void perfTest()
+    {
+        constexpr size_t testsCount = 100'000;
+
+        {
+            std::chrono::high_resolution_clock::time_point start = std::chrono::high_resolution_clock::now();
+
+            ARPHeader header;
+            for (size_t i = 0; i < testsCount; ++i) {
+                for (size_t n = 0; n < testsCount; ++n) {
+                    clear_memset(&header);
+                }
+            }
+            std::chrono::high_resolution_clock::time_point end = std::chrono::high_resolution_clock::now();
+            std::chrono::duration<double> time_span = duration_cast<std::chrono::duration<double>>(end - start);
+            std::cout << "It took me " << time_span.count() << " seconds.\n";
+        }
+
+        {
+            std::chrono::high_resolution_clock::time_point start = std::chrono::high_resolution_clock::now();
+
+            ARPHeader header;
+            for (size_t i = 0; i < testsCount; ++i) {
+                for (size_t n = 0; n < testsCount; ++n) {
+                    clear(&header);
+                }
+            }
+            std::chrono::high_resolution_clock::time_point end = std::chrono::high_resolution_clock::now();
+            std::chrono::duration<double> time_span = duration_cast<std::chrono::duration<double>>(end - start);
+            std::cout << "It took me " << time_span.count() << " seconds.\n";
+        }
+    }
+#pragma optimize( "", on )
+}
 
 
 void ObjectOrientedExperiments::OOP_Experiments::TestAll()
@@ -179,7 +279,14 @@ void ObjectOrientedExperiments::OOP_Experiments::TestAll()
     // OOP_Test::ExampleTwo::test();  // overrided method call
     // OOP_Test::ExampleThree::test();   // static binding
 
-    OOP::MoveTest_CallMoveConstructor();
+    // OOP::MoveTest_CallMoveConstructor();
 
-    OOP::TestClassConversationOperatorCall();
+    // OOP::TestClassConversationOperatorCall();
+
+    // Clear_NonTrivial_Objects::clearTest();
+    // Clear_NonTrivial_Objects::perfTest();
+
+    uint8_t  sender_mac[6]{};
+
+    std::fill_n(sender_mac, 6, 0);
 };

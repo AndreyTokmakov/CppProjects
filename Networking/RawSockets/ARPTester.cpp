@@ -45,7 +45,8 @@ namespace ARPTester
     ARPHeader* initARPHeader(ARPHeader* arpHeader,
                              std::string_view sourceMac)
     {
-        memset(arpHeader, 0, sizeof(ARPHeader));
+        arpHeader->clear();
+
         arpHeader->htype = htons(1);               // Hardware type (16 bits): 1 for ethernet
         arpHeader->ptype = htons(ETH_P_IP);        // Protocol type (16 bits): 2048 for IP
         arpHeader->hlen = 6;                       // Hardware address length (8 bits): 6 bytes for MAC address
@@ -66,7 +67,8 @@ namespace ARPTester
     ARPHeader* initARPHeader_Request(ARPHeader* arpHeader,
                                      const sockaddr_ll& device)
     {
-        memset(arpHeader, 0, sizeof(ARPHeader));
+        arpHeader->clear();
+
         arpHeader->htype = htons(1);               // Hardware type (16 bits): 1 for ethernet
         arpHeader->ptype = htons(ETH_P_IP);        // Protocol type (16 bits): 2048 for IP
         arpHeader->hlen = 6;                       // Hardware address length (8 bits): 6 bytes for MAC address
@@ -83,7 +85,8 @@ namespace ARPTester
                                    [[maybe_unused]] const sockaddr_ll& device,
                                    std::string_view targetMac)
     {
-        memset(arpHeader, 0, sizeof(ARPHeader));
+        arpHeader->clear();
+
         arpHeader->htype = htons(1);               // Hardware type (16 bits): 1 for ethernet
         arpHeader->ptype = htons(ETH_P_IP);        // Protocol type (16 bits): 2048 for IP
         arpHeader->hlen = 6;                       // Hardware address length (8 bits): 6 bytes for MAC address
@@ -102,7 +105,8 @@ namespace ARPTester
                                    std::string_view senderMac,
                                    std::string_view targetMac)
     {
-        memset(arpHeader, 0, sizeof(ARPHeader));
+        arpHeader->clear();
+
         arpHeader->htype = htons(1);               // Hardware type (16 bits): 1 for ethernet
         arpHeader->ptype = htons(ETH_P_IP);        // Protocol type (16 bits): 2048 for IP
         arpHeader->hlen = 6;                       // Hardware address length (8 bits): 6 bytes for MAC address
@@ -314,6 +318,7 @@ namespace ARPTester::Tests
 
     void PoisoningTestEx()
     {
+
         constexpr std::string_view targetDeviceMac { "6c:24:08:f8:b6:af" };
         constexpr std::string_view ipAddressToOverwrite { "192.168.101.9" };
         constexpr std::string_view fakeMacAddressToSet { "11:22:33:44:44:44" };

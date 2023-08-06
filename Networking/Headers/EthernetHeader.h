@@ -107,6 +107,14 @@ public:
         }
         return true;
     }
+
+    void clear() noexcept
+    {
+        std::fill_n(destMac, std::size(destMac), 0);
+        std::fill_n(sourceMac, std::size(sourceMac), 0);
+        std::fill_n(type, std::size(type), 0);
+    }
+
 };
 
 
