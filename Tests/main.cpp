@@ -460,12 +460,34 @@ namespace CallFunctionByName
     }
 }
 
+namespace Ranges
+{
+    void reverse()
+    {
+        std::vector<int> r = {1, 2, 3, 4, 5};
+
+        auto reversed = r | std::views::reverse;
+        for (auto i : reversed)
+            std::cout << i << " ";
+    }
+
+    void reverse_view()
+    {
+        std::vector<int> r = {1, 2, 3, 4, 5};
+
+        std::ranges::reverse_view rv(r);
+        for (auto i : rv)
+            std::cout << i << " ";
+    }
+}
 
 int main([[maybe_unused]] int argc,
         [[maybe_unused]] char** argv)
 {
     const std::vector<std::string_view> args(argv + 1, argv + argc);
 
+    // Ranges::reverse();
+    // Ranges::reverse_view();
 
     // static_assert(false == std::equality_comparable_with<std::unique_ptr<int>, nullptr_t>);
 
@@ -486,7 +508,7 @@ int main([[maybe_unused]] int argc,
     // Iterators::TestAll();
     // Files::TestAll();
     // ConstexprMap::TestAll()
-    // DesignPatterns::TestAll();
+    DesignPatterns::TestAll();
     // Date_Time_Chrono::TestAll();
     // MaxStack::TestAll();
     // DebugLogger::TestAll();

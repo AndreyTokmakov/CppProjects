@@ -10,6 +10,7 @@ Description : CRTP src
 #include <iostream>
 #include "CRTP.h"
 #include "ObjectCounter.h"
+#include "CRTP_Cloneable.h"
 #include <memory>
 
 namespace CRTP {
@@ -109,6 +110,7 @@ namespace CRTP::Cloneable
 
 void CRTP::Test()
 {
-    test1();
+    // test1();
     // ObjectCounter::Test();
+    CRTP_Cloneable::Test();
 }

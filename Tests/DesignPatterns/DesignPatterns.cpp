@@ -344,7 +344,7 @@ namespace DesignPatterns::CRTP
         [[nodiscard]]
         virtual std::string getID() const = 0;
 
-        virtual void setID(std::string id) = 0;
+        // virtual void setID(std::string id) = 0;  // INFO: No need to demo
 
         virtual void show() const = 0;
     };
@@ -352,6 +352,7 @@ namespace DesignPatterns::CRTP
     template<typename Base, typename Derived>
     class Copyable : public Base {
     private:
+        [[nodiscard]]
         inline const Derived &self() const noexcept {
             return *static_cast<const Derived *const>(this);
         }
@@ -361,6 +362,7 @@ namespace DesignPatterns::CRTP
 
         [[nodiscard]]
         std::unique_ptr<Base> clone() const override {
+            std::cout << "Cloning " << typeid(Derived).name() << std::endl;
             return std::make_unique<Derived>(this->self());
         }
 
@@ -370,74 +372,62 @@ namespace DesignPatterns::CRTP
         }
     };
 
-
     class DerivedA : public Copyable<IBase, DerivedA> {
     private:
-        std::string _id;
+        std::string id;
     public:
-        DerivedA() : _id("unnamed-A") {}
+        explicit DerivedA() : id("unnamed-A") {}
 
-        explicit DerivedA(std::string id) : _id { std::move(id) } {}
+        explicit DerivedA(std::string id) : id { std::move(id) } {}
 
         [[nodiscard]]
-        std::string getID() const override {
-            return _id;
-        }
-
-        void setID(std::string id) override {
-            this->_id = id;
-        }
+        std::string getID() const override { return id; }
+        // void setID(std::string id) override { this->id = id; } // INFO: No need to demo
 
         void show() const override {
-            std::cout << " => Class DerivedA - id = " << _id << "\n";
+            std::cout << " => Class DerivedA - id = " << id << "\n";
         }
     };
 
 
-    class DerivedB : public Copyable<IBase, DerivedA> {
+    class DerivedB : public Copyable<IBase, DerivedB> {
     private:
-        std::string _id;
+        std::string id;
     public:
-        DerivedB() : _id("unnamed-B") {}
+        DerivedB() : id("unnamed-B") {}
 
-        explicit DerivedB(std::string id) : _id { std::move(id) } {}
+        explicit DerivedB(std::string id) : id { std::move(id) } {}
 
         [[nodiscard]]
-        std::string getID() const override {
-            return _id;
-        }
-
-        void setID(std::string id) override {
-            this->_id = id;
-        }
+        std::string getID() const override { return id; }
+        // void setID(std::string id) override { this->id = id; } // INFO: No need to demo
 
         void show() const override {
-            std::cout << " => Class DerivedA - id = " << _id << "\n";
+            std::cout << " => Class DerivedB - id = " << id << "\n";
         }
     };
 
     void Test()
     {
-        DerivedA da("objectA");
-        DerivedB db("objectB");
+        DerivedA a("objectA");
+        DerivedB b("objectB");
 
-        da.show();
-        db.show();
+        a.show();
+        b.show();
 
-        IBase* ptr = &da;
-        ptr->show();
+        std::cout << "----------------------------------------------------------\n";
 
-        ptr = &db;
-        ptr->show();
+        IBase *aPtr = &a, *bPtr = &b;
+        aPtr->show();
+        bPtr->show();
 
+        std::cout << "----------------------------------------------------------\n";
 
-        ptr = &da;
-        std::unique_ptr<IBase> clone1 = ptr->clone();
-        clone1->show();
+        std::unique_ptr<IBase> clone = aPtr->clone();
+        clone->show();
 
-        ptr = &db;
-        clone1.reset( ptr->clone().get());
-        clone1->show();
+        clone = bPtr->clone();
+        clone->show();
     }
 }
 
@@ -1371,7 +1361,7 @@ void DesignPatterns::TestAll()
     // Strategy::Test();
     // Strategy_Text::Test();
 
-    // CRTP::Test();
+    CRTP::Test();
 
     // Chain_of_Responsibility::Test();
 
@@ -1388,5 +1378,5 @@ void DesignPatterns::TestAll()
 
     // Observer::test();
 
-    Decorator::test();
+    // Decorator::test();
 }

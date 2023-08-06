@@ -67,6 +67,6 @@ add_executable(DesignPatterns
 		Decorator/MoneyTaxesDecoratorTwo.cpp Decorator/MoneyTaxesDecoratorTwo.h Observer/LambdaObserver.cpp
 		MVC/ModelViewController.cpp MVC/ModelViewController.h DependencyInjection/DependencyInjection.cpp
 		DependencyInjection/DependencyInjection.h
-		Adapter/ChargingPhoneAdapter.cpp Adapter/ChargingPhoneAdapter.cpp Decorator/WindowDecorator.cpp)
+		Adapter/ChargingPhoneAdapter.cpp Adapter/ChargingPhoneAdapter.cpp Decorator/WindowDecorator.cpp CRTP/CRTP_Cloneable.cpp CRTP/CRTP_Cloneable.h)
 
 TARGET_LINK_LIBRARIES(DesignPatterns pthread)

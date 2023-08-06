@@ -71,7 +71,7 @@ int main([[maybe_unused]]  int argc,
     /** Structural patterns: **/
     // Adapter::TestAll();
     // Bridge::TestAll();
-    PImpl::TestAll();
+    // PImpl::TestAll();
     // Composite::Test();
     // Facade::Test();
     // Decorator::Test();
@@ -97,7 +97,7 @@ int main([[maybe_unused]]  int argc,
     /// NULL OBJECT
 
     /** C++ IDIOMS: **/
-    // CRTP::Test();
+    CRTP::Test();
     // TypeErasure::Test();
     // RAII::Test();
     // CopyAndSwap::TEST_ALL();   ---- TESTs
