@@ -1,11 +1,11 @@
-//============================================================================
-// Name        : Utilities.h
-// Created on  : 01.04.2020
-// Author      : Tokmakov Andrey
-// Version     : 1.0
-// Copyright   : Your copyright notice
-// Description : Utilities class
-//============================================================================
+/**============================================================================
+Name        : Utilities.h
+Created on  : 01.04.2020
+Author      : Tokmakov Andrey
+Version     : 1.0
+Copyright   : Your copyright notice
+Description : Utilities class
+============================================================================**/
 
 #ifndef INTEGER_INCLUDE_GUARD__H
 #define INTEGER_INCLUDE_GUARD__H

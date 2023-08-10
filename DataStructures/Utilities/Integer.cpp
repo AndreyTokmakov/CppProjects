@@ -1,11 +1,11 @@
-//============================================================================
-// Name        : Utilities.cpp
-// Created on  : 01.04.2020
-// Author      : Tokmakov Andrey
-// Version     : 1.0
-// Copyright   : Your copyright notice
-// Description : Utilities class
-//============================================================================
+/**============================================================================
+Name        : Utilities.cpp
+Created on  : 01.04.2020
+Author      : Tokmakov Andrey
+Version     : 1.0
+Copyright   : Your copyright notice
+Description : Utilities class
+============================================================================**/
 
 #include "Integer.h"
 #include <utility>

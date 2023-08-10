@@ -14,110 +14,8 @@
 
 
 #include "CustomVector.h"
-
-namespace Utilities
-{
-    class Long {
-        long value {0};
-
-    public:
-        Long() {
-            std::cout << "Long::Long(DEFAULT)\n";
-        }
-
-        Long(long v): value {v} {
-            std::cout << "Long::Long(" << value << ")\n";
-        }
-
-        ~Long() {
-            std::cout << "Long::~Long(" << value << ")\n";
-        }
-
-        Long(const Long &obj): value {obj.value} {
-            std::cout << "Long::Long(" << value << ") Copy constructor\n";
-        }
-
-        Long(Long&& obj) noexcept : value { std::exchange(obj.value, 0)} {
-            std::cout << "Long::Long(" << value << ") Move constructor\n";
-        }
-
-        Long& operator=(const Long& right) {
-            std::cout << "[Copy assignment operator from Integer -> Integer]" << std::endl;
-            if (this != &right)
-                value = right.value;
-            return *this;
-        }
-
-        Long& operator=(Long&& right) noexcept {
-            std::cout << "[Move assignment operator]" << std::endl;
-            if (this != &right)
-                this->value = std::exchange(right.value, 0);
-            return *this;
-        }
-
-        /*
-        Long(const Long& l) = delete;
-        Long& operator=(const Long& l) = delete;
-        Long(Long&& l) noexcept = delete;
-        Long& operator=(Long&& l) noexcept = delete;
-        */
-
-        friend Long operator+(const Long& l1, const Long& l2);
-
-        friend std::ostream& operator<<(std::ostream& stream, const Long& obj);
-    };
-
-    class Integer {
-        int value {0};
-
-    public:
-        Integer() = default;
-
-        explicit Integer(int v): value {v} {
-        }
-
-        ~Integer() = default;
-
-        Integer(const Integer &obj): value {obj.value} {
-        }
-
-        Integer(Integer&& obj) noexcept : value { std::exchange(obj.value, 0)} {
-        }
-
-        Integer& operator=(const Integer& right) {
-            if (this != &right)
-                value = right.value;
-            return *this;
-        }
-
-        Integer& operator=(Integer&& right) noexcept {
-            if (this != &right)
-                this->value = std::exchange(right.value, 0);
-            return *this;
-        }
-
-        friend Integer operator+(const Integer& l1, const Integer& l2);
-        friend std::ostream& operator<<(std::ostream& stream, const Integer& obj);
-    };
-
-    std::ostream& operator<<(std::ostream& stream, const Integer& obj) {
-        stream << obj.value;
-        return stream;
-    }
-
-    Integer operator+(const Integer& l1, const Integer& l2) {
-        return Integer(l1.value + l2.value);
-    }
-
-    std::ostream& operator<<(std::ostream& stream, const Long& obj) {
-        stream << obj.value;
-        return stream;
-    }
-
-    Long operator+(const Long& l1, const Long& l2) {
-        return Long(l1.value + l2.value);
-    }
-}
+#include "../Utilities/Integer.h"
+#include "../Utilities/Long.h"
 
 namespace CustomVector {
 
@@ -150,6 +48,8 @@ namespace CustomVector {
     private:
         void increaseCapacity()
         {
+            std::cout << "* * * * increaseCapacity() * * * *" << std::endl;
+
             capacity *= growthFactor;
             pointer newData { allocator.allocate(capacity) };
 
@@ -168,6 +68,8 @@ namespace CustomVector {
         explicit Vector(size_t s = initialCapacity) {
             capacity = s > 0 ? s : initialCapacity;
             data = allocator.allocate(s);
+
+            std::cout << "capacity = " << capacity << ", size = " << size << std::endl;
         }
 
         ~Vector() {
@@ -213,6 +115,17 @@ namespace CustomVector {
             /** Construct element in place: **/
             new (data + size) object_type{ std::forward<Args>(params)... };
             ++size;
+        }
+
+
+        void swap(Vector &other) noexcept {
+            std::swap(this->data, other.data);
+            std::swap(this->size, other.size);
+        }
+
+        static void swap(Vector &first, Vector &second) noexcept {
+            std::swap(first.data, second.data);
+            std::swap(first.size, second.size);
         }
     };
 
@@ -305,7 +218,7 @@ namespace CustomVector {
 namespace CustomVector::Testing {
 
     void IteratorTests() {
-        Vector<Utilities::Integer> data(0);
+        Vector<Integer> data(0);
 
         for (int i: {1,2,3})
             data.emplace_back(i);
@@ -316,11 +229,11 @@ namespace CustomVector::Testing {
     }
 
     void IteratorTest2() {
-        Vector<Utilities::Long> data;
+        Vector<Long> data;
         for (int i: {1, 2, 3, 4 ,5})
             data.emplace_back(i);
 
-        VectorBaseIterator<Utilities::Long, Vector<Utilities::Long>> iter {data, 0 };
+        VectorBaseIterator<Long, Vector<Long>> iter {data, 0 };
         // vector_iterator<Utilities::Integer> iter {data, 0 };
 
         std::cout << *iter << std::endl;
@@ -337,15 +250,18 @@ namespace CustomVector::Testing {
 void CustomVector::TestAll()
 {
     // Testing::IteratorTests();
-    Testing::IteratorTest2();
+    // Testing::IteratorTest2();
+
+
+    Vector<Long> data(0);
+
+
+    for (int i: {1,2,3,4,5}) {
+        data.push_back(Long(i));
+        // data.emplace_back(i);
+    }
 
     /*
-    //  Vector<Utilities::Long> data(0);
-    std::vector<Utilities::Long> data;
-
-    for (int i: {1,2,3})
-        data.emplace_back(i);
-
     for (const auto& v: data)
         std::cout << v << std::endl;
     */
