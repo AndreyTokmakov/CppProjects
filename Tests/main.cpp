@@ -64,6 +64,7 @@ Description : Tests C++ project
 #include "Collections/CollectionsTests.h"
 #include "ObjectOrientedExperimetns/RAIIWrapper.h"
 #include "ObjectOrientedExperimetns/OOP_Experiments.h"
+#include "ObjectOrientedExperimetns/VirtualTables.h"
 #include "Optional/Optional.h"
 #include "ConstexprMap/ConstexprMap.h"
 #include "Multithreading/Multithreading.h"
@@ -529,13 +530,13 @@ namespace CopyAndCopyObjectTests
 }
 
 
+
 int main([[maybe_unused]] int argc,
         [[maybe_unused]] char** argv)
 {
     const std::vector<std::string_view> args(argv + 1, argv + argc);
 
-    CopyAndCopyObjectTests::createSocketTest();
-
+    // CopyAndCopyObjectTests::createSocketTest();
 
     // static_assert(false == std::equality_comparable_with<std::unique_ptr<int>, nullptr_t>);
 
@@ -548,7 +549,7 @@ int main([[maybe_unused]] int argc,
 
     // ReturnTypeCast::tests();
 
-    // Cpp23_Features::TestAll();
+    Cpp23_Features::TestAll();
     // AutoTests::TestAll();
     // Algorithms::TestAll();
     // Multithreading::TestAll();
@@ -567,6 +568,7 @@ int main([[maybe_unused]] int argc,
     // CopyElision_RVO::TestAll();
     // ObjectOrientedExperiments::RAIIWrapper::TestAll();
     // ObjectOrientedExperiments::OOP_Experiments::TestAll();
+    // ObjectOrientedExperiments::VirtualTables::TestAll();
     // Optional::TestAll();
     // Math::TestAll();
     // LRUCache::TestAll();
