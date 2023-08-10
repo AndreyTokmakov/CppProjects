@@ -414,8 +414,8 @@ void Memory::TestAll()
 
     // SharedPtr_BadUsage_DoubleDelete();
     // SharedPtr_BadUsage_DoubleDelete_FIX_EmptyDeleter();
-    Shared_Weak_UsageCount();
+    // Shared_Weak_UsageCount();
 
-    // AllocateShared_And_Trace();
+    AllocateShared_And_Trace();
 
 }

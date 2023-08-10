@@ -11,6 +11,7 @@
 #include <vector>
 #include <memory>
 #include <utility>
+#include <algorithm>
 
 
 #include "CustomVector.h"
@@ -48,8 +49,6 @@ namespace CustomVector {
     private:
         void increaseCapacity()
         {
-            std::cout << "* * * * increaseCapacity() * * * *" << std::endl;
-
             capacity *= growthFactor;
             pointer newData { allocator.allocate(capacity) };
 
@@ -65,20 +64,25 @@ namespace CustomVector {
         // Vector(size_t s): data { allocator.allocate(s) }, capacity { s }  {
         // }
 
-        explicit Vector(size_t s = initialCapacity) {
+        explicit Vector(const size_t s = initialCapacity) {
             capacity = s > 0 ? s : initialCapacity;
-            data = allocator.allocate(s);
-
-            std::cout << "capacity = " << capacity << ", size = " << size << std::endl;
+            data = allocator.allocate(capacity);
         }
 
-        ~Vector() {
+        ~Vector()
+        {
             /** Invoke destructors for all contained objects: **/
             std::destroy_n(data, size);
 
             /** Deallocate all memory: **/
             allocator.deallocate(data, capacity);
         }
+
+        Vector(const  Vector<Type, Allocator>  &other) : size { other.size } {
+            data = allocator.allocate(other.capacity);
+            std::copy_n(other.data, size, data);
+        }
+
 
     public:
         [[nodiscard]]
@@ -105,27 +109,40 @@ namespace CustomVector {
         void push_back(const Type& v) {
             if (size >= capacity)
                 increaseCapacity();
-            this->data[size++] = v;
-        }
 
-        template<typename ... Args>
-        void emplace_back(Args&& ...  params) {
-            if (size >= capacity)
-                increaseCapacity();
-            /** Construct element in place: **/
-            new (data + size) object_type{ std::forward<Args>(params)... };
+            this->data[size] = v;
             ++size;
         }
 
+        template<typename ... Args>
+        object_type& emplace_back(Args&& ...  params) {
+            if (size >= capacity)
+                increaseCapacity();
 
-        void swap(Vector &other) noexcept {
+            /** Construct element in place: **/
+            new (data + size) object_type { std::forward<Args>(params)... };
+            return data[size++];
+        }
+
+        void swap(Vector<Type, Allocator> &other) noexcept {
             std::swap(this->data, other.data);
             std::swap(this->size, other.size);
         }
 
-        static void swap(Vector &first, Vector &second) noexcept {
+        static void swap(Vector<Type, Allocator> &first,
+                         Vector<Type, Allocator> &second) noexcept {
             std::swap(first.data, second.data);
             std::swap(first.size, second.size);
+        }
+
+        Vector<Type, Allocator> & operator=(const Vector<Type, Allocator>& other) {
+            if (&other == this)
+                return *this;
+
+            Vector localCopy(other);
+            // swap(localCopy);
+            Vector::swap(localCopy, *this);
+            return *this;
         }
     };
 
@@ -243,6 +260,19 @@ namespace CustomVector::Testing {
         std::cout << *iter << std::endl;
 
     }
+
+    void CopyVector()
+    {
+
+        Vector<Long> data;
+        for (int i: {1, 2, 3, 4 ,5})
+            data.emplace_back(i);
+
+        Vector<Long> data1 = data;
+
+        for (const auto& v: data1)
+            std::cout << v << std::endl;
+    }
 }
 
 //-----------------------------------------------------------------------------
@@ -253,15 +283,18 @@ void CustomVector::TestAll()
     // Testing::IteratorTest2();
 
 
-    Vector<Long> data(0);
+    Testing::CopyVector();
 
-
-    for (int i: {1,2,3,4,5}) {
-        data.push_back(Long(i));
-        // data.emplace_back(i);
-    }
 
     /*
+    Vector<Long> data(0);
+    // std::vector<Long> data(0);
+
+    for (int i: {1,2,3,4,5}) {
+        // data.push_back(Long(i));
+        data.emplace_back(i);
+    }
+
     for (const auto& v: data)
         std::cout << v << std::endl;
     */

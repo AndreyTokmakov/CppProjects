@@ -549,11 +549,11 @@ int main([[maybe_unused]] int argc,
 
     // ReturnTypeCast::tests();
 
-    Cpp23_Features::TestAll();
+    // Cpp23_Features::TestAll();
     // AutoTests::TestAll();
     // Algorithms::TestAll();
     // Multithreading::TestAll();
-    // Memory::TestAll();
+    Memory::TestAll();
     // Iterators::TestAll();
     // Files::TestAll();
     // ConstexprMap::TestAll()
