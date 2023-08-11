@@ -78,15 +78,24 @@ namespace CustomVector {
             allocator.deallocate(data, capacity);
         }
 
-        Vector(const  Vector<Type, Allocator>  &other) : size { other.size } {
+        Vector(const  Vector<object_type, Allocator>  &other): capacity { other.capacity }, size { other.size } {
             data = allocator.allocate(other.capacity);
             std::copy_n(other.data, size, data);
         }
 
+        Vector<object_type, Allocator> & operator=(const Vector<object_type, Allocator>& other) {
+            if (&other == this)
+                return *this;
+
+            Vector localCopy(other);
+            // swap(localCopy);
+            Vector::swap(localCopy, *this);
+            return *this;
+        }
 
     public:
         [[nodiscard]]
-        Type& operator[] (size_t index) {
+        object_type& operator[] (size_t index) {
             // TODO: Check size & index ???
             return this->data[index];
         }
@@ -106,11 +115,19 @@ namespace CustomVector {
             return 0 == size;
         }
 
-        void push_back(const Type& v) {
+        void push_back(const object_type& v) {
             if (size >= capacity)
                 increaseCapacity();
 
             this->data[size] = v;
+            ++size;
+        }
+
+        void push_back(object_type&& v) {
+            if (size >= capacity)
+                increaseCapacity();
+
+            this->data[size] = std::move(v);
             ++size;
         }
 
@@ -124,25 +141,15 @@ namespace CustomVector {
             return data[size++];
         }
 
-        void swap(Vector<Type, Allocator> &other) noexcept {
+        void swap(Vector<object_type, Allocator> &other) noexcept {
             std::swap(this->data, other.data);
             std::swap(this->size, other.size);
         }
 
-        static void swap(Vector<Type, Allocator> &first,
-                         Vector<Type, Allocator> &second) noexcept {
+        static void swap(Vector<object_type, Allocator> &first,
+                         Vector<object_type, Allocator> &second) noexcept {
             std::swap(first.data, second.data);
             std::swap(first.size, second.size);
-        }
-
-        Vector<Type, Allocator> & operator=(const Vector<Type, Allocator>& other) {
-            if (&other == this)
-                return *this;
-
-            Vector localCopy(other);
-            // swap(localCopy);
-            Vector::swap(localCopy, *this);
-            return *this;
         }
     };
 
@@ -232,7 +239,8 @@ namespace CustomVector {
 
 //-----------------------------------------------------------------------------
 
-namespace CustomVector::Testing {
+namespace CustomVector::Testing
+{
 
     void IteratorTests() {
         Vector<Integer> data(0);
@@ -258,12 +266,21 @@ namespace CustomVector::Testing {
         std::cout << *iter << std::endl;
         iter++;
         std::cout << *iter << std::endl;
+    }
+
+    void PushBack()
+    {
+        Vector<Long> data;
+        //std::vector<Long> data;
+        for (int i: {1, 2, 3})
+        {
+            data.push_back(Long{i});
+        }
 
     }
 
     void CopyVector()
     {
-
         Vector<Long> data;
         for (int i: {1, 2, 3, 4 ,5})
             data.emplace_back(i);
@@ -283,7 +300,9 @@ void CustomVector::TestAll()
     // Testing::IteratorTest2();
 
 
-    Testing::CopyVector();
+    // Testing::CopyVector();
+
+    Testing::PushBack();
 
 
     /*

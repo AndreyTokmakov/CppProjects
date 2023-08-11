@@ -14,6 +14,7 @@ Description : Cpp23_Features
 #include <array>
 #include <vector>
 #include <coroutine>
+#include <expected>
 
 
 // C++ 23:
@@ -171,6 +172,62 @@ namespace Cpp23_Features::Multidimensional_Operator
     }
 }
 
+namespace Cpp23_Features::Expected
+{
+    // Typical use case
+    std::expected<std::string,std::error_code> fun(bool error = true) {
+        if (error)
+            return std::unexpected(std::make_error_code(std::errc::invalid_argument));
+        return {"Hello World!" };
+    }
+
+    void basics()
+    {
+        std::expected<int,int> v = 10;
+
+        // Similar interface to std::optional
+        // v.has_value() == true , v.value() == 10, *v == 10
+
+        std::cout << std::boolalpha << "v.has_value() == " << v.has_value() << "\n";
+        std::cout << "*v == " << *v << ", v.value() == " << v.value() << "\n";
+    }
+
+
+    void UnExpected()
+    {
+        std::expected<int,int> err = std::unexpected {10};
+        // To distinguish the error, it has to be wrapped in std::unexpected
+
+        std::cout << std::boolalpha << "\nerr.has_value() == " << err.has_value() << "\n"; // err.has_value() == false
+        std::cout << "e.error() == " << err.error() << "\n";                               // err.error() == 10
+    }
+
+    void Non_Initialized()
+    {
+        std::expected<int,int> m;
+
+        // std::expected always contains either a result or an error
+
+        std::cout << "\nm.has_value() == " << m.has_value() << "\n";  // m.has_value() == true
+        std::cout << "m.value() == " << m.value() << "\n";            // m.value() == int{} == 0
+    }
+
+    void No_DefaultValue()
+    {
+        struct NoDefault final {
+            explicit constexpr NoDefault(int) {}
+        };
+
+        // Therefore if the result type cannot be default constructed
+        // the resulting std::expected cannot be default constructed either.
+
+        // std::expected<NoDefault,int> n; // Wouldn't compile
+        std::expected<NoDefault,int> n{20}; // OK
+
+        std::cout << "\nn.has_value() == " << n.has_value() << "\n";  // n.has_value() == true
+    }
+}
+
 
 
 void Cpp23_Features::TestAll()
@@ -187,5 +244,10 @@ void Cpp23_Features::TestAll()
 
     // Wparentheses();
 
-    Multidimensional_Operator::simpleTest();
+    // Multidimensional_Operator::simpleTest();
+
+    Expected::basics();
+    Expected::UnExpected();
+    Expected::Non_Initialized();
+    Expected::No_DefaultValue();
 };

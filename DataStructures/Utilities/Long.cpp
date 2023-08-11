@@ -23,7 +23,7 @@ Long::Long(const Long &obj)
     std::cout << "Long(" << value << ") [Copy constructor]\n";
 }
 
-Long::Long(Long &&obj) noexcept: value { std::exchange(obj.value, 0) }
+Long::Long(Long && obj) noexcept: value { std::exchange(obj.value, 0) }
 {
     std::cout << "Long(" << value << ") [Move constructor]\n";
 }
@@ -60,6 +60,7 @@ Long& Long::operator=(long val) {
 
 Long& Long::operator=(Long &&right) noexcept
 {
+    std::cout << "Long& Long::operator=(Long &&right)(" << right.value << ")\n";
     if (this != &right)
         this->value = std::exchange(right.value, 0);
     return *this;
