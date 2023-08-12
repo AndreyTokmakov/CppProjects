@@ -74,7 +74,7 @@ namespace Array {
 
         Array &operator=(Array &&other) noexcept {
             if (this != &other) {
-                delete[] data;
+                /// delete[] data; ????
                 data = std::exchange(other.data, nullptr);
                 size = std::exchange(other.size, 0);
             }

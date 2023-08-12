@@ -78,25 +78,41 @@ namespace CustomVector {
             allocator.deallocate(data, capacity);
         }
 
-        Vector(const  Vector<object_type, Allocator>  &other): capacity { other.capacity }, size { other.size } {
+        Vector(const Vector<object_type, Allocator>& other):
+                capacity { other.capacity }, size { other.size } {
+            std::cout << "Vector(copy constructor)\n";
             data = allocator.allocate(other.capacity);
-            std::copy_n(other.data, size, data);
+            // std::copy_n(other.data, size, data);
         }
 
-        Vector<object_type, Allocator> & operator=(const Vector<object_type, Allocator>& other) {
-            if (&other == this)
-                return *this;
+        Vector(Vector<object_type, Allocator>&& other) noexcept:
+                data { std::exchange(other.data, nullptr)},
+                capacity { std::exchange(other.capacity, 0) },
+                size { std::exchange(other.size, 0) } {
+            // std::cout << "Vector(move constructor)\n";
+        }
 
-            Vector localCopy(other);
-            // swap(localCopy);
-            Vector::swap(localCopy, *this);
+        Vector<object_type, Allocator>& operator=(const Vector<object_type, Allocator>& other) {
+            if (&other != this) {
+                Vector localCopy(other);
+                Vector::swap(localCopy, *this);
+            }
+            return *this;
+        }
+
+        Vector<object_type, Allocator>& operator=(Vector<object_type, Allocator>&& other) noexcept {
+            if (&other != this)
+            {
+                data = std::exchange(other.data, nullptr);
+                capacity = std::exchange(other.capacity, 0);
+                size = std::exchange(other.size, 0);
+            }
             return *this;
         }
 
     public:
         [[nodiscard]]
         object_type& operator[] (size_t index) {
-            // TODO: Check size & index ???
             return this->data[index];
         }
 
@@ -144,12 +160,14 @@ namespace CustomVector {
         void swap(Vector<object_type, Allocator> &other) noexcept {
             std::swap(this->data, other.data);
             std::swap(this->size, other.size);
+            std::swap(this->capacity, other.capacity);
         }
 
         static void swap(Vector<object_type, Allocator> &first,
                          Vector<object_type, Allocator> &second) noexcept {
             std::swap(first.data, second.data);
             std::swap(first.size, second.size);
+            std::swap(first.capacity, second.capacity);
         }
     };
 
@@ -276,17 +294,72 @@ namespace CustomVector::Testing
         {
             data.push_back(Long{i});
         }
+    }
 
+    void Copy_Constructor()
+    {
+        Vector<Long> original;
+        for (int i: {1, 2, 3, 4 ,5})
+            original.emplace_back(i);
+
+        Vector<Long> movedTo = original;
+
+        std::cout << "------------------------ original --------------------------- \n";
+        for (const auto& v: original)
+            std::cout << v << std::endl;
+
+        std::cout << "------------------------ movedTo --------------------------- \n";
+        for (const auto& v: movedTo)
+            std::cout << v << std::endl;
+    }
+
+    void Move_Constructor()
+    {
+        Vector<Long> original;
+        for (int i: {1, 2, 3, 4 ,5})
+            original.emplace_back(i);
+
+        Vector<Long> movedTo = std::move(original);
+
+        std::cout << "------------------------ original --------------------------- \n";
+        for (const auto& v: original)
+            std::cout << v << std::endl;
+
+        std::cout << "------------------------ movedTo --------------------------- \n";
+        for (const auto& v: movedTo)
+            std::cout << v << std::endl;
     }
 
     void CopyVector()
+    {
+        Vector<Long> original;
+        for (int i: {1, 2, 3, 4 ,5})
+            original.emplace_back(i);
+
+        Vector<Long> movedTo = std::move(original);
+
+        std::cout << "------------------------ original --------------------------- \n";
+        for (const auto& v: original)
+            std::cout << v << std::endl;
+
+        std::cout << "------------------------ movedTo --------------------------- \n";
+        for (const auto& v: movedTo)
+            std::cout << v << std::endl;
+    }
+
+
+    void MoveVector()
     {
         Vector<Long> data;
         for (int i: {1, 2, 3, 4 ,5})
             data.emplace_back(i);
 
-        Vector<Long> data1 = data;
+        Vector<Long> data1 = std::move(data);
 
+        for (const auto& v: data)
+            std::cout << v << std::endl;
+
+        std::cout << std::endl;
         for (const auto& v: data1)
             std::cout << v << std::endl;
     }
@@ -299,10 +372,13 @@ void CustomVector::TestAll()
     // Testing::IteratorTests();
     // Testing::IteratorTest2();
 
+    Testing::Copy_Constructor();
+    // Testing::Move_Constructor();
 
     // Testing::CopyVector();
+    // Testing::MoveVector();
 
-    Testing::PushBack();
+    // Testing::PushBack();
 
 
     /*
