@@ -309,8 +309,8 @@ namespace Algorithms::NonModifying {
             }
             else {
                 std::cout << "the first adjacent pair of equal elements at: "
-                          << std::distance(numbers.begin(), iter) <
-                          < ". {" << *iter << ", " << *(std::next(iter)) << "}" << std::endl;
+                          << std::distance(numbers.begin(), iter)
+                          << ". {" << *iter << ", " << *(std::next(iter)) << "}" << std::endl;
             }
         }
 
@@ -1456,7 +1456,7 @@ namespace Algorithms::Functional {
 
         std::vector<int> foo { 10,20,30,40,50 }, bar {10,20,40,80,160 };
         auto [start, end] =
-                td::mismatch(foo.cbegin(), foo.cend(), bar.cbegin(), std::equal_to<int>());
+                std::mismatch(foo.cbegin(), foo.cend(), bar.cbegin(), std::equal_to<int>());
         std::cout << "First mismatching pair is: " << *start << " and " << *end << '\n';
     }
 

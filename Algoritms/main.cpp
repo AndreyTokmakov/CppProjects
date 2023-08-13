@@ -27,8 +27,8 @@ int main([[maybe_unused]] int argc,
 {
 	// Graphs::TEST_ALL();
 	// LinkedList::TEST_ALL();
-	// Heap_Algoritms::TEST_ALL();
-    Trees::TEST_ALL();
+	Heap_Algoritms::TEST_ALL();
+    // Trees::TEST_ALL();
 	// Queues::TEST_ALL();
 	// Stack::TEST_ALL();
 	// Sorting::TEST_ALL();

@@ -17,51 +17,45 @@ namespace Files
 {
     void TestFileLength()
     {
-        constexpr std::string_view file_path { R"(/home/andtokm/Projects/data/Nifti/segm_labels_3d.nii)"};
+        constexpr std::string_view file_path
+                { R"(/home/andtokm/DiskS/Temp/TESTING_ROOT_DIR/test_run.log)"};
 
-        std::ifstream ifile(file_path.data(), std::ios::binary);
-        if (ifile.is_open()) {
-            ifile.seekg(0, std::ios_base::end);
-            const size_t fileSize = ifile.tellg();
-            ifile.seekg(0, std::ios_base::beg);
+        if (std::ifstream file(file_path.data(), std::ios::binary); file.is_open() && file.good()) {
+            file.seekg(0, std::ios_base::end);
+            const size_t fileSize = file.tellg();
+            file.seekg(0, std::ios_base::beg);
 
-            std::cout << "Size = " << fileSize << std::endl;
+            std::cout << "Size : " << fileSize << std::endl;
+            std::cout << "Size : " << std::filesystem::file_size(file_path) << std::endl;
         }
-        ifile.close();
     }
 
-    void FileSize()
-    {
-        constexpr std::string_view file_path { R"(/home/andtokm/DiskS/Temp/TESTING_ROOT_DIR/test_run.log)"};
-        std::cout << "File size = " << std::filesystem::file_size(file_path) << std::endl;
-    }
 
     void ReadFileBlocks()
     {
         constexpr std::string_view file_path
-                { R"(/home/andtokm/Projects/data/cases/2280/automodeling/out/2280_teeth.obj)"};
+                { R"(/home/andtokm/DiskS/Temp/TESTING_ROOT_DIR/test_run.log)"};
 
-        size_t bytesTotal = 0;
-        std::ifstream ifile(file_path.data(), std::ios::binary);
+        size_t bytesReadTotal { 0 };
         char buffer[1024 * 1024] {};
-        if (ifile.is_open()) {
+        if (std::ifstream file(file_path.data(), std::ios::binary); file.is_open() && file.good()) {
             std::streamsize bytesRead {0};
-            while (0 < (bytesRead = ifile.readsome(buffer, std::size(buffer)))) {
-                std::cout << bytesRead << std::endl;
-                bytesTotal += bytesRead;
+            while (0 < (bytesRead = file.readsome(buffer, std::size(buffer)))) {
+                // std::cout << bytesRead << std::endl;
+                bytesReadTotal += bytesRead;
             }
         }
-        ifile.close();
 
-        std::cout << bytesTotal << std::endl;
+        std::cout << "Bytes read: " << bytesReadTotal << std::endl;
+        std::cout << "File size : " << std::filesystem::file_size(file_path) << std::endl;
     }
 };
 
 
 void Files::TestAll()
 {
-    // TestFileLength();
-    FileSize();
+    TestFileLength();
+
     // ReadFileBlocks();
 };
 

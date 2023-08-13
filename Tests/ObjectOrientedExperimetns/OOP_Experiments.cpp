@@ -272,6 +272,76 @@ namespace ObjectOrientedExperiments::Clear_NonTrivial_Objects
 }
 
 
+namespace ObjectOrientedExperiments::CopyObjects
+{
+
+    struct SocketScoped
+    {
+        static constexpr int INVALID_HANDLE { -1 };
+        static constexpr int SOCKET_ERROR { -1 };
+
+        int handle { INVALID_HANDLE };
+
+        SocketScoped(int s = INVALID_HANDLE) : handle { s } {
+        }
+
+        SocketScoped& operator=(int s) {
+            handle = s;
+            return *this;
+        }
+
+        SocketScoped(const SocketScoped& sock) = default;
+        SocketScoped& operator=(const SocketScoped& sock) = default;
+
+        SocketScoped(SocketScoped&& sock) noexcept :
+                handle { std::exchange(sock.handle, INVALID_HANDLE)}  {
+        }
+
+        SocketScoped& operator=(SocketScoped&& sock) noexcept {
+            handle = std::exchange(sock.handle, INVALID_HANDLE);
+            return *this;
+        }
+
+        operator int() const { // No explicit
+            return handle;
+        }
+
+        [[nodiscard]]
+        inline bool isValid() const noexcept {
+            return INVALID_HANDLE == handle;
+        }
+
+        explicit operator bool() const noexcept {
+            return (INVALID_HANDLE != handle);
+        }
+
+        ~SocketScoped() {
+            closeSocket(handle);
+        }
+
+    private:
+        static void closeSocket(int s) {
+            std::cout << "Close socket (" << s << ")\n";
+        }
+    };
+
+    SocketScoped createSocket()
+    {
+        SocketScoped socket = 123;
+        if (-1 == socket) {
+            std::cerr << "Failed to create socket. Error = " << errno << std::endl;
+        }
+        return socket;
+    }
+
+    void createSocketTest()
+    {
+        SocketScoped s = createSocket();
+    }
+}
+
+
+
 void ObjectOrientedExperiments::OOP_Experiments::TestAll()
 {
     // OOP_Experiments::FriendTests
@@ -286,7 +356,10 @@ void ObjectOrientedExperiments::OOP_Experiments::TestAll()
     // Clear_NonTrivial_Objects::clearTest();
     // Clear_NonTrivial_Objects::perfTest();
 
-    uint8_t  sender_mac[6]{};
+    CopyObjects::createSocket();
 
+    /*
+    uint8_t  sender_mac[6]{};
     std::fill_n(sender_mac, 6, 0);
+     */
 };

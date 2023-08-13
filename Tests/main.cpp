@@ -83,6 +83,7 @@ Description : Tests C++ project
 #include "Coroutines/Coroutines.h"
 #include "Cpp23_Features/Cpp23_Features.h"
 #include "Auto/AutoTests.h"
+#include "Heap/Heap.h"
 
 
 struct AnyBase {
@@ -461,82 +462,10 @@ namespace CallFunctionByName
     }
 }
 
-namespace CopyAndCopyObjectTests
-{
-
-    struct SocketScoped
-    {
-        static constexpr int INVALID_HANDLE { -1 };
-        static constexpr int SOCKET_ERROR { -1 };
-
-        int handle { INVALID_HANDLE };
-
-        SocketScoped(int s = INVALID_HANDLE) : handle { s } {
-        }
-
-        SocketScoped& operator=(int s) {
-            handle = s;
-            return *this;
-        }
-
-        SocketScoped(const SocketScoped& sock) = default;
-        SocketScoped& operator=(const SocketScoped& sock) = default;
-
-        SocketScoped(SocketScoped&& sock) noexcept :
-            handle { std::exchange(sock.handle, INVALID_HANDLE)}  {
-        }
-
-        SocketScoped& operator=(SocketScoped&& sock) noexcept {
-            handle = std::exchange(sock.handle, INVALID_HANDLE);
-            return *this;
-        }
-
-        operator int() const { // No explicit
-            return handle;
-        }
-
-        [[nodiscard]]
-        inline bool isValid() const noexcept {
-            return INVALID_HANDLE == handle;
-        }
-
-        explicit operator bool() const noexcept {
-            return (INVALID_HANDLE != handle);
-        }
-
-        ~SocketScoped() {
-            closeSocket(handle);
-        }
-
-    private:
-        static void closeSocket(int s) {
-            std::cout << "Close socket (" << s << ")\n";
-        }
-    };
-
-    SocketScoped createSocket()
-    {
-        SocketScoped socket = 123;
-        if (-1 == socket) {
-            std::cerr << "Failed to create socket. Error = " << errno << std::endl;
-        }
-        return socket;
-    }
-
-    void createSocketTest()
-    {
-        SocketScoped s = createSocket();
-    }
-}
-
-
-
 int main([[maybe_unused]] int argc,
         [[maybe_unused]] char** argv)
 {
     const std::vector<std::string_view> args(argv + 1, argv + argc);
-
-    // CopyAndCopyObjectTests::createSocketTest();
 
     // static_assert(false == std::equality_comparable_with<std::unique_ptr<int>, nullptr_t>);
 
@@ -549,7 +478,9 @@ int main([[maybe_unused]] int argc,
 
     // ReturnTypeCast::tests();
 
-    Cpp23_Features::TestAll();
+    Heap::TestAll();
+
+    // Cpp23_Features::TestAll();
     // AutoTests::TestAll();
     // Algorithms::TestAll();
     // Multithreading::TestAll();

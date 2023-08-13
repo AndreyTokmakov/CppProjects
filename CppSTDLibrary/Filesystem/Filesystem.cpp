@@ -21,11 +21,10 @@
 #include <iterator>
 
 
-namespace Filesystem {
-    using String = std::string;
-    using CString = const String&;
-
-    void DirectoryIteratorTest(int level = 0) {
+namespace Filesystem
+{
+    void DirectoryIteratorTest(int level = 0)
+    {
         const std::string dirPath = R"(/home/andtokm/tmp/folder_for_testing)";
         for (const auto& entry : std::filesystem::directory_iterator(dirPath)) {
             const auto filenameStr = entry.path().filename().string();
@@ -83,7 +82,7 @@ namespace Filesystem {
     void CreateDirectoryTest() {
         namespace fs = std::filesystem;
 
-        const String dir1 = "C:\\Temp\\TEST_DIRS\\DirToCreate1";
+        constexpr std::string_view dir1 = R"(C:\Temp\TEST_DIRS\DirToCreate1)";
         bool result = fs::create_directory(dir1);
         std::cout << "Create directory result : " << result << std::endl;
 
@@ -92,7 +91,7 @@ namespace Filesystem {
             std::cout << "Directory '" << dir1 << "' exists" << std::endl;
         }
 
-        const String dirs = "C:\\Temp\\TEST_DIRS\\DirToCreate1\\DirToCreate2\\DirToCreate3";
+        constexpr std::string_view dirs = R"(C:\Temp\TEST_DIRS\DirToCreate1\DirToCreate2\DirToCreate3)";
         result = fs::create_directories(dirs);
         std::cout << "Create directories result : " << result << std::endl;
 
@@ -105,8 +104,8 @@ namespace Filesystem {
     void DeleteDirectoryTest() {
         namespace fs = std::filesystem;
 
-        const String dir1 = "C:\\Temp\\TEST_DIRS\\DirToCreate1";
-        const String dirs = "C:\\Temp\\TEST_DIRS\\DirToCreate1\\DirToCreate2\\DirToCreate3";
+        constexpr std::string_view dir1 = R"(C:\Temp\TEST_DIRS\DirToCreate1)";
+        constexpr std::string_view  dirs = R"(C:\Temp\TEST_DIRS\DirToCreate1\DirToCreate2\DirToCreate3)";
 
         try {
             bool result = fs::remove(dir1);
@@ -136,8 +135,8 @@ namespace Filesystem {
     void CopyDirTest() {
         namespace fs = std::filesystem;
 
-        const String srcDir = "C:\\Temp\\TEST_DIRS\\html_dir";
-        const String dstDir = "C:\\Temp\\TEST_DIRS\\html_dir_copy";
+        constexpr std::string_view srcDir = R"(C:\Temp\TEST_DIRS\html_dir)";
+        constexpr std::string_view dstDir = R"(C:\Temp\TEST_DIRS\html_dir_copy)";
 
         std::error_code code;
 
@@ -516,6 +515,21 @@ namespace Filesystem::Sizes {
         std::cout << "File size = " << std::filesystem::file_size(file) << std::endl;
     }
 
+    void TestFileSize()
+    {
+        constexpr std::string_view file_path
+                { R"(/home/andtokm/DiskS/Temp/TESTING_ROOT_DIR/test_run.log)"};
+
+        if (std::ifstream file(file_path.data(), std::ios::binary); file.is_open() && file.good()) {
+            file.seekg(0, std::ios_base::end);
+            const size_t fileSize = file.tellg();
+            file.seekg(0, std::ios_base::beg);
+
+            std::cout << "Size : " << fileSize << std::endl;
+            std::cout << "Size : " << std::filesystem::file_size(file_path) << std::endl;
+        }
+    }
+
     size_t dir_size(const std::filesystem::path& path)
     {
         size_t size = 0;
@@ -801,8 +815,8 @@ void Filesystem::TestAll()
     // Is_Dir_Exists();
     // Is_Dir_Exists_ErrrCpde();
 
-    CurrentPath();
-    GetCurrentDir();
+    // CurrentPath();
+    // GetCurrentDir();
 
     // Hard_Link_Count();
 
@@ -822,7 +836,8 @@ void Filesystem::TestAll()
     // DocumentStorageTests::Test();
 
 
-    // Sizes::FileSize();
+    Sizes::FileSize();
+    Sizes::TestFileSize();
     // Sizes::Directory_Size();
     // Sizes::Experiments();
 

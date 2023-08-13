@@ -19,7 +19,8 @@
 
 namespace Random {
 
-	void Random_INT_UniformDistribution() {
+	void Random_INT_UniformDistribution()
+    {
 		std::random_device rd{};
 		auto mtgen = std::mt19937 { rd() };
 		auto ud = std::uniform_int_distribution<>{ 1, 6 };
@@ -114,11 +115,11 @@ void Random::TestAll()
 {
 	// Random::SimpleRandomNumbers();
 
-	// Random::Random_INT_UniformDistribution();
+	Random::Random_INT_UniformDistribution();
 
 	// UniformRealDistribution::test();
 
-	Strings::Test();
+	// Strings::Test();
 
     // GenerateNumbersInRange();
 

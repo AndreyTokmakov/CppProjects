@@ -16,6 +16,7 @@
 #include <sstream>
 #include <fstream>	
 #include <functional>
+#include <filesystem>
 #include <cassert>
 
 namespace FilesStreams {
@@ -390,6 +391,25 @@ namespace FilesStreams::Readers {
         }
     }
 
+    void ReadFileBlocks()
+    {
+        constexpr std::string_view file_path
+                { R"(/home/andtokm/DiskS/Temp/TESTING_ROOT_DIR/test_run.log)"};
+
+        size_t bytesReadTotal { 0 };
+        char buffer[1024 * 1024] {};
+        if (std::ifstream file(file_path.data(), std::ios::binary); file.is_open() && file.good()) {
+            std::streamsize bytesRead {0};
+            while (0 < (bytesRead = file.readsome(buffer, std::size(buffer)))) {
+                // std::cout << bytesRead << std::endl;
+                bytesReadTotal += bytesRead;
+            }
+        }
+
+        std::cout << "Bytes read: " << bytesReadTotal << std::endl;
+        std::cout << "File size : " << std::filesystem::file_size(file_path) << std::endl;
+    }
+
 }
 
 void FilesStreams::TestAll() {
@@ -404,4 +424,5 @@ void FilesStreams::TestAll() {
 	// Readers::SimpleReadFile2();
 	// Readers::SimpleReadFile_BAD();
 	Readers::ReadFileLinesToVector();
+	Readers::ReadFileBlocks();
 };
