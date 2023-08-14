@@ -462,7 +462,7 @@ namespace CallFunctionByName
     }
 }
 
-void foo(const char** argv, const size_t size)
+void parseInputParams(const char** argv, const size_t size)
 {
     const std::vector<std::string_view> args(argv, argv + size);
 
@@ -471,6 +471,10 @@ void foo(const char** argv, const size_t size)
     std::cout << std::endl;
 
     const std::span<const char*> argsSpan(argv,  size);
+
+    for (const std::string_view sv: argsSpan)
+        std::cout << sv << " ";
+    std::cout << std::endl;
 }
 
 int main([[maybe_unused]] int argc,
@@ -478,8 +482,19 @@ int main([[maybe_unused]] int argc,
 {
     const std::vector<std::string_view> args(argv + 1, argv + argc);
 
+    // const std::vector params {"one", "two", "three", "four", "five"};
+    // parseInputParams(std::vector {"one", "two", "three", "four", "five"}.data(), 5);
 
-    foo(std::vector{"1", "2", "3", "4", "5"}.data(), 5);
+    /*
+    std::vector<const char*> params {"one", "two", "three", "four", "five"};
+
+    const std::span<const char*> argsSpan1(params);
+    const std::span<const std::string_view> argsSpan2(params);
+    */
+
+
+
+
 
     // static_assert(false == std::equality_comparable_with<std::unique_ptr<int>, nullptr_t>);
 
@@ -492,7 +507,7 @@ int main([[maybe_unused]] int argc,
 
     // ReturnTypeCast::tests();
 
-    // Heap::TestAll();
+    Heap::TestAll();
 
     // Cpp23_Features::TestAll();
     // AutoTests::TestAll();

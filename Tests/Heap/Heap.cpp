@@ -48,21 +48,26 @@ namespace Heap::MinHeapImpl
 
     public:
 
-        MinHeap& add(value_type value)
+
+        void __add(value_type value, std::vector<value_type>& heap)
         {
-            size_t index = data.size();  // Index of new element to be inserted
-            data.push_back(value);       // and insert that element
+            size_t index = heap.size();  // Index of new element to be inserted
+            heap.push_back(value);       // and insert that element
 
             /** Parent element index will :**/
             size_t parentIndex = (index - 1) / 2;
 
-            while (index > 0 && data[parentIndex] > data[index])
+            while (index > 0 && heap[parentIndex] > heap[index])
             {
-                std::swap(data[parentIndex], data[index]);
+                std::swap(heap[parentIndex], heap[index]);
                 index = parentIndex;
                 parentIndex = (index - 1) / 2;
             }
+        }
 
+        MinHeap& add(value_type value)
+        {
+            __add(value, data);
             return *this;
         }
 
@@ -85,6 +90,17 @@ namespace Heap::MinHeapImpl
                 std::swap(this->vector[index], this->vector[current]);
                 index = current;
             }
+        }
+
+        void makeHeap()
+        {
+            std::vector<value_type> tmp;
+            tmp.reserve(data.size());
+
+            for (const value_type& val: data)
+                __add(val, tmp);
+
+            tmp.swap(data);
         }
 
         [[nodiscard("Dont ignore the value")]]
@@ -138,6 +154,22 @@ namespace Heap::Tests
             minHeap.add(getRandomUniqueInt(0, 100));
 
         minHeap.print();
+        std::cout << std::boolalpha << minHeap.isValid() << std::endl;
+        std::cout << std::boolalpha << std::is_heap(minHeap.data.cbegin(), minHeap.data.cend(), std::greater<>()) << std::endl;
+    }
+
+
+    void makeHeapTest()
+    {
+        constexpr size_t count = 50;
+        MinHeap<int> minHeap;
+
+        for (size_t n = 0; n < count; ++n)
+            minHeap.data.push_back(getRandomUniqueInt(0, 100));
+
+        minHeap.makeHeap();
+        minHeap.print();
+
         std::cout << std::boolalpha << minHeap.isValid() << std::endl;
         std::cout << std::boolalpha << std::is_heap(minHeap.data.cbegin(), minHeap.data.cend(), std::greater<>()) << std::endl;
     }
@@ -223,7 +255,8 @@ namespace Heap::Tests
 void Heap::TestAll()
 {
     // Tests::addTest();
-    Tests::addTest2();
+    // Tests::addTest2();
+    Tests::makeHeapTest();
 
     // Tests::Check_Parent_Nodes();
 
