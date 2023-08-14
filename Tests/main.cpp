@@ -462,10 +462,24 @@ namespace CallFunctionByName
     }
 }
 
+void foo(const char** argv, const size_t size)
+{
+    const std::vector<std::string_view> args(argv, argv + size);
+
+    for (const std::string_view sv: args)
+        std::cout << sv << " ";
+    std::cout << std::endl;
+
+    const std::span<const char*> argsSpan(argv,  size);
+}
+
 int main([[maybe_unused]] int argc,
         [[maybe_unused]] char** argv)
 {
     const std::vector<std::string_view> args(argv + 1, argv + argc);
+
+
+    foo(std::vector{"1", "2", "3", "4", "5"}.data(), 5);
 
     // static_assert(false == std::equality_comparable_with<std::unique_ptr<int>, nullptr_t>);
 
@@ -478,7 +492,7 @@ int main([[maybe_unused]] int argc,
 
     // ReturnTypeCast::tests();
 
-    Heap::TestAll();
+    // Heap::TestAll();
 
     // Cpp23_Features::TestAll();
     // AutoTests::TestAll();

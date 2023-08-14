@@ -216,8 +216,9 @@ namespace Heap::Tests
 }
 
 // TODO
-//  validate()
+//  validate() / for Min and MAX
 //  min / max strategy? function
+//  MAKE_HEAP
 
 void Heap::TestAll()
 {
