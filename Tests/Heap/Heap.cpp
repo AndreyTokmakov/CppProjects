@@ -15,6 +15,7 @@ Description : Heap
 #include <algorithm>
 #include <random>
 #include <unordered_set>
+#include <chrono>
 
 namespace
 {
@@ -192,8 +193,68 @@ namespace Heap::Tests
 
         std::cout << std::boolalpha << minHeap.isValid() << std::endl;
         std::cout << std::boolalpha << std::is_heap(minHeap.data.cbegin(), minHeap.data.cend(), std::greater<>()) << std::endl;
+
     }
 
+    void makeHeap_Performance()
+    {
+        constexpr size_t count = 10'000, testsCount = 100'000;
+
+        const std::vector<int> data = [count]{
+            std::vector<int> tmp;
+            tmp.reserve(count);
+            for (size_t n = 0; n < count; ++n)
+                tmp.push_back(getRandomUniqueInt(0, 10 * count));
+            return tmp;
+        }();
+
+        const double vecCopyTime = [&data]
+        {
+            std::vector<int> tmp;
+            const std::chrono::high_resolution_clock::time_point start = std::chrono::high_resolution_clock::now();
+
+            for (size_t i = 0; i < testsCount; ++i)
+                tmp = data;
+
+            const std::chrono::high_resolution_clock::time_point end = std::chrono::high_resolution_clock::now();
+            const std::chrono::duration<double> time_span = duration_cast<std::chrono::duration<double>>(end - start);
+            return time_span.count();
+        }();
+
+        std::cout << vecCopyTime << std::endl;
+
+        {
+            MinHeap<int> minHeap;
+
+            const std::chrono::high_resolution_clock::time_point start = std::chrono::high_resolution_clock::now();
+
+            for (size_t i = 0; i < testsCount; ++i)
+            {
+                minHeap.data = data;
+                minHeap.makeHeap();
+            }
+
+            const std::chrono::high_resolution_clock::time_point end = std::chrono::high_resolution_clock::now();
+            std::chrono::duration<double> time_span = duration_cast<std::chrono::duration<double>>(end - start);
+            std::cout << "It took me " << time_span.count() << " seconds.\n";
+        }
+
+        {
+            MinHeap<int> minHeap;
+
+            const std::chrono::high_resolution_clock::time_point start = std::chrono::high_resolution_clock::now();
+
+            for (size_t i = 0; i < testsCount; ++i)
+            {
+                minHeap.data = data;
+                minHeap.makeHeap_Rebuild();
+            }
+
+            const std::chrono::high_resolution_clock::time_point end = std::chrono::high_resolution_clock::now();
+            std::chrono::duration<double> time_span = duration_cast<std::chrono::duration<double>>(end - start);
+            std::cout << "It took me " << time_span.count() << " seconds.\n";
+        }
+    }
 
     bool _is_max_heap(const std::vector<int>& data)
     {   // index of the parent of the last element ((SIZE - 1) - 1) / 2
@@ -272,7 +333,6 @@ namespace Heap::Tests
 // TODO:
 //   1. validate() / for Min and MAX
 //   2. min / max strategy? function (make comparator --> class Type)
-//   3. MAKE_HEAP | Run perf tests
 //   4. pop()
 //   5. add option to Limit size of the heap (to find N-Max elements)
 
@@ -281,8 +341,10 @@ void Heap::TestAll()
     // Tests::addTest();
     // Tests::addTest2();
 
-    Tests::makeHeapTest();
+    // Tests::makeHeapTest();
     Tests::makeHeapTest_Rebuild();
+    // Tests::makeHeap_Performance();
+
 
     // Tests::Check_Parent_Nodes();
 
