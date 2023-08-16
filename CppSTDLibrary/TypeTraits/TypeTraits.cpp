@@ -680,6 +680,29 @@ namespace TypeTraits::TypeID
     }
 }
 
+namespace TypeTraits::CustomTraits
+{
+    template<typename T, T val>
+    struct integral_constant {
+        static constexpr T value { val };
+    };
+
+    using true_type = integral_constant<bool, true>;
+    using false_type = integral_constant<bool, false>;
+
+    template<typename T>
+    struct is_pointer: false_type {};
+
+    template<typename T>
+    struct is_pointer<T*>: true_type {};
+
+    void Is_Pointer_2()
+    {
+        static_assert(is_pointer<int*>::value);
+        static_assert(not is_pointer<int>::value);
+    }
+}
+
 void TypeTraits::TestAll()
 {
 	// IsClass::Test();
@@ -690,7 +713,7 @@ void TypeTraits::TestAll()
 	// IsArray::Enable_If_Test();
 
 	// TypeID::TypeID_Tests();
-	TypeID::MapOf_TypeIDs();
+	// TypeID::MapOf_TypeIDs();
 
 	// Is_Function::Test();
 	// Is_Lvalue_Reference::Test();
@@ -711,6 +734,7 @@ void TypeTraits::TestAll()
 
 	// CustomTraits::Void_Test();
 	// CustomTraits::Is_Pointer();
+	CustomTraits::Is_Pointer_2();
 	// CustomTraits::Color_Test();
 
 	// Decltype_and_Declval::Test();

@@ -73,26 +73,26 @@ namespace Heap::MinHeapImpl
 
         void heapify(size_t index)
         {
-            size_t left, right, current;
+            size_t left, right, parent;
             while (true)
             {
                 left = 2 * index + 1;
                 right = 2 * index + 2;
-                current = index;
+                parent = index;
 
-                if (data.size() > left && this->vector[left] > this->vector[current])
-                    current = left;
-                if (data.size()  > right && this->vector[right] > this->vector[current])
-                    current = right;
-                if (current == index)
+                if (data.size() > left && data[parent] > data[left])
+                    parent = left;
+                if (data.size()  > right && data[parent] > data[right])
+                    parent = right;
+                if (parent == index)
                     break;
 
-                std::swap(this->vector[index], this->vector[current]);
-                index = current;
+                std::swap(data[index], data[parent]);
+                index = parent;
             }
         }
 
-        void makeHeap()
+        void makeHeap_Rebuild()
         {
             std::vector<value_type> tmp;
             tmp.reserve(data.size());
@@ -101,6 +101,12 @@ namespace Heap::MinHeapImpl
                 __add(val, tmp);
 
             tmp.swap(data);
+        }
+
+        void makeHeap()
+        {
+            for (int idx = (data.size() - 1) / 2; idx >= 0; idx--)
+                heapify(static_cast<size_t>(idx));
         }
 
         [[nodiscard("Dont ignore the value")]]
@@ -158,6 +164,20 @@ namespace Heap::Tests
         std::cout << std::boolalpha << std::is_heap(minHeap.data.cbegin(), minHeap.data.cend(), std::greater<>()) << std::endl;
     }
 
+    void makeHeapTest_Rebuild()
+    {
+        constexpr size_t count = 50;
+        MinHeap<int> minHeap;
+
+        for (size_t n = 0; n < count; ++n)
+            minHeap.data.push_back(getRandomUniqueInt(0, 100));
+
+        minHeap.makeHeap_Rebuild();
+        minHeap.print();
+
+        std::cout << std::boolalpha << minHeap.isValid() << std::endl;
+        std::cout << std::boolalpha << std::is_heap(minHeap.data.cbegin(), minHeap.data.cend(), std::greater<>()) << std::endl;
+    }
 
     void makeHeapTest()
     {
@@ -173,6 +193,7 @@ namespace Heap::Tests
         std::cout << std::boolalpha << minHeap.isValid() << std::endl;
         std::cout << std::boolalpha << std::is_heap(minHeap.data.cbegin(), minHeap.data.cend(), std::greater<>()) << std::endl;
     }
+
 
     bool _is_max_heap(const std::vector<int>& data)
     {   // index of the parent of the last element ((SIZE - 1) - 1) / 2
@@ -247,16 +268,21 @@ namespace Heap::Tests
     }
 }
 
-// TODO
-//  validate() / for Min and MAX
-//  min / max strategy? function
-//  MAKE_HEAP
+
+// TODO:
+//   1. validate() / for Min and MAX
+//   2. min / max strategy? function (make comparator --> class Type)
+//   3. MAKE_HEAP | Run perf tests
+//   4. pop()
+//   5. add option to Limit size of the heap (to find N-Max elements)
 
 void Heap::TestAll()
 {
     // Tests::addTest();
     // Tests::addTest2();
+
     Tests::makeHeapTest();
+    Tests::makeHeapTest_Rebuild();
 
     // Tests::Check_Parent_Nodes();
 

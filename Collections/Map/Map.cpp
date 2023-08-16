@@ -507,23 +507,79 @@ namespace Map {
         return  0;
 	}
 
-	void insert_or_assign() {
-		std::map<std::string, Integer> dictionary;
+    /**
+     * insert_or_assign() vs operator[]
+     * Result: SAME! in this example
+    **/
+	void insert_or_assign()
+    {
+        {
+            std::map<std::string, Integer> dictionary;
 
-		std::cout << "\n>>> Using 'insert_or_assign' to add an Integer(111), Integer(222) and Integer(333) elements <<<" << std::endl;
+            dictionary.insert_or_assign("Key1", 111);
+            dictionary.insert_or_assign("Key2", 222);
 
-		dictionary.insert_or_assign("Key1", 111);
-		dictionary.insert_or_assign("Key2", 222);
-		dictionary.insert_or_assign("Key3", 333);
+            std::cout << "Before:\n" << dictionary << std::endl;
 
-		print_map_info(dictionary, "\n >>> Before:");
+            std::cout << "Modifying the Key2 entry: insert_or_assign()" << std::endl;
+            dictionary.insert_or_assign("Key2", 222222);
 
-		std::cout << "\n>>> Using 'insert_or_assign' to add an element Integer(345) with existing key ' <<<" << std::endl;
-		dictionary.insert_or_assign("Key3", 345);
+            std::cout << "\nAfter:\n" << dictionary << std::endl;
+        }
 
-		print_map_info(dictionary, "\n >>> After:");
+        std::cout << "---------------------- operator[]------------------------\n";
+
+        {
+            std::map<std::string, Integer> dictionary;
+
+            dictionary.insert_or_assign("Key1", 111);
+            dictionary.insert_or_assign("Key2", 222);
+
+            std::cout << "Before:\n" << dictionary << std::endl;
+
+            std::cout << "Modifying the Key2 entry: operator[]" << std::endl;
+            dictionary["Key2"] = 222222;
+
+            std::cout << "\nAfter:\n" << dictionary << std::endl;
+        }
 	}
 
+    /**
+     * insert_or_assign() vs operator[] in case of missing element
+     * Result:
+     *      insert_or_assign better()
+     *      with operator[]  --> additional 'Copy assignment operator()' called
+    **/
+    void insert_or_assign__missing_key()
+    {
+        {
+            std::map<std::string, Integer> dictionary;
+
+            dictionary.insert_or_assign("Key1", 111);
+
+            std::cout << "Before:\n" << dictionary << std::endl;
+
+            std::cout << "Adding the Key2 entry: insert_or_assign()" << std::endl;
+            dictionary.insert_or_assign("Key2", 222222);
+
+            std::cout << "\nAfter:\n" << dictionary << std::endl;
+        }
+
+        std::cout << "---------------------- operator[]------------------------\n";
+
+        {
+            std::map<std::string, Integer> dictionary;
+
+            dictionary.insert_or_assign("Key1", 111);
+
+            std::cout << "Before:\n" << dictionary << std::endl;
+
+            std::cout << "Adding the Key2 entry: operator[]" << std::endl;
+            dictionary["Key2"] = 222222;
+
+            std::cout << "\nAfter:\n" << dictionary << std::endl;
+        }
+    }
 	void emplace_hint_test1()
 	{
 		std::map<char, int> mymap;
@@ -1024,7 +1080,8 @@ void Map::TEST_ALL()
 	// insert_result();
 
 	// insert_or_assign();
-	
+    insert_or_assign__missing_key();
+
 	// try_emplace_test();
 	// try_emplace_test_2();
 	// try_emplace_test_3();
@@ -1056,19 +1113,5 @@ void Map::TEST_ALL()
 
 	// Test::ForEach_Test();
 	// Test::Iterators_Invalidation();
-
-
-    std::map<int, std::string> map {
-            {1, "1"},
-            {10, "10"}
-    };
-
-
-    auto [it, ok] = map.insert({15, "15"});
-
-    if (std::next(it) == map.end()) {
-        std::cout << "LAst" << std::endl;
-    }
-
 
 }

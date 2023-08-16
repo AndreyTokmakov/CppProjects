@@ -482,16 +482,7 @@ int main([[maybe_unused]] int argc,
 {
     const std::vector<std::string_view> args(argv + 1, argv + argc);
 
-    // const std::vector params {"one", "two", "three", "four", "five"};
     // parseInputParams(std::vector {"one", "two", "three", "four", "five"}.data(), 5);
-
-    /*
-    std::vector<const char*> params {"one", "two", "three", "four", "five"};
-
-    const std::span<const char*> argsSpan1(params);
-    const std::span<const std::string_view> argsSpan2(params);
-    */
-
 
 
 
