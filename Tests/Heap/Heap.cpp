@@ -172,19 +172,19 @@ namespace Heap::MinHeapImpl
 
 namespace Heap::HeapWithComparator
 {
-    template<typename __Type >
-    struct MinHeap
+    template<typename __Type, typename __Cmp>
+    struct Heap
     {
         using value_type = __Type;
+
+        __Cmp comparator {};
 
         static_assert(!std::is_same_v<value_type, void>,
                       "Type of the value shall not be void");
 
         std::vector<value_type> data;
 
-
     public:
-
 
         void __add(value_type value, std::vector<value_type>& heap)
         {
@@ -194,7 +194,7 @@ namespace Heap::HeapWithComparator
             /** Parent element index will :**/
             size_t parentIndex = (index - 1) / 2;
 
-            while (index > 0 && heap[parentIndex] > heap[index])
+            while (index > 0 && comparator(heap[index], heap[parentIndex]))
             {
                 std::swap(heap[parentIndex], heap[index]);
                 index = parentIndex;
@@ -202,7 +202,7 @@ namespace Heap::HeapWithComparator
             }
         }
 
-        MinHeap& add(value_type value)
+        Heap& add(value_type value)
         {
             __add(value, data);
             return *this;
@@ -217,32 +217,15 @@ namespace Heap::HeapWithComparator
                 right = 2 * index + 2;
                 parent = index;
 
-                if (data.size() > left && data[parent] > data[left])
+                if (data.size() > left && comparator(data[left], data[parent]))
                     parent = left;
-                if (data.size()  > right && data[parent] > data[right])
+                if (data.size()  > right && comparator(data[right], data[parent]))
                     parent = right;
                 if (parent == index)
                     break;
 
                 std::swap(data[index], data[parent]);
                 index = parent;
-            }
-        }
-
-        void heapifyRecursive(size_t index)
-        {
-            size_t parent = index;
-            size_t l = 2 * index + 1;
-            size_t r = 2 * index + 2;
-
-            if (l < data.size() && data[parent] > data[l])
-                parent = l;
-            if (r < data.size() && data[parent] > data[r])
-                parent = r;
-
-            if (parent != index) {
-                std::swap(data[index], data[parent]);
-                heapify(parent);
             }
         }
 
@@ -270,7 +253,6 @@ namespace Heap::HeapWithComparator
 
             heapify(0);         // FIXME: Not working
             // heapifyRecursive(0);   // FIXME: Not working
-
             // makeHeap();
 
             return top;
@@ -283,16 +265,14 @@ namespace Heap::HeapWithComparator
 
             // Check MaxHeap condition expect the 'last parent'. Will be checked at the end
             for (size_t idx = 0; idx < lastParentIdx; ++idx) {
-                if (data[idx] > data[idx * 2 + 1] || data[idx] > data[idx * 2 + 2])
+                if (comparator(data[idx * 2 + 1], data[idx]) || comparator(data[idx * 2 + 2], data[idx]))
                     return false;
             }
 
-            if (data[lastParentIdx] > data[lastParentIdx * 2 + 1])
+            if (comparator(data[lastParentIdx * 2 + 1], data[lastParentIdx]))
                 return false;
-            return data.size() <= (lastParentIdx * 2 + 2) || data[lastParentIdx * 2 + 2] > data[lastParentIdx];
+            return data.size() <= (lastParentIdx * 2 + 2) || comparator(data[lastParentIdx], data[lastParentIdx * 2 + 2]);
         }
-
-
 
         void print() const noexcept
         {
@@ -300,7 +280,6 @@ namespace Heap::HeapWithComparator
                 std::cout << val << ' ';
             std::cout << std::endl;
         }
-
     };
 };
 
@@ -517,6 +496,78 @@ namespace Heap::Tests
     }
 }
 
+namespace Heap::Tests_Comparator
+{
+    using namespace HeapWithComparator;
+
+    void addTest()
+    {
+        Heap<int, std::less<>> heap;
+        heap.add(10).add(9).add(8).add(7).add(6).add(5).add(4).add(2);
+
+        heap.print();
+        std::cout << std::boolalpha << heap.isValid() << std::endl;
+        std::cout << std::boolalpha << std::is_heap(heap.data.cbegin(), heap.data.cend(), std::greater<>()) << std::endl;
+    }
+
+
+    void addTest2_Less()
+    {
+        constexpr size_t count = 50;
+        Heap<int, std::less<>> heap;
+
+        for (size_t n = 0; n < count; ++n)
+            heap.add(getRandomUniqueInt(0, 100));
+
+        heap.print();
+        std::cout << std::boolalpha << heap.isValid() << std::endl;
+        std::cout << std::boolalpha << std::is_heap(heap.data.cbegin(), heap.data.cend(), std::greater<>()) << std::endl;
+    }
+
+    void addTest2_Greater()
+    {
+        constexpr size_t count = 50;
+        Heap<int, std::greater<>> heap;
+
+        for (size_t n = 0; n < count; ++n)
+            heap.add(getRandomUniqueInt(0, 100));
+
+        heap.print();
+        std::cout << std::boolalpha << heap.isValid() << std::endl;
+        std::cout << std::boolalpha << std::is_heap(heap.data.cbegin(), heap.data.cend(), std::less<>()) << std::endl;
+    }
+
+    void makeHeapTest_Greater()
+    {
+        constexpr size_t count = 25;
+        Heap<int, std::greater<>> heap;
+
+        for (size_t n = 0; n < count; ++n)
+            heap.data.push_back(getRandomUniqueInt(0, 10 * count));
+
+        heap.makeHeap();
+        heap.print();
+
+        std::cout << std::boolalpha << heap.isValid() << std::endl;
+        std::cout << std::boolalpha << std::is_heap(heap.data.cbegin(), heap.data.cend(), std::less<>()) << std::endl;
+    }
+
+    void makeHeapTest_Less()
+    {
+        constexpr size_t count = 25;
+        Heap<int, std::less<>> heap;
+
+        for (size_t n = 0; n < count; ++n)
+            heap.data.push_back(getRandomUniqueInt(0, 10 * count));
+
+        heap.makeHeap();
+        heap.print();
+
+        std::cout << std::boolalpha << heap.isValid() << std::endl;
+        std::cout << std::boolalpha << std::is_heap(heap.data.cbegin(), heap.data.cend(), std::greater<>()) << std::endl;
+    }
+}
+
 
 // TODO:
 //   1. validate() / for Min and MAX
@@ -532,14 +583,13 @@ void Heap::TestAll()
     // Tests::makeHeapTest();
     // Tests::makeHeapTest_Rebuild();
     // Tests::makeHeap_Performance();
-    Tests::pop_Test();
+    // Tests::pop_Test();
 
+    // Tests_Comparator::addTest();
+    // Tests_Comparator::addTest2_Less();
+    // Tests_Comparator::addTest2_Greater();
 
-    // Tests::Check_Parent_Nodes();
-
-    /*
-    std::vector<int> numbers {0,1,2,3,4,5,6,7,8,9, 10};
-    Tests::_is_max_heap(numbers);
-    */
+    Tests_Comparator::makeHeapTest_Greater();
+    // Tests_Comparator::makeHeapTest_Less();
 
 };
