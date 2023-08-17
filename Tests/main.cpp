@@ -84,6 +84,7 @@ Description : Tests C++ project
 #include "Cpp23_Features/Cpp23_Features.h"
 #include "Auto/AutoTests.h"
 #include "Heap/Heap.h"
+#include "Comparators/Comparators.h"
 
 
 struct AnyBase {
@@ -477,17 +478,13 @@ void parseInputParams(const char** argv, const size_t size)
     std::cout << std::endl;
 }
 
+
 int main([[maybe_unused]] int argc,
         [[maybe_unused]] char** argv)
 {
     const std::vector<std::string_view> args(argv + 1, argv + argc);
-
     // parseInputParams(std::vector {"one", "two", "three", "four", "five"}.data(), 5);
 
-
-
-
-    // static_assert(false == std::equality_comparable_with<std::unique_ptr<int>, nullptr_t>);
 
     // Experiments::Test({20, 40, 60});
 
@@ -498,7 +495,8 @@ int main([[maybe_unused]] int argc,
 
     // ReturnTypeCast::tests();
 
-    Heap::TestAll();
+    // Heap::TestAll();
+    Comparators::TestAll();
 
     // Cpp23_Features::TestAll();
     // AutoTests::TestAll();

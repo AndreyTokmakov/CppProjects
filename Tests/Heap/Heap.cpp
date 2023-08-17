@@ -47,6 +47,7 @@ namespace Heap::MinHeapImpl
 
         std::vector<value_type> data;
 
+
     public:
 
 
@@ -93,6 +94,23 @@ namespace Heap::MinHeapImpl
             }
         }
 
+        void heapifyRecursive(size_t index)
+        {
+            size_t parent = index;
+            size_t l = 2 * index + 1;
+            size_t r = 2 * index + 2;
+
+            if (l < data.size() && data[parent] > data[l])
+                parent = l;
+            if (r < data.size() && data[parent] > data[r])
+                parent = r;
+
+            if (parent != index) {
+                std::swap(data[index], data[parent]);
+                heapify(parent);
+            }
+        }
+
         void makeHeap_Rebuild()
         {
             std::vector<value_type> tmp;
@@ -108,6 +126,154 @@ namespace Heap::MinHeapImpl
         {
             for (int idx = (data.size() - 1) / 2; idx >= 0; idx--)
                 heapify(static_cast<size_t>(idx));
+        }
+
+        value_type pop()
+        {
+            const value_type top = data.front();
+            data.erase(data.begin());
+
+            heapify(0);         // FIXME: Not working
+            // heapifyRecursive(0);   // FIXME: Not working
+
+            // makeHeap();
+
+            return top;
+        }
+
+        [[nodiscard("Dont ignore the value")]]
+        bool isValid() const noexcept {
+            // index of the parent of the last element ((SIZE - 1) - 1) / 2
+            const size_t lastParentIdx = (data.size() - 2) / 2;
+
+            // Check MaxHeap condition expect the 'last parent'. Will be checked at the end
+            for (size_t idx = 0; idx < lastParentIdx; ++idx) {
+                if (data[idx] > data[idx * 2 + 1] || data[idx] > data[idx * 2 + 2])
+                    return false;
+            }
+
+            if (data[lastParentIdx] > data[lastParentIdx * 2 + 1])
+                return false;
+            return data.size() <= (lastParentIdx * 2 + 2) || data[lastParentIdx * 2 + 2] > data[lastParentIdx];
+        }
+
+
+
+        void print() const noexcept
+        {
+            for (const value_type& val: data)
+                std::cout << val << ' ';
+            std::cout << std::endl;
+        }
+
+    };
+};
+
+
+namespace Heap::HeapWithComparator
+{
+    template<typename __Type >
+    struct MinHeap
+    {
+        using value_type = __Type;
+
+        static_assert(!std::is_same_v<value_type, void>,
+                      "Type of the value shall not be void");
+
+        std::vector<value_type> data;
+
+
+    public:
+
+
+        void __add(value_type value, std::vector<value_type>& heap)
+        {
+            size_t index = heap.size();  // Index of new element to be inserted
+            heap.push_back(value);       // and insert that element
+
+            /** Parent element index will :**/
+            size_t parentIndex = (index - 1) / 2;
+
+            while (index > 0 && heap[parentIndex] > heap[index])
+            {
+                std::swap(heap[parentIndex], heap[index]);
+                index = parentIndex;
+                parentIndex = (index - 1) / 2;
+            }
+        }
+
+        MinHeap& add(value_type value)
+        {
+            __add(value, data);
+            return *this;
+        }
+
+        void heapify(size_t index)
+        {
+            size_t left, right, parent;
+            while (true)
+            {
+                left = 2 * index + 1;
+                right = 2 * index + 2;
+                parent = index;
+
+                if (data.size() > left && data[parent] > data[left])
+                    parent = left;
+                if (data.size()  > right && data[parent] > data[right])
+                    parent = right;
+                if (parent == index)
+                    break;
+
+                std::swap(data[index], data[parent]);
+                index = parent;
+            }
+        }
+
+        void heapifyRecursive(size_t index)
+        {
+            size_t parent = index;
+            size_t l = 2 * index + 1;
+            size_t r = 2 * index + 2;
+
+            if (l < data.size() && data[parent] > data[l])
+                parent = l;
+            if (r < data.size() && data[parent] > data[r])
+                parent = r;
+
+            if (parent != index) {
+                std::swap(data[index], data[parent]);
+                heapify(parent);
+            }
+        }
+
+        void makeHeap_Rebuild()
+        {
+            std::vector<value_type> tmp;
+            tmp.reserve(data.size());
+
+            for (const value_type& val: data)
+                __add(val, tmp);
+
+            tmp.swap(data);
+        }
+
+        void makeHeap()
+        {
+            for (int idx = (data.size() - 1) / 2; idx >= 0; idx--)
+                heapify(static_cast<size_t>(idx));
+        }
+
+        value_type pop()
+        {
+            const value_type top = data.front();
+            data.erase(data.begin());
+
+            heapify(0);         // FIXME: Not working
+            // heapifyRecursive(0);   // FIXME: Not working
+
+            // makeHeap();
+
+            return top;
         }
 
         [[nodiscard("Dont ignore the value")]]
@@ -165,6 +331,12 @@ namespace Heap::Tests
         std::cout << std::boolalpha << std::is_heap(minHeap.data.cbegin(), minHeap.data.cend(), std::greater<>()) << std::endl;
     }
 
+    void checkHeap(const MinHeap<int>& heap)
+    {
+        std::cout << std::boolalpha << heap.isValid() << std::endl;
+        std::cout << std::boolalpha << std::is_heap(heap.data.cbegin(), heap.data.cend(), std::greater<>()) << std::endl;
+    }
+
     void makeHeapTest_Rebuild()
     {
         constexpr size_t count = 50;
@@ -176,8 +348,7 @@ namespace Heap::Tests
         minHeap.makeHeap_Rebuild();
         minHeap.print();
 
-        std::cout << std::boolalpha << minHeap.isValid() << std::endl;
-        std::cout << std::boolalpha << std::is_heap(minHeap.data.cbegin(), minHeap.data.cend(), std::greater<>()) << std::endl;
+        checkHeap(minHeap);
     }
 
     void makeHeapTest()
@@ -191,9 +362,26 @@ namespace Heap::Tests
         minHeap.makeHeap();
         minHeap.print();
 
-        std::cout << std::boolalpha << minHeap.isValid() << std::endl;
-        std::cout << std::boolalpha << std::is_heap(minHeap.data.cbegin(), minHeap.data.cend(), std::greater<>()) << std::endl;
+        checkHeap(minHeap);
+    }
 
+    void pop_Test()
+    {
+        constexpr size_t count = 5;
+        MinHeap<int> minHeap;
+
+        for (size_t n = 0; n < count; ++n)
+            minHeap.data.push_back(getRandomUniqueInt(0, 100));
+
+        minHeap.makeHeap();
+
+        minHeap.print();
+        checkHeap(minHeap);
+
+        minHeap.pop();
+
+        minHeap.print();
+        checkHeap(minHeap);
     }
 
     void makeHeap_Performance()
@@ -236,7 +424,7 @@ namespace Heap::Tests
 
             const std::chrono::high_resolution_clock::time_point end = std::chrono::high_resolution_clock::now();
             std::chrono::duration<double> time_span = duration_cast<std::chrono::duration<double>>(end - start);
-            std::cout << "It took me " << time_span.count() << " seconds.\n";
+            std::cout << "It took me " << time_span.count() - vecCopyTime << " seconds.\n";
         }
 
         {
@@ -252,7 +440,7 @@ namespace Heap::Tests
 
             const std::chrono::high_resolution_clock::time_point end = std::chrono::high_resolution_clock::now();
             std::chrono::duration<double> time_span = duration_cast<std::chrono::duration<double>>(end - start);
-            std::cout << "It took me " << time_span.count() << " seconds.\n";
+            std::cout << "It took me " << time_span.count() - vecCopyTime << " seconds.\n";
         }
     }
 
@@ -342,8 +530,9 @@ void Heap::TestAll()
     // Tests::addTest2();
 
     // Tests::makeHeapTest();
-    Tests::makeHeapTest_Rebuild();
+    // Tests::makeHeapTest_Rebuild();
     // Tests::makeHeap_Performance();
+    Tests::pop_Test();
 
 
     // Tests::Check_Parent_Nodes();
