@@ -495,8 +495,8 @@ int main([[maybe_unused]] int argc,
 
     // ReturnTypeCast::tests();
 
-    // Heap::TestAll();
-    Comparators::TestAll();
+    Heap::TestAll();
+    // Comparators::TestAll();
 
     // Cpp23_Features::TestAll();
     // AutoTests::TestAll();

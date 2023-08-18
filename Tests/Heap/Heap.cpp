@@ -539,17 +539,28 @@ namespace Heap::Tests_Comparator
 
     void makeHeapTest_Greater()
     {
-        constexpr size_t count = 25;
-        Heap<int, std::greater<>> heap;
+        uint32_t testCount = 10;
+        while (--testCount)
+        {
+            const size_t count = getRandomUniqueInt();
+            Heap<int, std::greater<>> heap;
 
-        for (size_t n = 0; n < count; ++n)
-            heap.data.push_back(getRandomUniqueInt(0, 10 * count));
+            for (size_t n = 0; n < count; ++n)
+                heap.data.push_back(getRandomUniqueInt(0, 10 * count));
 
-        heap.makeHeap();
-        heap.print();
+            heap.makeHeap();
+            // heap.print();
 
-        std::cout << std::boolalpha << heap.isValid() << std::endl;
-        std::cout << std::boolalpha << std::is_heap(heap.data.cbegin(), heap.data.cend(), std::less<>()) << std::endl;
+            if (!heap.isValid() || !std::is_heap(heap.data.cbegin(), heap.data.cend(), std::less<>()) )
+            {
+                std::cout << "ERROR" << std::endl;
+
+                // std::cout << std::boolalpha << heap.isValid() << std::endl;
+                // std::cout << std::boolalpha << std::is_heap(heap.data.cbegin(), heap.data.cend(), std::less<>()) << std::endl;
+            }
+
+            std::cout << "OK\n";
+        }
     }
 
     void makeHeapTest_Less()
