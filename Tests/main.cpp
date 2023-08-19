@@ -478,9 +478,60 @@ void parseInputParams(const char** argv, const size_t size)
     std::cout << std::endl;
 }
 
+namespace HeapStyleCollection
+{
+    // TODO: add comparator
+    template<typename _Ty, size_t _Size>
+    struct NotHeap final
+    {
+        using value_type = _Ty;
+
+        static_assert(!std::is_same_v<value_type, void>, "ERROR: Value type can not be void");
+
+        std::vector<value_type> values {};
+        // std::array<value_type> values {};
+
+        NotHeap() {
+            values.reserve(_Size);
+        }
+
+        void add(const value_type& val)
+        {
+            if (_Size > values.size())
+                values.push_back(val);
+            else if (values[0] > val)
+                values[0] = val;
+
+            size_t topIndex = 0;
+            for (size_t idx = 1; idx < values.size(); ++idx) {
+                if (values[idx] > values[topIndex])
+                    topIndex = idx;
+            }
+
+            std::swap(values[0], values[topIndex]);
+        }
+    };
+
+    void test()
+    {
+        NotHeap<int, 5> tmp {};
+
+        tmp.add(7);
+        tmp.add(3);
+        tmp.add(1);
+        tmp.add(9);
+        tmp.add(11);
+        tmp.add(4);
+        tmp.add(5);
+        tmp.add(-1);
+
+        std::cout << tmp.values << std::endl;
+    }
+}
+
 
 int main([[maybe_unused]] int argc,
-        [[maybe_unused]] char** argv)
+         [[maybe_unused]] char** argv)
 {
     const std::vector<std::string_view> args(argv + 1, argv + argc);
     // parseInputParams(std::vector {"one", "two", "three", "four", "five"}.data(), 5);
@@ -495,7 +546,9 @@ int main([[maybe_unused]] int argc,
 
     // ReturnTypeCast::tests();
 
-    Heap::TestAll();
+    HeapStyleCollection::test();
+
+    // Heap::TestAll();
     // Comparators::TestAll();
 
     // Cpp23_Features::TestAll();
