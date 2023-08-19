@@ -501,7 +501,15 @@ namespace HeapStyleCollection
                 values.push_back(val);
             else if (values[0] > val)
                 values[0] = val;
+            else
+                return;
 
+            update();
+            // updateSTD();
+        }
+
+        void update()
+        {
             size_t topIndex = 0;
             for (size_t idx = 1; idx < values.size(); ++idx) {
                 if (values[idx] > values[topIndex])
@@ -509,6 +517,11 @@ namespace HeapStyleCollection
             }
 
             std::swap(values[0], values[topIndex]);
+        }
+
+        void updateSTD()
+        {
+            std::nth_element(values.begin(), values.begin() + 1, values.end(), std::greater<>());
         }
     };
 
