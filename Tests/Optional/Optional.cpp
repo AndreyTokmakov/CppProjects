@@ -10,27 +10,68 @@ Description : Optional
 #include "Optional.h"
 
 #include <utility>
+#include <array>
 #include "../Helpers/Utilities.h"
 
 namespace Optional
 {
-    template<typename T>
+    template<typename _Ty>
     struct MyOptional
     {
-        T v {};
+        using data_type = _Ty;
+        using pointer   = data_type*;
 
-        /*
-        template<class Type>
-        void set(Type&& newVal) {
-            v.~T();
-            v = std::forward<Type>(newVal);
+    private:
+        // using aligned_storage_t = std::aligned_storage_t<sizeof(data_type), alignof(data_type)>;
+        // aligned_storage_t data;
+
+        // char data [sizeof(data_type)]{};
+        std::array<u_int8_t, sizeof(data_type)> storage {};
+        bool has_value { false };
+
+
+    public:
+        MyOptional() noexcept = default;
+
+        template<typename ... Types>
+        MyOptional(Types&& ... params) {
+            ::new (storage.data()) data_type(std::forward<Types>(params)...);
+            has_value = true;
         }
-        */
 
-        template<class Type>
-        void set(Type&& newVal) {
-            //v.~T();
-            std::exchange(v, std::forward<Type>(newVal));
+        [[nodiscard]]
+        pointer asPointer() noexcept {
+            return reinterpret_cast<pointer>(storage.data());
+        }
+
+        inline explicit operator bool() const noexcept {
+            return has_value;
+        }
+
+        void destroy()
+        {
+            if (has_value) {
+                asPointer()->~data_type();
+            }
+        }
+
+        [[nodiscard]]
+        inline bool hasValue() const noexcept {
+            return has_value;
+        }
+
+        void set(_Ty&& newVal)
+        {
+            destroy();
+
+            pointer objPtr = reinterpret_cast<pointer>(storage.data());
+            std::exchange(*objPtr, std::forward<data_type>(newVal));
+
+            has_value = true;
+        }
+
+        ~MyOptional() {
+            destroy();
         }
     };
 

@@ -17,6 +17,7 @@ Description : Tests C++ project
 #include <filesystem>
 #include <tuple>
 #include <ranges>
+#include <cassert>
 
 #include <exception>
 #include <thread>
@@ -85,7 +86,7 @@ Description : Tests C++ project
 #include "Auto/AutoTests.h"
 #include "Heap/Heap.h"
 #include "Comparators/Comparators.h"
-
+#include "FindMinMaxValues/FindMinMaxValues.h"
 
 struct AnyBase {
     virtual const std::type_info& type() = 0;
@@ -99,6 +100,15 @@ namespace
     template<typename T>
     std::ostream& operator<<(std::ostream & stream,
                              const std::vector<T>& collection)
+    {
+        for (const T& v: collection)
+            stream << v << ' ';
+        return stream;
+    }
+
+    template<typename T, size_t _Size>
+    std::ostream& operator<<(std::ostream & stream,
+                             const std::array<T, _Size>& collection)
     {
         for (const T& v: collection)
             stream << v << ' ';
@@ -478,67 +488,44 @@ void parseInputParams(const char** argv, const size_t size)
     std::cout << std::endl;
 }
 
-namespace HeapStyleCollection
+namespace ConceptsTests
 {
-    // TODO: add comparator
-    template<typename _Ty, size_t _Size>
-    struct NotHeap final
+    template<typename T>
+    concept SupportsValidation = requires(T t)
     {
-        using value_type = _Ty;
+        t.validate();
+    };
 
-        static_assert(!std::is_same_v<value_type, void>, "ERROR: Value type can not be void");
-
-        std::vector<value_type> values {};
-        // std::array<value_type> values {};
-
-        NotHeap() {
-            values.reserve(_Size);
+    template<typename T>
+    void Send(const T& data)
+    {
+        if constexpr(SupportsValidation<T>) {
+            data.validate();
         }
-
-        void add(const value_type& val)
-        {
-            if (_Size > values.size())
-                values.push_back(val);
-            else if (values[0] > val)
-                values[0] = val;
-            else
-                return;
-
-            update();
-            // updateSTD();
+        else {
+            std::cout << "Can not be validated\n";
         }
+    }
 
-        void update()
-        {
-            size_t topIndex = 0;
-            for (size_t idx = 1; idx < values.size(); ++idx) {
-                if (values[idx] > values[topIndex])
-                    topIndex = idx;
-            }
+    struct EmptyObject { };
 
-            std::swap(values[0], values[topIndex]);
-        }
-
-        void updateSTD()
-        {
-            std::nth_element(values.begin(), values.begin() + 1, values.end(), std::greater<>());
+    struct Validator
+    {
+        void validate() const {
+            std::cout << "ComplexType::validate()" << std::endl;
         }
     };
 
-    void test()
+    void If_Constexpr_Concepts()
     {
-        NotHeap<int, 5> tmp {};
+        EmptyObject obj1;
+        Validator obj2;
 
-        tmp.add(7);
-        tmp.add(3);
-        tmp.add(1);
-        tmp.add(9);
-        tmp.add(11);
-        tmp.add(4);
-        tmp.add(5);
-        tmp.add(-1);
+        Send(obj1);
+        Send(obj2);
 
-        std::cout << tmp.values << std::endl;
+        static_assert(SupportsValidation<Validator>);
+        static_assert(not SupportsValidation<EmptyObject>);
     }
 }
 
@@ -549,6 +536,7 @@ int main([[maybe_unused]] int argc,
     const std::vector<std::string_view> args(argv + 1, argv + argc);
     // parseInputParams(std::vector {"one", "two", "three", "four", "five"}.data(), 5);
 
+    // ConceptsTests::If_Constexpr_Concepts();
 
     // Experiments::Test({20, 40, 60});
 
@@ -559,7 +547,7 @@ int main([[maybe_unused]] int argc,
 
     // ReturnTypeCast::tests();
 
-    HeapStyleCollection::test();
+    // FindMinMaxValues::TestAll();
 
     // Heap::TestAll();
     // Comparators::TestAll();
@@ -584,7 +572,7 @@ int main([[maybe_unused]] int argc,
     // ObjectOrientedExperiments::RAIIWrapper::TestAll();
     // ObjectOrientedExperiments::OOP_Experiments::TestAll();
     // ObjectOrientedExperiments::VirtualTables::TestAll();
-    // Optional::TestAll();
+    Optional::TestAll();
     // Math::TestAll();
     // LRUCache::TestAll();
     // EventLoop::TestAll();

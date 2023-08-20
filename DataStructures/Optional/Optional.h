@@ -30,6 +30,12 @@ namespace Optional {
     };
     */
 
+    template<typename T>
+    concept HasRelease = requires(T t)
+    {
+        t.Release();
+    };
+
 	template<typename Ty>
 	class Optional {
 	private:
@@ -84,7 +90,75 @@ namespace Optional {
 		}
 	};
 
-	/** Test go there. **/
+
+    template<typename _Ty>
+    struct MyOptional
+    {
+        using data_type = _Ty;
+        using pointer   = data_type*;
+
+    private:
+        // using aligned_storage_t = std::aligned_storage_t<sizeof(data_type), alignof(data_type)>;
+        // aligned_storage_t data;
+
+        std::array<u_int8_t, sizeof(data_type)> storage {};
+        bool has_value { false };
+
+    public:
+        MyOptional() noexcept = default;
+
+        template<typename ... Types>
+        MyOptional(Types&& ... params) {
+            ::new (storage.data()) data_type(std::forward<Types>(params)...);
+            has_value = true;
+        }
+
+        [[nodiscard]]
+        pointer asPointer() noexcept {
+            return reinterpret_cast<pointer>(storage.data());
+        }
+
+        inline explicit operator bool() const noexcept {
+            return has_value;
+        }
+
+        void destroy()
+        {
+            if (has_value) {
+                asPointer()->~data_type();
+            }
+        }
+
+        [[nodiscard]]
+        inline bool hasValue() const noexcept {
+            return has_value;
+        }
+
+        void set(_Ty&& newVal)
+        {
+            destroy();
+
+            pointer objPtr = reinterpret_cast<pointer>(storage.data());
+            std::exchange(*objPtr, std::forward<data_type>(newVal));
+
+            has_value = true;
+        }
+
+        ~MyOptional() requires(not std::is_trivially_destructible_v<data_type>) {
+            destroy();
+        }
+
+        ~MyOptional() requires (not std::is_trivially_destructible_v<data_type> and HasRelease<data_type>)
+        {
+            if (has_value) {
+                asPointer()->Release();
+                asPointer()->~data_type();
+            }
+        }
+    };
+
+
+    /** Test go there. **/
 	void TEST_ALL();
 };
 
