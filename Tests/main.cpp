@@ -529,12 +529,28 @@ namespace ConceptsTests
     }
 }
 
+std::optional<int> getAge(int v)
+{
+    if (100 > v)
+        return std::make_optional<int>(v);
+    return std::nullopt;
+}
+
 
 int main([[maybe_unused]] int argc,
          [[maybe_unused]] char** argv)
 {
     const std::vector<std::string_view> args(argv + 1, argv + argc);
     // parseInputParams(std::vector {"one", "two", "three", "four", "five"}.data(), 5);
+
+
+    int value = getAge(103)
+            .or_else([]() { return std::make_optional<int>(18); })
+            .transform([](int age) { return age + 1; }).value();
+
+
+    std::cout << value << std::endl;
+
 
     // ConceptsTests::If_Constexpr_Concepts();
 
@@ -572,7 +588,7 @@ int main([[maybe_unused]] int argc,
     // ObjectOrientedExperiments::RAIIWrapper::TestAll();
     // ObjectOrientedExperiments::OOP_Experiments::TestAll();
     // ObjectOrientedExperiments::VirtualTables::TestAll();
-    Optional::TestAll();
+    // Optional::TestAll();
     // Math::TestAll();
     // LRUCache::TestAll();
     // EventLoop::TestAll();
