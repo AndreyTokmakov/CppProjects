@@ -15,15 +15,14 @@
 #include <vector>
 #include <optional>
 #include <utility>
-#include <stdio.h>
-#include <stdlib.h>
 #include <functional>
+#include <algorithm>
+#include <format>
+
 
 #include "../Integer/Integer.h"
 #include "OptionalTests.h"
 
-using String = std::string;
-using CString = const String&;
 
 namespace Optional {
 
@@ -36,10 +35,10 @@ namespace Optional {
 
 	class UserName {
 	private:
-		String mName;
+		std::string mName;
 
 	public:
-		explicit UserName(CString str) : mName(str) {
+		explicit UserName(const std::string& str) : mName(str) {
 			std::cout << "UserName::UserName(\'";
 			std::cout << mName << "\')\n";
 		}
@@ -130,7 +129,7 @@ namespace Optional {
 		std::cout << v.value() << std::endl;
 	}
 
-	std::optional<const char*> maybe_getenv(CString variable) {
+	std::optional<const char*> maybe_getenv(const std::string& variable) {
         if (const char* env_p = std::getenv(variable.data()))
             return env_p;
 		return std::nullopt;
@@ -223,11 +222,11 @@ namespace Optional {
 	}
 
 	void CheckParamValue() {
-		const std::list<String> values = { "SOME_VALUE", "" };
+		const std::list<std::string> values = { "SOME_VALUE", "" };
 
 		std::cout << "New style: " << std::endl;
 
-		for (CString val : values) {
+		for (const std::string& val : values) {
 			if (auto ostr = optional_from_string(val); ostr)
 				std::cout << "ostr " << *ostr << std::endl;
 			else
@@ -236,8 +235,8 @@ namespace Optional {
 
 		// Old Style:
 
-		std::optional<String> ostr;
-		for (CString val : values) {
+		std::optional<std::string> ostr;
+		for (const std::string& val : values) {
 			if (std::nullopt != (ostr = optional_from_string(val)))
 				std::cout << "ostr " << *ostr << std::endl;
 			else
@@ -420,6 +419,129 @@ namespace Optional::Apllications {
 }
 
 
+namespace Cpp23_Features
+{
+    const std::unordered_map<int, std::string> cache {
+            {1, "I"},
+            {2, "II"},
+            {3, "III"},
+            {4, "IV"},
+            {5, "V"},
+    };
+
+    const std::unordered_map<int, std::string> database {
+            {1, "I"},
+            {2, "II"},
+            {3, "III"},
+            {4, "IV"},
+            {5, "V"},
+            {6, "VI"},
+            {7, "VII"},
+            {8, "VIII"},
+            {9, "IX"},
+            {10, "X"},
+    };
+
+    std::optional<std::string> getFromCache(int key)
+    {
+        const auto iter = cache.find(key);
+        if (cache.end() != iter)
+            return std::make_optional<std::string>(iter->second);
+        return std::nullopt;
+    }
+
+    std::optional<std::string> getFromDatabase(int key)
+    {
+        const auto iter = database.find(key);
+        if (database.end() != iter)
+            return std::make_optional<std::string>(iter->second);
+        return std::nullopt;
+    }
+
+    std::optional<std::string> decorate(const std::string& str)
+    {
+        return std::format("[{}]", str);
+    }
+
+    std::string toUpper(const std::string& str) {
+        std::string tmp {str};
+        std::transform(tmp.begin(), tmp.end(), tmp.begin(), ::toupper);
+        return tmp;
+    }
+
+    template<typename _Ty>
+    std::ostream& operator<<(std::ostream& stream, const std::optional<_Ty>& opt)
+    {
+        if (opt.has_value())
+            stream << opt.value();
+        else
+            stream <<  "NullOpt";
+        return stream;
+    }
+
+    std::optional<int> getAge(int v)
+    {
+        if (100 > v)
+            return std::make_optional<int>(v);
+        return std::nullopt;
+    }
+
+    void OrElse_Test()
+    {
+        for (int val: {3, 7})
+        {
+            const std::optional<std::string> result = getFromCache(val)
+                    .or_else([&]() { return getFromDatabase(val); });
+
+            std::cout << val << " --> " << result << std::endl;
+        }
+
+        std::cout << std::endl;
+
+        for (int val: {3, 7, 13})
+        {
+            const std::optional<std::string> result = getFromCache(val)
+                    .or_else([&]() { return getFromDatabase(val); })
+                    .or_else([&]() { return std::make_optional<std::string>("None"); });
+
+            std::cout << val << " --> " << result << std::endl;
+        }
+    }
+
+    void AndThen_Test()
+    {
+        for (int val: {3, 7})
+        {
+            const std::optional<std::string> result = getFromCache(val)
+                    .and_then(decorate);
+            std::cout << val << " --> " << result << std::endl;
+        }
+
+        for (int val: {3, 7})
+        {
+            const std::optional<std::string> result = getFromCache(val)
+                    .and_then([](const std::string& str) { return std::make_optional<std::string>("OK"); });
+            std::cout << val << " --> " << result << std::endl;
+        }
+    }
+
+    void Transform_Test()
+    {
+        {
+            const std::optional<int> number = 5;
+            const std::optional<int> squared = number.transform([](int x) { return x * x; });
+            std::cout << number << " --> " << squared << std::endl;
+        }
+
+        {
+            const std::optional<std::string> text = "qwerty";
+            const std::optional<std::string> upperCase = text.transform(toUpper);
+            std::cout << text << " --> " << upperCase << std::endl;
+        }
+    }
+}
+
+
 void Optional::TestAll() {
 
 	// OptionalCreation();
@@ -435,7 +557,7 @@ void Optional::TestAll() {
 	// UserWithOptionalName();
 	// Options_ParseIntTest();
 
-	ValueOR_Tests();
+	// ValueOR_Tests();
 	// ChangeValues();
 
 	// Optional_Reference_Wrapper();
@@ -443,5 +565,10 @@ void Optional::TestAll() {
 	// VariousTests();
 
 	// Apllications::ReadEnvironment();
+
+
+    // Cpp23_Features::OrElse_Test();
+    // Cpp23_Features::AndThen_Test();
+    Cpp23_Features::Transform_Test();
 };
 
