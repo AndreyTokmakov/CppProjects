@@ -15,6 +15,8 @@
 #include <future>
 #include <chrono>
 #include <semaphore>
+#include <syncstream>
+
 
 using namespace std::literals;
 
@@ -98,7 +100,7 @@ namespace Semaphore::BinarySemaphore {
     }
 };
 
-namespace Semaphore::Tests
+namespace Semaphore::BinarySemaphore
 {
     void Simple_Acquire_Release()
     {
@@ -121,7 +123,61 @@ namespace Semaphore::Tests
         job1.wait();
         job2.wait();
     }
+
+    void Semaphore_VS_ConditionalVariable()
+    {
+        const std::chrono::duration timeout = 1000ms;
+
+        {
+            std::binary_semaphore signal(0);
+            auto t = std::jthread([&signal]() {
+                std::osyncstream(std::cout) << std::this_thread::get_id() << " Waiting\n";
+
+                // Wait until this thread is signaled
+                signal.acquire();
+
+                std::osyncstream(std::cout) << std::this_thread::get_id() << " Running\n";
+            });
+
+            // Injected wait to demonstrate correct ordering
+            std::this_thread::sleep_for(timeout);
+
+            std::osyncstream(std::cout) << std::this_thread::get_id() << " Before unblocking the thread.\n";
+
+            // Signal the thread to run
+            signal.release();
+        }
+
+        std::cout << "\n\n";
+
+        {
+            // Example of how this would look with a condition variable:
+            std::mutex mux;
+            std::condition_variable cond;
+            bool received = false;
+
+            auto t = std::jthread([&mux, &cond, &received]() {
+                std::osyncstream(std::cout) << std::this_thread::get_id() << " Waiting\n";
+
+                // Wait until this thread is signaled
+                std::unique_lock lock(mux);
+                cond.wait(lock, [&received] { return received; });
+
+                std::osyncstream(std::cout) << std::this_thread::get_id() << " Running\n";
+            });
+
+            // Injected wait to demonstrate correct ordering
+            std::this_thread::sleep_for(timeout);
+            std::osyncstream(std::cout) << std::this_thread::get_id() << " Before unblocking the thread.\n";
+            { // Signal the thread to run
+                std::unique_lock lock(mux);
+                received = true;
+            }
+            cond.notify_one();
+        }
+    }
 }
+
 
 void Semaphore::TEST_ALL()
 {
@@ -129,6 +185,7 @@ void Semaphore::TEST_ALL()
     // BinarySemaphore::Release_TRY_Acquire__BasicTest();
     // BinarySemaphore::Release_TRY_Acquire_FOR__BasicTest();
 
-    Tests::Simple_Acquire_Release();
+    // BinarySemaphore::Simple_Acquire_Release();
+    BinarySemaphore::Semaphore_VS_ConditionalVariable();
 };
 
