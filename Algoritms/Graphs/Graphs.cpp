@@ -210,13 +210,33 @@ namespace Graphs::DFS_NonRecur
             return *this;
         }
 
-        void dfs(value_type v) {
+        void dfs(value_type v)
+        {
             visited[v] = true;
             std::cout << v << " ";
 
             for (const value_type id : graph[v])
                 if (!visited[id])
                     dfs(id);
+        }
+
+        void dfs1(value_type s)
+        {
+            visited[s] = true;
+            std::deque<int> queue { s }; // deque contains 1-st node
+
+            while (!queue.empty()) {
+                s = queue.back();
+                queue.pop_back();
+                std::cout << s << " ";
+
+                for (const auto& nodes = graph[s]; int it: nodes) {
+                    if (!visited[it]) {
+                        visited[it] = true;
+                        queue.push_back(it);
+                    }
+                }
+            }
         }
 
         void bfs(value_type s)
@@ -247,6 +267,16 @@ namespace Graphs::DFS_NonRecur
                     .addEdge(2, 0).addEdge(2, 3).addEdge(9, 3);
 
             g.dfs(2);
+        }
+
+        std::cout << std::endl;
+
+        {
+            Graph g;
+            g.addEdge(0, 1).addEdge(0, 9).addEdge(1, 2)
+                    .addEdge(2, 0).addEdge(2, 3).addEdge(9, 3);
+
+            g.dfs1(2);
         }
 
         std::cout << std::endl;
