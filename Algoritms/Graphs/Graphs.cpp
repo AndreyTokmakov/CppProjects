@@ -204,7 +204,7 @@ namespace Graphs::DFS_NonRecur
         std::map<value_type, bool> visited;
         std::map<value_type, std::vector<value_type>> graph;
 
-        Graph& addEdge(value_type v, value_type w) {
+        Graph& add(value_type v, value_type w) {
             graph[v].push_back(w);
             graph[w].push_back(v);
             return *this;
@@ -223,17 +223,18 @@ namespace Graphs::DFS_NonRecur
         void dfs1(value_type s)
         {
             visited[s] = true;
-            std::deque<int> queue { s }; // deque contains 1-st node
+            std::vector<int> vec { s }; // deque contains 1-st node
 
-            while (!queue.empty()) {
-                s = queue.back();
-                queue.pop_back();
+            while (!vec.empty()) {
+                s = vec.back();
+                vec.pop_back();
+
                 std::cout << s << " ";
 
                 for (const auto& nodes = graph[s]; int it: nodes) {
                     if (!visited[it]) {
                         visited[it] = true;
-                        queue.push_back(it);
+                        vec.push_back(it);
                     }
                 }
             }
@@ -261,33 +262,38 @@ namespace Graphs::DFS_NonRecur
 
     void Test()
     {
+        /*
         {
             Graph g;
-            g.addEdge(0, 1).addEdge(0, 9).addEdge(1, 2)
-                    .addEdge(2, 0).addEdge(2, 3).addEdge(9, 3);
+            g.add(0, 1).add(0, 9).add(1, 2).add(2, 0).add(2, 3).add(9, 3);
 
-            g.dfs(2);
+            g.dfs(0);
         }
 
+        std::cout << std::endl;
+        */
+
+        {
+            Graph g;
+            // g.add(0, 1).add(0, 9).add(1, 2).add(2, 0).add(2, 3).add(9, 3);
+            g.add(0, 1).add(1, 2).add(2, 3)
+                    .add(0, 4).add(4,5).add(5,6)
+                    .add(0, 7).add(7,8).add(8, 9);
+
+
+            g.dfs1(0);
+        }
+
+        /*
         std::cout << std::endl;
 
         {
             Graph g;
-            g.addEdge(0, 1).addEdge(0, 9).addEdge(1, 2)
-                    .addEdge(2, 0).addEdge(2, 3).addEdge(9, 3);
-
-            g.dfs1(2);
-        }
-
-        std::cout << std::endl;
-
-        {
-            Graph g;
-            g.addEdge(0, 1).addEdge(0, 9).addEdge(1, 2)
-                    .addEdge(2, 0).addEdge(2, 3).addEdge(9, 3);
+            g.add(0, 1).add(0, 9).add(1, 2).add(2, 0).add(2, 3).add(9, 3);
 
             g.bfs(2);
         }
+         */
     }
 }
 
@@ -385,21 +391,20 @@ namespace Graphs::Detect_Cycle {
 	}
 }
 
+namespace Graphs::Find_All_Paths
+{
 
-
-namespace Graphs::Find_All_Paths {
-
-	class Graph
+	struct Graph
 	{
-	public:
         using ValueType = int;
 
 		std::map<ValueType, bool> visited;
 		std::map<ValueType, std::vector<ValueType>> nodes;
 		std::vector<ValueType> path;
 
-		void addEdge(ValueType v, ValueType w) {
+        Graph& add(ValueType v, ValueType w) {
 			nodes[v].push_back(w);
+            return *this;
 		}
 
 		void FindPaths(ValueType v,
@@ -427,16 +432,102 @@ namespace Graphs::Find_All_Paths {
 	void Test()
 	{
 		Graph g;
-		g.addEdge(0, 1);
-		g.addEdge(0, 2);
-		g.addEdge(0, 3);
-		g.addEdge(2, 0);
-		g.addEdge(2, 1);
-		g.addEdge(1, 3);
-
+		g.add(0, 1).add(0, 2).add(0, 3).add(2, 0).add(2, 1).add(1, 3);
 
 		g.FindPaths(2, 3);
 	}
+}
+
+namespace Graphs::Find_All_Paths_Ex
+{
+
+    struct Graph
+    {
+        using ValueType = int;
+
+        std::map<ValueType, bool> visited;
+        std::map<ValueType, std::vector<ValueType>> graph;
+        std::vector<ValueType> path;
+
+        Graph& add(ValueType v, ValueType w) {
+            graph[v].push_back(w);
+            return *this;
+        }
+
+        void dfs1(ValueType s)
+        {
+            visited[s] = true;
+            std::deque<int> queue { s }; // deque contains 1-st node
+
+            while (!queue.empty()) {
+                s = queue.back();
+                queue.pop_back();
+                std::cout << s << " ";
+
+                for (const auto& nodes = graph[s]; int it: nodes) {
+                    if (!visited[it]) {
+                        visited[it] = true;
+                        queue.push_back(it);
+                    }
+                }
+            }
+        }
+
+        void FindPaths(ValueType v,
+                       ValueType node_to_find) {
+            visited[v] = true;
+            path.push_back(v);
+
+            if (v == node_to_find) { // Print full path
+                std::cout << path << std::endl;
+            }
+            else {
+                for (const ValueType id : graph[v])
+                    if (!visited[id])
+                        FindPaths(id, node_to_find);
+            }
+
+
+            path.pop_back();
+            visited[v] = false;
+        }
+
+        void FindPaths1(ValueType v,
+                        ValueType node_to_find)
+        {
+            visited[v] = true;
+            path.push_back(v);
+            std::vector<int> queue { v };
+
+            while (!queue.empty())
+            {
+                v = queue.back();
+                queue.pop_back();
+                std::cout << v << " ";
+
+                for (const auto& nodes = graph[v]; int it: nodes)
+                {
+                    if (!visited[it])
+                    {
+                        visited[it] = true;
+                        queue.push_back(it);
+                    }
+                }
+
+                path.pop_back();
+                visited[v] = false;
+            }
+        }
+    };
+
+    void Test()
+    {
+        Graph g;
+        g.add(0, 1).add(0, 2).add(0, 3).add(2, 0).add(2, 1).add(1, 3);
+
+        // g.FindPaths(2, 3);
+        g.FindPaths1(2, 3);
+    }
 }
 
 namespace Graphs::Find_Longest_Path {
@@ -876,13 +967,15 @@ void Graphs::TEST_ALL()
 
 	// DFS_Tests::Test();
     // DFS_Tests2::Test();
-    DFS_NonRecur::Test();
+    // DFS_NonRecur::Test();
 
     // Find_Mother_Vertex::Test();
 
 	// Detect_Cycle::Test();
 
 	// Find_All_Paths::Test();
+    Find_All_Paths_Ex::Test();
+
 	// Find_Longest_Path::Test();
 	// Find_Shortest_Path::Test();
 	// Find_Shortest_and_Longest_Path::Test();
