@@ -204,9 +204,9 @@ namespace Graphs::DFS_NonRecur
         std::map<value_type, bool> visited;
         std::map<value_type, std::vector<value_type>> graph;
 
-        Graph& addEdge(value_type v, value_type w) {
+        Graph& add(value_type v, value_type w) {
             graph[v].push_back(w);
-            graph[w].push_back(v);
+            //graph[w].push_back(v);
             return *this;
         }
 
@@ -261,33 +261,32 @@ namespace Graphs::DFS_NonRecur
 
     void Test()
     {
+        /*
         {
             Graph g;
-            g.addEdge(0, 1).addEdge(0, 9).addEdge(1, 2)
-                    .addEdge(2, 0).addEdge(2, 3).addEdge(9, 3);
+            g.add(0, 1).add(0, 9).add(1, 2).add(2, 0).add(2, 3).add(9, 3);
+            g.dfs(0);
+        }*/
 
-            g.dfs(2);
+        //std::cout << std::endl;
+
+        {
+            Graph g;
+            g.add(0,1).add(1, 2).add(2,3).add(3,4).add(4,5)
+                .add(0,6).add(6, 7).add(7,8).add(8,9)
+                .add(0,10).add(10,11).add(11,12).add(12,13);
+
+            g.dfs1(0); // 0 10 11 12 13 6 7 8 9 1 2 3 4 5
         }
 
+        /*
         std::cout << std::endl;
 
         {
             Graph g;
-            g.addEdge(0, 1).addEdge(0, 9).addEdge(1, 2)
-                    .addEdge(2, 0).addEdge(2, 3).addEdge(9, 3);
-
-            g.dfs1(2);
-        }
-
-        std::cout << std::endl;
-
-        {
-            Graph g;
-            g.addEdge(0, 1).addEdge(0, 9).addEdge(1, 2)
-                    .addEdge(2, 0).addEdge(2, 3).addEdge(9, 3);
-
+            g.add(0, 1).add(0, 9).add(1, 2).add(2, 0).add(2, 3).add(9, 3);
             g.bfs(2);
-        }
+        }*/
     }
 }
 
