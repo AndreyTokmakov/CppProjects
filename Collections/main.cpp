@@ -1,30 +1,13 @@
-//============================================================================
-// Name        : CollectionsTests.cpp
-// Created on  : August 12, 2019
-// Author      : Tokmakov Andrey
-// Version     : 1.0
-// Copyright   : Your copyright notice
-// Description : Collections study and src project
-//============================================================================
+/**============================================================================
+Name        : CollectionsTests.cpp
+Created on  : 12.08.2019
+Author      : Andrei Tokmakov
+Version     : 1.0
+Copyright   : Your copyright notice
+Description : CollectionsTests
+============================================================================**/
 
 #include <iostream>
-
-#include <map>
-#include <vector>
-#include <list>
-#include <tuple>
-#include <algorithm>
-#include <set>
-#include <unordered_map>
-
-#include <string>
-#include <string_view>
-
-#include <complex>
-#include <chrono>
-#include <thread>
-
-#include "Integer/Integer.h"
 
 #include "Custom_Vector/Custom_Vector.h"
 #include "Queue/Queue.h"
@@ -56,12 +39,12 @@ int main([[maybe_unused]] int argc,
 	// TEST(Heap);
 	// TEST(Vector);
 	// TEST(Valarray);
-	TEST(Map);
+	// TEST(Map);
 	// TEST(MultiMap);
     // TEST(UnorderedMap);
     // TEST(Set);
     // TEST(UnorderedSet);
 	// TEST(Queue);
-	// TEST(PriorityQueue);
+	PriorityQueue::TestAll();
 	// TEST(Custom_Vector);
 }

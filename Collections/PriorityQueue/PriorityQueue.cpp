@@ -1,15 +1,16 @@
-//============================================================================
-// Name        : PriorityQueue.cpp
-// Created on  : 16.04.2020
-// Author      : Tokmakov Andrey
-// Version     : 1.0
-// Copyright   : Your copyright notice
-// Description : C++ STL PriorityQueue container testing
-//============================================================================
+/**============================================================================
+Name        : PriorityQueue.cpp
+Created on  : 16.04.2020
+Author      : Andrei Tokmakov
+Version     : 1.0
+Copyright   : Your copyright notice
+Description : C++ STL PriorityQueue container testing
+============================================================================**/
 
 #include <iostream>       
-#include <queue>          // std::priority_queue
-#include <list>          // std::priority_queue
+#include <queue>
+#include <list>
+#include <iomanip>
 
 #include "PriorityQueue.h"
 
@@ -168,78 +169,6 @@ namespace PriorityQueue {
 	using my_pair_t = std::pair<size_t, bool>;
 	using my_container_t = std::vector<my_pair_t>;
 
-	void Custom_Comparator()
-	{
-		{
-			auto my_comp = [](const my_pair_t& e1, const my_pair_t& e2) {
-				return e1.first > e2.first;
-			};
-			std::priority_queue<my_pair_t, my_container_t, decltype(my_comp)> queue(my_comp);
-
-			queue.push(std::make_pair(5, true));
-			queue.push(std::make_pair(3, false));
-			queue.push(std::make_pair(7, true));
-			std::cout << std::boolalpha;
-
-			while (!queue.empty())
-			{
-				const auto& p = queue.top();
-				std::cout << p.first << " " << p.second << "\n";
-				queue.pop();
-			}
-		}
-		std::cout << "----------------------------------- Test2: -------------------------------------" << std::endl;
-		{
-			using Pair = std::pair<size_t, bool>;
-			using ContainerType = std::vector<Pair>;
-
-			auto comparator = [](const Pair& e1, const Pair& e2) {
-				return e1.first < e2.first;
-			};
-			std::priority_queue<Pair, ContainerType, decltype(comparator)> queue(comparator);
-
-			queue.push(std::make_pair(5, true));
-			queue.push(std::make_pair(3, false));
-			queue.push(std::make_pair(7, true));
-
-
-			std::cout << std::boolalpha;
-
-			while (!queue.empty())
-			{
-				const auto& p = queue.top();
-				std::cout << p.first << " " << p.second << "\n";
-				queue.pop();
-			}
-		}
-	}
-
-	void Custom_Comparator_UPDATE_value()
-	{
-		using Pair = std::pair<size_t, bool>;
-		using ContainerType = std::vector<Pair>;
-
-		auto comparator = [](const Pair& e1, const Pair& e2) {
-			return e1.first < e2.first;
-		};
-		std::priority_queue<Pair, ContainerType, decltype(comparator)> queue(comparator);
-
-		queue.emplace(3, true);
-		queue.emplace(5, true);
-		queue.emplace(7, true);
-
-
-		std::cout << std::boolalpha;
-
-
-		while (!queue.empty()) {
-			const auto& p = queue.top();
-			std::cout << p.first << " " << p.second << "\n";
-			queue.pop();
-		}
-	}
-
-
 
 
 
@@ -266,8 +195,101 @@ namespace PriorityQueue {
 		}
 	}
 }
+
+
+namespace PriorityQueue::CustomComparator
+{
+
+    void UpdateValue()
+    {
+        using Pair = std::pair<size_t, bool>;
+        using ContainerType = std::vector<Pair>;
+
+        auto comparator = [](const Pair& e1, const Pair& e2) {
+            return e1.first < e2.first;
+        };
+        std::priority_queue<Pair, ContainerType, decltype(comparator)> queue(comparator);
+
+        queue.emplace(3, true);
+        queue.emplace(5, true);
+        queue.emplace(7, true);
+
+        std::cout << std::boolalpha;
+
+        while (!queue.empty()) {
+            const auto& p = queue.top();
+            std::cout << p.first << " " << p.second << "\n";
+            queue.pop();
+        }
+    }
+
+    void Custom_Comparator()
+    {
+        {
+            auto my_comp = [](const my_pair_t& e1, const my_pair_t& e2) {
+                return e1.first > e2.first;
+            };
+            std::priority_queue<my_pair_t, my_container_t, decltype(my_comp)> queue(my_comp);
+
+            queue.emplace(5, true);
+            queue.emplace(3, false);
+            queue.emplace(7, true);
+            std::cout << std::boolalpha;
+
+            while (!queue.empty())
+            {
+                const auto& p = queue.top();
+                std::cout << p.first << " " << p.second << "\n";
+                queue.pop();
+            }
+        }
+        std::cout << "----------------------------------- Test2: -------------------------------------" << std::endl;
+        {
+            using Pair = std::pair<size_t, bool>;
+            using ContainerType = std::vector<Pair>;
+
+            auto comparator = [](const Pair& e1, const Pair& e2) {
+                return e1.first < e2.first;
+            };
+            std::priority_queue<Pair, ContainerType, decltype(comparator)> queue(comparator);
+
+            queue.emplace(5, true);
+            queue.emplace(3, false);
+            queue.emplace(7, true);
+
+            std::cout << std::boolalpha;
+
+            while (!queue.empty())
+            {
+                const auto& p = queue.top();
+                std::cout << p.first << " " << p.second << "\n";
+                queue.pop();
+            }
+        }
+    }
+
+    void CompareStringByLength()
+    {
+        std::priority_queue<std::string,
+                            std::vector<std::string>,
+                decltype([](const auto& left, const auto& right) {
+                    return left.length() > right.length();
+                })> custom;
+
+        custom.emplace("a");
+        custom.emplace("aa");
+        custom.emplace("aaa");
+
+        // Prints "a" "aa" "aaa"
+        while (!custom.empty()) {
+            std::cout << std::quoted(custom.top()) << " ";
+            custom.pop();
+        }
+        std::cout << "\n";
+    }
+}
 	
-void PriorityQueue::TEST_ALL()
+void PriorityQueue::TestAll()
 {
 	// Constructors();
 
@@ -277,8 +299,8 @@ void PriorityQueue::TEST_ALL()
 
 	// Different_Order_Comparators();
 
-	// Custom_Comparator();
-
-	// Custom_Comparator_UPDATE_value();
+	// CustomComparator::UpdateValue();
+	// CustomComparator::Custom_Comparator();
+	CustomComparator::CompareStringByLength();
 
 }

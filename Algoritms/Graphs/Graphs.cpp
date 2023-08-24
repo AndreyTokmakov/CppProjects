@@ -51,9 +51,9 @@ namespace Graphs::Tests {
 
 	public:
 
-		void addEdge(value_type v,
-					 value_type w) {
+		void addEdge(value_type v, value_type w) {
 			nodes[v].push_back(w);
+			nodes[w].push_back(v);
 		}
 
 		[[nodiscard]]
@@ -88,15 +88,17 @@ namespace Graphs::Tests {
 	}
 
 
-	void BFS_Test() {
+	void BFS_Test()
+    {
 		// Create a graph given in the above diagram 
 		Graph graphs;
-		graphs.addEdge(0, 1);
-		graphs.addEdge(0, 2);
-		graphs.addEdge(1, 2);
-		graphs.addEdge(2, 0);
-		graphs.addEdge(2, 3);
-		graphs.addEdge(3, 3);
+
+        graphs.addEdge(0, 1);
+        graphs.addEdge(0, 9);
+        graphs.addEdge(1, 2);
+        graphs.addEdge(2, 0);
+        graphs.addEdge(2, 3);
+        graphs.addEdge(9, 3);
 
 		std::cout << "Following is Breadth First Traversal (starting from vertex 2):" << std::endl;
 		BFS(graphs, 2);
@@ -192,6 +194,72 @@ namespace Graphs::DFS_Tests2 {
     }
 }
 
+namespace Graphs::DFS_NonRecur
+{
+    class Graph
+    {
+    public:
+        using value_type = int;
+
+        std::map<value_type, bool> visited;
+        std::map<value_type, std::vector<value_type>> graph;
+
+        Graph& addEdge(value_type v, value_type w) {
+            graph[v].push_back(w);
+            graph[w].push_back(v);
+            return *this;
+        }
+
+        void dfs(value_type v) {
+            visited[v] = true;
+            std::cout << v << " ";
+
+            for (const value_type id : graph[v])
+                if (!visited[id])
+                    dfs(id);
+        }
+
+        void bfs(value_type s)
+        {
+            visited[s] = true;
+            std::deque<int> queue { s }; // deque contains 1-st node
+
+            while (!queue.empty()) {
+                s = queue.front();
+                queue.pop_front();
+                std::cout << s << " ";
+
+                for (const auto& nodes = graph[s]; int it: nodes) {
+                    if (!visited[it]) {
+                        visited[it] = true;
+                        queue.push_back(it);
+                    }
+                }
+            }
+        }
+    };
+
+    void Test()
+    {
+        {
+            Graph g;
+            g.addEdge(0, 1).addEdge(0, 9).addEdge(1, 2)
+                    .addEdge(2, 0).addEdge(2, 3).addEdge(9, 3);
+
+            g.dfs(2);
+        }
+
+        std::cout << std::endl;
+
+        {
+            Graph g;
+            g.addEdge(0, 1).addEdge(0, 9).addEdge(1, 2)
+                    .addEdge(2, 0).addEdge(2, 3).addEdge(9, 3);
+
+            g.bfs(2);
+        }
+    }
+}
 
 namespace Graphs::Find_Mother_Vertex {
 
@@ -778,12 +846,13 @@ void Graphs::TEST_ALL()
 
 	// DFS_Tests::Test();
     // DFS_Tests2::Test();
+    DFS_NonRecur::Test();
 
     // Find_Mother_Vertex::Test();
 
 	// Detect_Cycle::Test();
 
-	Find_All_Paths::Test();
+	// Find_All_Paths::Test();
 	// Find_Longest_Path::Test();
 	// Find_Shortest_Path::Test();
 	// Find_Shortest_and_Longest_Path::Test();
