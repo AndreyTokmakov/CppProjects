@@ -454,6 +454,17 @@ namespace Graphs::Find_All_Paths_Ex
             return *this;
         }
 
+        void DFS(ValueType v) {
+            // Mark the current node as visited and print it
+            visited[v] = true;
+            std::cout << v << " ";
+
+            // Recur for all the vertices adjacent to this current node
+            for (const ValueType id : graph[v])
+                if (!visited[id])
+                    DFS(id);
+        }
+
         void dfs1(ValueType s)
         {
             visited[s] = true;
