@@ -7,9 +7,9 @@ project(${PROJECT_NAME} VERSION ${PROJECT_VERSION} LANGUAGES CXX)
 
 add_compile_options(-c -Wall -Wextra -O3 -std=c++2a)
 
-include_directories(/home/andtokm/DiskS/ProjectsUbuntu/third_party/libssh2/include)
-include_directories(/home/andtokm/DiskS/ProjectsUbuntu/third_party/libssh2/build/src)
-link_directories(/home/andtokm/DiskS/ProjectsUbuntu/third_party/libssh2/build/src)
+include_directories(../../third_party/libssh2/include)
+include_directories(../../third_party/libssh2/build/src)
+link_directories(../../third_party/libssh2/build/src)
 
 # include all components
 add_executable(Networking MACOSX_BUNDLE
@@ -51,4 +51,4 @@ add_executable(Networking MACOSX_BUNDLE
         RawSockets/CaptureTraffic.h PcapAnalyzer/PcapAnalyzer.cpp PcapAnalyzer/PcapAnalyzer.h WiFi/WiFiExperiments.cpp WiFi/WiFiExperiments.h ssh/SshExperiments.cpp ssh/SshExperiments.h SSL/SSL_Experiments.cpp SSL/SSL_Experiments.h SSL/TCP_SSL_Server.cpp SSL/TCP_SSL_Server.h SSL/HTTPS_Server.cpp SSL/HTTPS_Server.h)
 
 # Link phread library
-TARGET_LINK_LIBRARIES(Networking pthread -lssh2 rt crypt crypto ssl)
+TARGET_LINK_LIBRARIES(Networking pthread ssh2 rt crypt crypto ssl)

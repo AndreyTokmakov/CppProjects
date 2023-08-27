@@ -31,7 +31,7 @@ Description : HTTPS_Server
 #include <memory>
 #include <vector>
 #include <array>
-#include <fstream>
+#include <format>
 
 #include <unistd.h>
 #include <sys/socket.h>
@@ -70,6 +70,18 @@ namespace
         SocketGuard& operator=(SocketGuard&&) noexcept = delete;
     };
 
+    struct CertificateDeleter {
+        void operator()(BIO* bio) const {
+            if (bio)
+                ::BIO_free(bio);
+        }
+
+        void operator()(X509* x509) const {
+            if (x509)
+                ::X509_free(x509);
+        }
+    };
+
     int Error(std::string_view text)
     {
         std::cerr << text << ". Error = " << errno << std::endl;
@@ -88,6 +100,35 @@ namespace
         std::cerr << func_name << "() failed" << "Result = " << result << ". Error = " << errno << std::endl;
         ERR_print_errors_fp(stderr);
         return errno;
+    }
+
+    void printPeerCertificateInfo(SSL* ssl)
+    {
+        const std::unique_ptr<X509, CertificateDeleter> certX509 {
+            ::SSL_get_peer_certificate(ssl), CertificateDeleter {}
+        };
+        if (!certX509)
+        {
+            std::cout << "* * * * * Failed to get certificate * * * * * \n";
+            /*
+            std::unique_ptr<BIO, CertificateDeleter> bio {
+                    ::BIO_new_mem_buf(content.data(), content.size()), CertificateDeleter{} };
+            if (!bio) {
+                std::cout << "BIO_new_mem_buf() failed" << std::endl;
+                return;
+            }
+
+            certX509.reset(::PEM_read_bio_X509(bio.get(), nullptr, nullptr, nullptr));
+            if (!certX509) {
+                std::cout << "PEM_read_bio_X509() failed" << std::endl;
+                return;
+            }
+            */
+        }
+        else
+        {
+            std::cout << "Version: " << X509_get_version(certX509.get()) +1 << std::endl;
+        }
     }
 }
 
@@ -143,7 +184,7 @@ namespace HTTPS_Server::SimpleSSLSocketServer
             }
         }
 
-        constexpr uint16_t port {8001};
+        constexpr uint16_t port { 52525 };
         constexpr std::string_view host {"0.0.0.0"};
         sockaddr_in server {PF_INET, htons(port), {.s_addr = inet_addr(host.data())}, {}};
 
@@ -155,6 +196,8 @@ namespace HTTPS_Server::SimpleSSLSocketServer
         if (SOCKET_ERROR == ::listen(serverSocket, backlog)) {
             return Error("Failed to Listen the socket.");
         }
+
+        std::cout << std::format("Running on https://{}:{}", host, port) << std::endl;
 
         constexpr size_t bytesToRead {44}; // FIXME
         sockaddr_in clientAddr {};
@@ -178,6 +221,10 @@ namespace HTTPS_Server::SimpleSSLSocketServer
                 PutSSLError("SSL_new");
                 continue;
             }
+
+            // const X509* cert = SSL_get_peer_certificate(ssl.get());
+            printPeerCertificateInfo(ssl.get());
+
 
             if (const int result = SSL_set_fd(ssl.get(), clientSocket); 1 != result)
             {
