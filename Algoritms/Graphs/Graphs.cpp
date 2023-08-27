@@ -526,8 +526,8 @@ namespace Graphs::Find_All_Paths_Ex
                     }
                 }
 
-                path.pop_back();
-                visited[v] = false;
+                //path.pop_back();
+               // visited[v] = false;
             }
         }
     };
@@ -535,10 +535,13 @@ namespace Graphs::Find_All_Paths_Ex
     void Test()
     {
         Graph g;
-        g.add(0, 1).add(0, 2).add(0, 3).add(2, 0).add(2, 1).add(1, 3);
+        g
+          .add(0, 1).add(1,4).add(4,5).add(5,10)
+          .add(0, 2).add(2,6).add(6,7).add(7,10)
+          .add(0, 3).add(3,8).add(8,9).add(9,10);
 
         // g.FindPaths(2, 3);
-        g.FindPaths1(2, 3);
+        g.FindPaths1(0, 10);
     }
 }
 

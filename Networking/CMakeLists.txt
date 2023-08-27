@@ -48,7 +48,7 @@ add_executable(Networking MACOSX_BUNDLE
         Servers/EPollTCPServerDebug.cpp Servers/EPollTCPServerDebug.h
         Servers/EPollTCPServerMultithreaded.cpp Servers/EPollTCPServerMultithreaded.h
         RawSockets/CaptureTraffic.cpp
-        RawSockets/CaptureTraffic.h PcapAnalyzer/PcapAnalyzer.cpp PcapAnalyzer/PcapAnalyzer.h WiFi/WiFiExperiments.cpp WiFi/WiFiExperiments.h ssh/SshExperiments.cpp ssh/SshExperiments.h)
+        RawSockets/CaptureTraffic.h PcapAnalyzer/PcapAnalyzer.cpp PcapAnalyzer/PcapAnalyzer.h WiFi/WiFiExperiments.cpp WiFi/WiFiExperiments.h ssh/SshExperiments.cpp ssh/SshExperiments.h SSL/SSL_Experiments.cpp SSL/SSL_Experiments.h SSL/TCP_SSL_Server.cpp SSL/TCP_SSL_Server.h)
 
 # Link phread library
-TARGET_LINK_LIBRARIES(Networking pthread -lssh2)
+TARGET_LINK_LIBRARIES(Networking pthread -lssh2 rt crypt crypto ssl)

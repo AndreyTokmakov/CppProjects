@@ -530,6 +530,25 @@ namespace ConceptsTests
     }
 }
 
+namespace Conversation
+{
+    struct B {};
+
+    struct A {
+        A() = default;
+        explicit A(const B&)  {}
+        operator B() const {  return {}; }
+    };
+
+    void Fun(A a) {}
+
+    void test2()
+    {
+        Fun(A{});
+        Fun(B{}); // #B Will not compile due to explicit ctor
+    }
+}
+
 
 int main([[maybe_unused]] int argc,
          [[maybe_unused]] char** argv)
@@ -537,12 +556,8 @@ int main([[maybe_unused]] int argc,
     const std::vector<std::string_view> args(argv + 1, argv + argc);
     // parseInputParams(std::vector {"one", "two", "three", "four", "five"}.data(), 5);
 
-    std::vector<char> buffer{};
-    std::format_to(std::back_inserter(buffer), "{}, {}", "Hello", "World");
 
-    for(const auto& c : buffer)
-        std::cout << c;
-    std::cout << '\n';
+
 
 
     // ConceptsTests::If_Constexpr_Concepts();
