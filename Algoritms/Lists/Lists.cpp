@@ -62,6 +62,17 @@ namespace LinkedList
 		return root;
 	}
 
+    template<typename Type>
+    Node<Type>* InitList(const std::vector<Type>& data) {
+        assert(std::size(args) > 0), "List expectes to have more than one element";
+        Node<Type>* root = new Node<Type>(data.front()), * node = root;
+        for (size_t idx = 1; idx < data.size(); ++idx) {
+            node->next = new Node(data[idx]);
+            node = node->next;
+        }
+        return root;
+    }
+
 	template<typename T>
 	void PrintList(const Node<T>* root, const std::string& text = "\n") {
 		auto* node = const_cast<Node<T>*>(root);
@@ -583,25 +594,16 @@ namespace LinkedList {
 		return root;
 	}
 
-	void DeleteeNodes_ByValue() {
-		std::cout << "--------------------- Test1: ------------------\n" << std::endl;
-		{
-			Node<int>* list = InitList({ 5,1,5,5,2,4,5,5,5,7,8,9 });
-			PrintList(list, "  -->  ");
-			PrintList(_delete_nodes(list, 5), "\n\n");
-		}
-		std::cout << "--------------------- Test2: ------------------\n" << std::endl;
-		{
-			Node<int>* list = InitList({ 5,1,5,5,2,4,5,5,5,7,8,9 });
-			PrintList(list, "  -->  ");
-			PrintList(_delete_nodes(list, 5), "\n\n");
-		}
-		std::cout << "--------------------- Test3: ------------------\n" << std::endl;
-		{
-			Node<int>* list = InitList({ 5,5,5 });
-			PrintList(list, "  -->  ");
-			PrintList(_delete_nodes(list, 5), "\n\n");
-		}
+	void DeleteNodes_ByValue()
+    {
+        for (const std::vector<int>& data: std::vector<std::vector<int>> {
+                { 5,1,5,5,2,4,5,5,5,7,8,9 }, { 5,1,5,5,2,4,5,5,5,7,8,9 }, { 5,5,5 }
+        })
+        {
+            Node<int>* list = InitList(data);
+            PrintList(list, "  -->  ");
+            PrintList(_delete_nodes(list, 5), "\n\n");
+        }
 	}
 
 	//----------------------------------------------------------------------//
@@ -622,28 +624,16 @@ namespace LinkedList {
 		return root;
 	}
 
-	void DeleteeNodes_ByValue2() {
-		std::cout << "--------------------- Test1: ------------------\n" << std::endl;
-		{
-			Node<int>* list = InitList({ 5,1,5,5,2,4,5,5,5,7,8,9 });
-			PrintList(list, "  -->  ");
-			list = _delete_nodes_2(list, 5);
-			PrintList(list);
-		}
-		std::cout << "--------------------- Test2: ------------------\n" << std::endl;
-		{
-			Node<int>* list = InitList({ 5,1,5,5,2,4,5,5,5,7,8,9 });
-			PrintList(list, "  -->  ");
-			list = _delete_nodes_2(list, 5);
-			PrintList(list);
-		}
-		std::cout << "--------------------- Test3: ------------------\n" << std::endl;
-		{
-			Node<int>* list = InitList({ 5,5,5 });
-			PrintList(list, "  -->  ");
-			list = _delete_nodes_2(list, 5);
-			PrintList(list);
-		}
+	void DeleteNodes_ByValue2()
+    {
+        for (const std::vector<int>& data: std::vector<std::vector<int>> {
+                { 5,1,5,5,2,4,5,5,5,7,8,9 }, { 5,1,5,5,2,4,5,5,5,7,8,9 }, { 5,5,5 }
+        })
+        {
+            Node<int>* list = InitList(data);
+            PrintList(list, "  -->  ");
+            PrintList(_delete_nodes_2(list, 5), "\n\n");
+        }
 	}
 
 	//----------------------------------------------------------------------//
@@ -1224,10 +1214,10 @@ void LinkedList::TEST_ALL()
 
 	// LinkedList::Insert_Into_Sorted_List();
 	// LinkedList::Insert_Into_Sorted_List_2();
-	LinkedList::Insert_Into_Sorted_List_3();
+	// LinkedList::Insert_Into_Sorted_List_3();
 
-	// LinkedList::DeleteeNodes_ByValue();
-	// LinkedList::DeleteeNodes_ByValue2();
+	// LinkedList::DeleteNodes_ByValue();
+	LinkedList::DeleteNodes_ByValue2();
 	// LinkedList::DeleteeNodes_ByValue3();
 	// LinkedList::DeleteeNodes_By_Position();
 	// LinkedList::DeleteeNodes_By_Position();

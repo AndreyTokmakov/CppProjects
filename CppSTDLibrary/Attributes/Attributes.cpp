@@ -250,7 +250,8 @@ namespace Attributes:: Deprecated { //[[deprecated]]
     }
 }
 
-namespace Attributes::NoUniqueAddress {
+namespace Attributes::NoUniqueAddress
+{
     struct Empty {
     }; // empty class
 
@@ -288,11 +289,11 @@ namespace Attributes::NoUniqueAddress {
         // e1 and e2 cannot share the same address because they have the
         // same type, even though they are marked with [[no_unique_address]].
         // However, either may share address with c.
-        static_assert(sizeof(Z) >= 2);
+        static_assert(sizeof(Z) == 2);
 
         // e1 and e2 cannot have the same address, but one of them can share with
         // c[0] and the other with c[1]
-        std::cout << "sizeof(W) == 2 is " << (sizeof(W) == 2) << '\n';
+        static_assert(sizeof(W) == 3);
     }
 
     //--------------------------------------------------------------

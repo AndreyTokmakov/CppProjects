@@ -42,6 +42,7 @@
 #include "SSL/TCP_SSL_Server.h"
 #include "SSL/HTTPS_Server.h"
 #include "SSL/HTTPS_AsyncServer.h"
+#include "SSL/HTTPS_ServerMultithreaded.h"
 
 
 
@@ -83,7 +84,8 @@ int main([[maybe_unused]] int argc,
     // SSL_Experiments::TestAll();
     // TCP_SSL_Server::TestAll();
     // HTTPS_Server::TestAll();
-    HTTPS_AsyncServer::TestAll();
+    // HTTPS_AsyncServer::TestAll();
+    HTTPS_ServerMultithreaded::TestAll();
 
     return EXIT_SUCCESS;
 }
