@@ -33,6 +33,7 @@ Description : HTTPS_ServerMultithreaded
 #include <vector>
 #include <array>
 #include <format>
+#include <thread>
 
 #include <unistd.h>
 #include <sys/socket.h>
@@ -133,7 +134,7 @@ namespace
     }
 }
 
-namespace HTTPS_ServerMultithreaded::SimpleSSLSocketServer
+namespace HTTPS_ServerMultithreaded
 {
 
     constexpr std::string_view pageHTML {
@@ -152,6 +153,59 @@ namespace HTTPS_ServerMultithreaded::SimpleSSLSocketServer
             .append(pageHTML)
             .append("\r\n");
 
+    void processClientConnection(int clientSocket,
+                                 SSL_CTX* sslContext)
+    {
+        const SocketGuard clientSockGuard {clientSocket };
+        std::unique_ptr<SSL, decltype(&::SSL_free)> ssl {SSL_new(sslContext), SSL_free };
+        if (!ssl) {
+            PutSSLError("SSL_new");
+            return;
+        }
+
+        // const X509* cert = SSL_get_peer_certificate(ssl.get());
+        // printPeerCertificateInfo(ssl.get());
+
+
+        if (const int result = SSL_set_fd(ssl.get(), clientSocket); 1 != result)
+        {
+            PutSSLError("SSL_set_fd", result);
+            return;
+        }
+        else {
+            std::cerr << "OK. SSL_set_fd() = " << result << std::endl;
+        }
+
+        if (const int result = SSL_accept(ssl.get()); 1 != result)
+        {
+            PutSSLError("SSL_accept", result);
+            return;
+        }
+        else {
+            std::cerr << "OK. SSL_accept() = " << result << std::endl;
+        }
+
+        constexpr size_t bytesToRead {44}; // FIXME
+        std::array<char, 1024> buffer {};
+        if (const int bytesRead = SSL_read(ssl.get(), buffer.data(), bytesToRead); bytesToRead != bytesRead)
+        {
+            std::cout << std::string_view {buffer.data(), bytesToRead} << std::endl;
+        }
+        else {
+            PutSSLError("SSL_read", bytesRead);
+        }
+
+
+        if (const int bytesWritten = SSL_write(ssl.get(), response.data(), response.length()); bytesWritten) {
+            std::cout << bytesWritten << " bytes send\n";
+        }
+        else {
+            PutSSLError("SSL_read", bytesWritten);
+        }
+
+        SSL_shutdown(ssl.get());
+    }
+
     int runServer()
     {
         const int serverSocket = ::socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
@@ -168,19 +222,19 @@ namespace HTTPS_ServerMultithreaded::SimpleSSLSocketServer
         }
 
         const SSL_METHOD *method = SSLv23_server_method();
-        std::unique_ptr<SSL_CTX, decltype(&::SSL_CTX_free)> ctx {SSL_CTX_new(method), SSL_CTX_free };
-        if (!ctx) {
+        std::unique_ptr<SSL_CTX, decltype(&::SSL_CTX_free)> sslContext {SSL_CTX_new(method), SSL_CTX_free };
+        if (!sslContext) {
             return PutSSLError("SSL_CTX_new");
         }
 
         {
-            if (1 == SSL_CTX_use_certificate_file(ctx.get(), certFile.data(), SSL_FILETYPE_PEM)) {
+            if (1 == SSL_CTX_use_certificate_file(sslContext.get(), certFile.data(), SSL_FILETYPE_PEM)) {
                 std::cout << "CERTIFICATE INITIALISED" << std::endl;
             }
-            if (1 == SSL_CTX_use_PrivateKey_file(ctx.get(), keyFile.data(), SSL_FILETYPE_PEM)) {
+            if (1 == SSL_CTX_use_PrivateKey_file(sslContext.get(), keyFile.data(), SSL_FILETYPE_PEM)) {
                 std::cout << "KEY INITIALISED" << std::endl;
             }
-            if (1 == SSL_CTX_check_private_key(ctx.get())) {
+            if (1 == SSL_CTX_check_private_key(sslContext.get())) {
                 std::cout << "KEY VALIDATED" << std::endl;
             }
         }
@@ -200,10 +254,8 @@ namespace HTTPS_ServerMultithreaded::SimpleSSLSocketServer
 
         std::cout << std::format("Running on https://{}:{}", host, port) << std::endl;
 
-        constexpr size_t bytesToRead {44}; // FIXME
         sockaddr_in clientAddr {};
         socklen_t addLen { sizeof(clientAddr) };
-        std::array<char, 1024> buffer {};
 
         while (true)
         {
@@ -214,58 +266,41 @@ namespace HTTPS_ServerMultithreaded::SimpleSSLSocketServer
                 continue;
             }
 
-            const SocketGuard clientSockGuard {clientSocket };
             std::cout << "Client connected " << inet_ntoa(clientAddr.sin_addr) << ':' << htons(clientAddr.sin_port) << std::endl;
 
-            std::unique_ptr<SSL, decltype(&::SSL_free)> ssl {SSL_new(ctx.get()), SSL_free };
-            if (!ssl) {
-                PutSSLError("SSL_new");
-                continue;
-            }
-
-            // const X509* cert = SSL_get_peer_certificate(ssl.get());
-            // printPeerCertificateInfo(ssl.get());
-
-
-            if (const int result = SSL_set_fd(ssl.get(), clientSocket); 1 != result)
-            {
-                PutSSLError("SSL_set_fd", result);
-                continue;
-            }
-            else {
-                std::cerr << "OK. SSL_set_fd() = " << result << std::endl;
-            }
-
-            if (const int result = SSL_accept(ssl.get()); 1 != result)
-            {
-                PutSSLError("SSL_accept", result);
-                continue;
-            }
-            else {
-                std::cerr << "OK. SSL_accept() = " << result << std::endl;
-            }
-
-            if (const int bytesRead = SSL_read(ssl.get(), buffer.data(), bytesToRead); bytesToRead != bytesRead)
-            {
-                std::cout << std::string_view {buffer.data(), bytesToRead} << std::endl;
-            }
-            else {
-                PutSSLError("SSL_read", bytesRead);
-            }
-
-
-            if (const int bytesWritten = SSL_write(ssl.get(), response.data(), response.length()); bytesWritten) {
-                std::cout << bytesWritten << " bytes send\n";
-            }
-            else {
-                PutSSLError("SSL_read", bytesWritten);
-            }
-
-            SSL_shutdown(ssl.get());
+            std::thread T {processClientConnection, clientSocket, sslContext.get()};
+            T.detach();
         }
     }
 };
 
-void HTTPS_ServerMultithreaded::TestAll(){
+struct Worker
+{
+    void task()
+    {
+        int i = 0;
+        while (true)
+        {
+            std::cout << ++i << std::endl;
+            std::this_thread::sleep_for(std::chrono::seconds(1));
+        }
+    }
 
+    void start()
+    {
+        for (int i = 0; i < 5; ++i)
+        {
+            std::thread T {&Worker::task, this};
+            // T.join();
+            T.detach();
+        }
+    }
+};
+
+void HTTPS_ServerMultithreaded::TestAll()
+{
+    // Worker{}.start();
+    // std::this_thread::sleep_for(std::chrono::seconds(10));
+
+    runServer();
 };
