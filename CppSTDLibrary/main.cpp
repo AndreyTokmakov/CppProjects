@@ -259,7 +259,7 @@ int main(int argc, char** argv)
     // ObjectOrientedProgramming::TestAll();
     // Optional::TestAll();
     // PolymorphicMemoryResources::TestAll();
-    // Random::TestAll();
+    Random::TestAll();
     // Ranges::TestAll();
     // ReferenceWrapper::TestAll();
     // StarshipOperator::TestAll();
@@ -274,7 +274,7 @@ int main(int argc, char** argv)
     // SharedPtr_Tests::TestAll();
     // Variant::TestAll();
     // VolatileTests::TestAll();
-    TypeTraits::TestAll();
+    // TypeTraits::TestAll();
     // Tuple::TestAll();
     // TypeCast::TestAll();
     // Int::TestAll();

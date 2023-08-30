@@ -530,6 +530,38 @@ namespace LinkedList {
 		PrintList(result);
 	}
 
+    //----------------------------------------------------------------------//
+
+    template<typename T>
+    Node<int>* _insert_into_sorted_list_3(Node<T>* root, T value)
+    {
+        Node<T>* const new_node = new Node<T>(value);
+        if (nullptr == root || root->data > value) {
+            new_node->next = root;
+            return new_node;
+        }
+
+        Node<T> *node = root->next, *prev = root;
+        while (nullptr != node && node->data <= value) {
+            prev = node;
+            node = node->next;
+        }
+
+        prev->next = new_node;
+        new_node->next = node;
+
+        return root;
+    }
+
+    void Insert_Into_Sorted_List_3()
+    {
+        Node<int>* list = InitList({ 1,2,4,6,8,10,12,14 });
+        PrintList(list);
+
+        Node<int>* result = _insert_into_sorted_list_3(list, 9);
+        PrintList(result);
+    }
+
 	//----------------------------------------------------------------------//
 
 	template<typename T>
@@ -1188,10 +1220,11 @@ void LinkedList::TEST_ALL()
 	// LinkedList::Check_If_Palindrom();
 
 	// LinkedList::Merge_Two_Lists();
-	LinkedList::Merge_Two_Lists_2();
+	// LinkedList::Merge_Two_Lists_2();
 
 	// LinkedList::Insert_Into_Sorted_List();
 	// LinkedList::Insert_Into_Sorted_List_2();
+	LinkedList::Insert_Into_Sorted_List_3();
 
 	// LinkedList::DeleteeNodes_ByValue();
 	// LinkedList::DeleteeNodes_ByValue2();

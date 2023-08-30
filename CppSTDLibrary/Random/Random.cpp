@@ -102,7 +102,8 @@ namespace Random::Strings {
 	}
 }
 
-void GenerateNumbersInRange() {
+void GenerateNumbersInRange()
+{
     std::random_device rd;  //Will be used to obtain a seed for the random number engine
     std::mt19937 gen(rd()); //Standard mersenne_twister_engine seeded with rd()
     std::uniform_real_distribution<> distribution(-0.1, 0.1);
@@ -111,11 +112,47 @@ void GenerateNumbersInRange() {
     }
 }
 
+
+namespace Random::PrimeNumbers
+{
+    constexpr bool isPrime(int value)
+    {
+        if (1 == value || 2 == value)
+            return true;
+        else if (0 == value % 2 || 0 == value % 3)
+            return false;
+
+        for (int i = 5; (i * i) <= value; i += 2) {
+            if (0 == value % i)
+                return false;
+        }
+        return true;
+    }
+
+    int randomPrimeNumber() {
+        std::random_device rd;
+        std::mt19937 engine{rd()};
+        std::uniform_int_distribution<int> dist {1, std::numeric_limits<int>::max()};
+        int n{0};
+        while ((n = dist(engine)) && !isPrime(n)) {}
+        return n;
+    }
+
+
+    void getRandomPrime_Test()
+    {
+        std::cout << randomPrimeNumber() << std::endl;
+    }
+}
+
+
+
+
 void Random::TestAll()
 {
 	// Random::SimpleRandomNumbers();
 
-	Random::Random_INT_UniformDistribution();
+	// Random::Random_INT_UniformDistribution();
 
 	// UniformRealDistribution::test();
 
@@ -123,4 +160,5 @@ void Random::TestAll()
 
     // GenerateNumbersInRange();
 
+    PrimeNumbers::getRandomPrime_Test();
 }

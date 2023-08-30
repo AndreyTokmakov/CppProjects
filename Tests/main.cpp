@@ -545,7 +545,7 @@ namespace Conversation
     void test2()
     {
         Fun(A{});
-        Fun(B{}); // #B Will not compile due to explicit ctor
+        // Fun(B{}); // #B Will not compile due to explicit ctor
     }
 }
 
@@ -557,6 +557,11 @@ int main([[maybe_unused]] int argc,
     // parseInputParams(std::vector {"one", "two", "three", "four", "five"}.data(), 5);
 
 
+    std::map<std::string, std::string> map {};
+
+    std::string text = map["has_some"];
+
+    std::cout << std::quoted(text) << std::endl;
 
 
 
