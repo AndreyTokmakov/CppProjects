@@ -1217,7 +1217,7 @@ void LinkedList::TEST_ALL()
 	// LinkedList::Insert_Into_Sorted_List_3();
 
 	// LinkedList::DeleteNodes_ByValue();
-	LinkedList::DeleteNodes_ByValue2();
+	// LinkedList::DeleteNodes_ByValue2();
 	// LinkedList::DeleteeNodes_ByValue3();
 	// LinkedList::DeleteeNodes_By_Position();
 	// LinkedList::DeleteeNodes_By_Position();
@@ -1226,7 +1226,7 @@ void LinkedList::TEST_ALL()
 	// LinkedList::MoveAllOccurrencesToTheEnd_TEST();
 
 	// LinkedList::Delete_Duplicates();
-	// LinkedList::Delete_Duplicates_InSortedList();
+	LinkedList::Delete_Duplicates_InSortedList();
 
     // LinkedList::FindMiddleElement();
     // LinkedList::Remove_N_Node_From_End();

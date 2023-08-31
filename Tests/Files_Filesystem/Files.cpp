@@ -49,14 +49,92 @@ namespace Files
         std::cout << "Bytes read: " << bytesReadTotal << std::endl;
         std::cout << "File size : " << std::filesystem::file_size(file_path) << std::endl;
     }
+
+    void Experiments()
+    {
+        namespace fs = std::filesystem;
+
+        // Create a backup folder if it doesn't exist
+        const fs::path backupFolder = "/tmp/backup";
+        if (!fs::exists(backupFolder))
+            create_directory(backupFolder);
+
+
+        // Check if there is sufficient space
+        /*
+        if (fs::space(backup_folder).available < fs::file_size(file))
+            throw std::runtime_error("Not enough space for backup.");
+        */
+
+        const fs::space_info spaceInfo = fs::space(backupFolder);
+        std::cout << "Space info : " << backupFolder << std::endl;
+        std::cout << "\tavailable: " << spaceInfo.available << std::endl;
+        std::cout << "\tfree     : " << spaceInfo.free << std::endl;
+        std::cout << "\tcapacity : " << spaceInfo.capacity << std::endl;
+
+    }
+
+    void demo_perms(std::filesystem::perms p)
+    {
+        using std::filesystem::perms;
+        auto show = [=](char op, perms perm)
+        {
+            std::cout << (perms::none == (perm & p) ? '-' : op);
+        };
+        show('r', perms::owner_read);
+        show('w', perms::owner_write);
+        show('x', perms::owner_exec);
+        show('r', perms::group_read);
+        show('w', perms::group_write);
+        show('x', perms::group_exec);
+        show('r', perms::others_read);
+        show('w', perms::others_write);
+        show('x', perms::others_exec);
+        std::cout << '\n';
+    }
+
+
+    void testFilePermissions()
+    {
+        namespace fs = std::filesystem;
+
+        // Create a backup folder if it doesn't exist
+        const fs::path backupFolder = "/tmp/backup";
+        if (!fs::exists(backupFolder))
+            create_directory(backupFolder);
+
+        const fs::path filePath = backupFolder / "test.txt";
+        std::cout << filePath << std::endl;
+        if (std::ofstream file {filePath.c_str()}; file.is_open()) // create file
+        {
+            std::cout << "Created file with permissions: ";
+            demo_perms(std::filesystem::status(filePath).permissions());
+
+            /*
+            std::filesystem::permissions(
+                    "test.txt",
+                    std::filesystem::perms::owner_all | std::filesystem::perms::group_all,
+                    std::filesystem::perm_options::add
+            );
+
+            std::cout << "After adding u+rwx and g+rwx:  ";
+            demo_perms(std::filesystem::status("test.txt").permissions());
+
+            std::filesystem::remove("test.txt");
+            */
+        }
+    }
 };
 
 
 void Files::TestAll()
 {
-    TestFileLength();
+    // TestFileLength();
 
     // ReadFileBlocks();
+
+    // Experiments();
+    testFilePermissions();
 };
 
 
