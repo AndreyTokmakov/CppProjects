@@ -375,11 +375,14 @@ namespace Filesystem::DocumentStorageTests {
     }
 }
 
-namespace Filesystem::Files {
+namespace Filesystem::Files
+{
     namespace fs = std::filesystem;
 
     /* Test directory: */
-    static const std::string testDir = R"(S:\Temp\Folder_For_Testing)";
+    const std::filesystem::path testDir {R"(/home/andtokm/DiskS/Temp/TESTING_ROOT_DIR/)"};
+    const std::filesystem::path filePath {R"(/home/andtokm/DiskS/Temp/TESTING_ROOT_DIR/test_run.log)"};
+    const std::filesystem::path filePathNoWrite {R"(/home/andtokm/DiskS/Temp/TESTING_ROOT_DIR/TestFile_NotWritable.log)"};
 
     void Check_IsFile_Exists() {
         const std::filesystem::path path { R"(/home/andtokm/tmp/TEST_FILES/TestFile.txt)" };
@@ -395,7 +398,7 @@ namespace Filesystem::Files {
     }
 
     void CrateFile() {
-        auto testFile = std::filesystem::path(testDir + R"(\Read_Write_Files\File_to_Create.txt)");
+        auto testFile = testDir / "Read_Write_Files/ile_to_Create.txt";
         std::ofstream dataFile(testFile);
         if (!dataFile) {
             std::cerr << "OOPS, can't open \"" << testFile.string() << "\"\n";
@@ -427,18 +430,31 @@ namespace Filesystem::Files {
     }
 
 
-    void Last_Write_Time() {
+    void Last_Write_Time()
+    {
         using namespace std::chrono_literals;
-        const auto file = fs::path(testDir + R"(\File_1.txt)");
 
-        auto lwt = std::filesystem::last_write_time(file);
+        const std::filesystem::path tempFile = std::filesystem::temp_directory_path() / "example.bin";
+        std::ofstream {tempFile.c_str()}.put('a'); // create file
 
-        //std::time_t cftime = decltype(lwt)::clock::
-        //std::cout << "File write time is " << std::asctime(std::localtime(&cftime)) << '\n';
+        std::cout << "Temporary file: " << tempFile << std::endl;
+
+        std::filesystem::file_time_type fileTime = std::filesystem::last_write_time(tempFile);
+        std::cout << std::format("File write time is {} (Original)", fileTime) << std::endl;
+
+        // move file write time 1 hour to the future
+        std::filesystem::last_write_time(tempFile, fileTime + 1h);
+
+        // read back from the filesystem
+        fileTime = std::filesystem::last_write_time(tempFile);
+        std::cout << std::format("File write time is {} (Updated)", fileTime) << std::endl;
+
+        std::filesystem::remove(tempFile);
     }
 
-    void File_Params() {
-        const auto file = fs::path(testDir + R"(\File_1.txt)");
+    void File_Params()
+    {
+        const std::filesystem::path file = testDir / "test.txt";
 
         std::cout << "exists: " << std::filesystem::exists(file) << "\n"
                   << "root_name: " << file.root_name() << "\n"
@@ -461,72 +477,78 @@ namespace Filesystem::Files {
     }
 }
 
-namespace Filesystem::Permissions {
+namespace Filesystem::Permissions
+{
+    using perms = std::filesystem::perms;
 
-    void demo_perms(std::filesystem::perms p)
+    constexpr std::string_view testDir {R"(/home/andtokm/DiskS/Temp/TESTING_ROOT_DIR/)"};
+    constexpr std::string_view filePath {R"(/home/andtokm/DiskS/Temp/TESTING_ROOT_DIR/test_run.log)"};
+    constexpr std::string_view filePathNoWrite {R"(/home/andtokm/DiskS/Temp/TESTING_ROOT_DIR/TestFile_NotWritable.log)"};
+
+
+
+    void printPermissions(const perms& p)
     {
-        std::cout << ((p & std::filesystem::perms::owner_read) != std::filesystem::perms::none ? "r" : "-")
-                  << ((p & std::filesystem::perms::owner_write) != std::filesystem::perms::none ? "w" : "-")
-                  << ((p & std::filesystem::perms::owner_exec) != std::filesystem::perms::none ? "x" : "-")
-                  << ((p & std::filesystem::perms::group_read) != std::filesystem::perms::none ? "r" : "-")
-                  << ((p & std::filesystem::perms::group_write) != std::filesystem::perms::none ? "w" : "-")
-                  << ((p & std::filesystem::perms::group_exec) != std::filesystem::perms::none ? "x" : "-")
-                  << ((p & std::filesystem::perms::others_read) != std::filesystem::perms::none ? "r" : "-")
-                  << ((p & std::filesystem::perms::others_write) != std::filesystem::perms::none ? "w" : "-")
-                  << ((p & std::filesystem::perms::others_exec) != std::filesystem::perms::none ? "x" : "-")
-                  << '\n';
+        auto show = [=](char op, perms perm) {
+            std::cout << (perms::none == (perm & p) ? '-' : op);
+        };
+        show('r', perms::owner_read);
+        show('w', perms::owner_write);
+        show('x', perms::owner_exec);
+        show('r', perms::group_read);
+        show('w', perms::group_write);
+        show('x', perms::group_exec);
+        show('r', perms::others_read);
+        show('w', perms::others_write);
+        show('x', perms::others_exec);
+        std::cout << '\n';
     }
 
-    void Get_File_Permissions() {
-        const std::filesystem::path file = R"(S:\Temp\Folder_For_Testing\Read_Write_Files\read_write.txt)";
-        demo_perms(std::filesystem::status(file).permissions());
+    void Get_File_Permissions()
+    {
+        printPermissions(std::filesystem::status(filePath).permissions());
     }
 
-    void If_File_Writable() {
+    void If_File_Writable()
+    {
+        for (const std::string_view path: {filePath, filePathNoWrite})
         {
-            const std::filesystem::path file = R"(S:\Temp\Folder_For_Testing\Read_Write_Files\read_write.txt)";
-            auto status = std::filesystem::status(file);
-
-            std::cout << "File: " << file << std::endl;
-            if ((status.permissions() & std::filesystem::perms{ 0222 }) != std::filesystem::perms::none) {
-                std::cout << "File writable" << std::endl;
+            const std::filesystem::path file { path};
+            if (exists(file))
+            {
+                auto status = std::filesystem::status(file);
+                std::cout << "File: " << file << std::endl;
+                if ((status.permissions() & std::filesystem::perms{ 0222 }) != std::filesystem::perms::none) {
+                    std::cout << "File writable" << std::endl;
+                }
+                else {
+                    std::cout << "File NON writable" << std::endl;
+                }
             }
         }
-
-        {
-            const std::filesystem::path file = R"(S:\Temp\Folder_For_Testing\Read_Write_Files\no_writable_file.txt)";
-            auto status = std::filesystem::status(file);
-
-            std::cout << "File: " << file << std::endl;
-            if ((status.permissions() & std::filesystem::perms{ 0222 }) != std::filesystem::perms::none) {
-                std::cout << "File writable" << std::endl;
-            }
-            else
-                std::cout << "File NON writable" << std::endl;
-        }
-
     }
 }
 
-namespace Filesystem::Sizes {
+namespace Filesystem::Sizes
+{
+    constexpr std::string_view testDir {R"(/home/andtokm/DiskS/Temp/TESTING_ROOT_DIR/)"};
+    constexpr std::string_view filePath {R"(/home/andtokm/DiskS/Temp/TESTING_ROOT_DIR/test_run.log)"};
 
-    void FileSize() {
-        constexpr std::string_view file {R"(S:\Temp\TESTING_ROOT_DIR\test_run.log)"};
-        std::cout << "File size = " << std::filesystem::file_size(file) << std::endl;
+    void FileSize()
+    {
+        std::cout << "File " << std::quoted(filePath) << " size: "
+                  << std::filesystem::file_size(filePath) << std::endl;
     }
 
     void TestFileSize()
     {
-        constexpr std::string_view file_path
-                { R"(/home/andtokm/DiskS/Temp/TESTING_ROOT_DIR/test_run.log)"};
-
-        if (std::ifstream file(file_path.data(), std::ios::binary); file.is_open() && file.good()) {
+        if (std::ifstream file(filePath.data(), std::ios::binary); file.is_open() && file.good()) {
             file.seekg(0, std::ios_base::end);
             const size_t fileSize = file.tellg();
             file.seekg(0, std::ios_base::beg);
 
             std::cout << "Size : " << fileSize << std::endl;
-            std::cout << "Size : " << std::filesystem::file_size(file_path) << std::endl;
+            std::cout << "Size : " << std::filesystem::file_size(filePath) << std::endl;
         }
     }
 
@@ -549,11 +571,10 @@ namespace Filesystem::Sizes {
         return size;
     }
 
-
-    void Directory_Size() {
-        constexpr std::string_view dirPath{ R"(S:\Temp\TESTING_ROOT_DIR)" };
-        const size_t size = dir_size(dirPath);
-        // std::cout << std::format("Folder '{}' size is {}", dirPath, size) << std::endl;
+    void Directory_Size()
+    {
+        const size_t size = dir_size(testDir);
+        std::cout << std::format("Folder '{}' size is {}", testDir, size) << std::endl;
     }
 
     void Experiments() {
@@ -612,9 +633,8 @@ namespace Filesystem::Tests {
     }
 
 
-
-    void Tests() {
-
+    void Tests()
+    {
         constexpr std::string_view dir = R"(S:\Projects\cpp\third_party\VTK)";
         std::vector paths = CollectPaths(dir);
         std::cout << paths.size() << std::endl;
@@ -626,7 +646,6 @@ namespace Filesystem::Tests {
             }
         }
         std::cout << count << std::endl;
-
     }
 }
 
@@ -794,6 +813,48 @@ namespace Filesystem::Experiments {
     }
 };
 
+namespace Filesystem::SpaceInfo
+{
+    void GetSpaceInfo()
+    {
+        // Create a backup folder if it doesn't exist
+        const std::filesystem::path backupFolder = "/tmp/backup";
+        if (!std::filesystem::exists(backupFolder))
+            create_directory(backupFolder);
+
+
+        const std::filesystem::space_info spaceInfo = std::filesystem::space(backupFolder);
+        std::cout << "Space info : " << backupFolder << std::endl;
+        std::cout << "\tavailable: " << spaceInfo.available << std::endl;
+        std::cout << "\tfree     : " << spaceInfo.free << std::endl;
+        std::cout << "\tcapacity : " << spaceInfo.capacity << std::endl;
+    }
+
+    void print_space_info(auto const& dirs, int width = 20)
+    {
+        (std::cout << std::left).imbue(std::locale("en_US.UTF-8"));
+        for (const auto s : {"Capacity", "Free", "Available", "Dir"})
+            std::cout << "│ " << std::setw(width) << s << ' ';
+        std::cout << '\n';
+        std::error_code ec;
+        for (auto const& dir : dirs) {
+            const std::filesystem::space_info si = std::filesystem::space(dir, ec);
+            std::cout
+                    << "│ " << std::setw(width) << static_cast<std::intmax_t>(si.capacity) << ' '
+                    << "│ " << std::setw(width) << static_cast<std::intmax_t>(si.free) << ' '
+                    << "│ " << std::setw(width) << static_cast<std::intmax_t>(si.available) << ' '
+                    << "│ " << dir << '\n';
+        }
+    }
+
+    void PrintSpaceInfo()
+    {
+        const auto dirs = { "/dev/null", "/tmp", "/home", "/null" };
+        print_space_info(dirs);
+    }
+
+}
+
 
 void Filesystem::TestAll()
 {
@@ -826,7 +887,7 @@ void Filesystem::TestAll()
     // Files::CrateFile();
     // Files::CopyFile();
     // Files::MoveFile();
-    // Files::Last_Write_Time();
+    Files::Last_Write_Time();
     // Files::Check_IsFile_Exists();
 
 
@@ -836,8 +897,8 @@ void Filesystem::TestAll()
     // DocumentStorageTests::Test();
 
 
-    Sizes::FileSize();
-    Sizes::TestFileSize();
+    // Sizes::FileSize();
+    // Sizes::TestFileSize();
     // Sizes::Directory_Size();
     // Sizes::Experiments();
 
@@ -850,6 +911,9 @@ void Filesystem::TestAll()
     // Experiments::CreateFile_and_GetTime();
     // Experiments::VARIOUS_TESTS();
     // Experiments::ListDirectory_GetModifiedTime();
+
+    // SpaceInfo::GetSpaceInfo();
+    // SpaceInfo::PrintSpaceInfo();
 
 
     // Attributes::Test();

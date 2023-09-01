@@ -242,7 +242,7 @@ int main(int argc, char** argv)
     // Initialization::TestAll();
     // IteratorTests::TestAll();
     // FilesStreams::TestAll();
-    // Filesystem::TestAll();
+    Filesystem::TestAll();
     // Format::TestAll();
     // FunctionObjects::TestAll();
     // Hashing::TestAll();
@@ -259,7 +259,7 @@ int main(int argc, char** argv)
     // ObjectOrientedProgramming::TestAll();
     // Optional::TestAll();
     // PolymorphicMemoryResources::TestAll();
-    Random::TestAll();
+    // Random::TestAll();
     // Ranges::TestAll();
     // ReferenceWrapper::TestAll();
     // StarshipOperator::TestAll();
