@@ -366,7 +366,8 @@ namespace LinkedList {
         return root;
     }
 
-    void Remove_N_Node_From_End() {
+    void Remove_N_Node_From_End()
+    {
         Node<int>* root = InitList({ 1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20 });
         constexpr int N = 7;
         _remove_N_Node_From_End(root, N);
@@ -893,7 +894,8 @@ namespace LinkedList {
 
 	//----------------------------------------------------------------------//
 
-	void Reverse_Even_Subarrays() {
+	void Reverse_Even_Subarrays()
+    {
 		Node<int>* list = InitList({ 2, 18, 24, 3, 5, 7, 9, 6, 12 }); // -> 24, 18, 2, 3, 5, 7, 9, 12, 6
 		Node<int>* node = list;
 
@@ -1226,10 +1228,10 @@ void LinkedList::TEST_ALL()
 	// LinkedList::MoveAllOccurrencesToTheEnd_TEST();
 
 	// LinkedList::Delete_Duplicates();
-	LinkedList::Delete_Duplicates_InSortedList();
+	// LinkedList::Delete_Duplicates_InSortedList();
 
     // LinkedList::FindMiddleElement();
-    // LinkedList::Remove_N_Node_From_End();
+    LinkedList::Remove_N_Node_From_End();
     // LinkedList::Find_Nth_Element_FromTheEnd();
 	// LinkedList::MoveAllOccurrencesToTheEnd();
 
