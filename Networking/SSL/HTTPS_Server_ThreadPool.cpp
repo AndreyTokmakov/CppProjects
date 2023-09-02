@@ -150,86 +150,91 @@ namespace HTTPS_Server_ThreadPool
                 std::unique_ptr<SSL_CTX, decltype(&::SSL_CTX_free)> {nullptr, SSL_CTX_free }
         };
 
+        /** Maximum number of request handler workers: **/
+        // static inline const size_t THREADS_COUNT { std::thread::hardware_concurrency() };
+        static inline const size_t THREADS_COUNT { std::thread::hardware_concurrency() * 4 };
+
+        static inline const std::chrono::duration<int64_t, std::ratio<1, 1000>> QUEUE_TIMEOUT {
+                std::chrono::milliseconds(2000)
+        };
+
         mutable std::mutex mutex;
         std::deque<int> sessions;
         std::condition_variable gotClientRequest;
-        std::atomic_bool run { true };
         std::vector<std::jthread> workers {};
 
         template<class Rep, class Period>
-        bool getClientRequestHandle(int& clientHandle,
-                                    const std::chrono::duration<Rep, Period> &timeout) noexcept
+        int getClientRequestHandle(const std::chrono::duration<Rep, Period> &timeout) noexcept
         {
+            int clientSocket { INVALID_SOCKET };
+
             {
                 std::unique_lock<std::mutex> lock {mutex};
                 if (!gotClientRequest.wait_for(lock, timeout, [this] { return !sessions.empty(); }))
-                    return false;
-                clientHandle = sessions.front();
+                    return INVALID_SOCKET;
+                clientSocket = sessions.front();
                 sessions.pop_front();
             }
 
             gotClientRequest.notify_all();
-            return true;
+            return clientSocket;
+        }
+
+        // TODO: Rename
+        void submit(int clientSocket) noexcept
+        {
+            {
+                std::lock_guard<std::mutex> lock(mutex);
+                sessions.push_back(clientSocket);
+            }
+            gotClientRequest.notify_one();
         }
 
         [[noreturn]]
         void handleClientSession()
         {
-            int clientSocket {INVALID_SOCKET};
             constexpr size_t bytesToRead {44}; // FIXME
             std::array<char, 1024> buffer {};
 
-            while (run)
+            while (true)
             {
-                if (bool result = getClientRequestHandle(clientSocket, QUEUE_TIMEOUT); result) {
-
+                if (int clientSocket = getClientRequestHandle(QUEUE_TIMEOUT); INVALID_SOCKET != clientSocket)
+                {
                     const SocketGuard clientSockGuard{clientSocket};
                     std::unique_ptr<SSL, decltype(&::SSL_free)> ssl{SSL_new(sslContext.get()), SSL_free};
                     if (!ssl) {
                         PutSSLError("SSL_new");
-                        return;
                     }
+
+                    // const X509* cert = SSL_get_peer_certificate(ssl.get());
+                    // printPeerCertificateInfo(ssl.get());
+
+                    if (const int result = SSL_set_fd(ssl.get(), clientSocket); 1 != result) {
+                        PutSSLError("SSL_set_fd", result);
+                    }
+                    if (const int result = SSL_accept(ssl.get()); 1 != result) {
+                        PutSSLError("SSL_accept", result);
+                    }
+
+                    if (const int bytesRead = SSL_read(ssl.get(), buffer.data(), bytesToRead); bytesToRead != bytesRead)
+                    {
+                        std::cout << std::string_view {buffer.data(), bytesToRead} << std::endl;
+                    }
+                    else {
+                        PutSSLError("SSL_read", bytesRead);
+                    }
+
+
+                    if (const int bytesWritten = SSL_write(ssl.get(), response.data(), response.length()); bytesWritten) {
+                        std::cout << bytesWritten << " bytes send\n";
+                    }
+                    else {
+                        PutSSLError("SSL_read", bytesWritten);
+                    }
+
+                    SSL_shutdown(ssl.get());
                 }
             }
-        }
-
-        int processClientConnection(int clientSocket)
-        {
-            const SocketGuard clientSockGuard {clientSocket };
-            std::unique_ptr<SSL, decltype(&::SSL_free)> ssl {SSL_new(sslContext.get()), SSL_free };
-            if (!ssl) {
-                return PutSSLError("SSL_new");
-            }
-
-            // const X509* cert = SSL_get_peer_certificate(ssl.get());
-            // printPeerCertificateInfo(ssl.get());
-
-            if (const int result = SSL_set_fd(ssl.get(), clientSocket); 1 != result) {
-                return PutSSLError("SSL_set_fd", result);
-            }
-            if (const int result = SSL_accept(ssl.get()); 1 != result) {
-                return PutSSLError("SSL_accept", result);
-            }
-
-            constexpr size_t bytesToRead {44}; // FIXME
-            std::array<char, 1024> buffer {};
-            if (const int bytesRead = SSL_read(ssl.get(), buffer.data(), bytesToRead); bytesToRead != bytesRead)
-            {
-                std::cout << std::string_view {buffer.data(), bytesToRead} << std::endl;
-            }
-            else {
-                PutSSLError("SSL_read", bytesRead);
-            }
-
-
-            if (const int bytesWritten = SSL_write(ssl.get(), response.data(), response.length()); bytesWritten) {
-                std::cout << bytesWritten << " bytes send\n";
-            }
-            else {
-                PutSSLError("SSL_read", bytesWritten);
-            }
-
-            return SSL_shutdown(ssl.get());
         }
 
         bool initSSL()
@@ -266,7 +271,7 @@ namespace HTTPS_Server_ThreadPool
             return true;
         }
 
-        int start()
+        int start(std::string_view host, uint16_t port)
         {
             if (!initSSL())
                 return -1;
@@ -277,9 +282,6 @@ namespace HTTPS_Server_ThreadPool
             }
 
             const SocketGuard guard { serverSocket };
-
-            constexpr uint16_t port { 52525 };
-            constexpr std::string_view host {"0.0.0.0"};
             sockaddr_in server {PF_INET, htons(port), {.s_addr = inet_addr(host.data())}, {}};
 
             if (SOCKET_ERROR == ::bind(serverSocket, reinterpret_cast<sockaddr*>(&server), sizeof(server))) {
@@ -296,6 +298,10 @@ namespace HTTPS_Server_ThreadPool
             sockaddr_in clientAddr {};
             socklen_t addLen { sizeof(clientAddr) };
 
+            for (size_t i = 0; i < THREADS_COUNT; ++i) {
+                workers.emplace_back(&HTTPS_Server::handleClientSession, this);
+            }
+
             while (true)
             {
                 std::cout << "\nWaiting for next connection ....\n";
@@ -307,9 +313,7 @@ namespace HTTPS_Server_ThreadPool
 
                 std::cout << "Client connected " << inet_ntoa(clientAddr.sin_addr)
                           << ':' << htons(clientAddr.sin_port) << std::endl;
-
-                std::thread T { &HTTPS_Server::processClientConnection, this, clientSocket};
-                T.detach();
+                submit(clientSocket);
             }
         }
     };
@@ -317,5 +321,6 @@ namespace HTTPS_Server_ThreadPool
 
 void HTTPS_Server_ThreadPool::TestAll()
 {
-
+    HTTPS_Server server;
+    server.start("0.0.0.0", 52525);
 };
