@@ -83,17 +83,9 @@ namespace LinkedList
 		std::cout << text;
 	}
 
-    template<typename _Ty>
-    std::ostream& operator<<(std::ostream& stream, const Node<int>* root)
-    {
-        Node<_Ty>* node = root;
-        while (node) {
-            stream << node->data << ' ';
-            node = node->next;
-        }
-        return stream;
-    }
+
 }
+
 
 namespace LinkedList {
 
@@ -509,8 +501,8 @@ namespace LinkedList {
         Node<int>* list1 = InitList({ 0,2,4,6,8,10,12,14 });
         Node<int>* list2 = InitList({ 1,3,5,7,9,11,13,15 });
 
-        Node<int>* result = merge_recursion_non_recur(list1, list2);
-        std::cout << result << std::endl;
+        const Node<int>* result = merge_recursion_non_recur(list1, list2);
+        PrintList(result);
     }
 
 	//----------------------------------------------------------------------//
@@ -1265,7 +1257,7 @@ void LinkedList::TEST_ALL()
 
 	// LinkedList::Merge_Two_Lists();
 	// LinkedList::Merge_Two_Lists_2();
-	LinkedList::Merge_Two_Lists_NonRecursive();
+	// LinkedList::Merge_Two_Lists_NonRecursive();
 
 	// LinkedList::Insert_Into_Sorted_List();
 	// LinkedList::Insert_Into_Sorted_List_2();

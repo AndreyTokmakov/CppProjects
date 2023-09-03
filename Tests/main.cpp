@@ -549,6 +549,42 @@ namespace Conversation
     }
 }
 
+namespace PrintTemplateType
+{
+    template<typename T>
+    struct Node
+    {
+        T value {};
+    };
+
+    template<typename T>
+    std::ostream& operator<<(std::ostream& stream, const Node<T>& node)
+    {
+        stream << node.value;
+        return stream;
+    }
+
+    template<>
+    std::ostream& operator<<(std::ostream& stream, const Node<int>& node)
+    {
+        stream << "Integer value: " << node.value;
+        return stream;
+    }
+
+
+    void test()
+    {
+        {
+            Node<int> node{123};
+            std::cout << node << std::endl;
+        }
+        {
+            Node<std::string> node{"123"};
+            std::cout << node << std::endl;
+        }
+    }
+}
+
 
 int main([[maybe_unused]] int argc,
          [[maybe_unused]] char** argv)
@@ -556,7 +592,7 @@ int main([[maybe_unused]] int argc,
     const std::vector<std::string_view> args(argv + 1, argv + argc);
     // parseInputParams(std::vector {"one", "two", "three", "four", "five"}.data(), 5);
 
-
+    PrintTemplateType::test();
 
 
     // ConceptsTests::If_Constexpr_Concepts();

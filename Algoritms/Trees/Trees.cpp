@@ -1747,19 +1747,19 @@ namespace Trees::Level_Order
     void Level_Order_Traversal()
     {
         {
-            BinTree::BinaryTree tree{ 40,22,85 ,10,30,54,125 ,5,12 ,25,32 ,45,60, 120,130,4,7,11,15,24,28,31,35,42,50,55,65,100,122,127 };
+            BinTree::BinaryTree tree { 40,22,85 ,10,30,54,125 ,5,12 ,25,32 ,45,60, 120,130,4,7,11,15,24,28,31,35,42,50,55,65,100,122,127 };
             __LevelOrderTraversal_Map(tree.getRoot());
         }
         return;
 
         std::cout << std::endl;
         {
-            BinTree::BinaryTree tree{ 40,22,85 ,10,30,54,125 ,5,12 ,25,32 ,45,60, 120,130,4,7,11,15,24,28,31,35,42,50,55,65,100,122,127 };
+            BinTree::BinaryTree tree { 40,22,85 ,10,30,54,125 ,5,12 ,25,32 ,45,60, 120,130,4,7,11,15,24,28,31,35,42,50,55,65,100,122,127 };
             __LevelOrderTraversal_Queue(tree.getRoot());
         }
         std::cout << std::endl;
         {
-            BinTree::BinaryTree tree{ 40,22,85 ,10,30,54,125 ,5,12 ,25,32 ,45,60, 120,130,4,7,11,15,24,28,31,35,42,50,55,65,100,122,127 };
+            BinTree::BinaryTree tree { 40,22,85 ,10,30,54,125 ,5,12 ,25,32 ,45,60, 120,130,4,7,11,15,24,28,31,35,42,50,55,65,100,122,127 };
             __levelOrderTraversal3(tree.getRoot());
         }
     }
@@ -1832,9 +1832,9 @@ namespace Trees::Level_Order
 
     //---------------------------------------------------------------------------------------------
 
-    void largest_value_in_each_level(const BinTree::Node* node,
-                                     std::vector<int>& levels,
-                                     size_t level)
+    void _largest_value_in_each_level(const BinTree::Node* node,
+                                      std::vector<int>& levels,
+                                      size_t level)
     {
         if (nullptr == node)
             return;
@@ -1842,14 +1842,14 @@ namespace Trees::Level_Order
         int& maxElement = (level + 1) > levels.size() ? levels.emplace_back(std::numeric_limits<int>::min()) : levels[level];
         maxElement = std::max(maxElement, node->data);
 
-        largest_value_in_each_level(node->left, levels, level + 1);
-        largest_value_in_each_level(node->right, levels, level + 1);
+        _largest_value_in_each_level(node->left, levels, level + 1);
+        _largest_value_in_each_level(node->right, levels, level + 1);
     }
 
-    void largest_value_in_each_level(const BinTree::Node* node)
+    void Largest_Value_In_Each_Level_MAP(const BinTree::Node* node)
     {
         std::vector<int> levels;
-        largest_value_in_each_level(node, levels, 0);
+        _largest_value_in_each_level(node, levels, 0);
 
         for (const int val : levels) {
                 std::cout << val << " ";
@@ -1857,7 +1857,7 @@ namespace Trees::Level_Order
         }
     }
 
-    std::vector<int> largest_values(const BinTree::Node* root)
+    std::vector<int> _largest_values(const BinTree::Node* root)
     {
         std::vector<int> res;
         if (!root)
@@ -1887,9 +1887,9 @@ namespace Trees::Level_Order
     void Largest_Value_In_Each_Level()
     {
         const BinTree::BinaryTree tree {10, 5, 15, 3, 7, 12};
-        largest_value_in_each_level(tree.getRoot());  // 10 15 12
+        Largest_Value_In_Each_Level_MAP(tree.getRoot());  // 10 15 12
 
-        const std::vector<int> maximums = largest_values(tree.getRoot());  // 10 15 12
+        const std::vector<int> maximums = _largest_values(tree.getRoot());  // 10 15 12
         std::cout << maximums << std::endl;
     }
 }
@@ -1968,7 +1968,8 @@ namespace Trees::Min_and_Max_Elements
 
     //------------------------------------------------------------------------------------------------
 
-    BinTree::Node* __get_min_Nth_element_NonRecur(BinTree::Node* node, size_t k) {
+    BinTree::Node* __get_min_Nth_element_NonRecur(BinTree::Node* node, size_t k)
+    {
         std::vector<BinTree::Node*> stack {};
         BinTree::Node *curr = node;
 
@@ -1990,8 +1991,9 @@ namespace Trees::Min_and_Max_Elements
         return nullptr;
     }
 
-    void Find_N_th_MinElement_NonRecur() {
-        BinTree::BinaryTree tree{ 33,22,85,10,30,54,125,5,8,25,32,45,60,120,130 };
+    void Find_N_th_MinElement_NonRecur()
+    {
+        BinTree::BinaryTree tree { 33,22,85,10,30,54,125,5,8,25,32,45,60,120,130 };
 
         size_t K = 4;
         auto res = __get_min_Nth_element_NonRecur(tree.getRoot(), K);
@@ -2066,8 +2068,8 @@ void Trees::TEST_ALL()
 
     // Min_and_Max_Elements::Find_MIN_and_MAX_Element();
     // Min_and_Max_Elements::Find_N_th_MinElement();
-    Min_and_Max_Elements::Find_N_th_MinElement_NonRecur();
-    Min_and_Max_Elements::Find_N_th_Largest_MorrisTraversal();
+    // Min_and_Max_Elements::Find_N_th_MinElement_NonRecur();
+    // Min_and_Max_Elements::Find_N_th_Largest_MorrisTraversal();
 
 
     // BinTreeTests::Find_Element();
