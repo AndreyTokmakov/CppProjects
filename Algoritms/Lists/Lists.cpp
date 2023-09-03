@@ -82,6 +82,17 @@ namespace LinkedList
 		}
 		std::cout << text;
 	}
+
+    template<typename _Ty>
+    std::ostream& operator<<(std::ostream& stream, const Node<int>* root)
+    {
+        Node<_Ty>* node = root;
+        while (node) {
+            stream << node->data << ' ';
+            node = node->next;
+        }
+        return stream;
+    }
 }
 
 namespace LinkedList {
@@ -460,6 +471,47 @@ namespace LinkedList {
 		Node<int>* result = merge(list1, list2);
 		PrintList(result);
 	}
+
+    //----------------------------------------------------------------------//
+
+    template<typename T>
+    Node<int>* merge_recursion_non_recur(Node<T>* node1,
+                                         Node<T>* node2)
+    {
+        Node<int>* root = nullptr;
+        if (node1->data < node2->data) {
+            root = node1;
+            node1 = node1->next;
+        } else {
+            root = node2;
+            node2 = node2->next;
+        }
+
+        Node<int>* node = root;
+        while (node1 && node2)
+        {
+            if (node1->data < node2->data) {
+                node->next = node1;
+                node1 = node1->next;
+            }
+            else {
+                node->next = node2;
+                node2 = node2->next;
+            }
+            node = node->next;
+        }
+
+        return root;
+    }
+
+    void Merge_Two_Lists_NonRecursive()
+    {
+        Node<int>* list1 = InitList({ 0,2,4,6,8,10,12,14 });
+        Node<int>* list2 = InitList({ 1,3,5,7,9,11,13,15 });
+
+        Node<int>* result = merge_recursion_non_recur(list1, list2);
+        std::cout << result << std::endl;
+    }
 
 	//----------------------------------------------------------------------//
 
@@ -1213,6 +1265,7 @@ void LinkedList::TEST_ALL()
 
 	// LinkedList::Merge_Two_Lists();
 	// LinkedList::Merge_Two_Lists_2();
+	LinkedList::Merge_Two_Lists_NonRecursive();
 
 	// LinkedList::Insert_Into_Sorted_List();
 	// LinkedList::Insert_Into_Sorted_List_2();
@@ -1231,7 +1284,7 @@ void LinkedList::TEST_ALL()
 	// LinkedList::Delete_Duplicates_InSortedList();
 
     // LinkedList::FindMiddleElement();
-    LinkedList::Remove_N_Node_From_End();
+    // LinkedList::Remove_N_Node_From_End();
     // LinkedList::Find_Nth_Element_FromTheEnd();
 	// LinkedList::MoveAllOccurrencesToTheEnd();
 

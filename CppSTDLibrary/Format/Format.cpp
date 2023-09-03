@@ -133,6 +133,28 @@ namespace Format
     }
 };
 
+namespace Format::Date_and_Time
+{
+    using namespace std::literals;
+
+    void FormatTime()
+    {
+        std::chrono::hh_mm_ss c {16h + 32min + 10s};
+
+        const std::string& str1 = std::format("{:%R}", c);
+        const std::string& str2 = std::format("{:%T}", c);
+
+        std::cout << str1 << "  " << str2 << std::endl;
+    }
+
+    void Format_TimePoint()
+    {
+        const std::chrono::time_point now = std::chrono::system_clock::now();
+        std::cout << std::format("{:%d-%m-%Y %H:%M:%OS}", now) << '\n';
+    }
+
+}
+
 void Format::TestAll()
 {
     // Format_Numbers();
@@ -145,7 +167,10 @@ void Format::TestAll()
 
     // Make_Path();
 
-    Formatted_Size();
+    // Formatted_Size();
 
     // Experiments();
+
+    Date_and_Time::FormatTime();
+    Date_and_Time::Format_TimePoint();
 }

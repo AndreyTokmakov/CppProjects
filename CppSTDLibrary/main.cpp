@@ -229,7 +229,7 @@ int main(int argc, char** argv)
     // BitSet::TestAll();
     // BitwiseOperation::TestAll();
     // Byte::TestAll();
-    // Chrono::TestAll();
+    Chrono::TestAll();
     // Concepts::TestAll();
     // ConsoleInOut::TestAll();
     // CopyElision::TestAll();
@@ -242,7 +242,7 @@ int main(int argc, char** argv)
     // Initialization::TestAll();
     // IteratorTests::TestAll();
     // FilesStreams::TestAll();
-    Filesystem::TestAll();
+    // Filesystem::TestAll();
     // Format::TestAll();
     // FunctionObjects::TestAll();
     // Hashing::TestAll();

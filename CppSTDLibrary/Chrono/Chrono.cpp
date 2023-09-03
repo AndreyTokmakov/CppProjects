@@ -204,15 +204,17 @@ namespace Chrono {
         static constexpr int MST = -7;
         static constexpr int UTC = 0;
         static constexpr int CCT = 8;
+        static constexpr int UAE = 4;
 
         time(&rawtime);
 
         ptm = gmtime(&rawtime);
 
         puts("Current time around the World:");
-        printf("Phoenix, AZ (U.S.) :  %2d:%02d\n", (ptm->tm_hour + MST) % 24, ptm->tm_min);
+        printf("Phoenix, AZ (U.S.)  : %2d:%02d\n", (ptm->tm_hour + MST) % 24, ptm->tm_min);
         printf("Reykjavik (Iceland) : %2d:%02d\n", (ptm->tm_hour + UTC) % 24, ptm->tm_min);
-        printf("Beijing (China) :     %2d:%02d\n", (ptm->tm_hour + CCT) % 24, ptm->tm_min);
+        printf("Beijing (China)     : %2d:%02d\n", (ptm->tm_hour + CCT) % 24, ptm->tm_min);
+        printf("Abu Dhabi (UAE)     : %2d:%02d\n", (ptm->tm_hour + UAE) % 24, ptm->tm_min);
     }
 
     void TIme_Format() {
@@ -386,7 +388,8 @@ namespace Chrono::StringFormat
         return std::string{buff.data()};
     }
 
-    void StrfTime() {
+    void StrfTime()
+    {
         const std::time_t t = std::time(nullptr);
         const tm* timeInfo = std::localtime(&t);
 
@@ -416,16 +419,18 @@ namespace Chrono::StringFormat
         std::cout << str << std::endl;
     }
 
-    void CTime_String() {
+    void CTime_String()
+    {
         const std::time_t ct { std::time(0) };
         const std::string_view timeStr { ctime(&ct) };
 
         std::cout << timeStr << std::endl;
     }
 
-    void Format() {
-        const auto now = std::chrono::system_clock::now();
-        // std::cout << std::format("{:%d-%m-%Y %H:%M:%OS}", now) << '\n';
+    void Format()
+    {
+        const std::chrono::time_point now = std::chrono::system_clock::now();
+        std::cout << std::format("{:%d-%m-%Y %H:%M:%OS}", now) << '\n';
     }
 }
 
@@ -451,7 +456,7 @@ void Chrono::TestAll()
     // GM_time_VS_localtime();
     // Time_T();
 
-    // Zones_Tests();
+    Zones_Tests();
 
     // Localtime_TM();
 
@@ -469,7 +474,7 @@ void Chrono::TestAll()
 
     // TimeZones::Test();
 
-    StringFormat::StrfTime();
+    // StringFormat::StrfTime();
     // StringFormat::Asctime();
     // StringFormat::PutTime_To_String();
     // StringFormat::CTime_String();

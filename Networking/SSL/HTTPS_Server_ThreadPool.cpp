@@ -23,6 +23,7 @@ Description : HTTPS_Server_ThreadPool
 #include <thread>
 #include <deque>
 #include <vector>
+#include <chrono>
 #include <condition_variable>
 
 #include <unistd.h>
@@ -127,29 +128,48 @@ namespace
 
 namespace HTTPS_Server_ThreadPool
 {
-    struct HTTPS_Server
-    {
-        static inline constexpr std::string_view pageHTML {
-                "<html><head><title>AndTokmServer</title></head><body BGCOLOR='grey'>Welcome</body></html>"
-        };
+    using namespace std::literals;
 
-        const std::string response = std::string { "HTTP/1.1 200 OK\r\n"}
-                .append("Date: Wed, 11 Feb 2009 11:20:59 GMT\r\n")
+    struct Session
+    {
+        int socket {};
+        sockaddr_in addr {};
+    };
+
+    std::string buildHtml_BAD(Session& session)
+    {
+        const std::chrono::time_point now = std::chrono::system_clock::now();
+        std::cout << std::format("{:%d-%m-%Y %H:%M:%OS}", now) << '\n';
+
+        std::string html = "<html><head><title>AndTokmServer</title></head><body BGCOLOR='grey'>";
+
+        html += "Time now  : " + std::format("{:%d-%m-%Y %H:%M:%OS}", now);
+        html += "<BR>Connection: " + std::string {inet_ntoa(session.addr.sin_addr)} + ":" +
+                std::to_string(htons(session.addr.sin_port));
+        html += "</body></html>";
+
+        return html;
+    }
+
+    std::string buildHttpResponse(Session& session)
+    {
+        const std::string html = buildHtml_BAD(session);
+
+        return std::string { "HTTP/1.1 200 OK\r\n"}
+                //.append("Date: Wed, 11 Feb 2009 11:20:59 GMT\r\n")
                 .append("Server: AndTokmServer\r\n")
                 .append("X-Powered-By: PHP/5.2.4-2ubuntu5wm1\r\n")
-                .append("Last-Modified: Wed, 11 Feb 2009 11:20:59 GMT\r\n")
+                        // .append("Last-Modified: Wed, 11 Feb 2009 11:20:59 GMT\r\n")
                 .append("Content-Language: ru\r\n")
                 .append("Content-Type: text/html; charset=utf-8\r\n")
-                .append("Content-Length: " + std::to_string(pageHTML.length()) + "\r\n")
+                .append("Content-Length: " + std::to_string(html.length()) + "\r\n")
                 .append("Connection: close\r\n\r\n")
-                .append(pageHTML)
+                .append(html)
                 .append("\r\n");
+    }
 
-        /** SSL Context **/
-        std::unique_ptr<SSL_CTX, decltype(&::SSL_CTX_free)> sslContext {
-                std::unique_ptr<SSL_CTX, decltype(&::SSL_CTX_free)> {nullptr, SSL_CTX_free }
-        };
-
+    struct HTTPS_Server
+    {
         /** Maximum number of request handler workers: **/
         // static inline const size_t THREADS_COUNT { std::thread::hardware_concurrency() };
         static inline const size_t THREADS_COUNT { std::thread::hardware_concurrency() * 4 };
@@ -158,34 +178,38 @@ namespace HTTPS_Server_ThreadPool
                 std::chrono::milliseconds(2000)
         };
 
+        /** SSL Context **/
+        std::unique_ptr<SSL_CTX, decltype(&::SSL_CTX_free)> sslContext {
+                std::unique_ptr<SSL_CTX, decltype(&::SSL_CTX_free)> {nullptr, SSL_CTX_free }
+        };
+
         mutable std::mutex mutex;
-        std::deque<int> sessions;
+        std::deque<Session> sessions;
         std::condition_variable gotClientRequest;
         std::vector<std::jthread> workers {};
 
         template<class Rep, class Period>
-        int getClientRequestHandle(const std::chrono::duration<Rep, Period> &timeout) noexcept
+        bool getNextSessionHandle(Session& session,
+                                  const std::chrono::duration<Rep, Period> &timeout) noexcept
         {
-            int clientSocket { INVALID_SOCKET };
-
             {
                 std::unique_lock<std::mutex> lock {mutex};
                 if (!gotClientRequest.wait_for(lock, timeout, [this] { return !sessions.empty(); }))
-                    return INVALID_SOCKET;
-                clientSocket = sessions.front();
+                    return false;
+                session = sessions.front();
                 sessions.pop_front();
             }
-
             gotClientRequest.notify_all();
-            return clientSocket;
+            return true;
         }
 
+
         // TODO: Rename
-        void submit(int clientSocket) noexcept
+        void submit(Session&& session) noexcept
         {
             {
                 std::lock_guard<std::mutex> lock(mutex);
-                sessions.push_back(clientSocket);
+                sessions.push_back(session);
             }
             gotClientRequest.notify_one();
         }
@@ -196,11 +220,12 @@ namespace HTTPS_Server_ThreadPool
             constexpr size_t bytesToRead {44}; // FIXME
             std::array<char, 1024> buffer {};
 
+            Session session;
             while (true)
             {
-                if (int clientSocket = getClientRequestHandle(QUEUE_TIMEOUT); INVALID_SOCKET != clientSocket)
+                if (getNextSessionHandle(session, QUEUE_TIMEOUT))
                 {
-                    const SocketGuard clientSockGuard{clientSocket};
+                    const SocketGuard clientSockGuard { session.socket };
                     std::unique_ptr<SSL, decltype(&::SSL_free)> ssl{SSL_new(sslContext.get()), SSL_free};
                     if (!ssl) {
                         PutSSLError("SSL_new");
@@ -209,7 +234,7 @@ namespace HTTPS_Server_ThreadPool
                     // const X509* cert = SSL_get_peer_certificate(ssl.get());
                     // printPeerCertificateInfo(ssl.get());
 
-                    if (const int result = SSL_set_fd(ssl.get(), clientSocket); 1 != result) {
+                    if (const int result = SSL_set_fd(ssl.get(), session.socket); 1 != result) {
                         PutSSLError("SSL_set_fd", result);
                     }
                     if (const int result = SSL_accept(ssl.get()); 1 != result) {
@@ -225,6 +250,7 @@ namespace HTTPS_Server_ThreadPool
                     }
 
 
+                    const std::string response = buildHttpResponse(session);
                     if (const int bytesWritten = SSL_write(ssl.get(), response.data(), response.length()); bytesWritten) {
                         std::cout << bytesWritten << " bytes send\n";
                     }
@@ -293,27 +319,23 @@ namespace HTTPS_Server_ThreadPool
                 return Error("Failed to Listen the socket.");
             }
 
-            std::cout << std::format("Running on https://{}:{}", host, port) << std::endl;
-
-            sockaddr_in clientAddr {};
-            socklen_t addLen { sizeof(clientAddr) };
-
             for (size_t i = 0; i < THREADS_COUNT; ++i) {
                 workers.emplace_back(&HTTPS_Server::handleClientSession, this);
             }
 
+            std::cout << std::format("Running on https://{}:{}", host, port) << std::endl;
+            socklen_t len { sizeof(Session::addr) };
             while (true)
             {
                 std::cout << "\nWaiting for next connection ....\n";
-                const int clientSocket = ::accept(serverSocket, reinterpret_cast<sockaddr*>(&clientAddr), &addLen);
-                if (INVALID_SOCKET == clientSocket) {
+                Session session {};
+                session.socket = ::accept(serverSocket,reinterpret_cast<sockaddr*>(&session.addr),&len);
+                if (INVALID_SOCKET == session.socket) {
                     Error("Failed to create client socket");
                     continue;
                 }
 
-                std::cout << "Client connected " << inet_ntoa(clientAddr.sin_addr)
-                          << ':' << htons(clientAddr.sin_port) << std::endl;
-                submit(clientSocket);
+                submit(std::move(session));
             }
         }
     };

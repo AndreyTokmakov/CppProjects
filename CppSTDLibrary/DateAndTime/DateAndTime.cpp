@@ -112,6 +112,28 @@ namespace DateAndTime
         auto ms = timestampToInt(timeStr);
         std::cout <<  1648846800000 + ms << std::endl;
     }
+
+
+    void TimeSpec()
+    {
+        std::timespec ts;
+        std::timespec_get(&ts, TIME_UTC);
+        char buff[0x80];
+        std::strftime(buff, sizeof buff, "%D %T", std::gmtime(&ts.tv_sec));
+
+        //  auto [sec, nsec] = ts; // UB: structured bindings should not be used because the
+        // declaration order and data member list are unspecified
+
+        std::cout << "Current time: " << buff << " (UTC)\n"
+                  << "Raw timespec.time_t: " << ts.tv_sec << '\n'
+                  << "Raw timespec.tv_nsec: " << ts.tv_nsec << '\n';
+    }
+
+    void Format()
+    {
+        const std::chrono::time_point now = std::chrono::system_clock::now();
+        std::cout << std::format("{:%d-%m-%Y %H:%M:%OS}", now) << '\n';
+    }
 };
 
 
@@ -167,8 +189,8 @@ namespace DateAndTime::Performance
             STOP_TIME_MEASURE
         }
     }
-}
 
+}
 
 void DateAndTime::TestAll()
 {
@@ -182,5 +204,7 @@ void DateAndTime::TestAll()
     // StringToTime_Manual_2("11:13:35.0400123");
 
     // Performance::Test();
+
+    TimeSpec();
 };
 
