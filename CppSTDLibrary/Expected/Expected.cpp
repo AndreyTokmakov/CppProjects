@@ -10,6 +10,7 @@ Description : Expected C++23 Library tests
 #include <iostream>
 #include <string_view>
 #include <expected>
+#include <vector>
 
 #include "Expected.h"
 
@@ -101,6 +102,32 @@ namespace Expected
     }
 };
 
+namespace Expected
+{
+    std::expected<int, std::string> getInt(const std::string& arg)
+    {
+        try {
+            return std::stoi(arg);
+        }
+        catch (...) {
+            return std::unexpected{std::string(arg + ": Error")};
+        }
+    }
+
+    void Transform()
+    {
+        const std::vector<std::string> strings = {"66", "foo", "-5"};
+        for (const std::string& str: strings)
+        {
+            std::expected res = getInt(str)
+                    .transform( [](int n) { return n + 100; })
+                    .transform( [](int n) { return std::to_string(n); });
+
+            std::cout << *res << std::endl;
+        }
+    }
+}
+
 void Expected::TestAll()
 {
     // BasicFunctions();
@@ -110,6 +137,8 @@ void Expected::TestAll()
     // Test_Error();
     // Test_Error_2();
 
-    Emplace();
+    // Emplace();
+
+    Expected::Transform();
 };
 

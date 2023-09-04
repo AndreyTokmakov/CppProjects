@@ -229,13 +229,13 @@ int main(int argc, char** argv)
     // BitSet::TestAll();
     // BitwiseOperation::TestAll();
     // Byte::TestAll();
-    Chrono::TestAll();
+    // Chrono::TestAll();
     // Concepts::TestAll();
     // ConsoleInOut::TestAll();
     // CopyElision::TestAll();
     // DateAndTime::TestAll();
     // EnumTests::TestAll();
-    // Expected::TestAll();
+    Expected::TestAll();
     // StrongTypes::TestAll();
     // InitializerList::TestAll();
     // InlineVariables::TestAll();
