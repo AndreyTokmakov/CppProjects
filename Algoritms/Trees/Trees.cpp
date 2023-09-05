@@ -636,7 +636,8 @@ namespace BinTreeTests {
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    void __Inorder_Walkthrough_NonRecursion(BinTree::Node* node) {
+    void __Inorder_Walkthrough_NonRecursion(BinTree::Node* node)
+    {
         std::vector<BinTree::Node*> stack {};
         BinTree::Node *curr = node;
 
@@ -655,10 +656,10 @@ namespace BinTreeTests {
             /* we have visited the node and its left subtree.  Now, it's right subtree's turn */
             curr = curr->right;
         }
-
     }
 
-    void Inorder_Walkthrough_NonRecursion() {
+    void Inorder_Walkthrough_NonRecursion()
+    {
         BinTree::BinaryTree tree;
 
         tree.insert(33);
@@ -687,6 +688,45 @@ namespace BinTreeTests {
         BinTree::BinaryTree tree{ 33,22,85,10,30,54,125 };
 
         __Backwards_Walkthrough(tree.getRoot());
+    }
+
+    ///////////////////////////////////////////////////////
+
+    void __backwards_walkthrough_non_recursion(BinTree::Node* node)
+    {
+        std::vector<BinTree::Node*> stack {};
+        BinTree::Node *curr = node;
+
+        while (curr || !stack.empty())
+        {   /* Reach the left most Node of the curr Node */
+            while (curr)
+            { /* place pointer to a tree node on the stack before traversing the node's left subtree */
+                stack.push_back(curr);
+                curr = curr->right;
+            }
+
+            curr = stack.back(); // Current must be NULL at this point
+            stack.pop_back();
+
+            std::cout << curr->data << " ";
+            /* we have visited the node and its left subtree.  Now, it's right subtree's turn */
+            curr = curr->left;
+        }
+    }
+
+    void Backwards_Walkthrough_NonRecursion()
+    {
+        BinTree::BinaryTree tree;
+
+        tree.insert(33);
+        tree.insert(22);
+        tree.insert(85);
+        tree.insert(10);
+        tree.insert(30);
+        tree.insert(54);
+        tree.insert(125);
+
+        __backwards_walkthrough_non_recursion(tree.getRoot());
     }
 
     ///////////////////////////////////////////////////////////////
@@ -1573,11 +1613,13 @@ namespace Trees::Check_Is_BST
         root->left->left = new BinTree::Node(3);
         root->left->right = new BinTree::Node(9);
 
+        /*
         int p = std::numeric_limits<int>::min();
         std::cout << std::boolalpha << isBinarySearchTree(root) << std::endl;
         std::cout << std::boolalpha << isBinarySearchTree_Inorder(root, p) << std::endl;
         std::cout << std::boolalpha << isBinarySearchTree_Inorder2(root) << std::endl;
         std::cout << std::boolalpha << isBinarySearchTree_Inorder3(root) << std::endl;
+        */
         std::cout << std::boolalpha << _is_bst_non_recursive(root) << std::endl;
     }
 }
@@ -2088,6 +2130,7 @@ void Trees::TEST_ALL()
     // BinTreeTests::Inorder_Walkthrough();
     // BinTreeTests::Inorder_Walkthrough_NonRecursion();
     // BinTreeTests::Backwards_Walkthrough();
+    BinTreeTests::Backwards_Walkthrough_NonRecursion();
     // BinTreeTests::Print_Top_View();
     // BinTreeTests::ReverseTree();
 
