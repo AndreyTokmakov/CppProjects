@@ -818,7 +818,24 @@ namespace Tests {
 	}
 }
 
-void ConstConstexprMutable::TEST_ALL() {
+namespace ConstConstexprMutable::Returning_ConstExpr_Array_SizeAsParameter
+{
+    void createArray()
+    {
+        constexpr auto func = [](auto size)
+        {
+            return std::array<int, size> {};
+        };
+
+        /** Will not compile **/
+        // constexpr std::array f = func(42);
+
+        constexpr std::array f = func(std::integral_constant<int, 42>{});
+    }
+}
+
+void ConstConstexprMutable::TestAll()
+{
 
     // ConstexprMap::Test();
 
@@ -873,5 +890,8 @@ void ConstConstexprMutable::TEST_ALL() {
 
 
 	// Tests::ForLoop();
-	Tests::Test_Constexpr_Integer();
+	// Tests::Test_Constexpr_Integer();
+
+
+    Returning_ConstExpr_Array_SizeAsParameter::createArray();
 };

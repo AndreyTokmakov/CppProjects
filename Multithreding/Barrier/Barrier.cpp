@@ -52,7 +52,10 @@ namespace Barrier
                     << secondsToSleep << std::endl;
 
             std::this_thread::sleep_for(std::chrono::seconds(secondsToSleep));
-            barrier.arrive();
+
+
+            [[maybe_unused]]
+            const auto token = barrier.arrive();
         };
 
         std::cout << getCurrentTime() << " starting...\n";
@@ -126,7 +129,7 @@ namespace Barrier
 
     void Barrier_With_Completion()
     {
-        auto names = { "One", "Two", "Three" };
+        std::vector<std::string> names { "One", "Two", "Three" };
         std::barrier phase(std::ssize(names),[] {
             std::osyncstream(std::cout) << "Callback()\n";
         });
@@ -140,7 +143,7 @@ namespace Barrier
         };
 
         std::cout << "Starting...\n";
-        for (std::vector<std::jthread> jobs; std::string&& name : names)
+        for (std::vector<std::jthread> jobs; std::string& name : names)
             jobs.emplace_back(work, name);
 
     }

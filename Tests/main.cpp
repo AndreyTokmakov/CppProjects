@@ -587,13 +587,14 @@ namespace PrintTemplateType
 }
 
 
+
 int main([[maybe_unused]] int argc,
          [[maybe_unused]] char** argv)
 {
     const std::vector<std::string_view> args(argv + 1, argv + argc);
     // parseInputParams(std::vector {"one", "two", "three", "four", "five"}.data(), 5);
 
-    // PrintTemplateType::test();
+    PrintTemplateType::test();
 
 
     // ConceptsTests::If_Constexpr_Concepts();

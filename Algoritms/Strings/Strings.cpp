@@ -761,6 +761,8 @@ namespace Strings {
 
         auto degrees = std::abs(hours * 30  -  minutes * 6 + (30 * minutes) / 60);
         degrees = std::min(degrees, 360 - degrees);
+
+        [[maybe_unused]]
         const double radians = ( degrees * std::numbers::pi ) / 180;
 
         // std::cout << "degrees = " << degrees << std::endl;

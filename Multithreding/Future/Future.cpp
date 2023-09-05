@@ -13,6 +13,7 @@
 #include <future>
 #include <vector>
 #include <algorithm>
+#include <syncstream>
 
 #include "Future.h"
 #include "../ThreadHelperUtilities/ThreadHelperUtilities.h"
@@ -177,15 +178,17 @@ namespace Future {
         THREAD_INFO << "Done. Future result : " << result << std::endl;
     }
 
-    std::future<std::string> createFuture(unsigned int timeout) {
+    std::future<std::string> createFuture(unsigned int timeout)
+    {
         std::cout << "Creating future function called." << std::endl;
         std::future<std::string> the_future = std::async(std::launch::async, [](unsigned int timeout)-> std::string {
             std::cout << "Sleeping for " << timeout << " seconds..." << std::endl;
             std::this_thread::sleep_for(std::chrono::seconds(timeout));
             return std::string("Task lasted for " + std::to_string(timeout) + " seconds.");
         }, timeout);
+
         // Return the future object
-        return std::move(the_future);
+        return the_future;
     }
 
     void Future_WaitFor_3() {
@@ -524,6 +527,32 @@ namespace Future::SharedFuture
 
         THREAD_INFO << "Done. " << std::endl;
     }
+
+    void WaitForFuture_InTwoThreads()
+    {
+        using namespace std::literals;
+
+        std::promise<int> provider;
+
+        // Transfer the state from the provider generated future to a shared future.
+        std::shared_future<int> future(provider.get_future());
+
+        // Start 3 new threads, taking a copy of the future.
+        std::vector<std::jthread> runners;
+        for (int i = 0; i < 3; ++i)
+        {
+            runners.emplace_back([future]() {
+                std::osyncstream(std::cout) << std::this_thread::get_id() << " running.\n";
+                int value = future.get();
+                std::osyncstream(std::cout) << std::this_thread::get_id() << " thread unblocked with value " << value << "\n";
+            });
+        }
+
+        std::this_thread::sleep_for(200ms);
+
+        std::osyncstream(std::cout) << std::this_thread::get_id() << " producing result.\n";
+        provider.set_value(42);
+    }
 }
 
 namespace Future::CollectionFutures {
@@ -588,7 +617,7 @@ namespace Future::Tests {
 
 void Future::TEST_ALL()
 {
-    Future_CreateAndPush_ToVector();
+    // Future_CreateAndPush_ToVector();
 
     // FutureAsyncRun();
 
@@ -614,6 +643,7 @@ void Future::TEST_ALL()
 
     // SharedFuture::Test();
     // SharedFuture::WaitFor_CheckStatus();
+    SharedFuture::WaitForFuture_InTwoThreads();
 
     // CollectionFutures::Emplace_To_Vector();
 

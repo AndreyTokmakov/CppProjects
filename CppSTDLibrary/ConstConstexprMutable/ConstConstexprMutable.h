@@ -11,7 +11,7 @@
 #define CONST_CONSTEXPR_MUTABLE_TESTS__H_
 
 namespace ConstConstexprMutable {
-	void TEST_ALL();
+	void TestAll();
 };
 
 #endif /* CONST_CONSTEXPR_MUTABLE_TESTS__H_ */

@@ -62,9 +62,10 @@ namespace LinkedList
 		return root;
 	}
 
+
     template<typename Type>
     Node<Type>* InitList(const std::vector<Type>& data) {
-        assert(std::size(args) > 0), "List expectes to have more than one element";
+        assert(std::size(data) > 0), "List expectes to have more than one element";
         Node<Type>* root = new Node<Type>(data.front()), * node = root;
         for (size_t idx = 1; idx < data.size(); ++idx) {
             node->next = new Node(data[idx]);

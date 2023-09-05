@@ -27,6 +27,7 @@
 #include "DateAndTime/DateAndTime.h"
 #include "Concepts/Concepts.h"
 #include "ConsoleInOut/ConsoleInOut.h"
+#include "ConstConstexprMutable/ConstConstexprMutable.h"
 #include "CopyElision/CopyElision.h"
 #include "Format/Format.h"
 #include "EnumTests/EnumTests.h"
@@ -232,10 +233,11 @@ int main(int argc, char** argv)
     // Chrono::TestAll();
     // Concepts::TestAll();
     // ConsoleInOut::TestAll();
+    ConstConstexprMutable::TestAll();
     // CopyElision::TestAll();
     // DateAndTime::TestAll();
     // EnumTests::TestAll();
-    Expected::TestAll();
+    // Expected::TestAll();
     // StrongTypes::TestAll();
     // InitializerList::TestAll();
     // InlineVariables::TestAll();
