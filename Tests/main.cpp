@@ -594,7 +594,7 @@ int main([[maybe_unused]] int argc,
     const std::vector<std::string_view> args(argv + 1, argv + argc);
     // parseInputParams(std::vector {"one", "two", "three", "four", "five"}.data(), 5);
 
-    PrintTemplateType::test();
+    // PrintTemplateType::test();
 
 
     // ConceptsTests::If_Constexpr_Concepts();
@@ -617,7 +617,7 @@ int main([[maybe_unused]] int argc,
     // AutoTests::TestAll();
     // Algorithms::TestAll();
     // Multithreading::TestAll();
-    // Memory::TestAll();
+    Memory::TestAll();
     // Iterators::TestAll();
     // Files::TestAll();
     // ConstexprMap::TestAll()

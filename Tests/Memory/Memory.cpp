@@ -399,6 +399,76 @@ namespace Memory::UniquePtrExperiments
     }
 }
 
+namespace Memory::PlacementNew
+{
+
+    void CreateObjects()
+    {
+        using T = Helpers::Long;
+        constexpr size_t max_size = 10;
+
+        decltype(auto) memBlock = operator new[](max_size * sizeof(T));
+        T *pool = static_cast<T*>(memBlock);
+        for (int pos = 0; pos < 10; ++pos)
+            new (&pool[pos]) T {pos};
+
+        // for (int i = 9; i >= 0; --i)
+        //    pool[i].~T();
+
+        T* ptr = std::launder(reinterpret_cast<T*>(pool));
+        std::destroy(ptr, ptr + max_size);
+
+        operator delete[](memBlock);
+    }
+
+
+    template <typename... Ts>
+    struct LocalObject* createObject(Ts&&... params);
+
+    struct LocalObject
+    {
+        int val { 0 };
+        std::string name;
+
+        explicit LocalObject(int v): val {v} {
+            std::cout << "LocalObject(" << val << ", " << std::quoted(name) << ")\n";
+        }
+
+        LocalObject(int v, std::string s): val {v}, name { std::move(s)} {
+            std::cout << "LocalObject(" << val << ", " << std::quoted(name) << ")\n";
+        }
+
+        ~LocalObject() {
+            std::cout << "~LocalObject(" << val << ", " << std::quoted(name) << ")\n";
+        }
+
+    private:
+
+        void* operator new(size_t size)
+        {
+            std::cout << "LocalObject created on Heap. Size = " << size << std::endl;
+            decltype(auto) memBlock = operator new[](size);
+            return malloc(size);
+        }
+
+        template <typename... Ts>
+        friend LocalObject* createObject(Ts&&... params);
+    };
+
+    template <typename... Ts>
+    struct LocalObject* createObject(Ts&&... params)
+    {
+        return new LocalObject(std::forward<Ts>(params)...);
+    }
+
+    void CreateObjects_PrivateFunc()
+    {
+        // LocalObject* obj = new LocalObject(10, "sdsds");
+        LocalObject* obj = createObject(12, "dsdsdsd");
+        delete obj;
+    }
+}
+
 void Memory::TestAll()
 {
 
@@ -416,6 +486,10 @@ void Memory::TestAll()
     // SharedPtr_BadUsage_DoubleDelete_FIX_EmptyDeleter();
     // Shared_Weak_UsageCount();
 
-    AllocateShared_And_Trace();
+    // AllocateShared_And_Trace();
 
+    // PlacementNew::CreateObjects();
+    PlacementNew::CreateObjects_PrivateFunc();
+
+    // std::cout << sizeof(std::string) << std::endl;
 }
