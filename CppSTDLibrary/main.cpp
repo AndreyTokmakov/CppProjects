@@ -233,7 +233,7 @@ int main(int argc, char** argv)
     // Chrono::TestAll();
     // Concepts::TestAll();
     // ConsoleInOut::TestAll();
-    ConstConstexprMutable::TestAll();
+    // ConstConstexprMutable::TestAll();
     // CopyElision::TestAll();
     // DateAndTime::TestAll();
     // EnumTests::TestAll();
@@ -254,7 +254,7 @@ int main(int argc, char** argv)
     // MoveSemantics_RuleOfFive::TestAll();
     // Numbers::TestAll();
     // Math::TestAll();
-    // Memory::TestAll();
+    Memory::TestAll();
     // Metaprogramming::TestAll();
     // InlineNamespaces::TestAll();
     // NumericLimits::TestAll();

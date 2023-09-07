@@ -18,7 +18,8 @@
 #include "../Integer/Integer.h"
 
 
-namespace ObjectOrientedProgramming::Constructors {
+namespace ObjectOrientedProgramming::Constructors
+{
 
     class Base {
     protected:
@@ -3149,6 +3150,42 @@ namespace ObjectOrientedProgramming::Covariant_Return_Type
         const auto fancyWindow1 = cloneWindow(fancyWindow);
         std::cout << "fancyWindow1->getName(): " << fancyWindow1->getName() << '\n';
     }
+
+
+
+    struct Base {
+        virtual void info() const noexcept {
+            std::cout << "Base::info()\n";
+        }
+
+        virtual ~Base() = default;
+    };
+
+    struct Derived : Base {
+        void info() const noexcept override {
+            std::cout << "Derived::info()\n";
+        }
+    };
+
+    struct Parent
+    {
+        virtual std::unique_ptr<Base> make() {
+            return std::make_unique<Base>();
+        }
+    };
+
+    struct Child : Parent
+    {
+        std::unique_ptr<Base> make() override {
+            return std::make_unique<Derived>();
+        }
+    };
+
+    void Return_UniquePtr_WithDerivedClass()
+    {
+        Parent{}.make()->info();
+        Child{}.make()->info();
+    }
 }
 
 
@@ -3263,18 +3300,16 @@ void ObjectOrientedProgramming::TestAll()
 
     // **************************** Covariant Return Type: ****************************//
 
-    Covariant_Return_Type::testPointers();
-    Covariant_Return_Type::testStartPointers();
-
+    // Covariant_Return_Type::testPointers();
+    // Covariant_Return_Type::testStartPointers();
+    Covariant_Return_Type::Return_UniquePtr_WithDerivedClass();
 
     // ******************************** Polymorphism: *********************************//
 
     // Polymorphism_Without_Pointers::Test();
-    Polymorphism_With_Variant::classicPointerDispatch();
-    Polymorphism_With_Variant::variantVisitDispatch();
-    Polymorphism_With_PolymorphicVectors::Test();
-
-
+    // Polymorphism_With_Variant::classicPointerDispatch();
+    // Polymorphism_With_Variant::variantVisitDispatch();
+    // Polymorphism_With_PolymorphicVectors::Test();
 
     // InheritanceAndTemplates::Test();
 

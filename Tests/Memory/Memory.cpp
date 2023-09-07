@@ -112,41 +112,6 @@ namespace Memory
 
 namespace Memory
 {
-    struct Base {
-        virtual void info() const noexcept {
-            std::cout << "Base::info()\n";
-        }
-
-        virtual ~Base() = default;
-    };
-
-    struct Derived : Base {
-        void info() const noexcept override {
-            std::cout << "Derived::info()\n";
-        }
-    };
-
-    struct Parent
-    {
-        virtual std::unique_ptr<Base> make() {
-            return std::make_unique<Base>();
-        }
-    };
-
-    struct Child : Parent
-    {
-        std::unique_ptr<Base> make() override {
-            return std::make_unique<Derived>();
-        }
-    };
-
-    void test()
-    {
-        Parent{}.make()->info();
-        Child{}.make()->info();
-    }
-
-
     struct ARPHeader
     {
         uint16_t htype {0};
@@ -319,6 +284,15 @@ namespace Memory
         std::shared_ptr<int> sharedInt (traceAllocator.allocate(1), deleter, traceAllocator);
     }
 
+    void AllocateMakeShared_And_Trace()
+    {
+        TracingAllocator<int> traceAllocator;
+        auto deleter = [&traceAllocator](int* ptr){
+            traceAllocator.deallocate(ptr, 1);
+        };
+
+        std::shared_ptr<int> sharedInt (traceAllocator.allocate(1), deleter, traceAllocator);
+    }
 
     void Shared_Weak_UsageCount()
     {
@@ -420,26 +394,25 @@ namespace Memory::PlacementNew
 
         operator delete[](memBlock);
     }
+}
 
+namespace Memory::RestrictObjectHeapCreation
+{
 
     template <typename... Ts>
     struct LocalObject* createObject(Ts&&... params);
 
     struct LocalObject
     {
-        int val { 0 };
+        int value { 0 };
         std::string name;
 
-        explicit LocalObject(int v): val {v} {
-            std::cout << "LocalObject(" << val << ", " << std::quoted(name) << ")\n";
-        }
-
-        LocalObject(int v, std::string s): val {v}, name { std::move(s)} {
-            std::cout << "LocalObject(" << val << ", " << std::quoted(name) << ")\n";
+        LocalObject(int v, std::string s): value {v}, name { std::move(s)} {
+            std::cout << "LocalObject(" << value << ", " << std::quoted(name) << ")\n";
         }
 
         ~LocalObject() {
-            std::cout << "~LocalObject(" << val << ", " << std::quoted(name) << ")\n";
+            std::cout << "~LocalObject(" << value << ", " << std::quoted(name) << ")\n";
         }
 
     private:
@@ -448,7 +421,8 @@ namespace Memory::PlacementNew
         {
             std::cout << "LocalObject created on Heap. Size = " << size << std::endl;
             decltype(auto) memBlock = operator new[](size);
-            return malloc(size);
+            // decltype(auto) memBlock1 = malloc(size);
+            return memBlock;
         }
 
         template <typename... Ts>
@@ -463,11 +437,51 @@ namespace Memory::PlacementNew
 
     void CreateObjects_PrivateFunc()
     {
+        /** Will not compile **/
         // LocalObject* obj = new LocalObject(10, "sdsds");
+
         LocalObject* obj = createObject(12, "dsdsdsd");
+
         delete obj;
     }
 }
+
+#if 1
+
+void* operator new(size_t count) {
+    decltype(auto) ptr = malloc(count);
+    std::cout << count << " bytes allocated at address " << ptr << std::endl;
+    return ptr;
+}
+
+void operator delete(void* ptr) noexcept {
+    std::cout << "Deallocating " << ptr << std::endl;
+    free(ptr);
+}
+
+namespace Memory::SharedPtr_MemoryAllocationTests
+{
+    using Helpers::Long;
+
+    void TestAllocations()
+    {
+        std::cout << "----------------------------------------------------\n";
+        {
+
+            std::shared_ptr<Long> sharedLong = std::shared_ptr<Long> { new Long {123}};
+
+        }
+        std::cout << "----------------------------------------------------\n";
+        {
+
+            std::shared_ptr<Long> sharedLong = std::make_shared<Long> (123);
+
+        }
+        std::cout << "----------------------------------------------------\n";
+    }
+}
+#endif
+
 
 void Memory::TestAll()
 {
@@ -487,9 +501,12 @@ void Memory::TestAll()
     // Shared_Weak_UsageCount();
 
     // AllocateShared_And_Trace();
+    // AllocateMakeShared_And_Trace();
 
     // PlacementNew::CreateObjects();
-    PlacementNew::CreateObjects_PrivateFunc();
 
-    // std::cout << sizeof(std::string) << std::endl;
+    // RestrictObjectHeapCreation::CreateObjects_PrivateFunc();
+
+
+    SharedPtr_MemoryAllocationTests::TestAllocations();
 }

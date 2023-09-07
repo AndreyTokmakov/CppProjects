@@ -21,6 +21,8 @@
 #include <array>
 #include <memory_resource>
 #include <cstdlib> // for std::byte
+#include <iomanip>
+
 
 #define DEBUG_OUTPUT
 #define FOR(var_name, range) for (int var_name  = 0; var_name < range; ++var_name)
@@ -1046,7 +1048,7 @@ namespace Memory::OperatorNew {
 	// Allocates memory by calling: operator new (sizeof(Object))
 	// and then constructs an object at the newly allocated space
 	void Classic_Allocation() {
-		auto objPtr = std::make_unique<Object>(12345);
+		std::unique_ptr<Object> obj = std::make_unique<Object>(12345);
 	}
 
 	// Allocates memory by calling: operator new (sizeof(Object),std::nothrow)
@@ -1057,12 +1059,14 @@ namespace Memory::OperatorNew {
 
 	// Allocates memory by calling: operator new (sizeof(Object),std::nothrow)
 	// and then constructs an object at the newly allocated space
-	void Allocate_Placement() {
+	void Allocate_Placement()
+    {
 		Object *objPtr1 = new (std::nothrow) Object(333);
 
-		std::cout << "objPtr1->value = " << objPtr1->value << std::endl;
+		std::cout << "objPtr1->value = " << objPtr1->value << "\n\n";
 	
 		// Does NOT allocate NEW memory -- calls: operator new (sizeof(Object), objPtr) but constructs an object at objPtr address
+        objPtr1->~Object();
 		Object *objPtr2 = new (objPtr1) Object(444);
 
 		std::cout << "objPtr1->value = " << objPtr1->value << std::endl;
@@ -1081,7 +1085,8 @@ namespace Memory::OperatorNew {
 
 	// Allocates memory by calling: operator new (sizeof(Object),std::nothrow)
 	// and then constructs an object at the newly allocated space
-	void Allocate_Placement1() {
+	void Allocate_Placement_DestroyAt()
+    {
 		{
 			Object* objPtr = new Object(333);
 			std::destroy_at(objPtr); // Just call DTor
@@ -1659,9 +1664,58 @@ namespace Memory::Construct {
     }
 }
 
+namespace Memory::RestrictObjectHeapCreation
+{
 
+    template <typename... Ts>
+    struct LocalObject* createObject(Ts&&... params);
 
-void Memory::TestAll() {
+    struct LocalObject
+    {
+        int value { 0 };
+        std::string name;
+
+        LocalObject(int v, std::string s): value {v}, name { std::move(s)} {
+            std::cout << "LocalObject(" << value << ", " << std::quoted(name) << ")\n";
+        }
+
+        ~LocalObject() {
+            std::cout << "~LocalObject(" << value << ", " << std::quoted(name) << ")\n";
+        }
+
+    private:
+
+        void* operator new(size_t size)
+        {
+            std::cout << "LocalObject created on Heap. Size = " << size << std::endl;
+            decltype(auto) memBlock = operator new[](size);
+            // decltype(auto) memBlock1 = malloc(size);
+            return memBlock;
+        }
+
+        template <typename... Ts>
+        friend LocalObject* createObject(Ts&&... params);
+    };
+
+    template <typename... Ts>
+    struct LocalObject* createObject(Ts&&... params)
+    {
+        return new LocalObject(std::forward<Ts>(params)...);
+    }
+
+    void CreateObjects_PrivateFunc()
+    {
+        /** Will not compile **/
+        // LocalObject* obj = new LocalObject(10, "sdsds");
+
+        LocalObject* obj = createObject(12, "dsdsdsd");
+
+        delete obj;
+    }
+}
+
+void Memory::TestAll()
+{
 	// Delete_Array();
 	// NoThrowTest();
 
@@ -1710,7 +1764,7 @@ void Memory::TestAll() {
 	// OperatorNew::Classic_Allocation();
 	// OperatorNew::Allocate_NoThrow();
 	// OperatorNew::Allocate_Placement();
-	// OperatorNew::Allocate_Placement1();
+	// OperatorNew::Allocate_Placement_DestroyAt();
 	// OperatorNew::Allocate_Placement2();
 	// OperatorNew::CreateObject_NoConstructor();
 	// OperatorNew::Construct_AT();
@@ -1727,7 +1781,7 @@ void Memory::TestAll() {
 	// Allocators::Basic_STD_Allocator();
 	// Allocators::SimpleTest();
 	// Allocators::StackAllocatorTests();
-	Allocators::AllocateShared_And_Trace();
+	// Allocators::AllocateShared_And_Trace();
 
 	// Allocators_Vector::Emplace_CustomType_1();
 	// Allocators_Vector::Emplace_CustomType_2();
@@ -1744,4 +1798,7 @@ void Memory::TestAll() {
 
 	// Alligned_New_Delete::Simple_OverAlligned_New();
 	// Alligned_New_Delete::Custom_Alligned_New();
+
+
+    RestrictObjectHeapCreation::CreateObjects_PrivateFunc();
 };

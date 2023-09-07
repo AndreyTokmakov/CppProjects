@@ -22,6 +22,7 @@
 #include <map>
 #include <cmath>
 #include <unordered_set>
+#include <unordered_map>
 
 namespace
 {
@@ -1415,9 +1416,10 @@ namespace BinTreeTests {
 }
 
 
-namespace Trees::Complete_Tree {
-
-    void Count_Levels() {
+namespace Trees::Complete_Tree
+{
+    void Count_Levels()
+    {
         int elements_count = 15;
         std::cout << "if tree has " << elements_count << " elements so height is: " << (int)log2(elements_count) << std::endl;
     }
@@ -1434,11 +1436,9 @@ namespace Trees::Complete_Tree {
     }
 
     bool __is_complete(const BinTree::Node* root, int index, int n) {
-        // Null node - noop
-        if (root == nullptr)
+        if (root == nullptr)  // Null node - noop
             return true;
-        // If the index of this node is beyond the range, we have a gap somewhere.
-        if (index >= n)
+        if (index >= n) // If the index of this node is beyond the range, we have a gap somewhere.
             return false;
         // Recurse to 2*i+1 and 2*i+2
         return __is_complete(root->left, 2*index+1, n) &&
@@ -1457,6 +1457,31 @@ namespace Trees::Complete_Tree {
 
         std::cout << std::boolalpha << __is_complete_binary_tree(tree1) << std::endl;
         std::cout << std::boolalpha << __is_complete_binary_tree(tree2) << std::endl;
+    }
+
+    //------------------------------------------------------------------------------
+
+    void _is_completed_tree_map(const BinTree::Node* node, std::unordered_map<int, int> & values, int level) {
+        if (nullptr == node)
+            return;
+        ++values[level];
+        _is_completed_tree_map(node->left, values, level + 1);
+        _is_completed_tree_map(node->right, values, level + 1);
+    }
+
+    void _is_completed_tree_map(const BinTree::Node* node) {
+        std::unordered_map<int, int> values;
+        _is_completed_tree_map(node, values, 0);
+
+        for (const auto& [k,v]: values) {
+            std::cout << k << " = " << v << ", expected: " << std::pow(2, k) << std::endl;
+        }
+    }
+
+    void IsCompletedTree_MAP()
+    {
+        BinTree::BinaryTree tree1 { 33, 22, 85, 10 ,30, 54, 125 };
+        _is_completed_tree_map(tree1.getRoot());
     }
 }
 
@@ -2130,7 +2155,7 @@ void Trees::TEST_ALL()
     // BinTreeTests::Inorder_Walkthrough();
     // BinTreeTests::Inorder_Walkthrough_NonRecursion();
     // BinTreeTests::Backwards_Walkthrough();
-    BinTreeTests::Backwards_Walkthrough_NonRecursion();
+    // BinTreeTests::Backwards_Walkthrough_NonRecursion();
     // BinTreeTests::Print_Top_View();
     // BinTreeTests::ReverseTree();
 
@@ -2158,4 +2183,5 @@ void Trees::TEST_ALL()
     // Complete_Tree::Count_Levels();
     // Complete_Tree::Count_Elements();
     // Complete_Tree::IsCompletedTree();               // FIXME: error
+    Complete_Tree::IsCompletedTree_MAP();               // FIXME: error
 }
