@@ -976,10 +976,8 @@ namespace BinTreeTests {
         if (nullptr == node)
             return;
 
-        if (level > levels.size())
-            levels.push_back(node->data);
-        else
-            levels[level - 1] += node->data;
+        int& lvlSum = level > levels.size() ? levels.emplace_back() : levels[level - 1];
+        lvlSum += node->data;
 
         __find_maximum_level_sum(node->left, level + 1, levels);
         __find_maximum_level_sum(node->right, level + 1, levels);
@@ -1032,10 +1030,8 @@ namespace BinTreeTests {
         if (nullptr == node)
             return;
 
-        if (level > levels.size())
-            levels.push_back(1);
-        else
-            levels[level - 1] ++;
+        int& lvlElements = (level > levels.size()) ? levels.emplace_back() : levels[level - 1];
+        ++lvlElements;
 
         __find_if_last_level_completed(node->left, level + 1, levels);
         __find_if_last_level_completed(node->right, level + 1, levels);
@@ -2168,7 +2164,7 @@ void Trees::TEST_ALL()
     // BinTreeTests::Find_Min_Depth();
     // BinTreeTests::Find_Depth_Tests_2();
     // BinTreeTests::Find_MaxElement_NotForBST();
-    // BinTreeTests::Find_If_Last_Level_Completed();
+    BinTreeTests::Find_If_Last_Level_Completed();
     // BinTreeTests::Find_Largest_BST_Sub();
 
     // BinTreeTests::Find_Maximum_PathSum_BetweenNodes();
@@ -2183,5 +2179,5 @@ void Trees::TEST_ALL()
     // Complete_Tree::Count_Levels();
     // Complete_Tree::Count_Elements();
     // Complete_Tree::IsCompletedTree();               // FIXME: error
-    Complete_Tree::IsCompletedTree_MAP();               // FIXME: error
+    // Complete_Tree::IsCompletedTree_MAP();               // FIXME: error
 }

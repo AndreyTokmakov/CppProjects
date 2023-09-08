@@ -586,6 +586,25 @@ namespace PrintTemplateType
     }
 }
 
+namespace ObjectOrientedExperiments
+{
+    class Base {
+    public:
+        virtual void show() { std::cout << "In Base" << std::endl; }
+    };
+
+    class Derived : public Base {
+    public:
+        virtual void show() { std::cout << "In Derived" << std::endl; }
+    };
+
+    void Call_BaseClass_Func_Hack()
+    {
+        Base *ptr = new Derived;
+        ptr->Base::show();  // "In Base" will be printed
+        ptr->show();        // "In Base" will be printed
+    }
+}
 
 
 int main([[maybe_unused]] int argc,
@@ -595,6 +614,8 @@ int main([[maybe_unused]] int argc,
     // parseInputParams(std::vector {"one", "two", "three", "four", "five"}.data(), 5);
 
     // PrintTemplateType::test();
+
+    ObjectOrientedExperiments::Call_BaseClass_Func_Hack();
 
 
     // ConceptsTests::If_Constexpr_Concepts();
@@ -617,7 +638,7 @@ int main([[maybe_unused]] int argc,
     // AutoTests::TestAll();
     // Algorithms::TestAll();
     // Multithreading::TestAll();
-    Memory::TestAll();
+    // Memory::TestAll();
     // Iterators::TestAll();
     // Files::TestAll();
     // ConstexprMap::TestAll()
