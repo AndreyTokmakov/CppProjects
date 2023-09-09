@@ -563,6 +563,34 @@ namespace UniquePtr_Tests::Size_Depending_of_Params
     }
 }
 
+namespace UniquePtr_Tests::Make_Unique_For_Overwrite
+{
+    // Output Fibonacci numbers to an output iterator.
+    template<typename OutputIt>
+    OutputIt fibonacci(OutputIt first, OutputIt last)
+    {
+        for (int a = 0, b = 1; first != last; ++first)
+        {
+            *first = b;
+            b += std::exchange(a, b);
+        }
+        return first;
+    }
+
+
+    void AllocateArray_AndInitialize()
+    {
+        constexpr size_t len { 10 };
+        const std::unique_ptr<int[]> values = std::make_unique_for_overwrite<int[]>(len);
+
+        fibonacci(values.get(), values.get() + len);
+
+        std::cout << "make_unique_for_overwrite<int[]>(10), fibonacci(...): [" << values[0];
+        for (std::size_t i = 1; i < 10; ++i)
+            std::cout << ", " << values[i];
+        std::cout << "]\n";
+    }
+};
 
 
 void UniquePtr_Tests::TestAll()
@@ -596,7 +624,7 @@ void UniquePtr_Tests::TestAll()
 	// Deleters::Get_Deleter_Test();
 	// Deleters::MakeUnique_ObjectRequirements();
 
-    Deleters::CustomDeleterTests();
+    // Deleters::CustomDeleterTests();
 
 	// Deleters::FabricMethod_Shared_WithDeleter();
 	// Deleters::FabricMethod_WithDeleter();
@@ -605,5 +633,7 @@ void UniquePtr_Tests::TestAll()
 
 	// TESTS::UniquePtr_Array();
 
-    Size_Depending_of_Params::SizeTest();
+    // Size_Depending_of_Params::SizeTest();
+
+    Make_Unique_For_Overwrite::AllocateArray_AndInitialize();
 };

@@ -446,7 +446,7 @@ namespace Memory::RestrictObjectHeapCreation
     }
 }
 
-#if 1
+#if 0
 
 void* operator new(size_t count) {
     decltype(auto) ptr = malloc(count);
@@ -482,10 +482,37 @@ namespace Memory::SharedPtr_MemoryAllocationTests
 }
 #endif
 
+namespace Memory::MakeUnique_ForOverwrite
+{
+    // Output Fibonacci numbers to an output iterator.
+    template<typename OutputIt>
+    OutputIt fibonacci(OutputIt first, OutputIt last)
+    {
+        for (int a = 0, b = 1; first != last; ++first)
+        {
+            *first = b;
+            b += std::exchange(a, b);
+        }
+        return first;
+    }
+
+
+    void AllocateArray_AndInitialize()
+    {
+        constexpr size_t len { 10 };
+        const std::unique_ptr<int[]> values = std::make_unique_for_overwrite<int[]>(len);
+
+        fibonacci(values.get(), values.get() + len);
+
+        std::cout << "make_unique_for_overwrite<int[]>(10), fibonacci(...): [" << values[0];
+        for (std::size_t i = 1; i < 10; ++i)
+            std::cout << ", " << values[i];
+        std::cout << "]\n";
+    }
+};
 
 void Memory::TestAll()
 {
-
     // CleanUP_Exception_Test();
     // SharedPtrLeak();
 
@@ -507,6 +534,7 @@ void Memory::TestAll()
 
     // RestrictObjectHeapCreation::CreateObjects_PrivateFunc();
 
+    // SharedPtr_MemoryAllocationTests::TestAllocations();
 
-    SharedPtr_MemoryAllocationTests::TestAllocations();
+    MakeUnique_ForOverwrite::AllocateArray_AndInitialize();
 }

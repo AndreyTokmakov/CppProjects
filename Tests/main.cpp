@@ -615,7 +615,7 @@ int main([[maybe_unused]] int argc,
 
     // PrintTemplateType::test();
 
-    ObjectOrientedExperiments::Call_BaseClass_Func_Hack();
+    // ObjectOrientedExperiments::Call_BaseClass_Func_Hack();
 
 
     // ConceptsTests::If_Constexpr_Concepts();
@@ -638,7 +638,7 @@ int main([[maybe_unused]] int argc,
     // AutoTests::TestAll();
     // Algorithms::TestAll();
     // Multithreading::TestAll();
-    // Memory::TestAll();
+    Memory::TestAll();
     // Iterators::TestAll();
     // Files::TestAll();
     // ConstexprMap::TestAll()
