@@ -200,7 +200,7 @@ int main([[maybe_unused]] int argc,
     // SystemInformation::TestAll();
 
     // Modules::TestAll();
-    ModulesKernel::TestAll();
+    // ModulesKernel::TestAll();
 
     // Servers::TestAll();
     // WebServerSimple::TestAll();
@@ -212,7 +212,7 @@ int main([[maybe_unused]] int argc,
     // NotifyTest();
 
     // Semaphore::TestAll();
-    // SharedMemory::TestAll(params);
+    SharedMemory::TestAll(params);
     // Pipes::TestAll(params);
 
 

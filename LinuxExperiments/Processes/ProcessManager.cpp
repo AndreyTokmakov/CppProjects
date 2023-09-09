@@ -11,6 +11,7 @@ Description : Linux ProcessManager C++ experiments
 
 #include <iostream>
 #include <string_view>
+#include <string>
 #include <filesystem>
 #include <fstream>
 #include <memory>
@@ -106,12 +107,12 @@ namespace ProcessManager::VectorAndMapDemo
                     std::string line;
                     while (std::getline(file, line))
                     {
-                        if (line.contains("Name:"))
+                        if (line.find("Name:") != std::string::npos)
                         {
                             start = line.find_first_not_of(' ', 6);
                             proc.name.assign(line.cbegin() + start, line.cend());
                         }
-                        else if (line.contains("PPid:"))
+                        else if (line.find("PPid:") != std::string::npos)
                         {
                             start = line.find_first_not_of(' ', 6);
                             for (end = start; end < line.size(); ++end)
@@ -245,12 +246,12 @@ namespace ProcessManager::ProcessTree
                         std::string line;
                         while (std::getline(file, line))
                         {
-                            if (line.contains("Name:"))
+                            if (line.find("Name:") != std::string::npos)
                             {
                                 start = line.find_first_not_of(' ', 6);
                                 process->name.assign(line.cbegin() + start, line.cend());
                             }
-                            else if (line.contains("PPid:"))
+                            else if (line.find("PPid:") != std::string::npos)
                             {
                                 start = line.find_first_not_of(' ', 6);
                                 for (end = start; end < line.size(); ++end)
@@ -306,7 +307,7 @@ namespace ProcessManager::ProcessTree
         const auto processTree = getProcesses();
         for (const auto& [pid, process]: processTree)
         {
-            if (process->name.contains("chrome")) {
+            if (process->name.find("chrome") != std::string::npos) {
                 printProcTree(process->pid);
                 break;
             }
@@ -318,7 +319,8 @@ namespace ProcessManager::ProcessTree
         const auto processTree = getProcesses();
         for (const auto& [pid, process]: processTree)
         {
-            if (process->name.contains("chrome") && !process->parent->name.contains("chrome")) {
+            if (process->name.find("chrome") != std::string::npos &&
+                process->parent->name.find("chrome") != std::string::npos) {
                 // ExecuteShellCommand(std::format("kill -9 {}", process->pid));
                 ExecuteShellCommand(std::string {"kill -9 "}.append(std::to_string(process->pid)));
                 break;
@@ -358,13 +360,13 @@ namespace ProcessManager::ProcessFilesystem
                 while (std::getline(file, line))
                 {
                     // std::cout << line << std::endl;
-                    if (line.contains("Name:"))
+                    if (line.find("Name:") != std::string::npos)
                     {
                         start = line.find_first_not_of(' ', 6);
                         std::string name(line.cbegin() + start, line.cend());
                         std::cout << "name = " << name << std::endl;
                     }
-                    else if (line.contains("PPid:"))
+                    else if (line.find("PPid:") != std::string::npos)
                     {
                         start = line.find_first_not_of(' ', 6);
                         for (end = start; end < line.size(); ++end)

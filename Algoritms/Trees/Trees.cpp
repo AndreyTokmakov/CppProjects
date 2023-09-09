@@ -903,7 +903,8 @@ namespace BinTreeTests {
         __find_deepest_node_3(node->right, depth + 1, result);
     }
 
-    void Find_Deepest_Node() {
+    void Find_Deepest_Node()
+    {
         BinTree::BinaryTree tree{ 33,22,85,10,30,54,125,5,12,25,32,45,60,120,130,4,3,2,12,13,14,15,16 };
 
         {
@@ -2157,14 +2158,14 @@ void Trees::TEST_ALL()
 
 
     // BinTreeTests::Find_Max_Depth();
-    // BinTreeTests::Find_Deepest_Node();
+    BinTreeTests::Find_Deepest_Node();
     // BinTreeTests::Find_Maximum_Node_AtLevel();
     // BinTreeTests::Find_Maximum_Level_Sum();
     // BinTreeTests::Find_Level_With_Maximum_Sum();
     // BinTreeTests::Find_Min_Depth();
     // BinTreeTests::Find_Depth_Tests_2();
     // BinTreeTests::Find_MaxElement_NotForBST();
-    BinTreeTests::Find_If_Last_Level_Completed();
+    // BinTreeTests::Find_If_Last_Level_Completed();
     // BinTreeTests::Find_Largest_BST_Sub();
 
     // BinTreeTests::Find_Maximum_PathSum_BetweenNodes();

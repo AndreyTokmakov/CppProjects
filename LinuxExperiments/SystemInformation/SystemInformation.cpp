@@ -14,7 +14,8 @@
 
 namespace SystemInformation
 {
-    void GetSysInfo() {
+    void GetSysInfo()
+    {
         utsname buf1 {};
         if (uname(&buf1)!=0) {
             std::cout << "uname() failed. Error = " << errno << std::endl;
@@ -42,8 +43,8 @@ void SystemInformation::TestAll()
     // GetSysInfo();
     // GetPageSize();
 
-    std::cout << sysconf(_SC_LOGIN_NAME_MAX)  << std::endl;
-    std::cout << sysconf(_SC_OPEN_MAX)  << std::endl;
-    std::cout << sysconf(_SC_NGROUPS_MAX)  << std::endl;
-    std::cout << sysconf(_SC_RTSIG_MAX)  << std::endl;
+    // std::cout << sysconf(_SC_LOGIN_NAME_MAX)  << std::endl;
+    // std::cout << sysconf(_SC_OPEN_MAX)  << std::endl;
+    // std::cout << sysconf(_SC_NGROUPS_MAX)  << std::endl;
+    // std::cout << sysconf(_SC_RTSIG_MAX)  << std::endl;
 };

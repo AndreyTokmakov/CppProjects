@@ -33,9 +33,9 @@ namespace SharedMemory
         std::cout << errText << ". Error = " << errno << std::endl;
     }
 
-    void InitSharedMem_Sleep_AndCloseSegment(size_t secondsToSleep = 30) {
-        int sharedMemory = INVALID_HANDLE;
-        sharedMemory = ::shm_open(sharedMemoryObjName.data(),
+    void InitSharedMem_Sleep_AndCloseSegment(size_t secondsToSleep = 30)
+    {
+        int sharedMemory = ::shm_open(sharedMemoryObjName.data(),
                                   O_CREAT|O_RDWR|O_EXCL|O_TRUNC, S_IRWXU|S_IRWXG);
         if (INVALID_HANDLE == sharedMemory) {
             if (EEXIST == errno) { /** Shared memory already exist. **/
@@ -49,7 +49,7 @@ namespace SharedMemory
             }
         }
 
-        SharedData* data = (SharedData*)::mmap(NULL,
+        SharedData* data = (SharedData*)::mmap(nullptr,
                                                sizeof(SharedData),
                                                PROT_READ | PROT_WRITE, MAP_SHARED,
                                                sharedMemory,
@@ -58,10 +58,6 @@ namespace SharedMemory
         data->counter++;
 
         std::cout << data->counter << std::endl;
-
-        std::this_thread::sleep_for(std::chrono::seconds (secondsToSleep));
-
-        data->counter = 123;
 
         std::this_thread::sleep_for(std::chrono::seconds (secondsToSleep));
 
@@ -93,6 +89,8 @@ namespace SharedMemory
 
         SharedData* data = reinterpret_cast<SharedData*>(sharedBuffer);
         std::cout << data->counter << std::endl;
+
+        data->counter++;
 
 
         /*
@@ -131,8 +129,8 @@ namespace SharedMemory
 
 void SharedMemory::TestAll(const std::vector<std::string_view>& params)
 {
-    InitSharedMem_Sleep_AndCloseSegment(10);
+    // InitSharedMem_Sleep_AndCloseSegment(10);
 
-    // GetDataFromSharedMemory_Test();
+    GetDataFromSharedMemory_Test();
 };
 
