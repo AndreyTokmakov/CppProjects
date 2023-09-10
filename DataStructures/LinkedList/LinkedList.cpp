@@ -181,14 +181,14 @@ namespace LinkedLists::One {
             }
         }
 
-        void push_back(object_type val) {
-            if (auto last = new Node<object_type>{val}; head) {
-                auto prev = tail;
-                tail = last;
-                prev->next = tail;
-            } else {
-                tail = head = last;
-            }
+        void push_back(object_type val)
+        {
+            Node<object_type>* node = new Node<object_type>{val};
+            if (!tail)
+                head = node;
+            else
+                tail->next = node;
+            tail = node;
         }
 
         /** Iterators support:  **/
@@ -619,7 +619,7 @@ namespace LinkedLists::TestsTwo
 void LinkedLists::TEST_ALL()
 {
     // TestsOne::PrintContent_Iterator();
-    // TestsOne::PushBackElement();
+    TestsOne::PushBackElement();
     // TestsOne::initializer_list();
     // TestsOne::TEST();
 
@@ -627,5 +627,5 @@ void LinkedLists::TEST_ALL()
     // TestsTwo::PrintContent_Iterator();
     // TestsTwo::PushBackElement();
     // TestsTwo::initializer_list();
-    TestsTwo::TEST();
+    // TestsTwo::TEST();
 };

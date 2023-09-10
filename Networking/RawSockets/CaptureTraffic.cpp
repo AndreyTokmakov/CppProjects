@@ -98,7 +98,6 @@ namespace CaptureTraffic
         }
     }
 
-    [[noreturn]]
     void snifferTest2()
     {
         constexpr std::string_view interfaceName { "wlx00c0cab21ffc" };
@@ -124,6 +123,7 @@ namespace CaptureTraffic
         }
 
         unsigned char frame[2048] {};
+
         ssize_t bytes = 0;
         while(true)
         {

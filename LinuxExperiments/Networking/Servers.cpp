@@ -30,6 +30,8 @@ namespace Servers
     {
         constexpr size_t RECV_BUFFER_SIZE {1024};
         constexpr size_t OBSERVED_FDS_POLL {64};
+
+        [[maybe_unused]]
         constexpr size_t MAX_EVENTS {16};
 
         // struct sigaction action {.sa_handler = SIG_IGN};
@@ -72,8 +74,8 @@ namespace Servers
         }
 
         /* Set server's socket as the first element */
-        pollfd fds[OBSERVED_FDS_POLL] {{.fd = hSocket, .events = POLLIN}, };
-        for (int i = 1; i < OBSERVED_FDS_POLL; ++i) {
+        pollfd fds[OBSERVED_FDS_POLL] {{.fd = hSocket, .events = POLLIN}};
+        for (size_t i = 1; i < OBSERVED_FDS_POLL; ++i) {
             fds[i].events = POLLIN;
             fds[i].fd = UNUSED_FD;
         }
@@ -92,7 +94,7 @@ namespace Servers
                          * when connection is terminated (i.e. file descriptor has been closed),
                          * we might the POLLNVAL error. See poll(2) for more information.
                          */
-                        printf("Event (%d): %d on fd: %d\n", i, polled_fd->revents, polled_fd->fd);
+                        printf("Event (%ld): %d on fd: %d\n", i, polled_fd->revents, polled_fd->fd);
                     }
 
                     /* If reading from a file descriptor is not possible, then do nothing. */

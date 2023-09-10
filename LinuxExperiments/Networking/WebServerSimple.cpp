@@ -81,7 +81,7 @@ namespace WebServerSimple
         */
     };
 
-    void foo(Socket sock) {
+    void foo([[maybe_unused]] Socket sock) {
 
     }
 
@@ -135,7 +135,7 @@ namespace WebServerSimple
         resp += html;
 
         int clientSocket = -1;
-        long bytes = 0;
+        size_t bytes = 0;
         std::string request;
         char buffer[bufferSize];
         while (true) {

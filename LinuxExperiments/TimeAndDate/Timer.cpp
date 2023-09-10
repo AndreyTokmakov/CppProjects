@@ -36,7 +36,7 @@ namespace Timer {
         EventData eventData { };
 
         /* sigevent specifies behaviour on expiration  */
-        sigevent sev = { 0 };
+        sigevent sev = { 0 , 0, 0, 0};
 
         /* specify start delay and interval it_value and it_interval must not be zero */
         itimerspec its {};

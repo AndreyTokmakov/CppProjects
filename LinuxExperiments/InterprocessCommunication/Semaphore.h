@@ -10,8 +10,11 @@
 #ifndef CPPPROJECTS_SEMAPHORE_H
 #define CPPPROJECTS_SEMAPHORE_H
 
+#include <vector>
+#include <string_view>
+
 namespace Semaphore {
-    void TestAll();
+    void TestAll(const std::vector<std::string_view>& params);
 };
 
 #endif //CPPPROJECTS_SEMAPHORE_H

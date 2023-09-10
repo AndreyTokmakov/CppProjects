@@ -44,7 +44,7 @@ namespace Pipes
 
 }
 
-void Pipes::TestAll(const std::vector<std::string_view>& params)
+void Pipes::TestAll(const std::vector<std::string_view>&)
 {
     SimpleTest();
 };

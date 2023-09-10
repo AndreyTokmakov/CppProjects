@@ -48,6 +48,7 @@ namespace Modules
 
         auto pos2 = line.find(' ', ++pos1);
         if (std::string::npos != pos2) {
+            [[maybe_unused]]
             auto [ptr, ec] { std::from_chars(line.data() + pos1, line.data() + pos2, module.size) };
         } else return module;
 
@@ -97,6 +98,7 @@ namespace Modules
             }
             return false;
         }
+        return false;
     }
 
     void CheckLoadedModules() {

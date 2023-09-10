@@ -135,14 +135,20 @@ namespace OpenSSL {
 
         ptrCert509 cert{d2i_X509(nullptr, &data, certData.size()), X509_free};
         if (cert) {
+
+            [[maybe_unused]]
             ASN1_TIME *not_before = X509_get_notBefore(cert.get());
+
+            [[maybe_unused]]
             ASN1_TIME *not_after = X509_get_notAfter(cert.get());
         } else {
             std::cout << "Unable to parse certificate in memory" << std::endl;
         }
     }
 
-    void GetSerialNumber(const std::vector<std::string_view> &params) {
+    void GetSerialNumber(const std::vector<std::string_view> &params)
+    {
+        [[maybe_unused]]
         const std::string_view path = !params.empty() ? params.front() : certPath1;
 
         const std::vector<char> certData = readCertificate(certPath1);
@@ -184,6 +190,7 @@ namespace OpenSSL {
 
     void GetSerialNumber2(const std::vector<std::string_view> &params)
     {
+        [[maybe_unused]]
         const std::string_view path = !params.empty() ? params.front() : certPath1;
         const std::vector<char> certData = readCertificate(certPath1);
         const auto *data = reinterpret_cast<const unsigned char *>(certData.data());

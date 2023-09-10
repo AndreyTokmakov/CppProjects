@@ -222,8 +222,7 @@ namespace Networking::UtilitiesLocal
             return;
         }
 
-        sockaddr_in server { PF_INET, htons(port) };
-        server.sin_addr.s_addr = inet_addr(ipAddr.data());
+        sockaddr_in server {PF_INET, htons(port), {.s_addr = inet_addr(ipAddr.data())}, {}};
 
         std::cout << "Connecting to server..." << std::endl;
         int error = ::connect(socket, (sockaddr*)&server, sizeof(server));
@@ -248,9 +247,7 @@ namespace Networking::UtilitiesLocal
             return;
         }
 
-        sockaddr_in server { PF_INET, htons(port) };
-        server.sin_addr.s_addr = inet_addr(ipAddress.data());
-
+        sockaddr_in server {PF_INET, htons(port), {.s_addr = inet_addr(ipAddress.data())}, {}};
         std::cout << "Connecting to server..." << std::endl;
         int error = ::connect(socket, (sockaddr*)&server, sizeof(server));
         if (SOCKET_ERROR == error) {

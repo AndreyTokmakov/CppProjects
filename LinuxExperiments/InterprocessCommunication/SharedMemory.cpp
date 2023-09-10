@@ -127,7 +127,7 @@ namespace SharedMemory
     }
 }
 
-void SharedMemory::TestAll(const std::vector<std::string_view>& params)
+void SharedMemory::TestAll(const std::vector<std::string_view>&)
 {
     // InitSharedMem_Sleep_AndCloseSegment(10);
 

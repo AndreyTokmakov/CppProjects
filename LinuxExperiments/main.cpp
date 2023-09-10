@@ -211,8 +211,8 @@ int main([[maybe_unused]] int argc,
 
     // NotifyTest();
 
-    // Semaphore::TestAll();
-    SharedMemory::TestAll(params);
+    Semaphore::TestAll(params);
+    // SharedMemory::TestAll(params);
     // Pipes::TestAll(params);
 
 
