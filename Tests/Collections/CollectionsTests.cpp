@@ -21,6 +21,7 @@ Description : CollectionsTests
 #include <chrono>
 #include <random>
 #include <unordered_set>
+#include <unordered_map>
 
 namespace CollectionsTests::Utils
 {
@@ -463,6 +464,23 @@ namespace CollectionsTests::Trie
 }
 
 
+namespace CollectionsTests::UnorderedMap
+{
+    void DeletedNotExisting()
+    {
+        std::unordered_map<int, std::string> numbers {
+            {1, "One"}, {2, "Two"}, {3, "Three"}, {4, "Four"}, {5, "Five"}
+        };
+
+        auto res = numbers.erase(1);
+        std::cout << res << std::endl;
+
+        res = numbers.erase(1);
+        std::cout << res << std::endl;
+    }
+}
+
+
 void CollectionsTests::TestAll()
 {
     // CustomArrayTest::Test();
@@ -475,5 +493,7 @@ void CollectionsTests::TestAll()
     // Arrays::PrintArrayTest();
 
     // Trie::test();
-    Trie::PerformanceTests();
+    // Trie::PerformanceTests();
+
+    UnorderedMap::DeletedNotExisting();
 };

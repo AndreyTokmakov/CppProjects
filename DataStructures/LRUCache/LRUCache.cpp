@@ -23,7 +23,7 @@
 
 namespace LRUCache::CircleIteratorArray {
 
-	//template<typename K, typename V, size_t _Size>
+	//template<typename K, typename V, size_t Capacity>
 	template<typename K = std::string, 
 		     typename V = std::string, size_t _Size = 5>
 	class LRUCache {
@@ -225,8 +225,9 @@ namespace LRUCache::CircleIteratorArray::Tests {
 
 namespace LRUCache::Cache_LinkedList {
 	
-	template<typename K, typename V, size_t _Size>
-	class LRUCache {
+	template<typename K, typename V, size_t Capacity>
+	class LRUCache
+    {
 	private:
 		using KeyType = K;
 		using ValueType = V;
@@ -235,7 +236,7 @@ namespace LRUCache::Cache_LinkedList {
 
 		static_assert(!std::is_same_v<KeyType, void>, "ERROR: Key type can not be void");
 		static_assert(!std::is_same_v<ValueType, void>, "ERROR: Value type can not be void");
-		static_assert(0 != _Size, "ERROR: Please try a little bigger buffer");
+		static_assert(0 != Capacity, "ERROR: Please try a little bigger buffer");
 
 	private:
 		std::list<Item> items;
@@ -244,20 +245,22 @@ namespace LRUCache::Cache_LinkedList {
 	public:
 		/* Adds a key=>value item
 		   Returns false if key already exists: */
-		bool put(const KeyType& key, const V& value) noexcept {
+		bool put(const KeyType& key, const V& value) noexcept
+        {
             if (auto iter = cache.find(key); cache.end() != iter) {
                 // iter->second->second = value;
                 return false;
             }
 
             // Delete least recently used item:
-			if (items.size() == _Size) {
+			if (items.size() == Capacity) {
 				cache.erase(items.back().first); // Erase the last item key from the map-cache using iterator
 				items.pop_back();                // Erase last item from the list
 			}
 
             /* Insert the new item at front of the list: */
             items.emplace_front(key, value);
+
             /* Insert {key->item_iterator} in the map: */
             cache.emplace(key, items.begin());
 
@@ -274,23 +277,20 @@ namespace LRUCache::Cache_LinkedList {
 
 			/* Use list splice to transfer this item to the first position, 
 			   which makes the item most-recently-used. Iterators still stay valid. */
-			// Just move the found element to first position on the LIST
 			items.splice(items.begin(), items, iter->second);
 			return iter->second->second;
 		}
 
 		// Erases an item
-		void erase(const KeyType& k) noexcept {
-			auto itr = cache.find(k);
-			if (itr == cache.end()) {
-				return;
+		void erase(const KeyType& k) noexcept
+        {
+			if (auto iter = cache.find(k); iter != cache.end())
+            {   // Erase from the list
+                items.erase(iter->second);
+
+                // Erase from the hash / map
+                cache.erase(iter);
 			}
-
-			// Erase from the list
-			items.erase(itr->second);
-
-			// Erase from the  map
-			cache.erase(itr);
 		}
 
 		/* TEST */
@@ -306,7 +306,8 @@ namespace LRUCache::Cache_LinkedList {
 	//=================================================================================//
 
 
-	void RunTests() {
+	void RunTests()
+    {
 		auto printlnCache = []<typename C>(const C & cache) {
 			cache.forEach([](auto& k, auto& v) {
 				std::cout << k << "=>" << v << " ";
@@ -342,7 +343,7 @@ namespace LRUCache::Cache_LinkedList {
 
 namespace LRUCache::CircleIterator_Deque {
 
-	//template<typename K, typename V, size_t _Size>
+	//template<typename K, typename V, size_t Capacity>
 	template<typename K = std::string,
 		typename V = std::string, size_t _Size = 5>
 		class LRUCache {

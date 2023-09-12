@@ -46,10 +46,11 @@ namespace RAII_CommitWrapper::One
     };
 
     template<typename F1, typename F2>
-    struct CommitWrapper final {
+    struct CommitWrapper final
+    {
         F1 successCallback {};
         F2 failureCallback {};
-        bool ok {false};
+        bool ok { false };
 
         explicit CommitWrapper(F1&& func1, F2&& func2):
                 successCallback {std::move(func1)}, failureCallback {std::move(func2)} {
@@ -59,7 +60,8 @@ namespace RAII_CommitWrapper::One
             ok = true;
         }
 
-        ~CommitWrapper() {
+        ~CommitWrapper()
+        {
             std::cout << "DTor called\n";
             if (ok)
                 successCallback();
@@ -129,7 +131,8 @@ namespace RAII_CommitWrapper::Two
         bool ok {false};
     };
 
-    class Foo {
+    class Foo
+            {
     public:
         ~Foo() {
             std::cout << "~Foo::Foo()" << std::endl;

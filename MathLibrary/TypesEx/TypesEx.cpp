@@ -17,7 +17,7 @@ namespace TypesEx {
 
     public:
         friend std::ostream& operator<<(std::ostream& stream, const Point<_Size, Ty>& pt) {
-            // TODO: Is there better way to iterate???? std::array<Ty, _Size>::_M_elems
+            // TODO: Is there better way to iterate???? std::array<Ty, Capacity>::_M_elems
             for (const Ty& v : pt._M_elems)
                 stream << v << " ";
             return stream;
@@ -60,13 +60,13 @@ namespace TypesEx {
         }
 
         /*
-        friend bool operator==(const Point<_Size, Ty>& pt1,
-                               const Point<_Size, Ty>& pt2) {
+        friend bool operator==(const Point<Capacity, Ty>& pt1,
+                               const Point<Capacity, Ty>& pt2) {
             return pt1 == pt2;
         }
 
-        friend bool operator!=(const Point<_Size, Ty>& pt1,
-                               const Point<_Size, Ty>& pt2) {
+        friend bool operator!=(const Point<Capacity, Ty>& pt1,
+                               const Point<Capacity, Ty>& pt2) {
             return !(pt1 == pt2);
         }
         */

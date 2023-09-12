@@ -147,7 +147,7 @@ namespace Types
         friend Point<_Size, Ty> cross(const Point<_Size, Ty>& pt1,
                                       const Point<_Size, Ty>& pt2)
         {
-            static_assert(3 == _Size, "Points cross product availableWorkers only for points with _Size == 3");
+            static_assert(3 == _Size, "Points cross product availableWorkers only for points with Capacity == 3");
             Point<_Size, Ty> pt{
                     pt1.coordinates[1] * pt2.coordinates[2] - pt1.coordinates[2] * pt2.coordinates[1],
                     pt1.coordinates[2] * pt2.coordinates[0] - pt1.coordinates[0] * pt2.coordinates[2],

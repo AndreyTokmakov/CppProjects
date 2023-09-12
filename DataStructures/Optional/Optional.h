@@ -45,7 +45,7 @@ namespace Optional {
 
 		/*
 		static_assert(!std::is_same_v<KeyType, void>, "ERROR: Key type can not be void");
-		static_assert(0 != _Size,  "ERROR: Please try a little bigger buffer");
+		static_assert(0 != Capacity,  "ERROR: Please try a little bigger buffer");
 		*/
 
 	private:

@@ -56,9 +56,9 @@ int main([[maybe_unused]] int argc,
     // ExecutorAdapter2::TestAll();
     // Function::Test();
     // HashTable::TestAll();
-    LinkedLists::TEST_ALL();
+    // LinkedLists::TEST_ALL();
     // Logging::TEST_ALL();
-	// LRUCache::TEST_ALL();
+	LRUCache::TEST_ALL();
     // ObjectPools::TEST_ALL();
     // Optional::TEST_ALL();
     // PriorityList::TEST_ALL();

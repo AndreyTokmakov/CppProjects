@@ -523,7 +523,7 @@ namespace ObjectPools::GoodPools_Tests {
 
 			// Remove the object from the list of free objects.
 			available.pop_back();
-			++(_size);
+			++_size;
 
 			// Wrap the initialized object and return it.
 			return std::unique_ptr<object_type, Deleter> { objectPtr, Deleter{this}};
@@ -809,8 +809,8 @@ void ObjectPools::TEST_ALL()
 	// GoodPools_Basic::SimpleTest();
 	// GoodPools_Basic::PerformanceTests();
 
-	// GoodPools_Tests::SimpleTest();
+	GoodPools_Tests::SimpleTest();
 	// GoodPools_Tests::PerformanceTests();
 
-    GoodPools_MultiThreaded::PerformanceTests();
+    // GoodPools_MultiThreaded::PerformanceTests();
 };

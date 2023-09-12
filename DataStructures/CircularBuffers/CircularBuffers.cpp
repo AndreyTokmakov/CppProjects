@@ -147,7 +147,7 @@ namespace CircularBuffers::Demo1
 	// template <class T>
 	// concept NotVoidType = !std::is_void_v<T>;
 
-	// template <class T, size_t _Size> class RingBuffer {};
+	// template <class T, size_t Capacity> class RingBuffer {};
 
 	template <class T, size_t _Size>
 	class RingBuffer {
