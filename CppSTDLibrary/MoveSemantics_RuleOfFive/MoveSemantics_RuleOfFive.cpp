@@ -1588,8 +1588,60 @@ namespace MoveSemantics_RuleOfFive::Method_Invoked_OnlyForRValueRefs
     }
 }
 
+namespace MoveSemantics_RuleOfFive::Move_Overload_vs_PerfectForwarding
+{
 
-void MoveSemantics_RuleOfFive::TestAll() {
+    std::vector<std::string> logs {};
+    std::vector<Integer> storage {};
+
+    template<typename T> requires std::convertible_to<T, Integer>
+    void store_new(T&& v)
+    {
+        storage.push_back(std::forward<T>(v));
+    }
+
+    void store(const Integer & str)
+    {
+        storage.push_back(str);
+    }
+
+    void store(Integer && str)
+    {
+        storage.push_back(std::move(str));
+    }
+
+
+    void test_overload()
+    {
+        {
+            Integer l{1};
+            store(l);
+        }
+        std::cout << std::endl;
+
+        {
+            store(Integer{1});
+        }
+        std::cout << std::endl;
+    }
+
+    void test_perfect_forwarding()
+    {
+        {
+            Integer l{1};
+            store_new(l);
+        }
+        std::cout << std::endl;
+
+        {
+            store_new(Integer{1});
+        }
+        std::cout << std::endl;
+    }
+}
+
+void MoveSemantics_RuleOfFive::TestAll()
+{
 	// FillVector_NoCopy();
 	// FillVector_Copy();
 	// test_0();
@@ -1643,7 +1695,11 @@ void MoveSemantics_RuleOfFive::TestAll() {
 
 
     // Method_Invoked_OnlyForRValueRefs::Test();
-    Method_Invoked_OnlyForRValueRefs::RValue_Only_Object_Methods();
+    // Method_Invoked_OnlyForRValueRefs::RValue_Only_Object_Methods();
 
 	// Tests::Lifitime_Extenstion_Test();
+
+
+    Move_Overload_vs_PerfectForwarding::test_overload();
+    Move_Overload_vs_PerfectForwarding::test_perfect_forwarding();
 }

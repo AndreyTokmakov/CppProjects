@@ -617,7 +617,7 @@ namespace MoveExperiments
     template<typename T> requires std::convertible_to<T, Long>
     void store_new(T&& v)
     {
-        logs.push_back(std::forward<T>(v));
+        storage.push_back(std::forward<T>(v));
     }
 
     void store(const Long & str)
@@ -631,9 +631,32 @@ namespace MoveExperiments
     }
 
 
-    void test()
+    void test_overload()
     {
+        {
+            Long l{1};
+            store(l);
+        }
+        std::cout << std::endl;
 
+        {
+            store(Long{1});
+        }
+        std::cout << std::endl;
+    }
+
+    void test_perfect_forwarding()
+    {
+        {
+            Long l{1};
+            store_new(l);
+        }
+        std::cout << std::endl;
+
+        {
+            store_new(Long{1});
+        }
+        std::cout << std::endl;
     }
 }
 
@@ -648,7 +671,8 @@ int main([[maybe_unused]] int argc,
 
     // ObjectOrientedExperiments::Call_BaseClass_Func_Hack();
 
-    MoveExperiments::test();
+    // MoveExperiments::test_overload();
+    MoveExperiments::test_perfect_forwarding();
 
     // ConceptsTests::If_Constexpr_Concepts();
 
