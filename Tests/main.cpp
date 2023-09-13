@@ -671,9 +671,6 @@ int main([[maybe_unused]] int argc,
 
     // ObjectOrientedExperiments::Call_BaseClass_Func_Hack();
 
-    // MoveExperiments::test_overload();
-    MoveExperiments::test_perfect_forwarding();
-
     // ConceptsTests::If_Constexpr_Concepts();
 
     // Experiments::Test({20, 40, 60});
@@ -703,7 +700,7 @@ int main([[maybe_unused]] int argc,
     // MaxStack::TestAll();
     // DebugLogger::TestAll();
     // UniquePtr_Size::SizeTest();
-    // CollectionsTests::TestAll();
+    CollectionsTests::TestAll();
     // Templates::TestAll();
     // ExpressionTemplates::TestAll();
     // CopyElision_RVO::TestAll();

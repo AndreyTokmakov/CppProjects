@@ -23,6 +23,8 @@ Description : CollectionsTests
 #include <unordered_set>
 #include <unordered_map>
 
+#include "../Helpers/Long.h"
+
 namespace CollectionsTests::Utils
 {
     std::string randomString(size_t size = 16)
@@ -480,6 +482,26 @@ namespace CollectionsTests::UnorderedMap
     }
 }
 
+namespace CollectionsTests::Vector
+{
+    using Helpers::Long;
+
+    void GetRefToBack_And_DeleteLastElement()
+    {
+        std::vector<Long> numbers { Long{1}, Long {2}, Long{3}, Long{4}, Long{5}};
+
+        std::cout << "----------------------------------------------------------\n";
+
+        Long& last = numbers.back();
+        numbers.pop_back();
+
+        std::cout << last.getValue() << std::endl;
+
+        std::cout << "----------------------------------------------------------\n";
+
+    }
+}
+
 
 void CollectionsTests::TestAll()
 {
@@ -495,5 +517,7 @@ void CollectionsTests::TestAll()
     // Trie::test();
     // Trie::PerformanceTests();
 
-    UnorderedMap::DeletedNotExisting();
+    // UnorderedMap::DeletedNotExisting();
+
+    Vector::GetRefToBack_And_DeleteLastElement();
 };

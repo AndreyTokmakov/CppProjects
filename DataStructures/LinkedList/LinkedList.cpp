@@ -165,7 +165,8 @@ namespace LinkedLists::One {
             }
         }
 
-        ~LinkedList() {
+        ~LinkedList()
+        {
             /*
             auto node = head;
             while (head) {
