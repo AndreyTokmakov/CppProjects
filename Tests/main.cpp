@@ -607,6 +607,37 @@ namespace ObjectOrientedExperiments
 }
 
 
+namespace MoveExperiments
+{
+    using Helpers::Long;
+
+    std::vector<std::string> logs {};
+    std::vector<Long> storage {};
+
+    template<typename T> requires std::convertible_to<T, Long>
+    void store_new(T&& v)
+    {
+        logs.push_back(std::forward<T>(v));
+    }
+
+    void store(const Long & str)
+    {
+        storage.push_back(str);
+    }
+
+    void store(Long && str)
+    {
+        storage.push_back(std::move(str));
+    }
+
+
+    void test()
+    {
+
+    }
+}
+
+
 int main([[maybe_unused]] int argc,
          [[maybe_unused]] char** argv)
 {
@@ -617,6 +648,7 @@ int main([[maybe_unused]] int argc,
 
     // ObjectOrientedExperiments::Call_BaseClass_Func_Hack();
 
+    MoveExperiments::test();
 
     // ConceptsTests::If_Constexpr_Concepts();
 
@@ -647,7 +679,7 @@ int main([[maybe_unused]] int argc,
     // MaxStack::TestAll();
     // DebugLogger::TestAll();
     // UniquePtr_Size::SizeTest();
-    CollectionsTests::TestAll();
+    // CollectionsTests::TestAll();
     // Templates::TestAll();
     // ExpressionTemplates::TestAll();
     // CopyElision_RVO::TestAll();
