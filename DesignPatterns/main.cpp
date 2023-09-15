@@ -59,7 +59,7 @@ int main([[maybe_unused]]  int argc,
     // Builder::Test();
     // Builder::Test_HTML();
     // Builder::Test_User();
-    // FabricMethod::TestAll();
+    FabricMethod::TestAll();
     // Prototype::Test();
     // Singleton::TEST_ALL();;
     // Monostate::TestAll();;
@@ -97,7 +97,7 @@ int main([[maybe_unused]]  int argc,
     /// NULL OBJECT
 
     /** C++ IDIOMS: **/
-    CRTP::Test();
+    // CRTP::Test();
     // TypeErasure::Test();
     // RAII::Test();
     // CopyAndSwap::TEST_ALL();   ---- TESTs

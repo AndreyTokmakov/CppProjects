@@ -16,6 +16,17 @@
 #include <utility>
 #include <cstdint>
 
+namespace
+{
+    template<typename T>
+    std::ostream& operator<<(std::ostream &stream,
+                             const std::vector<T> & collections) {
+        for (const T& i: collections)
+            stream << " " << i;
+        return stream;
+    }
+}
+
 namespace Templates::FoldExpressions
 {
 
@@ -76,6 +87,80 @@ namespace Templates::FoldExpressions
         auto result = logged_add(2, 3);
     }
 }
+
+namespace Templates::FoldExpressions
+{
+    // When there is only one parameter left
+    template<typename T>
+    double sum(const T &last) {
+        std::cout << "sum(" << last << ")\n";
+        return last;
+    }
+
+    // When there are 2 or more parameter
+    template<typename T, typename ...Ts>
+    double sum(const T &first, const Ts &... args) {
+        return first + sum(args...);
+    }
+
+    void Recursive_Expansion() {
+        sum(1, 2, 3, 4, 5);
+    }
+
+
+    // When there is only two parameter left
+    template<typename T>
+    double sum_two(const T &a, const T &b) {
+        std::cout << "sum(" << a << ',' << b << ")\n";
+        return a + b;
+    }
+
+    template<typename T, typename ...Ts>
+    double sum_two(const T &first, const Ts &... args) {
+        return first + sum_two(args...);
+    }
+
+    void Recursive_Expansion_Two() {
+        sum_two(1, 2, 3, 4, 5);
+    }
+}
+
+namespace Templates::FoldExpressions
+{
+    template<typename ...Ts>
+    struct GetFirst{};
+
+    template<typename First, typename ...Rest>
+    struct GetFirst<First, Rest...>{
+        using Type = First;
+    };
+
+    template<typename... Ts>
+    auto make_vector(Ts&&... params) -> decltype(auto)
+    {
+        constexpr size_t size = sizeof...(params);
+        using _Ty = typename GetFirst<Ts...>::Type;
+        std::vector<_Ty> vec {};
+        vec.reserve(size);
+        (vec.emplace_back(std::forward<Ts>(params)), ...);
+        return vec;
+    }
+
+    void GetFirstElementType_CreateVector()
+    {
+        {
+            const auto collection = make_vector(1, 2, 3);
+            std::cout << collection << std::endl;
+        }
+        {
+            const auto collection = make_vector(
+                    std::string {"I"}, std::string {"II"}, std::string {"III"}
+                    );
+            std::cout << collection << std::endl;
+        }
+    }
+}
+
 
 
 namespace Templates::NTTP
@@ -202,10 +287,6 @@ namespace Templates::Specialization
         Object<float, int> mfi;    // uses Object<T , int>()
         Object<int *, float *> mp; // uses Object<T1*,T2*>()
     }
-
-
-
-
 }
 
 
@@ -213,9 +294,12 @@ void Templates::TestAll()
 {
     // FoldExpressions::MatchingTests();
     // FoldExpressions::PassingFunction_to_ClassTemplateArgument();
+    // FoldExpressions::Recursive_Expansion();
+    FoldExpressions::Recursive_Expansion_Two();
+    // FoldExpressions::GetFirstElementType_CreateVector();
 
     // NTTP::testConfig();
     // NTTP::testPersonalBudget();
 
-    Specialization::Test();
+    // Specialization::Test();
 }

@@ -23,6 +23,17 @@ Description : Templates src
 #include "../Integer/Integer.h"
 #include "Templates.h"
 
+namespace
+{
+    template<typename T>
+    std::ostream& operator<<(std::ostream &stream,
+                             const std::vector<T> & collections) {
+        for (const T& i: collections)
+            stream << " " << i;
+        return stream;
+    }
+}
+
 namespace Templates {
 
     class A {
@@ -1080,11 +1091,12 @@ namespace Templates::Methods {
     }
 }
 
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-//                                                    FoldExpression                                                                              //
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-namespace Templates::FoldExpression {
+
+
+
+namespace Templates::FoldExpression
+{
     template<typename ...Args>
     auto sum(Args ...args) {
         return (args + ... + 0);
@@ -1295,9 +1307,42 @@ namespace Templates::FoldExpression {
     }
 };
 
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-//                                                VariadicTemplates                                                                          //
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+namespace Templates::FoldExpression
+{
+    template<typename ...Ts>
+    struct GetFirst{};
+
+    template<typename First, typename ...Rest>
+    struct GetFirst<First, Rest...>{
+        using Type = First;
+    };
+
+    template<typename... Ts>
+    auto make_vector(Ts&&... params) -> decltype(auto)
+    {
+        constexpr size_t size = sizeof...(params);
+        using _Ty = typename GetFirst<Ts...>::Type;
+        std::vector<_Ty> vec {};
+        vec.reserve(size);
+        (vec.emplace_back(std::forward<Ts>(params)), ...);
+        return vec;
+    }
+
+    void GetFirstElementType_CreateVector()
+    {
+        {
+            const auto collection = make_vector(1, 2, 3);
+            std::cout << collection << std::endl;
+        }
+        {
+            const auto collection = make_vector(
+                    std::string {"I"}, std::string {"II"}, std::string {"III"}
+            );
+            std::cout << collection << std::endl;
+        }
+    }
+}
+
 
 namespace Templates::VariadicTemplates {
 
@@ -1320,7 +1365,7 @@ namespace Templates::VariadicTemplates {
     //////////////////////////////////////////////////////
 
     void print() {
-        std::cout << "Finis coronat opus" << std::endl;
+        std::cout << "* * * Will be called at the very end * * * " << std::endl;
     }
 
     template <typename T, typename... Types>
@@ -1329,7 +1374,7 @@ namespace Templates::VariadicTemplates {
         print(var2 ...);
     }
 
-    void Print_Multiple_Variables_RecursiceHack() {
+    void Print_Multiple_Variables_RecursiveHack() {
 
         print(1, 2, 3.14, "Pass me any number of arguments", "I will print\n");
     }
@@ -1443,7 +1488,25 @@ namespace Templates::VariadicTemplates {
         std::cout << x << std::endl;
     }
 
-    ///////////////////////////////////////////////////////////////////////
+    //========================================================================================================
+
+    // When there is only two parameter left
+    template<typename T>
+    double sum_two(const T &a, const T &b) {
+        std::cout << "sum(" << a << ',' << b << ")\n";
+        return a + b;
+    }
+
+    template<typename T, typename ...Ts>
+    double sum_two(const T &first, const Ts &... args) {
+        return first + sum_two(args...);
+    }
+
+    void Recursive_Expansion_Two() {
+        sum_two(1, 2, 3, 4, 5);
+    }
+
+    //========================================================================================================
 
     template<typename... Ts>
     class Overload: Ts... {
@@ -2714,7 +2777,9 @@ void Templates::TestAll()
 
 
     // VariadicTemplates::Sum_Multiple_Variables();
-    // VariadicTemplates::Print_Multiple_Variables_RecursiceHack();
+    VariadicTemplates::Print_Multiple_Variables_RecursiveHack();
+    // VariadicTemplates::Recursive_Expansion_Two();
+
     // VariadicTemplates::Variadic_Sizeof();
     // VariadicTemplates::Check_IfTypes_AreSame();
     // VariadicTemplates::ExtendedUsingDeclarations();
@@ -2733,6 +2798,8 @@ void Templates::TestAll()
     // FoldExpression::FillVector();
     // FoldExpression::FillVector2();
     // FoldExpression::Make_Vector();
+
+    // FoldExpression::GetFirstElementType_CreateVector();
 
     // FoldExpression::CallFunction();
     // FoldExpression::CallFunctionList();
@@ -2777,7 +2844,7 @@ void Templates::TestAll()
 
     // PartialSpecialization::Test();
     // PartialSpecialization::Test2();
-    PartialSpecialization::Pow_Test_Static();
+    // PartialSpecialization::Pow_Test_Static();
 
     // PartialSpecialization_WithConcepts::Test();
     // PartialSpecialization_WithConcepts::DependingOf_NumberOfParameters();

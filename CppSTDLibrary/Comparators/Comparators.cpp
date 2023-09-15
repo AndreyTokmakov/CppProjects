@@ -1,10 +1,10 @@
 /**============================================================================
 Name        : Comparators.cpp
-Created on  : 17.08.2023
+Created on  : 15.09.2023
 Author      : Andrei Tokmakov
 Version     : 1.0
 Copyright   : Your copyright notice
-Description : Comparators
+Description : Comparators.cpp
 ============================================================================**/
 
 #include "Comparators.h"

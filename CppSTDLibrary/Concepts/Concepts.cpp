@@ -1856,6 +1856,57 @@ namespace Concepts::FoldExpression
     void Sum_Has_Integer_Type() {
         auto x = sumToInt(1,3);
     }*/
+
+    //--------------------------------------------------------------------------
+
+    template<typename... Types>
+    void print_sizes(Types&&... args) {
+        std::cout << sizeof...(Types) << " | " << sizeof...(args) << "\n\n";
+    }
+
+    template<typename T, typename... Types>
+    void print_sizes_remaining(T firstArg, Types... args) {
+        std::cout << sizeof...(Types) << " | " << sizeof...(args) << "\n\n"; // print number of remaining args
+    }
+
+    template<typename T>
+    concept ComparableBase = requires(T const& a, T const& b) {
+        { a < b } -> std::same_as<bool>;
+        { a > b } -> std::same_as<bool>;
+        { a == b };
+        { a == b } -> std::convertible_to<bool>;
+        { a == b } noexcept -> std::convertible_to<bool>;
+    };
+
+    template<typename ... Types>
+    concept Comparable = requires(Types ... params)
+    {
+        true;
+        // requires sizeof ... (Types) >= 2;
+
+        // { (... > params) } -> std::same_as<bool>;
+
+        // { (... + params) } noexcept -> std::same_as<first_arg_t<Types ...>>;
+    };
+
+    template <Comparable... Args>
+    auto tryToCompare(Args&& ... params) {
+        return true;
+    }
+
+    void Elements_Shall_be_Comparable()
+    {
+        tryToCompare(1, 2);
+
+
+        /*
+        print_sizes(1,2 ,3);
+        print_sizes_remaining(1,2,3);
+
+        print_sizes("qwerty", 1.4, 1u, false);
+        print_sizes_remaining("qwerty", 1.4, 1u, false);
+        */
+    }
 }
 
 namespace Concepts::Is_Constructible
@@ -2345,7 +2396,7 @@ void Concepts::TestAll()
 
 
 
-    NestedConcepts::CheckMethodReturnType();
+    // NestedConcepts::CheckMethodReturnType();
 
 
 
@@ -2381,6 +2432,8 @@ void Concepts::TestAll()
     // FoldExpression::Test();
     // FoldExpression::Test_Construct_With_Arguments();
     // FoldExpression::Test_All_Params_are_SameType();
+    FoldExpression::Elements_Shall_be_Comparable();
+
 
     // IntegerConcepts::IntegerSum();
 
@@ -2396,6 +2449,6 @@ void Concepts::TestAll()
     // Tests::LAMBDA_CONCEPT();
     // Tests::Printable_Test();
 
-    Static_Asserts::TestClassMethods();
+    // Static_Asserts::TestClassMethods();
     // Static_Asserts::StaticAssert_Conects();
 };

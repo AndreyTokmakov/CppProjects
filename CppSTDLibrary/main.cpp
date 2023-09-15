@@ -29,6 +29,7 @@
 #include "ConsoleInOut/ConsoleInOut.h"
 #include "ConstConstexprMutable/ConstConstexprMutable.h"
 #include "CopyElision/CopyElision.h"
+#include "Comparators/Comparators.h"
 #include "Format/Format.h"
 #include "EnumTests/EnumTests.h"
 #include "Expected/Expected.h"
@@ -231,6 +232,7 @@ int main(int argc, char** argv)
     // BitwiseOperation::TestAll();
     // Byte::TestAll();
     // Chrono::TestAll();
+    // Comparators::TestAll();
     // Concepts::TestAll();
     // ConsoleInOut::TestAll();
     // ConstConstexprMutable::TestAll();
@@ -254,7 +256,7 @@ int main(int argc, char** argv)
     // MoveSemantics_RuleOfFive::TestAll();
     // Numbers::TestAll();
     // Math::TestAll();
-    Memory::TestAll();
+    // Memory::TestAll();
     // Metaprogramming::TestAll();
     // InlineNamespaces::TestAll();
     // NumericLimits::TestAll();
@@ -280,7 +282,7 @@ int main(int argc, char** argv)
     // Tuple::TestAll();
     // TypeCast::TestAll();
     // Int::TestAll();
-    // Templates::TestAll();
+    Templates::TestAll();
     // Utilities::TestAll();
     // UniquePtr_Tests::TestAll();
 

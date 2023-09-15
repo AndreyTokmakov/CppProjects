@@ -116,12 +116,14 @@ void PhoneChargeAdapterTest();
 void Adapter::TestAll()
 {
     // Classic::Test();
+
     // USBAdapterTest();
+
 	// PrivateInheritance::Test();
 
     // BaseAdapterTest();
 
-    // GoodExample_Test();
+    GoodExample_Test();
 
-    PhoneChargeAdapterTest();
+    // PhoneChargeAdapterTest();
 }
