@@ -1,11 +1,11 @@
-//============================================================================
-// Name        : List.h
-// Created on  : 05.05.2020
-// Author      : Tokmakov Andrey
-// Version     : 1.0
-// Copyright   : Your copyright notice
-// Description : C++ List container testing
-//============================================================================
+/**============================================================================
+Name        : Vector.cpp
+Created on  : 05.05.2020
+Author      : Andrei Tokmakov
+Version     : 1.0
+Copyright   : Your copyright notice
+Description : C++ List container testing
+============================================================================**/
 
 #include <iostream>
 #include <sstream>
@@ -442,7 +442,8 @@ namespace List
     }
 }
 
-void List::TEST_ALL() {
+void List::TestAll()
+{
 	// Emplace_front();
 	// Emplace_front_ReturnValue();
 

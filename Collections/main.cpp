@@ -32,12 +32,12 @@ int main([[maybe_unused]] int argc,
          [[maybe_unused]] char** argv)
 {
 	// TEST(Array);
-	// TEST(List);
+	// List::TestAll();
 	// TEST(ForwardList);
 	// TEST(Deque);
 	// TEST(Stack);
 	// TEST(Heap);
-	// TEST(Vector);
+	Vector::TestAll();
 	// TEST(Valarray);
 	// TEST(Map);
 	// TEST(MultiMap);
@@ -45,6 +45,6 @@ int main([[maybe_unused]] int argc,
     // TEST(Set);
     // TEST(UnorderedSet);
 	// TEST(Queue);
-	PriorityQueue::TestAll();
+	// PriorityQueue::TestAll();
 	// TEST(Custom_Vector);
 }

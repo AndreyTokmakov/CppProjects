@@ -1,11 +1,11 @@
-//============================================================================
-// Name        : Vector.cpp
-// Created on  : 15.04.2020
-// Author      : Tokmakov Andrey
-// Version     : 1.0
-// Copyright   : Your copyright notice
-// Description : C++ STL Vector container testing
-//============================================================================
+/**============================================================================
+Name        : Vector.cpp
+Created on  : 15.04.2020
+Author      : Andrei Tokmakov
+Version     : 1.0
+Copyright   : Your copyright notice
+Description : C++ STL Vector container testing
+============================================================================**/
 
 #include "Vector.h"
 
@@ -196,6 +196,15 @@ namespace Vector {
 
 		std::cout << "words1: Size: " << words1.size() << ", Space left: " << words1.capacity() - words1.size() << std::endl;
 	}
+
+    void Clear_Capacity_Tests()
+    {
+        std::vector<int> numbers {1,2,3,4,5,6,7,8,9};
+        std::cout << "Size: " << numbers.size() << ". capacity = " << numbers.capacity() << std::endl;
+
+        numbers.clear();
+        std::cout << "Size: " << numbers.size() << ". capacity = " << numbers.capacity() << std::endl;
+    }
 
 	void Allocate_Memory_Tests()
 	{
@@ -641,10 +650,10 @@ namespace Vector::CustomObjects {
         Object(const Object& obj) = delete;
         Object& operator=(const Object& obj) = delete;
 
-        Object(Object&& obj) noexcept {
+        Object(Object&&) noexcept {
         }
 
-        Object& operator=(Object&& obj) noexcept {
+        Object& operator=(Object&&) noexcept {
             return *this;
         }
 
@@ -914,12 +923,13 @@ namespace Vector::Allocators {
 	}
 }
 
-void Vector::TEST_ALL()
+void Vector::TestAll()
 {
-    Constructors_Tests();
+    // Constructors_Tests();
 
 	// Resize_Capacity_Tests();
 	// Resize_Capacity_Tests_2();
+	Clear_Capacity_Tests();
 	// Allocate_Memory_Tests();
 
 	// Create_and_Print();

@@ -11,9 +11,11 @@ Description : DVector.cpp
 
 #include <iostream>
 #include <vector>
+#include <deque>
 #include <memory>
 #include <utility>
 #include <algorithm>
+#include <chrono>
 
 #include "../Helpers/Long.h"
 
@@ -48,8 +50,7 @@ namespace DVector
         /** The allocator to use for allocating and deallocating chunks: **/
         Allocator allocator;
 
-    //private:
-    public:
+    private:
 
         void growVector()
         {
@@ -66,6 +67,14 @@ namespace DVector
 
             std::destroy_n(newData + left_old + 1, size);
             allocator.deallocate(newData, capacity);
+        }
+
+        void destroy()
+        {
+            const size_t size = right - left - 1;
+
+            /** Invoke destructors for all contained objects: **/
+            std::destroy_n(data + left + 1, size);
         }
 
     public:
@@ -85,8 +94,7 @@ namespace DVector
                 return;
 
             /** Invoke destructors for all contained objects: **/
-            const size_t size = right - left - 1;
-            std::destroy_n(data + left + 1, size);
+            destroy();
 
             /** Deallocate all memory: **/
             allocator.deallocate(data, capacity);
@@ -131,13 +139,13 @@ namespace DVector
     public:
 
         [[nodiscard]]
-        object_type& operator[] (size_t index) {
+        object_type& operator[] (size_t index) const {
             return this->data[index];
         }
 
         [[nodiscard]]
         inline size_t Size() const noexcept {
-            return right - left - 1;
+            return 0 != capacity ? right - left - 1 : 0;
         }
 
         [[nodiscard]]
@@ -146,36 +154,59 @@ namespace DVector
         }
 
         [[nodiscard]]
+        inline size_t FrontCapacity() const noexcept {
+            return left + 1;
+        }
+
+        [[nodiscard]]
+        inline size_t BackCapacity() const noexcept {
+            return capacity - right;
+        }
+
+        [[nodiscard]]
         inline bool Empty() const noexcept {
-            return 1 == (right - left);
+            return 0 == capacity || 1 != (right - left);
         }
 
-        void push_back(const object_type& v)
+        inline void Clear() noexcept
+        {
+            /** Invoke destructors for all contained objects: **/
+            destroy();
+
+            right = capacity / 2;
+            left = right - 1;
+        }
+
+        object_type& push_back(const object_type& v)
         {
             if (right >= capacity)
                 growVector();
-            this->data[right++] = v;
+            this->data[right] = v;
+            return data[right++];
         }
 
-        void push_front(const object_type& v)
+        object_type& push_front(const object_type& v)
         {
             if (0 >= left)
                 growVector();
-            this->data[left--] = v;
+            this->data[left] = v;
+            return data[left--];
         }
 
-        void push_back(object_type&& v)
+        object_type& push_back(object_type&& v)
         {
             if (right >= capacity)
                 growVector();
-            this->data[right++] = std::move(v);
+            this->data[right] = std::move(v);
+            return data[right++];
         }
 
-        void push_front(object_type&& v)
+        object_type& push_front(object_type&& v)
         {
             if (0 >= left)
                 growVector();
-            this->data[left--] = std::move(v);
+            this->data[left] = std::move(v);
+            return data[left--];
         }
 
         template<typename ... Args>
@@ -217,6 +248,8 @@ namespace DVector
             std::swap(first.capacity, second.capacity);
         }
 
+    public:  /** Debug methods: **/
+
         void printInfo()
         {
             const size_t size = right - left - 1;
@@ -225,6 +258,11 @@ namespace DVector
 
             for (size_t idx = 0; idx < capacity; ++idx)
                 std::cout << '[' << idx << "] = " << data[idx] << std::endl;
+        }
+
+        void callGrowVector()
+        {
+            growVector();
         }
     };
 
@@ -335,7 +373,7 @@ namespace DVector::Tests
         vect.push_back(34);
 
         vect.printInfo();
-        vect.growVector();
+        vect.callGrowVector();
         vect.printInfo();
     }
 
@@ -383,15 +421,181 @@ namespace DVector::Tests
 
         vect2.printInfo();
     }
+
+    void CopyAssignmentTests()
+    {
+        DVector<Helpers::Long> vect1;
+
+        vect1.emplace_back(5);
+        vect1.emplace_back(6);
+        vect1.emplace_back(7);
+        vect1.emplace_front(4);
+        vect1.emplace_front(3);
+
+
+        DVector<Helpers::Long> vect2;
+        vect2 = vect1;
+
+        vect1.printInfo();
+        vect2.printInfo();
+    }
+
+    void MoveAssignmentTests()
+    {
+        DVector<Helpers::Long> vect1;
+
+        vect1.emplace_back(5);
+        vect1.emplace_back(6);
+        vect1.emplace_back(7);
+        vect1.emplace_front(4);
+        vect1.emplace_front(3);
+
+        DVector<Helpers::Long> vect2;
+        vect2 = std::move(vect1);
+
+        vect1.printInfo();
+        vect2.printInfo();
+    }
+
+    void Clear_Tests()
+    {
+        DVector<int> numbers;
+        for (int i = 0; i < 55; ++i)
+            numbers.push_back(i);
+
+        std::cout << "Size: " << numbers.Size() << ", Empty: " << std::boolalpha << numbers.Empty() << std::endl;
+
+        numbers.Clear();
+        std::cout << "Size: " << numbers.Size() << ", Empty: " << std::boolalpha << numbers.Empty() << std::endl;
+    }
+
+    void Empty_and_Size_Test()
+    {
+        DVector<Helpers::Long> numbers1;
+        std::cout << "Size: " << numbers1.Size() << ", Empty: " << std::boolalpha << numbers1.Empty() << std::endl;
+
+        DVector<Helpers::Long> numbers2 {std::move(numbers1) };
+        std::cout << "Size: " << numbers1.Size() << ", Empty: " << std::boolalpha << numbers1.Empty() << std::endl;
+        std::cout << "Size: " << numbers2.Size() << ", Empty: " << std::boolalpha << numbers2.Empty() << std::endl;
+
+        numbers2.Clear();
+        std::cout << "Size: " << numbers2.Size() << ", Empty: " << std::boolalpha << numbers2.Empty() << std::endl;
+    }
+
+    void Front_Back_CapacityTests()
+    {
+        DVector<int> vect1;
+
+        vect1.emplace_back(5);
+        vect1.emplace_back(6);
+        vect1.emplace_back(7);
+        vect1.emplace_front(4);
+        vect1.emplace_front(3);
+
+        std::cout << std::boolalpha
+                  << (vect1.Capacity() == vect1.Size() + vect1.FrontCapacity() + vect1.BackCapacity())
+                  << std::endl;
+
+        std::cout << "Size: " << vect1.Size()
+                  << ", Front: " << vect1.FrontCapacity()
+                  << ", Back: " << vect1.BackCapacity()
+                  << std::endl;
+
+        vect1.printInfo();
+    }
+}
+
+
+namespace DVector::PerfTests
+{
+    constexpr size_t testsCount { 10'000 };
+    constexpr size_t pushBacksMax { 4'000 };
+    constexpr size_t pushFrontMax { 4'000 };
+    constexpr size_t blockSize { 20 };
+
+    void RunTests()
+    {
+        {
+            std::chrono::high_resolution_clock::time_point start = std::chrono::high_resolution_clock::now();
+
+            for (size_t test = 0; test < testsCount; ++test)
+            {
+                std::vector<int> vector;
+
+                size_t pushBacks = 0, pushFronts = 0;
+                while (pushBacksMax > pushBacks && pushFrontMax > pushFronts)
+                {
+                    for (size_t n = 0; pushBacks < pushBacksMax && n < blockSize; ++n, ++pushBacks)
+                        vector.push_back(1);
+                    for (size_t n = 0; pushFronts < pushFrontMax && n < blockSize; ++n, ++pushFronts)
+                        vector.insert(vector.cbegin(), 1);
+                }
+            }
+
+            std::chrono::high_resolution_clock::time_point end = std::chrono::high_resolution_clock::now();
+            std::chrono::duration<double> time_span = duration_cast<std::chrono::duration<double>>(end - start);
+            std::cout << "It took me " << time_span.count() << " seconds.\n";
+        }
+
+        {
+            std::chrono::high_resolution_clock::time_point start = std::chrono::high_resolution_clock::now();
+
+            for (size_t test = 0; test < testsCount; ++test)
+            {
+                std::deque<int> deque;
+
+                size_t pushBacks = 0, pushFronts = 0;
+                while (pushBacksMax > pushBacks && pushFrontMax > pushFronts)
+                {
+                    for (size_t n = 0; pushBacks < pushBacksMax && n < blockSize; ++n, ++pushBacks)
+                        deque.push_back(1);
+                    for (size_t n = 0; pushFronts < pushFrontMax && n < blockSize; ++n, ++pushFronts)
+                        deque.push_front( 1);
+                }
+            }
+
+            std::chrono::high_resolution_clock::time_point end = std::chrono::high_resolution_clock::now();
+            std::chrono::duration<double> time_span = duration_cast<std::chrono::duration<double>>(end - start);
+            std::cout << "It took me " << time_span.count() << " seconds.\n";
+        }
+
+        {
+            std::chrono::high_resolution_clock::time_point start = std::chrono::high_resolution_clock::now();
+
+            for (size_t test = 0; test < testsCount; ++test)
+            {
+                DVector<int> vector;
+
+                size_t pushBacks = 0, pushFronts = 0;
+                while (pushBacksMax > pushBacks && pushFrontMax > pushFronts)
+                {
+                    for (size_t n = 0; pushBacks < pushBacksMax && n < blockSize; ++n, ++pushBacks)
+                        vector.push_back(1);
+                    for (size_t n = 0; pushFronts < pushFrontMax && n < blockSize; ++n, ++pushFronts)
+                        vector.push_front( 1);
+                }
+            }
+
+            std::chrono::high_resolution_clock::time_point end = std::chrono::high_resolution_clock::now();
+            std::chrono::duration<double> time_span = duration_cast<std::chrono::duration<double>>(end - start);
+            std::cout << "It took me " << time_span.count() << " seconds.\n";
+        }
+    }
+
 }
 
 
 // TODO:
-//  Test destruction after Reallocation
-//  Test Copy_Constructor
-//  Test Copy_Assignment
-//  Test Move_Constructor
-//  Test Move_Assignment
+//  destruction after Reallocation
+//  Copy_Constructor
+//  Copy_Assignment
+//  Move_Constructor
+//  Move_Assignment
+//  Size()
+//  Empty()
+//  Clear()
+//  Resize()
+
 
 void DVector::TestAll()
 {
@@ -406,7 +610,16 @@ void DVector::TestAll()
 
     // Tests::DestructorTest();
 
+    // Tests::Clear_Tests();
+    // Tests::Empty_and_Size_Test();
 
     // Tests::CopyConstructorTests();
-    Tests::MoveConstructorTests();
+    // Tests::MoveConstructorTests();
+
+    // Tests::CopyAssignmentTests();
+    // Tests::MoveAssignmentTests();
+
+    // Tests::Front_Back_CapacityTests();
+
+    PerfTests::RunTests();
 }
