@@ -165,7 +165,12 @@ namespace DVector
 
         [[nodiscard]]
         inline bool Empty() const noexcept {
-            return 0 == capacity || 1 != (right - left);
+            return 0 == capacity || 1 == (right - left);
+        }
+
+        [[nodiscard]]
+        inline pointer Data() const noexcept {
+            return data + left + 1;
         }
 
         inline void Clear() noexcept
@@ -332,129 +337,128 @@ namespace DVector::Tests
 
     void PushBack()
     {
-        DVector<int> vect;
-        vect.push_back(21);
-        vect.push_back(22);
-        vect.push_back(23);
+        DVector<int> dVector;
 
-        vect.printInfo();
+        dVector.push_back(21);
+        dVector.push_back(22);
+        dVector.push_back(23);
+
+        dVector.printInfo();
     }
 
     void PushBack_Realloc()
     {
-        DVector<int> vect;
+        DVector<int> dVector;
 
         for (int i = 0; i < 50; ++i)
-            vect.push_back(100 + i);
+            dVector.push_back(100 + i);
 
-        vect.printInfo();
+        dVector.printInfo();
     }
 
     void PushFront()
     {
-        DVector<int> vect;
+        DVector<int> dVector;
 
-        vect.push_front(21);
-        vect.push_front(22);
-        vect.push_front(23);
+        dVector.push_front(21);
+        dVector.push_front(22);
+        dVector.push_front(23);
 
-        vect.printInfo();
+        dVector.printInfo();
     }
 
     void EstimateDistances()
     {
-        DVector<int> vect;
+        DVector<int> dVector;
 
-        vect.push_front(21);
-        vect.push_front(22);
-        vect.push_front(23);
+        dVector.push_front(21);
+        dVector.push_front(22);
+        dVector.push_front(23);
 
-        vect.push_back(33);
-        vect.push_back(34);
+        dVector.push_back(33);
+        dVector.push_back(34);
 
-        vect.printInfo();
-        vect.callGrowVector();
-        vect.printInfo();
+        dVector.printInfo();
+        dVector.callGrowVector();
+        dVector.printInfo();
     }
-
 
     void DestructorTest()
     {
-        DVector<Helpers::Long> vect;
+        DVector<Helpers::Long> dVector;
 
-        vect.emplace_back(101);
-        vect.emplace_back(102);
-        vect.emplace_back(103);
+        dVector.emplace_back(101);
+        dVector.emplace_back(102);
+        dVector.emplace_back(103);
 
-        vect.printInfo();
+        dVector.printInfo();
     }
 
     void CopyConstructorTests()
     {
-        DVector<Helpers::Long> vect1;
+        DVector<Helpers::Long> dVector1;
 
-        vect1.emplace_back(101);
-        vect1.emplace_back(102);
-        vect1.emplace_back(103);
+        dVector1.emplace_back(101);
+        dVector1.emplace_back(102);
+        dVector1.emplace_back(103);
 
-        vect1.printInfo();
+        dVector1.printInfo();
 
-        DVector<Helpers::Long> vect2 = vect1;
+        DVector<Helpers::Long> vect2 = dVector1;
 
         vect2.printInfo();
     }
 
     void MoveConstructorTests()
     {
-        DVector<Helpers::Long> vect1;
+        DVector<Helpers::Long> dVector1;
 
-        vect1.emplace_back(5);
-        vect1.emplace_back(6);
-        vect1.emplace_back(7);
+        dVector1.emplace_back(5);
+        dVector1.emplace_back(6);
+        dVector1.emplace_back(7);
 
-        vect1.emplace_front(4);
-        vect1.emplace_front(3);
+        dVector1.emplace_front(4);
+        dVector1.emplace_front(3);
 
         // vect1.printInfo();
 
-        DVector<Helpers::Long> vect2 = std::move(vect1);
-
-        vect2.printInfo();
+        DVector<Helpers::Long> dVector2 = std::move(dVector1);
+        dVector2.printInfo();
     }
 
     void CopyAssignmentTests()
     {
-        DVector<Helpers::Long> vect1;
+        DVector<Helpers::Long> dVector1;
 
-        vect1.emplace_back(5);
-        vect1.emplace_back(6);
-        vect1.emplace_back(7);
-        vect1.emplace_front(4);
-        vect1.emplace_front(3);
+        dVector1.emplace_back(5);
+        dVector1.emplace_back(6);
+        dVector1.emplace_back(7);
+        dVector1.emplace_front(4);
+        dVector1.emplace_front(3);
 
 
-        DVector<Helpers::Long> vect2;
-        vect2 = vect1;
+        DVector<Helpers::Long> dVector2;
+        dVector2 = dVector1;
 
-        vect1.printInfo();
-        vect2.printInfo();
+        dVector1.printInfo();
+        dVector2.printInfo();
     }
 
     void MoveAssignmentTests()
     {
-        DVector<Helpers::Long> vect1;
+        DVector<Helpers::Long> dVector;
 
-        vect1.emplace_back(5);
-        vect1.emplace_back(6);
-        vect1.emplace_back(7);
-        vect1.emplace_front(4);
-        vect1.emplace_front(3);
+        dVector.emplace_back(5);
+        dVector.emplace_back(6);
+        dVector.emplace_back(7);
+        dVector.emplace_front(4);
+        dVector.emplace_front(3);
 
-        DVector<Helpers::Long> vect2;
-        vect2 = std::move(vect1);
+        DVector<Helpers::Long> dVector2;
+        dVector2 = std::move(dVector);
 
-        vect1.printInfo();
-        vect2.printInfo();
+        dVector.printInfo();
+        dVector2.printInfo();
     }
 
     void Clear_Tests()
@@ -471,37 +475,53 @@ namespace DVector::Tests
 
     void Empty_and_Size_Test()
     {
-        DVector<Helpers::Long> numbers1;
-        std::cout << "Size: " << numbers1.Size() << ", Empty: " << std::boolalpha << numbers1.Empty() << std::endl;
+        DVector<Helpers::Long> dVector;
+        std::cout << "Size: " << dVector.Size() << ", Empty: " << std::boolalpha << dVector.Empty() << std::endl;
 
-        DVector<Helpers::Long> numbers2 {std::move(numbers1) };
-        std::cout << "Size: " << numbers1.Size() << ", Empty: " << std::boolalpha << numbers1.Empty() << std::endl;
-        std::cout << "Size: " << numbers2.Size() << ", Empty: " << std::boolalpha << numbers2.Empty() << std::endl;
+        DVector<Helpers::Long> dVector2 { std::move(dVector) };
+        std::cout << "Size: " << dVector.Size() << ", Empty: " << std::boolalpha << dVector.Empty() << std::endl;
+        std::cout << "Size: " << dVector2.Size() << ", Empty: " << std::boolalpha << dVector2.Empty() << std::endl;
 
-        numbers2.Clear();
-        std::cout << "Size: " << numbers2.Size() << ", Empty: " << std::boolalpha << numbers2.Empty() << std::endl;
+        dVector2.Clear();
+        std::cout << "Size: " << dVector.Size() << ", Empty: " << std::boolalpha << dVector.Empty() << std::endl;
     }
 
     void Front_Back_CapacityTests()
     {
-        DVector<int> vect1;
+        DVector<int> dVector;
 
-        vect1.emplace_back(5);
-        vect1.emplace_back(6);
-        vect1.emplace_back(7);
-        vect1.emplace_front(4);
-        vect1.emplace_front(3);
+        dVector.push_back(3);
+        dVector.push_back(4);
+        dVector.push_back(5);
+        dVector.push_front(2);
+        dVector.push_front(1);
 
         std::cout << std::boolalpha
-                  << (vect1.Capacity() == vect1.Size() + vect1.FrontCapacity() + vect1.BackCapacity())
+                  << (dVector.Capacity() == dVector.Size() + dVector.FrontCapacity() + dVector.BackCapacity())
                   << std::endl;
 
-        std::cout << "Size: " << vect1.Size()
-                  << ", Front: " << vect1.FrontCapacity()
-                  << ", Back: " << vect1.BackCapacity()
+        std::cout << "Size: " << dVector.Size()
+                  << ", Front: " << dVector.FrontCapacity()
+                  << ", Back: " << dVector.BackCapacity()
                   << std::endl;
 
-        vect1.printInfo();
+        // dVector.printInfo();
+    }
+
+    void Test_Data()
+    {
+        DVector<int> dVector;
+
+        const std::vector<int> testValues { 3, 4, 5, 6, 7};
+        for (int v: testValues)
+            dVector.push_back(v);
+
+        const int* data = dVector.Data();
+        for (size_t idx = 0; idx < dVector.Size(); ++idx)
+        {
+            if (testValues[idx] != data[idx])
+                std::cout << "ERROR!!! " << testValues[idx] << " != " << data[idx] << std::endl;
+        }
     }
 }
 
@@ -581,7 +601,6 @@ namespace DVector::PerfTests
             std::cout << "It took me " << time_span.count() << " seconds.\n";
         }
     }
-
 }
 
 
@@ -595,6 +614,7 @@ namespace DVector::PerfTests
 //  Empty()
 //  Clear()
 //  Resize()
+//  Data()
 
 
 void DVector::TestAll()
@@ -610,8 +630,10 @@ void DVector::TestAll()
 
     // Tests::DestructorTest();
 
-    // Tests::Clear_Tests();
+    Tests::Clear_Tests();
     // Tests::Empty_and_Size_Test();
+
+    // Tests::Test_Data();
 
     // Tests::CopyConstructorTests();
     // Tests::MoveConstructorTests();
@@ -621,5 +643,5 @@ void DVector::TestAll()
 
     // Tests::Front_Back_CapacityTests();
 
-    PerfTests::RunTests();
+    // PerfTests::RunTests();
 }
