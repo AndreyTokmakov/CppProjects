@@ -661,12 +661,37 @@ namespace MoveExperiments
     }
 }
 
+void MoveStringToArray()
+{
+    constexpr size_t capacity {10};
+
+    std::string text {"12345"};
+    auto allocator = std::allocator<std::string>{};
+
+    std::string* data = allocator.allocate(capacity * sizeof (std::string));
+    // std::string* data = new std::string("qwerty");
+    // std::string* data = new std::string[capacity];
+
+    /*
+    data[5] = std::move(text);
+    */
+
+    std::cout << std::quoted(data[5]) << std::endl;
+
+    // *data = std::move(text);
+    data[5] = std::move(text);
+
+    std::cout << std::quoted(data[5]) << std::endl;
+}
+
 
 int main([[maybe_unused]] int argc,
          [[maybe_unused]] char** argv)
 {
     const std::vector<std::string_view> args(argv + 1, argv + argc);
     // parseInputParams(std::vector {"one", "two", "three", "four", "five"}.data(), 5);
+
+    MoveStringToArray();
 
     // PrintTemplateType::test();
 
@@ -713,7 +738,7 @@ int main([[maybe_unused]] int argc,
     // Math::TestAll();
     // LRUCache::TestAll();
     // EventLoop::TestAll();
-    DVector::TestAll();
+    // DVector::TestAll();
     // Iterators::TestAll();
     // Convertaion_UTF8_UTF32::TestAll();    // Encoding
     // Unicode::TestAll();                   // Encoding
