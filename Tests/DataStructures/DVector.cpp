@@ -21,15 +21,29 @@ Description : DVector.cpp
 #include <chrono>
 #include <unordered_set>
 #include <random>
+#include <fstream>
 
 #include "../Helpers/Long.h"
 
+template<typename _Ty>
+struct Allocator: std::allocator<_Ty>
+{
+    _Ty* allocate(size_t size)
+    {
+        return new _Ty[size];
+    }
+
+    void deallocate(_Ty* ptr, size_t)
+    {
+        delete[] ptr;
+    }
+};
 
 namespace DVector
 {
 
     template<typename Type,
-             typename Allocator = std::allocator<Type>>
+             typename Allocator = Allocator<Type>>
     class DVector
     {
         using object_type = Type;
@@ -475,22 +489,6 @@ namespace DVector::Tests
         dVector.printInfo();
     }
 
-    void MoveAssignmentTests()
-    {
-        DVector<Helpers::Long> dVector;
-
-        dVector.emplace_back(5);
-        dVector.emplace_back(6);
-        dVector.emplace_back(7);
-        dVector.emplace_front(4);
-        dVector.emplace_front(3);
-
-        DVector<Helpers::Long> dVector2;
-        dVector2 = std::move(dVector);
-
-        dVector.printInfo();
-        dVector2.printInfo();
-    }
 
     void Front_Back_CapacityTests()
     {
@@ -666,6 +664,51 @@ namespace DVector::Tests::MoveConstructor
             dVectorOrig.push_back(v);
 
         DVector<int> dVectorDest = std::move(dVectorOrig);
+
+        assertEquals(0UL, dVectorOrig.Size());
+        assertEquals(true, dVectorOrig.Empty());
+        assertEquals(0UL, dVectorOrig.Capacity());
+
+        assertEquals(testValues.size(), dVectorDest.Size());
+        assertEquals(false, dVectorDest.Empty());
+        assertEquals(160UL, dVectorDest.Capacity());
+
+        assertContent(testValues, dVectorDest);
+    }
+}
+
+namespace DVector::Tests::MoveAssignmentOperator
+{
+    void MoveAssignmentTests()
+    {
+        const std::vector<int> testValues = getRandomIntegerVector(7);
+        DVector<int> dVectorOrig;
+        for (int v: testValues)
+            dVectorOrig.push_back(v);
+
+        DVector<int> dVectorDest;
+        dVectorDest = std::move(dVectorOrig);
+
+        assertEquals(0UL, dVectorOrig.Size());
+        assertEquals(true, dVectorOrig.Empty());
+        assertEquals(0UL, dVectorOrig.Capacity());
+
+        assertEquals(testValues.size(), dVectorDest.Size());
+        assertEquals(false, dVectorDest.Empty());
+        assertEquals(40UL, dVectorDest.Capacity());
+
+        assertContent(testValues, dVectorDest);
+    }
+
+    void MoveAssignmentTests_Reallocation()
+    {
+        const std::vector<int> testValues = getRandomIntegerVector(50);
+        DVector<int> dVectorOrig;
+        for (int v: testValues)
+            dVectorOrig.push_back(v);
+
+        DVector<int> dVectorDest;
+        dVectorDest = std::move(dVectorOrig);
 
         assertEquals(0UL, dVectorOrig.Size());
         assertEquals(true, dVectorOrig.Empty());
@@ -877,7 +920,7 @@ namespace DVector::Tests::IndexOperator
 
 namespace DVector::PerfTests
 {
-    constexpr size_t testsCount { 100 };
+    constexpr size_t testsCount { 1'000 };
     constexpr size_t pushBacksMax { 4'000 };
     constexpr size_t pushFrontMax { 4'000 };
     constexpr size_t blockSize { 20 };
@@ -959,13 +1002,108 @@ namespace DVector::PerfTests
 }
 
 
+namespace DVector::PerfTestsStatistics
+{
+    constexpr size_t testsCount { 10'000 };
+
+    using Type = int;
+    // using Type = size_t;
+    // using Type = std::string;
+
+    const Type element {};
+
+    void RunTests()
+    {
+        std::vector<std::string> results;
+
+        for (size_t elementsCount = 10; elementsCount < 2'000; elementsCount += 10)
+        {
+            const size_t pushBacksMax = elementsCount / 2;
+            const size_t pushFrontMax = elementsCount / 2;
+            const size_t blockSize  = elementsCount > 40 ? 20 : elementsCount;
+
+            std::string& result = results.emplace_back(std::to_string(elementsCount) + ",");
+            {
+                std::chrono::high_resolution_clock::time_point start = std::chrono::high_resolution_clock::now();
+
+                for (size_t test = 0; test < testsCount; ++test) {
+                    std::vector<Type> vector;
+
+                    size_t pushBacks = 0, pushFronts = 0;
+                    while (pushBacksMax > pushBacks && pushFrontMax > pushFronts) {
+                        for (size_t n = 0; pushBacks < pushBacksMax && n < blockSize; ++n, ++pushBacks)
+                            vector.push_back(element);
+                        for (size_t n = 0; pushFronts < pushFrontMax && n < blockSize; ++n, ++pushFronts)
+                            vector.insert(vector.cbegin(), element);
+                    }
+                }
+
+                std::chrono::high_resolution_clock::time_point end = std::chrono::high_resolution_clock::now();
+                std::chrono::duration<double> time_span = duration_cast<std::chrono::duration<double>>(end - start);
+                // std::cout << "\tIt took me " << time_span.count() << " seconds.\n";
+                result += std::to_string(time_span.count()) + ",";
+            }
+
+            {
+                std::chrono::high_resolution_clock::time_point start = std::chrono::high_resolution_clock::now();
+
+                for (size_t test = 0; test < testsCount; ++test) {
+                    std::deque<Type> deque;
+
+                    size_t pushBacks = 0, pushFronts = 0;
+                    while (pushBacksMax > pushBacks && pushFrontMax > pushFronts) {
+                        for (size_t n = 0; pushBacks < pushBacksMax && n < blockSize; ++n, ++pushBacks)
+                            deque.push_back(element);
+                        for (size_t n = 0; pushFronts < pushFrontMax && n < blockSize; ++n, ++pushFronts)
+                            deque.push_front(element);
+                    }
+                }
+
+                std::chrono::high_resolution_clock::time_point end = std::chrono::high_resolution_clock::now();
+                std::chrono::duration<double> time_span = duration_cast<std::chrono::duration<double>>(end - start);
+                // std::cout << "\tIt took me " << time_span.count() << " seconds.\n";
+                result += std::to_string(time_span.count()) + ",";
+            }
+
+            {
+                std::chrono::high_resolution_clock::time_point start = std::chrono::high_resolution_clock::now();
+
+                for (size_t test = 0; test < testsCount; ++test) {
+                    DVector<Type> vector;
+
+                    size_t pushBacks = 0, pushFronts = 0;
+                    while (pushBacksMax > pushBacks && pushFrontMax > pushFronts) {
+                        for (size_t n = 0; pushBacks < pushBacksMax && n < blockSize; ++n, ++pushBacks)
+                            vector.push_back(element);
+                        for (size_t n = 0; pushFronts < pushFrontMax && n < blockSize; ++n, ++pushFronts)
+                            vector.push_front(element);
+                    }
+                }
+
+                std::chrono::high_resolution_clock::time_point end = std::chrono::high_resolution_clock::now();
+                std::chrono::duration<double> time_span = duration_cast<std::chrono::duration<double>>(end - start);
+                // std::cout << "\tIt took me " << time_span.count() << " seconds.\n";
+                result += std::to_string(time_span.count()) + ",";
+            }
+        }
+
+        if (std::fstream file("/tmp/results.csv", std::ios::in | std::ios::out | std::ios::trunc);
+            file.is_open() && file.good())
+        {
+            for (const std::string& str: results)
+                file << str << '\n';
+        }
+    }
+}
+
+
 // TODO: TESTS
-//  +   Constructor
+//   +  Constructor
 //      destruction after Reallocation
-//  +   Copy_Constructor
-//      Copy_Assignment
-//      Move_Constructor
-//      Move_Assignment
+//   +  Copy_Constructor
+//   +  Copy_Assignment
+//   +  Move_Constructor
+//   +  Move_Assignment
 //   +  Size()
 //   +  Empty()
 //   +  Clear()
@@ -983,12 +1121,11 @@ void DVector::TestAll()
     using namespace Tests;
 
     // PushBack();
-    PushBack_CustomTypes();
+    // PushBack_CustomTypes();
 
 
     // PushBack_Realloc();
     // PushFront();
-    // DestructorTest();
     // MoveAssignmentTests();
     // Front_Back_CapacityTests();
 
@@ -1004,6 +1141,9 @@ void DVector::TestAll()
 
     MoveConstructor::MoveConstructorTests();
     MoveConstructor::MoveConstructorTests_Reallocation();
+
+    MoveAssignmentOperator::MoveAssignmentTests();
+    MoveAssignmentOperator::MoveAssignmentTests_Reallocation();
 
     IndexOperator::BasicTest();
     IndexOperator::CheckValues_With_PushBack_and_PushFront();
@@ -1027,4 +1167,5 @@ void DVector::TestAll()
     */
 
     // PerfTests::RunTests();
+    PerfTestsStatistics::RunTests();
 }
