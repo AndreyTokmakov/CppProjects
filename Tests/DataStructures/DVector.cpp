@@ -530,12 +530,13 @@ namespace DVector::Tests::PushBackTests
 
 namespace DVector::Tests::PushFrontTests
 {
-    void PushBack()
+    void PushFront()
     {
         const std::vector<int> testValues = getRandomIntegerVector(4);
         DVector<int> dVector;
-        for (int v: testValues)
-            dVector.push_back(v);
+        for (auto iter = testValues.rbegin(); testValues.rend() != iter; ++iter) {
+            dVector.push_front(*iter);
+        }
 
         assertEquals(testValues.size(), dVector.Size());
         assertEquals(testValues.empty(), dVector.Empty());
@@ -544,12 +545,13 @@ namespace DVector::Tests::PushFrontTests
         assertContent(testValues, dVector);
     }
 
-    void PushBack_Realloc()
+    void PushFront_Realloc()
     {
         const std::vector<int> testValues = getRandomIntegerVector(15);
         DVector<int> dVector;
-        for (int v: testValues)
-            dVector.push_back(v);
+        for (auto iter = testValues.rbegin(); testValues.rend() != iter; ++iter) {
+            dVector.push_front(*iter);
+        }
 
         assertEquals(testValues.size(), dVector.Size());
         assertEquals(testValues.empty(), dVector.Empty());
@@ -558,12 +560,13 @@ namespace DVector::Tests::PushFrontTests
         assertContent(testValues, dVector);
     }
 
-    void PushBack_CustomTypes_TODO()
+    void PushFront_CustomTypes_TODO()
     {
         const std::vector<std::string> testValues { "I", "II", "III", "IV"};
         DVector<std::string> dVector;
-        for (const auto& v: testValues)
-            dVector.push_back(v);
+        for (auto iter = testValues.rbegin(); testValues.rend() != iter; ++iter) {
+            dVector.push_front(*iter);
+        }
 
         assertEquals(testValues.size(), dVector.Size());
         assertEquals(testValues.empty(), dVector.Empty());
@@ -1181,17 +1184,17 @@ void DVector::TestAll()
 {
     using namespace Tests;
 
-    // PushFront();
     // MoveAssignmentTests();
     // Front_Back_CapacityTests();
-
 
     PushBackTests::PushBack();
     PushBackTests::PushBack_Realloc();
     PushBackTests::PushBack_CustomTypes_TODO();
 
+    PushFrontTests::PushFront();
+    PushFrontTests::PushFront_Realloc();
+    PushFrontTests::PushFront_CustomTypes_TODO();
 
-    /*
     Constructor::CreateVectorTest();
     Constructor::CreateVector_CustomCapacity();
 
@@ -1226,7 +1229,6 @@ void DVector::TestAll()
     Data::ReallocTest();
 
     Clear::Basic();
-    */
 
     // PerfTests::RunTests();
     // PerfTestsStatistics::RunTests();
