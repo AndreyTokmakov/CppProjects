@@ -22,6 +22,7 @@ Description : DVector.cpp
 #include <unordered_set>
 #include <random>
 #include <fstream>
+#include <format>
 
 #include "../Helpers/Long.h"
 
@@ -434,38 +435,7 @@ namespace DVector::Tests
     using namespace Utilities;
 
 
-    void PushBack()
-    {
-        DVector<int> dVector;
 
-        dVector.push_back(21);
-        dVector.push_back(22);
-        dVector.push_back(23);
-
-        dVector.printInfo();
-    }
-
-    void PushBack_CustomTypes()
-    {
-        DVector<std::string> dVector;
-
-        //for (int i = 0; i < 7; ++i)
-        //    dVector.push_back("");
-
-        dVector.push_back(std::string{});
-
-        dVector.printInfo();
-    }
-
-    void PushBack_Realloc()
-    {
-        DVector<int> dVector;
-
-        for (int i = 0; i < 50; ++i)
-            dVector.push_back(100 + i);
-
-        dVector.printInfo();
-    }
 
     void PushFront()
     {
@@ -510,6 +480,96 @@ namespace DVector::Tests
                   << std::endl;
 
         // dVector.printInfo();
+    }
+}
+
+namespace DVector::Tests::PushBackTests
+{
+    void PushBack()
+    {
+        const std::vector<int> testValues = getRandomIntegerVector(4);
+        DVector<int> dVector;
+        for (int v: testValues)
+            dVector.push_back(v);
+
+        assertEquals(testValues.size(), dVector.Size());
+        assertEquals(testValues.empty(), dVector.Empty());
+        assertEquals(10UL, dVector.Capacity());
+
+        assertContent(testValues, dVector);
+    }
+
+    void PushBack_Realloc()
+    {
+        const std::vector<int> testValues = getRandomIntegerVector(15);
+        DVector<int> dVector;
+        for (int v: testValues)
+            dVector.push_back(v);
+
+        assertEquals(testValues.size(), dVector.Size());
+        assertEquals(testValues.empty(), dVector.Empty());
+        assertEquals(40UL, dVector.Capacity());
+
+        assertContent(testValues, dVector);
+    }
+
+    void PushBack_CustomTypes_TODO()
+    {
+        const std::vector<std::string> testValues { "I", "II", "III", "IV"};
+        DVector<std::string> dVector;
+        for (const auto& v: testValues)
+            dVector.push_back(v);
+
+        assertEquals(testValues.size(), dVector.Size());
+        assertEquals(testValues.empty(), dVector.Empty());
+        assertEquals(10UL, dVector.Capacity());
+
+        assertContent(testValues, dVector);
+    }
+}
+
+namespace DVector::Tests::PushFrontTests
+{
+    void PushBack()
+    {
+        const std::vector<int> testValues = getRandomIntegerVector(4);
+        DVector<int> dVector;
+        for (int v: testValues)
+            dVector.push_back(v);
+
+        assertEquals(testValues.size(), dVector.Size());
+        assertEquals(testValues.empty(), dVector.Empty());
+        assertEquals(10UL, dVector.Capacity());
+
+        assertContent(testValues, dVector);
+    }
+
+    void PushBack_Realloc()
+    {
+        const std::vector<int> testValues = getRandomIntegerVector(15);
+        DVector<int> dVector;
+        for (int v: testValues)
+            dVector.push_back(v);
+
+        assertEquals(testValues.size(), dVector.Size());
+        assertEquals(testValues.empty(), dVector.Empty());
+        assertEquals(40UL, dVector.Capacity());
+
+        assertContent(testValues, dVector);
+    }
+
+    void PushBack_CustomTypes_TODO()
+    {
+        const std::vector<std::string> testValues { "I", "II", "III", "IV"};
+        DVector<std::string> dVector;
+        for (const auto& v: testValues)
+            dVector.push_back(v);
+
+        assertEquals(testValues.size(), dVector.Size());
+        assertEquals(testValues.empty(), dVector.Empty());
+        assertEquals(10UL, dVector.Capacity());
+
+        assertContent(testValues, dVector);
     }
 }
 
@@ -558,7 +618,6 @@ namespace DVector::Tests::Empty
         assertEquals(false, dVector2.Empty());
     }
 }
-
 
 namespace DVector::Tests::Constructor
 {
@@ -1015,8 +1074,9 @@ namespace DVector::PerfTestsStatistics
     void RunTests()
     {
         std::vector<std::string> results;
+        constexpr size_t from = 9000, until = 10000;
 
-        for (size_t elementsCount = 10; elementsCount < 2'000; elementsCount += 10)
+        for (size_t elementsCount = from; elementsCount < until; elementsCount += 50)
         {
             const size_t pushBacksMax = elementsCount / 2;
             const size_t pushFrontMax = elementsCount / 2;
@@ -1087,7 +1147,8 @@ namespace DVector::PerfTestsStatistics
             }
         }
 
-        if (std::fstream file("/tmp/results.csv", std::ios::in | std::ios::out | std::ios::trunc);
+        if (std::fstream file(std::format("/home/andtokm/DiskS/Temp/DVectorData/{}_{}_results.csv", from, until),
+                              std::ios::in | std::ios::out | std::ios::trunc);
             file.is_open() && file.good())
         {
             for (const std::string& str: results)
@@ -1120,14 +1181,15 @@ void DVector::TestAll()
 {
     using namespace Tests;
 
-    // PushBack();
-    // PushBack_CustomTypes();
-
-
-    // PushBack_Realloc();
     // PushFront();
     // MoveAssignmentTests();
     // Front_Back_CapacityTests();
+
+
+    PushBackTests::PushBack();
+    PushBackTests::PushBack_Realloc();
+    PushBackTests::PushBack_CustomTypes_TODO();
+
 
     /*
     Constructor::CreateVectorTest();
@@ -1167,5 +1229,5 @@ void DVector::TestAll()
     */
 
     // PerfTests::RunTests();
-    PerfTestsStatistics::RunTests();
+    // PerfTestsStatistics::RunTests();
 }

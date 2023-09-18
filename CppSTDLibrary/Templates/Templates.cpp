@@ -21,6 +21,8 @@ Description : Templates src
 // #include <format>
 
 #include "../Integer/Integer.h"
+#include "ConditionalExplicit.h"
+
 #include "Templates.h"
 
 namespace
@@ -2880,5 +2882,8 @@ void Templates::TestAll()
     // Applications_And_Examples::Fibonachi_Old_Test();
 
     // Friends::Access_Private_Field();
+
+
+    ConditionalExplicit::TestAll();
 
 }

@@ -542,7 +542,7 @@ namespace Conversation
         operator B() const {  return {}; }
     };
 
-    void Fun(A a) {}
+    void Fun([[maybe_unused]] A a) {}
 
     void test2()
     {
@@ -694,7 +694,6 @@ void MoveStringToArray()
 
     std::cout << std::quoted(data[5]) << std::endl;
 }
-
 
 int main([[maybe_unused]] int argc,
          [[maybe_unused]] char** argv)

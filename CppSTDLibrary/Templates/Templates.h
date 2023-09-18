@@ -12,7 +12,6 @@ Description : Templates src
 
 namespace Templates {
 	void TestAll();
-
 };
 
 #endif /* TEMPLATES_TESTS__H_ */
