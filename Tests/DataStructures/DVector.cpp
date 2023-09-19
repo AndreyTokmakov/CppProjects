@@ -177,6 +177,13 @@ namespace DVector
         }
 
         [[nodiscard]]
+        object_type& at(size_type index) const {
+            if (index >= (right - left - 1))
+                throw std::out_of_range(std::format("{} index is out of range", index));
+            return this->data[index + left + 1];
+        }
+
+        [[nodiscard]]
         inline size_type Size() const noexcept {
             return 0 != capacity ? right - left - 1 : 0;
         }
@@ -501,6 +508,29 @@ namespace DVector::Tests
                   << std::endl;
 
         // dVector.printInfo();
+    }
+}
+
+namespace DVector::Tests::AtMethodMethodTests
+{
+    void GetElement()
+    {
+        std::vector<int> testValues {1, 2, 3, 4, 5};
+        DVector<int> dVector;
+        for (int v: testValues)
+            dVector.push_back(v);
+
+        for (size_t idx = 0; idx < dVector.Size() ; ++idx)
+            std::cout << dVector.at(idx) << std::endl;
+    }
+
+    void OutOufRange()
+    {
+        DVector<int> dVector;
+        for (int i = 0; i < 5; ++i)
+            dVector.push_back(i);
+
+        auto x = dVector.at(10);
     }
 }
 
@@ -1430,6 +1460,11 @@ void DVector::TestAll()
     // MoveAssignmentTests();
     // Front_Back_CapacityTests();
 
+    // AtMethodMethodTests::GetElement();
+    AtMethodMethodTests::OutOufRange();
+
+
+    /*
     BackMethodTests::CheckBack_AfterPushBack();
     BackMethodTests::CheckBack_AfterPushFront();
     BackMethodTests::CheckBack_AfterPushBack_Reallocation();
@@ -1448,9 +1483,6 @@ void DVector::TestAll()
     PopFrontMethodTests::PopFront_Reallocation();
     PopFrontMethodTests::PopFront_UntilEmpty();
 
-
-
-    /*
     PushBackTests::PushBack();
     PushBackTests::PushBack_RValue();
 
