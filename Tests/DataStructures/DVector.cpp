@@ -576,52 +576,6 @@ namespace DVector::Tests::PushFrontTests
     }
 }
 
-namespace DVector::Tests::Empty
-{
-    void PushElementsAndCheckIsEmpty()
-    {
-        constexpr size_t size {55};
-        DVector<int> dVector;
-        for (int i = 0; i < static_cast<int>(size); ++i)
-            dVector.push_back(i);
-
-        assertEquals(size, dVector.Size());
-        assertEquals(false, dVector.Empty());
-    }
-
-    void CheckAfterClear()
-    {
-        constexpr size_t size {55};
-        DVector<int> dVector;
-        for (int i = 0; i < static_cast<int>(size); ++i)
-            dVector.push_back(i);
-
-        assertEquals(size, dVector.Size());
-        assertEquals(false, dVector.Empty());
-
-        dVector.Clear();
-
-        assertEquals(0UL, dVector.Size());
-        assertEquals(true, dVector.Empty());
-    }
-
-    void CheckAfterMove()
-    {
-        constexpr size_t size {55};
-        DVector<int> dVector1;
-        for (int i = 0; i < static_cast<int>(size); ++i)
-            dVector1.push_back(i);
-
-        DVector<int> dVector2 = std::move(dVector1);
-
-        assertEquals(0UL, dVector1.Size());
-        assertEquals(true, dVector1.Empty());
-
-        assertEquals(size, dVector2.Size());
-        assertEquals(false, dVector2.Empty());
-    }
-}
-
 namespace DVector::Tests::Constructor
 {
     void CreateVectorTest()
@@ -665,7 +619,6 @@ namespace DVector::Tests::CopyConstructor
         assertEquals(dVectorOrig, dVectorCopy);
     }
 }
-
 
 namespace DVector::Tests::CopyAssignmentOperator
 {
@@ -781,54 +734,6 @@ namespace DVector::Tests::MoveAssignmentOperator
         assertEquals(160UL, dVectorDest.Capacity());
 
         assertContent(testValues, dVectorDest);
-    }
-}
-
-namespace DVector::Tests::Data
-{
-    void SimpleTest()
-    {
-        const std::vector<int> testValues = getRandomIntegerUniqueVector(5);
-
-        DVector<int> dVector;
-        for (int v: testValues)
-            dVector.push_back(v);
-
-        const int* data = dVector.Data();
-        for (size_t idx = 0; idx < dVector.Size(); ++idx)
-            assertEquals(testValues[idx], data[idx]);
-    }
-
-    void SimpleTestTwo()
-    {
-        const std::vector<int> testValues = getRandomIntegerUniqueVector(10);
-
-        constexpr int N = 2;
-        DVector<int> dVector;
-        for (size_t idx = N; idx < testValues.size(); ++idx)
-            dVector.push_back(testValues[idx]);
-        for (int idx = N - 1; idx >= 0; --idx)
-            dVector.push_front(testValues[idx]);
-
-        const int* data = dVector.Data();
-        for (size_t idx = 0; idx < dVector.Size(); ++idx)
-            assertEquals(testValues[idx], data[idx]);
-    }
-
-    void ReallocTest()
-    {
-        const std::vector<int> testValues = getRandomIntegerUniqueVector(100);
-
-        constexpr int N = 2;
-        DVector<int> dVector;
-        for (size_t idx = N; idx < testValues.size(); ++idx)
-            dVector.push_back(testValues[idx]);
-        for (int idx = N - 1; idx >= 0; --idx)
-            dVector.push_front(testValues[idx]);
-
-        const int* data = dVector.Data();
-        for (size_t idx = 0; idx < dVector.Size(); ++idx)
-            assertEquals(testValues[idx], data[idx]);
     }
 }
 
@@ -980,6 +885,101 @@ namespace DVector::Tests::IndexOperator
     }
 }
 
+namespace DVector::Tests::Empty
+{
+    void PushElementsAndCheckIsEmpty()
+    {
+        constexpr size_t size {55};
+        DVector<int> dVector;
+        for (int i = 0; i < static_cast<int>(size); ++i)
+            dVector.push_back(i);
+
+        assertEquals(size, dVector.Size());
+        assertEquals(false, dVector.Empty());
+    }
+
+    void CheckAfterClear()
+    {
+        constexpr size_t size {55};
+        DVector<int> dVector;
+        for (int i = 0; i < static_cast<int>(size); ++i)
+            dVector.push_back(i);
+
+        assertEquals(size, dVector.Size());
+        assertEquals(false, dVector.Empty());
+
+        dVector.Clear();
+
+        assertEquals(0UL, dVector.Size());
+        assertEquals(true, dVector.Empty());
+    }
+
+    void CheckAfterMove()
+    {
+        constexpr size_t size {55};
+        DVector<int> dVector1;
+        for (int i = 0; i < static_cast<int>(size); ++i)
+            dVector1.push_back(i);
+
+        DVector<int> dVector2 = std::move(dVector1);
+
+        assertEquals(0UL, dVector1.Size());
+        assertEquals(true, dVector1.Empty());
+
+        assertEquals(size, dVector2.Size());
+        assertEquals(false, dVector2.Empty());
+    }
+}
+
+namespace DVector::Tests::Data
+{
+    void SimpleTest()
+    {
+        const std::vector<int> testValues = getRandomIntegerUniqueVector(5);
+
+        DVector<int> dVector;
+        for (int v: testValues)
+            dVector.push_back(v);
+
+        const int* data = dVector.Data();
+        for (size_t idx = 0; idx < dVector.Size(); ++idx)
+            assertEquals(testValues[idx], data[idx]);
+    }
+
+    void SimpleTestTwo()
+    {
+        const std::vector<int> testValues = getRandomIntegerUniqueVector(10);
+
+        constexpr int N = 2;
+        DVector<int> dVector;
+        for (size_t idx = N; idx < testValues.size(); ++idx)
+            dVector.push_back(testValues[idx]);
+        for (int idx = N - 1; idx >= 0; --idx)
+            dVector.push_front(testValues[idx]);
+
+        const int* data = dVector.Data();
+        for (size_t idx = 0; idx < dVector.Size(); ++idx)
+            assertEquals(testValues[idx], data[idx]);
+    }
+
+    void ReallocTest()
+    {
+        const std::vector<int> testValues = getRandomIntegerUniqueVector(100);
+
+        constexpr int N = 2;
+        DVector<int> dVector;
+        for (size_t idx = N; idx < testValues.size(); ++idx)
+            dVector.push_back(testValues[idx]);
+        for (int idx = N - 1; idx >= 0; --idx)
+            dVector.push_front(testValues[idx]);
+
+        const int* data = dVector.Data();
+        for (size_t idx = 0; idx < dVector.Size(); ++idx)
+            assertEquals(testValues[idx], data[idx]);
+    }
+}
+
+
 namespace DVector::PerfTests
 {
     constexpr size_t testsCount { 1'000 };
@@ -1062,7 +1062,6 @@ namespace DVector::PerfTests
         }
     }
 }
-
 
 namespace DVector::PerfTestsStatistics
 {
