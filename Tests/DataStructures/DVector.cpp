@@ -528,7 +528,7 @@ namespace DVector::Tests::AtMethodMethodTests
             dVector.push_back(v);
 
         for (size_t idx = 0; idx < dVector.size() ; ++idx)
-            std::cout << dVector.at(idx) << std::endl;
+            assertEquals(dVector.at(idx), testValues.at(idx));
     }
 
     void GetElement_Reallocation()
@@ -539,7 +539,7 @@ namespace DVector::Tests::AtMethodMethodTests
             dVector.push_back(v);
 
         for (size_t idx = 0; idx < dVector.size() ; ++idx)
-            std::cout << dVector.at(idx) << std::endl;
+            assertEquals(dVector.at(idx), testValues.at(idx));
     }
 
     void OutOufRange()
@@ -550,10 +550,9 @@ namespace DVector::Tests::AtMethodMethodTests
 
         try {
             auto x = dVector.at(10);
+            std::cerr << "Error: Exception shall be thrown\n";
         }
-        catch (const std::exception& exc)
-        {
-            std::cerr << exc.what() << std::endl;
+        catch (const std::exception& exc) {
         }
     }
 }
@@ -1486,7 +1485,6 @@ void DVector::TestAll()
     CapacityTests::CapacityAfterReallocation_PushBack();
     CapacityTests::CapacityAfterReallocation_PushFront();
 
-    /*
     AtMethodMethodTests::GetElement();
     AtMethodMethodTests::OutOufRange();
 
@@ -1552,7 +1550,6 @@ void DVector::TestAll()
     Data::ReallocTest();
 
     Clear::Basic();
-    */
 
     // PerfTests::RunTests();
     // PerfTestsStatistics::RunTests();
