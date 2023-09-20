@@ -10,7 +10,6 @@ Description : DVector.cpp
 #include "DVector.h"
 
 #include <iostream>
-#include <vector>
 #include <deque>
 #include <memory>
 #include <utility>
@@ -59,14 +58,14 @@ namespace DVector
 
     private:
         /** Elements collection block: **/
-        pointer data { nullptr };
+        pointer _data { nullptr };
 
         /** Capacity: **/
-        size_type capacity { 0 };
+        size_type _capacity { 0 };
 
         /** Index of the element **/
-        size_type left { 0 };
-        size_type right { 0 };
+        size_type _left { 0 };
+        size_type _right { 0 };
 
         /** The allocator to use for allocating and deallocating chunks: **/
         Allocator allocator;
@@ -75,66 +74,64 @@ namespace DVector
 
         void growVector()
         {
-            // std::cout << "* * * * ReAlloc (" << capacity << " ==> " << capacity * growthFactor << ") * * * * \n";
+            const size_type size = _right - _left - 1;
+            const size_type left_old = _left, left_center_dist = _capacity / 2 - _left - 1;
 
-            const size_type size = right - left - 1;
-            const size_type left_old = left, left_center_dist = capacity / 2 - left - 1;
+            _capacity *= growthFactor;
+            _left = _capacity / 2 - left_center_dist  - 1;
+            _right = _left + size + 1;
 
-            capacity *= growthFactor;
-            left = capacity / 2 - left_center_dist  - 1;
-            right = left + size + 1;
-
-            pointer newData { allocator.allocate(capacity) };
-            std::uninitialized_move_n(data + left_old + 1, size, newData + left + 1);
-            std::swap(data, newData);
+            pointer newData { allocator.allocate(_capacity) };
+            std::uninitialized_move_n(_data + left_old + 1, size, newData + _left + 1);
+            std::swap(_data, newData);
 
             std::destroy_n(newData + left_old + 1, size);
-            allocator.deallocate(newData, capacity);
+            allocator.deallocate(newData, _capacity);
         }
 
         void destroy()
         {
-            const size_type size = right - left - 1;
+            const size_type size = _right - _left - 1;
 
             /** Invoke destructors for all contained objects: **/
-            std::destroy_n(data + left + 1, size);
+            std::destroy_n(_data + _left + 1, size);
         }
 
     public:
 
         explicit DVector(const size_type s = initialCapacity)
         {
-            capacity = s > 0 ? s : initialCapacity;
-            data = allocator.allocate(capacity);
+            _capacity = s > 0 ? s : initialCapacity;
+            _data = allocator.allocate(_capacity);
 
-            right = capacity / 2;
-            left = right - 1;   // TODO: check right > 1 ??
+            _right = _capacity / 2;
+            _left = _right - 1;   // TODO: check right > 1 ??
         }
 
         ~DVector()
         {
-            if (0 == capacity)
+            if (0 == _capacity)
                 return;
 
             /** Invoke destructors for all contained objects: **/
             destroy();
 
             /** Deallocate all memory: **/
-            allocator.deallocate(data, capacity);
+            allocator.deallocate(_data, _capacity);
         }
 
         DVector(const DVector<object_type, Allocator>& other):
-                capacity { other.capacity }, left { other.left } , right { other.right }
+                _capacity { other._capacity }, _left { other._left } , _right { other._right }
         {
-            data = allocator.allocate(other.capacity);
-            std::copy_n(other.data + left + 1, right - left - 1, data + left + 1);
+            _data = allocator.allocate(other._capacity);
+            std::copy_n(other._data + _left + 1, _right - _left - 1, _data + _left + 1);
         }
 
         DVector(DVector<object_type, Allocator>&& other) noexcept:
-                data { std::exchange(other.data, nullptr) },
-                capacity { std::exchange(other.capacity, 0) },
-                left { std::exchange(other.left, 0) },
-                right { std::exchange(other.right, 0) } {
+                _data { std::exchange(other._data, nullptr) },
+                _capacity { std::exchange(other._capacity, 0) },
+                _left { std::exchange(other._left, 0) },
+                _right { std::exchange(other._right, 0) } {
             /** **/
         }
 
@@ -151,10 +148,10 @@ namespace DVector
         {
             if (&other != this)
             {
-                data = std::exchange(other.data, nullptr);
-                capacity = std::exchange(other.capacity, 0);
-                left = std::exchange(other.left, 0);
-                right = std::exchange(other.right, 0);
+                _data = std::exchange(other._data, nullptr);
+                _capacity = std::exchange(other._capacity, 0);
+                _left = std::exchange(other._left, 0);
+                _right = std::exchange(other._right, 0);
             }
             return *this;
         }
@@ -162,162 +159,145 @@ namespace DVector
     public:
 
         [[nodiscard]]
-        object_type& Front() const noexcept {
-            return this->data[left + 1];
+        object_type& front() const noexcept {
+            return this->_data[_left + 1];
         }
 
         [[nodiscard]]
-        object_type& Back() const noexcept {
-            return this->data[right - 1];
+        object_type& back() const noexcept {
+            return this->_data[_right - 1];
         }
 
         [[nodiscard]]
         object_type& operator[] (size_type index) const {
-            return this->data[index + left + 1];
+            return this->_data[index + _left + 1];
         }
 
         [[nodiscard]]
         object_type& at(size_type index) const {
-            if (index >= (right - left - 1))
+            if (index >= (_right - _left - 1))
                 throw std::out_of_range(std::format("{} index is out of range", index));
-            return this->data[index + left + 1];
+            return this->_data[index + _left + 1];
         }
 
         [[nodiscard]]
-        inline size_type Size() const noexcept {
-            return 0 != capacity ? right - left - 1 : 0;
+        inline size_type size() const noexcept {
+            return 0 != _capacity ? _right - _left - 1 : 0;
         }
 
         [[nodiscard]]
-        inline size_type Capacity() const noexcept {
-            return capacity;
+        inline size_type capacity() const noexcept {
+            return _capacity;
         }
 
         [[nodiscard]]
         inline size_type FrontCapacity() const noexcept {
-            return left + 1;
+            return _left + 1;
         }
 
         [[nodiscard]]
         inline size_type BackCapacity() const noexcept {
-            return capacity - right;
+            return _capacity - _right;
         }
 
         [[nodiscard]]
-        inline bool Empty() const noexcept {
-            return 0 == capacity || 1 == (right - left);
+        inline bool empty() const noexcept {
+            return 0 == _capacity || 1 == (_right - _left);
         }
 
         [[nodiscard]]
-        inline pointer Data() const noexcept {
-            return data + left + 1;
+        inline pointer data() const noexcept {
+            return _data + _left + 1;
         }
 
-        inline void Clear() noexcept
+        inline void clear() noexcept
         {
             /** Invoke destructors for all contained objects: **/
             destroy();
 
-            right = capacity / 2;
-            left = right - 1;
+            _right = _capacity / 2;
+            _left = _right - 1;
         }
 
         object_type& push_back(const object_type& v)
         {
-            if (right >= capacity)
+            if (_right >= _capacity)
                 growVector();
-            this->data[right] = v;
-            return data[right++];
+            this->_data[_right] = v;
+            return _data[_right++];
         }
 
         object_type& push_back(object_type&& v)
         {
-            if (right >= capacity)
+            if (_right >= _capacity)
                 growVector();
-            this->data[right] = std::move(v);
-            return data[right++];
+            this->_data[_right] = std::move(v);
+            return _data[_right++];
         }
 
         object_type& push_front(const object_type& v)
         {
-            if (0 >= left)
+            if (0 >= _left)
                 growVector();
-            this->data[left] = v;
-            return data[left--];
+            this->_data[_left] = v;
+            return _data[_left--];
         }
 
         object_type& push_front(object_type&& v)
         {
-            if (0 >= left)
+            if (0 >= _left)
                 growVector();
-            this->data[left] = std::move(v);
-            return data[left--];
+            this->_data[_left] = std::move(v);
+            return _data[_left--];
         }
 
         void pop_back()
         {
-            data[--right].~object_type();
+            _data[--_right].~object_type();
         }
 
         void pop_front()
         {
-            data[++left].~object_type();
+            _data[++_left].~object_type();
         }
 
         template<typename ... Args>
         object_type& emplace_back(Args&&... params)
         {
-            if (right >= capacity)
+            if (_right >= _capacity)
                 growVector();
 
             // Construct element in place:
-            new (data + right) object_type { std::forward<Args>(params)... };
-            return data[right++];
+            new (_data + _right) object_type { std::forward<Args>(params)... };
+            return _data[_right++];
         }
 
         template<typename ... Args>
         object_type& emplace_front(Args&&... params)
         {
-            if (0 >= left)
+            if (0 >= _left)
                 growVector();
 
             // Construct element in place:
-            new (data + left) object_type { std::forward<Args>(params)... };
-            return data[left--];
+            new (_data + _left) object_type { std::forward<Args>(params)... };
+            return _data[_left--];
         }
 
         void swap(DVector<object_type, Allocator> &other) noexcept
         {
-            std::swap(this->data, other.data);
-            std::swap(this->left, other.left);
-            std::swap(this->right, other.right);
-            std::swap(this->capacity, other.capacity);
+            std::swap(this->_data, other._data);
+            std::swap(this->_left, other._left);
+            std::swap(this->_right, other._right);
+            std::swap(this->_capacity, other._capacity);
         }
 
         static void swap(DVector<object_type, Allocator> &first,
                          DVector<object_type, Allocator> &second) noexcept
         {
-            std::swap(first.data, second.data);
-            std::swap(first.left, second.left);
-            std::swap(first.right, second.right);
-            std::swap(first.capacity, second.capacity);
-        }
-
-    public:  /** Debug methods: **/
-
-        void printInfo()
-        {
-            const size_type size = right - left - 1;
-            std::cout << "[ capacity = " << capacity << ", size = " << size << " ] "
-                      << "[ left: " << left << ", right: " << right << " ]\n";
-
-            for (size_type idx = 0; idx < capacity; ++idx)
-                std::cout << '[' << idx << "] = " << data[idx] << std::endl;
-        }
-
-        void callGrowVector()
-        {
-            growVector();
+            std::swap(first._data, second._data);
+            std::swap(first._left, second._left);
+            std::swap(first._right, second._right);
+            std::swap(first._capacity, second._capacity);
         }
     };
 
@@ -403,21 +383,21 @@ namespace Utilities
     }
 
     [[nodiscard]]
-    std::vector<int> getRandomIntegerVector(size_t size)
+    std::deque<int> getRandomIntegerDeque(size_t size)
     {
-        std::vector<int> intVector;
+        std::deque<int> ints;
         while (size--)
-            intVector.push_back(getRandomIntInRange(0, static_cast<int>(size * 2)));
-        return intVector;
+            ints.push_back(getRandomIntInRange(0, static_cast<int>(size * 2)));
+        return ints;
     }
 
     [[nodiscard]]
-    std::vector<int> getRandomIntegerUniqueVector(size_t size)
+    std::deque<int> getRandomIntegerUniqueDeque(size_t size)
     {
-        std::vector<int> intVector;
+        std::deque<int> ints;
         for (size_t i = 0; i < size; ++i)
-            intVector.push_back(getRandomUniqueInt(0, static_cast<int>(size * 2)));
-        return intVector;
+            ints.push_back(getRandomUniqueInt(0, static_cast<int>(size * 2)));
+        return ints;
     }
 
     template<typename _Ty1, typename _Ty2>
@@ -430,26 +410,12 @@ namespace Utilities
     }
 
     template<typename _Ty>
-    void assertContent(const std::vector<_Ty>& contentExpected,
-                       const DVector::DVector<_Ty>& vector)
-    {
-        if (contentExpected.size() != vector.Size())
-        {
-            std::cerr << "ERROR: Size mismatch: " << contentExpected.size() << " != " << vector.Size() << "\n";
-            std::terminate();
-        }
-
-        for (size_t idx = 0; idx < contentExpected.size(); ++idx)
-            assertEquals(vector[idx],  contentExpected[idx]);
-    }
-
-    template<typename _Ty>
     void assertContent(const std::deque<_Ty>& contentExpected,
                        const DVector::DVector<_Ty>& vector)
     {
-        if (contentExpected.size() != vector.Size())
+        if (contentExpected.size() != vector.size())
         {
-            std::cerr << "ERROR: Size mismatch: " << contentExpected.size() << " != " << vector.Size() << "\n";
+            std::cerr << "ERROR: Size mismatch: " << contentExpected.size() << " != " << vector.size() << "\n";
             std::terminate();
         }
 
@@ -461,13 +427,13 @@ namespace Utilities
     void assertEquals(const DVector::DVector<_Ty>& first,
                       const DVector::DVector<_Ty>& second)
     {
-        assertEquals(first.Size(), second.Size());
-        assertEquals(first.Capacity(), second.Capacity());
-        assertEquals(first.Empty(), second.Empty());
+        assertEquals(first.size(), second.size());
+        assertEquals(first.capacity(), second.capacity());
+        assertEquals(first.empty(), second.empty());
         assertEquals(first.FrontCapacity(), second.FrontCapacity());
         assertEquals(first.BackCapacity(), second.BackCapacity());
 
-        for (size_t idx = 0; idx < first.Size(); ++idx)
+        for (size_t idx = 0; idx < first.size(); ++idx)
             assertEquals(first[idx],  second[idx]);
     }
 }
@@ -483,8 +449,6 @@ namespace DVector::Tests
         dVector.emplace_back(101);
         dVector.emplace_back(102);
         dVector.emplace_back(103);
-
-        dVector.printInfo();
     }
 
 
@@ -499,10 +463,10 @@ namespace DVector::Tests
         dVector.push_front(1);
 
         std::cout << std::boolalpha
-                  << (dVector.Capacity() == dVector.Size() + dVector.FrontCapacity() + dVector.BackCapacity())
+                  << (dVector.capacity() == dVector.size() + dVector.FrontCapacity() + dVector.BackCapacity())
                   << std::endl;
 
-        std::cout << "Size: " << dVector.Size()
+        std::cout << "Size: " << dVector.size()
                   << ", Front: " << dVector.FrontCapacity()
                   << ", Back: " << dVector.BackCapacity()
                   << std::endl;
@@ -511,16 +475,70 @@ namespace DVector::Tests
     }
 }
 
+
+namespace DVector::Tests::CapacityTests
+{
+    void TestInitialCapacity()
+    {
+        DVector<int> dVector;
+
+        assertEquals(10UL, dVector.capacity());
+        assertEquals(5UL, dVector.FrontCapacity());
+        assertEquals(5UL, dVector.BackCapacity());
+    }
+
+    void TestCapacityWithConstructor()
+    {
+        DVector<int> dVector(30);
+        assertEquals(30UL, dVector.capacity());
+        assertEquals(15UL, dVector.FrontCapacity());
+        assertEquals(15UL, dVector.BackCapacity());
+    }
+
+    void CapacityAfterReallocation_PushBack()
+    {
+        DVector<int> dVector;
+        for (size_t i = 0; i < 15; ++i)
+            dVector.push_back(i);
+
+        assertEquals(40UL, dVector.capacity());
+        assertEquals(20UL, dVector.FrontCapacity());
+        assertEquals(5UL, dVector.BackCapacity());
+    }
+
+    void CapacityAfterReallocation_PushFront()
+    {
+        DVector<int> dVector;
+        for (size_t i = 0; i < 15; ++i)
+            dVector.push_front(i);
+
+        assertEquals(40UL, dVector.capacity());
+        assertEquals(5UL, dVector.FrontCapacity());
+        assertEquals(20UL, dVector.BackCapacity());
+    }
+}
+
 namespace DVector::Tests::AtMethodMethodTests
 {
     void GetElement()
     {
-        std::vector<int> testValues {1, 2, 3, 4, 5};
+        const std::deque<int> testValues = getRandomIntegerDeque(5);
         DVector<int> dVector;
         for (int v: testValues)
             dVector.push_back(v);
 
-        for (size_t idx = 0; idx < dVector.Size() ; ++idx)
+        for (size_t idx = 0; idx < dVector.size() ; ++idx)
+            std::cout << dVector.at(idx) << std::endl;
+    }
+
+    void GetElement_Reallocation()
+    {
+        const std::deque<int> testValues = getRandomIntegerDeque(55);
+        DVector<int> dVector;
+        for (int v: testValues)
+            dVector.push_back(v);
+
+        for (size_t idx = 0; idx < dVector.size() ; ++idx)
             std::cout << dVector.at(idx) << std::endl;
     }
 
@@ -530,7 +548,13 @@ namespace DVector::Tests::AtMethodMethodTests
         for (int i = 0; i < 5; ++i)
             dVector.push_back(i);
 
-        auto x = dVector.at(10);
+        try {
+            auto x = dVector.at(10);
+        }
+        catch (const std::exception& exc)
+        {
+            std::cerr << exc.what() << std::endl;
+        }
     }
 }
 
@@ -538,7 +562,7 @@ namespace DVector::Tests::PopBackMethodTests
 {
     void PopBack()
     {
-        std::vector<int> testValues {1, 2, 3, 4, 5};
+        std::deque<int> testValues {1, 2, 3, 4, 5};
         DVector<int> dVector;
         for (int v: testValues)
             dVector.push_back(v);
@@ -546,15 +570,15 @@ namespace DVector::Tests::PopBackMethodTests
         dVector.pop_back();
         testValues.pop_back();
 
-        assertEquals(testValues.back(), dVector.Back());
-        assertEquals(testValues.front(), dVector.Front());
-        assertEquals(testValues.size(), dVector.Size());
+        assertEquals(testValues.back(), dVector.back());
+        assertEquals(testValues.front(), dVector.front());
+        assertEquals(testValues.size(), dVector.size());
         assertContent(testValues, dVector);
     }
 
     void PopBack_Reallocation()
     {
-        std::vector<int> testValues {1,2,3,4,5,7,8,9,10,11,12,13,14,15};
+        std::deque<int> testValues {1,2,3,4,5,7,8,9,10,11,12,13,14,15};
         DVector<int> dVector;
         for (int v: testValues)
             dVector.push_back(v);
@@ -562,27 +586,27 @@ namespace DVector::Tests::PopBackMethodTests
         dVector.pop_back();
         testValues.pop_back();
 
-        assertEquals(testValues.back(), dVector.Back());
-        assertEquals(testValues.front(), dVector.Front());
-        assertEquals(testValues.size(), dVector.Size());
-        assertEquals(testValues.empty(), dVector.Empty());
+        assertEquals(testValues.back(), dVector.back());
+        assertEquals(testValues.front(), dVector.front());
+        assertEquals(testValues.size(), dVector.size());
+        assertEquals(testValues.empty(), dVector.empty());
         assertContent(testValues, dVector);
     }
 
 
     void PopBack_UntilEmpty()
     {
-        std::vector<int> testValues {1,2,3,4,5,7,8,9,10,11,12,13,14,15};
+        std::deque<int> testValues {1,2,3,4,5,7,8,9,10,11,12,13,14,15};
         DVector<int> dVector;
         for (int v: testValues)
             dVector.push_back(v);
 
-        while (!dVector.Empty())
+        while (!dVector.empty())
         {
-            assertEquals(testValues.back(), dVector.Back());
-            assertEquals(testValues.front(), dVector.Front());
-            assertEquals(testValues.size(), dVector.Size());
-            assertEquals(testValues.empty(), dVector.Empty());
+            assertEquals(testValues.back(), dVector.back());
+            assertEquals(testValues.front(), dVector.front());
+            assertEquals(testValues.size(), dVector.size());
+            assertEquals(testValues.empty(), dVector.empty());
             assertContent(testValues, dVector);
 
             dVector.pop_back();
@@ -603,9 +627,9 @@ namespace DVector::Tests::PopFrontMethodTests
         dVector.pop_front();
         testValues.pop_front();
 
-        assertEquals(testValues.back(), dVector.Back());
-        assertEquals(testValues.front(), dVector.Front());
-        assertEquals(testValues.size(), dVector.Size());
+        assertEquals(testValues.back(), dVector.back());
+        assertEquals(testValues.front(), dVector.front());
+        assertEquals(testValues.size(), dVector.size());
         assertContent(testValues, dVector);
     }
 
@@ -619,10 +643,10 @@ namespace DVector::Tests::PopFrontMethodTests
         dVector.pop_front();
         testValues.pop_front();
 
-        assertEquals(testValues.back(), dVector.Back());
-        assertEquals(testValues.front(), dVector.Front());
-        assertEquals(testValues.size(), dVector.Size());
-        assertEquals(testValues.empty(), dVector.Empty());
+        assertEquals(testValues.back(), dVector.back());
+        assertEquals(testValues.front(), dVector.front());
+        assertEquals(testValues.size(), dVector.size());
+        assertEquals(testValues.empty(), dVector.empty());
         assertContent(testValues, dVector);
     }
 
@@ -633,12 +657,12 @@ namespace DVector::Tests::PopFrontMethodTests
         for (int v: testValues)
             dVector.push_back(v);
 
-        while (!dVector.Empty())
+        while (!dVector.empty())
         {
-            assertEquals(testValues.back(), dVector.Back());
-            assertEquals(testValues.front(), dVector.Front());
-            assertEquals(testValues.size(), dVector.Size());
-            assertEquals(testValues.empty(), dVector.Empty());
+            assertEquals(testValues.back(), dVector.back());
+            assertEquals(testValues.front(), dVector.front());
+            assertEquals(testValues.size(), dVector.size());
+            assertEquals(testValues.empty(), dVector.empty());
             assertContent(testValues, dVector);
 
             dVector.pop_front();
@@ -651,42 +675,42 @@ namespace DVector::Tests::BackMethodTests
 {
     void CheckBack_AfterPushBack()
     {
-        const std::vector<int> testValues = getRandomIntegerVector(4);
+        const std::deque<int> testValues = getRandomIntegerDeque(4);
         DVector<int> dVector;
         for (int v: testValues)
             dVector.push_back(v);
 
-        assertEquals(testValues.back(), dVector.Back());
+        assertEquals(testValues.back(), dVector.back());
     }
 
     void CheckBack_AfterPushFront()
     {
-        const std::vector<int> testValues = getRandomIntegerVector(4);
+        const std::deque<int> testValues = getRandomIntegerDeque(4);
         DVector<int> dVector;
         for (int v: testValues)
             dVector.push_front(v);
 
-        assertEquals(testValues.front(), dVector.Back());
+        assertEquals(testValues.front(), dVector.back());
     }
 
     void CheckBack_AfterPushBack_Reallocation()
     {
-        const std::vector<int> testValues = getRandomIntegerVector(45);
+        const std::deque<int> testValues = getRandomIntegerDeque(45);
         DVector<int> dVector;
         for (int v: testValues)
             dVector.push_back(v);
 
-        assertEquals(testValues.back(), dVector.Back());
+        assertEquals(testValues.back(), dVector.back());
     }
 
     void CheckBack_AfterPushFront_Reallocation()
     {
-        const std::vector<int> testValues = getRandomIntegerVector(45);
+        const std::deque<int> testValues = getRandomIntegerDeque(45);
         DVector<int> dVector;
         for (int v: testValues)
             dVector.push_front(v);
 
-        assertEquals(testValues.front(), dVector.Back());
+        assertEquals(testValues.front(), dVector.back());
     }
 }
 
@@ -694,42 +718,42 @@ namespace DVector::Tests::FrontMethodTests
 {
     void CheckFront_AfterPushBack()
     {
-        const std::vector<int> testValues = getRandomIntegerVector(4);
+        const std::deque<int> testValues = getRandomIntegerDeque(4);
         DVector<int> dVector;
         for (int v: testValues)
             dVector.push_back(v);
 
-        assertEquals(testValues.front(), dVector.Front());
+        assertEquals(testValues.front(), dVector.front());
     }
 
     void CheckFront_AfterPushFront()
     {
-        const std::vector<int> testValues = getRandomIntegerVector(4);
+        const std::deque<int> testValues = getRandomIntegerDeque(4);
         DVector<int> dVector;
         for (int v: testValues)
             dVector.push_front(v);
 
-        assertEquals(testValues.back(), dVector.Front());
+        assertEquals(testValues.back(), dVector.front());
     }
 
     void CheckFront_AfterPushBack_Reallocation()
     {
-        const std::vector<int> testValues = getRandomIntegerVector(45);
+        const std::deque<int> testValues = getRandomIntegerDeque(45);
         DVector<int> dVector;
         for (int v: testValues)
             dVector.push_back(v);
 
-        assertEquals(testValues.front(), dVector.Front());
+        assertEquals(testValues.front(), dVector.front());
     }
 
     void CheckFront_AfterPushFront_Reallocation()
     {
-        const std::vector<int> testValues = getRandomIntegerVector(45);
+        const std::deque<int> testValues = getRandomIntegerDeque(45);
         DVector<int> dVector;
         for (int v: testValues)
             dVector.push_front(v);
 
-        assertEquals(testValues.back(), dVector.Front());
+        assertEquals(testValues.back(), dVector.front());
     }
 }
 
@@ -739,56 +763,56 @@ namespace DVector::Tests::PushBackTests
 {
     void PushBack()
     {
-        const std::vector<int> testValues = getRandomIntegerVector(4);
+        const std::deque<int> testValues = getRandomIntegerDeque(4);
         DVector<int> dVector;
         for (int v: testValues)
             dVector.push_back(v);
 
-        assertEquals(testValues.size(), dVector.Size());
-        assertEquals(testValues.empty(), dVector.Empty());
-        assertEquals(10UL, dVector.Capacity());
+        assertEquals(testValues.size(), dVector.size());
+        assertEquals(testValues.empty(), dVector.empty());
+        assertEquals(10UL, dVector.capacity());
 
         assertContent(testValues, dVector);
     }
 
     void PushBack_RValue()
     {
-        const std::vector<std::string> testValues { "I", "II", "III", "IV"};
+        const std::deque<std::string> testValues { "I", "II", "III", "IV"};
         DVector<std::string> dVector;
         for (std::string v: testValues)
             dVector.push_back(std::move(v));
 
-        assertEquals(testValues.size(), dVector.Size());
-        assertEquals(testValues.empty(), dVector.Empty());
-        assertEquals(10UL, dVector.Capacity());
+        assertEquals(testValues.size(), dVector.size());
+        assertEquals(testValues.empty(), dVector.empty());
+        assertEquals(10UL, dVector.capacity());
 
         assertContent(testValues, dVector);
     }
 
     void PushBack_Realloc()
     {
-        const std::vector<int> testValues = getRandomIntegerVector(15);
+        const std::deque<int> testValues = getRandomIntegerDeque(15);
         DVector<int> dVector;
         for (int v: testValues)
             dVector.push_back(v);
 
-        assertEquals(testValues.size(), dVector.Size());
-        assertEquals(testValues.empty(), dVector.Empty());
-        assertEquals(40UL, dVector.Capacity());
+        assertEquals(testValues.size(), dVector.size());
+        assertEquals(testValues.empty(), dVector.empty());
+        assertEquals(40UL, dVector.capacity());
 
         assertContent(testValues, dVector);
     }
 
     void PushBack_CustomTypes_TODO()
     {
-        const std::vector<std::string> testValues { "I", "II", "III", "IV"};
+        const std::deque<std::string> testValues { "I", "II", "III", "IV"};
         DVector<std::string> dVector;
         for (const auto& v: testValues)
             dVector.push_back(v);
 
-        assertEquals(testValues.size(), dVector.Size());
-        assertEquals(testValues.empty(), dVector.Empty());
-        assertEquals(10UL, dVector.Capacity());
+        assertEquals(testValues.size(), dVector.size());
+        assertEquals(testValues.empty(), dVector.empty());
+        assertEquals(10UL, dVector.capacity());
 
         assertContent(testValues, dVector);
     }
@@ -798,45 +822,45 @@ namespace DVector::Tests::PushFrontTests
 {
     void PushFront()
     {
-        const std::vector<int> testValues = getRandomIntegerVector(4);
+        const std::deque<int> testValues = getRandomIntegerDeque(4);
         DVector<int> dVector;
         for (auto iter = testValues.rbegin(); testValues.rend() != iter; ++iter) {
             dVector.push_front(*iter);
         }
 
-        assertEquals(testValues.size(), dVector.Size());
-        assertEquals(testValues.empty(), dVector.Empty());
-        assertEquals(10UL, dVector.Capacity());
+        assertEquals(testValues.size(), dVector.size());
+        assertEquals(testValues.empty(), dVector.empty());
+        assertEquals(10UL, dVector.capacity());
 
         assertContent(testValues, dVector);
     }
 
     void PushFront_Realloc()
     {
-        const std::vector<int> testValues = getRandomIntegerVector(15);
+        const std::deque<int> testValues = getRandomIntegerDeque(15);
         DVector<int> dVector;
         for (auto iter = testValues.rbegin(); testValues.rend() != iter; ++iter) {
             dVector.push_front(*iter);
         }
 
-        assertEquals(testValues.size(), dVector.Size());
-        assertEquals(testValues.empty(), dVector.Empty());
-        assertEquals(40UL, dVector.Capacity());
+        assertEquals(testValues.size(), dVector.size());
+        assertEquals(testValues.empty(), dVector.empty());
+        assertEquals(40UL, dVector.capacity());
 
         assertContent(testValues, dVector);
     }
 
     void PushFront_CustomTypes_TODO()
     {
-        const std::vector<std::string> testValues { "I", "II", "III", "IV"};
+        const std::deque<std::string> testValues { "I", "II", "III", "IV"};
         DVector<std::string> dVector;
         for (auto iter = testValues.rbegin(); testValues.rend() != iter; ++iter) {
             dVector.push_front(*iter);
         }
 
-        assertEquals(testValues.size(), dVector.Size());
-        assertEquals(testValues.empty(), dVector.Empty());
-        assertEquals(10UL, dVector.Capacity());
+        assertEquals(testValues.size(), dVector.size());
+        assertEquals(testValues.empty(), dVector.empty());
+        assertEquals(10UL, dVector.capacity());
 
         assertContent(testValues, dVector);
     }
@@ -847,17 +871,17 @@ namespace DVector::Tests::Constructor
     void CreateVectorTest()
     {
         DVector<int> dVector;
-        assertEquals(0UL, dVector.Size());
-        assertEquals(true, dVector.Empty());
-        assertEquals(10UL, dVector.Capacity());
+        assertEquals(0UL, dVector.size());
+        assertEquals(true, dVector.empty());
+        assertEquals(10UL, dVector.capacity());
     }
 
     void CreateVector_CustomCapacity()
     {
         DVector<int> dVector (100);
-        assertEquals(0UL, dVector.Size());
-        assertEquals(true, dVector.Empty());
-        assertEquals(100UL, dVector.Capacity());
+        assertEquals(0UL, dVector.size());
+        assertEquals(true, dVector.empty());
+        assertEquals(100UL, dVector.capacity());
     }
 }
 
@@ -865,7 +889,7 @@ namespace DVector::Tests::CopyConstructor
 {
     void CopyConstructorTests()
     {
-        const std::vector<int> testValues = getRandomIntegerVector(7);
+        const std::deque<int> testValues = getRandomIntegerDeque(7);
         DVector<int> dVectorOrig;
         for (int v: testValues)
             dVectorOrig.push_back(v);
@@ -876,7 +900,7 @@ namespace DVector::Tests::CopyConstructor
 
     void CopyConstructorTests_Realloc()
     {
-        const std::vector<int> testValues = getRandomIntegerVector(50);
+        const std::deque<int> testValues = getRandomIntegerDeque(50);
         DVector<int> dVectorOrig;
         for (int v: testValues)
             dVectorOrig.push_back(v);
@@ -890,7 +914,7 @@ namespace DVector::Tests::CopyAssignmentOperator
 {
     void CopyAssignmentTests()
     {
-        const std::vector<int> testValues = getRandomIntegerVector(7);
+        const std::deque<int> testValues = getRandomIntegerDeque(7);
         DVector<int> dVectorOrig;
         for (int v: testValues)
             dVectorOrig.push_back(v);
@@ -903,7 +927,7 @@ namespace DVector::Tests::CopyAssignmentOperator
 
     void CopyAssignmentTests_Reallocation()
     {
-        const std::vector<int> testValues = getRandomIntegerVector(50);
+        const std::deque<int> testValues = getRandomIntegerDeque(50);
         DVector<int> dVectorOrig;
         for (int v: testValues)
             dVectorOrig.push_back(v);
@@ -919,40 +943,40 @@ namespace DVector::Tests::MoveConstructor
 {
     void MoveConstructorTests()
     {
-        const std::vector<int> testValues = getRandomIntegerVector(7);
+        const std::deque<int> testValues = getRandomIntegerDeque(7);
         DVector<int> dVectorOrig;
         for (int v: testValues)
             dVectorOrig.push_back(v);
 
         DVector<int> dVectorDest = std::move(dVectorOrig);
 
-        assertEquals(0UL, dVectorOrig.Size());
-        assertEquals(true, dVectorOrig.Empty());
-        assertEquals(0UL, dVectorOrig.Capacity());
+        assertEquals(0UL, dVectorOrig.size());
+        assertEquals(true, dVectorOrig.empty());
+        assertEquals(0UL, dVectorOrig.capacity());
 
-        assertEquals(testValues.size(), dVectorDest.Size());
-        assertEquals(false, dVectorDest.Empty());
-        assertEquals(40UL, dVectorDest.Capacity());
+        assertEquals(testValues.size(), dVectorDest.size());
+        assertEquals(false, dVectorDest.empty());
+        assertEquals(40UL, dVectorDest.capacity());
 
         assertContent(testValues, dVectorDest);
     }
 
     void MoveConstructorTests_Reallocation()
     {
-        const std::vector<int> testValues = getRandomIntegerVector(50);
+        const std::deque<int> testValues = getRandomIntegerDeque(50);
         DVector<int> dVectorOrig;
         for (int v: testValues)
             dVectorOrig.push_back(v);
 
         DVector<int> dVectorDest = std::move(dVectorOrig);
 
-        assertEquals(0UL, dVectorOrig.Size());
-        assertEquals(true, dVectorOrig.Empty());
-        assertEquals(0UL, dVectorOrig.Capacity());
+        assertEquals(0UL, dVectorOrig.size());
+        assertEquals(true, dVectorOrig.empty());
+        assertEquals(0UL, dVectorOrig.capacity());
 
-        assertEquals(testValues.size(), dVectorDest.Size());
-        assertEquals(false, dVectorDest.Empty());
-        assertEquals(160UL, dVectorDest.Capacity());
+        assertEquals(testValues.size(), dVectorDest.size());
+        assertEquals(false, dVectorDest.empty());
+        assertEquals(160UL, dVectorDest.capacity());
 
         assertContent(testValues, dVectorDest);
     }
@@ -962,7 +986,7 @@ namespace DVector::Tests::MoveAssignmentOperator
 {
     void MoveAssignmentTests()
     {
-        const std::vector<int> testValues = getRandomIntegerVector(7);
+        const std::deque<int> testValues = getRandomIntegerDeque(7);
         DVector<int> dVectorOrig;
         for (int v: testValues)
             dVectorOrig.push_back(v);
@@ -970,20 +994,20 @@ namespace DVector::Tests::MoveAssignmentOperator
         DVector<int> dVectorDest;
         dVectorDest = std::move(dVectorOrig);
 
-        assertEquals(0UL, dVectorOrig.Size());
-        assertEquals(true, dVectorOrig.Empty());
-        assertEquals(0UL, dVectorOrig.Capacity());
+        assertEquals(0UL, dVectorOrig.size());
+        assertEquals(true, dVectorOrig.empty());
+        assertEquals(0UL, dVectorOrig.capacity());
 
-        assertEquals(testValues.size(), dVectorDest.Size());
-        assertEquals(false, dVectorDest.Empty());
-        assertEquals(40UL, dVectorDest.Capacity());
+        assertEquals(testValues.size(), dVectorDest.size());
+        assertEquals(false, dVectorDest.empty());
+        assertEquals(40UL, dVectorDest.capacity());
 
         assertContent(testValues, dVectorDest);
     }
 
     void MoveAssignmentTests_Reallocation()
     {
-        const std::vector<int> testValues = getRandomIntegerVector(50);
+        const std::deque<int> testValues = getRandomIntegerDeque(50);
         DVector<int> dVectorOrig;
         for (int v: testValues)
             dVectorOrig.push_back(v);
@@ -991,13 +1015,13 @@ namespace DVector::Tests::MoveAssignmentOperator
         DVector<int> dVectorDest;
         dVectorDest = std::move(dVectorOrig);
 
-        assertEquals(0UL, dVectorOrig.Size());
-        assertEquals(true, dVectorOrig.Empty());
-        assertEquals(0UL, dVectorOrig.Capacity());
+        assertEquals(0UL, dVectorOrig.size());
+        assertEquals(true, dVectorOrig.empty());
+        assertEquals(0UL, dVectorOrig.capacity());
 
-        assertEquals(testValues.size(), dVectorDest.Size());
-        assertEquals(false, dVectorDest.Empty());
-        assertEquals(160UL, dVectorDest.Capacity());
+        assertEquals(testValues.size(), dVectorDest.size());
+        assertEquals(false, dVectorDest.empty());
+        assertEquals(160UL, dVectorDest.capacity());
 
         assertContent(testValues, dVectorDest);
     }
@@ -1012,13 +1036,13 @@ namespace DVector::Tests::Clear
         for (int i = 0; i < static_cast<int>(size); ++i)
             dVector.push_back(i);
 
-        assertEquals(size, dVector.Size());
-        assertEquals(false, dVector.Empty());
+        assertEquals(size, dVector.size());
+        assertEquals(false, dVector.empty());
 
-        dVector.Clear();
+        dVector.clear();
 
-        assertEquals(0UL, dVector.Size());
-        assertEquals(true, dVector.Empty());
+        assertEquals(0UL, dVector.size());
+        assertEquals(true, dVector.empty());
     }
 }
 
@@ -1031,8 +1055,8 @@ namespace DVector::Tests::Sizes
         for (int i = 0; i < static_cast<int>(size); ++i)
             dVector.push_back(i);
 
-        assertEquals(10U, dVector.Capacity());
-        assertEquals(size, dVector.Size());
+        assertEquals(10U, dVector.capacity());
+        assertEquals(size, dVector.size());
     }
 
     void CheckAfterPush_Reallocation()
@@ -1042,8 +1066,8 @@ namespace DVector::Tests::Sizes
         for (int i = 0; i < static_cast<int>(size); ++i)
             dVector.push_back(i);
 
-        assertEquals(40U, dVector.Capacity());
-        assertEquals(size, dVector.Size());
+        assertEquals(40U, dVector.capacity());
+        assertEquals(size, dVector.size());
     }
 
     void CheckAfterMove()
@@ -1055,13 +1079,13 @@ namespace DVector::Tests::Sizes
 
         DVector<int> dVectorDest = std::move(dVectorOrig);
 
-        assertEquals(0UL, dVectorOrig.Size());
-        assertEquals(0UL, dVectorOrig.Capacity());
-        assertEquals(true, dVectorOrig.Empty());
+        assertEquals(0UL, dVectorOrig.size());
+        assertEquals(0UL, dVectorOrig.capacity());
+        assertEquals(true, dVectorOrig.empty());
 
-        assertEquals(size, dVectorDest.Size());
-        assertEquals(40U, dVectorDest.Capacity());
-        assertEquals(false, dVectorDest.Empty());
+        assertEquals(size, dVectorDest.size());
+        assertEquals(40U, dVectorDest.capacity());
+        assertEquals(false, dVectorDest.empty());
     }
 }
 
@@ -1069,19 +1093,19 @@ namespace DVector::Tests::IndexOperator
 {
     void BasicTest()
     {
-        const std::vector<int> testValues = getRandomIntegerVector(7);
+        const std::deque<int> testValues = getRandomIntegerDeque(7);
         DVector<int> dVector;
         for (int v: testValues)
             dVector.push_back(v);
 
-        assertEquals(testValues.size(), dVector.Size());
+        assertEquals(testValues.size(), dVector.size());
         for (size_t idx = 0; idx < testValues.size(); ++idx)
             assertEquals(dVector[idx], testValues[idx]);
     }
 
     void CheckValues_With_PushBack_and_PushFront()
     {
-        const std::vector<int> testValues = getRandomIntegerVector(8);
+        const std::deque<int> testValues = getRandomIntegerDeque(8);
 
         constexpr int N = 3;
         DVector<int> dVector;
@@ -1090,14 +1114,14 @@ namespace DVector::Tests::IndexOperator
         for (int idx = N - 1; idx >= 0; --idx)
             dVector.push_front(testValues[idx]);
 
-        assertEquals(testValues.size(), dVector.Size());
+        assertEquals(testValues.size(), dVector.size());
         for (size_t idx = 0; idx < testValues.size(); ++idx)
             assertEquals(dVector[idx], testValues[idx]);
     }
 
     void CheckValues_With_PushBack_and_PushFront_Realloc()
     {
-        const std::vector<int> testValues = getRandomIntegerVector(100);
+        const std::deque<int> testValues = getRandomIntegerDeque(100);
 
         constexpr int N = 40;
         DVector<int> dVector;
@@ -1106,14 +1130,14 @@ namespace DVector::Tests::IndexOperator
         for (int idx = N - 1; idx >= 0; --idx)
             dVector.push_front(testValues[idx]);
 
-        assertEquals(testValues.size(), dVector.Size());
+        assertEquals(testValues.size(), dVector.size());
         for (size_t idx = 0; idx < testValues.size(); ++idx)
             assertEquals(dVector[idx], testValues[idx]);
     }
 
     void CheckValues_AfterMove()
     {
-        const std::vector<int> testValues = getRandomIntegerVector(100);
+        const std::deque<int> testValues = getRandomIntegerDeque(100);
 
         constexpr int N = 40;
         DVector<int> dVectorOrig;
@@ -1124,17 +1148,17 @@ namespace DVector::Tests::IndexOperator
 
         const DVector<int> dVectorDest = std::move(dVectorOrig);
 
-        assertEquals(0UL, dVectorOrig.Size());
-        assertEquals(0UL, dVectorOrig.Capacity());
-        assertEquals(true, dVectorOrig.Empty());
+        assertEquals(0UL, dVectorOrig.size());
+        assertEquals(0UL, dVectorOrig.capacity());
+        assertEquals(true, dVectorOrig.empty());
 
-        assertEquals(testValues.size(), dVectorDest.Size());
+        assertEquals(testValues.size(), dVectorDest.size());
         for (size_t idx = 0; idx < testValues.size(); ++idx)
             assertEquals(dVectorDest[idx], testValues[idx]);
     }
 
     void CheckValues_WithCopyConstructor() {
-        const std::vector<int> testValues = getRandomIntegerVector(100);
+        const std::deque<int> testValues = getRandomIntegerDeque(100);
 
         constexpr int N = 40;
         DVector<int> dVectorOrig;
@@ -1160,8 +1184,8 @@ namespace DVector::Tests::Empty
         for (int i = 0; i < static_cast<int>(size); ++i)
             dVector.push_back(i);
 
-        assertEquals(size, dVector.Size());
-        assertEquals(false, dVector.Empty());
+        assertEquals(size, dVector.size());
+        assertEquals(false, dVector.empty());
     }
 
     void CheckAfterClear()
@@ -1171,13 +1195,13 @@ namespace DVector::Tests::Empty
         for (int i = 0; i < static_cast<int>(size); ++i)
             dVector.push_back(i);
 
-        assertEquals(size, dVector.Size());
-        assertEquals(false, dVector.Empty());
+        assertEquals(size, dVector.size());
+        assertEquals(false, dVector.empty());
 
-        dVector.Clear();
+        dVector.clear();
 
-        assertEquals(0UL, dVector.Size());
-        assertEquals(true, dVector.Empty());
+        assertEquals(0UL, dVector.size());
+        assertEquals(true, dVector.empty());
     }
 
     void CheckAfterMove()
@@ -1189,11 +1213,11 @@ namespace DVector::Tests::Empty
 
         DVector<int> dVector2 = std::move(dVector1);
 
-        assertEquals(0UL, dVector1.Size());
-        assertEquals(true, dVector1.Empty());
+        assertEquals(0UL, dVector1.size());
+        assertEquals(true, dVector1.empty());
 
-        assertEquals(size, dVector2.Size());
-        assertEquals(false, dVector2.Empty());
+        assertEquals(size, dVector2.size());
+        assertEquals(false, dVector2.empty());
     }
 }
 
@@ -1201,20 +1225,20 @@ namespace DVector::Tests::Data
 {
     void SimpleTest()
     {
-        const std::vector<int> testValues = getRandomIntegerUniqueVector(5);
+        const std::deque<int> testValues = getRandomIntegerUniqueDeque(5);
 
         DVector<int> dVector;
         for (int v: testValues)
             dVector.push_back(v);
 
-        const int* data = dVector.Data();
-        for (size_t idx = 0; idx < dVector.Size(); ++idx)
+        const int* data = dVector.data();
+        for (size_t idx = 0; idx < dVector.size(); ++idx)
             assertEquals(testValues[idx], data[idx]);
     }
 
     void SimpleTestTwo()
     {
-        const std::vector<int> testValues = getRandomIntegerUniqueVector(10);
+        const std::deque<int> testValues = getRandomIntegerUniqueDeque(10);
 
         constexpr int N = 2;
         DVector<int> dVector;
@@ -1223,14 +1247,14 @@ namespace DVector::Tests::Data
         for (int idx = N - 1; idx >= 0; --idx)
             dVector.push_front(testValues[idx]);
 
-        const int* data = dVector.Data();
-        for (size_t idx = 0; idx < dVector.Size(); ++idx)
+        const int* data = dVector.data();
+        for (size_t idx = 0; idx < dVector.size(); ++idx)
             assertEquals(testValues[idx], data[idx]);
     }
 
     void ReallocTest()
     {
-        const std::vector<int> testValues = getRandomIntegerUniqueVector(100);
+        const std::deque<int> testValues = getRandomIntegerUniqueDeque(100);
 
         constexpr int N = 2;
         DVector<int> dVector;
@@ -1239,8 +1263,8 @@ namespace DVector::Tests::Data
         for (int idx = N - 1; idx >= 0; --idx)
             dVector.push_front(testValues[idx]);
 
-        const int* data = dVector.Data();
-        for (size_t idx = 0; idx < dVector.Size(); ++idx)
+        const int* data = dVector.data();
+        for (size_t idx = 0; idx < dVector.size(); ++idx)
             assertEquals(testValues[idx], data[idx]);
     }
 }
@@ -1265,7 +1289,7 @@ namespace DVector::PerfTests
 
             for (size_t test = 0; test < testsCount; ++test)
             {
-                std::vector<Type> vector;
+                std::deque<Type> vector;
 
                 size_t pushBacks = 0, pushFronts = 0;
                 while (pushBacksMax > pushBacks && pushFrontMax > pushFronts)
@@ -1424,10 +1448,8 @@ namespace DVector::PerfTestsStatistics
     }
 }
 
-
 // TODO: New functions:
 //      Resize()
-//      at[]
 
 // TODO: TESTS
 //   +  Constructor
@@ -1448,7 +1470,7 @@ namespace DVector::PerfTestsStatistics
 //   +  Data()
 //      Capacity: Front_Capacity() && Back_Capacity()
 //   +  index operator[]
-
+//   +  at[]
 
 // TODO: Add Default Contructable CONCEPT
 
@@ -1457,14 +1479,17 @@ void DVector::TestAll()
 {
     using namespace Tests;
 
-    // MoveAssignmentTests();
     // Front_Back_CapacityTests();
 
-    // AtMethodMethodTests::GetElement();
-    AtMethodMethodTests::OutOufRange();
-
+    CapacityTests::TestInitialCapacity();
+    CapacityTests::TestCapacityWithConstructor();
+    CapacityTests::CapacityAfterReallocation_PushBack();
+    CapacityTests::CapacityAfterReallocation_PushFront();
 
     /*
+    AtMethodMethodTests::GetElement();
+    AtMethodMethodTests::OutOufRange();
+
     BackMethodTests::CheckBack_AfterPushBack();
     BackMethodTests::CheckBack_AfterPushFront();
     BackMethodTests::CheckBack_AfterPushBack_Reallocation();
