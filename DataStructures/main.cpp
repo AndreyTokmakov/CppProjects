@@ -28,6 +28,7 @@
 #include "ThreadPoolOne/ThreadPoolOne.h"
 #include "ThreadPoolTwo/ThreadPoolTwo.h"
 #include "ThreadPoolLimited/ThreadPoolLimited.h"
+#include "TwoSidedVector/TwoSidedVector.h"
 #include "CategoryTree/CategoryTree.h"
 #include "PriorityList/PriorityList.h"
 #include "LockFreeDataStructures/LockFreeQueue.h"
@@ -58,12 +59,13 @@ int main([[maybe_unused]] int argc,
     // HashTable::TestAll();
     // LinkedLists::TEST_ALL();
     // Logging::TEST_ALL();
-	LRUCache::TEST_ALL();
+	// LRUCache::TEST_ALL();
     // ObjectPools::TEST_ALL();
     // Optional::TEST_ALL();
     // PriorityList::TEST_ALL();
     // RAII_CommitWrapper::TEST_ALL();
     // ReferenceWrapper::Test();
+    TwoSidedVector::TestAll();
 
     // Memory::Shared_Ptr_Tests();
 

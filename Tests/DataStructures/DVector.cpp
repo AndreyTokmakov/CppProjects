@@ -191,12 +191,12 @@ namespace DVector
         }
 
         [[nodiscard]]
-        inline size_type FrontCapacity() const noexcept {
+        inline size_type front_capacity() const noexcept {
             return _left + 1;
         }
 
         [[nodiscard]]
-        inline size_type BackCapacity() const noexcept {
+        inline size_type back_capacity() const noexcept {
             return _capacity - _right;
         }
 
@@ -430,8 +430,8 @@ namespace Utilities
         assertEquals(first.size(), second.size());
         assertEquals(first.capacity(), second.capacity());
         assertEquals(first.empty(), second.empty());
-        assertEquals(first.FrontCapacity(), second.FrontCapacity());
-        assertEquals(first.BackCapacity(), second.BackCapacity());
+        assertEquals(first.front_capacity(), second.front_capacity());
+        assertEquals(first.back_capacity(), second.back_capacity());
 
         for (size_t idx = 0; idx < first.size(); ++idx)
             assertEquals(first[idx],  second[idx]);
@@ -463,18 +463,17 @@ namespace DVector::Tests
         dVector.push_front(1);
 
         std::cout << std::boolalpha
-                  << (dVector.capacity() == dVector.size() + dVector.FrontCapacity() + dVector.BackCapacity())
+                  << (dVector.capacity() == dVector.size() + dVector.front_capacity() + dVector.back_capacity())
                   << std::endl;
 
         std::cout << "Size: " << dVector.size()
-                  << ", Front: " << dVector.FrontCapacity()
-                  << ", Back: " << dVector.BackCapacity()
+                  << ", Front: " << dVector.front_capacity()
+                  << ", Back: " << dVector.back_capacity()
                   << std::endl;
 
         // dVector.printInfo();
     }
 }
-
 
 namespace DVector::Tests::CapacityTests
 {
@@ -483,16 +482,16 @@ namespace DVector::Tests::CapacityTests
         DVector<int> dVector;
 
         assertEquals(10UL, dVector.capacity());
-        assertEquals(5UL, dVector.FrontCapacity());
-        assertEquals(5UL, dVector.BackCapacity());
+        assertEquals(5UL, dVector.front_capacity());
+        assertEquals(5UL, dVector.back_capacity());
     }
 
     void TestCapacityWithConstructor()
     {
         DVector<int> dVector(30);
         assertEquals(30UL, dVector.capacity());
-        assertEquals(15UL, dVector.FrontCapacity());
-        assertEquals(15UL, dVector.BackCapacity());
+        assertEquals(15UL, dVector.front_capacity());
+        assertEquals(15UL, dVector.back_capacity());
     }
 
     void CapacityAfterReallocation_PushBack()
@@ -502,8 +501,8 @@ namespace DVector::Tests::CapacityTests
             dVector.push_back(i);
 
         assertEquals(40UL, dVector.capacity());
-        assertEquals(20UL, dVector.FrontCapacity());
-        assertEquals(5UL, dVector.BackCapacity());
+        assertEquals(20UL, dVector.front_capacity());
+        assertEquals(5UL, dVector.back_capacity());
     }
 
     void CapacityAfterReallocation_PushFront()
@@ -513,8 +512,8 @@ namespace DVector::Tests::CapacityTests
             dVector.push_front(i);
 
         assertEquals(40UL, dVector.capacity());
-        assertEquals(5UL, dVector.FrontCapacity());
-        assertEquals(20UL, dVector.BackCapacity());
+        assertEquals(5UL, dVector.front_capacity());
+        assertEquals(20UL, dVector.back_capacity());
     }
 }
 
@@ -755,8 +754,6 @@ namespace DVector::Tests::FrontMethodTests
         assertEquals(testValues.back(), dVector.front());
     }
 }
-
-
 
 namespace DVector::Tests::PushBackTests
 {
