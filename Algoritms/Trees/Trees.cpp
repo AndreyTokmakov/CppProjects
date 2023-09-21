@@ -647,14 +647,17 @@ namespace BinTreeTests {
             while (curr)
             { /* place pointer to a tree node on the stack before traversing the node's left subtree */
                 stack.push_back(curr);
+                std::cout << " while(" << curr->data << ")\n";
                 curr = curr->left;
             }
 
-            curr = stack.back(); // Current must be NULL at this point
+            // Current must be NULL at this point
+            curr = stack.back();
             stack.pop_back();
 
             std::cout << curr->data << " ";
-            /* we have visited the node and its left subtree.  Now, it's right subtree's turn */
+
+            /* we have visited the node and its left subtree --> Now, it's right subtree's turn */
             curr = curr->right;
         }
     }
@@ -876,9 +879,12 @@ namespace BinTreeTests {
         std::cout << "Depth2 = " << tree.getDepth() << std::endl;
     }
 
-    ///////////////////////////////////////////////////////////////////////////////////////
+    //===============================================================================================
 
-    void __find_deepest_node(const BinTree::Node* node, size_t depth, size_t& max_depth, int& result) {
+    void __find_deepest_node(const BinTree::Node* node,
+                             size_t depth,
+                             size_t& max_depth,
+                             int& result) {
         if (nullptr != node) {
             if (depth > max_depth) {
                 result = node->data;
@@ -1113,7 +1119,8 @@ namespace BinTreeTests {
 
 
     void ReverseTree() {
-        // BinTree::BinaryTree tree{ 40,22,85 ,10,30,54,125 ,5,12 ,25,32 ,45,60, 120,130,4,7,11,15,24,28,31,35,42,50,55,65,100,122,127 };
+        // BinTree::BinaryTree tree { 40,22,85 ,10,30,54,125 ,5,12 ,25,32 ,45,60, 120,130,4,
+        //                           7,11,15,24,28,31,35,42,50,55,65,100,122,127 };
         BinTree::BinaryTree tree{ 40,22,85 ,10,30,54,125 ,5,12 ,25,32 ,45,60, 120,130 };
 
         tree.display();
@@ -2151,14 +2158,15 @@ void Trees::TEST_ALL()
 
     // BinTreeTests::Inorder_Walkthrough();
     // BinTreeTests::Inorder_Walkthrough_NonRecursion();
+
     // BinTreeTests::Backwards_Walkthrough();
     // BinTreeTests::Backwards_Walkthrough_NonRecursion();
     // BinTreeTests::Print_Top_View();
     // BinTreeTests::ReverseTree();
 
 
-    // BinTreeTests::Find_Max_Depth();
-    BinTreeTests::Find_Deepest_Node();
+    BinTreeTests::Find_Max_Depth();
+    // BinTreeTests::Find_Deepest_Node();
     // BinTreeTests::Find_Maximum_Node_AtLevel();
     // BinTreeTests::Find_Maximum_Level_Sum();
     // BinTreeTests::Find_Level_With_Maximum_Sum();

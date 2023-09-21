@@ -11,11 +11,23 @@
 #include <string>
 #include <functional>
 #include <utility>
+#include <memory>
+#include <cassert>
 
 #include "Utilities.h"
 
-using String = std::string;
-using CString = const String&;
+
+namespace
+{
+    template<typename _Ty1, typename _Ty2>
+    void assertEquals(const _Ty1& a, const _Ty2& b)
+    {
+        if (a != b) {
+            std::cerr << "Error: " << a << " != " << b << std::endl;
+            std::terminate();
+        }
+    }
+}
 
 namespace Utilities::ApplyTests {
 
@@ -232,7 +244,30 @@ namespace Utilities
         std::cout << std::in_range<std::size_t>(-1) << '\n';
         std::cout << std::in_range<std::size_t>(42) << '\n';
     }
+}
 
+
+
+namespace Utilities::ToAddress
+{
+    void to_address_tests()
+    {
+        auto t1 = std::make_unique<int>(1);
+        int *p1 = std::to_address(t1);
+        assertEquals(p1, t1.get());
+
+        std::unique_ptr<int> t2; /// empty smart pointer
+        int *p2 = std::to_address(t2);
+        assertEquals(p2, nullptr); /// p2 == nullptr
+
+        int x = 0, *t3 = &x;
+        int *p3 = std::to_address(t3);
+        assertEquals(t3, p3); /// t3 == p3
+
+        std::vector<int> rng{1,2,3}; /// Also works for contiguous iterators
+        int *p4 = std::to_address(rng.begin());
+        assertEquals(p4, rng.data()); /// p4 == rng.data()
+    }
 }
 
 void Utilities::TestAll()
@@ -246,7 +281,7 @@ void Utilities::TestAll()
 	// Invoke_Tests::Is_Invocable();
 	// Invoke_Tests::Invoke_Functor();
 	// Invoke_Tests::Invoke_Class_Method_FromMethod();
-	Invoke_Tests::Invoke_Class_Method_FromMethod_Delegate();
+	//Invoke_Tests::Invoke_Class_Method_FromMethod_Delegate();
 
 	// Make_Tuples::Test();
 	// Make_Tuples::Test2();
@@ -261,4 +296,7 @@ void Utilities::TestAll()
 	Integer_Comparison_Functions::Compare_Greater_Perfect();
 	Integer_Comparison_Functions::Tests();
     */
+
+
+    ToAddress::to_address_tests();
 };

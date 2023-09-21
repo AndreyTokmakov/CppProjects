@@ -1531,6 +1531,7 @@ namespace Memory::Alligned_New_Delete {
 }
 
 //*************************** Alligned_New_Delete: ***************************//
+
 namespace Memory::Address {
 
 	class unreferenceable {
@@ -1538,9 +1539,11 @@ namespace Memory::Address {
 		int value;
 
 		// Comment this!!
-		unreferenceable* operator&() { 
-			return nullptr; 
+#if 1
+		unreferenceable* operator&() {
+			return nullptr;
 		}
+#endif
 	};
 
 	void print(unreferenceable* m) {

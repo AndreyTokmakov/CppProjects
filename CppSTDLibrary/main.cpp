@@ -282,8 +282,8 @@ int main(int argc, char** argv)
     // Tuple::TestAll();
     // TypeCast::TestAll();
     // Int::TestAll();
-    Templates::TestAll();
-    // Utilities::TestAll();
+    // Templates::TestAll();
+    Utilities::TestAll();
     // UniquePtr_Tests::TestAll();
 
     // WeakPtr::TestAll();
