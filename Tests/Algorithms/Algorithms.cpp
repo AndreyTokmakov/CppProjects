@@ -17,6 +17,7 @@ Description : Algorithms
 #include <array>
 #include <numeric>
 #include <cassert>
+#include <cmath>
 
 namespace Algorithms
 {
@@ -446,6 +447,54 @@ namespace Algorithms
     }
 }
 
+
+namespace Algorithms::Numbers
+{
+    std::vector<int> sortedSquaredArray(const std::vector<int>& numbers)
+    {
+        int right = 0;
+        while (0 > numbers[right]) {
+            ++right;
+        }
+
+        std::vector<int> result;
+        result.reserve(numbers.size());
+
+        const int size = numbers.size();
+        int left = right - 1;
+        while (left >= 0 && size > right)
+        {
+            const int leftVal = std::pow(numbers[left], 2), rightVal = std::pow(numbers[right], 2);
+            if (leftVal > rightVal) {
+                result.push_back(rightVal);
+                ++right;
+            } else {
+                result.push_back(leftVal);
+                --left;
+            }
+        }
+
+        while (left >= 0)
+            result.push_back(std::pow(numbers[left--], 2));
+        while (size > right)
+            result.push_back(std::pow(numbers[right++], 2));
+
+        return result;
+    }
+
+
+    void printSortedSquaredNumber_InSortedArray()
+    {
+
+        std::vector<int> testData {-4, -3, -2, 0 ,1 ,5, 6, 9};
+        std::vector<int> result = sortedSquaredArray(testData);
+
+        for (int i: result)
+            std::cout << i <<  ' ';
+        std::cout << std::endl;
+    }
+}
+
 namespace Algorithms::Strings
 {
 
@@ -557,6 +606,8 @@ void Algorithms::TestAll()
     // Algorithms::BinarySearch();
     // Algorithms::PrintAllSubArraysTest();
 
+    Numbers::printSortedSquaredNumber_InSortedArray();
+
     // Algorithms::Sqrt();sdsd
 
     // Contains();
@@ -569,6 +620,6 @@ void Algorithms::TestAll()
 
     // FindCommonElements_3_SortedArrays();
 
-    Strings::FindCommon_PrefixAndPostfix();
+    // Strings::FindCommon_PrefixAndPostfix();
 };
 

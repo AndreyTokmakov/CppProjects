@@ -2953,6 +2953,53 @@ namespace Numeric::Intervals {
     }
 }
 
+namespace Numeric
+{
+    std::vector<int> sortedSquaredArray(const std::vector<int>& numbers)
+    {
+        int right = 0;
+        while (0 > numbers[right]) {
+            ++right;
+        }
+
+        std::vector<int> result;
+        result.reserve(numbers.size());
+
+        const int size = numbers.size();
+        int left = right - 1;
+        while (left >= 0 && size > right)
+        {
+            const int leftVal = std::pow(numbers[left], 2), rightVal = std::pow(numbers[right], 2);
+            if (leftVal > rightVal) {
+                result.push_back(rightVal);
+                ++right;
+            } else {
+                result.push_back(leftVal);
+                --left;
+            }
+        }
+
+        while (left >= 0)
+            result.push_back(std::pow(numbers[left--], 2));
+        while (size > right)
+            result.push_back(std::pow(numbers[right++], 2));
+
+        return result;
+    }
+
+
+    void printSortedSquaredNumber_InSortedArray()
+    {
+
+        std::vector<int> testData {-4, -3, -2, 0 ,1 ,5, 6, 9};
+        std::vector<int> result = sortedSquaredArray(testData);
+
+        for (int i: result)
+            std::cout << i <<  ' ';
+        std::cout << std::endl;
+    }
+}
+
 void Numeric::TEST_ALL()
 {
     // Numeric::isPowerOf2();
@@ -3036,6 +3083,7 @@ void Numeric::TEST_ALL()
     // Numeric::Find_Smallest_Missing_Positive_Number();
     Numeric::Find_Repeating_And_Missing();
 
+    Numeric::printSortedSquaredNumber_InSortedArray();
 
     // Numeric::Find_All_Symmetric_Pairs_InArray();
 

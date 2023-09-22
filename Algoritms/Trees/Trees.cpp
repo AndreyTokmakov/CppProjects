@@ -2165,8 +2165,8 @@ void Trees::TEST_ALL()
     // BinTreeTests::ReverseTree();
 
 
-    BinTreeTests::Find_Max_Depth();
-    // BinTreeTests::Find_Deepest_Node();
+    // BinTreeTests::Find_Max_Depth();
+    BinTreeTests::Find_Deepest_Node();
     // BinTreeTests::Find_Maximum_Node_AtLevel();
     // BinTreeTests::Find_Maximum_Level_Sum();
     // BinTreeTests::Find_Level_With_Maximum_Sum();
