@@ -21,6 +21,14 @@ Description : Algorithms
 
 namespace Algorithms
 {
+    template<typename _Ty>
+    std::ostream& operator<<(std::ostream& stream, const std::vector<_Ty>& vec)
+    {
+        for (const auto & v: vec)
+            stream << v << ' ';
+        return stream;
+    }
+
     void printArray(const std::vector<int>& vect, size_t start, size_t end) {
         while (end > start)
             std::cout << vect[start++] << " ";
@@ -600,13 +608,59 @@ namespace Algorithms::Strings
     }
 }
 
+
+namespace Algorithms::Majority
+{
+    /** Problem:
+    Given an array of integers as std::vector<int>, return
+    the majority element (guaranteed to be present).
+
+    A majority element has more than size/2 number of instances in the array.
+
+    There is a solution that runs in O(n) time and O(1) space.
+    **/
+
+    int majority_element(const std::vector<int>& nums)
+    {
+        int major = 0;
+        for (size_t count = 0; auto v : nums) {
+            if (0 == count) {
+                major = v;
+                count = 1;
+            } else if (v == major) {
+                ++count;
+            } else {
+                --count;
+            }
+        }
+        return major;
+    }
+
+    void Test()
+    {
+        for (const std::vector<int>& v: std::vector<std::vector<int>> {
+                // {0},
+                // {1,1,1,2},
+                {2,2,1,1,1},
+                // {1,0,1,2,1,3,1,5},
+                // {1,2,3,4,5,6,6,6,6,6,6,6},
+        })
+        {
+            const int major = majority_element(v);
+            std::cout << "[ " << v << "] ==> " << major << std::endl;
+        }
+    }
+}
+
 void Algorithms::TestAll()
 {
     // Algorithms::Devide_SubArray();
     // Algorithms::BinarySearch();
     // Algorithms::PrintAllSubArraysTest();
 
-    Numbers::printSortedSquaredNumber_InSortedArray();
+    // Numbers::printSortedSquaredNumber_InSortedArray();
+
+    Majority::Test();
 
     // Algorithms::Sqrt();sdsd
 

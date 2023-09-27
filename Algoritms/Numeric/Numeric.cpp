@@ -49,31 +49,31 @@ namespace Numeric {
     }
 
     template<typename T>
-    std::ostream &operator<<(std::ostream &ostr, const std::vector<T> &list) {
+    std::ostream &operator<<(std::ostream &stream, const std::vector<T> &list) {
         for (const auto &i: list)
-            ostr << " " << i;
-        return ostr;
+            stream << " " << i;
+        return stream;
     }
 
     template<typename T>
-    std::ostream &operator<<(std::ostream &ostr, const std::list<T> &list) {
+    std::ostream &operator<<(std::ostream &stream, const std::list<T> &list) {
         for (const auto &i: list)
-            ostr << " " << i;
-        return ostr;
+            stream << " " << i;
+        return stream;
     }
 
     template<typename T>
-    std::ostream &operator<<(std::ostream &ostr, const std::set<T> &set) {
+    std::ostream &operator<<(std::ostream &stream, const std::set<T> &set) {
         for (const auto &i: set)
-            ostr << " " << i;
-        return ostr;
+            stream << " " << i;
+        return stream;
     }
 
     template<typename T>
-    std::ostream &operator<<(std::ostream &ostr, const std::deque<T> &list) {
+    std::ostream &operator<<(std::ostream &stream, const std::deque<T> &list) {
         for (const auto &i: list)
-            ostr << " " << i;
-        return ostr;
+            stream << " " << i;
+        return stream;
     }
 
     template<typename T>
@@ -3000,6 +3000,49 @@ namespace Numeric
     }
 }
 
+namespace Numeric
+{
+    /** Problem:
+    Given an array of integers as std::vector<int>, return
+    the majority element (guaranteed to be present).
+
+    A majority element has more than size/2 number of instances in the array.
+
+    There is a solution that runs in O(n) time and O(1) space.
+    **/
+
+    int majority_element(const std::vector<int>& nums)
+    {
+        int major = 0;
+        for (size_t count = 0; auto v : nums) {
+            if (0 == count) {
+                major = v;
+                count = 1;
+            } else if (v == major) {
+                ++count;
+            } else {
+                --count;
+            }
+        }
+        return major;
+    }
+
+    void Find_The_Majority_Element()
+    {
+        for (const std::vector<int>& v: std::vector<std::vector<int>> {
+                // {0},
+                // {1,1,1,2},
+                {2,2,1,1,1},
+                // {1,0,1,2,1,3,1,5},
+                // {1,2,3,4,5,6,6,6,6,6,6,6},
+        })
+        {
+            const int major = majority_element(v);
+            std::cout << "[ " << v << "] ==> " << major << std::endl;
+        }
+    }
+}
+
 void Numeric::TEST_ALL()
 {
     // Numeric::isPowerOf2();
@@ -3063,6 +3106,7 @@ void Numeric::TEST_ALL()
     // Numeric::RemoveDuplicates_SortedArray();
     // Numeric::DeleteFromArray();
 
+    Numeric::Find_The_Majority_Element();
 
     // Numeric::Find_SubArrays_SumZero();
     // Numeric::Find_SubArrays_WithGivenSum();
@@ -3081,9 +3125,9 @@ void Numeric::TEST_ALL()
     // Numeric::Find_K_MissingNumber_Sorted();
     // Numeric::Find_K_MissingNumber();
     // Numeric::Find_Smallest_Missing_Positive_Number();
-    Numeric::Find_Repeating_And_Missing();
+    // Numeric::Find_Repeating_And_Missing();
 
-    Numeric::printSortedSquaredNumber_InSortedArray();
+    // Numeric::printSortedSquaredNumber_InSortedArray();
 
     // Numeric::Find_All_Symmetric_Pairs_InArray();
 

@@ -62,6 +62,7 @@ Description : Tests C++ project
 #include "DataStructures/LRUCache.h"
 #include "DataStructures/EventLoop.h"
 #include "DataStructures/MaxStack.h"
+#include "DataStructures/MinStack.h"
 #include "DataStructures/DVector.h"
 #include "DebugLogger/DebugLogger.h"
 #include "Date_Time_Chrono/Date_Time_Chrono.h"
@@ -726,7 +727,7 @@ int main([[maybe_unused]] int argc,
 
     // Cpp23_Features::TestAll();
     // AutoTests::TestAll();
-    Algorithms::TestAll();
+    // Algorithms::TestAll();
     // Multithreading::TestAll();
     // Memory::TestAll();
     // Iterators::TestAll();
@@ -735,6 +736,7 @@ int main([[maybe_unused]] int argc,
     // DesignPatterns::TestAll();
     // Date_Time_Chrono::TestAll();
     // MaxStack::TestAll();
+    MinStack::TestAll();
     // DebugLogger::TestAll();
     // UniquePtr_Size::SizeTest();
     // CollectionsTests::TestAll();
@@ -748,7 +750,7 @@ int main([[maybe_unused]] int argc,
     // Math::TestAll();
     // LRUCache::TestAll();
     // EventLoop::TestAll();
-    DVector::TestAll();
+    // DVector::TestAll();
     // Iterators::TestAll();
     // Convertaion_UTF8_UTF32::TestAll();    // Encoding
     // Unicode::TestAll();                   // Encoding

@@ -49,12 +49,12 @@ int main([[maybe_unused]] int argc,
          [[maybe_unused]] char** argv)
 {
     // AsyncLaunch::TEST_ALL();
-    // Atomic::TEST_ALL();
+    Atomic::TEST_ALL();
     // Barrier::TEST_ALL();
     // CallOnce::TEST_ALL();
     // ConditionVariable::TEST_ALL();
     // Exceptions_Handling::TEST_ALL();
-    Future::TEST_ALL();
+    // Future::TEST_ALL();
 
     // Latch::TEST_ALL();
     // LockFreeQueue::TEST_ALL()
