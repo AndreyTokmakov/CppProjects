@@ -35,7 +35,9 @@ add_executable(DataStructures MACOSX_BUNDLE
 		MinStack/MinStack.cpp
 		MinStack/MinStack.h
 		MinHeap/MinHeap.cpp
-		MinHeap/MinHeap.h)
+		MinHeap/MinHeap.h
+		Heap_WithComparator/HeapWithComparator.cpp
+		Heap_WithComparator/HeapWithComparator.h)
 
  # Link phread library
 TARGET_LINK_LIBRARIES(DataStructures pthread)

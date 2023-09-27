@@ -24,6 +24,7 @@
 #include "Logger/Logger.h"
 #include "MinHeap/MinHeap.h"
 #include "MinStack/MinStack.h"
+#include "Heap_WithComparator/HeapWithComparator.h"
 #include "ReferenceWrapper/ReferenceWrapper.h"
 #include "CustomVector/CustomVector.h"
 #include "LinkedList/LinkedList.h"
@@ -69,7 +70,8 @@ int main([[maybe_unused]] int argc,
     // ReferenceWrapper::Test();
     // TwoSidedVector::TestAll();
     // MinStack::TestAll();
-    MinHeap::TestAll();
+    // MinHeap::TestAll();
+    HeapWithComparator::TestAll();
 
     // Memory::Shared_Ptr_Tests();
 
