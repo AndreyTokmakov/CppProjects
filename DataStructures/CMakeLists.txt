@@ -31,7 +31,9 @@ add_executable(DataStructures MACOSX_BUNDLE
     PriorityList/PriorityList.cpp PriorityList/PriorityList.h
         RAII_CommitWrapper/RAII_CommitWrapper.cpp RAII_CommitWrapper/RAII_CommitWrapper.h Array/Array.cpp Array/Array.h Function/Function.cpp Function/Function.h ExecutorAdapter/ExecutorAdapter.cpp ExecutorAdapter/ExecutorAdapter.h HashTable/HashTable.cpp HashTable/HashTable.h ExecutorAdapter2/ExecutorAdapter2.cpp ExecutorAdapter2/ExecutorAdapter2.h ObjectNumberLimiter/ObjectNumberLimiter.cpp ObjectNumberLimiter/ObjectNumberLimiter.h BinaryTree/BinaryTree.cpp BinaryTree/BinaryTree.h ThreadPoolLimited/ThreadPoolLimited.cpp ThreadPoolLimited/ThreadPoolLimited.h Trie/Trie.cpp Trie/Trie.h Utilities/Long.cpp Utilities/Long.h
         TwoSidedVector/TwoSidedVector.cpp
-        TwoSidedVector/TwoSidedVector.h)
+        TwoSidedVector/TwoSidedVector.h
+		MinStack/MinStack.cpp
+		MinStack/MinStack.h)
 
  # Link phread library
 TARGET_LINK_LIBRARIES(DataStructures pthread)

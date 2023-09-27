@@ -94,6 +94,11 @@ namespace Barrier
         std::vector<std::jthread> threads;
         for (size_t idx = 0; idx < threadsCount; ++idx)
             threads.emplace_back(task);
+
+        for (std::jthread& T: threads)
+            T.join();
+        std::cout << getCurrentTime() << " done\n";
+
     }
 
 
