@@ -33,7 +33,9 @@ add_executable(DataStructures MACOSX_BUNDLE
         TwoSidedVector/TwoSidedVector.cpp
         TwoSidedVector/TwoSidedVector.h
 		MinStack/MinStack.cpp
-		MinStack/MinStack.h)
+		MinStack/MinStack.h
+		MinHeap/MinHeap.cpp
+		MinHeap/MinHeap.h)
 
  # Link phread library
 TARGET_LINK_LIBRARIES(DataStructures pthread)

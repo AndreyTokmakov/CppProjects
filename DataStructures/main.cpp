@@ -22,6 +22,7 @@
 #include "ObjectPools/ObjectPools.h"
 #include "Optional/Optional.h"
 #include "Logger/Logger.h"
+#include "MinHeap/MinHeap.h"
 #include "MinStack/MinStack.h"
 #include "ReferenceWrapper/ReferenceWrapper.h"
 #include "CustomVector/CustomVector.h"
@@ -67,7 +68,8 @@ int main([[maybe_unused]] int argc,
     // RAII_CommitWrapper::TEST_ALL();
     // ReferenceWrapper::Test();
     // TwoSidedVector::TestAll();
-    MinStack::TestAll();
+    // MinStack::TestAll();
+    MinHeap::TestAll();
 
     // Memory::Shared_Ptr_Tests();
 
