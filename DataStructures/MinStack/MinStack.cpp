@@ -113,7 +113,7 @@ namespace MinStack::Vector_List
 
         using Item = std::pair<object_type, typename std::list<object_type>::iterator>;
 
-        std::list<Item> store;
+        std::vector<Item> store;
         std::list<object_type> mins;
 
     public:

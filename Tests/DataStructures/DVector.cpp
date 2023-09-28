@@ -14,11 +14,14 @@ Description : DVector.cpp
 #include <memory>
 #include <utility>
 #include <algorithm>
+#include <filesystem>
 
 
 /** For testing only: **/
 #include <chrono>
 #include <unordered_set>
+#include <unordered_map>
+#include <map>
 #include <random>
 #include <fstream>
 #include <format>
@@ -1350,26 +1353,96 @@ namespace DVector::PerfTests
 
 namespace DVector::PerfTestsStatistics
 {
-    constexpr size_t testsCount { 10'000 };
+    struct TimeMeasurements
+    {
+        double vectorTime = 0.0;
+        double dequeTime = 0.0;
+        double dVectorTime = 0.0;
+    };
 
-    using Type = int;
+    std::vector<std::string> split(std::string_view input,
+                                   std::string_view delimiter = ",") {
+        std::vector<std::string> output;
+        for (size_t first = 0; first < input.size(); ) {
+            const auto second = input.find_first_of(delimiter, first);
+            if (first != second)
+                output.emplace_back(input.substr(first, second - first));
+            if (second == std::string_view::npos)
+                break;
+            first = second + 1;
+        }
+        return output;
+    }
+
+    std::map<size_t, TimeMeasurements> readResultsFile(const std::filesystem::path& filePath)
+    {
+        std::map<size_t, TimeMeasurements> results;
+        if (std::fstream file = std::fstream(filePath.string()); file.is_open() && file.good())
+        {
+            std::string line;
+            while (std::getline(file, line)){
+                const std::vector<std::string> values = split(line);
+
+                if (4 != values.size()) {
+                    std::cerr << "Error: " << values.size() << " != 4. Value: " << std::quoted(line) << std::endl;
+                    break;
+                }
+                // FIXME: ignore line with column names
+                if (0 == atoi(values[0].data()))
+                    continue;
+                results.emplace(atoi(values[0].data()),TimeMeasurements{atof(values[1].data()),
+                                                                        atof(values[2].data()),
+                                                                        atof(values[3].data())});
+            }
+        }
+        return results;
+    }
+
+    void updateResultsFile(const  std::vector<std::pair<size_t, TimeMeasurements>>& results)
+    {
+        constexpr std::string_view filePath {R"(/home/andtokm/DiskS/Temp/DVectorData/32_Bytes/total.csv)"};
+        std::map<size_t, TimeMeasurements> existingData {  readResultsFile(filePath.data()) };
+
+        for (const auto& [count, measurements]: results) {
+            existingData[count] = measurements;
+        }
+
+        if (std::fstream file(filePath.data(), std::ios::in | std::ios::out | std::ios::trunc);
+                file.is_open() && file.good())
+        {
+            file << "elemetns,vector,deque,dvector\n";
+            for (const auto& [count, stats]: existingData)
+                file << count << ',' << std::to_string(stats.vectorTime)
+                               << ',' << std::to_string(stats.dequeTime)
+                               << ',' << std::to_string(stats.dVectorTime) << '\n';
+        }
+    }
+
+    constexpr size_t testsCount { 10'00 };
+
+    // using Type = int;
     // using Type = size_t;
-    // using Type = std::string;
+    using Type = std::string;
 
     const Type element {};
 
     void RunTests()
     {
-        std::vector<std::string> results;
-        constexpr size_t from = 9000, until = 10000;
+        std::vector<std::pair<size_t, TimeMeasurements>> results;
+        // std::vector<std::string> results;
 
-        for (size_t elementsCount = from; elementsCount < until; elementsCount += 50)
+        constexpr size_t from = 2000, until = 3'000;
+
+        for (size_t elementsCount = from; elementsCount < until; elementsCount += 100)
         {
             const size_t pushBacksMax = elementsCount / 2;
             const size_t pushFrontMax = elementsCount / 2;
             const size_t blockSize  = elementsCount > 40 ? 20 : elementsCount;
 
-            std::string& result = results.emplace_back(std::to_string(elementsCount) + ",");
+            auto& [count, measurements] = results.emplace_back(elementsCount, TimeMeasurements{});
+            // std::string& result = results.emplace_back(std::to_string(elementsCount) + ",");
+            std::cout << elementsCount << ",";
+
             {
                 std::chrono::high_resolution_clock::time_point start = std::chrono::high_resolution_clock::now();
 
@@ -1387,8 +1460,10 @@ namespace DVector::PerfTestsStatistics
 
                 std::chrono::high_resolution_clock::time_point end = std::chrono::high_resolution_clock::now();
                 std::chrono::duration<double> time_span = duration_cast<std::chrono::duration<double>>(end - start);
-                // std::cout << "\tIt took me " << time_span.count() << " seconds.\n";
-                result += std::to_string(time_span.count()) + ",";
+
+                measurements.vectorTime = time_span.count();
+                // result += std::to_string(time_span.count()) + ",";
+                std::cout << time_span.count() << ",";
             }
 
             {
@@ -1408,8 +1483,10 @@ namespace DVector::PerfTestsStatistics
 
                 std::chrono::high_resolution_clock::time_point end = std::chrono::high_resolution_clock::now();
                 std::chrono::duration<double> time_span = duration_cast<std::chrono::duration<double>>(end - start);
-                // std::cout << "\tIt took me " << time_span.count() << " seconds.\n";
-                result += std::to_string(time_span.count()) + ",";
+
+                measurements.dequeTime = time_span.count();
+                // result += std::to_string(time_span.count()) + ",";
+                std::cout << time_span.count() << ",";
             }
 
             {
@@ -1429,18 +1506,26 @@ namespace DVector::PerfTestsStatistics
 
                 std::chrono::high_resolution_clock::time_point end = std::chrono::high_resolution_clock::now();
                 std::chrono::duration<double> time_span = duration_cast<std::chrono::duration<double>>(end - start);
-                // std::cout << "\tIt took me " << time_span.count() << " seconds.\n";
-                result += std::to_string(time_span.count()) + ",";
+
+                measurements.dVectorTime = time_span.count();
+                // result += std::to_string(time_span.count());
+                std::cout << time_span.count() << "\n";
             }
         }
 
+        updateResultsFile(results);
+
+        /*
         if (std::fstream file(std::format("/home/andtokm/DiskS/Temp/DVectorData/{}_{}_results.csv", from, until),
                               std::ios::in | std::ios::out | std::ios::trunc);
-            file.is_open() && file.good())
+                file.is_open() && file.good())
         {
+            for (const auto& [count, stats]: results)
+                file << count << ',' << stats.vectorTime << ',' << stats.dequeTime << ',' << stats.dVectorTime << '\n';
+
             for (const std::string& str: results)
                 file << str << '\n';
-        }
+        }*/
     }
 }
 
@@ -1476,7 +1561,7 @@ void DVector::TestAll()
     using namespace Tests;
 
     // Front_Back_CapacityTests();
-
+    /*
     CapacityTests::TestInitialCapacity();
     CapacityTests::TestCapacityWithConstructor();
     CapacityTests::CapacityAfterReallocation_PushBack();
@@ -1547,7 +1632,8 @@ void DVector::TestAll()
     Data::ReallocTest();
 
     Clear::Basic();
-
+     */
     // PerfTests::RunTests();
-    // PerfTestsStatistics::RunTests();
+
+    PerfTestsStatistics::RunTests();
 }

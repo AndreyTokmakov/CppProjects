@@ -736,7 +736,7 @@ int main([[maybe_unused]] int argc,
     // DesignPatterns::TestAll();
     // Date_Time_Chrono::TestAll();
     // MaxStack::TestAll();
-    MinStack::TestAll();
+    // MinStack::TestAll();
     // DebugLogger::TestAll();
     // UniquePtr_Size::SizeTest();
     // CollectionsTests::TestAll();
@@ -750,7 +750,7 @@ int main([[maybe_unused]] int argc,
     // Math::TestAll();
     // LRUCache::TestAll();
     // EventLoop::TestAll();
-    // DVector::TestAll();
+    DVector::TestAll();
     // Iterators::TestAll();
     // Convertaion_UTF8_UTF32::TestAll();    // Encoding
     // Unicode::TestAll();                   // Encoding
