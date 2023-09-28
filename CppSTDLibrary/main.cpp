@@ -233,7 +233,7 @@ int main(int argc, char** argv)
     // Byte::TestAll();
     // Chrono::TestAll();
     // Comparators::TestAll();
-    // Concepts::TestAll();
+    Concepts::TestAll();
     // ConsoleInOut::TestAll();
     // ConstConstexprMutable::TestAll();
     // CopyElision::TestAll();
@@ -283,7 +283,7 @@ int main(int argc, char** argv)
     // TypeCast::TestAll();
     // Int::TestAll();
     // Templates::TestAll();
-    Utilities::TestAll();
+    // Utilities::TestAll();
     // UniquePtr_Tests::TestAll();
 
     // WeakPtr::TestAll();

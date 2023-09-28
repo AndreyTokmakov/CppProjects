@@ -2342,6 +2342,40 @@ namespace Concepts::Regular
 }
 
 
+namespace Concepts::ConceptsAsInterface
+{
+    template<typename Type>
+    concept HasInfoMethod = requires (Type val) {
+        { val.info() } noexcept;
+    };
+
+    struct ClassA {
+        void info() noexcept {
+            std::cout << "ClassA() info" << std::endl;
+        }
+    };
+
+    struct ClassB {
+        int info() noexcept {
+            std::cout << "ClassB() info" << std::endl;
+            return 0;
+        }
+    };
+
+    void printInfo(HasInfoMethod auto& obj)
+    {
+        obj.info();
+    }
+
+    void passClassObjAsInterface()
+    {
+        ClassA aObj;
+        ClassB bObj;
+
+        printInfo(aObj);
+        printInfo(bObj);
+    }
+}
 
 void Concepts::TestAll()
 {
@@ -2394,6 +2428,8 @@ void Concepts::TestAll()
     // Requires_With_Constexpr::Constexpr_Check_Method();
     // RequiresSequence::Test1();
 
+
+    ConceptsAsInterface::passClassObjAsInterface();
 
 
     // NestedConcepts::CheckMethodReturnType();
