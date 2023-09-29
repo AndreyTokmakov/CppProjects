@@ -2377,6 +2377,45 @@ namespace Concepts::ConceptsAsInterface
     }
 }
 
+namespace Concepts::CheckAllTypesAreSame
+{
+    template<typename T, typename ... Ts>
+    constexpr bool are_same_v = std::conjunction_v<std::is_same<T, Ts> ... >;
+
+    template <typename... Args>
+    requires are_same_v<Args...>
+    auto _add(Args&& ... params) {
+        return (... + params);
+    }
+
+    template <typename... T>
+    bool validate_integrals(T ...)
+    requires (std::integral<T> && ... )
+    // requires std::conjunction_v<std::is_integral<T> ... >
+    {
+        return true;
+    }
+
+    void Check_with_Concepts()
+    {
+        auto x = _add(1,2,3);
+        // auto b = Add(1, 2, 3.4);
+    }
+
+    void Check_with_StaticAssert()
+    {
+        static_assert(are_same_v<int, int, int>);
+        static_assert(not are_same_v<int, int&, int>);
+    }
+
+    void Check_ALL_Integral()
+    {
+        std::cout << std::boolalpha << validate_integrals(1) << std::endl;
+        std::cout << std::boolalpha << validate_integrals(1, 2) << std::endl;
+        // std::cout << std::boolalpha << validate_integrals(1, 2, 2.2) << std::endl;
+    }
+}
+
 void Concepts::TestAll()
 {
     // MovableTest();
@@ -2428,9 +2467,7 @@ void Concepts::TestAll()
     // Requires_With_Constexpr::Constexpr_Check_Method();
     // RequiresSequence::Test1();
 
-
-    ConceptsAsInterface::passClassObjAsInterface();
-
+    // ConceptsAsInterface::passClassObjAsInterface();
 
     // NestedConcepts::CheckMethodReturnType();
 
@@ -2468,7 +2505,12 @@ void Concepts::TestAll()
     // FoldExpression::Test();
     // FoldExpression::Test_Construct_With_Arguments();
     // FoldExpression::Test_All_Params_are_SameType();
-    FoldExpression::Elements_Shall_be_Comparable();
+    // FoldExpression::Elements_Shall_be_Comparable();
+
+
+    CheckAllTypesAreSame::Check_with_Concepts();
+    CheckAllTypesAreSame::Check_with_StaticAssert();
+    CheckAllTypesAreSame::Check_ALL_Integral();
 
 
     // IntegerConcepts::IntegerSum();
