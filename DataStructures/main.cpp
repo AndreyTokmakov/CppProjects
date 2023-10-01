@@ -71,7 +71,7 @@ int main([[maybe_unused]] int argc,
     // TwoSidedVector::TestAll();
     // MinStack::TestAll();
     // MinHeap::TestAll();
-    HeapWithComparator::TestAll();
+    // HeapWithComparator::TestAll();
 
     // Memory::Shared_Ptr_Tests();
 

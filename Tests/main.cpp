@@ -727,7 +727,7 @@ int main([[maybe_unused]] int argc,
 
     // Cpp23_Features::TestAll();
     // AutoTests::TestAll();
-    // Algorithms::TestAll();
+    Algorithms::TestAll();
     // Multithreading::TestAll();
     // Memory::TestAll();
     // Iterators::TestAll();
@@ -750,7 +750,7 @@ int main([[maybe_unused]] int argc,
     // Math::TestAll();
     // LRUCache::TestAll();
     // EventLoop::TestAll();
-    DVector::TestAll();
+    // DVector::TestAll();
     // Iterators::TestAll();
     // Convertaion_UTF8_UTF32::TestAll();    // Encoding
     // Unicode::TestAll();                   // Encoding

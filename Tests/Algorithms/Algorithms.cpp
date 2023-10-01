@@ -13,11 +13,15 @@ Description : Algorithms
 #include <vector>
 #include <optional>
 #include <algorithm>
-#include <unordered_map>
+
 #include <array>
 #include <numeric>
 #include <cassert>
 #include <cmath>
+#include <cmath>
+#include <set>
+#include <unordered_set>
+#include <unordered_map>
 
 namespace Algorithms
 {
@@ -501,6 +505,44 @@ namespace Algorithms::Numbers
             std::cout << i <<  ' ';
         std::cout << std::endl;
     }
+
+    //--------------------------------------------------------------------
+
+    size_t _longest_increasing_subsequence_1(const std::vector<int>& Numeric) {
+        // create an empty ordered set S. ith element in S is defined as the
+        // smallest integer that ends an increasing sequence of length i
+        std::set<int> tmp;
+
+        for (int val : Numeric) {
+            auto [iter, ok] = tmp.insert(val);
+            // 1. If element IS NOT inserted at the END, then delete next greater element from set
+            // 2. Ignore the current element if already present in the set
+            if (ok && tmp.end() != std::next(iter))
+                tmp.erase(std::next(iter));
+
+            std::cout << "[" << tmp << "]\n";;
+        }
+
+        std::cout << "size = " << tmp.size() << ": " << tmp << std::endl;
+    }
+
+    size_t _longest_increasing_subsequence_2(const std::vector<int>& numbers)
+    {
+
+        return 0;
+    }
+
+    void LongestIncreasingSubsequence()
+    {
+        std::vector<std::vector<int>> testData {
+                { 1, 2, 3 },
+                // { -1, -2, -3, -4, -4, -6 },{ 1,2, 4 }, { 5,4,1,3,2}
+        };
+        for (const std::vector<int>& data: testData)
+        {
+            std::cout << _longest_increasing_subsequence(data) << std::endl;
+        }
+    }
 }
 
 namespace Algorithms::Strings
@@ -659,8 +701,9 @@ void Algorithms::TestAll()
     // Algorithms::PrintAllSubArraysTest();
 
     // Numbers::printSortedSquaredNumber_InSortedArray();
+    Numbers::LongestIncreasingSubsequence();
 
-    Majority::Test();
+    // Majority::Test();
 
     // Algorithms::Sqrt();sdsd
 
