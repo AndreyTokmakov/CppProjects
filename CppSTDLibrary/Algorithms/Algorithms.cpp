@@ -748,30 +748,18 @@ namespace Algorithms::BinarySearch {
 
     void LowerBound_UpperBound()
     {
-        std::cout << "---------------------------------   Test1   --------------------------\n" << std::endl;
+        const std::vector<std::pair<std::vector<int>, std::pair<int, int>>> testData {
+                {{1,1,2,3,3,3,3,4,4,6,8,8,8,10,11,12,13 }, {5, 9}},
+                {{1,2,3,4,5,6,7,7,7,8,9,9,11,11,12,16,20,20,20,20}, {10, 202}},
+        };
+        for (const auto& [data, boundaries]: testData)
         {
-            int start = 4, end = 8;
-            std::vector<int> data = { 1, 1, 2, 3, 3, 3, 3, 4, 4, 5, 6, 8, 8, 8, 9, 10, 11, 12, 13 };
-            auto lower = std::lower_bound(data.begin(), data.end(), start);
-            auto upper = std::upper_bound(data.begin(), data.end(), end);
+            const int start = boundaries.first, end = boundaries.second;
+            const auto lower = std::lower_bound(data.begin(), data.end(), start);
+            const auto upper = std::upper_bound(data.begin(), data.end(), end);
 
-            std::cout << "Values from " << start << " - " << end << " :  ";
+            std::cout << "\nValues from " << start << " - " << end << " :  ";
             std::copy(lower, upper, std::ostream_iterator<int>(std::cout, " "));
-        }
-
-        std::cout << "\n\n---------------------------------   Test2   --------------------------\n" << std::endl;
-
-        {
-            std::vector<int> data = { 1,2,3,4,5,6,7,7,7,8,9,9,11,11,12,16,20,20,20,20 };
-
-            int start = 10, end = 202;
-            auto lower = std::lower_bound(data.begin(), data.end(), start);
-            auto upper = std::upper_bound(data.begin(), data.end(), end);
-
-            std::cout << "Values from " << start << " - " << end << " :  ";
-            while (++lower != upper)
-                std::cout << *lower << " ";
-            std::cout << std::endl;
         }
     }
 
@@ -1698,7 +1686,7 @@ void Algorithms::TestAll()
     // ModifyingSequenceOperations::Remove_Copy();
     // ModifyingSequenceOperations::Remove_Copy_If();
     // ModifyingSequenceOperations::Erase();
-    ModifyingSequenceOperations::Erase_IF();
+    // ModifyingSequenceOperations::Erase_IF();
     // ModifyingSequenceOperations::Rotate();
     // ModifyingSequenceOperations::Unique();
     // ModifyingSequenceOperations::UniqueCopy();
@@ -1727,7 +1715,7 @@ void Algorithms::TestAll()
     // BinarySearch::BinarySearch();
     // BinarySearch::UpperBound();
     // BinarySearch::UpperBound1();
-    // BinarySearch::LowerBound_UpperBound();
+    BinarySearch::LowerBound_UpperBound();
     // BinarySearch::EqualRange();
     // BinarySearch::Set_Union();
 
