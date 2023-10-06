@@ -70,7 +70,37 @@ namespace TagDispatching
     }
 }
 
+namespace TagDispatching::BasesOnValueType
+{
 
-void TagDispatching::Test() {
-    test_1();
+    template<typename T>
+    void get_value_impl(T t, std::true_type)
+    {
+        std::cout << "Arithmetic type\n";
+    }
+
+    template<typename T>
+    void get_value_impl(T t, std::false_type)
+    {
+        std::cout << "Non Arithmetic type\n";
+    }
+
+    template<typename T>
+    void get_value(T t)
+    {
+        get_value_impl(t, std::is_arithmetic<T>());
+    }
+
+    void test()
+    {
+        get_value(1);
+        get_value("1");
+    }
+}
+
+void TagDispatching::Test()
+{
+    // test_1();
+
+    BasesOnValueType::test();
 }
