@@ -489,14 +489,23 @@ namespace Strings {
 		if (str1.size() != str2.size())
 			return -1;
 		for (size_t pos = 0; pos < str1.size(); pos++)
-			if (true == _is_K_rotate_equals(str1, str2, pos))
+			if (_is_K_rotate_equals(str1, str2, pos))
 				return pos;
 		return -1;
 	}
 
-	void CheckIfStrings_RotareRotateEquals() {
-		std::string text1 = "123456789", text2 = "789123456";
-		std::cout << _Find_K_Rotates_To_Make_Equal(text1, text2) << std::endl;
+	void CheckIfStrings_RotateRotateEquals()
+    {
+        std::vector<std::pair<std::pair<std::string, std::string> , size_t>> testData {
+                {{"123456789", "789123456"}, 3},
+                {{"00001", "01000"}, 3},
+        };
+
+        for (const auto& [data, result_expected]: testData)
+        {
+            const int rotationsCount = _Find_K_Rotates_To_Make_Equal(data.first, data.second);
+            std::cout << "from '" << data.first << "' to '" << data.second << "' -> " << rotationsCount << std::endl;
+        }
 	}
 
 	//--------------------------------------------------------------------------------------//
@@ -1760,9 +1769,9 @@ void Strings::TEST_ALL()
 	// Strings::StrLen();
 
 	// Strings::RotateString();
-	// Strings::CheckIfStrings_RotareRotateEquals();
+	Strings::CheckIfStrings_RotateRotateEquals();
 
-    Strings::FindCommon_PrefixAndPostfix();
+    // Strings::FindCommon_PrefixAndPostfix();
 
 	// Strings::MoveCharsToEnd();
     // Strings::MoveZerosToEnd();
@@ -1789,7 +1798,7 @@ void Strings::TEST_ALL()
 
 	// Strings::Palindrome_Test();
 	// Strings::Longest_Palindrome_1();
-	Strings::Longest_Palindrome_2();
+	// Strings::Longest_Palindrome_2();
 
 	// Strings::Find_If_KPalindrome();
 	// Strings::Find_All_Palindrome_In_String();
@@ -1802,7 +1811,7 @@ void Strings::TEST_ALL()
 	// Strings::RotationalCipher();
 
 	// Strings::Permutations();
-	// Strings::Permutations2();
+    // Strings::Permutations2();
 
     // Strings::CheckIfTwoStringsArePermutation();
 	// Strings::AreAnagrams();
