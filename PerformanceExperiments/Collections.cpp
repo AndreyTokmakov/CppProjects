@@ -34,6 +34,7 @@
 #include <ostream>
 
 #include <vector>
+#include <algorithm>
 
 #include "Collections.h"
 

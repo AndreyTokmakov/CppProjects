@@ -7,6 +7,7 @@ Copyright   : Your copyright notice
 Description : Encoding C++ project
 ============================================================================**/
 
+#include <iostream>
 #include <vector>
 #include <string_view>
 

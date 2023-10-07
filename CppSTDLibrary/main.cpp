@@ -220,11 +220,11 @@ int main(int argc, char** argv)
 
     // Files::ReadFile();
     // AggregateInitialization::TestAll();
-    Algorithms::TestAll();
+    // Algorithms::TestAll();
     // Alignment::TestAll();
     // Any::TestAll();
     // Arrays::TestAll();
-    // Asserts::TestAll();
+    Asserts::TestAll();
     // Atomic::TestAll();
     // Attributes::TestAll();
     // Auto::TestAll();

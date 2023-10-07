@@ -12,6 +12,7 @@ Description : ContikiDCube
 #include <iostream>
 #include <string_view>
 #include <vector>
+#include <cstdint>
 
 namespace {
     constexpr size_t TB_MAX_SRC_DEST = 48;

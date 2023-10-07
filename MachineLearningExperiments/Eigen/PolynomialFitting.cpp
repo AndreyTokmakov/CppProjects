@@ -7,6 +7,9 @@
 // Description : ML Eigen polynomial fitting experiments
 //============================================================================
 
+#include "PolynomialFitting.h"
+
+#if 0
 #include <iostream>
 #include <string>
 #include <string_view>
@@ -16,7 +19,6 @@
 #include <Dense>
 #include "matplotlibcpp.h"
 #include <cmath>
-#include "PolynomialFitting.h"
 
 namespace PolynomialFitting
 {
@@ -117,9 +119,10 @@ namespace PolynomialFitting
         matplotlibcpp::show();
     }
 };
+#endif
 
 void PolynomialFitting::TestAll() {
     // LeastSquarePolynomialFit();
-    PolynomialFit_ForAutoModeling();
+    // PolynomialFit_ForAutoModeling();
 };
 

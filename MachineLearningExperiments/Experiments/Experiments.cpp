@@ -11,6 +11,7 @@
 #include <random>
 #include <iomanip>
 #include <fstream>
+#include <algorithm>
 
 #include "../Utilities/Utilities.h"
 #include "Experiments.h"

@@ -27,7 +27,7 @@ namespace Events
 
     class Target {
     public:
-        void onEvent(const void* pSender, int& arg) {
+        void onEvent([[maybe_unused]] const void* pSender, int& arg) {
             std::cout << "onEvent: " << arg << std::endl;
         }
     };

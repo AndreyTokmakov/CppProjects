@@ -5,7 +5,7 @@ set(PROJECT_VERSION 1.0.0.0)
 project(${PROJECT_NAME} VERSION ${PROJECT_VERSION} LANGUAGES CXX)
 
 add_compile_options(-c -Wall -Wextra -O3 -std=c++2a)
-include_directories(/home/andtokm/DiskS/ProjectsUbuntu/third_party/Eigen/Eigen)
+include_directories(/home/andtokm/DiskS/ProjectsUbuntu/third_party/eigen/Eigen)
 include_directories(/home/andtokm/Projects/third_party/matplotlib-cpp)
 
 # include_directories(/usr/include/python3.8)
@@ -40,4 +40,6 @@ add_executable(${PROJECT_NAME}  MACOSX_BUNDLE
 )
 
  # Link phread library
-TARGET_LINK_LIBRARIES(${PROJECT_NAME} pthread mlpack blas armadillo lapack ${Boost_LIBRARIES} python3.8)
+TARGET_LINK_LIBRARIES(${PROJECT_NAME}
+		# pthread mlpack blas armadillo lapack ${Boost_LIBRARIES} python3.8
+)

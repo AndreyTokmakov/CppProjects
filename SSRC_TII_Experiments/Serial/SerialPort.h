@@ -20,6 +20,7 @@
 #include <vector>
 #include <asm/ioctls.h>
 #include <asm/termbits.h>
+#include <cstdint>
 
 // User headers
 #include "Exception.h"

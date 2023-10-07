@@ -24,7 +24,7 @@ namespace Timer
         PocoTimer() {
             stopWatch.start();
         }
-        void PrintElapsedTime(Poco::Timer& timer) {
+        void PrintElapsedTime([[maybe_unused]] Poco::Timer& timer) {
             std::cout << "Time elapsed: " << stopWatch.elapsed() / 1000 << " milliseconds." << std::endl;
         }
     };

@@ -31,6 +31,7 @@ Description : EthernetHeader
 #include <string>
 #include <string_view>
 #include <array>
+#include <algorithm>
 
 /** EthernetHeader class: **/
 struct EthernetHeader final
