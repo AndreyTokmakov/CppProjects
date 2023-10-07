@@ -149,7 +149,7 @@ namespace Strings {
 		// find longest palindromic subsequence of given string 
 		std::string lps = longestPalindrome2(str);
 
-		// If the difference between longest palindromic 
+		// If the difference between the longest palindromic
 		// subsequence and the original string is less 
 		// than equal to k, then the string is k-palindrome 
 		return (str.size() - lps.size() <= k);
@@ -1374,23 +1374,20 @@ namespace Strings {
 	// Write a function to check whether two given strings are Permutation of each other or not.
 	// A Permutation of a string is another string that contains same characters, only the order
 	// of characters can be different. For example, �abcd� and �dabc� are Permutation of each other.
-	void CheckIfTwoStringsArePermutation() {
-		{
-			std::string str1 = "test", str2 = "estt";
-			std::cout << std::boolalpha << _are_permutation(str1, str2) << std::endl;
-		}
-		{
-			std::string str1 = "ABBAACCDDD", str2 = "BACDBACDAD";
-			std::cout << std::boolalpha << _are_permutation(str1, str2) << std::endl;
-		}
-		{
-			std::string str1 = "ABCDDDDBA", str2 = "ABCCDDDBA";
-			std::cout << std::boolalpha << _are_permutation(str1, str2) << std::endl;
-		}
-		{
-			std::string str1 = "abcd", str2 = "bbbb";
-			std::cout << std::boolalpha << _are_permutation(str1, str2) << std::endl;
-		}
+	void CheckIfTwoStringsArePermutation()
+    {
+        std::vector<std::pair<std::pair<std::string, std::string> , bool>> testData {
+                {{"test", "estt"}, true},
+                {{"ABBAACCDDD", "BACDBACDAD"}, true},
+                {{"ABCDDDDBA", "ABCCDDDBA"}, false},
+                {{"abcd", "bbbb"}, false},
+        };
+
+        for (const auto& [data, expected]: testData)
+        {
+            std::cout << std::boolalpha << _are_permutation(data.first, data.second)
+                      << ", expected = " << std::boolalpha << expected << std::endl;
+        }
 	}
 
 	//--------------------------------------------------------------------------------------//
@@ -1409,19 +1406,20 @@ namespace Strings {
 		return true;
 	}
 
-	void AreAnagrams() {
-		{
-			std::string str1 = "triangle", str2 = "integral";
-			std::cout << "Is '" << str1 << "' and '" << str2 << "' anagrams: " << std::boolalpha << _are_anagrams(str1, str2) << std::endl;
-		}
-		{
-			std::string str1 = "listen", str2 = "silent";
-			std::cout << "Is '" << str1 << "' and '" << str2 << "' anagrams: " << std::boolalpha << _are_anagrams(str1, str2) << std::endl;
-		}
-		{
-			std::string str1 = "acbdd", str2 = "aabc";
-			std::cout << "Is '" << str1 << "' and '" << str2 << "' anagrams: " << std::boolalpha << _are_anagrams(str1, str2) << std::endl;
-		}
+	void AreAnagrams()
+    {
+        std::vector<std::pair<std::pair<std::string, std::string> , bool>> testData {
+                {{"triangle", "integral"}, true},
+                {{"listen", "silent"}, true},
+                {{"acbdd", "aabc"}, false},
+        };
+
+        for (const auto& [data, expected]: testData)
+        {
+            std::cout << "Is '" << data.first << "' and '" << data.second << "' anagrams: "
+                      << std::boolalpha << _are_anagrams(data.first, data.second)
+                      << ", expected = " << std::boolalpha << expected << std::endl;
+        }
 	}
 
 	//--------------------------------------------------------------------------------------//
@@ -1769,7 +1767,7 @@ void Strings::TEST_ALL()
 	// Strings::StrLen();
 
 	// Strings::RotateString();
-	Strings::CheckIfStrings_RotateRotateEquals();
+	// Strings::CheckIfStrings_RotateRotateEquals();
 
     // Strings::FindCommon_PrefixAndPostfix();
 
@@ -1814,7 +1812,7 @@ void Strings::TEST_ALL()
     // Strings::Permutations2();
 
     // Strings::CheckIfTwoStringsArePermutation();
-	// Strings::AreAnagrams();
+	Strings::AreAnagrams();
 	// Strings::MakeAnagrams_CountDeletions();
 
     // Strings::Minimum_Substring();
