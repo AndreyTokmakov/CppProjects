@@ -1101,22 +1101,33 @@ namespace Strings {
 
 	//--------------------------------------------------------------------------------------//
 
-	void Find_If_String_IsSubstring_OfAnother() {
-		std::string text = "qw34er333345tyui34op", str = "345";
+    bool is_substring(const std::string& text, const std::string& str)
+    {
+        for (size_t i = 0, len = text.length() - str.length(); i < len; ++i) {
+            if (text[i] == str[0]) {
+                size_t k = i, n = 0;
+                while (text[k++] == str[n++]) {
+                    if (n == str.length())
+                        return true;
+                }
+            }
+        }
+        return false;
+    }
 
+	void Find_If_String_IsSubstring_OfAnother()
+    {
+        std::vector<std::pair<std::pair<std::string, std::string>, bool>> testData {
+                { {"qw34er333345tyui34op", "345"}, true },
+                { {"1234512345", "123"}, true },
+                { {"1234512345", "3456"}, false },
+        };
 
-		for (size_t i = 0; i < text.length(); ++i) {
-			if (text[i] == str[0]) {
-				int k = i, n = 0;
-				while (text[k++] == str[n++]) {
-					if (n == str.length()) {
-						std::cout << "Ok" << std::endl;
-						return;
-					}
-				}
-			}
-		}
-		std::cout << "Done" << std::endl;
+        for (const auto& [values, expected]: testData)
+        {
+            std::cout << "Is '" << values.first << "' is substring of '" << values.second << "' = "  << std::boolalpha
+                      << is_substring(values.first, values.second) << ", expected: " << expected << std::endl;
+        }
 	}
 
 	//--------------------------------------------------------------------------------------//
@@ -1204,8 +1215,8 @@ namespace Strings {
     bool check_parentheses_3_bracket_ex(const std::string& str)
     {
         constexpr std::array<std::pair<char, char>, 3> symbols {{
-                                                                        {'[', ']'}, {'{', '}'}, {'(', ')'}
-                                                                }};
+            {'[', ']'}, {'{', '}'}, {'(', ')'}
+        }};
         std::vector<char> brackets;
         for (const char c : str) {
             for (const auto& [open, close]: symbols) {
@@ -1253,21 +1264,11 @@ namespace Strings {
 	// (i.e. each open parenthesis is eventually closed). For example, given the string "()())()", you should return 1. 
 	// Given the string ")(", you should return 2, since we must remove all of them.
 
-	void CalcParentheses_K_Deletions() {
-		{
-			std::string str = "()())()";
-			std::cout << str << " = " << _calcParentheses_K_deletions(str) << std::endl;
-		}
-		{
-			std::string str = ")(";
-			std::cout << str << " = " << _calcParentheses_K_deletions(str) << std::endl;
-		}
-		{
-			std::string str = ")()(";
-			std::cout << str << " = " << _calcParentheses_K_deletions(str) << std::endl;
-		}
-		{
-			std::string str = "((()))()";
+	void CalcParentheses_K_Deletions()
+    {
+        const std::vector<std::string> testData {"()())()", ")(", ")()(", "((()))()"};
+		for (const std::string& str: testData)
+        {
 			std::cout << str << " = " << _calcParentheses_K_deletions(str) << std::endl;
 		}
 	}
@@ -1301,7 +1302,8 @@ namespace Strings {
 	//--------------------------------------------------------------------------------------//
 
 	// ERROR: if  text = "dcbefebcfe", mask = "fd" we have resul = 'dcbefebcf' instread 'dcbef'
-	std::string _minimum_length_substrings(const std::string& text, const std::string& mask) {
+	std::string _minimum_length_substrings(const std::string& text,
+                                           const std::string& mask) {
 		size_t chars[256] = { 0 };
 		for (size_t pos = 0; pos < text.length(); pos++)
 			chars[text[pos]] = pos + 1;
@@ -1801,7 +1803,7 @@ void Strings::TEST_ALL()
 	// Strings::Find_If_KPalindrome();
 	// Strings::Find_All_Palindrome_In_String();
 	// Strings::FindDuplicateSymbols();
-    // Strings::Find_If_String_IsSubstring_OfAnother();
+    Strings::Find_If_String_IsSubstring_OfAnother();
 	// Strings::CalcParentheses();
 	// Strings::CalcParentheses_3_BRacket();
 	// Strings::CalcParentheses_K_Deletions();
@@ -1812,7 +1814,7 @@ void Strings::TEST_ALL()
     // Strings::Permutations2();
 
     // Strings::CheckIfTwoStringsArePermutation();
-	Strings::AreAnagrams();
+	// Strings::AreAnagrams();
 	// Strings::MakeAnagrams_CountDeletions();
 
     // Strings::Minimum_Substring();
