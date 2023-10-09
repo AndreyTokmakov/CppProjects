@@ -1103,7 +1103,7 @@ namespace Strings {
 
     bool is_substring(const std::string& text, const std::string& str)
     {
-        for (size_t i = 0, len = text.length() - str.length(); i < len; ++i) {
+        for (size_t i = 0, len = text.length() - str.length(); i <= len; ++i) {
             if (text[i] == str[0]) {
                 size_t k = i, n = 0;
                 while (text[k++] == str[n++]) {
@@ -1121,6 +1121,7 @@ namespace Strings {
                 { {"qw34er333345tyui34op", "345"}, true },
                 { {"1234512345", "123"}, true },
                 { {"1234512345", "3456"}, false },
+                { {"123456789", "789"}, true },
         };
 
         for (const auto& [values, expected]: testData)
