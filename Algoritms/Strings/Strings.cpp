@@ -1115,6 +1115,16 @@ namespace Strings {
         return false;
     }
 
+    bool is_substring_ex(const std::string& text, const std::string& str)
+    {
+        const size_t textLength = text.length(), strLen = str.length();
+        for (size_t idx = 0, n = 0; idx <= textLength - strLen; ++idx) {
+            for (n = 0; n < strLen && text[n + idx] == str[n]; ++n) { /** **/ }
+            if (strLen == n)
+                return true;
+        }
+        return false;
+    }
 	void Find_If_String_IsSubstring_OfAnother()
     {
         std::vector<std::pair<std::pair<std::string, std::string>, bool>> testData {
@@ -1126,8 +1136,11 @@ namespace Strings {
 
         for (const auto& [values, expected]: testData)
         {
-            std::cout << "Is '" << values.first << "' is substring of '" << values.second << "' = "  << std::boolalpha
-                      << is_substring(values.first, values.second) << ", expected: " << expected << std::endl;
+            std::cout << "Is '" << values.first << "' is substring of '" << values.second << "' = "
+                      << std::boolalpha
+                      << is_substring(values.first, values.second) << " | "
+                      << is_substring_ex(values.first, values.second) << " | expected = " << expected
+                      << std::endl;
         }
 	}
 
