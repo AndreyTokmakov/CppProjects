@@ -76,10 +76,19 @@ namespace Date_Time_Chrono::TimeToString
         return timeStr;
     }
 
+    std::string formatToString()
+    {
+        std::string buffer;
+        buffer.reserve(32);
+        std::format_to(std::back_inserter(buffer), "{:%Y-%m-%d %H:%M:%OS}", std::chrono::system_clock::now());
+        return buffer;
+    }
+
     void Test()
     {
         std::cout << std::quoted(getCurrentTime()) << std::endl;
         std::cout << std::quoted(getDaytimeString()) << std::endl;
+        std::cout << std::quoted(formatToString()) << std::endl;
     }
 }
 

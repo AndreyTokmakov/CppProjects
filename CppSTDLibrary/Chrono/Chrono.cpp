@@ -441,6 +441,44 @@ uint64_t format_date(std::string_view str)
     return h * m * s * ms;
 }
 
+namespace Chrono::TimeToString
+{
+    std::string getCurrentTime() noexcept {
+        const std::chrono::time_point now { std::chrono::system_clock::now() };
+        const time_t in_time_t { std::chrono::system_clock::to_time_t(std::chrono::system_clock::now()) };
+        const std::chrono::duration nowMs = std::chrono::duration_cast<std::chrono::microseconds>(
+                now.time_since_epoch()) % 1000000;
+        std::stringstream ss;
+        ss << std::put_time(std::localtime(&in_time_t), "%a %b %d %Y %T")
+           << '.' << std::setfill('0') << std::setw(6) << nowMs.count();
+        return ss.str();
+    }
+
+    std::string getDaytimeString()
+    {
+        time_t now = time(nullptr);
+        std::string timeStr {ctime(&now)};
+        timeStr.pop_back();
+        return timeStr;
+    }
+
+    std::string formatToString()
+    {
+        std::string buffer;
+        buffer.reserve(32);
+        std::format_to(std::back_inserter(buffer), "{:%Y-%m-%d %H:%M:%OS}", std::chrono::system_clock::now());
+        return buffer;
+    }
+
+    void Test()
+    {
+        std::cout << std::quoted(getCurrentTime()) << std::endl;
+        std::cout << std::quoted(getDaytimeString()) << std::endl;
+        std::cout << std::quoted(formatToString()) << std::endl;
+    }
+}
+
+
 
 void Chrono::TestAll()
 {
@@ -456,7 +494,8 @@ void Chrono::TestAll()
     // GM_time_VS_localtime();
     // Time_T();
 
-    Zones_Tests();
+    // Zones_Tests();
+
 
     // Localtime_TM();
 
@@ -473,6 +512,8 @@ void Chrono::TestAll()
     // Duration::DurationCast();
 
     // TimeZones::Test();
+
+    TimeToString::Test();
 
     // StringFormat::StrfTime();
     // StringFormat::Asctime();
