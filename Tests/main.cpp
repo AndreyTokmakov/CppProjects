@@ -727,14 +727,14 @@ int main([[maybe_unused]] int argc,
 
     // Cpp23_Features::TestAll();
     // AutoTests::TestAll();
-    // Algorithms::TestAll();
+    Algorithms::TestAll();
     // Multithreading::TestAll();
     // Memory::TestAll();
     // Iterators::TestAll();
     // Files::TestAll();
     // ConstexprMap::TestAll()
     // DesignPatterns::TestAll();
-    Date_Time_Chrono::TestAll();
+    // Date_Time_Chrono::TestAll();
     // MaxStack::TestAll();
     // MinStack::TestAll();
     // DebugLogger::TestAll();

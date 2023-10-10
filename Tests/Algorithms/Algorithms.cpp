@@ -20,6 +20,7 @@ Description : Algorithms
 #include <cmath>
 #include <cmath>
 #include <set>
+#include <memory>
 #include <unordered_set>
 #include <unordered_map>
 
@@ -734,6 +735,96 @@ namespace Algorithms::Majority
     }
 }
 
+namespace MaxTree
+{
+    /** Problem:
+    Given an array of unique integers, construct a binary max-tree.
+
+    A max tree is constructed by picking the maximum element as the root;
+    all elements to the left of the maximum belong to the left child subtree, and all elements to the right belong to the right subtree.
+    Both subtrees recursively follow the same logic.
+
+    Solution:
+    Let's consider traversing elements left-to-right.
+
+    If the element is lower than the previous one, we can add it as right child.
+
+    If it isn't we need to find the correct place, which will be as the right child of the next higher node
+    and the entire subtree of lower values will become the left child of the inserted node.
+
+    We can achieve this using a monotonic stack.
+    **/
+
+    struct Node
+    {
+        int value { 0 };
+        Node* left { nullptr };
+        Node* right { nullptr };
+    };
+
+    struct Tree
+    {
+        Node* add(int value) {
+            return store.emplace_back(std::make_unique<Node>(value, nullptr, nullptr)).get();
+            // return store.back().get();
+        }
+
+        Node* root = nullptr;
+
+    private:
+        std::vector<std::unique_ptr<Node>> store;
+    };
+
+
+    Tree make_max_tree(const std::vector<int>& nums)
+    {
+        Tree t;
+        std::vector<Node*> s;
+        for (int v : nums)
+        {
+            Node* node = t.add(v);
+
+            // Until we find the first higher value.
+            while (!s.empty() && s.back()->value < v) {
+                // Once we stop we have node->left pointing to the root of the tree representing lower values.
+                node->left = s.back();
+                s.pop_back();
+            }
+
+            // If there is a higher value we have seen this node belongs as the right child.
+            if (!s.empty())
+                s.back()->right = node;
+
+            // Continue to the next element.
+            s.push_back(node);
+        }
+
+        t.root = s.front();
+        return t;
+    }
+
+    // template<typename T>
+    void validate(bool condition)
+    {
+        if (!condition)
+        {
+            std::cout << "ERROR\n";
+        }
+    }
+
+    void test()
+    {
+        Tree t4 = make_max_tree({6,7,5,9,8,4});
+
+        validate(t4.root->value == 9);
+        validate(t4.root->left->value == 7);
+        validate(t4.root->left->left->value == 6);
+        validate(t4.root->left->right->value == 5);
+        validate(t4.root->right->value == 8);
+        validate(t4.root->right->right->value == 4);
+    }
+}
+
 void Algorithms::TestAll()
 {
     // Algorithms::Devide_SubArray();
@@ -741,7 +832,9 @@ void Algorithms::TestAll()
     // Algorithms::PrintAllSubArraysTest();
 
     // Numbers::printSortedSquaredNumber_InSortedArray();
-    Numbers::LongestIncreasingSubsequence();
+    // Numbers::LongestIncreasingSubsequence();
+
+    MaxTree::test();
 
     // Majority::Test();
 
