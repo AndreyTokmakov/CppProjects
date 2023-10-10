@@ -92,10 +92,24 @@ namespace Date_Time_Chrono::TimeToString
     }
 }
 
+namespace Date_Time_Chrono::Experiments
+{
+    void test()
+    {
+        std::chrono::gps_clock gpsClock;
+
+        // std::cout << gpsClock.
+
+    }
+}
+
 void Date_Time_Chrono::TestAll()
 {
     // ChronoTests();
     // Year_Month_Day_Test();
 
-    TimeToString::Test();
+    // TimeToString::Test();
+
+
+    Experiments::test();
 }

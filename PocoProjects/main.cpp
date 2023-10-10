@@ -37,9 +37,9 @@ int main([[maybe_unused]] int argc,
     // Events::TestAll();
     // Processes::TestAll();
     // Networking::TestAll();
-    // Environment::TestAll();
+    Environment::TestAll();
     // Random::TestAll();
-    Cryptography::TestAll();
+    // Cryptography::TestAll();
 
 
     return EXIT_SUCCESS;
