@@ -64,6 +64,7 @@ Description : Tests C++ project
 #include "DataStructures/MaxStack.h"
 #include "DataStructures/MinStack.h"
 #include "DataStructures/DVector.h"
+#include "DataStructures/RateLimiter.h"
 #include "DebugLogger/DebugLogger.h"
 #include "Date_Time_Chrono/Date_Time_Chrono.h"
 #include "Collections/CollectionsTests.h"
@@ -727,7 +728,7 @@ int main([[maybe_unused]] int argc,
 
     // Cpp23_Features::TestAll();
     // AutoTests::TestAll();
-    Algorithms::TestAll();
+    // Algorithms::TestAll();
     // Multithreading::TestAll();
     // Memory::TestAll();
     // Iterators::TestAll();
@@ -737,6 +738,7 @@ int main([[maybe_unused]] int argc,
     // Date_Time_Chrono::TestAll();
     // MaxStack::TestAll();
     // MinStack::TestAll();
+    RateLimiter::TestAll();
     // DebugLogger::TestAll();
     // UniquePtr_Size::SizeTest();
     // CollectionsTests::TestAll();

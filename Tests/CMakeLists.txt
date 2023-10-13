@@ -24,7 +24,6 @@ add_executable(Tests MACOSX_BUNDLE
         Encoding/PunycodeFinal.cpp Encoding/PunycodeFinal.h
         Encoding/Convertaion_UTF8_UTF32.cpp Encoding/Convertaion_UTF8_UTF32.h
         Templates_Metaprogramming/Templates.cpp Templates_Metaprogramming/Templates.h
-
         DebugLogger/DebugLogger.cpp DebugLogger/DebugLogger.h
         Collections/CollectionsTests.cpp Collections/CollectionsTests.h
         ObjectOrientedExperimetns/RAIIWrapper.cpp ObjectOrientedExperimetns/RAIIWrapper.h
@@ -59,6 +58,7 @@ add_executable(Tests MACOSX_BUNDLE
         Heap/Heap.cpp Heap/Heap.h
         Comparators/Comparators.cpp Comparators/Comparators.h
         FindMinMaxValues/FindMinMaxValues.cpp FindMinMaxValues/FindMinMaxValues.h
+        DataStructures/RateLimiter.cpp DataStructures/RateLimiter.h
         )
 
  # Link phread library
