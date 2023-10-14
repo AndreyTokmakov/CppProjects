@@ -21,59 +21,55 @@ namespace RateLimiter
 {
     struct RateLimiter
     {
-        std::jthread clockThread {};
-        uint64_t currentTime {0};
+        constexpr static size_t refillInterval { 1UL *  1'000'000'000 };
+
+        uint64_t currentTime = std::chrono::high_resolution_clock::now().time_since_epoch().count();
 
         uint32_t tokensMax {0};
-        uint32_t refillInterval {0};
+        std::jthread clockThread {};
 
-        uint64_t frameStart {0};
-        uint64_t tokens {0};
+        struct Client
+        {
+            uint64_t frameStart {0};
+            uint64_t tokens {0};
+            std::mutex mtx;
+        };
 
-        RateLimiter(uint32_t tokens, uint32_t refillIntervalSec):
-            clockThread {std::jthread(&RateLimiter::clock, this)},
-            tokensMax {tokens},
-            refillInterval {refillIntervalSec * 1'000'000'000} {
+        Client client;
+
+        explicit RateLimiter(uint32_t maxTokens):
+                tokensMax { maxTokens },
+                clockThread { std::jthread(&RateLimiter::clock, this) }
+        {
+            client.frameStart = std::chrono::high_resolution_clock::now().time_since_epoch().count();
+            client.tokens = tokensMax;
         }
 
+        [[noreturn]]
         void clock()
         {
             while (true)
             {
                 currentTime = std::chrono::high_resolution_clock::now().time_since_epoch().count();
-                // std::cout << currentTime << std::endl;
-                std::this_thread::sleep_for(std::chrono::milliseconds (50));
+                std::this_thread::sleep_for(std::chrono::milliseconds (1));
             }
         }
 
         bool processRequest()
         {
-            // TODO: remove
-            if (0 == frameStart) {
-                frameStart = currentTime;
-                tokens = tokensMax - 1;
+            if (currentTime - client.frameStart >= refillInterval)
+            {
+                const uint64_t delta = currentTime - client.frameStart - refillInterval;
+                client.frameStart = currentTime + delta;
+                client.tokens = tokensMax;
+            }
+
+            if (client.tokens > 0) {
+                --client.tokens;
                 return true;
             }
 
-            if (currentTime - frameStart > refillInterval)
-            {
-                std::cout << "* * * * * REFILL * * * * * * \n";
-                frameStart = currentTime;
-                tokens = tokensMax;
-                // TODO: FIX
-            } else {
-                --tokens;
-            }
-
-
-            std::cout << "currentTime = " << currentTime
-                      << ", frameStart  = " << frameStart
-                      << ", tokens = " << tokens
-                      << std::endl;
-
-
-            // std::cout << currentTime - frameStart << "\n\n";
-            return true;
+            return false;
         }
     };
 }
@@ -87,11 +83,42 @@ uint32_t getCount()
 
 void RateLimiter::TestAll()
 {
-    RateLimiter limiter(100, 5);
+    constexpr int rpsTarget = 100;
+    RateLimiter limiter(rpsTarget);
 
-    while (true)
+    size_t requestSend = 0;
+    size_t requestDeclined = 0;
+    constexpr size_t requestToSend = 200'000;
+
+
+    const std::chrono::high_resolution_clock::time_point start = std::chrono::high_resolution_clock::now();
+    for (size_t n = 0; n < requestToSend; ++n)
     {
-        std::this_thread::sleep_for(std::chrono::milliseconds (100));
-        limiter.processRequest();
+        std::this_thread::sleep_for(std::chrono::microseconds (100));
+
+        if (limiter.processRequest()) {
+            // std::cout << "Request allowed\n";
+            ++requestSend;
+        }
+        else {
+            // std::cout << "Request declined\n";
+            ++requestDeclined;
+        }
+
+        // if (0 == n % 100)
+        //     std::cout << n << std::endl;
     }
+
+    const std::chrono::high_resolution_clock::time_point end = std::chrono::high_resolution_clock::now();
+    const std::chrono::duration<double> time_span = duration_cast<std::chrono::duration<double>>(end - start);
+    const double seconds = time_span.count();
+
+    std::cout << "seconds: " << seconds << std::endl;
+    std::cout << "requestSend: " << requestSend << ", requestDeclined = " << requestDeclined << std::endl;
+
+    std::cout << "Result RPS: " << static_cast<double>(requestSend) / seconds << std::endl;
+
+    std::cout << "Total (rps): " << static_cast<double>(requestToSend) / seconds << ".  "
+              << "Passed: " << (static_cast<double>(requestSend) / static_cast<double>(requestToSend)) * 100 << ".  "
+              << "Dropped: " << (static_cast<double>(requestDeclined) / static_cast<double>(requestToSend)) * 100 << "%\n";
 }
