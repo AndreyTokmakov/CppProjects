@@ -70,6 +70,13 @@ namespace Numeric {
     }
 
     template<typename T>
+    std::ostream &operator<<(std::ostream &stream, const std::unordered_set<T> &set) {
+        for (const auto &i: set)
+            stream << " " << i;
+        return stream;
+    }
+
+    template<typename T>
     std::ostream &operator<<(std::ostream &stream, const std::deque<T> &list) {
         for (const auto &i: list)
             stream << " " << i;
@@ -2091,42 +2098,39 @@ namespace Numeric {
     //--------------------------------------------------------------------------------------//
 
     template<typename T>
-    std::optional<T> __Find_First_Element_Occured_Odd_Times(const std::vector<T>& data) {
-        std::unordered_map<T, std::pair<size_t, size_t>> repitions;
-        typename std::unordered_map<T, std::pair<size_t, size_t>>::iterator iter = repitions.begin();
-        for (size_t i = 0; i < data.size(); i++) {
-            if (auto [iter, ok] = repitions.insert({ data[i], {i, 1} }); false == ok) {
-                iter->second.second++;
-            }
-        }
-        T result = -1;
-        size_t xx = data.size();
-        for (const auto& entry : repitions) {
-            if (1 == entry.second.second && xx >= entry.second.first) {
-                xx = entry.second.first;
-                result = entry.first;
-            }
-        }
-        return data.size() == xx ? std::nullopt : std::make_optional<T>(result);
-    }
+    std::optional<T> __find_first_element_occurred_odd_times(const std::vector<T>& data) {
+        std::unordered_map<T, size_t> map;
+        for (T val : data)
+            map[val]++;
 
+        for (T val : data)
+            if (0 != map[val] % 2)
+                return val;
+
+        return std::nullopt;
+    }
 
     template<typename T>
-    void __Find_First_Element_Occured_Odd_Times_EX(const std::vector<T>& data) {
-        std::unordered_map<T, size_t> map;
-        for (T i : data)
-            map[i]++;
+    std::optional<T> __find_first_element_occurred_odd_times_set(const std::vector<T>& data)
+    {
+        std::unordered_set<T> set;
+        for (T val : data) {
+            if (auto [iter, inserted] = set.insert(val); false == inserted)
+                set.erase(iter);
+        }
 
-        auto result = std::find_if(data.begin(), data.end(), [&map](const auto v) {
-            return map.find(v)->second % 2 == 1;
-        });
-        std::cout << *result << std::endl;
+        for (T val : data) {
+            if (set.contains(val))
+                return val;
+        }
+
+        return std::nullopt;
     }
 
-    void  Find_First_Element_Occured_Once() {
-        const std::vector<int> Numeric { 77, 1,2,12, 3,4,5,1,2,3,33,4,5, 1,2,3,12, 33, 12, 4,5 };
-        //std::cout << __Find_First_Element_Occured_Odd_Times(Numeric).value_or(-1) << std::endl;
-        __Find_First_Element_Occured_Odd_Times_EX(Numeric);
+    void  Find_First_Element_Occurred_Once() {
+        const std::vector<int> values { 1, 2, 3, 5, 4, 1, 2, 3, 4 ,5, 4 ,5};
+        std::cout << __find_first_element_occurred_odd_times(values).value_or(-1) << std::endl;
+        std::cout << __find_first_element_occurred_odd_times_set(values).value_or(-1) << std::endl;
     }
 
     //--------------------------------------------------------------------------------------//
@@ -2151,6 +2155,35 @@ namespace Numeric {
         std::optional<int> res = _find_first_repeating_element(data);
 
         std::cout << res.value_or(-1) << std::endl;
+    }
+
+
+    //---------------------------------------------------------------------------------------//
+
+    int find_minimum_index_of_repeating_element_GOOD(const std::vector<int>& numbers) {
+        std::unordered_map<int, int> dup;
+        int pos = numbers.size();
+        for (size_t i = 0; i < numbers.size(); i++) {
+            if (auto result = dup.insert({ numbers[i], i }); !result.second)
+                pos = std::min(pos, result.first->second);
+        }
+        return pos == numbers.size() ? -1 : pos;
+    }
+
+    long find_minimum_index_of_repeating_element(const std::vector<int>& numbers) {
+        std::unordered_set<int> dup{ numbers.begin(), numbers.end() };
+        long minIndex = -1;
+        for (long i = std::ssize(numbers); i >= 0; i--) {
+            if (dup.end() != dup.find(numbers[i]))
+                minIndex = i;
+        }
+        return minIndex;
+    }
+
+    void Find_Minimum_Index_Of_RepeatingElement() {
+        std::vector<int> numbers = { 5,6,3,4,3,6,4,5 };
+        std::cout << "Result = " << find_minimum_index_of_repeating_element_GOOD(numbers) << std::endl;
+        std::cout << "Result = " << find_minimum_index_of_repeating_element(numbers) << std::endl;
     }
 
     //--------------------------------------------------------------------------------------//
@@ -3176,8 +3209,9 @@ void Numeric::TEST_ALL()
 
     // Numeric::Find_Elements_Occured_Once();
     // Numeric::Find_ONE_Element_Occured_Once();
-    // Numeric::Find_First_Element_Occured_Once();
+    Numeric::Find_First_Element_Occurred_Once();
     // Numeric::Find_First_Repeating_Element();
+    // Numeric::Find_Minimum_Index_Of_RepeatingElement();
 
     // Numeric::Count_Number_tOccurrences_SortedArray();
 

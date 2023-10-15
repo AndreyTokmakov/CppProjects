@@ -703,6 +703,15 @@ int main([[maybe_unused]] int argc,
     const std::vector<std::string_view> args(argv + 1, argv + argc);
     // parseInputParams(std::vector {"one", "two", "three", "four", "five"}.data(), 5);
 
+    int data[18] {};
+    std::fill_n(data, 18, -1);
+
+
+    for (int v: data)
+    {
+        std::cout << v << std::endl;
+    }
+
     // MoveStringToArray();
 
     // PrintTemplateType::test();
@@ -738,7 +747,7 @@ int main([[maybe_unused]] int argc,
     // Date_Time_Chrono::TestAll();
     // MaxStack::TestAll();
     // MinStack::TestAll();
-    RateLimiter::TestAll();
+    // RateLimiter::TestAll();
     // DebugLogger::TestAll();
     // UniquePtr_Size::SizeTest();
     // CollectionsTests::TestAll();

@@ -1033,44 +1033,6 @@ namespace Strings {
 		}
 	}
 
-	//---------------------------------------------------------------------------------------//
-
-	int find_minimum_index_of_repeating_element(const std::vector<int>& numbers) {
-		std::unordered_set<int> dup;
-		int pos = -1;
-		for (int i = numbers.size() - 1; i > 0; i--) {
-			if (!dup.insert(numbers[i]).second)
-				pos = i;
-		}
-		return pos;
-	}
-
-	int find_minimum_index_of_repeating_element_GOOD(const std::vector<int>& numbers) {
-		std::unordered_map<int, int> dup;
-		int pos = numbers.size();
-		for (size_t i = 0; i < numbers.size(); i++) {
-			if (auto result = dup.insert({ numbers[i], i }); !result.second)
-				pos = std::min(pos, result.first->second);
-		}
-		return pos == numbers.size() ? -1 : pos;
-	}
-
-    int find_minimum_index_of_repeating_element_3(const std::vector<int>& numbers) {
-        std::unordered_set<int> dup{ numbers.begin(), numbers.end() };
-        int pos = -1;
-        for (int i = numbers.size() - 1; i > 0; i--) {
-            if (dup.end() != dup.find(numbers[i]))
-                pos = i;
-        }
-        return pos;
-    }
-
-	void Find_Minimum_Index_Of_RepeatingElement() {
-		std::vector<int> numbers = { 5,6,3,4,3,6,4 };
-		std::cout << "Result = " << find_minimum_index_of_repeating_element(numbers) << std::endl;
-		std::cout << "Result = " << find_minimum_index_of_repeating_element_GOOD(numbers) << std::endl;
-		std::cout << "Result = " << find_minimum_index_of_repeating_element_3(numbers) << std::endl;
-	}
 
 	//--------------------------------------------------------------------------------------//
 
@@ -1807,7 +1769,6 @@ void Strings::TEST_ALL()
 
 	// Strings::Find_First_Char_Occured_Once();
 	// Strings::Find_First_K_Chars_Occured_Once();
-	// Strings::Find_Minimum_Index_Of_RepeatingElement();
 	// Strings::Find_LongestSubstring_With_K_DistinctChar acters();
 
 	// Strings::Palindrome_Test();
@@ -1817,7 +1778,7 @@ void Strings::TEST_ALL()
 	// Strings::Find_If_KPalindrome();
 	// Strings::Find_All_Palindrome_In_String();
 	// Strings::FindDuplicateSymbols();
-    Strings::Find_If_String_IsSubstring_OfAnother();
+    //  Strings::Find_If_String_IsSubstring_OfAnother();
 	// Strings::CalcParentheses();
 	// Strings::CalcParentheses_3_BRacket();
 	// Strings::CalcParentheses_K_Deletions();
