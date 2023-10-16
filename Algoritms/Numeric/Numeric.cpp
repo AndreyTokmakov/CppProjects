@@ -2127,10 +2127,44 @@ namespace Numeric {
         return std::nullopt;
     }
 
-    void  Find_First_Element_Occurred_Once() {
-        const std::vector<int> values { 1, 2, 3, 5, 4, 1, 2, 3, 4 ,5, 4 ,5};
-        std::cout << __find_first_element_occurred_odd_times(values).value_or(-1) << std::endl;
-        std::cout << __find_first_element_occurred_odd_times_set(values).value_or(-1) << std::endl;
+    template<typename T>
+    std::optional<T> __find_first_element_occurred_odd_times_set_one_iter(const std::vector<T>& data)
+    {
+        std::optional<T> result;
+        std::unordered_set<T> set;
+        for (int idx = data.size() - 1; idx >= 0; --idx)
+        {
+            if (auto [iter, inserted] = set.insert(data[idx]); false == inserted) {
+                set.erase(iter);
+                if (result.value() == data[idx])
+                    result.reset();
+            }
+            else {
+                result = data[idx];
+            }
+        }
+
+        return result;
+    }
+
+    void  Find_First_Element_Occurred_Once()
+    {
+        std::vector<std::pair<std::vector<int>, int>> testData {
+               {{ 1, 2, 3, 2 }, 2},
+               {{ 1, 1, 1, 1 }, -1},
+               {{ 1, 2, 1, 2 }, -1},
+               {{ 1, 2, 3, 4, 5, 1, 2, 3, 4, 5 }, -1},
+               {{ 1, 2, 3, 4, 5, 1, 2, 3, 4, 5, 4, 5}, 4},
+               {{ 1, 2, 3, 5, 4, 1, 2, 3, 4, 5, 4, 5}, 5},
+        };
+        for (const auto& [values, resultExpected]: testData)
+        {
+            std::cout << values << ". Expected: " << resultExpected << "\n\t"
+                << ' ' <<   __find_first_element_occurred_odd_times(values).value_or(-1)
+                << ' ' <<   __find_first_element_occurred_odd_times_set(values).value_or(-1)
+                << ' ' <<   __find_first_element_occurred_odd_times_set_one_iter(values).value_or(-1)
+                << std::endl;
+        }
     }
 
     //--------------------------------------------------------------------------------------//
