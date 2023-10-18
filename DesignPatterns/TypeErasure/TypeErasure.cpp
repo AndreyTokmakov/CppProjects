@@ -81,6 +81,11 @@ namespace TypeErasure::ExperimentFirst
 
 namespace TypeErasure::ExperimentSecond
 {
+    template<typename T>
+    concept HasGetNameMethod = requires(T & a) {
+        { a.getName()  } -> std::same_as<std::string>;
+    };
+
     struct Object
     {
         struct Interface
@@ -91,19 +96,7 @@ namespace TypeErasure::ExperimentSecond
             virtual std::string getName() const = 0;
         };
 
-        std::shared_ptr<const Interface> object {};
-
-        template <typename T>
-        explicit Object(T&& obj): object {
-            std::make_shared<struct Model<T>>(std::forward<T>(obj))} {
-        }
-
-        [[nodiscard]]
-        std::string getName() const {
-            return object->getName();
-        }
-
-        template<typename T>
+        template<HasGetNameMethod T>
         struct Model : Interface
         {
             explicit Model(const T& t) : object { t } { }
@@ -116,6 +109,18 @@ namespace TypeErasure::ExperimentSecond
         private:
             T object;
         };
+
+        std::shared_ptr<const Interface> object {};
+
+        template <typename T>
+        explicit Object(T&& obj): object {
+            std::make_shared<Model<T>>(std::forward<T>(obj))} {
+        }
+
+        [[nodiscard]]
+        std::string getName() const {
+            return object->getName();
+        }
     };
 
     struct Bar {
