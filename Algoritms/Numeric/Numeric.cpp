@@ -1390,9 +1390,23 @@ namespace Numeric {
         std::cout << minHeap.front() << std::endl;
     }
 
+    void _next_larger_element2(const std::vector<int>& numbers)
+    {
+        std::array<int, 2> mins {numbers[0], numbers[1]};
+        if (mins[0] > mins[1]) std::swap(mins[0], mins[1]);
+
+        for (size_t idx = 2; idx < numbers.size(); ++idx) {
+            if (numbers[idx] > mins[0]) mins[0] = numbers[idx];
+            if (mins[0] > mins[1]) std::swap(mins[0], mins[1]);
+        }
+
+        std::cout << mins.front() << std::endl;
+    }
+
     void NextLargerElement() {
         const std::vector<int> Numeric = { 1, 3, 2, 4, 6, 9, 5,11 };
         _next_larger_element(Numeric);
+        _next_larger_element2(Numeric);
     }
 
     //--------------------------------------------------------------------------------------//
@@ -3191,7 +3205,7 @@ void Numeric::TEST_ALL()
     // Numeric::Find_N_Max_Elements2();
     // Numeric::MaxPairSumInArray();
 
-    // Numeric::NextLargerElement();
+    Numeric::NextLargerElement();
     // Numeric::Find_All_Distinct_Combinations_LengthK();
     // Numeric::Find_Longest_Increasing_Subsequence();
     // Numeric::Find_Longest_Increasing_Subsequence_1();
@@ -3215,7 +3229,7 @@ void Numeric::TEST_ALL()
     // Numeric::RemoveDuplicates_SortedArray();
     // Numeric::DeleteFromArray();
 
-    Numeric::Find_The_Majority_Element();
+    // Numeric::Find_The_Majority_Element();
 
     // Numeric::Find_SubArrays_SumZero();
     // Numeric::Find_SubArrays_WithGivenSum();
@@ -3243,7 +3257,7 @@ void Numeric::TEST_ALL()
 
     // Numeric::Find_Elements_Occured_Once();
     // Numeric::Find_ONE_Element_Occured_Once();
-    Numeric::Find_First_Element_Occurred_Once();
+    // Numeric::Find_First_Element_Occurred_Once();
     // Numeric::Find_First_Repeating_Element();
     // Numeric::Find_Minimum_Index_Of_RepeatingElement();
 
