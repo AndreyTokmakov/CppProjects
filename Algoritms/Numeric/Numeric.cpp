@@ -1381,8 +1381,8 @@ namespace Numeric {
     // Just using classing min_heap approach
     void _next_larger_element(const std::vector<int>& numbers)
     {
-        std::vector<int> minHeap(numbers.begin(), numbers.begin() + 2);
-        for (size_t idx = 2; idx < numbers.size(); ++idx) {
+        std::array<int, 2> minHeap {numbers[0], numbers[1]};
+        for (size_t idx = minHeap.size(); idx < numbers.size(); ++idx) {
             minHeap.front() = minHeap.front() > numbers[idx] ? minHeap.front() : numbers[idx];
             std::make_heap(minHeap.begin(), minHeap.end(), [](int x, int y) { return y < x; });
         }

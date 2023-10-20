@@ -59,6 +59,7 @@ add_executable(Tests MACOSX_BUNDLE
         Comparators/Comparators.cpp Comparators/Comparators.h
         FindMinMaxValues/FindMinMaxValues.cpp FindMinMaxValues/FindMinMaxValues.h
         DataStructures/RateLimiter.cpp DataStructures/RateLimiter.h
+        DataStructures/BitReader.cpp DataStructures/BitReader.h
         )
 
  # Link phread library

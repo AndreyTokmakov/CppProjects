@@ -65,6 +65,7 @@ Description : Tests C++ project
 #include "DataStructures/MinStack.h"
 #include "DataStructures/DVector.h"
 #include "DataStructures/RateLimiter.h"
+#include "DataStructures/BitReader.h"
 #include "DebugLogger/DebugLogger.h"
 #include "Date_Time_Chrono/Date_Time_Chrono.h"
 #include "Collections/CollectionsTests.h"
@@ -91,6 +92,7 @@ Description : Tests C++ project
 #include "Auto/AutoTests.h"
 #include "Heap/Heap.h"
 #include "Comparators/Comparators.h"
+#include "FindMinMaxValues/FindMinMaxValues.h"
 #include "FindMinMaxValues/FindMinMaxValues.h"
 
 struct AnyBase {
@@ -703,14 +705,11 @@ int main([[maybe_unused]] int argc,
     const std::vector<std::string_view> args(argv + 1, argv + argc);
     // parseInputParams(std::vector {"one", "two", "three", "four", "five"}.data(), 5);
 
-    int data[18] {};
-    std::fill_n(data, 18, -1);
+
+    // SW memory barrier:
+    // asm volatile("" : : :  "memory");
 
 
-    for (int v: data)
-    {
-        std::cout << v << std::endl;
-    }
 
     // MoveStringToArray();
 
