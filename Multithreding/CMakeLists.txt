@@ -37,7 +37,10 @@ add_executable(Multithreding MACOSX_BUNDLE
         ThreadPoolLimited/ThreadPoolLimited.cpp ThreadPoolLimited/ThreadPoolLimited.h
         FalseSharing/FalseSharingExperiments.cpp FalseSharing/FalseSharingExperiments.h
         SynchStream_Custom/SynchStream_Custom.cpp SynchStream_Custom/SynchStream_Custom.h
-        SynchStream/SynchStream.cpp SynchStream/SynchStream.h PerformanceExperiments/PerformanceExperiments.cpp PerformanceExperiments/PerformanceExperiments.h)
+        SynchStream/SynchStream.cpp SynchStream/SynchStream.h
+        PerformanceExperiments/PerformanceExperiments.cpp PerformanceExperiments/PerformanceExperiments.h
+        SpinLock/SpinLock.h SpinLock/SpinLock.cpp
+        )
 
  # Link phread library
 TARGET_LINK_LIBRARIES(Multithreding pthread)

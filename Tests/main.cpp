@@ -699,30 +699,16 @@ void MoveStringToArray()
     std::cout << std::quoted(data[5]) << std::endl;
 }
 
+
 int main([[maybe_unused]] int argc,
          [[maybe_unused]] char** argv)
 {
     const std::vector<std::string_view> args(argv + 1, argv + argc);
     // parseInputParams(std::vector {"one", "two", "three", "four", "five"}.data(), 5);
 
-    struct Foo {
-        int x { 0 };
-        int y { 0 };
-    };
-
-    struct FooAligned {
-        alignas(std::hardware_destructive_interference_size) int x{0};
-        alignas(std::hardware_destructive_interference_size) int y{0};
-    };
-
-    std::cout << sizeof(Foo) << std::endl;
-    std::cout << sizeof(FooAligned) << std::endl;
-
-
 
     // SW memory barrier:
     // asm volatile("" : : :  "memory");
-
 
 
     // MoveStringToArray();
@@ -751,7 +737,7 @@ int main([[maybe_unused]] int argc,
     // Cpp23_Features::TestAll();
     // AutoTests::TestAll();
     // Algorithms::TestAll();
-    // Multithreading::TestAll();
+    Multithreading::TestAll();
     // Memory::TestAll();
     // Iterators::TestAll();
     // Files::TestAll();

@@ -42,6 +42,7 @@
 #include "LockFreeDataStructures/LockFreeQueue.h"
 #include "SynchStream_Custom/SynchStream_Custom.h"
 #include "SynchStream/SynchStream.h"
+#include "SpinLock/SpinLock.h"
 #include "PerformanceExperiments/PerformanceExperiments.h"
 
 
@@ -50,7 +51,7 @@ int main([[maybe_unused]] int argc,
 {
     // AsyncLaunch::TEST_ALL();
     // Atomic::TEST_ALL();
-    Barrier::TEST_ALL();
+    // Barrier::TEST_ALL();
     // CallOnce::TEST_ALL();
     // ConditionVariable::TEST_ALL();
     // Exceptions_Handling::TEST_ALL();
@@ -64,11 +65,13 @@ int main([[maybe_unused]] int argc,
     // Promise::TEST_ALL();
     // PackagedTask::TEST_ALL();
     // ParallelExecutionAlgoritms::TEST_ALL();
-    // FalseSharingExperiments::TEST_ALL();
+
     // Semaphore::TEST_ALL();
     // Synchronization::TEST_ALL();
     // SynchStream::TEST_ALL();
     // SynchStream_Custom::TEST_ALL();
+
+    // SpinLock::TestAll();
 
     // ThreadPools::TEST_ALL();
     // ThreadPoolBlocking::TEST_ALL();
@@ -78,6 +81,7 @@ int main([[maybe_unused]] int argc,
     // Threads::TEST_ALL();
     // JThreads::TEST_ALL();
 
+    FalseSharingExperiments::TEST_ALL();
     // PerformanceExperiments::TestAll();
 
     return EXIT_SUCCESS;

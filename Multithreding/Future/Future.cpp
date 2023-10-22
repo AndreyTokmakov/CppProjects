@@ -13,10 +13,25 @@
 #include <future>
 #include <vector>
 #include <algorithm>
+
 #include <syncstream>
+#include <chrono>
+#include <format>
 
 #include "Future.h"
 #include "../ThreadHelperUtilities/ThreadHelperUtilities.h"
+
+namespace
+{
+    std::string timeString()
+    {
+        std::string buffer;
+        buffer.reserve(32);
+        std::format_to(std::back_inserter(buffer), "{:%Y-%m-%d %H:%M:%OS}", std::chrono::system_clock::now());
+        buffer.shrink_to_fit();
+        return buffer;
+    }
+}
 
 namespace Future::CallClassMethod {
 
@@ -553,6 +568,45 @@ namespace Future::SharedFuture
         std::osyncstream(std::cout) << std::this_thread::get_id() << " producing result.\n";
         provider.set_value(42);
     }
+
+    void WaitForFuture_SignallingBetweenThreads()
+    {
+        using namespace std::literals;
+
+        auto debug = [](std::string_view text) {
+            std::osyncstream(std::cout) << timeString() << " | " << std::this_thread::get_id() << " : " << text << '\n';
+        };
+
+        // Our runner with two stages.
+        auto wait_for_signal = [&](auto future) {
+            debug("Waiting for signal.");
+            future.wait();
+            debug("Signal received.");
+        };
+
+        { // 1:1 example
+            std::promise<void> sender;
+            auto t = std::jthread(wait_for_signal, sender.get_future());
+            std::this_thread::sleep_for(200ms);
+            debug("Sending signal from main thread.");
+            sender.set_value();
+        }
+        std::cout << "\n";
+
+        { // 1:N example
+            std::promise<void> sender;
+            // Reminder, promise::get_future() can only be called once
+            std::shared_future<void> receiver(sender.get_future());
+
+            std::vector<std::jthread> runners;
+            std::generate_n(std::back_inserter(runners), 4, [&]{
+                return std::jthread(wait_for_signal, receiver);
+            });
+            std::this_thread::sleep_for(200ms);
+            debug("Sending signal from main thread.");
+            sender.set_value();
+        }
+    }
 }
 
 namespace Future::CollectionFutures {
@@ -643,7 +697,8 @@ void Future::TEST_ALL()
 
     // SharedFuture::Test();
     // SharedFuture::WaitFor_CheckStatus();
-    SharedFuture::WaitForFuture_InTwoThreads();
+    // SharedFuture::WaitForFuture_InTwoThreads();
+    SharedFuture::WaitForFuture_SignallingBetweenThreads();
 
     // CollectionFutures::Emplace_To_Vector();
 

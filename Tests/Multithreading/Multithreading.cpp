@@ -174,58 +174,64 @@ namespace Multithreading::Experiments
     // ----------------------------------------------------------------------------
 
     template <class T, size_t N>
-    class LockFreeQueue {
+    class LockFreeQueue
+    {
+        std::array<T, N> buffer{};  // Used by both threads
+        std::atomic<size_t> size {0}; // Used by both threads
+        size_t read_pos { 0 };
+        size_t write_pos { 0 };
+
     public:
-        LockFreeQueue() : size_{0}, read_pos_{0}, write_pos_{0} {
-            //assert(size_.is_lock_free());
-            if (!size_.is_lock_free()) {
+        LockFreeQueue() : size {0}, read_pos{0}, write_pos{0} {
+            // assert(size_.is_lock_free());
+            if (!size.is_lock_free()) {
                 std::cout << "ERROR!\n";
             }
         }
 
-        auto size() const {
-            return size_.load();
+        [[nodiscard]]
+        size_t Size() const {
+            return size.load();
         }
 
-        auto push(const T& t) {
-            if (size_.load() >= N) {
-                throw std::overflow_error("Queue is full");
-            }
-            buffer_[write_pos_] = t;
-            write_pos_ = (write_pos_ + 1) % N;
-            size_.fetch_add(1);
-        }
-
-        auto& front() const {
-            const auto s = size_.load();
+        [[nodiscard]]
+        T& front() {
+            const size_t s = size.load();
             if (s == 0) {
                 throw std::underflow_error("Queue is empty");
             }
-            return buffer_[read_pos_];
+            return buffer[read_pos];
         }
 
-        auto pop() {
-            if (size_.load() == 0) {
+        void push(const T& t) {
+            if (size.load() >= N) {
+                throw std::overflow_error("Queue is full");
+            }
+            buffer[write_pos] = t;
+            write_pos = (write_pos + 1) % N;
+            size.fetch_add(1);
+        }
+
+        void pop() {
+            if (size.load() == 0) {
                 throw std::underflow_error("Queue is empty");
             }
-            read_pos_ = (read_pos_ + 1) % N;
-            size_.fetch_sub(1);
+            read_pos = (read_pos + 1) % N;
+            size.fetch_sub(1);
         }
-
-    private:
-        std::array<T, N> buffer_{}; // Used by both threads
-        std::atomic<size_t> size_{}; // Used by both threads
-        size_t read_pos_ = 0;
-        size_t write_pos_ = 0;
     };
 
     void LockFreeTest() {
 
         LockFreeQueue<int, 5> queue {};
-        queue.push(1);
-        queue.push(2);
 
-        std::cout << queue.size() << std::endl;
+        for (int i = 0; i < 10; ++i) {
+            std::cout << "Pushing " << i << std::endl;
+            queue.push(i);
+            std::cout << "front " << queue.front() << ", Size = " << queue.Size() << std::endl;
+        }
+
+        std::cout << queue.Size() << std::endl;
     }
 }
 
@@ -302,8 +308,8 @@ namespace Multithreading::SwitchingThreads_SpinLock
         explicit Worker(uint32_t turn = 1): turnSwitch {turn} {
         }
 
-        void spinLock(uint32_t turn) {
-            while (turnSwitch.load(std::memory_order_acquire) != turn) {
+        void spinLock(uint32_t order) {
+            while (turnSwitch.load(std::memory_order_acquire) != order) {
             }
         }
 
@@ -328,7 +334,8 @@ namespace Multithreading::SwitchingThreads_SpinLock
     };
 
 
-    int32_t getRandomInt(int32_t from = 0, int32_t until = 100) {
+    int32_t getRandomInt(int32_t from = 0, int32_t until = 100)
+    {
         std::random_device rd;
         std::mt19937 gen(rd());
         std::uniform_real_distribution<> distribution(from, until);
@@ -400,14 +407,17 @@ namespace Multithreading::LockFree
         {
             std::shared_ptr<node> const new_node = std::make_shared<node>(data);
             new_node->next = std::atomic_load(&head);
-            while (!std::atomic_compare_exchange_weak(&head, &new_node->next,new_node)) { /** **/ };
+            while (!std::atomic_compare_exchange_weak(&head, &new_node->next,new_node)) {
+                /** **/
+            };
         }
 
         std::shared_ptr<T> pop()
         {
             std::shared_ptr<node> old_head = std::atomic_load(&head);
-            while (old_head && !std::atomic_compare_exchange_weak(&head,
-                                                                  &old_head,std::atomic_load(&old_head->next))) { /** **/ };
+            while (old_head && !std::atomic_compare_exchange_weak(&head,&old_head,std::atomic_load(&old_head->next))) {
+                /** **/
+            };
             if (old_head) {
                 std::atomic_store(&old_head->next,std::shared_ptr<node>());
                 return old_head->data;
@@ -634,9 +644,67 @@ namespace Multithreading::SimpleThreadSafeCollection
     }
 }
 
+namespace FalseSharingExperiments
+{
+#define START_TIME_MEASURE auto start = std::chrono::high_resolution_clock::now();
+#define STOP_TIME_MEASURE  { auto end = std::chrono::high_resolution_clock::now(); \
+                           auto duration = std::chrono::duration_cast<std::chrono::microseconds>(end - start).count(); \
+						   std::cout << "Result: " << duration << " microseconds" << std::endl;}
+
+    constexpr size_t ITER_COUNT { 10'000'000 };
+    constexpr size_t COUNT { 12 };
+
+    struct Stats {
+        int a { 0 };
+        int b { 0 };
+        int c { 0 };
+        int d { 0 };
+    };
+
+    struct StatsAligned {
+        alignas(std::hardware_destructive_interference_size) int a { 0 };
+        alignas(std::hardware_destructive_interference_size) int b { 0 };
+        alignas(std::hardware_destructive_interference_size) int c { 0 };
+        alignas(std::hardware_destructive_interference_size) int d { 0 };
+    };
+
+
+    template<typename T>
+    void task(T& var)
+    {
+        for (size_t i = 0; i < ITER_COUNT; ++i) {
+            for (size_t n = 0; n < ITER_COUNT; ++n) {
+                ++var;
+            }
+        }
+    }
+
+    template<typename T>
+    void test()
+    {
+        std::vector<T> store (COUNT);
+        std::vector<std::thread> threads {};
+        for (T& entry: store) {
+            threads.emplace_back(task<int>, std::ref(entry.a));
+            threads.emplace_back(task<int>, std::ref(entry.b));
+            threads.emplace_back(task<int>, std::ref(entry.c));
+            threads.emplace_back(task<int>, std::ref(entry.d));
+        }
+
+        START_TIME_MEASURE;
+        std::for_each(threads.begin(), threads.end(), [](std::thread& job ) { job.join(); });
+        STOP_TIME_MEASURE;
+    }
+
+    void Benchmark()
+    {
+        test<Stats>();
+        test<StatsAligned>();
+    }
+};
+
 void Multithreading::TestAll()
 {
-
     /*
     // create stop_source and stop_token:
     std::stop_source ssrc;
@@ -660,15 +728,20 @@ void Multithreading::TestAll()
     */
 
 
-
     // SwitchingThreads::Test();
 
     // Experiments::CalcTeethContactPoints();
     // Experiments::Debug("33", 333);
 
+
+    // Experiments::LockFreeTest();  <-------------- FIXME
+
     // Pools::Test();
 
     // SimpleThreadSafeCollection::Test();
 
-    SwitchingThreads_SpinLock::TestAll();
+    // SwitchingThreads_SpinLock::TestAll();
+
+
+    FalseSharingExperiments::Benchmark();
 }

@@ -224,14 +224,14 @@ int main(int argc, char** argv)
     // Alignment::TestAll();
     // Any::TestAll();
     // Arrays::TestAll();
-    Asserts::TestAll();
+    // Asserts::TestAll();
     // Atomic::TestAll();
     // Attributes::TestAll();
     // Auto::TestAll();
     // BitSet::TestAll();
     // BitwiseOperation::TestAll();
     // Byte::TestAll();
-    // Chrono::TestAll();
+    Chrono::TestAll();
     // Comparators::TestAll();
     // Concepts::TestAll();
     // ConsoleInOut::TestAll();

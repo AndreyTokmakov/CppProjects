@@ -467,6 +467,7 @@ namespace Chrono::TimeToString
         std::string buffer;
         buffer.reserve(32);
         std::format_to(std::back_inserter(buffer), "{:%Y-%m-%d %H:%M:%OS}", std::chrono::system_clock::now());
+        buffer.shrink_to_fit();
         return buffer;
     }
 
