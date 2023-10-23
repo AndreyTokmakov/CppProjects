@@ -149,12 +149,57 @@ namespace Atomic_MemoryOrder::Consumer_Producer
     }
 }
 
+namespace Atomic_MemoryOrder::SynchThreads
+{
+    std::atomic<int> order {0};
+
+    void thread_1()
+    {
+        int expected = 1;
+        while (!order.compare_exchange_weak(expected, 2, std::memory_order_release, std::memory_order_relaxed))
+        {
+            std::this_thread::sleep_for(std::chrono::seconds (1));
+            std::cout << "False: " << order << ", Expected: " << expected << std::endl;
+            expected = 1;
+        }
+
+        std::cout << "Order: " << order << std::endl;
+    }
+
+    /*
+    void thread_2()
+    {
+        int expected = 1;
+        // memory_order_relaxed is okay because this is an RMW,
+        // and RMWs (with any ordering) following a release form a release sequence
+        while (!flag.compare_exchange_strong(expected, 2, std::memory_order_relaxed))
+        {
+            expected = 1;
+        }
+    }
+
+    void thread_3()
+    {
+        while (flag.load(std::memory_order_acquire) < 2);
+        // if we read the value 2 from the atomic flag, we see 42 in the vector
+        assert(data.at(0) == 42); // will never fire
+    }
+    */
+
+    void test()
+    {
+        std::jthread a(thread_1);
+    }
+}
+
 
 void Atomic_MemoryOrder::TestAll()
 {
     // AtomicThreadFence::test();
 
     // Consumer_Producer::WaitFor_AtomicInt();
-    Consumer_Producer::WaitFor_AtomicFlag();
+    // Consumer_Producer::WaitFor_AtomicFlag();
+
+    SynchThreads::test();
 
 }
