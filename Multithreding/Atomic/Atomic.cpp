@@ -745,7 +745,7 @@ void Atomic::TEST_ALL()
 {
     // AtomicFlag::Spinlock_Test();
     // AtomicFlag::Spinlock_Test_Guard();
-    // AtomicFlag::Test_and_Set();
+    AtomicFlag::Test_and_Set();
     // AtomicFlag::Wait_Notify();
 
     // Atomic_Boolean::Bool_Load_Test();
@@ -769,7 +769,7 @@ void Atomic::TEST_ALL()
     // AtomicRef::NoAtomicIncrement();
     // AtomicRef::AtomicIncrement();
 
-    Compare::CompareExchangeWeak();
+    // Compare::CompareExchangeWeak();
     // Compare::CompareExchangeStrong();
 
     // Cpp_20_Features::Wait();

@@ -15,6 +15,7 @@ add_executable(Multithreding MACOSX_BUNDLE
         AsyncLaunch/AsyncLaunch.cpp AsyncLaunch/AsyncLaunch.h
         ThreadHelperUtilities/ThreadHelperUtilities.cpp ThreadHelperUtilities/ThreadHelperUtilities.h
         Atomic/Atomic.cpp Atomic/Atomic.h
+        Atomic/Atomic_MemoryOrder.cpp Atomic/Atomic_MemoryOrder.h
         Barrier/Barrier.cpp Barrier/Barrier.h
         CallOnce/CallOnce.cpp CallOnce/CallOnce.h
         ConditionVariable/ConditionVariable.cpp ConditionVariable/ConditionVariable.h

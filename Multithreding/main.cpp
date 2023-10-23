@@ -21,6 +21,7 @@
 #include "ThreadPoolBlocking/ThreadPoolBlocking.h"
 #include "ThreadPoolLimited/ThreadPoolLimited.h"
 #include "Atomic/Atomic.h"
+#include "Atomic/Atomic_MemoryOrder.h"
 #include "Promise/Promise.h"
 #include "Future/Future.h"
 #include "PackagedTask/PackagedTask.h"
@@ -50,7 +51,10 @@ int main([[maybe_unused]] int argc,
          [[maybe_unused]] char** argv)
 {
     // AsyncLaunch::TEST_ALL();
+
     // Atomic::TEST_ALL();
+    Atomic_MemoryOrder::TestAll();
+
     // Barrier::TEST_ALL();
     // CallOnce::TEST_ALL();
     // ConditionVariable::TEST_ALL();
@@ -81,7 +85,7 @@ int main([[maybe_unused]] int argc,
     // Threads::TEST_ALL();
     // JThreads::TEST_ALL();
 
-    FalseSharingExperiments::TEST_ALL();
+    // FalseSharingExperiments::TEST_ALL();
     // PerformanceExperiments::TestAll();
 
     return EXIT_SUCCESS;
