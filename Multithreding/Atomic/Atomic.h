@@ -11,7 +11,7 @@
 #define ATOMIC_TESTS_INCLUDE_GUARD__H
 
 namespace Atomic {
-    void TEST_ALL();
+    void TestAll();
 };
 
 #endif // !ATOMIC_TESTS_INCLUDE_GUARD__H

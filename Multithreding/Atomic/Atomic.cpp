@@ -22,6 +22,21 @@
 
 #include "../ThreadHelperUtilities/ThreadHelperUtilities.h"
 
+
+
+namespace
+{
+    std::string timeString()
+    {
+        std::string buffer;
+        buffer.reserve(32);
+        std::format_to(std::back_inserter(buffer), "{:%Y-%m-%d %H:%M:%OS}", std::chrono::system_clock::now());
+        buffer.shrink_to_fit();
+        return buffer;
+    }
+}
+
+
 namespace Atomic::Atomic_INT
 {
 
@@ -331,8 +346,8 @@ namespace Atomic::AtomicFlag
             std::cout << std::endl;
         };
 
-        std::jthread t1(prepare);
         std::jthread t2(complete);
+        std::jthread t1(prepare);
     }
 }
 
@@ -741,12 +756,12 @@ namespace Atomic::ModificationOrder
     }
 };
 
-void Atomic::TEST_ALL()
+void Atomic::TestAll()
 {
     // AtomicFlag::Spinlock_Test();
     // AtomicFlag::Spinlock_Test_Guard();
-    AtomicFlag::Test_and_Set();
-    // AtomicFlag::Wait_Notify();
+    // AtomicFlag::Test_and_Set();
+    AtomicFlag::Wait_Notify();
 
     // Atomic_Boolean::Bool_Load_Test();
     // Atomic_Boolean::SetValue();

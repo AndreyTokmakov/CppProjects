@@ -16,6 +16,11 @@ Description : Multithreading performance experiments
 #include <vector>
 #include <syncstream>
 
+#define START_TIME_MEASURE auto start = std::chrono::high_resolution_clock::now();
+#define STOP_TIME_MEASURE  { auto end = std::chrono::high_resolution_clock::now(); \
+                           auto duration = std::chrono::duration_cast<std::chrono::microseconds>(end - start).count(); \
+						   std::cout << "Result: " << duration << " microseconds" << std::endl;}
+
 namespace PerformanceExperiments::CV_vs_Atomic
 {
     struct RunnerBase
@@ -155,7 +160,81 @@ namespace PerformanceExperiments::CV_vs_Atomic
     }
 };
 
+
+
+namespace PerformanceExperiments::SpinLock_vs_Mutex
+{
+    class SpinLock
+    {
+        std::atomic_flag flag {false};
+
+    public:
+        void lock() {
+            // First thead has flag == true. So it will exit while loop at the first iteration
+            while (flag.test_and_set(std::memory_order_acquire)) {
+            }
+        }
+
+        void unlock() {
+            flag.clear(std::memory_order_release);
+        }
+
+        ~SpinLock() {
+            flag.clear(std::memory_order_release);
+        }
+    };
+
+    void RunBenchmark()
+    {
+        constexpr int threadsMax {16};
+        constexpr size_t iterCount { 1'000'000 };
+
+        {
+            std::mutex mtx;
+            uint64_t counter = 0;
+
+            auto task = [&] {
+                for (size_t idx  = 0; idx < iterCount; ++idx) {
+                    std::lock_guard<std::mutex> lock{mtx};
+                    ++counter;
+                }
+            };
+
+            START_TIME_MEASURE
+            {
+                std::vector<std::jthread> jobs;
+                for (int t = 0; t < threadsMax; ++t)
+                    jobs.emplace_back(task);
+            }
+            STOP_TIME_MEASURE
+        }
+
+        {
+            SpinLock spinLock;
+            uint64_t counter = 0;
+
+            auto task = [&] {
+                for (size_t idx  = 0; idx < iterCount; ++idx) {
+                    spinLock.lock();
+                    ++counter;
+                    spinLock.unlock();
+                }
+            };
+
+            START_TIME_MEASURE
+            {
+                std::vector<std::jthread> jobs;
+                for (int t = 0; t < threadsMax; ++t)
+                    jobs.emplace_back(task);
+            }
+            STOP_TIME_MEASURE
+
+        }
+    }
+}
+
 void PerformanceExperiments::TestAll()
 {
-    CV_vs_Atomic::RunBenchmark();
+    // CV_vs_Atomic::RunBenchmark();
+    SpinLock_vs_Mutex::RunBenchmark();
 };
