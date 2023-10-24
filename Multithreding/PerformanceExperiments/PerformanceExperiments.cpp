@@ -228,10 +228,14 @@ namespace PerformanceExperiments::SpinLock_vs_Mutex
                     jobs.emplace_back(task);
             }
             STOP_TIME_MEASURE
-
         }
+
+        /// Result: 687476 microseconds
+        /// Result: 3805998 microseconds
     }
 }
+
+
 
 void PerformanceExperiments::TestAll()
 {
