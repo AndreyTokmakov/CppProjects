@@ -235,10 +235,138 @@ namespace PerformanceExperiments::SpinLock_vs_Mutex
     }
 }
 
+namespace PerformanceExperiments::AtomicCounter_vs_Mutex
+{
+    class SpinLock
+    {
+        std::atomic_flag flag {false};
 
+    public:
+        void lock() {
+            // First thead has flag == true. So it will exit while loop at the first iteration
+            while (flag.test_and_set(std::memory_order_acquire)) {
+            }
+        }
+
+        void unlock() {
+            flag.clear(std::memory_order_release);
+        }
+
+        ~SpinLock() {
+            flag.clear(std::memory_order_release);
+        }
+    };
+
+    void RunBenchmark()
+    {
+        constexpr int threadsMax {16};
+        constexpr size_t iterCount { 1'000'000 };
+
+        {
+            std::mutex mtx;
+            uint64_t counter = 0;
+
+            auto task = [&] {
+                for (size_t idx  = 0; idx < iterCount; ++idx) {
+                    std::lock_guard<std::mutex> lock{mtx};
+                    ++counter;
+                }
+            };
+
+            START_TIME_MEASURE
+            {
+                std::vector<std::jthread> jobs;
+                for (int t = 0; t < threadsMax; ++t)
+                    jobs.emplace_back(task);
+            }
+            STOP_TIME_MEASURE
+        }
+
+        {
+            std::atomic<uint64_t> counter = 0;
+
+            auto task = [&] {
+                for (size_t idx  = 0; idx < iterCount; ++idx) {
+                    ++counter;
+                }
+            };
+
+            START_TIME_MEASURE
+            {
+                std::vector<std::jthread> jobs;
+                for (int t = 0; t < threadsMax; ++t)
+                    jobs.emplace_back(task);
+            }
+            STOP_TIME_MEASURE
+        }
+
+        {
+            std::atomic<uint64_t> counter = 0;
+
+            auto task = [&] {
+                for (size_t idx  = 0; idx < iterCount; ++idx) {
+                    counter.fetch_add(1);
+                }
+            };
+
+            START_TIME_MEASURE
+            {
+                std::vector<std::jthread> jobs;
+                for (int t = 0; t < threadsMax; ++t)
+                    jobs.emplace_back(task);
+            }
+            STOP_TIME_MEASURE
+        }
+
+        {
+            std::atomic<uint64_t> counter = 0;
+
+            auto task = [&] {
+                for (size_t idx  = 0; idx < iterCount; ++idx) {
+                    uint64_t x = counter.load(std::memory_order_relaxed);
+                    while (!counter.compare_exchange_strong(x, x + 1)) {}
+                }
+            };
+
+            START_TIME_MEASURE
+            {
+                std::vector<std::jthread> jobs;
+                for (int t = 0; t < threadsMax; ++t)
+                    jobs.emplace_back(task);
+            }
+            STOP_TIME_MEASURE
+        }
+
+        {
+            std::atomic<uint64_t> counter = 0;
+
+            auto task = [&] {
+                for (size_t idx  = 0; idx < iterCount; ++idx) {
+                    uint64_t x = counter.load(std::memory_order_relaxed);
+                    while (!counter.compare_exchange_weak(x, x + 1)) {}
+                }
+            };
+
+            START_TIME_MEASURE
+            {
+                std::vector<std::jthread> jobs;
+                for (int t = 0; t < threadsMax; ++t)
+                    jobs.emplace_back(task);
+            }
+            STOP_TIME_MEASURE
+        }
+
+        /// Result: 686003 microseconds   mutext
+        /// Result: 186516 microseconds   ++counter
+        /// Result: 185476 microseconds   fetch_add
+        /// Result: 712774 microseconds   compare_exchange_strong
+        /// Result: 717862 microseconds   compare_exchange_weak
+    }
+}
 
 void PerformanceExperiments::TestAll()
 {
     // CV_vs_Atomic::RunBenchmark();
-    SpinLock_vs_Mutex::RunBenchmark();
+    // SpinLock_vs_Mutex::RunBenchmark();
+    AtomicCounter_vs_Mutex::RunBenchmark();
 };
