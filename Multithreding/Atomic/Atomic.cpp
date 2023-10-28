@@ -214,12 +214,6 @@ namespace Atomic::Atomic_Boolean {
         std::cout << "b = " << std::boolalpha << b << ", x = " << x << std::endl;
     }
 
-
-    void Is_Lock_Free() {
-        //
-    }
-
-
     void Consumer_Producer() {
 
         std::atomic<bool> run { true };

@@ -17,6 +17,8 @@ add_executable(Multithreding MACOSX_BUNDLE
         Atomic/Atomic.cpp Atomic/Atomic.h
         Atomic/Atomic_MemoryOrder.cpp Atomic/Atomic_MemoryOrder.h
         Atomic/AtomicFlag.cpp Atomic/AtomicFlag.h
+        Atomic/Atomic_CompareExchange.cpp Atomic/Atomic_CompareExchange.h
+        Atomic/Atomic_IsLockFree.cpp Atomic/Atomic_IsLockFree.h
         Barrier/Barrier.cpp Barrier/Barrier.h
         CallOnce/CallOnce.cpp CallOnce/CallOnce.h
         ConditionVariable/ConditionVariable.cpp ConditionVariable/ConditionVariable.h

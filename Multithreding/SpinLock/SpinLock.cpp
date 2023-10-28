@@ -35,6 +35,54 @@ namespace
 }
 
 
+namespace SpinLock::Impl
+{
+    class SpinLock
+    {
+        std::atomic_flag flag {false};
+
+    public:
+        void lock() {
+            // First thead has flag == true. So it will exit while loop at the first iteration
+            while (flag.test_and_set(std::memory_order_acquire)) {
+            }
+        }
+
+        void unlock() {
+            flag.clear(std::memory_order_release);
+        }
+
+        ~SpinLock() {
+            flag.clear(std::memory_order_release);
+        }
+    };
+
+
+    class SpinLock2
+    {
+        std::atomic<bool> isLocked;
+
+    public:
+        void lock()
+        {
+            bool expected = false;
+            while(!isLocked.compare_exchange_weak(expected, true, std::memory_order_acquire)) {
+                expected = false;
+            }
+        }
+
+        void unlock() {
+            isLocked.store(false, std::memory_order_release);
+        }
+
+
+        ~SpinLock2() {
+            isLocked.store(false, std::memory_order_release);
+        }
+    };
+}
+
+
 
 // https://leetcode.com/problems/print-in-order/submissions/
 /**

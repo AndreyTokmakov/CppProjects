@@ -700,15 +700,46 @@ void MoveStringToArray()
 }
 
 
+namespace
+{
+    template<typename , typename T = void>
+    constexpr bool is_complete = false;
+
+    template<typename T>
+    constexpr bool is_complete<T, std::enable_if_t<sizeof(T)>> = true;
+
+    template<typename T>
+    void foo()
+    {
+        if (is_complete<T>)
+            std::cout << "Complete\n";
+        else
+            std::cout << "Not Complete\n";
+    }
+
+    struct Obj ;
+
+
+
+    void testEx()
+    {
+        // foo<Obj>();
+
+        std::cout << sizeof(Obj) << std::endl;
+    }
+
+    // static_assert(is_complete<Obj>);
+}
+
 int main([[maybe_unused]] int argc,
          [[maybe_unused]] char** argv)
 {
     const std::vector<std::string_view> args(argv + 1, argv + argc);
     // parseInputParams(std::vector {"one", "two", "three", "four", "five"}.data(), 5);
 
+    testEx();
 
-    // SW memory barrier:
-    // asm volatile("" : : :  "memory");
+
 
 
     // MoveStringToArray();
@@ -737,7 +768,7 @@ int main([[maybe_unused]] int argc,
     // Cpp23_Features::TestAll();
     // AutoTests::TestAll();
     // Algorithms::TestAll();
-    Multithreading::TestAll();
+    // Multithreading::TestAll();
     // Memory::TestAll();
     // Iterators::TestAll();
     // Files::TestAll();

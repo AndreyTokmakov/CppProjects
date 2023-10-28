@@ -184,6 +184,30 @@ namespace PerformanceExperiments::SpinLock_vs_Mutex
         }
     };
 
+
+    class SpinLock2
+    {
+        std::atomic<bool> isLocked;
+
+    public:
+        void lock()
+        {
+            bool expected = false;
+            while(!isLocked.compare_exchange_weak(expected, true, std::memory_order_acquire)) {
+                expected = false;
+            }
+        }
+
+        void unlock() {
+            isLocked.store(false, std::memory_order_release);
+        }
+
+
+        ~SpinLock2() {
+            isLocked.store(false, std::memory_order_release);
+        }
+    };
+
     void RunBenchmark()
     {
         constexpr int threadsMax {16};
@@ -230,6 +254,26 @@ namespace PerformanceExperiments::SpinLock_vs_Mutex
             STOP_TIME_MEASURE
         }
 
+        {
+            SpinLock2 spinLock;
+            uint64_t counter = 0;
+
+            auto task = [&] {
+                for (size_t idx  = 0; idx < iterCount; ++idx) {
+                    spinLock.lock();
+                    ++counter;
+                    spinLock.unlock();
+                }
+            };
+
+            START_TIME_MEASURE
+            {
+                std::vector<std::jthread> jobs;
+                for (int t = 0; t < threadsMax; ++t)
+                    jobs.emplace_back(task);
+            }
+            STOP_TIME_MEASURE
+        }
         /// Result: 687476 microseconds
         /// Result: 3805998 microseconds
     }
@@ -366,7 +410,7 @@ namespace PerformanceExperiments::AtomicCounter_vs_Mutex
 
 void PerformanceExperiments::TestAll()
 {
-    // CV_vs_Atomic::RunBenchmark();
+    CV_vs_Atomic::RunBenchmark();
     // SpinLock_vs_Mutex::RunBenchmark();
-    AtomicCounter_vs_Mutex::RunBenchmark();
+    // AtomicCounter_vs_Mutex::RunBenchmark();
 };
