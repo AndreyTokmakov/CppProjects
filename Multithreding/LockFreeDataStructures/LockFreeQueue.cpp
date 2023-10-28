@@ -44,7 +44,7 @@
 
 #include "LockFreeQueue.h"
 
-namespace LockFreeQueue
+namespace LockFreeQueue::One
 {
     template<class T, size_t N>
     class LockFreeQueue {
@@ -99,13 +99,62 @@ namespace LockFreeQueue
         size_t write_pos_ = 0;
     };
 
+    void test()
+    {
+        LockFreeQueue<int, 5> queue{};
+        queue.push(1);
+        queue.push(2);
+
+        std::cout << queue.size() << std::endl;
+    }
 }
 
-void LockFreeQueue::TEST_ALL() {
+namespace LockFreeQueue::Two
+{
 
-    LockFreeQueue<int, 5> queue{};
-    queue.push(1);
-    queue.push(2);
+    template<typename T>
+    struct lock_free_queue
+    {
+        struct node
+        {
+            std::shared_ptr<T> data;
+            std::atomic<node*> next;
+            explicit node(T const& data): data(std::make_shared<T>(data)) {}
+        };
 
-    std::cout << queue.size() << std::endl;
+        std::atomic<node*> head;
+        std::atomic<node*> tail;
+
+    public:
+        void push(T const& data)
+        {
+            node* new_node = new node(data);
+            node* old_tail = tail.load();
+            while (!old_tail->next.compare_exchange_weak(reinterpret_cast<node*>(nullptr), new_node)){
+                old_tail = tail.load();
+            }
+            tail.compare_exchange_weak(old_tail, new_node);
+        }
+
+        std::shared_ptr<T> pop()
+        {
+            node* old_head=head.load();
+            while (old_head && !head.compare_exchange_weak(old_head, old_head->next)) {
+                old_head=head.load();
+            }
+            return old_head ? old_head->data : std::shared_ptr<T>();
+        }
+    };
+
+    void test()
+    {
+        // lock_free_queue<int> queue;
+        // queue.push(1);
+    }
+}
+
+void LockFreeQueue::TEST_ALL()
+{
+    // One::test();
+    Two::test();
 }
