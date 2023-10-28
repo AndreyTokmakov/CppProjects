@@ -111,6 +111,89 @@ namespace AtomicFlag::SpinLock {
     }
 }
 
+namespace AtomicFlag::Waiting
+{
+
+    void Notify_and_Wait()
+    {
+        std::string data { "INITIAL"};
+        std::atomic_flag atomicFlag {false};
+
+        auto producer = [&]() {
+            std::osyncstream{std::cout} << timeString() << " Producer: Started" << std::endl;
+
+            for (int i = 0; i < 3; ++i)
+            {
+                data = "NEW VALUE + " + timeString();
+
+                atomicFlag.test_and_set();
+
+                std::this_thread::sleep_for(std::chrono::seconds(1));
+
+                atomicFlag.notify_one();
+                std::osyncstream{std::cout} << timeString() << " Producer: notify_one " << std::endl;
+
+                atomicFlag.wait(true);
+            }
+
+            std::osyncstream{std::cout} << timeString() << " Producer: done " << std::endl;
+        };
+
+        auto consumer = [&] {
+            std::osyncstream{std::cout} << timeString() << " Consumer: Started" << std::endl;
+
+            for (int i = 0; i < 3; ++i)
+            {
+                atomicFlag.wait(false);
+                std::osyncstream{std::cout} << timeString() << " Consumer: data = " << data << std::endl;
+
+                atomicFlag.clear();
+                atomicFlag.notify_one();
+            }
+
+            std::osyncstream{std::cout} << timeString() << " Consumer: done" << std::endl;
+        };
+
+        std::jthread t2(consumer);
+        std::jthread t1(producer);
+    }
+
+    class SpinLock
+    {
+        std::atomic_flag flag {false};
+
+    public:
+        void lock() {
+            flag.wait(true);
+            flag.test_and_set();
+        }
+
+        void unlock() {
+            flag.clear(std::memory_order_release);
+            flag.notify_all();
+        }
+    };
+
+    void SpinLock_Test()
+    {
+        uint16_t counter {0};
+        SpinLock spinLock {};
+
+        auto task = [&]()
+        {
+            spinLock.lock();
+            std::osyncstream{std::cout} << timeString() << " " << ++counter << std::endl;
+            std::this_thread::sleep_for(std::chrono::milliseconds (1));
+            spinLock.unlock();
+        };
+
+        std::vector<std::jthread> jobs;
+        for (int t = 0; t < 4; ++t)
+            jobs.emplace_back(task);
+    }
+}
+
+
 // TODO: Wait()
 // TODO: Notify()
 
@@ -118,5 +201,9 @@ void AtomicFlag::TestAll()
 {
     // BasicTests::TestAndSet();
 
-    SpinLock::Test();
+    // SpinLock::Test();
+
+    // Waiting::Notify_and_Wait();
+
+    Waiting::SpinLock_Test();
 };
