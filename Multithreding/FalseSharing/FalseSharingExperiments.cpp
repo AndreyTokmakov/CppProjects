@@ -54,12 +54,12 @@ namespace FalseSharingExperiments::Base
     void test()
     {
         std::vector<T> store (THREADS_COUNT);
-        std::vector<std::thread> threads {};
-        for (T& entry: store)
-            threads.emplace_back(doWork, std::ref(entry.counter));
-
         START_TIME_MEASURE;
-        std::for_each(threads.begin(), threads.end(), [](std::thread& job ) { job.join(); });
+        {
+            std::vector<std::jthread> threads{};
+            for (T &entry: store)
+                threads.emplace_back(doWork, std::ref(entry.counter));
+        }
         STOP_TIME_MEASURE;
 
         // for (size_t i = 0; i < THREADS_COUNT; ++i)
@@ -167,48 +167,77 @@ namespace FalseSharingExperiments::DemoTwo
 
 namespace FalseSharingExperiments::DemoThree
 {
+    constexpr size_t ITER_COUNT { 10'000'000 };
+    constexpr size_t THREADS_COUNT { 32 };
+
     struct Foo {
-        int x {0};
-        int y {0};
+        std::atomic_int64_t a {0};
+        std::atomic_int64_t b {0};
+        std::atomic_int64_t c {0};
+        std::atomic_int64_t d {0};
     };
 
     struct FooAligned {
-        alignas(std::hardware_destructive_interference_size) int x{0};
-        alignas(std::hardware_destructive_interference_size) int y{0};
+        alignas(std::hardware_destructive_interference_size) std::atomic_int64_t a {0};
+        alignas(std::hardware_destructive_interference_size) std::atomic_int64_t b {0};
+        alignas(std::hardware_destructive_interference_size) std::atomic_int64_t c {0};
+        alignas(std::hardware_destructive_interference_size) std::atomic_int64_t d {0};
     };
 
-
     template<typename T>
-    void task(T& data, int id) {
-        for (int i = 0; i < 1'000'000'000; ++i) {
-            if (i % 2 == 0) {
-                data.x += id;
-            } else {
-                data.y += id;
-            }
+    void task(T& var) {
+        for (size_t i = 0; i < ITER_COUNT; ++i) {
+            var += 1;
         }
     }
 
-    template<typename T>
+    template<typename T, bool warmUp = false>
     void test()
     {
-        T x, y;
+        auto benchmark = [] {
+            T obj;
+            std::vector<std::jthread> threads{};
+            for (size_t threadNum = 0 ; threadNum < THREADS_COUNT; ++threadNum) {
+                if (0 == threadNum % 4)
+                    threads.emplace_back(task<decltype(T::a)>, std::ref(obj.a));
+                else if (1 == threadNum % 4)
+                    threads.emplace_back(task<decltype(T::b)>, std::ref(obj.b));
+                else if (2 == threadNum % 4)
+                    threads.emplace_back(task<decltype(T::c)>, std::ref(obj.c));
+                else
+                    threads.emplace_back(task<decltype(T::d)>, std::ref(obj.d));
+            }
+            // std::cout << obj.x << ' ' << obj.y << ' ' << obj.z << '\n';
+        };
 
-        START_TIME_MEASURE;
-        std::jthread t1(task<T>, std::ref(x), 1),
-                     t2(task<T>, std::ref(y), 2);
-        STOP_TIME_MEASURE;
+        if constexpr (not warmUp)
+        {
+            START_TIME_MEASURE;
+            benchmark();
+            STOP_TIME_MEASURE;
+        } else
+        {
+            benchmark();
+        }
+
     }
 
     void Benchmark()
     {
+        test<Foo, true>();
+        test<FooAligned, true>();
+
         test<Foo>();
         test<FooAligned>();
+
+        /// Result: 3696887 microseconds
+        /// Result: 1266461 microseconds
     }
 }
 
 void FalseSharingExperiments::TEST_ALL()
 {
+
     /*
     Base::SingleThreadTest();
     Base::ParallelThreads_SameVariable();
