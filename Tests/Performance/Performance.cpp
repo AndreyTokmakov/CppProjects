@@ -17,6 +17,34 @@ Description : Performance
 #include <thread>
 
 
+namespace Utils
+{
+    struct ScopedTimer
+    {
+        const std::string_view benchmarkName;
+        const std::chrono::high_resolution_clock::time_point start {
+                std::chrono::high_resolution_clock::now()
+        };
+
+        explicit ScopedTimer(std::string_view info) :
+            benchmarkName {info} {
+        }
+
+        ScopedTimer(const ScopedTimer&) = delete;
+        ScopedTimer(ScopedTimer&&) = delete;
+        ScopedTimer& operator=(const ScopedTimer&) = delete;
+        ScopedTimer& operator=(ScopedTimer&&) = delete;
+
+        ~ScopedTimer()
+        {
+            const std::chrono::high_resolution_clock::time_point end = std::chrono::high_resolution_clock::now();
+            const std::chrono::duration<double> time_span = duration_cast<std::chrono::duration<double>>(end - start);
+            std::cout << benchmarkName << ": " << time_span.count() << " seconds.\n";
+        }
+    };
+}
+
+
 namespace Performance::Stack_Vector
 {
     const size_t N = 1000;
@@ -81,6 +109,11 @@ namespace Performance::Stack_Vector
 
 void Performance::TestAll()
 {
-    Stack_Vector::DefaultStack();
-    Stack_Vector::VectorStack();
+    // Stack_Vector::DefaultStack();
+    // Stack_Vector::VectorStack();
+
+    {
+        Utils::ScopedTimer timer{"SomeTest"};
+        std::this_thread::sleep_for(std::chrono::seconds(1));
+    }
 };
