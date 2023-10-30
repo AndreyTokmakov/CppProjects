@@ -57,7 +57,7 @@ int main([[maybe_unused]] int argc,
 
     // Atomic::TestAll();
     // AtomicFlag::TestAll();
-    // Atomic_MemoryOrder::TestAll();
+    Atomic_MemoryOrder::TestAll();
     // Atomic_CompareExchange::TestAll();
     // Atomic_IsLockFree::TestAll();
 
@@ -91,7 +91,7 @@ int main([[maybe_unused]] int argc,
     // Threads::TEST_ALL();
     // JThreads::TEST_ALL();
 
-    FalseSharingExperiments::TEST_ALL();
+    // FalseSharingExperiments::TEST_ALL();
     // PerformanceExperiments::TestAll();
 
     return EXIT_SUCCESS;

@@ -149,21 +149,95 @@ namespace Atomic_MemoryOrder::Consumer_Producer
     }
 }
 
+namespace Atomic_MemoryOrder::CompareExchange
+{
+    void Weak_Test_1()
+    {
+        std::atomic<int> variable {0};
+
+        auto updater = [&variable]
+        {
+            std::this_thread::sleep_for(std::chrono::seconds (1));
+            std::osyncstream{std::cout} << timeString() << " Updater : variable -> 1\n";
+            variable.store(1, std::memory_order::release);
+        };
+
+        auto consumer = [&variable]()
+        {
+            constexpr int expected = 1, desired = 2;
+            int actual = expected;
+
+            // while (!order.compare_exchange_weak(expected, desired, std::memory_order_acquire, std::memory_order_relaxed))
+            while (!variable.compare_exchange_weak(actual, desired, std::memory_order_acquire))
+            {
+                std::this_thread::sleep_for(std::chrono::milliseconds (250));
+                std::osyncstream{std::cout} << timeString()
+                        << " Consumer: False. actual: " << actual << std::endl;
+                actual = expected;
+            }
+
+            std::osyncstream{std::cout} << timeString() << " Consumer: True.  variable: " << variable << std::endl;
+        };
+
+        std::jthread a(updater), b(consumer);
+    }
+
+    void Strong_Test_1()
+    {
+        std::atomic<int> variable {0};
+
+        auto updater = [&variable]
+        {
+            std::this_thread::sleep_for(std::chrono::seconds (1));
+            std::osyncstream{std::cout} << timeString() << " Updater : variable -> 1\n";
+            variable.store(1, std::memory_order::release);
+        };
+
+        auto consumer = [&variable]()
+        {
+            constexpr int expected = 1, desired = 2;
+            int actual = expected;
+
+            // while (!order.compare_exchange_weak(expected, desired, std::memory_order_acquire, std::memory_order_relaxed))
+            while (!variable.compare_exchange_strong(actual, desired, std::memory_order_acquire))
+            {
+                std::this_thread::sleep_for(std::chrono::milliseconds (250));
+                std::osyncstream{std::cout} << timeString()
+                                            << " Consumer: False. actual: " << actual << std::endl;
+                actual = expected;
+            }
+
+            std::osyncstream{std::cout} << timeString() << " Consumer: True.  variable: " << variable << std::endl;
+        };
+
+        std::jthread a(updater), b(consumer);
+    }
+}
+
 namespace Atomic_MemoryOrder::SynchThreads
 {
     std::atomic<int> order {0};
 
+    void updater()
+    {
+        std::this_thread::sleep_for(std::chrono::seconds (5));
+        std::osyncstream{std::cout} << timeString() << " Updater: order -> 1\n";
+        order.store(1, std::memory_order::release);
+    }
+
     void thread_1()
     {
         int expected = 1;
-        while (!order.compare_exchange_weak(expected, 2, std::memory_order_release, std::memory_order_relaxed))
+        // while (!order.compare_exchange_weak(expected, 2, std::memory_order_acquire, std::memory_order_relaxed))
+        while (!order.compare_exchange_weak(expected, 2, std::memory_order_acquire))
         {
             std::this_thread::sleep_for(std::chrono::seconds (1));
-            std::cout << "False: " << order << ", Expected: " << expected << std::endl;
+            std::osyncstream{std::cout} << timeString()
+                << " False. order: " << order << ", expected: " << expected << std::endl;
             expected = 1;
         }
 
-        std::cout << "Order: " << order << std::endl;
+        std::osyncstream{std::cout} << timeString() << " Order: " << order << std::endl;
     }
 
     /*
@@ -189,6 +263,7 @@ namespace Atomic_MemoryOrder::SynchThreads
     void test()
     {
         std::jthread a(thread_1);
+        std::jthread t2(updater);
     }
 }
 
@@ -200,6 +275,9 @@ void Atomic_MemoryOrder::TestAll()
     // Consumer_Producer::WaitFor_AtomicInt();
     // Consumer_Producer::WaitFor_AtomicFlag();
 
-    SynchThreads::test();
+    // SynchThreads::test();
+
+    // CompareExchange::Weak_Test_1();
+    CompareExchange::Strong_Test_1();
 
 }
