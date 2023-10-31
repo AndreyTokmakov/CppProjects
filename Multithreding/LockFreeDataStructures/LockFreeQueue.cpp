@@ -113,43 +113,34 @@ namespace LockFreeQueue::Two
 {
 
     template<typename T>
-    struct lock_free_queue
+    struct stack
     {
         struct node
         {
-            std::shared_ptr<T> data;
-            std::atomic<node*> next;
-            explicit node(T const& data): data(std::make_shared<T>(data)) {}
+            node* next;
+            T data;
+            explicit node(T && data) : data { std::move( data ) } { }
         };
 
         std::atomic<node*> head;
-        std::atomic<node*> tail;
 
-    public:
-        void push(T const& data)
+        void push(T && data)
         {
-            node* new_node = new node(data);
-            node* old_tail = tail.load();
-            while (!old_tail->next.compare_exchange_weak(reinterpret_cast<node*>(nullptr), new_node)){
-                old_tail = tail.load();
-            }
-            tail.compare_exchange_weak(old_tail, new_node);
-        }
+            node* new_node = new node { std::move( data ) };
+            new_node->next = head.load( std::memory_order_relaxed );
 
-        std::shared_ptr<T> pop()
-        {
-            node* old_head=head.load();
-            while (old_head && !head.compare_exchange_weak(old_head, old_head->next)) {
-                old_head=head.load();
+            while (!head.compare_exchange_weak(new_node->next, new_node,
+                                               std::memory_order_release, std::memory_order_relaxed))
+            {
+
             }
-            return old_head ? old_head->data : std::shared_ptr<T>();
         }
     };
 
     void test()
     {
-        // lock_free_queue<int> queue;
-        // queue.push(1);
+        stack<int> stack;
+        stack.push(1);
     }
 }
 
