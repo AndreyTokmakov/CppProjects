@@ -39,7 +39,9 @@ namespace Utils
         {
             const std::chrono::high_resolution_clock::time_point end = std::chrono::high_resolution_clock::now();
             const std::chrono::duration<double> time_span = duration_cast<std::chrono::duration<double>>(end - start);
-            std::cout << benchmarkName << ": " << time_span.count() << " seconds.\n";
+
+            std::cout << std::left << std::setw(14) << benchmarkName << ":  ";
+            std::cout << time_span.count() << " seconds.\n";
         }
     };
 }
@@ -68,9 +70,9 @@ namespace Performance::Stack_Vector
         return ops;
     }();
 
-    static void DefaultStack() {
-        std::chrono::high_resolution_clock::time_point start = std::chrono::high_resolution_clock::now();
-
+    static void DefaultStack()
+    {
+        Utils::ScopedTimer timer {"DefaultStack"};
         for (size_t i = 0; i < COUNT; ++i) {
             std::stack<int> st;
             std::for_each(begin(ops), end(ops), [&st](const auto& op) {
@@ -81,15 +83,11 @@ namespace Performance::Stack_Vector
                 }
             });
         }
-
-        std::chrono::high_resolution_clock::time_point end = std::chrono::high_resolution_clock::now();
-        std::chrono::duration<double> time_span = duration_cast<std::chrono::duration<double>>(end - start);
-        std::cout << "It took me " << time_span.count() << " seconds.\n";
     }
 
-    static void VectorStack() {
-        std::chrono::high_resolution_clock::time_point start = std::chrono::high_resolution_clock::now();
-
+    static void VectorStack()
+    {
+        Utils::ScopedTimer timer {"VectorStack"};
         for (size_t i = 0; i < COUNT; ++i) {
             std::stack<int, std::vector<int>> st;
             std::for_each(begin(ops), end(ops), [&st](const auto& op) {
@@ -100,20 +98,11 @@ namespace Performance::Stack_Vector
                 }
             });
         }
-
-        std::chrono::high_resolution_clock::time_point end = std::chrono::high_resolution_clock::now();
-        std::chrono::duration<double> time_span = duration_cast<std::chrono::duration<double>>(end - start);
-        std::cout << "It took me " << time_span.count() << " seconds.\n";
     }
 };
 
 void Performance::TestAll()
 {
-    // Stack_Vector::DefaultStack();
-    // Stack_Vector::VectorStack();
-
-    {
-        Utils::ScopedTimer timer{"SomeTest"};
-        std::this_thread::sleep_for(std::chrono::seconds(1));
-    }
+    Stack_Vector::DefaultStack();
+    Stack_Vector::VectorStack();
 };
