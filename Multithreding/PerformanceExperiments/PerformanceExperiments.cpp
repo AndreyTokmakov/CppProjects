@@ -15,11 +15,36 @@ Description : Multithreading performance experiments
 #include <thread>
 #include <vector>
 #include <syncstream>
+#include <iomanip>
 
-#define START_TIME_MEASURE auto start = std::chrono::high_resolution_clock::now();
-#define STOP_TIME_MEASURE  { auto end = std::chrono::high_resolution_clock::now(); \
-                           auto duration = std::chrono::duration_cast<std::chrono::microseconds>(end - start).count(); \
-						   std::cout << "Result: " << duration << " microseconds" << std::endl;}
+namespace Utils
+{
+    struct ScopedTimer
+    {
+        const std::string_view benchmarkName;
+        const std::chrono::high_resolution_clock::time_point start {
+                std::chrono::high_resolution_clock::now()
+        };
+
+        explicit ScopedTimer(std::string_view info) :
+                benchmarkName {info} {
+        }
+
+        ScopedTimer(const ScopedTimer&) = delete;
+        ScopedTimer(ScopedTimer&&) = delete;
+        ScopedTimer& operator=(const ScopedTimer&) = delete;
+        ScopedTimer& operator=(ScopedTimer&&) = delete;
+
+        ~ScopedTimer()
+        {
+            const std::chrono::high_resolution_clock::time_point end = std::chrono::high_resolution_clock::now();
+            const std::chrono::duration<double> time_span = duration_cast<std::chrono::duration<double>>(end - start);
+
+            std::cout << std::left << std::setw(14) << benchmarkName << ":  ";
+            std::cout << time_span.count() << " seconds.\n";
+        }
+    };
+}
 
 namespace PerformanceExperiments::CV_vs_Atomic
 {
@@ -208,9 +233,63 @@ namespace PerformanceExperiments::SpinLock_vs_Mutex
         }
     };
 
+    class SpinLock3
+    {
+        std::atomic<unsigned int> flag;
+
+    public:
+
+        SpinLock3(): flag {0} {}
+
+        void lock()
+        {
+            static const timespec ns {0, 1};
+            for (int i = 0; flag.load(std::memory_order_relaxed) || flag.exchange(1, std::memory_order_acquire); ++i)
+            {
+                if (8 == i)
+                {
+                    i = 0;
+                    nanosleep(&ns, nullptr);
+                }
+            }
+        }
+
+        void unlock() {
+            flag.store(0, std::memory_order_release);
+        }
+    };
+
+
+    class SpinLock4
+    {
+        // std::atomic_flag flag;
+        std::atomic<bool> flag;
+
+    public:
+
+        SpinLock4(): flag {false } {}
+
+        void lock()
+        {
+            static const timespec ns {0, 1};
+            for (int i = 0; flag.load(std::memory_order_relaxed) || flag.exchange(true, std::memory_order_acquire); ++i)
+            {
+                if (8 == i)
+                {
+                    i = 0;
+                    nanosleep(&ns, nullptr);
+                }
+            }
+        }
+
+        void unlock() {
+            flag.store(false, std::memory_order_release);
+        }
+    };
+
     void RunBenchmark()
     {
-        constexpr int threadsMax {16};
+        constexpr int threadsMax {8};
         constexpr size_t iterCount { 1'000'000 };
 
         {
@@ -224,13 +303,12 @@ namespace PerformanceExperiments::SpinLock_vs_Mutex
                 }
             };
 
-            START_TIME_MEASURE
             {
+                Utils::ScopedTimer timer {"Mutex"};
                 std::vector<std::jthread> jobs;
                 for (int t = 0; t < threadsMax; ++t)
                     jobs.emplace_back(task);
             }
-            STOP_TIME_MEASURE
         }
 
         {
@@ -245,13 +323,12 @@ namespace PerformanceExperiments::SpinLock_vs_Mutex
                 }
             };
 
-            START_TIME_MEASURE
             {
+                Utils::ScopedTimer timer{"SpinLock"};
                 std::vector<std::jthread> jobs;
                 for (int t = 0; t < threadsMax; ++t)
                     jobs.emplace_back(task);
             }
-            STOP_TIME_MEASURE
         }
 
         {
@@ -266,13 +343,52 @@ namespace PerformanceExperiments::SpinLock_vs_Mutex
                 }
             };
 
-            START_TIME_MEASURE
             {
+                Utils::ScopedTimer timer {"SpinLock2"};
                 std::vector<std::jthread> jobs;
                 for (int t = 0; t < threadsMax; ++t)
                     jobs.emplace_back(task);
             }
-            STOP_TIME_MEASURE
+        }
+
+        {
+            SpinLock4 spinLock;
+            uint64_t counter = 0;
+
+            auto task = [&] {
+                for (size_t idx  = 0; idx < iterCount; ++idx) {
+                    spinLock.lock();
+                    ++counter;
+                    spinLock.unlock();
+                }
+            };
+
+            {
+                Utils::ScopedTimer timer {"SpinLock4"};
+                std::vector<std::jthread> jobs;
+                for (int t = 0; t < threadsMax; ++t)
+                    jobs.emplace_back(task);
+            }
+        }
+
+        {
+            SpinLock3 spinLock;
+            uint64_t counter = 0;
+
+            auto task = [&] {
+                for (size_t idx  = 0; idx < iterCount; ++idx) {
+                    spinLock.lock();
+                    ++counter;
+                    spinLock.unlock();
+                }
+            };
+
+            {
+                Utils::ScopedTimer timer {"SpinLock3"};
+                std::vector<std::jthread> jobs;
+                for (int t = 0; t < threadsMax; ++t)
+                    jobs.emplace_back(task);
+            }
         }
         /// Result: 687476 microseconds
         /// Result: 3805998 microseconds
@@ -317,13 +433,12 @@ namespace PerformanceExperiments::AtomicCounter_vs_Mutex
                 }
             };
 
-            START_TIME_MEASURE
             {
+                Utils::ScopedTimer timer {"Mutex"};
                 std::vector<std::jthread> jobs;
                 for (int t = 0; t < threadsMax; ++t)
                     jobs.emplace_back(task);
             }
-            STOP_TIME_MEASURE
         }
 
         {
@@ -335,13 +450,12 @@ namespace PerformanceExperiments::AtomicCounter_vs_Mutex
                 }
             };
 
-            START_TIME_MEASURE
             {
+                Utils::ScopedTimer timer {"atomic"};
                 std::vector<std::jthread> jobs;
                 for (int t = 0; t < threadsMax; ++t)
                     jobs.emplace_back(task);
             }
-            STOP_TIME_MEASURE
         }
 
         {
@@ -353,13 +467,12 @@ namespace PerformanceExperiments::AtomicCounter_vs_Mutex
                 }
             };
 
-            START_TIME_MEASURE
             {
+                Utils::ScopedTimer timer {"atomic"};
                 std::vector<std::jthread> jobs;
                 for (int t = 0; t < threadsMax; ++t)
                     jobs.emplace_back(task);
             }
-            STOP_TIME_MEASURE
         }
 
         {
@@ -372,13 +485,12 @@ namespace PerformanceExperiments::AtomicCounter_vs_Mutex
                 }
             };
 
-            START_TIME_MEASURE
             {
+                Utils::ScopedTimer timer {"atomic"};
                 std::vector<std::jthread> jobs;
                 for (int t = 0; t < threadsMax; ++t)
                     jobs.emplace_back(task);
             }
-            STOP_TIME_MEASURE
         }
 
         {
@@ -391,13 +503,12 @@ namespace PerformanceExperiments::AtomicCounter_vs_Mutex
                 }
             };
 
-            START_TIME_MEASURE
             {
+                Utils::ScopedTimer timer {"atomic"};
                 std::vector<std::jthread> jobs;
                 for (int t = 0; t < threadsMax; ++t)
                     jobs.emplace_back(task);
             }
-            STOP_TIME_MEASURE
         }
 
         /// Result: 686003 microseconds   mutext
@@ -410,7 +521,7 @@ namespace PerformanceExperiments::AtomicCounter_vs_Mutex
 
 void PerformanceExperiments::TestAll()
 {
-    CV_vs_Atomic::RunBenchmark();
-    // SpinLock_vs_Mutex::RunBenchmark();
+    // CV_vs_Atomic::RunBenchmark();
+    SpinLock_vs_Mutex::RunBenchmark();
     // AtomicCounter_vs_Mutex::RunBenchmark();
 };
