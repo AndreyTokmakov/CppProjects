@@ -94,6 +94,7 @@ Description : Tests C++ project
 #include "Comparators/Comparators.h"
 #include "FindMinMaxValues/FindMinMaxValues.h"
 #include "FindMinMaxValues/FindMinMaxValues.h"
+#include "FunctionCall_LookUp/FunctionCall_LookUp.h"
 
 struct AnyBase {
     virtual const std::type_info& type() = 0;
@@ -765,10 +766,11 @@ int main([[maybe_unused]] int argc,
     // Unicode::TestAll();                   // Encoding
     // StringUtils::TestAll();               // Encoding
     // Strings::TestAll();
-    Performance::TestAll();
+    // Performance::TestAll();
     // BinaryAnalyzer::TestAll();
     // ThinkCell::IntervalMapTest();
     // TableFormatter::TestAll();
+    FunctionCall_LookUp::TestAll();
 
     // OOP::TestClassConversationOperatorCall();
 
@@ -787,30 +789,6 @@ int main([[maybe_unused]] int argc,
     // CacheLineTests::Test();
     // PointsAndLines::TestAll();
 
-#if 0
-    {
-        std::chrono::high_resolution_clock::time_point start = std::chrono::high_resolution_clock::now();
-
-        for (long i = 0; i < 100'000'000; ++i) {
-            std::copy_n(input.cbegin(), input.size(), buffer);
-        }
-        std::chrono::high_resolution_clock::time_point end = std::chrono::high_resolution_clock::now();
-        std::chrono::duration<double> time_span = duration_cast<std::chrono::duration<double>>(end - start);
-        std::cout << "It took me " << time_span.count() << " seconds.\n";
-    }
-
-    {
-        std::chrono::high_resolution_clock::time_point start = std::chrono::high_resolution_clock::now();
-
-        for (long i = 0; i < 100'000'000; ++i) {
-            std::uninitialized_move_n(input.begin(), input.size(), buffer);
-        }
-
-        std::chrono::high_resolution_clock::time_point end = std::chrono::high_resolution_clock::now();
-        std::chrono::duration<double> time_span = duration_cast<std::chrono::duration<double>>(end - start);
-        std::cout << "It took me " << time_span.count() << " seconds.\n";
-    }
-#endif
 
     return EXIT_SUCCESS;
 }
