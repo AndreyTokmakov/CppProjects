@@ -734,7 +734,7 @@ int main([[maybe_unused]] int argc,
 
     // Comparators::TestAll();
 
-    // Cpp23_Features::TestAll();
+    Cpp23_Features::TestAll();
     // AutoTests::TestAll();
     // Algorithms::TestAll();
     // Multithreading::TestAll();
@@ -770,7 +770,7 @@ int main([[maybe_unused]] int argc,
     // BinaryAnalyzer::TestAll();
     // ThinkCell::IntervalMapTest();
     // TableFormatter::TestAll();
-    FunctionCall_LookUp::TestAll();
+    // FunctionCall_LookUp::TestAll();
 
     // OOP::TestClassConversationOperatorCall();
 

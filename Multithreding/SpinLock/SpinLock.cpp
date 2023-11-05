@@ -101,8 +101,8 @@ namespace SpinLock::Impl
 
     void SpinLock_Tests()
     {
-        constexpr int threadsMax { 32 };
-        constexpr size_t iterCount { 100'000 };
+        constexpr int threadsMax { 8 };
+        constexpr uint64_t iterCount { 10'000'000 };
 
         auto validate = [] (size_t actual, size_t expected){
             std::cout << actual << " = " << expected << std::endl;

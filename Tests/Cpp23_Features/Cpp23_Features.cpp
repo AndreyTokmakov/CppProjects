@@ -20,7 +20,7 @@ Description : Cpp23_Features
 // C++ 23:
 // #include <expected>
 
-// #include <stacktrace>
+#include <stacktrace>
 // #include <flat_map>
 // #include <flat_set>
 
@@ -172,6 +172,17 @@ namespace Cpp23_Features::Multidimensional_Operator
     }
 }
 
+namespace Cpp23_Features::StackTrace
+{
+
+    void test()
+    {
+        // auto x = std::stacktrace::current();
+
+    }
+
+}
+
 namespace Cpp23_Features::Expected
 {
     // Typical use case
@@ -246,8 +257,10 @@ void Cpp23_Features::TestAll()
 
     // Multidimensional_Operator::simpleTest();
 
+    /*
     Expected::basics();
     Expected::UnExpected();
     Expected::Non_Initialized();
     Expected::No_DefaultValue();
+    */
 };
