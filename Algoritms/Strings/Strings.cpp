@@ -1017,6 +1017,26 @@ namespace Strings {
 
     //---------------------------------------------------------------------------------------//
 
+    int find_last_not_of(const std::string& str, const std::string& txt)
+    {
+        bool chars[256] {};
+        for (char c: txt)
+            chars[static_cast<uint8_t>(c)] = true;
+
+        for (int i = str.size() - 1; i >= 0; --i) {
+            if (chars[str[i]])
+                return i;
+        }
+        return -1;
+    }
+
+    void Find_Last_Not_Of()
+    {
+        std::cout << find_last_not_of("01234b567a89", "abc") << std::endl; // 9
+    }
+
+    //---------------------------------------------------------------------------------------//
+
 	void Find_First_K_Chars_Occured_Once() {
 		std::string str = "AZBCDBAGHCHFAC";
 		int k = 4;
@@ -1767,6 +1787,8 @@ void Strings::TEST_ALL()
 	// Strings::Find_K_MostFrequentCharacter();
 	// Strings::Find_K_MostFrequentCharacter_2();
 
+    Strings::Find_Last_Not_Of();
+
 	// Strings::Find_First_Char_Occured_Once();
 	// Strings::Find_First_K_Chars_Occured_Once();
 	// Strings::Find_LongestSubstring_With_K_DistinctChar acters();
@@ -1778,7 +1800,7 @@ void Strings::TEST_ALL()
 	// Strings::Find_If_KPalindrome();
 	// Strings::Find_All_Palindrome_In_String();
 	// Strings::FindDuplicateSymbols();
-    //  Strings::Find_If_String_IsSubstring_OfAnother();
+    // Strings::Find_If_String_IsSubstring_OfAnother();
 	// Strings::CalcParentheses();
 	// Strings::CalcParentheses_3_BRacket();
 	// Strings::CalcParentheses_K_Deletions();
