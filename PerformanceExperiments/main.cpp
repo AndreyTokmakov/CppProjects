@@ -3908,6 +3908,61 @@ namespace Performance {
 }
 #endif
 
+namespace DataLayout
+{
+    struct Object
+    {
+        std::string name;
+        uint32_t value {0};
+    };
+
+    struct ObjectList
+    {
+        std::vector<std::string> names;
+        std::vector<uint32_t> values;
+    };
+
+
+#pragma optimize( "", off )
+    void benchmark()
+    {
+        constexpr size_t objCount {100'000};
+        constexpr size_t TESTS_COUNT {100'000'000};
+
+        std::vector<Object> objs (objCount);
+        ObjectList objectList;
+        objectList.names.resize(objCount);
+        objectList.values.resize(objCount);
+
+        {
+            START_TIME_MEASURE;
+            {
+                uint32_t sum = 0;
+                for (size_t i = 0; i < TESTS_COUNT; ++i) {
+                    for (const Object& obj: objs) {
+                        sum += obj.value;
+                        sum += obj.name.size();
+                    }
+                }
+            }
+            STOP_TIME_MEASURE;
+        }
+        {
+            START_TIME_MEASURE;
+            {
+                uint32_t sum = 0;
+                for (size_t i = 0; i < TESTS_COUNT; ++i) {
+                    for (size_t n = 0; n < objCount; ++n) {
+                        sum += objs[n].name.size();
+                        sum += objs[n].value;
+                    }
+                }
+            }
+            STOP_TIME_MEASURE;
+        }
+    }
+#pragma optimize( "", on )
+}
 
 
 int main([[maybe_unused]] int argc,
@@ -3927,7 +3982,7 @@ int main([[maybe_unused]] int argc,
 
     // Span::Pass_Vector_As_Param();
 
-    Strings::PassStringToFunction();
+    // Strings::PassStringToFunction();
 
     // Pass_ConstStringRef_AsParameter::Construct_ForwardTest();
     // Pass_ConstStringRef_AsParameter::Emplace_StringParameter_ToVector();
@@ -4023,6 +4078,8 @@ int main([[maybe_unused]] int argc,
     // Performance::CPU_UsageTest();
 
     // Exceptions::Tests();
+
+    DataLayout::benchmark();
 
     return EXIT_SUCCESS;
 }

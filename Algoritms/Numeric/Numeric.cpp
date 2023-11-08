@@ -1546,6 +1546,48 @@ namespace Numeric {
 
     //--------------------------------------------------------------------------------------//
 
+    int find_the_duplicate_value(const std::vector<int>& values)
+    {
+        const int sum = std::accumulate(values.cbegin(), values.cend(), 0);
+        return sum - static_cast<int>((values.size() * (values.size() - 1)) / 2);
+    }
+
+    int find_the_duplicate_value_slow(const std::vector<int>& values)
+    {
+        int tortoise = values[0], hare = values[0];
+
+        // Advance until the tortoise meets the hare.
+        do {
+            tortoise = values[tortoise];
+            hare = values[values[hare]];
+        } while (tortoise != hare);
+
+        // Reset the tortoise and move both one step at a time, until they meet.
+        tortoise = values[0];
+        while (tortoise != hare) {
+            tortoise = values[tortoise];
+            hare = values[hare];
+        }
+
+        return hare;
+    }
+
+    /// Given an array of length N + 1 that contains the integers 1..n with one duplicate, return the duplicate.
+    /// All values a unique with exception of the one duplicate
+    /// Solution should have O(n) time complexity and O(1) space complexity.
+    void FindTheDuplicateValue()
+    {
+        for (const auto& [values, expected]: std::vector<  std::pair<std::vector<int>, int>>{
+            {{1,1,2}, 1}, {{3,1,1,2}, 1}, {{7,1,6,9,3,4,9,5,2,8}, 9}, {{5,1,2,3,4,5}, 5}
+        })
+        {
+            std::cout << find_the_duplicate_value(values) << " | "
+                      << find_the_duplicate_value_slow(values) << " | " << expected << std::endl;
+        }
+    }
+
+    //--------------------------------------------------------------------------------------//
+
     int search(const std::vector<int> data)
     {
         int left = 0, right = data.size() - 1;
@@ -3205,7 +3247,7 @@ void Numeric::TEST_ALL()
     // Numeric::Find_N_Max_Elements2();
     // Numeric::MaxPairSumInArray();
 
-    Numeric::NextLargerElement();
+    // Numeric::NextLargerElement();
     // Numeric::Find_All_Distinct_Combinations_LengthK();
     // Numeric::Find_Longest_Increasing_Subsequence();
     // Numeric::Find_Longest_Increasing_Subsequence_1();
@@ -3222,7 +3264,6 @@ void Numeric::TEST_ALL()
     // Numeric::Find_3_Elements_SumX_Unsorted();
     // Numeric::Find_DifferentPairs_SumK();
     // Numeric::Find_3_Elements_SumX_Sorted();
-
 
     // Numeric::RemoveElement();
     // Numeric::RemoveDuplicates();
@@ -3241,7 +3282,6 @@ void Numeric::TEST_ALL()
 
     // Numeric::FindCommonElements_3_SortedArrays();
 
-
     // Numeric::FindTheMissingNumber_SortedArray();
     // Numeric::FindTheMissingNumber_Unsorted();
     // Numeric::FindTheMissingNumber_Unsorted_AnyRange();
@@ -3249,11 +3289,11 @@ void Numeric::TEST_ALL()
     // Numeric::Find_K_MissingNumber();
     // Numeric::Find_Smallest_Missing_Positive_Number();
     // Numeric::Find_Repeating_And_Missing();
+    Numeric::FindTheDuplicateValue();
 
     // Numeric::printSortedSquaredNumber_InSortedArray();
 
     // Numeric::Find_All_Symmetric_Pairs_InArray();
-
 
     // Numeric::Find_Elements_Occured_Once();
     // Numeric::Find_ONE_Element_Occured_Once();
@@ -3262,7 +3302,6 @@ void Numeric::TEST_ALL()
     // Numeric::Find_Minimum_Index_Of_RepeatingElement();
 
     // Numeric::Count_Number_tOccurrences_SortedArray();
-
 
     // Numeric::CountDistinctPairs_WithDifference_K();
     // Numeric::GroupElements_ByFirstOccurance();
@@ -3277,7 +3316,6 @@ void Numeric::TEST_ALL()
     // Numeric::ReverseToMakeEqual();
     // Numeric::MaxSum_of_NonConsecutive_Elements_In_Array();
 
-
     // Random::BiasedCoin();
 
     // Numeric::Min_Length_SubArray_WithSameDegree();  // degreeOfArray: With same occurrences of duplicated elements
@@ -3287,5 +3325,4 @@ void Numeric::TEST_ALL()
     // Intervals::Find_Union_Interval();
 
     // Intervals::CalcMaxHotelVisitors();
-
 };
