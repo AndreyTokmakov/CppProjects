@@ -1030,9 +1030,23 @@ namespace Strings {
         return -1;
     }
 
+    int find_last_not_of_less_mem(const std::string& str, const std::string& txt)
+    {
+        uint8_t chars[32] {};
+        for (const uint8_t charNum: txt)
+            chars[charNum / 8] |= (1 << charNum % 8);
+
+        for (int i = static_cast<int>(str.size() - 1); i >= 0; --i) {
+            if (chars[str[i] / 8] & (1u << (str[i] % 8)))
+                return i;
+        }
+        return -1;
+    }
+
     void Find_Last_Not_Of()
     {
         std::cout << find_last_not_of("01234b567a89", "abc") << std::endl; // 9
+        std::cout << find_last_not_of_less_mem("01234b567a89", "abc") << std::endl; // 9
     }
 
     //---------------------------------------------------------------------------------------//

@@ -700,6 +700,55 @@ void MoveStringToArray()
     std::cout << std::quoted(data[5]) << std::endl;
 }
 
+namespace StringAlgs
+{
+    void find_last_not_of_less_mem_debug(const std::string& str, const std::string& txt)
+    {
+        uint8_t chars[32] {};
+        for (const uint8_t charNum: txt) {
+            // const uint16_t num = static_cast<uint16_t>(c);
+            // const uint16_t idx = charNum / 8;
+            // const uint16_t bit = charNum % 8;
+
+            // std::cout <<static_cast<char>(charNum)  << "   " << static_cast<uint16_t>(charNum) << "  " << idx << "   " << bit << "   " << std::endl;
+            // chars[static_cast<uint8_t>(c)] = true;
+
+            chars[charNum / 8] |= (1 << charNum % 8);
+        }
+
+        std::cout << "------------------------------------------------------\n";
+
+        for (size_t i = 0; i < std::size(chars); ++i)
+        {
+            const uint8_t mask = chars[i];
+            for (uint8_t bit = 0; bit < 8; ++bit)
+            {
+                const uint8_t charNum = i * 8 + bit;
+                //std::cout << static_cast<uint16_t>(charNum) << "   " << i << "   "  << static_cast<uint16_t>(bit) ;
+                if (mask & (1u << bit))
+                {
+                    // std::cout << i * 8 + bit  << std::endl;
+                    // std::cout << "  SET  (" <<  static_cast<char>(charNum) << ")";
+                    std::cout << static_cast<char>(charNum) << std::endl;
+                }
+                //std::cout <<  std::endl;
+            }
+        }
+    }
+
+    int find_last_not_of_less_mem(const std::string& str, const std::string& txt)
+    {
+        uint8_t chars[32] {};
+        for (const uint8_t charNum: txt)
+            chars[charNum / 8] |= (1 << charNum % 8);
+
+        for (int i = str.size() - 1; i >= 0; --i) {
+            if (chars[str[i] / 8] & (1u << (str[i] % 8)))
+                return i;
+        }
+        return -1;
+    }
+}
 
 
 
@@ -709,6 +758,7 @@ int main([[maybe_unused]] int argc,
     const std::vector<std::string_view> args(argv + 1, argv + argc);
     // parseInputParams(std::vector {"one", "two", "three", "four", "five"}.data(), 5);
 
+    StringAlgs::find_last_not_of_less_mem("12345b6789", "abc");
 
 
     // MoveStringToArray();
@@ -734,7 +784,7 @@ int main([[maybe_unused]] int argc,
 
     // Comparators::TestAll();
 
-    Cpp23_Features::TestAll();
+    // Cpp23_Features::TestAll();
     // AutoTests::TestAll();
     // Algorithms::TestAll();
     // Multithreading::TestAll();
