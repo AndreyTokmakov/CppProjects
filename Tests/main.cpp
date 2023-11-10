@@ -702,38 +702,44 @@ void MoveStringToArray()
 
 namespace StringAlgs
 {
-    void find_last_not_of_less_mem_debug(const std::string& str, const std::string& txt)
+    struct ScopedTimer
     {
-        uint8_t chars[32] {};
-        for (const uint8_t charNum: txt) {
-            // const uint16_t num = static_cast<uint16_t>(c);
-            // const uint16_t idx = charNum / 8;
-            // const uint16_t bit = charNum % 8;
+        const std::string_view benchmarkName;
+        const std::chrono::high_resolution_clock::time_point start {
+                std::chrono::high_resolution_clock::now()
+        };
 
-            // std::cout <<static_cast<char>(charNum)  << "   " << static_cast<uint16_t>(charNum) << "  " << idx << "   " << bit << "   " << std::endl;
-            // chars[static_cast<uint8_t>(c)] = true;
-
-            chars[charNum / 8] |= (1 << charNum % 8);
+        explicit ScopedTimer(std::string_view info) :
+                benchmarkName {info} {
         }
 
-        std::cout << "------------------------------------------------------\n";
+        ScopedTimer(const ScopedTimer&) = delete;
+        ScopedTimer(ScopedTimer&&) = delete;
+        ScopedTimer& operator=(const ScopedTimer&) = delete;
+        ScopedTimer& operator=(ScopedTimer&&) = delete;
 
-        for (size_t i = 0; i < std::size(chars); ++i)
+        ~ScopedTimer()
         {
-            const uint8_t mask = chars[i];
-            for (uint8_t bit = 0; bit < 8; ++bit)
-            {
-                const uint8_t charNum = i * 8 + bit;
-                //std::cout << static_cast<uint16_t>(charNum) << "   " << i << "   "  << static_cast<uint16_t>(bit) ;
-                if (mask & (1u << bit))
-                {
-                    // std::cout << i * 8 + bit  << std::endl;
-                    // std::cout << "  SET  (" <<  static_cast<char>(charNum) << ")";
-                    std::cout << static_cast<char>(charNum) << std::endl;
-                }
-                //std::cout <<  std::endl;
-            }
+            const std::chrono::high_resolution_clock::time_point end = std::chrono::high_resolution_clock::now();
+            const std::chrono::duration<double> time_span = duration_cast<std::chrono::duration<double>>(end - start);
+
+            std::cout << std::left << std::setw(14) << benchmarkName << ":  ";
+            std::cout << time_span.count() << " seconds.\n";
         }
+    };
+
+
+    int find_last_not_of(const std::string& str, const std::string& txt)
+    {
+        bool chars[256] {};
+        for (char c: txt)
+            chars[static_cast<uint8_t>(c)] = true;
+
+        for (int i = str.size() - 1; i >= 0; --i) {
+            if (chars[str[i]])
+                return i;
+        }
+        return -1;
     }
 
     int find_last_not_of_less_mem(const std::string& str, const std::string& txt)
@@ -742,11 +748,29 @@ namespace StringAlgs
         for (const uint8_t charNum: txt)
             chars[charNum / 8] |= (1 << charNum % 8);
 
-        for (int i = str.size() - 1; i >= 0; --i) {
+        for (int i = static_cast<int>(str.size() - 1); i >= 0; --i) {
             if (chars[str[i] / 8] & (1u << (str[i] % 8)))
                 return i;
         }
         return -1;
+    }
+
+    void benchmark()
+    {
+        constexpr size_t testsCount = 25'000;
+
+        {
+            ScopedTimer timer ("Test1");
+            for (size_t n = 0; n < testsCount; ++n)
+                for (size_t i = 0; i < testsCount; ++i)
+                    StringAlgs::find_last_not_of("dsdadsadasd454656ijsid837r374343743", "abcxcxc");
+        }
+        {
+            ScopedTimer timer ("Test2");
+            for (size_t n = 0; n < testsCount; ++n)
+                for (size_t i = 0; i < testsCount; ++i)
+                    StringAlgs::find_last_not_of_less_mem("dsdadsadasd454656ijsid837r374343743", "abcxcxc");
+        }
     }
 }
 
@@ -758,8 +782,7 @@ int main([[maybe_unused]] int argc,
     const std::vector<std::string_view> args(argv + 1, argv + argc);
     // parseInputParams(std::vector {"one", "two", "three", "four", "five"}.data(), 5);
 
-    StringAlgs::find_last_not_of_less_mem("12345b6789", "abc");
-
+    StringAlgs::benchmark();
 
     // MoveStringToArray();
 
