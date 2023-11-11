@@ -1769,8 +1769,6 @@ namespace Strings
 
 void Strings::TEST_ALL()
 {
-	// Strings::LongestSubstringWithoutRepeatingCharacters();
-
 	// Strings::LongestConsecutiveCharacters();
 	// Strings::MaxSubstringLength_Of_K_max_Unique_Elements();
 
@@ -1801,11 +1799,13 @@ void Strings::TEST_ALL()
 	// Strings::Find_K_MostFrequentCharacter();
 	// Strings::Find_K_MostFrequentCharacter_2();
 
-    Strings::Find_Last_Not_Of();
+    // Strings::Find_Last_Not_Of();
 
 	// Strings::Find_First_Char_Occured_Once();
 	// Strings::Find_First_K_Chars_Occured_Once();
-	// Strings::Find_LongestSubstring_With_K_DistinctChar acters();
+
+    Strings::LongestSubstringWithoutRepeatingCharacters();
+	// Strings::Find_LongestSubstring_With_K_DistinctCharacters();
 
 	// Strings::Palindrome_Test();
 	// Strings::Longest_Palindrome_1();
