@@ -15,6 +15,9 @@ Description : Cpp23_Features
 #include <vector>
 #include <coroutine>
 #include <expected>
+#include <ranges>
+#include <utility>
+#include <format>
 
 
 // C++ 23:
@@ -240,6 +243,40 @@ namespace Cpp23_Features::Expected
 }
 
 
+namespace CountingIterator
+{
+    void print(const std::string_view remark, const std::vector<std::string>& v)
+    {
+        const long size = std::ssize(v);
+        std::cout << remark << '[' << size << "] { ";
+        for (auto it = std::counted_iterator{std::cbegin(v), size}; it != std::default_sentinel; ++it)
+            std::cout << *it << ", ";
+        std::cout << "}\n";
+    }
+
+    void test_print()
+    {
+        const std::vector<std::string> values {"One", "Two", "Three", "Four", "Five"};
+        print("src", values);
+        std::vector<decltype(values)::value_type> dst;
+        std::ranges::copy(std::counted_iterator{values.begin(), 3},
+                          std::default_sentinel,
+                          std::back_inserter(dst));
+        print("dst", dst);
+    }
+
+
+    void test_simple()
+    {
+        const std::vector<std::string> values {"One", "Two", "Three", "Four", "Five"};
+        for (auto iter = std::counted_iterator{values.begin(), 3}; std::default_sentinel != iter; ++iter)
+        {
+            std::cout << *iter << ' ';
+        }
+    }
+}
+
+
 
 void Cpp23_Features::TestAll()
 {
@@ -263,4 +300,7 @@ void Cpp23_Features::TestAll()
     Expected::Non_Initialized();
     Expected::No_DefaultValue();
     */
+
+    CountingIterator::test_simple();
+    // CountingIterator::test_print();
 };

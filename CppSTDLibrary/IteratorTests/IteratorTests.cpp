@@ -856,8 +856,39 @@ namespace IteratorTests
     }
 }
 
+namespace CountingIterator
+{
+    void print(const std::string_view remark, const std::vector<std::string>& v)
+    {
+        const long size = std::ssize(v);
+        std::cout << remark << '[' << size << "] { ";
+        for (auto it = std::counted_iterator{std::cbegin(v), size}; it != std::default_sentinel; ++it)
+            std::cout << *it << ", ";
+        std::cout << "}\n";
+    }
 
-///////////////////////////////////////////////////////////////////////////////////
+    void test_print()
+    {
+        const std::vector<std::string> values {"One", "Two", "Three", "Four", "Five"};
+        print("src", values);
+        std::vector<decltype(values)::value_type> dst;
+        std::ranges::copy(std::counted_iterator{values.begin(), 3},
+                          std::default_sentinel,
+                          std::back_inserter(dst));
+        print("dst", dst);
+    }
+
+
+    void test_simple()
+    {
+        const std::vector<std::string> values {"One", "Two", "Three", "Four", "Five"};
+        for (auto iter = std::counted_iterator{values.begin(), 3}; std::default_sentinel != iter; ++iter)
+        {
+            std::cout << *iter << ' ';
+        }
+        std::cout << '\n';
+    }
+}
 
 void IteratorTests::TestAll() {
 
@@ -865,6 +896,10 @@ void IteratorTests::TestAll() {
 	// ReverseIterators::ReverseIterator_Vector();
 	// ReverseIterators::ReverseIterator_Vector2();
 	// ReverseIterators::ReverseIterator_Map();
+
+
+    CountingIterator::test_simple();
+    CountingIterator::test_print();
 
 	// FrotInserver();
 	// Front_Insert_Iterator();
@@ -890,7 +925,7 @@ void IteratorTests::TestAll() {
 	// CustomIterator2::Test();
 	// CustomIterator3::Test();
     // CustomIterator_IntIterator::Test();
-    CustomIterator_RangeIterator::Test();
+    // CustomIterator_RangeIterator::Test();
 
 	// Files::ReadFile();
 	// Files::ReadFile2();

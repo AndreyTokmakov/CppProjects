@@ -776,13 +776,17 @@ namespace StringAlgs
 
 
 
+
+
 int main([[maybe_unused]] int argc,
          [[maybe_unused]] char** argv)
 {
     const std::vector<std::string_view> args(argv + 1, argv + argc);
     // parseInputParams(std::vector {"one", "two", "three", "four", "five"}.data(), 5);
 
-    StringAlgs::benchmark();
+
+
+    // StringAlgs::benchmark();
 
     // MoveStringToArray();
 
@@ -807,7 +811,7 @@ int main([[maybe_unused]] int argc,
 
     // Comparators::TestAll();
 
-    // Cpp23_Features::TestAll();
+    Cpp23_Features::TestAll();
     // AutoTests::TestAll();
     // Algorithms::TestAll();
     // Multithreading::TestAll();
