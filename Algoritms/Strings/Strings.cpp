@@ -708,10 +708,37 @@ namespace Strings {
                       << longestUniqueSubstr_UnFinished(s) << std::endl;
 
         }
-
-        // std::cout << longestUniqueSubstr_4_Tbl("aaabbb") << std::endl;
-        // std::cout << longestUniqueSubstr_UnFinished("abcbef") << std::endl;
 	}
+
+    size_t longest_substring_without_repeating_characters(const std::string& str)
+    {
+        uint16_t chars[256] {};
+        size_t maxLen = 0;
+        bool hasDuplicates = 0;
+        for (size_t left = 0, right = 0; right < str.size(); ++right)
+        {
+            if (++chars[str[right]] > 1)
+                hasDuplicates = true;
+
+            while (hasDuplicates)
+            {
+                if (2 == chars[str[left]])
+                    hasDuplicates = false;
+                --chars[str[left++]];
+            }
+            maxLen = std::max(right - left + 1, maxLen);
+        }
+        return maxLen;
+    }
+
+    void LongestSubstringWithoutRepeatingCharacters2()
+    {
+        for (const std::string& s: {"abcde", "abcbef", "aaaaaa", "aaabbbccc"})
+        {
+            std::cout << longest_substring_without_repeating_characters(s) << " "
+                      << std::endl;
+        }
+    }
 
 	//--------------------------------------------------------------------------------------//
 
@@ -1805,6 +1832,7 @@ void Strings::TEST_ALL()
 	// Strings::Find_First_K_Chars_Occured_Once();
 
     Strings::LongestSubstringWithoutRepeatingCharacters();
+    Strings::LongestSubstringWithoutRepeatingCharacters2();
 	// Strings::Find_LongestSubstring_With_K_DistinctCharacters();
 
 	// Strings::Palindrome_Test();
