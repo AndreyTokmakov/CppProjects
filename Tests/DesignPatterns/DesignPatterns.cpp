@@ -1354,6 +1354,92 @@ namespace DesignPatterns::Decorator
     }
 }
 
+namespace DesignPatterns::TypeErasure_VoidType
+{
+    // Concept representing the interface (optional):
+    template <typename T>
+    concept Interface = requires (T t) {
+        { t.operation() } -> std::same_as<int>;
+    };
+
+    // Owning variant of a generic holder
+    struct GenericHolder
+    {
+        // Only the constructor is specific to each type:
+        template<Interface T>
+        explicit GenericHolder(std::unique_ptr<T> ptr)
+        {
+            // operation_ and destroy_ remember the type
+            operation_ = [](void* blob) {
+                return static_cast<T*>(blob)->operation();
+            };
+            destroy_ = [](void* blob) {
+                delete static_cast<T*>(blob);
+            };
+            blob_ = ptr.release();
+        }
+
+        ~GenericHolder()
+        {
+            if (blob_)
+                destroy_(this->blob_);
+        }
+
+        // Move only (can be made copyable by addition of a clone_ fp)
+        GenericHolder(const GenericHolder&) = delete;
+        GenericHolder& operator=(const GenericHolder&) = delete;
+
+        // Move operations
+        GenericHolder(GenericHolder&& other) noexcept :
+                blob_(std::exchange(other.blob_, nullptr)),
+                operation_(std::exchange(other.operation_, nullptr)),
+                destroy_(std::exchange(other.destroy_, nullptr)) {
+        }
+
+        GenericHolder& operator=(GenericHolder&& other) noexcept {
+            blob_ = std::exchange(other.blob_, nullptr);
+            operation_ = std::exchange(other.operation_, nullptr);
+            destroy_ = std::exchange(other.destroy_, nullptr);
+            return *this;
+        }
+
+        // Actual interface
+        int operation() { return operation_(this->blob_); }
+
+    private:
+        // Generic storage, note that adding a new operation breaks ABI
+        void *blob_;
+        int (*operation_)(void*);
+        void (*destroy_)(void*);
+    };
+
+    // Implementations are unrelated and have no virtual methods
+    struct ImplA {
+        [[nodiscard]]
+        int operation() const { return rank; }
+
+        int rank;
+    };
+
+    struct ImplB {
+        [[nodiscard]]
+        int operation() const { return std::stoi(text); }
+
+        std::string text;
+    };
+
+    void user(GenericHolder data) {
+        int v = data.operation();
+        std::cout << v << "\n";
+    }
+
+    void test()
+    {
+        user(GenericHolder(std::make_unique<ImplA>(10))); // OK, prints 10
+        user(GenericHolder(std::make_unique<ImplB>("42"))); // OK, prints 42
+    }
+}
+
 void DesignPatterns::TestAll()
 {
     // Singleton::Test();
@@ -1361,7 +1447,7 @@ void DesignPatterns::TestAll()
     // Strategy::Test();
     // Strategy_Text::Test();
 
-    CRTP::Test();
+    // CRTP::Test();
 
     // Chain_of_Responsibility::Test();
 
@@ -1379,4 +1465,6 @@ void DesignPatterns::TestAll()
     // Observer::test();
 
     // Decorator::test();
+
+    TypeErasure_VoidType::test();
 }

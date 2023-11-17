@@ -811,7 +811,7 @@ int main([[maybe_unused]] int argc,
 
     // Comparators::TestAll();
 
-    Cpp23_Features::TestAll();
+    // Cpp23_Features::TestAll();
     // AutoTests::TestAll();
     // Algorithms::TestAll();
     // Multithreading::TestAll();
@@ -819,7 +819,7 @@ int main([[maybe_unused]] int argc,
     // Iterators::TestAll();
     // Files::TestAll();
     // ConstexprMap::TestAll()
-    // DesignPatterns::TestAll();
+    DesignPatterns::TestAll();
     // Date_Time_Chrono::TestAll();
     // MaxStack::TestAll();
     // MinStack::TestAll();
