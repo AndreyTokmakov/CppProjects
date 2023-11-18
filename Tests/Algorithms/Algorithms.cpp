@@ -8,6 +8,7 @@ Description : Algorithms
 ============================================================================**/
 
 #include "Algorithms.h"
+#include "../Performance/Performance.h"
 
 #include <iostream>
 #include <vector>
@@ -825,6 +826,56 @@ namespace MaxTree
     }
 }
 
+namespace Algorithms::Strings
+{
+    using Performance::Utils::ScopedTimer;
+
+    int find_last_not_of(const std::string& str, const std::string& txt)
+    {
+        bool chars[256] {};
+        for (char c: txt)
+            chars[static_cast<uint8_t>(c)] = true;
+
+        for (int i = str.size() - 1; i >= 0; --i) {
+            if (chars[str[i]])
+                return i;
+        }
+        return -1;
+    }
+
+    int find_last_not_of_less_mem(const std::string& str, const std::string& txt)
+    {
+        uint8_t chars[32] {};
+        for (const uint8_t charNum: txt)
+            chars[charNum / 8] |= (1 << charNum % 8);
+
+        for (int i = static_cast<int>(str.size() - 1); i >= 0; --i) {
+            if (chars[str[i] / 8] & (1u << (str[i] % 8)))
+                return i;
+        }
+        return -1;
+    }
+
+    void FindLastNotOf__Benchmark()
+    {
+        constexpr size_t testsCount = 25'000;
+
+        {
+            ScopedTimer timer ("Test1");
+            for (size_t n = 0; n < testsCount; ++n)
+                for (size_t i = 0; i < testsCount; ++i)
+                    find_last_not_of("dsdadsadasd454656ijsid837r374343743", "abcxcxc");
+        }
+        {
+            ScopedTimer timer ("Test2");
+            for (size_t n = 0; n < testsCount; ++n)
+                for (size_t i = 0; i < testsCount; ++i)
+                    find_last_not_of_less_mem("dsdadsadasd454656ijsid837r374343743", "abcxcxc");
+        }
+    }
+}
+
+
 void Algorithms::TestAll()
 {
     // Algorithms::Devide_SubArray();
@@ -834,7 +885,7 @@ void Algorithms::TestAll()
     // Numbers::printSortedSquaredNumber_InSortedArray();
     // Numbers::LongestIncreasingSubsequence();
 
-    MaxTree::test();
+    // MaxTree::test();
 
     // Majority::Test();
 
@@ -851,5 +902,6 @@ void Algorithms::TestAll()
     // FindCommonElements_3_SortedArrays();
 
     // Strings::FindCommon_PrefixAndPostfix();
+    Strings::FindLastNotOf__Benchmark();
 };
 

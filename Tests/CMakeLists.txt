@@ -16,26 +16,25 @@ add_executable(Tests MACOSX_BUNDLE
         Encoding/Enconding.cpp Encoding/Enconding.h
         Encoding/URLDecoding.cpp Encoding/URLDecoding.h
         Encoding/Punycode.cpp Encoding/Punycode.h
-        CopyElision_RVO/CopyElision_RVO.cpp CopyElision_RVO/CopyElision_RVO.h
         Encoding/StringUtils_ToStudy.cpp
         Encoding/StringUtils.cpp Encoding/StringUtils.h
         Encoding/Unicode.cpp Encoding/Unicode.h
         Geometry/PointsAndLines.cpp Geometry/PointsAndLines.h
         Encoding/PunycodeFinal.cpp Encoding/PunycodeFinal.h
         Encoding/Convertaion_UTF8_UTF32.cpp Encoding/Convertaion_UTF8_UTF32.h
+        CopyElision_RVO/CopyElision_RVO.cpp CopyElision_RVO/CopyElision_RVO.h
         Templates_Metaprogramming/Templates.cpp Templates_Metaprogramming/Templates.h
         DebugLogger/DebugLogger.cpp DebugLogger/DebugLogger.h
         Collections/CollectionsTests.cpp Collections/CollectionsTests.h
         ObjectOrientedExperimetns/RAIIWrapper.cpp ObjectOrientedExperimetns/RAIIWrapper.h
-        Helpers/Long.h
         Algorithms/Algorithms.cpp Algorithms/Algorithms.h
         ConstexprMap/ConstexprMap.cpp ConstexprMap/ConstexprMap.h
+        Concepts/Concepts.cpp Concepts/Concepts.h
         Multithreading/Multithreading.cpp Multithreading/Multithreading.h
         DesignPatterns/DesignPatterns.cpp DesignPatterns/DesignPatterns.h
         Iterators/Iterators.cpp Iterators/Iterators.h
         Files_Filesystem/Files.cpp Files_Filesystem/Files.h
-        Helpers/UnorderedPair.h Helpers/Utilities.h
-        Helpers/Object.h
+        Helpers/Long.h Helpers/UnorderedPair.h Helpers/Utilities.h  Helpers/Object.h
         Strings/Strings.cpp Strings/Strings.h
         DataStructures/LRUCache.cpp DataStructures/LRUCache.h
         DataStructures/MaxStack.cpp DataStructures/MaxStack.h

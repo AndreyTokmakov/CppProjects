@@ -2264,6 +2264,46 @@ namespace Concepts::CheckFunctionOverloadExists
     }
 }
 
+namespace Concepts::CheckCallHaveFunction_IfConstexpr
+{
+    template<typename T>
+    concept SupportsValidation = requires(T t)
+    {
+        t.validate();
+    };
+
+    template<typename T>
+    void Send(const T& data)
+    {
+        if constexpr(SupportsValidation<T>) {
+            data.validate();
+        }
+        else {
+            std::cout << "Can not be validated\n";
+        }
+    }
+
+    struct EmptyObject { };
+
+    struct Validator
+    {
+        void validate() const {
+            std::cout << "ComplexType::validate()" << std::endl;
+        }
+    };
+
+    void If_Constexpr_Concepts()
+    {
+        EmptyObject obj1;
+        Validator obj2;
+
+        Send(obj1);
+        Send(obj2);
+
+        static_assert(SupportsValidation<Validator>);
+        static_assert(not SupportsValidation<EmptyObject>);
+    }
+}
 
 namespace Concepts::Regular
 {
@@ -2495,6 +2535,7 @@ void Concepts::TestAll()
     // ValidatTypeContains_Members_or_Types::Valid_Template_Substitution();
 
     // CheckFunctionOverloadExists::TryCallFunction();
+    CheckCallHaveFunction_IfConstexpr::If_Constexpr_Concepts();
 
     // Regular::IsSemirRegular();
     // Regular::IsRegular();

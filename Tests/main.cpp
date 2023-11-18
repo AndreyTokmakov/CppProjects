@@ -53,6 +53,7 @@ Description : Tests C++ project
 
 #include "Algorithms/Algorithms.h"
 #include "Geometry/PointsAndLines.h"
+#include "Concepts//Concepts.h"
 #include "Encoding/Unicode.h"
 #include "Encoding/Punycode.h"
 #include "Encoding/StringUtils.h"
@@ -496,46 +497,6 @@ void parseInputParams(const char** argv, const size_t size)
     std::cout << std::endl;
 }
 
-namespace ConceptsTests
-{
-    template<typename T>
-    concept SupportsValidation = requires(T t)
-    {
-        t.validate();
-    };
-
-    template<typename T>
-    void Send(const T& data)
-    {
-        if constexpr(SupportsValidation<T>) {
-            data.validate();
-        }
-        else {
-            std::cout << "Can not be validated\n";
-        }
-    }
-
-    struct EmptyObject { };
-
-    struct Validator
-    {
-        void validate() const {
-            std::cout << "ComplexType::validate()" << std::endl;
-        }
-    };
-
-    void If_Constexpr_Concepts()
-    {
-        EmptyObject obj1;
-        Validator obj2;
-
-        Send(obj1);
-        Send(obj2);
-
-        static_assert(SupportsValidation<Validator>);
-        static_assert(not SupportsValidation<EmptyObject>);
-    }
-}
 
 namespace Conversation
 {
@@ -592,25 +553,6 @@ namespace PrintTemplateType
     }
 }
 
-namespace ObjectOrientedExperiments
-{
-    class Base {
-    public:
-        virtual void show() { std::cout << "In Base" << std::endl; }
-    };
-
-    class Derived : public Base {
-    public:
-        virtual void show() { std::cout << "In Derived" << std::endl; }
-    };
-
-    void Call_BaseClass_Func_Hack()
-    {
-        Base *ptr = new Derived;
-        ptr->Base::show();  // "In Base" will be printed
-        ptr->show();        // "In Base" will be printed
-    }
-}
 
 
 namespace MoveExperiments
@@ -700,84 +642,6 @@ void MoveStringToArray()
     std::cout << std::quoted(data[5]) << std::endl;
 }
 
-namespace StringAlgs
-{
-    struct ScopedTimer
-    {
-        const std::string_view benchmarkName;
-        const std::chrono::high_resolution_clock::time_point start {
-                std::chrono::high_resolution_clock::now()
-        };
-
-        explicit ScopedTimer(std::string_view info) :
-                benchmarkName {info} {
-        }
-
-        ScopedTimer(const ScopedTimer&) = delete;
-        ScopedTimer(ScopedTimer&&) = delete;
-        ScopedTimer& operator=(const ScopedTimer&) = delete;
-        ScopedTimer& operator=(ScopedTimer&&) = delete;
-
-        ~ScopedTimer()
-        {
-            const std::chrono::high_resolution_clock::time_point end = std::chrono::high_resolution_clock::now();
-            const std::chrono::duration<double> time_span = duration_cast<std::chrono::duration<double>>(end - start);
-
-            std::cout << std::left << std::setw(14) << benchmarkName << ":  ";
-            std::cout << time_span.count() << " seconds.\n";
-        }
-    };
-
-
-    int find_last_not_of(const std::string& str, const std::string& txt)
-    {
-        bool chars[256] {};
-        for (char c: txt)
-            chars[static_cast<uint8_t>(c)] = true;
-
-        for (int i = str.size() - 1; i >= 0; --i) {
-            if (chars[str[i]])
-                return i;
-        }
-        return -1;
-    }
-
-    int find_last_not_of_less_mem(const std::string& str, const std::string& txt)
-    {
-        uint8_t chars[32] {};
-        for (const uint8_t charNum: txt)
-            chars[charNum / 8] |= (1 << charNum % 8);
-
-        for (int i = static_cast<int>(str.size() - 1); i >= 0; --i) {
-            if (chars[str[i] / 8] & (1u << (str[i] % 8)))
-                return i;
-        }
-        return -1;
-    }
-
-    void benchmark()
-    {
-        constexpr size_t testsCount = 25'000;
-
-        {
-            ScopedTimer timer ("Test1");
-            for (size_t n = 0; n < testsCount; ++n)
-                for (size_t i = 0; i < testsCount; ++i)
-                    StringAlgs::find_last_not_of("dsdadsadasd454656ijsid837r374343743", "abcxcxc");
-        }
-        {
-            ScopedTimer timer ("Test2");
-            for (size_t n = 0; n < testsCount; ++n)
-                for (size_t i = 0; i < testsCount; ++i)
-                    StringAlgs::find_last_not_of_less_mem("dsdadsadasd454656ijsid837r374343743", "abcxcxc");
-        }
-    }
-}
-
-
-
-
-
 int main([[maybe_unused]] int argc,
          [[maybe_unused]] char** argv)
 {
@@ -785,41 +649,30 @@ int main([[maybe_unused]] int argc,
     // parseInputParams(std::vector {"one", "two", "three", "four", "five"}.data(), 5);
 
 
-
-    // StringAlgs::benchmark();
-
     // MoveStringToArray();
-
     // PrintTemplateType::test();
-
-    // ObjectOrientedExperiments::Call_BaseClass_Func_Hack();
-
-    // ConceptsTests::If_Constexpr_Concepts();
-
     // Experiments::Test({20, 40, 60});
-
-    // Coroutines::TestAll();
-
     // OperatorCall_ExplicitTypeSpecialization::Test();
     // CallFunctionByName::Test();
-
     // ReturnTypeCast::tests();
-
     // FindMinMaxValues::TestAll();
 
-    // Heap::TestAll();
 
-    // Comparators::TestAll();
 
-    // Cpp23_Features::TestAll();
-    // AutoTests::TestAll();
+
     // Algorithms::TestAll();
+    // AutoTests::TestAll();
+    // Cpp23_Features::TestAll();
+    // Concepts::TestAll();
+    // Comparators::TestAll();
+    // Heap::TestAll();
+    // Coroutines::TestAll();
     // Multithreading::TestAll();
     // Memory::TestAll();
     // Iterators::TestAll();
     // Files::TestAll();
     // ConstexprMap::TestAll()
-    DesignPatterns::TestAll();
+    // DesignPatterns::TestAll();
     // Date_Time_Chrono::TestAll();
     // MaxStack::TestAll();
     // MinStack::TestAll();
@@ -849,7 +702,7 @@ int main([[maybe_unused]] int argc,
     // TableFormatter::TestAll();
     // FunctionCall_LookUp::TestAll();
 
-    // OOP::TestClassConversationOperatorCall();
+
 
     // InvokeTest::Test();
 

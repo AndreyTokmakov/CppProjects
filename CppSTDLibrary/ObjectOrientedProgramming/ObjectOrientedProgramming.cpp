@@ -2205,63 +2205,22 @@ namespace ObjectOrientedProgramming::CopyMove_Constructor_Operators {
     }
 }
 
-namespace ObjectOrientedProgramming::CallBaseClassMembers {
-
-    class A {
-    public:
-        A() { std::cout << "A::A()" << std::endl; }
-        virtual ~A() { std::cout << "A::~A()" << std::endl; }
-
-        virtual void Info() {
-            std::cout << "A::Info()" << std::endl;
-        }
+namespace ObjectOrientedProgramming::CallBaseClassMembers
+{
+    struct Base {
+        virtual void show() { std::cout << "In Base" << std::endl; }
+        virtual ~Base() = default;
     };
 
-    class B : public A {
-    public:
-        B() { std::cout << "B::B()" << std::endl; }
-        B(int i) { std::cout << "B::B(int)" << std::endl; }
-
-        virtual ~B() { std::cout << "B::~B()" << std::endl; }
-
-        virtual void Info() override {
-            std::cout << "B::Info()" << std::endl;
-        }
+    struct Derived : public Base {
+        void show() override { std::cout << "In Derived" << std::endl; }
     };
 
-    class C : public B {
-    public:
-        C() { std::cout << "C::C()" << std::endl; }
-        C(int i) { std::cout << "C::C(int)" << std::endl; }
-
-        virtual ~C() { std::cout << "C::~C()" << std::endl; }
-
-        virtual void Info() override {
-            //A::Info();
-            std::cout << "C::Info()" << std::endl;
-        }
-    };
-
-    class D : public C {
-    public:
-        D() { std::cout << "D::D()" << std::endl; }
-        virtual ~D() { std::cout << "D::~D()" << std::endl; }
-
-        virtual void Info() override {
-            //A::Info();  // -- OK if A public-ly inherited to B
-            //B::Info();  // -- OK if B public-ly inherited to C
-            //C::Info();
-            std::cout << "D::Info()" << std::endl;
-        }
-    };
-
-
-    void Test() {
-        /*
-        A* a = new B;
-        a->Info();
-        delete a;
-        */
+    void Call_BaseClass_Func_Hack()
+    {
+        Base *ptr = new Derived;
+        ptr->Base::show();      // "In Base" will be printed
+        ptr->show();            // "In Derived" will be printed
     }
 }
 
@@ -3296,7 +3255,7 @@ void ObjectOrientedProgramming::TestAll()
 
     // AccessMembers::Test();
     // MultipleInheritance::TEST();
-    // CallBaseClassMembers::Test();
+    CallBaseClassMembers::Call_BaseClass_Func_Hack();
 
     // **************************** Covariant Return Type: ****************************//
 
