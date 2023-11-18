@@ -665,8 +665,8 @@ int main([[maybe_unused]] int argc,
     // Cpp23_Features::TestAll();
     // Concepts::TestAll();
     // Comparators::TestAll();
+    Coroutines::TestAll();
     // Heap::TestAll();
-    // Coroutines::TestAll();
     // Multithreading::TestAll();
     // Memory::TestAll();
     // Iterators::TestAll();

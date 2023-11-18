@@ -90,7 +90,7 @@ int main([[maybe_unused]]  int argc,
     // Interpreter::Test();
     // Mediator::TestAll();
     // Memento::TestAll();
-    // Observer::TestAll();
+    Observer::TestAll();
     // State::TestAll();
     // TemplateMethod::TestAll();
     // Visitor::test();
@@ -98,7 +98,7 @@ int main([[maybe_unused]]  int argc,
 
     /** C++ IDIOMS: **/
     // CRTP::Test();
-    TypeErasure::Test();
+    // TypeErasure::Test();
     // RAII::Test();
     // CopyAndSwap::TEST_ALL();   ---- TESTs
     // TagDispatching::Test();

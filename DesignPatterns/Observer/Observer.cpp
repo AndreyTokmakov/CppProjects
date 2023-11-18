@@ -267,6 +267,7 @@ namespace Observer::Parsons
     {
         void set_age(uint8_t age)
         {
+            [[maybe_unused]]
             const bool old_can_vote = get_can_vote();
             this->m_age = age;
 
@@ -323,10 +324,11 @@ namespace Observer::Parsons
 void ObserverBasic_Test();    /// ObserverBasic.cpp
 void SubjectObserver_Test();  /// ObserverSubject.cpp
 void LambdaObserverTest();    /// LambdaObserverTest.cpp
+void ObserverMediator_Test();    /// LambdaObserverTest.cpp
 
 void Observer::TestAll()
 {
-    Test1::Test();
+    // Test1::Test();
     // Test2::Test();
     // Parsons::Test();
 
@@ -335,4 +337,6 @@ void Observer::TestAll()
     // SubjectObserver_Test();
 
     // LambdaObserverTest();
+
+    ObserverMediator_Test();
 }

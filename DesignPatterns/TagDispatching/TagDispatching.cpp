@@ -74,13 +74,15 @@ namespace TagDispatching::BasesOnValueType
 {
 
     template<typename T>
-    void get_value_impl(T t, std::true_type)
+    void get_value_impl([[maybe_unused]] T t,
+                        std::true_type)
     {
         std::cout << "Arithmetic type\n";
     }
 
     template<typename T>
-    void get_value_impl(T t, std::false_type)
+    void get_value_impl([[maybe_unused]] T t,
+                        std::false_type)
     {
         std::cout << "Non Arithmetic type\n";
     }

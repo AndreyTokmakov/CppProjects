@@ -80,11 +80,11 @@ namespace Visitor::CarVisitor
 
     class CarElementDoVisitor: public CarElementVisitor {
 
-        void visit(const Body& body) const override {
+        void visit([[maybe_unused]] const Body& body) const override {
             std::cout << "Moving my body" << '\n';
         }
 
-        void visit(const Car& car) const override {
+        void visit([[maybe_unused]] const Car& car) const override {
             std::cout << "Starting my car" << '\n';
         }
 
@@ -92,18 +92,18 @@ namespace Visitor::CarVisitor
             std::cout << "Kicking my " << wheel.getName() << " wheel" << '\n';
         }
 
-        void visit(const Engine& engine) const override {
+        void visit([[maybe_unused]] const Engine& engine) const override {
             std::cout << "Starting my engine" << '\n';
         }
     };
 
     class CarElementPrintVisitor: public CarElementVisitor {
 
-        void visit(const Body& body) const override {
+        void visit([[maybe_unused]] const Body& body) const override {
             std::cout << "Visiting body" << '\n';
         }
 
-        void visit(const Car& car) const override {
+        void visit([[maybe_unused]] const Car& car) const override {
             std::cout << "Visiting car" << '\n';
         }
 
@@ -111,7 +111,7 @@ namespace Visitor::CarVisitor
             std::cout << "Visiting " << wheel.getName() << " wheel" << '\n';
         }
 
-        void visit(const Engine& engine) const override {
+        void visit([[maybe_unused]] const Engine& engine) const override {
             std::cout << "Visiting engine" << '\n';
         }
     };

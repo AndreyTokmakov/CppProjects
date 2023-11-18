@@ -30,8 +30,7 @@ add_executable(DesignPatterns
 	ObjectPools/ObjectPoolsSimple.cpp  ObjectPools/ObjectPoolsExtended.cpp ObjectPools/ObjectPools.h
     Observer/Observer.cpp Observer/Observer.h
     Prototype/Prototype.cpp Prototype/Prototype.h
-	Proxy/Document.cpp
-		Proxy/CarProxy.cpp Proxy/Proxy.h
+	Proxy/Document.cpp Proxy/CarProxy.cpp Proxy/Proxy.h
 	Proxy/Subject.cpp
     RAII/RAII.cpp
     Singleton/Singleton.cpp Singleton/Singleton.h
@@ -57,7 +56,7 @@ add_executable(DesignPatterns
 		LazyInitialization/LazyInitialization.h
 		ChainOfResponsibility/Example2.cpp
 		Command/Command_MethodPtr.cpp Iterator/RangeIterator.cpp Mediator/ChatMediator.cpp
-		Observer/ObserverBasic.cpp TemplateMethod/TemplateMethod_ExampleTwo.cpp
+		Observer/ObserverBasic.cpp TemplateMethod/TemplateMethod_ExampleTwo.cpp Observer/ObserverMediator.cpp
 		TemplateMethod/TemplateMethod_ExampleThree.cpp Visitor/DynamicComponentsVisitor.cpp
 		Visitor/DynamicComponentsVisitor.cpp Visitor/DynamicComponentsVisitor.cpp
 		Observer/ObserverSubject.cpp Visitor/CarVisitor.cpp

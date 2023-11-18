@@ -37,11 +37,11 @@ int main([[maybe_unused]] int argc,
 	// TEST(Deque);
 	// TEST(Stack);
 	// TEST(Heap);
-	Vector::TestAll();
+	// Vector::TestAll();
 	// TEST(Valarray);
 	// TEST(Map);
 	// TEST(MultiMap);
-    // TEST(UnorderedMap);
+    TEST(UnorderedMap);
     // TEST(Set);
     // TEST(UnorderedSet);
 	// TEST(Queue);
