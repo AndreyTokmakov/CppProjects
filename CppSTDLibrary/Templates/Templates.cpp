@@ -254,6 +254,73 @@ namespace Templates::ClassSpecialization
 };
 
 
+namespace Templates::Specialization
+{
+    template<typename T1, typename T2>
+    struct Object {
+        Object() { std::cout << "Object<T1, T2>()" << std::endl; }
+    };
+
+    template<typename T>
+    struct Object<T, T> {
+        Object() { std::cout << "Object<T, T>()" << std::endl; }
+    };
+
+
+    template<typename T>
+    struct Object<T, int> {
+        Object() { std::cout << "Object<T, int>()" << std::endl; }
+    };
+
+    template<typename T1, typename T2>
+    struct Object<T1 *, T2 *> {
+        Object() { std::cout << "Object<T1*, T2*>()" << std::endl; }
+    };
+
+    void Test() {
+        Object<int, float> mif;    // uses Object<T1, T2>()
+        Object<float, float> mff;  // uses Object<T , T>()
+        Object<float, int> mfi;    // uses Object<T , int>()
+        Object<int *, float *> mp; // uses Object<T1*,T2*>()
+    }
+}
+
+namespace Templates::Specialization
+{
+    template<typename T>
+    struct Node
+    {
+        T value {};
+    };
+
+    template<typename T>
+    std::ostream& operator<<(std::ostream& stream, const Node<T>& node)
+    {
+        stream << node.value;
+        return stream;
+    }
+
+    template<>
+    std::ostream& operator<<(std::ostream& stream, const Node<int>& node)
+    {
+        stream << "Integer value: " << node.value;
+        return stream;
+    }
+
+    void PrintOperator_TemplateSpecialisation_Ostream()
+    {
+        {
+            Node<int> node{123};
+            std::cout << node << std::endl;
+        }
+        {
+            Node<std::string> node{"123"};
+            std::cout << node << std::endl;
+        }
+    }
+}
+
+
 namespace Templates::ClassSpecialization_RawArrays
 {
     template<typename T>
@@ -2779,7 +2846,7 @@ void Templates::TestAll()
 
 
     // VariadicTemplates::Sum_Multiple_Variables();
-    VariadicTemplates::Print_Multiple_Variables_RecursiveHack();
+    // VariadicTemplates::Print_Multiple_Variables_RecursiveHack();
     // VariadicTemplates::Recursive_Expansion_Two();
 
     // VariadicTemplates::Variadic_Sizeof();
@@ -2844,6 +2911,9 @@ void Templates::TestAll()
     // ClassSpecialization::Test();
     // ClassSpecialization::Test2();
 
+    Specialization::Test();
+    Specialization::PrintOperator_TemplateSpecialisation_Ostream();
+
     // PartialSpecialization::Test();
     // PartialSpecialization::Test2();
     // PartialSpecialization::Pow_Test_Static();
@@ -2884,6 +2954,6 @@ void Templates::TestAll()
     // Friends::Access_Private_Field();
 
 
-    ConditionalExplicit::TestAll();
+    // ConditionalExplicit::TestAll();
 
 }

@@ -289,6 +289,42 @@ namespace Templates::Specialization
     }
 }
 
+namespace Templates::Specialization
+{
+    template<typename T>
+    struct Node
+    {
+        T value {};
+    };
+
+    template<typename T>
+    std::ostream& operator<<(std::ostream& stream, const Node<T>& node)
+    {
+        stream << node.value;
+        return stream;
+    }
+
+    template<>
+    std::ostream& operator<<(std::ostream& stream, const Node<int>& node)
+    {
+        stream << "Integer value: " << node.value;
+        return stream;
+    }
+
+    void PrintOperator_TemplateSpecialisation_Ostream()
+    {
+        {
+            Node<int> node{123};
+            std::cout << node << std::endl;
+        }
+        {
+            Node<std::string> node{"123"};
+            std::cout << node << std::endl;
+        }
+    }
+}
+
+
 
 void Templates::TestAll()
 {
@@ -302,4 +338,5 @@ void Templates::TestAll()
     // NTTP::testPersonalBudget();
 
     // Specialization::Test();
+    Specialization::PrintOperator_TemplateSpecialisation_Ostream();
 }

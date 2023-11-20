@@ -22,6 +22,18 @@ namespace
         (std::cout << ... << std::forward<Args>(args)) << std::endl;
     }
 }
+/*
+namespace Coroutines::Generators
+{
+    std::generator<int> generatorForNumbers(int begin, int inc= 1){
+
+        for (int i= begin;; i += inc){
+            co_yield i;
+        }
+
+    }
+}
+ */
 
 namespace Coroutines::DemoOne
 {
@@ -283,7 +295,7 @@ void Coroutines::TestAll()
 
     // DemoTwo::test();
     // DemoTwo::test2();
-    DemoTwo::testFixed();
+    // DemoTwo::testFixed();
 
     // DemoThree::test();
 };

@@ -355,12 +355,21 @@ namespace ReturnTypeCast
     {
         std::string value{"123.456"};
 
+        operator short() {
+            std::cout << "Value::operator short()\n";
+            return 123;
+        }
+
+        operator unsigned int() {
+            std::cout << "Value::operator unsigned int()\n";
+            return 123;
+        }
+
         explicit operator int() {
             std::cout << "Value::operator int()\n";
             return 123;
         }
 
-        // private:
         operator double() {
             std::cout << "Value::operator double()\n";
             return 123.456f;
@@ -371,13 +380,27 @@ namespace ReturnTypeCast
     void tests()
     {
         Value val;
+
+
         {
-            const int v = val;
-            std::cout << v << std::endl;
+            short v = val;
+            // std::cout << v << std::endl;
         }
         {
-            const double v = val;
-            std::cout << v << std::endl;
+            unsigned int v = val;
+            // std::cout << v << std::endl;
+        }
+        {
+            int v = val;
+            // std::cout << v << std::endl;
+        }
+        {
+            // float v = val;
+            // std::cout << v << std::endl;
+        }
+        {
+            double v = val;
+            // std::cout << v << std::endl;
         }
     }
 }
@@ -517,42 +540,6 @@ namespace Conversation
     }
 }
 
-namespace PrintTemplateType
-{
-    template<typename T>
-    struct Node
-    {
-        T value {};
-    };
-
-    template<typename T>
-    std::ostream& operator<<(std::ostream& stream, const Node<T>& node)
-    {
-        stream << node.value;
-        return stream;
-    }
-
-    template<>
-    std::ostream& operator<<(std::ostream& stream, const Node<int>& node)
-    {
-        stream << "Integer value: " << node.value;
-        return stream;
-    }
-
-
-    void test()
-    {
-        {
-            Node<int> node{123};
-            std::cout << node << std::endl;
-        }
-        {
-            Node<std::string> node{"123"};
-            std::cout << node << std::endl;
-        }
-    }
-}
-
 
 
 namespace MoveExperiments
@@ -642,22 +629,75 @@ void MoveStringToArray()
     std::cout << std::quoted(data[5]) << std::endl;
 }
 
+
+namespace ReturnClass_MemberRef_CopyCTor
+{
+    struct Holder
+    {
+        Helpers::Long value { 123 };
+
+        Helpers::Long& getAsRef() noexcept
+        {
+            return value;
+        }
+
+        Helpers::Long getAsVal() noexcept
+        {
+            return value;
+        }
+    };
+
+    void tests()
+    {
+        Holder holder;
+
+        std::cout << "-----------------------------------------------------------------\n";
+
+        {
+            Helpers::Long & valRef = holder.getAsRef();
+            std::cout << valRef.value << std::endl;
+        }
+
+        std::cout << "-----------------------------------------------------------------\n";
+
+        {
+            Helpers::Long val = holder.getAsRef();
+            std::cout << val.value << std::endl;
+        }
+
+        std::cout << "-----------------------------------------------------------------\n";
+
+        {
+            const Helpers::Long & valRef = holder.getAsVal();
+            std::cout << valRef.value << std::endl;
+        }
+
+        std::cout << "-----------------------------------------------------------------\n";
+
+        {
+            Helpers::Long val = holder.getAsVal();
+            std::cout << val.value << std::endl;
+        }
+
+        std::cout << "-----------------------------------------------------------------\n";
+    }
+}
+
 int main([[maybe_unused]] int argc,
          [[maybe_unused]] char** argv)
 {
     const std::vector<std::string_view> args(argv + 1, argv + argc);
     // parseInputParams(std::vector {"one", "two", "three", "four", "five"}.data(), 5);
 
-
     // MoveStringToArray();
-    // PrintTemplateType::test();
     // Experiments::Test({20, 40, 60});
-    // OperatorCall_ExplicitTypeSpecialization::Test();
-    // CallFunctionByName::Test();
-    // ReturnTypeCast::tests();
     // FindMinMaxValues::TestAll();
 
-
+    /** * * * * *  Move to lib * * * * * **/
+    // OperatorCall_ExplicitTypeSpecialization::Test();
+    // ReturnTypeCast::tests();
+    // CallFunctionByName::Test();
+    // ReturnClass_MemberRef_CopyCTor::tests();
 
 
     // Algorithms::TestAll();
@@ -678,6 +718,7 @@ int main([[maybe_unused]] int argc,
     // MinStack::TestAll();
     // RateLimiter::TestAll();
     // DebugLogger::TestAll();
+    // PointsAndLines::TestAll();           // Geometry
     // UniquePtr_Size::SizeTest();
     // CollectionsTests::TestAll();
     // Templates::TestAll();
@@ -707,17 +748,11 @@ int main([[maybe_unused]] int argc,
     // InvokeTest::Test();
 
     // StaticInitObject a, b;
-    // Concepts_Experiments::TestConcepts();
 
     // OrderBook::TestAll();
     // OrderBook2::TestAll();
     // MatchingOrderBook::TestAll();
     // MatchingOrderBookEx::TestAll();
-
-    // TestDataGenerator::GenerateData();
-
-    // CacheLineTests::Test();
-    // PointsAndLines::TestAll();
 
 
     return EXIT_SUCCESS;
