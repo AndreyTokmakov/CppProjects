@@ -178,6 +178,37 @@ namespace Semaphore::BinarySemaphore
     }
 }
 
+namespace Semaphore::CountingSemaphore
+{
+    void Producer_Consumer()
+    {
+        std::vector<int> myVec{};
+        std::counting_semaphore<1> prepareSignal(0);
+
+        auto producer = [&]() {
+            myVec.insert(myVec.end(), {0, 1, 0, 3});
+
+            std::this_thread::sleep_for(std::chrono::seconds(2));
+
+            std::osyncstream(std::cout) << "Producer: Data prepared." << '\n';
+            prepareSignal.release();
+        };
+
+        auto consumer = [&] {
+            std::osyncstream(std::cout) << "Consumer: Waiting for data." << '\n';
+            prepareSignal.acquire();
+            myVec[2] = 2;
+            std::osyncstream(std::cout) << "Consumer: Complete the work." << '\n';
+
+            for (auto i: myVec)
+                std::osyncstream(std::cout) << i << " ";
+            std::osyncstream(std::cout) << '\n';
+        };
+
+        std::jthread t1(producer), t2(consumer);
+    }
+};
+
 
 void Semaphore::TEST_ALL()
 {
@@ -186,6 +217,8 @@ void Semaphore::TEST_ALL()
     // BinarySemaphore::Release_TRY_Acquire_FOR__BasicTest();
 
     // BinarySemaphore::Simple_Acquire_Release();
-    BinarySemaphore::Semaphore_VS_ConditionalVariable();
+    // BinarySemaphore::Semaphore_VS_ConditionalVariable();
+
+    CountingSemaphore::Producer_Consumer();
 };
 

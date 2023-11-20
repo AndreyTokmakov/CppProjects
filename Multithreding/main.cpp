@@ -18,6 +18,7 @@
 #include "Semaphore/Semaphore.h"
 #include "Latch/Latch.h"
 #include "ThreadPools/ThreadPools.h"
+#include "Threads/StoppingThreads.h"
 #include "ThreadPoolBlocking/ThreadPoolBlocking.h"
 #include "ThreadPoolLimited/ThreadPoolLimited.h"
 #include "Atomic/Atomic.h"
@@ -83,6 +84,8 @@ int main([[maybe_unused]] int argc,
 
     // SpinLock::TestAll();
 
+    StoppingThreads::TestAll();
+
     // ThreadPools::TEST_ALL();
     // ThreadPoolBlocking::TEST_ALL();
     // ThreadPoolBlocking::TEST_ALL();
@@ -92,7 +95,7 @@ int main([[maybe_unused]] int argc,
     // JThreads::TEST_ALL();
 
     // FalseSharingExperiments::TEST_ALL();
-    PerformanceExperiments::TestAll();
+    // PerformanceExperiments::TestAll();
 
     return EXIT_SUCCESS;
 }

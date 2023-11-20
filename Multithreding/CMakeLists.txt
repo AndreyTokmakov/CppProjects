@@ -44,6 +44,7 @@ add_executable(Multithreding MACOSX_BUNDLE
         SynchStream/SynchStream.cpp SynchStream/SynchStream.h
         PerformanceExperiments/PerformanceExperiments.cpp PerformanceExperiments/PerformanceExperiments.h
         SpinLock/SpinLock.h SpinLock/SpinLock.cpp
+        Threads/StoppingThreads.h Threads/StoppingThreads.cpp
         )
 
  # Link phread library

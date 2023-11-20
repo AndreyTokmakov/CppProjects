@@ -696,7 +696,7 @@ int main([[maybe_unused]] int argc,
     /** * * * * *  Move to lib * * * * * **/
     // OperatorCall_ExplicitTypeSpecialization::Test();
     // ReturnTypeCast::tests();
-    // CallFunctionByName::Test();
+    CallFunctionByName::Test();
     // ReturnClass_MemberRef_CopyCTor::tests();
 
 
@@ -705,7 +705,7 @@ int main([[maybe_unused]] int argc,
     // Cpp23_Features::TestAll();
     // Concepts::TestAll();
     // Comparators::TestAll();
-    Coroutines::TestAll();
+    // Coroutines::TestAll();
     // Heap::TestAll();
     // Multithreading::TestAll();
     // Memory::TestAll();
