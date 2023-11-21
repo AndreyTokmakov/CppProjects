@@ -12,3 +12,5 @@ C++ Optimisation and Performance Tuning experiments
 ## Some links to the external resources:
 1. Performance Benefits of Using Huge Pages for Code.
     https://easyperf.net/blog/2022/09/01/Utilizing-Huge-Pages-For-Code
+2. Virtual Function True price:
+   https://johnnysswlab.com/the-true-price-of-virtual-functions-in-c/
