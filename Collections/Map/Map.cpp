@@ -7,6 +7,7 @@
 #include <string>
 #include <string_view>
 #include <cassert>
+#include <ranges>
 
 #include "../Integer/Integer.h"
 
@@ -624,6 +625,30 @@ namespace Map {
 		}
 	}
 
+    void test_loops_backwards()
+    {
+        std::map<int, std::string> dict{
+                {1, "I"},
+                {2, "II"},
+                {3, "III"},
+        };
+
+        for (auto iter = std::prev(dict.end()); ; --iter) {
+            std::cout << iter->first << " = " << iter->second << std::endl;
+            if (iter == dict.begin()) break;
+        }
+
+        std::cout << std::endl;
+
+        for (auto iter = dict.rbegin(); iter != dict.rend(); ++iter)
+            std::cout << iter->first << " = " << iter->second << std::endl;
+
+        std::cout << std::endl;
+
+        for (auto& [k, v] : std::ranges::reverse_view(dict))
+            std::cout << k << " = " << v << std::endl;
+    }
+
 	void Rbegin_Rend_Test() {
 		std::map<char, int> test_map = { {'a',100}, {'b',200}, {'c',300}, {'d',400}, {'e',500} };
 		std::cout << "Original map content:" << std::endl;
@@ -1055,6 +1080,7 @@ namespace Map::Test {
 void Map::TEST_ALL()
 {
 	// test_loops();
+	test_loops_backwards();
 
     // emplace_duplicate_entry();
     // try_emplace_duplicate_entry();
@@ -1080,7 +1106,7 @@ void Map::TEST_ALL()
 	// insert_result();
 
 	// insert_or_assign();
-    insert_or_assign__missing_key();
+    // insert_or_assign__missing_key();
 
 	// try_emplace_test();
 	// try_emplace_test_2();

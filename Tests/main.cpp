@@ -696,11 +696,11 @@ int main([[maybe_unused]] int argc,
     /** * * * * *  Move to lib * * * * * **/
     // OperatorCall_ExplicitTypeSpecialization::Test();
     // ReturnTypeCast::tests();
-    CallFunctionByName::Test();
+    // CallFunctionByName::Test();
     // ReturnClass_MemberRef_CopyCTor::tests();
 
 
-    // Algorithms::TestAll();
+    Algorithms::TestAll();
     // AutoTests::TestAll();
     // Cpp23_Features::TestAll();
     // Concepts::TestAll();
