@@ -32,6 +32,8 @@
 #include <concepts>
 #include <span>
 #include <list>
+#include <iomanip>
+using namespace std::literals;
 
 namespace Ranges {
 
@@ -169,13 +171,14 @@ namespace Ranges {
 
     void View_DropWhile()
     {
-        const std::vector<int> numbers{ 0,1,2,3,4,5,6,7,8,9 };
+        const std::string text { "    Hello World" };
+        std::cout << std::quoted(text) << '\n';
 
-        auto is_even = [](int v) -> bool { return 0 == v % 2; };
-        auto print = [](int v) -> void { std::cout << v << ' '; };
+        auto conv = std::views::transform(
+                std::views::drop_while(text, ::isspace),::toupper);
 
-        //auto after_leading_event = std::ranges::drop_view(numbers, is_even);
-        //std::ranges::for_each(after_leading_event, print);
+        std::string temp(conv.begin(), conv.end());
+        std::cout << std::quoted(temp) << '\n';
     }
 
 
@@ -185,6 +188,37 @@ namespace Ranges {
         for (char c : std::ranges::join_view{ numbers }) {
         }
         */
+    }
+
+    void Repeat()
+    {
+        // bounded overload
+        for (auto s: std::views::repeat("C++"sv, 3))
+            std::cout << s << ' ';
+        std::cout << '\n';
+
+        // unbounded overload
+        for (auto s : std::views::repeat("Hello"sv) | std::views::take(3))
+            std::cout << s << ' ';
+        std::cout << "...\n";
+    }
+
+    void Zip()
+    {
+        std::vector<int> nums { 1,2,3,4,5 };
+        std::vector<std::string> nums1 { "onw", "two", "three", "four", "five" };
+        std::vector<char> nums2 {'A', 'B', 'C', 'D', 'E', 'F'};
+
+
+        for (std::tuple<int&, std::string&, char&> elem : std::views::zip(nums, nums1, nums2))
+        {
+            std::cout << std::get<0>(elem) << ' '
+                      << std::get<1>(elem) << ' '
+                      << std::get<2>(elem) << '\n';
+
+            std::get<char&>(elem) += ('a' - 'A'); // modifies the element of z
+        }
+
     }
 
     //---------------------------------------------------------------------------//
@@ -589,11 +623,33 @@ namespace Ranges::Algorithms
         std::cout << std::endl;
     }
 
-    void Reverse() {
+    void Reverse()
+    {
         const std::vector<int> numbers{ 0,1,2,3,4,5,6,7,8,9 };
         std::ranges::for_each(std::ranges::reverse_view(numbers), [](auto v) {
             std::cout << v << ' ';
         });
+        std::cout << std::endl;
+    }
+
+    void Reverse_Views()
+    {
+        const std::vector<int> numbers{ 0,1,2,3,4,5,6,7,8,9 };
+
+        auto reversed = numbers | std::views::reverse;
+        for (int i : reversed)
+            std::cout << i << " ";
+        std::cout << std::endl;
+
+        // same as:
+        for (int i : numbers | std::views::reverse)
+            std::cout << i << " ";
+        std::cout << std::endl;
+
+        // same as:
+        std::ranges::reverse_view rv {numbers};
+        for (int i : rv)
+            std::cout << i << " ";
         std::cout << std::endl;
     }
 
@@ -623,20 +679,26 @@ void Ranges::TestAll()
     // End();
     // Data();
 
+    // Repeat();
+
+    Zip();
+
     // Filter_View();
     // Filter_View_Vector();
 
-    // View_DropWhile(); // Not working
+    // View_DropWhile();
     // Join_View();
 
     // Algorithms::For_Each();
     // Algorithms::Find_IF();
-    Algorithms::Find_byName();
+    // Algorithms::Find_byName();
     // Algorithms::Sort();
     // Algorithms::Sort_ByID();
     // Algorithms::Unique();
     // Algorithms::Sort_BackWards();
+
     // Algorithms::Reverse();
+    // Algorithms::Reverse_Views();
     // Algorithms::Reverse_Span_Part();
 
     // Filters::Filter_Numbers();

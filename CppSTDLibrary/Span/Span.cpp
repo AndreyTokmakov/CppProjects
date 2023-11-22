@@ -154,7 +154,8 @@ namespace Span {
 
     }
 
-    void Subspan() {
+    void Subspan()
+    {
         constexpr int data[]{ 1, 2, 3, 4, 5, 6 };
         std::span<const int> data_span(data);
 
@@ -235,9 +236,9 @@ namespace Span {
 void Span::TestAll()
 {
     // Subspan_Test();
-    // Subspan();
+    Subspan();
 
-    Create();
+    // Create();
     // Create_Not();
 
     // Front();

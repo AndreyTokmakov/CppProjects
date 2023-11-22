@@ -683,6 +683,7 @@ namespace ReturnClass_MemberRef_CopyCTor
     }
 }
 
+
 int main([[maybe_unused]] int argc,
          [[maybe_unused]] char** argv)
 {
@@ -700,7 +701,7 @@ int main([[maybe_unused]] int argc,
     // ReturnClass_MemberRef_CopyCTor::tests();
 
 
-    Algorithms::TestAll();
+    // Algorithms::TestAll();
     // AutoTests::TestAll();
     // Cpp23_Features::TestAll();
     // Concepts::TestAll();
