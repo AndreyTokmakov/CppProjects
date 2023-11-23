@@ -264,9 +264,9 @@ int main(int argc, char** argv)
     // Optional::TestAll();
     // PolymorphicMemoryResources::TestAll();
     // Random::TestAll();
-    Ranges::TestAll();
+    // Ranges::TestAll();
     // ReferenceWrapper::TestAll();
-    // StarshipOperator::TestAll();
+    StarshipOperator::TestAll();
     // Streams::TestAll();
     // String::TestAll();
     // StringStream::TestAll();

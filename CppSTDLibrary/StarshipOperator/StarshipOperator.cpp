@@ -50,7 +50,7 @@ namespace StarshipOperator
 {
     struct Custom
     {
-        int v;   // Default operator==, also provides operator!=
+        int v {0};   // Default operator==, also provides operator!=
 
         friend bool operator==(const Custom&, const Custom&) = default;
         // Same as: bool operator==(const Custom&) const = default;
@@ -58,11 +58,11 @@ namespace StarshipOperator
 
     struct Point
     {
-        int x;
-        int y;
+        int x {0};
+        int y {0};
 
         // Default three-way comparison, also defaults operator== if none is declared:
-        friend auto operator<=>(const Point&, const Point&) = default;
+        friend constexpr std::strong_ordering operator<=>(const Point&, const Point&) = default;
 
         // Same as: auto operator <=>(const Point&) const = default;
     };
@@ -70,9 +70,13 @@ namespace StarshipOperator
     void CompareCustomTypes()
     {
         Point a{3,2}, b{1,3};
+
+        static_assert(std::equality_comparable<Point>);
         std::cout << std::boolalpha << (a > b) << "\n";
 
         Custom c{4}, d{5};
+
+        static_assert(std::equality_comparable<Custom>);
         std::cout << std::boolalpha << (c != d) << "\n";
     }
 }
@@ -118,9 +122,9 @@ void StarshipOperator::TestAll()
 {
     // OrderingTests();
 
-    // CompareCustomTypes();
+    CompareCustomTypes();
 
-    Inheritance::test();
+    // Inheritance::test();
 
 };
 

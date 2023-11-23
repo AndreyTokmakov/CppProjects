@@ -17,12 +17,34 @@ Description : C++ Optimisation and Performance Tuning experiments
 #include <algorithm>
 #include <numeric>
 
+struct point {
+    int x;
+    int y;
+};
+
+struct rectangle1 {
+    bool visible;
+    point p1;
+    point p2;
+};
+
+struct rectangle2 {
+    point p1;
+    point p2;
+    bool visible;
+};
+
 int main([[maybe_unused]] int argc,
          [[maybe_unused]] char** argv)
 {
     const std::vector<std::string_view> args(argv + 1, argv + argc);
 
     // FalseSharingExperiments::TestAll();
+
+
+    std::cout << sizeof(point) << std::endl;
+    std::cout << sizeof(rectangle1) << std::endl;
+    std::cout << sizeof(rectangle2) << std::endl;
 
 
     /*
