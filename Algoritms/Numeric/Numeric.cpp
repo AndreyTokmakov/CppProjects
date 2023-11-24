@@ -34,6 +34,7 @@
 #include <filesystem>
 #include <optional>
 #include <queue>
+#include <ranges>
 
 namespace Numeric {
 
@@ -3208,10 +3209,8 @@ namespace Numeric
     }
 }
 
-namespace Numeric::Boundaries
-{
-    size_t max_area(const std::vector<long>& height)
-    {
+namespace Numeric::Boundaries {
+    size_t max_area(const std::vector<long> &height) {
         size_t max = 0;
         for (size_t left = 0, right = height.size() - 1; left != right;) {
             max = std::max(max, std::min(height[left], height[right]) * (right - left));
@@ -3223,13 +3222,12 @@ namespace Numeric::Boundaries
         return max;
     }
 
-    long max_area_iter(const std::vector<long>& height)
-    {
+    long max_area_iter(const std::vector<long> &height) {
         std::vector<long>::const_iterator l = height.begin();
         std::vector<long>::const_iterator r = std::prev(height.end());
         long max = 0;
         while (l != r) {
-            max = std::max(max, std::min(*l,*r)*(r-l));
+            max = std::max(max, std::min(*l, *r) * (r - l));
             if (*l <= *r)
                 ++l;
             else
@@ -3252,17 +3250,67 @@ namespace Numeric::Boundaries
      * Therefore, to get the maximum, we can repeatedly apply this logic, keeping track of the maximum area as we go.
     **/
 
-    void Maximum_Area_Between_Boundaries()
-    {
-        for (const auto& [heights, area_expected]: std::vector<std::pair<std::vector<long>, long>> {
-                {{1,1}, 1}, {{1,9,1}, 2}, {{1,3,3,1},3}, {{1,3,1,3,1},6},
-                {{1,3,8,10,3,1},9}, {{1,3,8,8,3,1},9},
-                {{1,3,10,10,3,1},10}, {{1,2,5,3,2,12,1,3,7,8,2}, 35}
-        })
-        {
+    void Maximum_Area_Between_Boundaries() {
+        for (const auto &[heights, area_expected]: std::vector<std::pair<std::vector<long>, long>>{
+                {{1, 1},                               1},
+                {{1, 9, 1},                            2},
+                {{1, 3, 3,  1},                        3},
+                {{1, 3, 1,  3,  1},                    6},
+                {{1, 3, 8,  10, 3, 1},                 9},
+                {{1, 3, 8,  8,  3, 1},                 9},
+                {{1, 3, 10, 10, 3, 1},                 10},
+                {{1, 2, 5,  3,  2, 12, 1, 3, 7, 8, 2}, 35}
+        }) {
             std::cout << max_area(heights) << " " << max_area_iter(heights)
                       << ", Expected: " << area_expected << std::endl;
         }
+    }
+}
+
+namespace Numeric
+{
+    uint32_t find_rank(const std::vector<uint32_t>& papers)
+    {
+        std::map<uint32_t, uint32_t> tmp;
+        for (uint64_t v: papers)
+            ++tmp[v];
+
+        uint32_t result = 0, count = 0;
+        for (auto & [rank, ref_count] : std::ranges::reverse_view(tmp))
+        {
+            count += ref_count;
+            if (count >= rank)
+                result  = std::max(result, rank);
+        }
+
+        return result;
+    }
+
+    // Scientists are publishing papers, and these papers are getting cited in other papers.
+    // Find the rank of the scientist.
+    // Rank: largest R, such that at least R papers have >= R citations
+
+    // std::vector<uint32_t> papers {3, 4, 5, 11}; ->  3
+    // std::vector<uint32_t> papers {2, 4, 11};   ->  2
+
+    /**
+    Идея в том что бы структуры в виде вектора статей с количеством цитат (при ходит на вход)
+    создать структуру данных (map)
+    {
+        [количество цитат] <--> [количество таких статей в векторе]
+    }
+    А далее итерируясь в обратном порядке
+    подсчитывать значения в map-e --> считая колчество статей с данным и большым количеством цитат
+    (что соответствует значению в map-e)
+     */
+
+    void Rank()
+    {
+        std::vector<uint32_t> papers {3, 4, 5, 11};
+
+        uint32_t result = find_rank(papers);
+
+        std::cout << result << std::endl;
     }
 
 }
@@ -3375,7 +3423,9 @@ void Numeric::TEST_ALL()
     // Numeric::ReverseToMakeEqual();
     // Numeric::MaxSum_of_NonConsecutive_Elements_In_Array();
 
-    Boundaries::Maximum_Area_Between_Boundaries();
+    // Boundaries::Maximum_Area_Between_Boundaries();
+
+    Numeric::Rank();
 
     // Random::BiasedCoin();
 
