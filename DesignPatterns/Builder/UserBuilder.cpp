@@ -103,25 +103,25 @@ namespace Builder
             return this->user;
         }
     };
-
-
-    void Test_User()
-    {
-
-        User user0 = UserBuilder()
-                .setID(2065).setName("John").setLastName("Von Neumman")
-                .setEmail("nx098774a@sknmap.co").build();
-
-        User user1 = UserBuilder()
-                        .setID(1065).setName("Blaise")
-                        .setLastName("Pascal").setEmail("dummyEmail@service1.co.uk").build();
-
-        User user2 = UserBuilder()
-                        .setID(2001).setName("Nikola")
-                        .setLastName("Tesla").setEmail("wsx752@couk.com.sk").build();
-
-        user0.show();
-        user1.show();
-        user2.show();
-    }
 };
+
+void Test_User()
+{
+    using namespace Builder;
+
+    User user0 = UserBuilder()
+            .setID(2065).setName("John").setLastName("Von Neumman")
+            .setEmail("nx098774a@sknmap.co").build();
+
+    User user1 = UserBuilder()
+            .setID(1065).setName("Blaise")
+            .setLastName("Pascal").setEmail("dummyEmail@service1.co.uk").build();
+
+    User user2 = UserBuilder()
+            .setID(2001).setName("Nikola")
+            .setLastName("Tesla").setEmail("wsx752@couk.com.sk").build();
+
+    user0.show();
+    user1.show();
+    user2.show();
+}

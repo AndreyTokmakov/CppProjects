@@ -11,8 +11,7 @@
 
 #include <utility>
 
-namespace Builder
-{
+namespace Builder {
 
     /** "Product" */
     class Pizza {
@@ -24,13 +23,15 @@ namespace Builder
 
     public:
         virtual void setDough(std::string dough) noexcept;
+
         virtual void setSauce(std::string sauce) noexcept;
+
         virtual void setTopping(std::string topping) noexcept;
 
         virtual void setName(std::string name) noexcept;
 
         [[nodiscard]]
-		virtual std::string getName() const noexcept;
+        virtual std::string getName() const noexcept;
     };
 
 
@@ -41,21 +42,28 @@ namespace Builder
 
     public:
         std::unique_ptr<Pizza> getPizza() noexcept;
+
         virtual void createNewPizzaProduct();
 
         virtual void setName() = 0;
+
         virtual void buildDough() = 0;
+
         virtual void buildSauce() = 0;
+
         virtual void buildTopping() = 0;
     };
 
 
     /** "HawaiianPizzaBuilder" */
-    class HawaiianPizzaBuilder: public PizzaBuilder {
+    class HawaiianPizzaBuilder : public PizzaBuilder {
     public:
         void setName() override;
+
         void buildDough() override;
+
         void buildSauce() override;
+
         void buildTopping() override;
     };
 
@@ -63,8 +71,11 @@ namespace Builder
     class SpicyPizzaBuilder : public PizzaBuilder {
     public:
         virtual void setName() override;
+
         virtual void buildDough() override;
+
         virtual void buildSauce() override;
+
         virtual void buildTopping() override;
     };
 
@@ -75,6 +86,7 @@ namespace Builder
 
     public:
         void setPizzaBuilder(std::shared_ptr<PizzaBuilder> pizzaBuilder) noexcept;
+
         std::unique_ptr<Pizza> getPizza() noexcept;
 
     public:
@@ -82,93 +94,97 @@ namespace Builder
     };
 
 
+    void Pizza::setName(std::string name) noexcept {
+        this->name = std::move(name);
+    }
 
-	void Pizza::setName(std::string name) noexcept {
-		this->name = std::move(name);
-	}
+    void Pizza::setDough(std::string dough) noexcept {
+        this->dough = std::move(dough);
+    }
 
-	void Pizza::setDough(std::string dough) noexcept {
-		this->dough = std::move(dough);
-	}
+    void Pizza::setSauce(std::string sauce) noexcept {
+        this->sauce = std::move(sauce);
+    }
 
-	void Pizza::setSauce(std::string sauce) noexcept {
-		this->sauce = std::move(sauce);
-	}
+    void Pizza::setTopping(std::string topping) noexcept {
+        this->topping = std::move(topping);
+    }
 
-	void Pizza::setTopping(std::string topping) noexcept {
-		this->topping = std::move(topping);
-	}
-
-	std::string Pizza::getName() const noexcept {
-		return this->name;
-	}
-
-
-	std::unique_ptr<Pizza> PizzaBuilder::getPizza() noexcept {
-		return std::move(this->pizza);
-	}
-
-	void PizzaBuilder::createNewPizzaProduct() {
-		this->pizza = std::make_unique<Pizza>();
-	}
+    std::string Pizza::getName() const noexcept {
+        return this->name;
+    }
 
 
+    std::unique_ptr<Pizza> PizzaBuilder::getPizza() noexcept {
+        return std::move(this->pizza);
+    }
 
-	void HawaiianPizzaBuilder::setName() {
-		this->pizza->setName("HawaiianPizzaBuilder");
-	}
-
-	void HawaiianPizzaBuilder::buildDough() {
-		this->pizza->setDough("cross");
-	}
-
-	void HawaiianPizzaBuilder::buildSauce() {
-		this->pizza->setSauce("mild");
-	}
-
-	void HawaiianPizzaBuilder::buildTopping() {
-		this->pizza->setTopping("ham + pineapple");
-	}
+    void PizzaBuilder::createNewPizzaProduct() {
+        this->pizza = std::make_unique<Pizza>();
+    }
 
 
+    void HawaiianPizzaBuilder::setName() {
+        this->pizza->setName("HawaiianPizzaBuilder");
+    }
+
+    void HawaiianPizzaBuilder::buildDough() {
+        this->pizza->setDough("cross");
+    }
+
+    void HawaiianPizzaBuilder::buildSauce() {
+        this->pizza->setSauce("mild");
+    }
+
+    void HawaiianPizzaBuilder::buildTopping() {
+        this->pizza->setTopping("ham + pineapple");
+    }
 
 
-	void SpicyPizzaBuilder::setName() {
-		this->pizza->setName("SpicyPizzaBuilder");
-	}
+    void SpicyPizzaBuilder::setName() {
+        this->pizza->setName("SpicyPizzaBuilder");
+    }
 
-	void SpicyPizzaBuilder::buildDough() {
-		this->pizza->setDough("pan baked");
-	}
+    void SpicyPizzaBuilder::buildDough() {
+        this->pizza->setDough("pan baked");
+    }
 
-	void SpicyPizzaBuilder::buildSauce() {
-		this->pizza->setSauce("hot");
-	}
+    void SpicyPizzaBuilder::buildSauce() {
+        this->pizza->setSauce("hot");
+    }
 
-	void SpicyPizzaBuilder::buildTopping() {
-		this->pizza->setTopping("pepperoni + salami");
-	}
+    void SpicyPizzaBuilder::buildTopping() {
+        this->pizza->setTopping("pepperoni + salami");
+    }
 
 
+    void Waiter::setPizzaBuilder(std::shared_ptr<PizzaBuilder> pizzaBuilder) noexcept {
+        this->pizzaBuilder = std::move(pizzaBuilder);
+    }
 
-	void Waiter::setPizzaBuilder(std::shared_ptr<PizzaBuilder> pizzaBuilder) noexcept {
-		this->pizzaBuilder = std::move(pizzaBuilder);
-	}
+    std::unique_ptr<Pizza> Waiter::getPizza() noexcept {
+        return this->pizzaBuilder->getPizza();
+    }
 
-	std::unique_ptr<Pizza> Waiter::getPizza() noexcept {
-		return this->pizzaBuilder->getPizza();
-	}
+    void Waiter::constructPizza() noexcept {
+        pizzaBuilder->createNewPizzaProduct();
+        pizzaBuilder->setName();
+        pizzaBuilder->buildDough();
+        pizzaBuilder->buildSauce();
+        pizzaBuilder->buildTopping();
+    }
+}
 
-	void Waiter::constructPizza() noexcept {
-		pizzaBuilder->createNewPizzaProduct();
-		pizzaBuilder->setName();
-		pizzaBuilder->buildDough();
-		pizzaBuilder->buildSauce();
-		pizzaBuilder->buildTopping();
-	}
+void Test_User();
+void Test_HTML();
 
-	void Test()
+
+namespace Builder
+{
+	void TestAll()
 	{
+
+        /*
 		Waiter* waiter = new Waiter();
 		{
 			waiter->setPizzaBuilder(std::make_shared<HawaiianPizzaBuilder>());
@@ -185,5 +201,10 @@ namespace Builder
 			std::unique_ptr<Pizza> pizza = waiter->getPizza();
 			std::cout << "Pizza: " << pizza->getName() << std::endl;
 		}
+         */
+
+        // Test_User();
+
+        Test_HTML();
 	}
 };

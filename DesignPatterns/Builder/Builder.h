@@ -16,9 +16,7 @@
 
 namespace Builder {
 
-	void Test();
-	void Test_HTML();
-	void Test_User();
+	void TestAll();
 };
 
 

@@ -64,15 +64,16 @@ namespace Builder {
             return root.toString();
         }
     };
-
-    void Test_HTML()
-    {
-        {
-            HtmlBuilder builder{"ul"};
-            builder.addChild("li", "hello").addChild("li", "world");
-
-            std::cout << builder.toString() << std::endl;
-        }
-
-    }
 };
+
+void Test_HTML()
+{
+    using namespace Builder;
+
+    {
+        HtmlBuilder builder{"ul"};
+        builder.addChild("li", "hello").addChild("li", "world");
+
+        std::cout << builder.toString() << std::endl;
+    }
+}

@@ -56,7 +56,7 @@ int main([[maybe_unused]]  int argc,
 {
     /** Creation patterns **/
     // AbstractFactory::Test();
-    // Builder::Test();
+    Builder::TestAll();
     // Builder::Test_HTML();
     // Builder::Test_User();
     // FabricMethod::TestAll();
@@ -90,7 +90,7 @@ int main([[maybe_unused]]  int argc,
     // Interpreter::Test();
     // Mediator::TestAll();
     // Memento::TestAll();
-    Observer::TestAll();
+    // Observer::TestAll();
     // State::TestAll();
     // TemplateMethod::TestAll();
     // Visitor::test();

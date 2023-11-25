@@ -2,9 +2,8 @@
 
 namespace AbstractFactory
 {
-
-    class IProduct {
-    public:
+    struct IProduct
+    {
         [[nodiscard]]
         virtual std::string getName() const noexcept = 0;
 
@@ -27,10 +26,8 @@ namespace AbstractFactory
         std::string getName() const noexcept override = 0;
     };
 
-
-
-    class IAbstractFactory {
-    public:
+    struct IAbstractFactory
+    {
         [[nodiscard]]
         virtual std::shared_ptr<IAbstractProductA> createProductA() = 0;
 
@@ -39,8 +36,6 @@ namespace AbstractFactory
 
         virtual ~IAbstractFactory() = default;
     };
-
-
 
     class ProductA1 : public IAbstractProductA {
     public:
