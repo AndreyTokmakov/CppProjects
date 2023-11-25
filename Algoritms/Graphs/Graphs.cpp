@@ -505,7 +505,7 @@ namespace Graphs::Find_All_Paths_Ex
 
 
         void FindPaths1(ValueType v,
-                        ValueType node_to_find)
+                        [[maybe_unused]] ValueType node_to_find)
         {
             visited[v] = true;
             path.push_back(v);

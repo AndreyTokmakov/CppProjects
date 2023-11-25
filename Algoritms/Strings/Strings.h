@@ -11,7 +11,7 @@
 #define STRINGS_TESTS_INCLUDE_GUARD__H
 
 namespace Strings {
-	void TEST_ALL();
+	void TestAll();
 };
 
 #endif // !STRINGS_TESTS_INCLUDE_GUARD__H

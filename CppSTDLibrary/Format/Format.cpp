@@ -152,7 +152,38 @@ namespace Format::Date_and_Time
         const std::chrono::time_point now = std::chrono::system_clock::now();
         std::cout << std::format("{:%d-%m-%Y %H:%M:%OS}", now) << '\n';
     }
+}
 
+namespace CustomFormatters
+{
+    /*
+
+    struct Index {
+        unsigned int id_{ 0 };
+    };
+
+    template <>
+    struct std::formatter<Index> : std::formatter<int> {
+        auto format(const Index& id, std::format_context& ctx) const {
+            return std::formatter<int>::format(id.id_, ctx);
+        }
+    };
+
+    template <>
+    struct std::formatter<Index> {
+        // for debugging only
+        formatter() { std::cout << "formatter<Index>()\n"; }
+
+        constexpr auto parse(std::format_parse_context& ctx) {
+            return ctx.begin();
+        }
+
+        auto format(const Index& id, std::format_context& ctx) const {
+            return std::format_to(ctx.out(), "{}", id.id_);
+        }
+    };
+
+    */
 }
 
 void Format::TestAll()
