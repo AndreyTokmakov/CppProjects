@@ -59,7 +59,8 @@ namespace Strings {
 
 	//--------------------------------------------------------------------------------------//
 
-	size_t __palindrom_length(const std::string& str, size_t start, size_t end) {
+	size_t __palindrom_length(const std::string& str, size_t start, size_t end)
+    {
 		size_t length = 0;
 		while (start >= 0 && end < str.size()) {
 			if (str[start] == str[end]) {
@@ -1050,7 +1051,7 @@ namespace Strings {
         for (char c: txt)
             chars[static_cast<uint8_t>(c)] = true;
 
-        for (int i = str.size() - 1; i >= 0; --i) {
+        for (size_t i = str.size() - 1; i >= 0; --i) {
             if (chars[str[i]])
                 return i;
         }
@@ -1097,10 +1098,13 @@ namespace Strings {
 
 	//--------------------------------------------------------------------------------------//
 
-	int find_longestsubstring_with_k_distinctcharacters(const std::string& str, size_t K) {
+	int find_longestsubstring_with_k_distinctcharacters(const std::string& str, size_t K)
+    {
 		int chars[256] = { 0 };
 
-		int max_len = 0;
+        [[maybe_unused]]
+        int max_len = 0;
+
 		for (size_t i = 0; i < str.size(); i++) {
 			int distink_left = K, n = i;
 			memset(chars, 0, sizeof(chars));
@@ -1794,7 +1798,7 @@ namespace Strings
     }
 }
 
-void Strings::TEST_ALL()
+void Strings::TestAll()
 {
 	// Strings::LongestConsecutiveCharacters();
 	// Strings::MaxSubstringLength_Of_K_max_Unique_Elements();
@@ -1831,8 +1835,8 @@ void Strings::TEST_ALL()
 	// Strings::Find_First_Char_Occured_Once();
 	// Strings::Find_First_K_Chars_Occured_Once();
 
-    Strings::LongestSubstringWithoutRepeatingCharacters();
-    Strings::LongestSubstringWithoutRepeatingCharacters2();
+    // Strings::LongestSubstringWithoutRepeatingCharacters();
+    // Strings::LongestSubstringWithoutRepeatingCharacters2();
 	// Strings::Find_LongestSubstring_With_K_DistinctCharacters();
 
 	// Strings::Palindrome_Test();
