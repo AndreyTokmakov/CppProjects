@@ -56,12 +56,10 @@ int main([[maybe_unused]]  int argc,
 {
     /** Creation patterns **/
     // AbstractFactory::Test();
-    Builder::TestAll();
-    // Builder::Test_HTML();
-    // Builder::Test_User();
+    // Builder::TestAll();
     // FabricMethod::TestAll();
     // Prototype::Test();
-    // Singleton::TEST_ALL();;
+    Singleton::TEST_ALL();;
     // Monostate::TestAll();;
     // ObjectPools::SimpleTest();
     // ObjectPools::ExtentedTest();

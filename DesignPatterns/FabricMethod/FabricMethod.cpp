@@ -2,36 +2,28 @@
 
 namespace FabricMethod {
 
-    class IProduct {
-    public:
-        IProduct() = default;
+    struct IProduct
+    {
         virtual ~IProduct() = default;
-
         virtual std::string getName() = 0;
     };
 
-
-    class ICreator {
-    public:
+    struct ICreator
+    {
         virtual std::unique_ptr<IProduct> factoryMethod() = 0;
     };
 
 
-    class ProductA : public IProduct {
-    public:
-        ProductA() = default;
-
-        std::string getName() final {
+    struct ProductA : public IProduct
+    {
+        std::string getName() override {
             return "ProductA";
         }
     };
 
-
-    class ProductB : public IProduct {
-    public:
-        ProductB() = default;
-
-        std::string getName() final {
+    struct ProductB : public IProduct
+    {
+        std::string getName() override {
             return "ProductB";
         }
     };
@@ -69,7 +61,7 @@ namespace FabricMethod {
 
     void TestAll()
     {
-        // Test1();
-        Test2();
+        Test1();
+        // Test2();
     }
 }

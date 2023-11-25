@@ -15,7 +15,8 @@
 #include <unordered_map>
 #include <utility>
 
-namespace Prototype {
+namespace Prototype
+{
 
 	enum class Type {
 		PROTOTYPE_1 = 0,
