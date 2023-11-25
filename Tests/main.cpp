@@ -705,7 +705,7 @@ int main([[maybe_unused]] int argc,
     // Algorithms::TestAll();
     // AutoTests::TestAll();
     // Cpp23_Features::TestAll();
-    // Concepts::TestAll();
+    Concepts::TestAll();
     // Comparators::TestAll();
     // Coroutines::TestAll();
     // Heap::TestAll();

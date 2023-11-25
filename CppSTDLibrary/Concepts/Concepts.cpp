@@ -2456,6 +2456,37 @@ namespace Concepts::CheckAllTypesAreSame
     }
 }
 
+
+namespace Concepts::CheckTypes
+{
+    template<typename T, typename ... Types>
+    concept SameAsAnyOf = (... or std::same_as<T, Types>);
+
+    template<typename ... Ts>
+    struct Keeper
+    {
+        constexpr explicit Keeper(SameAsAnyOf<Ts ...  > auto obj) {
+        }
+
+        constexpr void setValue(SameAsAnyOf<Ts ...  > auto obj) {
+        }
+    };
+
+    struct A {};
+    struct B {};
+    struct C {};
+
+    void CheckThatTypeSameAs()
+    {
+        Keeper<int, double> keeper(1);
+        Keeper<int, std::string> keeper1(std::string {"text"});
+
+        Keeper<A, B> keeper3 { A{}};
+
+        // Keeper<A, B> keeper4 { C{}};  // Shall not compile
+    }
+}
+
 void Concepts::TestAll()
 {
     // MovableTest();
@@ -2535,11 +2566,10 @@ void Concepts::TestAll()
     // ValidatTypeContains_Members_or_Types::Valid_Template_Substitution();
 
     // CheckFunctionOverloadExists::TryCallFunction();
-    CheckCallHaveFunction_IfConstexpr::If_Constexpr_Concepts();
+    // CheckCallHaveFunction_IfConstexpr::If_Constexpr_Concepts();
 
     // Regular::IsSemirRegular();
     // Regular::IsRegular();
-
 
     // Containers::Test();
 
@@ -2548,11 +2578,11 @@ void Concepts::TestAll()
     // FoldExpression::Test_All_Params_are_SameType();
     // FoldExpression::Elements_Shall_be_Comparable();
 
-
     CheckAllTypesAreSame::Check_with_Concepts();
     CheckAllTypesAreSame::Check_with_StaticAssert();
     CheckAllTypesAreSame::Check_ALL_Integral();
 
+    CheckTypes::CheckThatTypeSameAs();
 
     // IntegerConcepts::IntegerSum();
 
@@ -2560,7 +2590,6 @@ void Concepts::TestAll()
 
     // Noexcept::Tests();
     // Noexcept::ChecK_Assignment_Cant_Throw();
-
 
     // ClassMethods::DisableClassMethods();
 

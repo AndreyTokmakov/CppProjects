@@ -52,7 +52,39 @@ namespace Concepts
     }
 }
 
+namespace Concepts::FoldExpression
+{
+    template<typename T, typename ... Types>
+    concept SameAsAnyOf = (... or std::same_as<T, Types>);
+
+    template<typename ... Ts>
+    struct Keeper
+    {
+        constexpr explicit Keeper(SameAsAnyOf<Ts ...  > auto obj) {
+        }
+
+        constexpr void setValue(SameAsAnyOf<Ts ...  > auto obj) {
+        }
+    };
+
+    struct A {};
+    struct B {};
+    struct C {};
+
+    void CheckThatTypeSameAs()
+    {
+        Keeper<int, double> keeper(1);
+        Keeper<int, std::string> keeper1(std::string {"text"});
+
+        Keeper<A, B> keeper3 { A{}};
+
+        // Keeper<A, B> keeper4 { C{}};  // Shall not compile
+    }
+}
+
 void Concepts::TestAll()
 {
-    If_Constexpr_Concepts();
+    // If_Constexpr_Concepts();
+
+    FoldExpression::CheckThatTypeSameAs();
 }
