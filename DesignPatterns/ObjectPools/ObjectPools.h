@@ -10,9 +10,9 @@ Description : Object pools pattern src
 #ifndef OBJECT_POOLS_PATTERN_TESTS__H_
 #define OBJECT_POOLS_PATTERN_TESTS__H_
 
-namespace ObjectPools {
-    void SimpleTest();
-    void ExtentedTest();
+namespace ObjectPools
+{
+    void TestAll();
 };
 
 #endif // !OBJECT_POOLS_PATTERN_TESTS__H_

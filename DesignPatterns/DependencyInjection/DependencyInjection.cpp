@@ -32,10 +32,10 @@ namespace DependencyInjection
     };
 
 
-    struct MyClass
+    struct Client
     {
         // Inject dependency
-        explicit MyClass(std::unique_ptr<IService> service) :
+        explicit Client(std::unique_ptr<IService> service) :
                 service { std::move(service) } {
         }
 
@@ -51,10 +51,10 @@ namespace DependencyInjection
 void DependencyInjection::TestAll()
 {
     // In production code:
-    MyClass m(std::make_unique<ProductionService>());
+    Client m(std::make_unique<ProductionService>());
     m.operate();
 
     // In test code:
-    MyClass n(std::make_unique<FakeService>());
+    Client n(std::make_unique<FakeService>());
     n.operate();
 };

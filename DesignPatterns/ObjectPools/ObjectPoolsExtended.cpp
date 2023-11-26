@@ -28,7 +28,7 @@
 #include <memory_resource>
 #include <cmath>
 
-namespace ObjectPools {
+namespace ObjectPoolsExtended {
 
     template<size_t N>
     class Object  {
@@ -52,10 +52,6 @@ namespace ObjectPools {
     using TypeLarge  = Object<1024 * 64>;
 
 
-
-
-
-
     template <typename Ty, typename Allocator = std::allocator<Ty>>
     class ObjectPool final
     {
@@ -73,22 +69,23 @@ namespace ObjectPools {
 
         static constexpr size_type DEFAULT_CHUNK_SIZE{ 5 };
 
-        size_type _new_block_size { DEFAULT_CHUNK_SIZE };
-        size_type _size {0};
-        size_type _capacity{ 0 };
+        size_type newBlockSize { DEFAULT_CHUNK_SIZE };
+        size_type size {0};
+        size_type capacity{ 0 };
 
-        void addChunk() {
+        void addChunk()
+        {
             // Allocate a new chunk of uninitialized memory
-            pointer newBlock { m_allocator.allocate(_new_block_size) };
+            pointer newBlock { m_allocator.allocate(newBlockSize) };
 
             // Keep all allocated blocks in 'pool' to delete them later:
             pool.push_back(newBlock);
 
-            available.resize(_new_block_size);
+            available.resize(newBlockSize);
             std::iota(std::begin(available), std::end(available), newBlock);
 
-            _capacity += _new_block_size;
-            _new_block_size *= 2; // TODO: 2 --> const
+            capacity += newBlockSize;
+            newBlockSize *= 2; // TODO: 2 --> const
         }
 
         // The allocator to use for allocating and deallocating chunks.
@@ -103,7 +100,7 @@ namespace ObjectPools {
                 std::destroy_at(object);
                 // Return object mem pointer back to pool
                 pool->available.push_back(object);
-                --pool->_size;
+                --pool->size;
             }
         };
 
@@ -155,57 +152,61 @@ namespace ObjectPools {
 
             // Remove the object from the list of free objects.
             available.pop_back();
-            ++_size;
+            ++size;
 
             // Wrap the initialized object and return it.
             return std::unique_ptr<object_type, Deleter> { objectPtr, Deleter{this}};
         }
 
-        size_type size() const noexcept {
-            return _size;
+        [[nodiscard]]
+        size_type Size() const noexcept {
+            return size;
         }
 
-        size_type capacity() const noexcept {
-            return _capacity;
+        [[nodiscard]]
+        size_type Capacity() const noexcept {
+            return capacity;
         }
     };
 }
 
-void ObjectPools::ExtentedTest()
+void Extended_Test()
 {
+    using namespace ObjectPoolsExtended;
+
     using TestType = TypeLarge;
     // using TestType = TestTypes::TypeMedium;
     ObjectPool<TestType> pool{};
 
     std::cout << "Pool address = " << &pool << std::endl;
-    std::cout << "Capacity = " << pool.capacity() << std::endl;
+    std::cout << "Capacity = " << pool.Capacity() << std::endl;
 
     auto object1{ pool.acquireObject() };
     auto object2{ pool.acquireObject() };
     auto object3{ pool.acquireObject() };
 
-    std::cout << "Capacity = " << pool.capacity() << ". Size = " << pool.size() << std::endl;
+    std::cout << "Capacity = " << pool.Capacity() << ". Size = " << pool.Size() << std::endl;
 
     auto object4{ pool.acquireObject() };
     auto object5{ pool.acquireObject() };
     auto object6{ pool.acquireObject() };
 
-    std::cout << "Capacity = " << pool.capacity() << ". Size = " << pool.size() << std::endl;
+    std::cout << "Capacity = " << pool.Capacity() << ". Size = " << pool.Size() << std::endl;
 
     auto object7{ pool.acquireObject() };
     auto object8{ pool.acquireObject() };
     auto object9{ pool.acquireObject() };
 
-    std::cout << "Capacity = " << pool.capacity() << ". Size = " << pool.size() << std::endl;
+    std::cout << "Capacity = " << pool.Capacity() << ". Size = " << pool.Size() << std::endl;
 
     {
         auto obj1 { pool.acquireObject() };
         auto obj2 { pool.acquireObject() };
         auto obj3 { pool.acquireObject() };
-        std::cout << "Capacity = " << pool.capacity() << ". Size = " << pool.size() << std::endl;
+        std::cout << "Capacity = " << pool.Capacity() << ". Size = " << pool.Size() << std::endl;
     }
 
-    std::cout << "Capacity = " << pool.capacity() << ". Size = " << pool.size() << std::endl;
+    std::cout << "Capacity = " << pool.Capacity() << ". Size = " << pool.Size() << std::endl;
 
     std::cout << typeid(object3).name() << std::endl;
 }

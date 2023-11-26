@@ -27,7 +27,7 @@ add_executable(DesignPatterns
     Mediator/Mediator.cpp Mediator/Mediator.h
     Memento/Memento.cpp Memento/Memento.h
     Named_Parameter_Idiom/NamedParameter.cpp Named_Parameter_Idiom/NamedParameter.h
-	ObjectPools/ObjectPoolsSimple.cpp  ObjectPools/ObjectPoolsExtended.cpp ObjectPools/ObjectPools.h
+        ObjectPools/ObjectPool.cpp ObjectPools/ObjectPoolsExtended.cpp ObjectPools/ObjectPools.h
     Observer/Observer.cpp Observer/Observer.h
     Prototype/Prototype.cpp Prototype/Prototype.h
 	Proxy/Document.cpp Proxy/CarProxy.cpp Proxy/Proxy.h

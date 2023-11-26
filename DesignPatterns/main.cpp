@@ -55,15 +55,14 @@ int main([[maybe_unused]]  int argc,
          [[maybe_unused]]  char** argv)
 {
     /** Creation patterns **/
-    AbstractFactory::TestAll();
+    // AbstractFactory::TestAll();
     // Builder::TestAll();
     // FabricMethod::TestAll();
     // Prototype::TestAll();
     // Singleton::TEST_ALL();;
     // Monostate::TestAll();;
-    // ObjectPools::SimpleTest();
-    // ObjectPools::ExtentedTest();
-    // DependencyInjection::TestAll();
+    // ObjectPools::TestAll();
+    DependencyInjection::TestAll();
     // LazyInitialization::TestAll();
 
     /** Structural patterns: **/
