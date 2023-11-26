@@ -23,7 +23,8 @@ namespace Prototype
 		PROTOTYPE_2
 	};
 
-	struct PrototypeTypeHasher {
+	struct PrototypeTypeHasher
+    {
 		std::size_t operator()(Type type) const noexcept {
 			return std::hash<int>{} ( static_cast<int>(type));
 		}
@@ -31,13 +32,12 @@ namespace Prototype
 
 	class Prototype {
 	protected:
-		std::string prototype_name_;
+		std::string name;
 
 	public:
 		Prototype() = default;
 
-		explicit Prototype(std::string prototype_name):
-                prototype_name_(std::move(prototype_name)) {
+		explicit Prototype(std::string name): name { std::move(name) } {
 		}
 
 		virtual ~Prototype() = default;
@@ -59,18 +59,18 @@ namespace Prototype
 
 	class ConcretePrototype1 : public Prototype {
 	public:
-		explicit ConcretePrototype1(std::string prototype_name):
-                Prototype(std::move(prototype_name)) {
-			std::cout << "Creating ConcretePrototype1(" << prototype_name_ << ")" << std::endl;
+		explicit ConcretePrototype1(std::string name):
+                Prototype { std::move(name) } {
+			std::cout << "Creating ConcretePrototype1(" << this->name << ")" << std::endl;
 		}
 
 		[[nodiscard]]
         std::unique_ptr<Prototype> Clone() const noexcept override {
-			return std::make_unique<ConcretePrototype1>(this->prototype_name_);
+			return std::make_unique<ConcretePrototype1>(this->name);
 		}
 
 		void Info() const noexcept override {
-			std::cout << "ConcretePrototype1::Info(): " << prototype_name_ << "\n";
+			std::cout << "ConcretePrototype1::Info(): " << name << "\n";
 		}
 	};
 
@@ -79,18 +79,18 @@ namespace Prototype
 		int concrete_prototype_field { 0 };
 
 	public:
-		explicit ConcretePrototype2(std::string prototype_name)
-			: Prototype(std::move(prototype_name)) {
-			std::cout << "Creating ConcretePrototype2(" << prototype_name_ << ")" << std::endl;
+		explicit ConcretePrototype2(std::string name)
+			: Prototype { std::move(name) } {
+			std::cout << "Creating ConcretePrototype2(" << this->name << ")" << std::endl;
 		}
 
 		[[nodiscard]]
         std::unique_ptr<Prototype> Clone() const noexcept override {
-			return std::make_unique<ConcretePrototype2>(this->prototype_name_);
+			return std::make_unique<ConcretePrototype2>(this->name);
 		}
 
 		void Info() const noexcept override {
-			std::cout << "ConcretePrototype2::Info(): " << prototype_name_ << "\n";
+			std::cout << "ConcretePrototype2::Info(): " << name << "\n";
 		}
 	};
 
@@ -141,9 +141,9 @@ namespace Prototype
 		std::unique_ptr<PrototypeFactory> prototype_factory = std::make_unique<PrototypeFactory>();
 		Client(prototype_factory.get());
 	}
-};
+}
 
-void Prototype::Test() {
-
+void Prototype::TestAll()
+{
 	Test1();
 }

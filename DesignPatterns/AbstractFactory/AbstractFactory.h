@@ -15,8 +15,7 @@
 #include <memory>
 
 namespace AbstractFactory {
-
-	void Test();
+	void TestAll();
 };
 
 #endif // !ABSTRACT_FACTORY_PATTERN_TESTS__H_

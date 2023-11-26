@@ -138,13 +138,21 @@ namespace AbstractFactory
 		this->productB->interact(this->productA);
 	}
 
-	void Test()
-	{
-		std::shared_ptr<Client> client1 = std::make_shared<Client>(std::make_shared<ConcreteFactory1>());
-		client1->execute();
-	
-		std::shared_ptr<Client> client2 = std::make_shared<Client>(std::make_shared<ConcreteFactory2>());
-		client2->execute();
-	}
+    void Basic_Test()
+    {
+        std::shared_ptr<Client> client1 = std::make_shared<Client>(std::make_shared<ConcreteFactory1>());
+        client1->execute();
 
+        std::shared_ptr<Client> client2 = std::make_shared<Client>(std::make_shared<ConcreteFactory2>());
+        client2->execute();
+    }
+}
+
+void ShapeFactory_Test();
+
+void AbstractFactory::TestAll()
+{
+    // AbstractFactory::Basic_Test();
+
+    ShapeFactory_Test();
 }

@@ -10,7 +10,7 @@ add_compile_options(-c -Wall -Wextra -O3 -std=c++2a)
 # include all components
 add_executable(DesignPatterns
     main.cpp
-    AbstractFactory/AbstractFactory.cpp AbstractFactory/AbstractFactory.h
+    AbstractFactory/AbstractFactory.cpp AbstractFactory/AbstractFactory.h AbstractFactory/ShapeFactory.cpp
     Adapter/Adapter.cpp Adapter/Adapter.h Adapter/USBAdapter.cpp
     Bridge/Bridge.cpp Bridge/Bridge.h
     Builder/Builder.cpp Builder/Builder.h

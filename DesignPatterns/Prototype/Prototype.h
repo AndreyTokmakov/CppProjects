@@ -11,7 +11,7 @@
 #define PROTOTYPE_PATTERN_INCLUDE_GUARD__H
 
 namespace Prototype {
-	void Test();
+	void TestAll();
 };
 
 #endif // !PROTOTYPE_PATTERN_INCLUDE_GUARD__H
