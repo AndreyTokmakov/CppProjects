@@ -18,7 +18,7 @@
 #include <vector>
 
 namespace Filter {
-	void Test();
+	void TestAll();
 };
 
 #endif

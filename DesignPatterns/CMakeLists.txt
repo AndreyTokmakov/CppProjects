@@ -21,13 +21,13 @@ add_executable(DesignPatterns
     Decorator/Decorator.cpp Decorator/Decorator.h
     FabricMethod/FabricMethod.h FabricMethod/FabricMethod.cpp  FabricMethod/FabricMethod2.cpp
 	Facade/Facade.cpp Facade/Facade.h
-    Filter/Filter.cpp Filter/Filter.h
+    Filter/Filter.cpp Filter/Filter.h Filter/Filter_ColorSize.cpp
     Flyweight/Flyweight.cpp Flyweight/Flyweight.h Flyweight/IconFlyweight.cpp
     Interpreter/Interpreter.cpp Interpreter/Interpreter.h
     Mediator/Mediator.cpp Mediator/Mediator.h
     Memento/Memento.cpp Memento/Memento.h
     Named_Parameter_Idiom/NamedParameter.cpp Named_Parameter_Idiom/NamedParameter.h
-        ObjectPools/ObjectPool.cpp ObjectPools/ObjectPoolsExtended.cpp ObjectPools/ObjectPools.h
+    ObjectPools/ObjectPool.cpp ObjectPools/ObjectPoolsExtended.cpp ObjectPools/ObjectPools.h
     Observer/Observer.cpp Observer/Observer.h
     Prototype/Prototype.cpp Prototype/Prototype.h
 	Proxy/Document.cpp Proxy/CarProxy.cpp Proxy/Proxy.h

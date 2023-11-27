@@ -62,7 +62,7 @@ int main([[maybe_unused]]  int argc,
     // Singleton::TEST_ALL();;
     // Monostate::TestAll();;
     // ObjectPools::TestAll();
-    DependencyInjection::TestAll();
+    // DependencyInjection::TestAll();
     // LazyInitialization::TestAll();
 
     /** Structural patterns: **/
@@ -104,6 +104,6 @@ int main([[maybe_unused]]  int argc,
 
     // ExecutorAdapter::TestAll();
 	// NamedParameter::Test();
-    // Filter::Test();
+    Filter::TestAll();
 }
 

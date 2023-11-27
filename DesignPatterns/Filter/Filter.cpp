@@ -245,11 +245,15 @@ namespace Filter
     }
 }
 
-void Filter::Test()
+void Filter_ColorSize_Test();
+
+void Filter::TestAll()
 {
-    Test_MaleFilter();
-    Test_FemaleFilter();
+    // Test_MaleFilter();
+    // Test_FemaleFilter();
 
     // Test1();
     // Test2();
+
+    Filter_ColorSize_Test();
 }
