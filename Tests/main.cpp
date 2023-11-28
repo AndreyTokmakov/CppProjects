@@ -683,6 +683,44 @@ namespace ReturnClass_MemberRef_CopyCTor
     }
 }
 
+namespace OOP
+{
+
+    class Base {
+    protected:
+        int a {0};
+    };
+
+    class Derived: protected Base
+    {
+    public:
+        void test_derived()
+        {
+            a = 10;
+        }
+    };
+
+    class DerivedEx: protected Derived
+    {
+    public:
+        void test_derived_ex()
+        {
+            a = 10;
+        }
+    };
+
+    void foo()
+    {
+        Derived d;
+        d.test_derived();
+
+        DerivedEx de;
+        de.test_derived_ex();
+    }
+
+
+}
+
 
 int main([[maybe_unused]] int argc,
          [[maybe_unused]] char** argv)
@@ -705,7 +743,7 @@ int main([[maybe_unused]] int argc,
     // Algorithms::TestAll();
     // AutoTests::TestAll();
     // Cpp23_Features::TestAll();
-    Concepts::TestAll();
+    // Concepts::TestAll();
     // Comparators::TestAll();
     // Coroutines::TestAll();
     // Heap::TestAll();
@@ -723,7 +761,7 @@ int main([[maybe_unused]] int argc,
     // PointsAndLines::TestAll();           // Geometry
     // UniquePtr_Size::SizeTest();
     // CollectionsTests::TestAll();
-    // Templates::TestAll();
+    Templates::TestAll();
     // ExpressionTemplates::TestAll();
     // CopyElision_RVO::TestAll();
     // ObjectOrientedExperiments::RAIIWrapper::TestAll();

@@ -324,6 +324,31 @@ namespace Templates::Specialization
     }
 }
 
+namespace Traits
+{
+    template<typename T1, typename T2>
+    struct is_same
+    {
+        static constexpr bool value { false };
+    };
+
+    template<typename T>
+    struct is_same<T, T>
+    {
+        static constexpr bool value {true };
+    };
+
+    template<typename T1, typename T2>
+    static constexpr bool is_same_v = is_same<T1, T2>::value;
+
+
+    void test()
+    {
+        static_assert(is_same_v<int, int>);
+        static_assert(not is_same_v<char, int>);
+        static_assert(is_same_v<int&, int&>);
+    }
+}
 
 
 void Templates::TestAll()
@@ -331,12 +356,12 @@ void Templates::TestAll()
     // FoldExpressions::MatchingTests();
     // FoldExpressions::PassingFunction_to_ClassTemplateArgument();
     // FoldExpressions::Recursive_Expansion();
-    FoldExpressions::Recursive_Expansion_Two();
+    // FoldExpressions::Recursive_Expansion_Two();
     // FoldExpressions::GetFirstElementType_CreateVector();
 
     // NTTP::testConfig();
     // NTTP::testPersonalBudget();
 
     // Specialization::Test();
-    Specialization::PrintOperator_TemplateSpecialisation_Ostream();
+    // Specialization::PrintOperator_TemplateSpecialisation_Ostream();
 }

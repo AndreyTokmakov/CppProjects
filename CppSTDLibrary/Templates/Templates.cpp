@@ -2714,6 +2714,29 @@ namespace Templates::TypeTraits {
         std::cout << std::boolalpha << is_pointer<int*>::value << std::endl;
         std::cout << std::boolalpha << is_pointer<int>::value << std::endl;
     }
+
+    template<typename T1, typename T2>
+    struct is_same
+    {
+        static constexpr bool value { false };
+    };
+
+    template<typename T>
+    struct is_same<T, T>
+    {
+        static constexpr bool value {true };
+    };
+
+    template<typename T1, typename T2>
+    static constexpr bool is_same_v = is_same<T1, T2>::value;
+
+
+    void IsSame_Test()
+    {
+        static_assert(is_same_v<int, int>);
+        static_assert(not is_same_v<char, int>);
+        static_assert(is_same_v<int&, int&>);
+    }
 }
 
 namespace Templates::OperatorOverload
@@ -2898,6 +2921,7 @@ void Templates::TestAll()
 
     // TypeTraits::IsVoid_Test();
     // TypeTraits::IsPointer_Test();
+    // TypeTraits::IsSame_Test();
 
     // ------------------------------- Templates <Typename T> ------------------------------------------
 
