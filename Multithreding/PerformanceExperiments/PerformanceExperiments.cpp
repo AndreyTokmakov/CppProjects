@@ -267,8 +267,8 @@ namespace PerformanceExperiments::SpinLock_vs_Mutex
         {
             uint32_t expected = 0;
             for (int i = 0; !isLocked.compare_exchange_weak(expected, 1,
-                                                            std::memory_order_relaxed,
-                                                            std::memory_order_release); ++i) {
+                                                            std::memory_order_acq_rel,
+                                                            std::memory_order_relaxed); ++i) {
                 expected = 0;
                 if (2 == i) /// to tune thread scheduler
                 {
