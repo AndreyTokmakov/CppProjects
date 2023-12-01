@@ -52,13 +52,13 @@ namespace PImpl::PImplDemo2
     };
 
 
-    class MyClass
+    class MyClass: public Interface
     {
     public:
         explicit MyClass(std::shared_ptr<Interface> impl) : m_pImpl { std::move(impl)} {
         }
 
-        ~MyClass() = default;
+        ~MyClass() override = default;
 
         // MyClass(const MyClass& rhs) = default;
         // MyClass& operator=(const MyClass& rhs) = default;
@@ -76,11 +76,11 @@ namespace PImpl::PImplDemo2
             return *this;
         }
 
-        void DoSth() {
+        void DoSth() override {
             Pimpl()->DoSth();
         }
 
-        void DoConst() const {
+        void DoConst() const override {
             Pimpl()->DoConst();
         }
 
@@ -107,17 +107,13 @@ void Demo2()
     std::shared_ptr<Interface> impl1 { std::make_shared<MyClassImpl>() };
     std::shared_ptr<Interface> impl2 { std::make_shared<MyClassImplEx>() };
 
-    std::unique_ptr<MyClass> obj1 { std::make_unique<MyClass>(impl1)};
-    obj1->DoSth();
-    obj1->DoConst();
+    std::unique_ptr<Interface> client { std::make_unique<MyClass>(impl1)};
 
-    std::unique_ptr<MyClass> obj2 { std::make_unique<MyClass>(impl2)};
-    obj2->DoSth();
-    obj2->DoConst();
+    client->DoSth();
+    client->DoConst();
 
-    /*
-    MyClass obj1 (*obj);
-    obj1.DoSth();
-    obj1.DoConst();
-    */
+    client= std::make_unique<MyClass>(impl2);
+
+    client->DoSth();
+    client->DoConst();
 }
