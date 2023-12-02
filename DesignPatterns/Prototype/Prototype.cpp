@@ -1,11 +1,11 @@
-//============================================================================
-// Name        : Prototype.cpp
-// Created on  : October 26, 2020
-// Author      : Tokmakov Andrey
-// Version     : 1.0
-// Copyright   : Your copyright notice
-// Description : Prototype pattern test
-//============================================================================
+/**============================================================================
+Name        : Prototype.cpp
+Created on  : October 26, 2020
+Author      : Tokmakov Andrey
+Version     : 1.0
+Copyright   : Your copyright notice
+Description : Prototype pattern test
+============================================================================**/
 
 #include "Prototype.h"
 
@@ -143,7 +143,10 @@ namespace Prototype
 	}
 }
 
+void PrototypeDemoType_Test();
+
 void Prototype::TestAll()
 {
-	Test1();
+	//  Test1();
+    PrototypeDemoType_Test();
 }

@@ -58,7 +58,7 @@ int main([[maybe_unused]]  int argc,
     // AbstractFactory::TestAll();
     // Builder::TestAll();
     // FabricMethod::TestAll();
-    // Prototype::TestAll();
+    Prototype::TestAll();
     // Singleton::TEST_ALL();;
     // Monostate::TestAll();;
     // ObjectPools::TestAll();
@@ -94,7 +94,7 @@ int main([[maybe_unused]]  int argc,
     /// NULL OBJECT
 
     /** C++ IDIOMS: **/
-    CRTP::Test();
+    // CRTP::Test();
     // TypeErasure::Test();
     // RAII::Test();
     // CopyAndSwap::TEST_ALL();   ---- TESTs
