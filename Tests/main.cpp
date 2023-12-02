@@ -717,9 +717,9 @@ namespace OOP
         DerivedEx de;
         de.test_derived_ex();
     }
-
-
 }
+
+
 
 
 int main([[maybe_unused]] int argc,
@@ -727,6 +727,8 @@ int main([[maybe_unused]] int argc,
 {
     const std::vector<std::string_view> args(argv + 1, argv + argc);
     // parseInputParams(std::vector {"one", "two", "three", "four", "five"}.data(), 5);
+
+    CRTP::test();
 
 
     // MoveStringToArray();
@@ -761,7 +763,7 @@ int main([[maybe_unused]] int argc,
     // PointsAndLines::TestAll();           // Geometry
     // UniquePtr_Size::SizeTest();
     // CollectionsTests::TestAll();
-    Templates::TestAll();
+    // Templates::TestAll();
     // ExpressionTemplates::TestAll();
     // CopyElision_RVO::TestAll();
     // ObjectOrientedExperiments::RAIIWrapper::TestAll();

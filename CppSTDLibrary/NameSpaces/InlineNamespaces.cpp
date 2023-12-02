@@ -26,7 +26,8 @@ namespace InlineNamespaces
             }
         }
 
-        inline namespace Version2
+        inline
+        namespace Version2
         {
             void printVersion() {
                 std::cout << "Version2" << std::endl;

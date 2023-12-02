@@ -104,9 +104,9 @@ void Networking::TestAll()
     // ResolveDnsName();
     // Test();
 
-    APITests::SendRequest();
+    // APITests::SendRequest();
     // APITests::SendRequestPost();
 
-    // Server::runServer();
+    Server::runServer();
 }
 

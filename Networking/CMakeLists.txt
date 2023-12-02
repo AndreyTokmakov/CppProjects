@@ -15,6 +15,7 @@ link_directories(../../third_party/libssh2/build/src)
 add_executable(Networking MACOSX_BUNDLE
         main.cpp
         Common/Header.cpp Common/Header.h
+        APIServer/APIServer.cpp APIServer/APIServer.h
         Common/HTTPHeader.cpp Common/HTTPHeader.h
         Common/HTTPMethod.h Common/HTTPRequest.cpp
         Common/HTTPRequest.h Common/HTTPResponse.cpp

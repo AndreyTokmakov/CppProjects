@@ -18,7 +18,8 @@ add_executable(DesignPatterns
     Command/Command.cpp Command/Command.h
     Composite/Composite.cpp Composite/Composite.h
     CRTP/CRTP.cpp CRTP/CRTP.h CRTP/ObjectCounter.cpp CRTP/ObjectCounter.h
-    Decorator/Decorator.cpp Decorator/Decorator.h
+	CRTP/CRTP_InvokeMethods.cpp
+		Decorator/Decorator.cpp Decorator/Decorator.h
     FabricMethod/FabricMethod.h FabricMethod/FabricMethod.cpp  FabricMethod/FabricMethod2.cpp
 	Facade/Facade.cpp Facade/Facade.h
     Filter/Filter.cpp Filter/Filter.h Filter/Filter_ColorSize.cpp

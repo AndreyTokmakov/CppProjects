@@ -1,11 +1,11 @@
-//============================================================================
-// Name        : Networking.cpp
-// Created on  : 15.09.2021
-// Author      : Tokmakov Andrey
-// Version     : 1.0
-// Copyright   : Your copyright notice
-// Description : Tests C++ project
-//============================================================================
+/**============================================================================
+Name        : Networking.cpp
+Created on  : 15.09.2021
+Author      : Andrei Tokmakov
+Version     : 1.0
+Copyright   : Your copyright notice
+Description : Tests C++ project
+============================================================================**/
 
 #include <iostream>
 #include <string>
@@ -45,7 +45,7 @@
 #include "SSL/HTTPS_ServerMultithreaded.h"
 #include "SSL/HTTPS_Server_ThreadPool.h"
 
-
+#include "APIServer/APIServer.h"
 
 int main([[maybe_unused]] int argc,
          [[maybe_unused]] char** argv)
@@ -87,7 +87,9 @@ int main([[maybe_unused]] int argc,
     // HTTPS_Server::TestAll();
     // HTTPS_AsyncServer::TestAll();
     // HTTPS_ServerMultithreaded::TestAll();
-    HTTPS_Server_ThreadPool::TestAll();
+    // HTTPS_Server_ThreadPool::TestAll();
+
+    APIServer::TestAll();
 
     return EXIT_SUCCESS;
 }

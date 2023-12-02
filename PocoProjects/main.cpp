@@ -36,8 +36,8 @@ int main([[maybe_unused]] int argc,
     // Timer::TestAll();
     // Events::TestAll();
     // Processes::TestAll();
-    // Networking::TestAll();
-    Environment::TestAll();
+    Networking::TestAll();
+    // Environment::TestAll();
     // Random::TestAll();
     // Cryptography::TestAll();
 

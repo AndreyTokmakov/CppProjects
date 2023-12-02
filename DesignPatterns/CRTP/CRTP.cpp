@@ -108,11 +108,15 @@ namespace CRTP::Cloneable
     */
 }
 
+void CRTP_InvokeMethods_Test();
+
 void CRTP::Test()
 {
     // test1();
 
-    ObjectCounter::Test();
+    // ObjectCounter::Test();
 
     // CRTP_Cloneable::Test();
+
+    CRTP_InvokeMethods_Test();
 }

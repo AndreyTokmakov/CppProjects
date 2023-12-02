@@ -1,16 +1,13 @@
 /**============================================================================
-Name        : EPollTCPServerDebug.cpp
-Created on  : 03.04.2023
+Name        : APIServer.cpp
+Created on  : 02.12.2023
 Author      : Andrei Tokmakov
 Version     : 1.0
 Copyright   : Your copyright notice
-Description : EPollTCPServerDebug
+Description : APIServer.cpp
 ============================================================================**/
 
-#include "EPollTCPServerMultithreaded.h"
-
-
-#include "EPollTCPServerDebug.h"
+#include "APIServer.h"
 
 #include <arpa/inet.h>
 #include <cerrno>
@@ -31,9 +28,8 @@ Description : EPollTCPServerDebug
 #include <condition_variable>
 
 
-namespace EPollTCPServerMultithreaded::Utilities
+namespace APIServer::Utilities
 {
-
     template<typename T>
     auto addSpace(const T& arg) -> decltype(auto) {
         std::cout << ' ';
@@ -41,8 +37,8 @@ namespace EPollTCPServerMultithreaded::Utilities
     };
 
     template<typename ...Args>
-    void debug(Args&&... args) {
-#if 1
+    void debug([[maybe_unused]] Args&&... args) {
+#if 0
         std::cout << "DEBUG ";
         (std::cout << ... << addSpace(std::forward<Args>(args))) << std::endl;
 #endif
@@ -50,7 +46,7 @@ namespace EPollTCPServerMultithreaded::Utilities
 }
 
 
-namespace EPollTCPServerMultithreaded
+namespace APIServer
 {
     using namespace Utilities;
 
@@ -81,6 +77,9 @@ namespace EPollTCPServerMultithreaded
         std::string hostAddress;
         uint16_t listenPort {};
 
+        // TODO: just for Debug
+        uint64_t requestsCounter = 0;
+
         /**------------------------------------------------------------------------------------------**/
 
         mutable std::mutex mutex;
@@ -103,7 +102,6 @@ namespace EPollTCPServerMultithreaded
             return true;
         }
 
-        [[noreturn]]
         void processRequest()
         {
             std::array<char, BUFFER_SIZE> buffer {};
@@ -115,7 +113,7 @@ namespace EPollTCPServerMultithreaded
             {
                 if (bool result = getClientRequestHandle(clientSock, QUEUE_TIMEOUT); result)
                 {
-                    debug("Request: ", clientSock);
+                    debug("processRequest(", clientSock, ")");
 
                     message.clear();
                     total = 0;
@@ -132,12 +130,18 @@ namespace EPollTCPServerMultithreaded
                         bytes = ::send(clientSock, reply.data(), reply.length(), 0);
                         debug(bytes, "bytes send");
                     }
+
+                    ++requestsCounter;
+                    if (0 == requestsCounter % 1000)
+                        std::cout << requestsCounter << std::endl;
                 }
             }
         }
 
         // TODO: Rename
-        void submit(handleType new_value) noexcept {
+        void submit(handleType new_value) noexcept
+        {
+            debug(new_value, " submited");
             {
                 std::lock_guard<std::mutex> lock(mutex);
                 queue.push_back(new_value);
@@ -206,8 +210,16 @@ namespace EPollTCPServerMultithreaded
                     clientSock = epollEvents[i].data.fd;
                     events = epollEvents[i].events;
 
+                    debug("eventsPoller: handling event: ", clientSock);
+
+                    if (events & EPOLLERR) debug("\t\t --> EPOLLERR", clientSock);
+                    if (events & EPOLLHUP) debug("\t\t --> EPOLLHUP", clientSock);
+                    if (events & EPOLLIN) debug("\t\t --> EPOLLIN", clientSock);
+                    if (events & EPOLLOUT) debug("\t\t --> EPOLLOUT", clientSock);
+                    if (events & EPOLLRDHUP) debug("\t\t --> EPOLLRDHUP", clientSock);
+
+
                     if ((events & EPOLLERR) || (events & EPOLLHUP)) {
-                        debug("Closing connection. Socket = ", clientSock, "[epoll_wait error]");
                         closeClientConnection(clientSock);
                     }
                     else if (events & EPOLLRDHUP) {
@@ -216,6 +228,7 @@ namespace EPollTCPServerMultithreaded
                     }
                     else if (events & EPOLLIN) {
                         // handleClientRequest(clientSock);
+                        debug("eventsPoller: handling event: ", clientSock);
                         submit(clientSock);
                     }
                     else if (events & EPOLLOUT) {
@@ -311,7 +324,7 @@ namespace EPollTCPServerMultithreaded
     }
 };
 
-void EPollTCPServerMultithreaded::Tests()
+void APIServer::TestAll()
 {
     startSerer();
-};
+}
