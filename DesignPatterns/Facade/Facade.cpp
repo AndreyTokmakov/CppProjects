@@ -90,50 +90,37 @@ namespace Facade::HouseFacade
 {
     struct Alarm
     {
-        void alarmOn() {
-            std::cout << "Alarm is on and house is secured"<<std::endl;
-        }
-
-        void alarmOff() {
-            std::cout << "Alarm is off and you can go into the house"<<std::endl;
-        }
+        void alarmOn() { std::cout << "Alarm is on and house is secured" << std::endl; }
+        void alarmOff() { std::cout << "Alarm is off and you can go into the house" << std::endl; }
     };
 
     struct Ac
     {
-        void acOn() {
-            std::cout << "Ac is on"<<std::endl;
-        }
-
-        void acOff() {
-            std::cout << "AC is off"<<std::endl;
-        }
+        void acOn()  { std::cout << "Ac is on"  << std::endl; }
+        void acOff() { std::cout << "AC is off" << std::endl; }
     };
 
     struct Tv
     {
-        void tvOn() {
-            std::cout << "Tv is on"<<std::endl;
-        }
-
-        void tvOff() {
-            std::cout << "TV is off"<<std::endl;
-        }
+        void tvOn()  { std::cout << "Tv is on"  << std::endl; }
+        void tvOff() { std::cout << "TV is off" << std::endl; }
     };
 
     struct HouseFacade
     {
-        Alarm alarm;
-        Ac ac;
-        Tv tv;
+        Alarm& alarm;
+        Ac& ac;
+        Tv& tv;
 
-        void goToWork() {
+        void goToWork()
+        {
             ac.acOff();
             tv.tvOff();
             alarm.alarmOn();
         }
 
-        void comeHome() {
+        void comeHome()
+        {
             alarm.alarmOff();
             ac.acOn();
             tv.tvOn();
@@ -142,7 +129,11 @@ namespace Facade::HouseFacade
 
     void Test()
     {
-        HouseFacade hf {};
+        Alarm alarm;
+        Ac ac;
+        Tv tv;
+
+        HouseFacade hf {alarm, ac, tv};
 
         hf.goToWork();
         hf.comeHome();

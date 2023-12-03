@@ -101,9 +101,9 @@ namespace Bridge::Clock
             this->cmdplay = cmd;
         }
 
-        virtual ~ShellMP3AlarmClock() = default;
+        ~ShellMP3AlarmClock() override = default;
 
-        void ring() noexcept {
+        void ring() noexcept override {
             // run command
             // system(cmdplay.c_str());
             std::cout << cmdplay.c_str() << std::endl;
@@ -129,11 +129,11 @@ namespace Bridge::Clock
 
 
 void DrawingAPITest();
-
+void Bridge_DrawingAPI_Two_Test();
 
 void Bridge::TestAll()
 {
     // Clock::Test();
-
-    DrawingAPITest();
+    // DrawingAPITest();
+    Bridge_DrawingAPI_Two_Test();
 }

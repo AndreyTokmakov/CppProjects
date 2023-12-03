@@ -13,9 +13,6 @@
 
 namespace ChainOfResponsibility
 {
-    using String = std::string;
-    using CString = const String&;
-
     /** Criminal action class: **/
     class CriminalAction {
     private:
@@ -25,7 +22,7 @@ namespace ChainOfResponsibility
         int complexity;
 
         /** Case brif description: **/
-        String description;
+        std::string description;
 
     public:
         CriminalAction(int complexity, std::string  description) :
@@ -47,20 +44,15 @@ namespace ChainOfResponsibility
         std::shared_ptr<Policeman> next;
 
         /** The investigation. **/
-        virtual void investigateConcrete(CString description) = 0;
+        virtual void investigateConcrete(const std::string& description) = 0;
 
     public:
         explicit Policeman(int deduction): deduction(deduction), next(nullptr) {
         }
 
-        ~Policeman() {
-            // delete next;
-            // std::cout << __FUNCTION__ << " " << typeid(*this).name() <<  std::endl;
-        }
-
         // Adds to the chain of responsibility a more experienced policeman who can take over investigation if the current fails
         std::shared_ptr<Policeman> setNext(std::shared_ptr<Policeman> policeman) {
-            next = policeman;
+            next = std::move(policeman);
             return next;
         }
 
@@ -78,6 +70,8 @@ namespace ChainOfResponsibility
                 investigateConcrete(criminalAction->description);
             }
         }
+
+        virtual ~Policeman() = default;
     };
 
 
@@ -117,7 +111,6 @@ namespace ChainOfResponsibility
     };
 
 
-
 	void Test()
 	{
 		std::shared_ptr<Policeman> policeman = std::make_shared<MartinRiggs>(3);
@@ -127,10 +120,14 @@ namespace ChainOfResponsibility
 		policeman->investigate(std::make_shared<CriminalAction>(7, "Cheeky bank robbery in downtown Los Angeles"));
 		policeman->investigate(std::make_shared<CriminalAction>(5, "A series of explosions in downtown New York"));
 	}
+}
 
-    void TestAll()
-    {
-        // Test();
-        Example2_Test();
-    }
+void ChainOfHandlers_Test();
+
+void ChainOfResponsibility::TestAll()
+{
+    // Test();
+    // Example2_Test();
+
+    ChainOfHandlers_Test();
 }

@@ -1466,5 +1466,5 @@ void DesignPatterns::TestAll()
 
     // Decorator::test();
 
-    TypeErasure_VoidType::test();
+    // TypeErasure_VoidType::test();
 }

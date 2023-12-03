@@ -58,7 +58,7 @@ int main([[maybe_unused]]  int argc,
     // AbstractFactory::TestAll();
     // Builder::TestAll();
     // FabricMethod::TestAll();
-    Prototype::TestAll();
+    // Prototype::TestAll();
     // Singleton::TEST_ALL();;
     // Monostate::TestAll();;
     // ObjectPools::TestAll();
@@ -81,7 +81,7 @@ int main([[maybe_unused]]  int argc,
     /** Behaviour patterns **/
     // Strategy::Test();
     // Policy::Test();
-    // ChainOfResponsibility::TestAll();
+    ChainOfResponsibility::TestAll();
     // Command::TestAll();
     // Iterator::Test();
     // Interpreter::Test();
