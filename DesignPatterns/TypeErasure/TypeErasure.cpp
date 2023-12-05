@@ -233,11 +233,15 @@ namespace TypeErasure::TypeErasure_VoidType
     }
 }
 
+void TypeErasure_CallOperator_Test();
+
 void TypeErasure::Test()
 {
     // ExperimentFirst::Test();
     // ExperimentSecond::Test();
 
-    TypeErasure_VoidType::test();
+    // TypeErasure_VoidType::test();
+
+    TypeErasure_CallOperator_Test();
 };
 

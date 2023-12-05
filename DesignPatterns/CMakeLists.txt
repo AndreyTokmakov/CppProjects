@@ -42,7 +42,7 @@ add_executable(DesignPatterns
 		Visitor/Visitor.cpp Visitor/Visitor.h Visitor/StockVisitor.cpp
 		Visitor/DynamicComponentsVisitor.cpp
 		Builder/HtmlBuilder.cpp
-		TypeErasure/TypeErasure.cpp TypeErasure/TypeErasure.h
+		TypeErasure/TypeErasure.cpp TypeErasure/TypeErasure.h TypeErasure/TypeErasure_CallOperator.cpp
 		CopyAndSwap/CopyAndSwap.cpp CopyAndSwap/CopyAndSwap.h
 		TagDispatching/TagDispatching.cpp TagDispatching/TagDispatching.h
 		Policy/Policy.cpp Policy/Policy.cpp

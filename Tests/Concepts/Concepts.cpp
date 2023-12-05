@@ -82,9 +82,37 @@ namespace Concepts::FoldExpression
     }
 }
 
+namespace Concepts::HasCallOperator
+{
+    template<typename Type>
+    concept IsFunctor = requires (Type obj) {
+        { obj(0) } -> std::same_as<int>;
+    };
+
+
+    void client(const IsFunctor auto& obj)
+    {
+        std::cout << obj(10) << std::endl;
+    }
+
+    struct FunctorOne {
+        int operator()(int x) const {
+            return x * 10;
+        }
+    };
+
+    void CheckTypeIsFunctor()
+    {
+        client(FunctorOne{});
+    }
+}
+
+
 void Concepts::TestAll()
 {
     // If_Constexpr_Concepts();
 
-    FoldExpression::CheckThatTypeSameAs();
+    // FoldExpression::CheckThatTypeSameAs();
+
+    HasCallOperator::CheckTypeIsFunctor();
 }

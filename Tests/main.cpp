@@ -728,6 +728,7 @@ int main([[maybe_unused]] int argc,
     const std::vector<std::string_view> args(argv + 1, argv + argc);
     // parseInputParams(std::vector {"one", "two", "three", "four", "five"}.data(), 5);
 
+
     // MoveStringToArray();
     // Experiments::Test({20, 40, 60});
     // FindMinMaxValues::TestAll();
@@ -742,7 +743,7 @@ int main([[maybe_unused]] int argc,
     // Algorithms::TestAll();
     // AutoTests::TestAll();
     // Cpp23_Features::TestAll();
-    // Concepts::TestAll();
+    Concepts::TestAll();
     // Comparators::TestAll();
     // Coroutines::TestAll();
     // Heap::TestAll();
@@ -751,7 +752,7 @@ int main([[maybe_unused]] int argc,
     // Iterators::TestAll();
     // Files::TestAll();
     // ConstexprMap::TestAll()
-    DesignPatterns::TestAll();
+    // DesignPatterns::TestAll();
     // Date_Time_Chrono::TestAll();
     // MaxStack::TestAll();
     // MinStack::TestAll();

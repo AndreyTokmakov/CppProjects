@@ -81,7 +81,7 @@ int main([[maybe_unused]]  int argc,
     /** Behaviour patterns **/
     // Strategy::Test();
     // Policy::Test();
-    ChainOfResponsibility::TestAll();
+    // ChainOfResponsibility::TestAll();
     // Command::TestAll();
     // Iterator::Test();
     // Interpreter::Test();
@@ -95,7 +95,7 @@ int main([[maybe_unused]]  int argc,
 
     /** C++ IDIOMS: **/
     // CRTP::Test();
-    // TypeErasure::Test();
+    TypeErasure::Test();
     // RAII::Test();
     // CopyAndSwap::TEST_ALL();   ---- TESTs
     // TagDispatching::Test();

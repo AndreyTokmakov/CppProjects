@@ -156,30 +156,20 @@ namespace PerformanceExperiments::CV_vs_Atomic
     void RunBenchmark()
     {
         {
-            auto start = std::chrono::system_clock::now();
-
+            Utils::ScopedTimer timer {"Atomic variable     "};
             if (auto engine = new AtomicEngine(); engine->start()) {
                 std::jthread ping = std::jthread(&AtomicEngine::ping, engine);
                 std::jthread pong = std::jthread(&AtomicEngine::pong, engine);
             }
-
-            std::chrono::duration<double> dur = std::chrono::system_clock::now() - start;
-            std::cout << "Duration: " << dur.count() << " seconds" << std::endl;
         }
 
         {
-            auto start = std::chrono::system_clock::now();
-
+            Utils::ScopedTimer timer {"Conditional variable"};
             if (auto engine = new CVEngine(); engine->start()) {
                 std::jthread ping = std::jthread(&CVEngine::ping, engine);
                 std::jthread pong = std::jthread(&CVEngine::pong, engine);
             }
-
-            std::chrono::duration<double> dur = std::chrono::system_clock::now() - start;
-            std::cout << "Duration: " << dur.count() << " seconds" << std::endl;
         }
-
-
         // Duration: 0.171744 seconds
         // Duration: 2.54261 seconds
     }
@@ -626,7 +616,7 @@ namespace PerformanceExperiments::AtomicCounter_vs_Mutex
 
 void PerformanceExperiments::TestAll()
 {
-    // CV_vs_Atomic::RunBenchmark();
-    SpinLock_vs_Mutex::RunBenchmark();
+    CV_vs_Atomic::RunBenchmark();
+    // SpinLock_vs_Mutex::RunBenchmark();
     // AtomicCounter_vs_Mutex::RunBenchmark();
 };
