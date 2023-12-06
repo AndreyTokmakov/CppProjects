@@ -35,7 +35,7 @@ add_executable(DesignPatterns
 		Proxy/Document.cpp Proxy/CarProxy.cpp Proxy/Proxy.h
 		Proxy/Subject.cpp
 		RAII/RAII.cpp
-		Singleton/Singleton.cpp Singleton/Singleton.h
+		Singleton/Singleton.cpp Singleton/Singleton.h Singleton/SingletonCRTP.cpp
 		ExecutorAdapter/ExecutorAdapter.cpp ExecutorAdapter/ExecutorAdapter.h
 		State/State.cpp State/State.h
 		Strategy/Strategy.cpp Strategy/Strategy.h

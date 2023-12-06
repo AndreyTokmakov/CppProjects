@@ -119,6 +119,6 @@ namespace Singleton {
 		static Singleton* Instance();
 	};
 
-	void TEST_ALL();
+	void TestAll();
 }
 

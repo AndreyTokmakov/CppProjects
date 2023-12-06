@@ -333,9 +333,9 @@ namespace Singleton::FileRepository
     }
 };
 
+void SingletonCRTP_Test();
 
-
-void Singleton::TEST_ALL()
+void Singleton::TestAll()
 {
 	// MeyersSingletonTests::Test1();
 	// MeyersSingletonTests::TestBad();
@@ -346,5 +346,7 @@ void Singleton::TEST_ALL()
 
 	// SharedPtrSingleton::Test();
 
-    FileRepository::Test();
+    // FileRepository::Test();
+
+    SingletonCRTP_Test();
 }
