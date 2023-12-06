@@ -48,7 +48,7 @@ int main([[maybe_unused]] int argc,
          [[maybe_unused]] char** argv)
 {
     /// Unimplemented
-    // BinaryTree::TestAll();
+    BinaryTree::TestAll();
 
 
     // Array::TEST_ALL();
