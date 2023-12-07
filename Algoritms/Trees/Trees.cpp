@@ -1986,17 +1986,25 @@ namespace Trees::Min_and_Max_Elements
 
     //----------------------------------------------------------------------------------------------------
 
-    int __get_min_element_non_recur(BinTree::Node* node) {
-        if (nullptr == node->left)
-            return node->data;
-        else return __get_min_element(node->left);
+    int __get_min_element_non_recur(BinTree::Node* node)
+    {
+        while (nullptr != node->left)
+            node = node->left;
+        return node->data;
+    }
+
+    int __get_max_element_non_recur(BinTree::Node* node)
+    {
+        while (nullptr != node->right)
+            node = node->right;
+        return node->data;
     }
 
     void Find_MIN_and_MAX_Element_NonRecursive()
     {
-        BinTree::BinaryTree tree{ 33,22,85,10,30,54,125 };
-
-        std::cout << "Min: " << __get_min_element_non_recur(tree.getRoot()) << std::endl;
+        BinTree::BinaryTree tree { 33,22,85,10,30,54,125 };
+        std::cout << __get_min_element_non_recur(tree.getRoot()) << std::endl;
+        std::cout << __get_max_element_non_recur(tree.getRoot()) << std::endl;
     }
 
     //----------------------------------------------------------------------------------------------------

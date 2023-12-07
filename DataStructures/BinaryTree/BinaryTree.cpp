@@ -117,6 +117,24 @@ namespace BinaryTree
             return nullptr;
         }
 
+        [[nodiscard]]
+        value_type minElement() const
+        {
+            node_pointer node { root };
+            while (nullptr != node->left)
+                node = node->left;
+            return node->data;
+        }
+
+        [[nodiscard]]
+        value_type maxElement() const
+        {
+            node_pointer node { root };
+            while (nullptr != node->right)
+                node = node->right;
+            return node->data;
+        }
+
     public: /** Test funcs **/
 
         void printInorder()
@@ -221,6 +239,21 @@ namespace BinaryTree::Tests
         std::cout << std::boolalpha << tree.isBST() << std::endl;
     }
 
+    void findMinMaxElement()
+    {
+        BinaryTree<int> tree;
+        int min = 1001, max = 0;
+        for (int i = 0; i < 100; ++i) {
+            const int value = Utilities::randomIntegerInRange(0, 1000);
+            tree.insert(value);
+            min = std::min(min, value);
+            max = std::max(max, value);
+        }
+
+        std::cout << min << " " << max << std::endl;
+        std::cout << tree.minElement() << " " << tree.maxElement() << std::endl;
+    }
+
     void checkContains()
     {
         BinaryTree<int> tree;
@@ -235,8 +268,6 @@ namespace BinaryTree::Tests
     }
 }
 
-// TODO: find | check contains
-// TODO: find MAX | MIN
 // TODO: Remove by values
 // TODO: FindLowestCommonAncestor
 // TODO: Find_N_th_MinElement
@@ -247,5 +278,6 @@ void BinaryTree::TestAll()
     // Tests::CreateAndPrintTree();
     // Tests::CreateAndPrintTreeBackwards();
     // Tests::check_is_BST();
-    Tests::checkContains();
+    // Tests::checkContains();
+    Tests::findMinMaxElement();
 }
