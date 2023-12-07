@@ -1967,7 +1967,6 @@ namespace Trees::Level_Order
 
 namespace Trees::Min_and_Max_Elements
 {
-
     int __get_min_element(BinTree::Node* node) {
         if (nullptr == node->left)
             return node->data;
@@ -1985,7 +1984,22 @@ namespace Trees::Min_and_Max_Elements
                   << ", Max: " << __get_max_element(tree.getRoot()) << std::endl;
     }
 
-    ///////////////////////////////////////////////////////////////
+    //----------------------------------------------------------------------------------------------------
+
+    int __get_min_element_non_recur(BinTree::Node* node) {
+        if (nullptr == node->left)
+            return node->data;
+        else return __get_min_element(node->left);
+    }
+
+    void Find_MIN_and_MAX_Element_NonRecursive()
+    {
+        BinTree::BinaryTree tree{ 33,22,85,10,30,54,125 };
+
+        std::cout << "Min: " << __get_min_element_non_recur(tree.getRoot()) << std::endl;
+    }
+
+    //----------------------------------------------------------------------------------------------------
 
     BinTree::Node* __get_min_Nth_element_X(BinTree::Node* node, size_t k, size_t& counter) {
         if (nullptr == node)
@@ -2138,6 +2152,8 @@ void Trees::TEST_ALL()
 
 
     // Min_and_Max_Elements::Find_MIN_and_MAX_Element();
+    Min_and_Max_Elements::Find_MIN_and_MAX_Element_NonRecursive();
+
     // Min_and_Max_Elements::Find_N_th_MinElement();
     // Min_and_Max_Elements::Find_N_th_MinElement_NonRecur();
     // Min_and_Max_Elements::Find_N_th_Largest_MorrisTraversal();
@@ -2166,7 +2182,7 @@ void Trees::TEST_ALL()
 
 
     // BinTreeTests::Find_Max_Depth();
-    BinTreeTests::Find_Deepest_Node();
+    // BinTreeTests::Find_Deepest_Node();
     // BinTreeTests::Find_Maximum_Node_AtLevel();
     // BinTreeTests::Find_Maximum_Level_Sum();
     // BinTreeTests::Find_Level_With_Maximum_Sum();

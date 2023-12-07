@@ -13,7 +13,19 @@ Description : BinaryTree data structure implementation
 #include <string>
 #include <memory>
 #include <utility>
+#include <random>
 
+
+namespace Utilities
+{
+    static std::random_device randomDevice{};
+    static std::mt19937 generator(randomDevice());
+
+    [[nodiscard]]
+    int randomIntegerInRange(int from = 0, int until = 1000) {
+        return std::uniform_int_distribution<int>{from, until}(generator);
+    }
+}
 
 
 namespace BinaryTree
@@ -38,6 +50,7 @@ namespace BinaryTree
     };
 
 
+    // TODO: Concepts -- comparable
     template<typename T = int>
     class BinaryTree
     {
@@ -47,26 +60,7 @@ namespace BinaryTree
         using node_pointer = Node<T>::node_pointer;
         static_assert(!std::is_same_v<value_type, void>, "ERROR: Value type can not be void");
 
-    // private:
-    public:
         node_pointer root { nullptr };
-
-        /*
-        node_pointer insert(value_type value,
-                            node_pointer node) {
-            if (nullptr == node) {
-                node = new Node<value_type>(value);
-            }
-            else if (value < node->data) {
-                node->left = insert(value, node->left);
-            }
-            else if (value > node->data) {
-                node->right = insert(value, node->right);
-            }
-            return node;
-        }
-        */
-
 
     public:
 
@@ -93,19 +87,107 @@ namespace BinaryTree
                 prev->right = newNode;
         }
 
-    public: /** Test funcs **/
-
-        void inorder(const node_pointer node) {
-            if (nullptr == node)
-                return;
-            inorder(node->left);
-            std::cout << node->data << " ";
-            inorder(node->right);
+        [[nodiscard]]
+        bool contains(const value_type& value) const
+        {
+            node_pointer node = root;
+            while (nullptr != node) {
+                if (value == node->data)
+                    return true;
+                else if (value > node->data)
+                    node = node->right;
+                else
+                    node = node->left;
+            }
+            return false;
         }
 
-        void display() {
-            inorder(root);
-            std::cout << std::endl;
+        [[nodiscard]]
+        node_pointer find(const value_type& value) const
+        {
+            node_pointer node = root;
+            while (nullptr != node) {
+                if (value == node->data)
+                    return node;
+                else if (value > node->data)
+                    node = node->right;
+                else
+                    node = node->left;
+            }
+            return nullptr;
+        }
+
+    public: /** Test funcs **/
+
+        void printInorder()
+        {
+            std::vector<node_pointer> stack {};
+            node_pointer curr = root;
+
+            while (curr || !stack.empty())
+            {   /* Reach the left most Node of the curr Node */
+                while (curr)
+                { /* place pointer to a tree node on the stack before traversing the node's left subtree */
+                    stack.push_back(curr);
+                    curr = curr->left;
+                }
+
+                // Current must be NULL at this point
+                curr = stack.back();
+                stack.pop_back();
+
+                std::cout << curr->data << " ";
+
+                /* we have visited the node and its left subtree --> Now, it's right subtree's turn */
+                curr = curr->right;
+            }
+        }
+
+        void printBackwards()
+        {
+            std::vector<node_pointer> stack {};
+            node_pointer curr = root;
+
+            while (curr || !stack.empty())
+            {
+                while (curr) {
+                    stack.push_back(curr);
+                    curr = curr->right;
+                }
+
+                curr = stack.back();
+                stack.pop_back();
+
+                std::cout << curr->data << " ";
+                curr = curr->left;
+            }
+        }
+
+        [[nodiscard]]
+        bool isBST() const
+        {
+            std::vector<node_pointer> stack {};
+            node_pointer curr = root;
+
+            int previous = std::numeric_limits<int>::min();
+            while (nullptr != curr || !stack.empty())
+            {   /* Reach the left most Node of the curr Node */
+                while (nullptr != curr)
+                { /* place pointer to a tree node on the stack before traversing the node's left subtree */
+                    stack.push_back(curr);
+                    curr = curr->left;
+                }
+
+                curr = stack.back(); // Current must be NULL at this point
+                stack.pop_back();
+
+                if (previous > curr->data)
+                    return false;
+
+                previous = curr->data;
+                curr = curr->right;
+            }
+            return true;
         }
     };
 }
@@ -114,34 +196,56 @@ namespace BinaryTree::Tests
 {
     void CreateAndPrintTree()
     {
-        /*
         BinaryTree<int> tree;
+        for (int i = 0; i < 10; ++i)
+            tree.insert(Utilities::randomIntegerInRange(0, 100));
 
-        tree.insert(10);
-        tree.insert(4);
-        tree.insert(20);
-        tree.insert(8);
-        tree.insert(30);
-
-        tree.display();
-        */
+        tree.printInorder();
     }
 
-    void CreateAndPrintTreeTEst()
+    void CreateAndPrintTreeBackwards()
     {
         BinaryTree<int> tree;
+        for (int i = 0; i < 10; ++i)
+            tree.insert(Utilities::randomIntegerInRange(0, 100));
 
-        tree.insert(10);
-        tree.insert(4);
-        tree.insert(20);
-        tree.insert(8);
+        tree.printBackwards();
+    }
 
-        tree.display();
+    void check_is_BST()
+    {
+        BinaryTree<int> tree;
+        for (int i = 0; i < 100; ++i)
+            tree.insert(Utilities::randomIntegerInRange(0, 1000));
+
+        std::cout << std::boolalpha << tree.isBST() << std::endl;
+    }
+
+    void checkContains()
+    {
+        BinaryTree<int> tree;
+        tree.insert(7);
+        tree.insert(34);
+        tree.insert(14);
+        tree.insert(25);
+        tree.insert(41);
+
+        std::cout << std::boolalpha << tree.contains(25) << std::endl;
+        std::cout << std::boolalpha << tree.contains(33) << std::endl;
     }
 }
 
+// TODO: find | check contains
+// TODO: find MAX | MIN
+// TODO: Remove by values
+// TODO: FindLowestCommonAncestor
+// TODO: Find_N_th_MinElement
+// TODO: Rebalance
+
 void BinaryTree::TestAll()
 {
-    //  Tests::CreateAndPrintTree();
-    Tests::CreateAndPrintTreeTEst();
+    // Tests::CreateAndPrintTree();
+    // Tests::CreateAndPrintTreeBackwards();
+    // Tests::check_is_BST();
+    Tests::checkContains();
 }
