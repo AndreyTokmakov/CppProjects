@@ -10,8 +10,10 @@ Description : BinaryTree data structure implementation
 #include "BinaryTree.h"
 
 #include <iostream>
-#include <string>
+#include <string_view>
 #include <memory>
+
+#include <numbers>
 #include <utility>
 #include <random>
 
@@ -76,9 +78,9 @@ namespace BinaryTree
                 return;
             }
 
-            node_pointer curr {root}, prev { nullptr };
-            while (curr) {
-                prev = std::exchange(curr, (value < curr->data) ? curr->left : curr->right);
+            node_pointer node {root}, prev { nullptr };
+            while (node) {
+                prev = std::exchange(node, (value < node->data) ? node->left : node->right);
             }
 
             if (auto newNode = new Node<value_type>(value); value < prev->data)
@@ -133,6 +135,52 @@ namespace BinaryTree
             while (nullptr != node->right)
                 node = node->right;
             return node->data;
+        }
+
+        [[nodiscard]]
+        value_type minNthElement(size_t k) const
+        {
+            std::vector<node_pointer> stack {};
+            node_pointer node = root;
+
+            while (nullptr != node || !stack.empty())
+            {
+                while (nullptr != node) {
+                    stack.push_back(node);
+                    node = node->left;
+                }
+
+                node = stack.back();
+                if (0 == --k)
+                    return node->data;
+
+                stack.pop_back();
+                node = node->right;
+            }
+            return std::numeric_limits<value_type>::min();
+        }
+
+        [[nodiscard]]
+        value_type maxNthElement(size_t k) const
+        {
+            std::vector<node_pointer> stack {};
+            node_pointer node = root;
+
+            while (nullptr != node || !stack.empty())
+            {
+                while (nullptr != node) {
+                    stack.push_back(node);
+                    node = node->right;
+                }
+
+                node = stack.back();
+                if (0 == --k)
+                    return node->data;
+
+                stack.pop_back();
+                node = node->left;
+            }
+            return std::numeric_limits<value_type>::min();
         }
 
     public: /** Test funcs **/
@@ -242,7 +290,7 @@ namespace BinaryTree::Tests
     void findMinMaxElement()
     {
         BinaryTree<int> tree;
-        int min = 1001, max = 0;
+        int min = std::numeric_limits<int>::max(), max = std::numeric_limits<int>::min();
         for (int i = 0; i < 100; ++i) {
             const int value = Utilities::randomIntegerInRange(0, 1000);
             tree.insert(value);
@@ -254,6 +302,27 @@ namespace BinaryTree::Tests
         std::cout << tree.minElement() << " " << tree.maxElement() << std::endl;
     }
 
+    void find_Nth_MinElement()
+    {
+        const size_t size {20}, nTh = size / 2;
+        BinaryTree<int> tree;
+        for (size_t i = 0; i < size; ++i)
+            tree.insert(Utilities::randomIntegerInRange(0, size * 10));
+
+        tree.printInorder();
+        std::cout << "\n[" << nTh << "-th min element] = " << tree.minNthElement(nTh) << std::endl;
+    }
+
+    void find_Nth_MaxElement()
+    {
+        const size_t size {10}, nTh = size / 2;
+        BinaryTree<int> tree;
+        for (size_t i = 0; i < size; ++i)
+            tree.insert(Utilities::randomIntegerInRange(0, size * 10));
+
+        tree.printBackwards();
+        std::cout << "\n[" << nTh << "-th max element] = " << tree.maxNthElement(nTh) << std::endl;
+    }
     void checkContains()
     {
         BinaryTree<int> tree;
@@ -268,10 +337,14 @@ namespace BinaryTree::Tests
     }
 }
 
+
+// TODO: Construct from list
+
 // TODO: Remove by values
 // TODO: FindLowestCommonAncestor
-// TODO: Find_N_th_MinElement
-// TODO: Rebalance
+// TODO: is_balanced | re-balance
+// TODO: depth | max | min
+
 
 void BinaryTree::TestAll()
 {
@@ -279,5 +352,8 @@ void BinaryTree::TestAll()
     // Tests::CreateAndPrintTreeBackwards();
     // Tests::check_is_BST();
     // Tests::checkContains();
-    Tests::findMinMaxElement();
+
+    // Tests::findMinMaxElement();
+    // Tests::find_Nth_MinElement();
+    Tests::find_Nth_MaxElement();
 }
