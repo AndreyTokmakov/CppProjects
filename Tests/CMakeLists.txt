@@ -60,7 +60,9 @@ add_executable(Tests MACOSX_BUNDLE
         DataStructures/RateLimiter.cpp DataStructures/RateLimiter.h
         DataStructures/BitReader.cpp DataStructures/BitReader.h
         FunctionCall_LookUp/FunctionCall_LookUp.cpp FunctionCall_LookUp/FunctionCall_LookUp.h
-        )
+        Assembly/AssemblyDemo.cpp
+        Assembly/AssemblyDemo.h
+)
 
  # Link phread library
 TARGET_LINK_LIBRARIES(Tests pthread)

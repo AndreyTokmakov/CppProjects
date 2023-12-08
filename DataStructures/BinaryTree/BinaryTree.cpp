@@ -66,6 +66,15 @@ namespace BinaryTree
 
     public:
 
+        BinaryTree() = default;
+
+        BinaryTree(const std::initializer_list<int> list)
+        {
+            // TODO: Construct from sorted array ????
+            for (int iter : list)
+                insert(iter);
+        }
+
         [[nodiscard]]
         node_pointer getRoot() const {
             return root;
@@ -335,6 +344,12 @@ namespace BinaryTree::Tests
         std::cout << std::boolalpha << tree.contains(25) << std::endl;
         std::cout << std::boolalpha << tree.contains(33) << std::endl;
     }
+
+    void InitializerList_Constructor()
+    {
+        BinaryTree<int> tree {6,5,4,3,2,1};
+        tree.printInorder();
+    }
 }
 
 
@@ -348,6 +363,8 @@ namespace BinaryTree::Tests
 
 void BinaryTree::TestAll()
 {
+    Tests::InitializerList_Constructor();
+
     // Tests::CreateAndPrintTree();
     // Tests::CreateAndPrintTreeBackwards();
     // Tests::check_is_BST();
@@ -355,5 +372,5 @@ void BinaryTree::TestAll()
 
     // Tests::findMinMaxElement();
     // Tests::find_Nth_MinElement();
-    Tests::find_Nth_MaxElement();
+    // Tests::find_Nth_MaxElement();
 }
