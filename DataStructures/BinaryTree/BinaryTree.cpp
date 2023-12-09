@@ -227,6 +227,7 @@ namespace BinaryTree
             return getDepth(root);
         }
 
+
     public: /** Test funcs **/
 
         void printInorder()
