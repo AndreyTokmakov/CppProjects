@@ -24,6 +24,8 @@
 #include <unordered_set>
 #include <unordered_map>
 
+#include "../Utilities/Utilities.h"
+
 namespace
 {
     template<typename T>
@@ -854,24 +856,8 @@ namespace BinTreeTests {
             return 1 + std::min(GetMinDepth(node->left), GetMinDepth(node->right));
     }
 
-    size_t getDepth_Test(const BinTree::Node* node) {
-        if (nullptr == node)
-            return 1;
-        unsigned int left = 1, right = 1;
-        BinTree::Node* node_prt = node->left;
-        while (nullptr != node_prt) {
-            left++;
-            node_prt = node_prt->left;
-        }
-        node_prt = node->right;
-        while (nullptr != node_prt) {
-            right++;
-            node_prt = node_prt->right;
-        }
-        return std::max(left, right);
-    }
-
-    void Find_Max_Depth() {
+    void Find_Max_Depth()
+    {
         //BinTree::BinaryTree tree {33,22,85,10,30,54,125,5,8,25,32,45,60,120,130};
         BinTree::BinaryTree tree{ 4,2,6,1,3,5,7 };
 
@@ -935,15 +921,96 @@ namespace BinTreeTests {
         std::cout << "Max depth = " << GetDepth(tree.getRoot()) << std::endl;
     }
 
-    void Find_Depth_Tests_2() {
-        BinTree::BinaryTree tree{ 50,20,60,10,25,27,28,29,30,31,32 };
-
-        std::cout << "Depth1 = " << GetDepth(tree.getRoot()) << std::endl;
-        std::cout << "Depth2 = " << tree.getDepth() << std::endl;
-        std::cout << "Depth2 = " << getDepth_Test(tree.getRoot()) << std::endl;
+    size_t __get_depth_test(const BinTree::Node* node) {
+        if (nullptr == node)
+            return 1;
+        unsigned int left = 1, right = 1;
+        BinTree::Node* node_prt = node->left;
+        while (nullptr != node_prt) {
+            left++;
+            node_prt = node_prt->left;
+        }
+        node_prt = node->right;
+        while (nullptr != node_prt) {
+            right++;
+            node_prt = node_prt->right;
+        }
+        return std::max(left, right);
     }
 
-    ///////////////////////////////////////////////////////////////////////////////////////////////////
+    struct NodeDepth
+    {
+        BinTree::Node* node {nullptr};
+        size_t depth {0};
+    };
+
+    size_t __get_depth_test_2(BinTree::Node* root)
+    {
+        size_t depth = 1;
+        std::vector<NodeDepth> stack {};
+        stack.reserve(100);
+        NodeDepth dNode { root, depth};
+
+        while (dNode.node || !stack.empty())
+        {
+            while (dNode.node) {
+                stack.push_back(dNode);
+                dNode = {dNode.node->left, stack.back().depth + 1};
+            }
+
+            dNode = stack.back();
+            stack.pop_back();
+            depth = std::max(depth, dNode.depth);
+            dNode = {dNode.node->right, dNode.depth + 1};
+        }
+        return depth;
+    }
+
+
+    void Find_Depth_Tests_2()
+    {
+        BinTree::BinaryTree tree{ 50,20,60,10,25,27,28,29,30,31,32 };
+        // BinTree::BinaryTree tree { 12, 5, 15, 3, 7, 13, 17, 8 ,9, 10};  // -->  Depth: 5
+
+        std::cout << "Depth = " << GetDepth(tree.getRoot()) << std::endl;
+        std::cout << "Depth = " << tree.getDepth() << std::endl;
+        std::cout << "Depth = " << __get_depth_test(tree.getRoot()) << std::endl;
+        std::cout << "Depth = " << __get_depth_test_2(tree.getRoot()) << std::endl;
+    }
+
+    ///------------------------------------------------------------------------------------------------
+
+    void Find_Depth_PerformanceTests()
+    {
+        constexpr size_t size {1'000}, testsCount {1000'000};
+
+        const BinTree::BinaryTree tree = [] {
+            BinTree::BinaryTree tree;
+            for (size_t i = 0; i < size; ++i)
+                tree.insert(Utilities::randomIntegerInRange(0, size * 10));
+            return tree;
+        }();
+
+        if (GetDepth(tree.getRoot()) != __get_depth_test_2(tree.getRoot()))
+        {
+            std::cerr << "Error!" << std::endl;
+            return;
+        }
+
+        {
+            Utilities::ScopedTimer timer {"Recursive"};
+            for (size_t i = 0; i < testsCount; ++i)
+                GetDepth(tree.getRoot());
+        }
+
+        {
+            Utilities::ScopedTimer timer {"Non recursive"};
+            for (size_t i = 0; i < testsCount; ++i)
+                __get_depth_test_2(tree.getRoot());
+        }
+    }
+
+    ///------------------------------------------------------------------------------------------------
 
     void __find_maximum_node_atLevel(const BinTree::Node* node, size_t level, int& result) {
         if (nullptr == node)
@@ -2160,7 +2227,7 @@ void Trees::TEST_ALL()
 
 
     // Min_and_Max_Elements::Find_MIN_and_MAX_Element();
-    Min_and_Max_Elements::Find_MIN_and_MAX_Element_NonRecursive();
+    // Min_and_Max_Elements::Find_MIN_and_MAX_Element_NonRecursive();
 
     // Min_and_Max_Elements::Find_N_th_MinElement();
     // Min_and_Max_Elements::Find_N_th_MinElement_NonRecur();
@@ -2174,7 +2241,7 @@ void Trees::TEST_ALL()
     // BinTreeTests::Remove_Tests();
     // BinTreeTests::TreeTest1();
     // BinTreeTests::BalanceTest();
-    // BinTreeTests::isTreeBalanced();
+    BinTreeTests::isTreeBalanced();
     // BinTreeTests::Calculate_Size();
 
     // BinTreeTests::FindLowestCommonAncestor();
@@ -2190,12 +2257,14 @@ void Trees::TEST_ALL()
 
 
     // BinTreeTests::Find_Max_Depth();
+    // BinTreeTests::Find_Min_Depth();
+    // BinTreeTests::Find_Depth_Tests_2();
+    // BinTreeTests::Find_Depth_PerformanceTests();
+
     // BinTreeTests::Find_Deepest_Node();
     // BinTreeTests::Find_Maximum_Node_AtLevel();
     // BinTreeTests::Find_Maximum_Level_Sum();
     // BinTreeTests::Find_Level_With_Maximum_Sum();
-    // BinTreeTests::Find_Min_Depth();
-    // BinTreeTests::Find_Depth_Tests_2();
     // BinTreeTests::Find_MaxElement_NotForBST();
     // BinTreeTests::Find_If_Last_Level_Completed();
     // BinTreeTests::Find_Largest_BST_Sub();

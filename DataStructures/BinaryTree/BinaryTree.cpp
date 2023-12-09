@@ -16,6 +16,7 @@ Description : BinaryTree data structure implementation
 #include <numbers>
 #include <utility>
 #include <random>
+#include <algorithm>
 
 
 namespace Utilities
@@ -192,6 +193,40 @@ namespace BinaryTree
             return std::numeric_limits<value_type>::min();
         }
 
+        struct NodeDepth
+        {
+            node_pointer node {nullptr};
+            size_t depth {0};
+        };
+
+        [[nodiscard]]
+        size_t getDepth(const node_pointer node) const
+        {
+            size_t depth = 1;
+            std::vector<NodeDepth> stack {};
+            NodeDepth dNode { root, depth};
+
+            while (dNode.node || !stack.empty())
+            {
+                while (dNode.node) {
+                    stack.push_back(dNode);
+                    dNode = {dNode.node->left, stack.back().depth + 1};
+                }
+
+                dNode = stack.back();
+                stack.pop_back();
+                depth = std::max(depth, dNode.depth);
+                dNode = {dNode.node->right, dNode.depth + 1};
+            }
+            return depth;
+        }
+
+        [[nodiscard]]
+        size_t getDepth() const
+        {
+            return getDepth(root);
+        }
+
     public: /** Test funcs **/
 
         void printInorder()
@@ -264,6 +299,29 @@ namespace BinaryTree
             }
             return true;
         }
+
+        [[nodiscard]]
+        size_t GetDepthRecur(const node_pointer node) const {
+            return nullptr == node ? 0 : 1 + std::max(GetDepthRecur(node->left), GetDepthRecur(node->right));
+        }
+
+        [[nodiscard]]
+        size_t GetDepthRecur() const {
+            return GetDepthRecur(root);
+        }
+
+        [[nodiscard]]
+        bool isBalanced(const node_pointer node) const {
+            if (nullptr == node)
+                return true;
+            return std::abs(static_cast<int>(getDepth(node->left)) - static_cast<int>(getDepth(node->right))) <= 1 &&
+                   isBalanced(node->left) && isBalanced(node->right);
+        }
+
+        [[nodiscard]]
+        bool isBalanced() const {
+            return isBalanced(root);
+        }
     };
 }
 
@@ -332,6 +390,18 @@ namespace BinaryTree::Tests
         tree.printBackwards();
         std::cout << "\n[" << nTh << "-th max element] = " << tree.maxNthElement(nTh) << std::endl;
     }
+
+    void Find_Depth_Test()
+    {
+        const size_t size {10'000};
+        BinaryTree<int> tree;
+        for (size_t i = 0; i < size; ++i)
+            tree.insert(Utilities::randomIntegerInRange(0, size * 10));
+
+        std::cout << tree.getDepth() << std::endl;
+        std::cout << tree.GetDepthRecur() << std::endl;
+    }
+
     void checkContains()
     {
         BinaryTree<int> tree;
@@ -350,6 +420,16 @@ namespace BinaryTree::Tests
         BinaryTree<int> tree {6,5,4,3,2,1};
         tree.printInorder();
     }
+
+    void Is_Balanced_Test()
+    {
+        const size_t size { 1000 };
+        BinaryTree<int> tree;
+        for (size_t i = 0; i < size; ++i)
+            tree.insert(Utilities::randomIntegerInRange(0, size * 10));
+
+        std::cout << std::boolalpha << tree.isBalanced() << std::endl;
+    }
 }
 
 
@@ -363,7 +443,11 @@ namespace BinaryTree::Tests
 
 void BinaryTree::TestAll()
 {
-    Tests::InitializerList_Constructor();
+    // Tests::InitializerList_Constructor();
+
+    // Tests::Find_Depth_Test();
+
+    Tests::Is_Balanced_Test();
 
     // Tests::CreateAndPrintTree();
     // Tests::CreateAndPrintTreeBackwards();
