@@ -324,7 +324,6 @@ namespace LinkedLists::Two
         using const_reference = const object_type&;
         using const_pointer = const object_type*;
 
-
         struct Node
         {
             object_type data {};
@@ -337,7 +336,6 @@ namespace LinkedLists::Two
             }
         };
 
-
         static_assert(!std::is_same_v<object_type, void>,
                       "Type of the Objects in the pool can not be void");
 
@@ -348,7 +346,9 @@ namespace LinkedLists::Two
         size_t size {0};
 
     public:
-        class ListIterator {
+
+        class ListIterator
+        {
             using value_type = LinkedList::object_type;
             using reference = LinkedList::reference;
             using pointer = LinkedList::pointer;
@@ -389,7 +389,8 @@ namespace LinkedLists::Two
             }
         };
 
-        class ListConstIterator {
+        class ListConstIterator
+        {
             using value_type = LinkedList::object_type;
             using const_reference = LinkedList::const_reference;
             using const_pointer = LinkedList::const_pointer;
@@ -620,7 +621,7 @@ namespace LinkedLists::TestsTwo
 void LinkedLists::TEST_ALL()
 {
     // TestsOne::PrintContent_Iterator();
-    TestsOne::PushBackElement();
+    // TestsOne::PushBackElement();
     // TestsOne::initializer_list();
     // TestsOne::TEST();
 

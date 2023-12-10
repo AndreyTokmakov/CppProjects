@@ -703,6 +703,31 @@ namespace FalseSharingExperiments
     }
 };
 
+
+namespace Future
+{
+    void WaitForFuture_RangeBasedLoop_Copy()
+    {
+        auto calculate = [](int timeout) {
+            std::osyncstream(std::cout) << "Starting job\n";
+            std::this_thread::sleep_for(std::chrono::seconds(timeout));
+            std::osyncstream(std::cout) << "Job done\n";
+            return 10;
+        };
+
+
+        std::vector<std::future<int>> workers;
+        workers.emplace_back(std::async(std::launch::async, calculate, 10));
+        workers.emplace_back(std::async(std::launch::async, calculate, 5));
+
+        int sum = 0;
+        for (auto&   T: workers)
+            sum += T.get();
+
+        std::cout << sum << std::endl;
+    }
+}
+
 void Multithreading::TestAll()
 {
     /*
@@ -743,5 +768,7 @@ void Multithreading::TestAll()
     // SwitchingThreads_SpinLock::TestAll();
 
 
-    FalseSharingExperiments::Benchmark();
+    // FalseSharingExperiments::Benchmark();
+
+    Future::WaitForFuture_RangeBasedLoop_Copy();
 }

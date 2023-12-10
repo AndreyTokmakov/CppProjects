@@ -2241,7 +2241,7 @@ void Trees::TEST_ALL()
     // BinTreeTests::Remove_Tests();
     // BinTreeTests::TreeTest1();
     // BinTreeTests::BalanceTest();
-    BinTreeTests::isTreeBalanced();
+    // BinTreeTests::isTreeBalanced();
     // BinTreeTests::Calculate_Size();
 
     // BinTreeTests::FindLowestCommonAncestor();

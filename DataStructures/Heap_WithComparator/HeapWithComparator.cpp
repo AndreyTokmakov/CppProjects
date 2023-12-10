@@ -131,8 +131,10 @@ namespace HeapWithComparator
     };
 };
 
-namespace
+namespace Tests
 {
+    using namespace HeapWithComparator;
+
     std::random_device rd{};
     std::mt19937 generator = std::mt19937 { rd() };
 
@@ -147,11 +149,6 @@ namespace
                 return number;
         }
     }
-}
-
-namespace Tests
-{
-    using namespace HeapWithComparator;
 
     void addTest()
     {
