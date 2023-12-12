@@ -9,8 +9,8 @@ project(${PROJECT_NAME} VERSION ${PROJECT_VERSION} LANGUAGES CXX)
 add_compile_options(-c -Wall -Wextra -O3 -std=c++2a)
 
 # include all components
-add_executable(Multithreding MACOSX_BUNDLE 
-    main.cpp
+add_executable(Multithreding
+        main.cpp
         ThreadPoolBlocking/ThreadPoolBlocking.cpp ThreadPoolBlocking/ThreadPoolBlocking.h
         AsyncLaunch/AsyncLaunch.cpp AsyncLaunch/AsyncLaunch.h
         ThreadHelperUtilities/ThreadHelperUtilities.cpp ThreadHelperUtilities/ThreadHelperUtilities.h
@@ -28,6 +28,7 @@ add_executable(Multithreding MACOSX_BUNDLE
         JThreads/JThreads.cpp JThreads/JThreads.h
         Latch/Latch.cpp Latch/Latch.h
         Multithreading_Collections/Multithreading_Collections.cpp Multithreading_Collections/Multithreading_Collections.h
+        Multithreading_Collections/Queue.cpp Multithreading_Collections/Queue.h
         Multithreading_Communication/Multithreading_Communication.cpp Multithreading_Communication/Multithreading_Communication.h
         Multithreading_Performance/Multithreading_Performance.cpp Multithreading_Performance/Multithreading_Performance.h
         PackagedTask/PackagedTask.cpp PackagedTask/PackagedTask.h
@@ -45,7 +46,6 @@ add_executable(Multithreding MACOSX_BUNDLE
         PerformanceExperiments/PerformanceExperiments.cpp PerformanceExperiments/PerformanceExperiments.h
         SpinLock/SpinLock.h SpinLock/SpinLock.cpp
         Threads/StoppingThreads.h Threads/StoppingThreads.cpp
-        )
+)
 
- # Link phread library
 TARGET_LINK_LIBRARIES(Multithreding pthread)

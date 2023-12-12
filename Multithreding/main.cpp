@@ -41,6 +41,7 @@
 #include "ParallelExecutionAlgoritms/ParallelExecutionAlgoritms.h"
 #include "Multithreading_Communication/Multithreading_Communication.h"
 #include "Multithreading_Collections/Multithreading_Collections.h"
+#include "Multithreading_Collections/Queue.h"
 #include "Multithreading_Performance/Multithreading_Performance.h"
 #include "Barrier/Barrier.h"
 #include "FalseSharing/FalseSharingExperiments.h"
@@ -72,6 +73,7 @@ int main([[maybe_unused]] int argc,
     // LockFreeQueue::TEST_ALL()
     // Multithreading_Performance::TEST_ALL();
     // Multithreading_Collections::TEST_ALL();
+    Queue::TestAll();
     // Multithreading_Communication::TEST_ALL();
     // Promise::TEST_ALL();
     // PackagedTask::TEST_ALL();
@@ -95,7 +97,7 @@ int main([[maybe_unused]] int argc,
     // JThreads::TEST_ALL();
 
     // FalseSharingExperiments::TEST_ALL();
-    PerformanceExperiments::TestAll();
+    // PerformanceExperiments::TestAll();
 
     return EXIT_SUCCESS;
 }
