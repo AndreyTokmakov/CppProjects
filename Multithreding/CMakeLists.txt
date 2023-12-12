@@ -24,7 +24,7 @@ add_executable(Multithreding
         ConditionVariable/ConditionVariable.cpp ConditionVariable/ConditionVariable.h
         Exceptions_Handling/Exceptions_Handling.cpp Exceptions_Handling/Exceptions_Handling.h
         Future/Future.cpp Future/Future.h
-        Integer/Integer.cpp Integer/Integer.h
+        Integer/Integer.h
         JThreads/JThreads.cpp JThreads/JThreads.h
         Latch/Latch.cpp Latch/Latch.h
         Multithreading_Collections/Multithreading_Collections.cpp Multithreading_Collections/Multithreading_Collections.h

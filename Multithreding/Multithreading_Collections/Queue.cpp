@@ -15,20 +15,59 @@ Description : Queue.cpp
 #include <condition_variable>
 #include <vector>
 #include <deque>
+#include <future>
+#include <syncstream>
+#include <format>
+#include <chrono>
+#include "../ThreadHelperUtilities/ThreadHelperUtilities.h"
+#include "../Integer/Integer.h"
+
+
+
+namespace
+{
+    template<typename T>
+    T add_space(const T& arg) {
+        std::osyncstream {std::cout} << ' ';
+        return arg;
+    };
+
+    template<typename ...Args>
+    void print(Args&&... args)
+    {
+        const std::chrono::time_point now = std::chrono::system_clock::now();
+        std::cout << std::format("{:%d-%m-%Y %H:%M:%OS}", now) << ":";
+        (std::osyncstream {std::cout}  << ... << add_space(std::forward<Args>(args))) << std::endl;
+    }
+
+    template<typename ...Args>
+    void FoldPrintEx(Args&&... args) {
+        auto add_space = []<typename T>(const T& arg) {
+            std::osyncstream {std::cout} << ' ';
+            return arg;
+        };
+        (std::osyncstream {std::cout} << ... << add_space(std::forward<Args>(args))) << std::endl;
+    }
+
+
+}
 
 namespace QueueCV
 {
     template<typename T>
     class Queue
     {
+        using value_type = T;
+        static_assert(!std::is_same_v<value_type, void>, "ERROR: Value type can not be void");
+
         mutable std::mutex mutex;
-        std::deque<T> data_queue;
+        std::deque<value_type> data_queue;
         std::condition_variable updated;
 
     public:
         Queue() = default;
 
-        void push(T new_value) {
+        void push(value_type new_value) {
             std::lock_guard<std::mutex> lock(mutex);
             data_queue.push(std::move(new_value));
             updated.notify_one();
@@ -49,7 +88,7 @@ namespace QueueCV
         }
         */
 
-        void wait_and_pop(T& value) {
+        void wait_and_pop(value_type& value) {
             std::unique_lock<std::mutex> lock(mutex);
             updated.wait(lock, [this] {
                 return false == data_queue.empty();
@@ -60,7 +99,9 @@ namespace QueueCV
 
 
         template<class _Rep, class _Period>
-        bool wait_for_and_pop(T& value, const std::chrono::duration<_Rep, _Period>& _Rel_time) {
+        bool wait_for_and_pop(value_type& value,
+                              const std::chrono::duration<_Rep, _Period>& _Rel_time)
+        {
             std::unique_lock<std::mutex> lock(mutex);
             bool ok = updated.wait_for(lock, _Rel_time, [this] {
                 return false == data_queue.empty();
@@ -72,7 +113,7 @@ namespace QueueCV
             return true;
         }
 
-        T&& wait_and_pop() {
+        value_type&& wait_and_pop() {
             std::unique_lock<std::mutex> lock(mutex);
             updated.wait(lock, [this] {
                 return false == data_queue.empty();
@@ -82,7 +123,7 @@ namespace QueueCV
             return std::move(entry);
         }
 
-        bool try_pop(T& value) {
+        bool try_pop(value_type& value) {
             std::lock_guard<std::mutex> lock(mutex);
             if (data_queue.empty())
                 return false;
@@ -91,13 +132,13 @@ namespace QueueCV
             return true;
         }
 
-        std::shared_ptr<T> try_pop()
+        std::shared_ptr<value_type> try_pop()
         {
             std::lock_guard<std::mutex> lock(mutex);
             if (data_queue.empty())
-                return std::shared_ptr<T>();
-            std::shared_ptr<T> result =
-                    std::make_shared<T>(std::move(data_queue.front()));
+                return std::shared_ptr<value_type>();
+            std::shared_ptr<value_type> result =
+                    std::make_shared<value_type>(std::move(data_queue.front()));
             data_queue.pop_front();
             return result;
         }
@@ -116,7 +157,83 @@ namespace QueueCV
     };
 }
 
+
+namespace Tests
+{
+    using namespace QueueCV;
+
+    using Int = Integer<false>;
+
+    void RunTest1()
+    {
+        QueueCV::Queue<Int> queue;
+
+        std::future<void> producer = std::async(std::launch::async, [&]()-> void {
+            THREAD_INFO << "Producer: started." << std::endl;
+            std::this_thread::sleep_for(std::chrono::seconds(1));
+            queue.emplace(1);
+            THREAD_INFO << "Producer: done" << std::endl;
+        });
+
+        std::future<void> consumer = std::async(std::launch::async, [&]()-> void {
+            THREAD_INFO << "Consumer: started" << std::endl;
+            auto&& entry = queue.wait_and_pop();
+            THREAD_INFO << "Consumer: We've got some" << std::endl;
+            std::this_thread::sleep_for(std::chrono::seconds(2));
+            entry.printInfo();
+            THREAD_INFO << "Consumer: done" << std::endl;
+        });
+
+        producer.wait();
+        consumer.wait();
+
+        THREAD_INFO << "Done!!" << std::endl;
+    }
+
+    void RunTest_WaitFor()
+    {
+        QueueCV::Queue<Int> queue;
+
+        std::future<void> producer = std::async(std::launch::async, [&]()-> void {
+            THREAD_INFO << "Producer: started." << std::endl;
+            std::this_thread::sleep_for(std::chrono::seconds(1));
+            queue.emplace(1);
+            THREAD_INFO << "Producer: done" << std::endl;
+        });
+
+        std::future<void> consumer = std::async(std::launch::async, [&]()-> void {
+            THREAD_INFO << "Consumer: started" << std::endl;
+            Int entry;
+            while (true)
+            {
+                auto ok = queue.wait_for_and_pop(entry, std::chrono::milliseconds(250));
+                if (ok) {
+                    THREAD_INFO << "Consumer: We've got some" << std::endl;
+                    break;
+                }
+                else {
+                    THREAD_INFO << "Timeout" << std::endl;
+                }
+            }
+
+            std::this_thread::sleep_for(std::chrono::seconds(2));
+            entry.printInfo();
+            THREAD_INFO << "Consumer: done" << std::endl;
+        });
+
+        producer.wait();
+        consumer.wait();
+
+        THREAD_INFO << "Done!!" << std::endl;
+    }
+}
+
+
 void Queue::TestAll()
 {
+    // print(1, 2, 3);
+    // FoldPrintEx(1, 2, 3);
 
+    // Tests::RunTest1();
+    Tests::RunTest_WaitFor();
 };

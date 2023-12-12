@@ -2,40 +2,79 @@
 
 #include <iostream>
 
-class Integer {
-protected:
-    int value;
+template<bool debug = true>
+class Integer
+{
+    int value { 0 };
 
 public:
-    Integer();
-    Integer(int val);
-    Integer(const Integer &obj);
 
-    virtual ~Integer();
+    Integer()
+    {
+        if constexpr (debug)
+            std::cout << __FUNCTION__ << "(" << this->value << ")" << std::endl;
+    }
 
-    virtual int getValue() const;
-    virtual void printInfo() const;
-    virtual void setValue(int val);
+    explicit Integer(int val) : value { val }
+    {
+        if constexpr (debug)
+            std::cout << __FUNCTION__ << "(" << this->value << ")" << std::endl;
+    }
+
+    Integer(const Integer &obj)
+    {
+        if constexpr (debug)
+            std::cout << __FUNCTION__ << " [Copy contructor]. (" << this->value << ")" << std::endl;
+        this->value = obj.value;
+    }
+
+    ~Integer()
+    {
+        if constexpr (debug)
+            std::cout << __FUNCTION__ << "(" << this->value << ")" << std::endl;
+    }
+
+    [[nodiscard]]
+    int getValue() const {
+        return this->value;
+    }
+
+    void printInfo() const {
+        std::cout << "Info : Integer value = " << this->value << std::endl;
+    }
+
+    void setValue(int val) {
+        this->value = val;
+    }
 
 
 public: /** Operators reload. **/
-    friend std::ostream& operator<< (std::ostream& stream,
-                                     const Integer& integer);
 
-    friend Integer operator+(const Integer& left,
-                             const Integer& right);
+    friend std::ostream& operator<<(std::ostream& os, const Integer& integer) {
+        os << integer.value;
+        return os;
+    }
 
-    friend Integer operator+=(Integer& left,
-                              const Integer& right);
+    friend Integer operator+(const Integer& left, const Integer& right) {
+        return Integer(left.value + right.value);
+    }
 
-    friend bool operator==(const Integer& left,
-                           const Integer& right);
+    friend Integer operator+=(Integer& left, const Integer& right) {
+        left.value += right.value;
+        return left;
+    }
 
-    friend bool operator<(const Integer& left,
-                          const Integer& right);
+    friend bool operator==(const Integer& left, const Integer& right) {
+        return left.value == right.value;
+    }
 
-    friend bool operator>(const Integer& left,
-                          const Integer& right);
+    friend bool operator<(const Integer& left, const Integer& right) {
+        return left.value < right.value;
+    }
+
+    friend bool operator>(const Integer& left, const Integer& right) {
+        return left.value > right.value;
+    }
 
     Integer operator=(const Integer& right) {
         if (this == &right) {
@@ -45,10 +84,33 @@ public: /** Operators reload. **/
         return *this;
     }
 
-    friend Integer operator+(const Integer& integer);
-    friend Integer operator-(const Integer& integer);
-    friend Integer operator++(Integer& integer);
-    friend Integer operator++(Integer& integer, int);
-    friend Integer operator--(Integer& integer);
-    friend Integer operator--(Integer& integer, int);
+    friend Integer operator+(const Integer& integer) {
+        return integer.value;
+    }
+
+    friend Integer operator-(const Integer& integer) {
+        return Integer(-integer.value);
+    }
+
+    friend Integer operator++(Integer& integer) {
+        integer.value++;
+        return integer;
+    }
+
+    friend Integer operator++(Integer& integer, int) {
+        Integer oldValue(integer.value);
+        ++integer.value;
+        return oldValue;
+    }
+
+    friend Integer operator--(Integer& integer) {
+        integer.value--;
+        return integer;
+    }
+
+    friend Integer operator--(Integer& integer, int) {
+        Integer oldValue(integer.value);
+        integer.value--;
+        return oldValue;
+    }
 };
