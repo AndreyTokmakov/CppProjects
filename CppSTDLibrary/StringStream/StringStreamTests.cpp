@@ -46,6 +46,13 @@ namespace StringStream
 	}
 }
 
+/*
+void* operator new(std::size_t sz){
+    std::cout << "Allocating: " << sz << '\n';
+    return std::malloc(sz);
+}
+*/
+
 namespace StringStream
 {
 	void Create_Tests()
@@ -281,7 +288,8 @@ namespace StringStream
 	}
 
 
-	void Test2() {
+	void Test2()
+    {
 		{
 			std::string str = "11:22:33:44:55";
 			std::stringstream ss(str);
@@ -300,6 +308,25 @@ namespace StringStream
 			std::cout << std::endl;
 		}
 	}
+
+
+
+    void View()
+    {
+        std::cout << "start...\n";
+        std::stringstream str;
+        str << 42;
+        str << " Hello C++20/23 Programming World";
+
+        std::cout << "str(1)\n";
+        std::cout << str.str() << '\n';
+
+        std::cout << "str(2)\n";
+        std::cout << str.str() << '\n';
+
+        std::cout << "view()\n";
+        std::cout << str.view() << '\n';
+    }
 };
 
 
@@ -313,10 +340,12 @@ void StringStream::TestAll()
     // Swap();
     // Clear();
 
+    View();
+
     // Count_Words();
     // Print_Frequency();
 
     // Spilit_Test_Delimiter();
-    SplitStringTests();
+    // SplitStringTests();
     // SplitString_Simple_Spaces();
 };

@@ -177,6 +177,7 @@ namespace Builder {
 
 void Test_User();
 void Test_HTML();
+void BlochBuilder_Test();
 
 
 namespace Builder
@@ -205,6 +206,9 @@ namespace Builder
 
         // Test_User();
 
-        Test_HTML();
+        // Test_HTML();
+
+
+        BlochBuilder_Test();
 	}
 };

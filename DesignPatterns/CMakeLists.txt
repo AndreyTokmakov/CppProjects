@@ -13,7 +13,7 @@ add_executable(DesignPatterns
 		AbstractFactory/AbstractFactory.cpp AbstractFactory/AbstractFactory.h AbstractFactory/ShapeFactory.cpp
 		Adapter/Adapter.cpp Adapter/Adapter.h Adapter/USBAdapter.cpp
 		Bridge/Bridge.cpp Bridge/Bridge.h
-		Builder/Builder.cpp Builder/Builder.h
+		Builder/Builder.cpp Builder/Builder.h Builder/BlochBuilder.cpp
 		ChainOfResponsibility/ChainOfResponsibility.cpp ChainOfResponsibility/ChainOfResponsibility.h
 		ChainOfResponsibility/ChainOfHandlers.cpp
 		Command/Command.cpp Command/Command.h

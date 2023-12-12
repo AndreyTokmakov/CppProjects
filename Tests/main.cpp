@@ -720,13 +720,70 @@ namespace OOP
 }
 
 
+namespace BlochBuilder
+{
+    struct IntegerValue
+    {
+        int value {0};
+    };
+
+    struct XPos: IntegerValue {};
+    struct YPos: IntegerValue {};
+    struct Width: IntegerValue {};
+    struct Height: IntegerValue {};
+
+
+    class Widget
+    {
+        /// Some implementation
+    public:
+        template<typename ... Args>
+        Widget(Args ... args)
+        {
+            (set(std::forward<Args>(args)), ...);
+            // (set(std::move(args)), ...);
+        }
+
+    public:
+        Widget& set(XPos xPos) {
+            std::cout << "Setting the xPos" << std::endl;
+            return *this;
+        }
+
+        Widget& set(YPos yPos) {
+            std::cout << "Setting the yPos" << std::endl;
+            return *this;
+        }
+
+        Widget& set(Width width) {
+            std::cout << "Setting the Width" << std::endl;
+            return *this;
+        }
+
+        Widget& set(Height height) {
+            std::cout << "Setting the Height" << std::endl;
+            return *this;
+        }
+    };
+
+    void Test()
+    {
+        Widget w1 ( XPos {12}, YPos {12}, Height {12}, Width {12});
+
+        std::cout << std::endl;
+
+        Widget w2 ( Height {12}, Width {12});
+    }
+}
 
 
 int main([[maybe_unused]] int argc,
          [[maybe_unused]] char** argv)
 {
     const std::vector<std::string_view> args(argv + 1, argv + argc);
-    // parseInputParams(std::vector {"one", "two", "three", "four", "five"}.data(), 5);
+    // parseInput
+
+    BlochBuilder::Test();
 
 
     // MoveStringToArray();
@@ -747,7 +804,7 @@ int main([[maybe_unused]] int argc,
     // Comparators::TestAll();
     // Coroutines::TestAll();
     // Heap::TestAll();
-    Multithreading::TestAll();
+    // Multithreading::TestAll();
     // Memory::TestAll();
     // Iterators::TestAll();
     // Files::TestAll();

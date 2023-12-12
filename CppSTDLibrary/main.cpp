@@ -247,7 +247,7 @@ int main(int argc, char** argv)
     // IteratorTests::TestAll();
     // FilesStreams::TestAll();
     // Filesystem::TestAll();
-    Format::TestAll();
+    // Format::TestAll();
     // FunctionObjects::TestAll();
     // Hashing::TestAll();
     // Lambdas::TestAll();
@@ -269,7 +269,7 @@ int main(int argc, char** argv)
     // StarshipOperator::TestAll();
     // Streams::TestAll();
     // String::TestAll();
-    // StringStream::TestAll();
+    StringStream::TestAll();
     // StringView::TestAll();
     // StructuredBinding::TestAll();
     // StrongTypes::TestAll();
