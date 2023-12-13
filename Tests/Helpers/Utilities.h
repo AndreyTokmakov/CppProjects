@@ -11,7 +11,7 @@ Description : Utilities
 #define CPPPROJECTS_UTILITIES_H
 
 #include "UnorderedPair.h"
-#include "Long.h"
+#include "Wrapper.h"
 #include "Object.h"
 
 #endif //CPPPROJECTS_UTILITIES_H

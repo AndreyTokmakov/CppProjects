@@ -16,7 +16,7 @@ Description : C++ Memory test
 #include <cstring>
 
 #include "../Helpers/Utilities.h"
-#include "../Helpers/Long.h"
+#include "../Helpers/Wrapper.h"
 #include "../Helpers/Object.h"
 
 
@@ -317,15 +317,15 @@ namespace Memory::UniquePtrExperiments
 
     void PointerToObjectOnStack()
     {
-        auto longDeleter = [](Long* ptr) {
+        auto longDeleter = [](Integer* ptr) {
             std::cout << "Skip deletion for Long(" << ptr << ")\n";
             //delete ptr;
         };
 
-        Long l1(10);
+        Integer l1(10);
 
         {
-            std::unique_ptr<Long, decltype(longDeleter)> lPtr{&l1, longDeleter};
+            std::unique_ptr<Integer, decltype(longDeleter)> lPtr{&l1, longDeleter};
         }
 
         std::cout << "Done\n";
@@ -378,7 +378,7 @@ namespace Memory::PlacementNew
 
     void CreateObjects()
     {
-        using T = Helpers::Long;
+        using T = Helpers::Integer;
         constexpr size_t max_size = 10;
 
         decltype(auto) memBlock = operator new[](max_size * sizeof(T));

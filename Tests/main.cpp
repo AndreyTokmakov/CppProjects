@@ -544,23 +544,23 @@ namespace Conversation
 
 namespace MoveExperiments
 {
-    using Helpers::Long;
+    using Helpers::Integer;
 
     std::vector<std::string> logs {};
-    std::vector<Long> storage {};
+    std::vector<Integer> storage {};
 
-    template<typename T> requires std::convertible_to<T, Long>
+    template<typename T> requires std::convertible_to<T, Integer>
     void store_new(T&& v)
     {
         storage.push_back(std::forward<T>(v));
     }
 
-    void store(const Long & str)
+    void store(const Integer & str)
     {
         storage.push_back(str);
     }
 
-    void store(Long && str)
+    void store(Integer && str)
     {
         storage.push_back(std::move(str));
     }
@@ -569,13 +569,13 @@ namespace MoveExperiments
     void test_overload()
     {
         {
-            Long l{1};
+            Integer l{1};
             store(l);
         }
         std::cout << std::endl;
 
         {
-            store(Long{1});
+            store(Integer{1});
         }
         std::cout << std::endl;
     }
@@ -583,13 +583,13 @@ namespace MoveExperiments
     void test_perfect_forwarding()
     {
         {
-            Long l{1};
+            Integer l{1};
             store_new(l);
         }
         std::cout << std::endl;
 
         {
-            store_new(Long{1});
+            store_new(Integer{1});
         }
         std::cout << std::endl;
     }
@@ -634,14 +634,14 @@ namespace ReturnClass_MemberRef_CopyCTor
 {
     struct Holder
     {
-        Helpers::Long value { 123 };
+        Helpers::Integer value { 123 };
 
-        Helpers::Long& getAsRef() noexcept
+        Helpers::Integer& getAsRef() noexcept
         {
             return value;
         }
 
-        Helpers::Long getAsVal() noexcept
+        Helpers::Integer getAsVal() noexcept
         {
             return value;
         }
@@ -654,28 +654,28 @@ namespace ReturnClass_MemberRef_CopyCTor
         std::cout << "-----------------------------------------------------------------\n";
 
         {
-            Helpers::Long & valRef = holder.getAsRef();
+            Helpers::Integer & valRef = holder.getAsRef();
             std::cout << valRef.value << std::endl;
         }
 
         std::cout << "-----------------------------------------------------------------\n";
 
         {
-            Helpers::Long val = holder.getAsRef();
+            Helpers::Integer val = holder.getAsRef();
             std::cout << val.value << std::endl;
         }
 
         std::cout << "-----------------------------------------------------------------\n";
 
         {
-            const Helpers::Long & valRef = holder.getAsVal();
+            const Helpers::Integer & valRef = holder.getAsVal();
             std::cout << valRef.value << std::endl;
         }
 
         std::cout << "-----------------------------------------------------------------\n";
 
         {
-            Helpers::Long val = holder.getAsVal();
+            Helpers::Integer val = holder.getAsVal();
             std::cout << val.value << std::endl;
         }
 
@@ -720,61 +720,31 @@ namespace OOP
 }
 
 
-namespace BlochBuilder
+namespace WrapperTests
 {
-    struct IntegerValue
+    void create()
     {
-        int value {0};
-    };
+        Helpers::Integer obj {1};
+    }
 
-    struct XPos: IntegerValue {};
-    struct YPos: IntegerValue {};
-    struct Width: IntegerValue {};
-    struct Height: IntegerValue {};
-
-
-    class Widget
+    void increment()
     {
-        /// Some implementation
-    public:
-        template<typename ... Args>
-        Widget(Args ... args)
-        {
-            (set(std::forward<Args>(args)), ...);
-            // (set(std::move(args)), ...);
-        }
+        Helpers::Integer obj {1};
 
-    public:
-        Widget& set(XPos xPos) {
-            std::cout << "Setting the xPos" << std::endl;
-            return *this;
-        }
+        ++obj;
+        std::cout << obj << std::endl;
 
-        Widget& set(YPos yPos) {
-            std::cout << "Setting the yPos" << std::endl;
-            return *this;
-        }
-
-        Widget& set(Width width) {
-            std::cout << "Setting the Width" << std::endl;
-            return *this;
-        }
-
-        Widget& set(Height height) {
-            std::cout << "Setting the Height" << std::endl;
-            return *this;
-        }
-    };
+        obj++;
+        std::cout << obj << std::endl;
+    }
 
     void Test()
     {
-        Widget w1 ( XPos {12}, YPos {12}, Height {12}, Width {12});
-
-        std::cout << std::endl;
-
-        Widget w2 ( Height {12}, Width {12});
+        // create();
+        increment();
     }
 }
+
 
 
 int main([[maybe_unused]] int argc,
@@ -783,7 +753,7 @@ int main([[maybe_unused]] int argc,
     const std::vector<std::string_view> args(argv + 1, argv + argc);
     // parseInput
 
-    BlochBuilder::Test();
+    WrapperTests::Test();
 
 
     // MoveStringToArray();

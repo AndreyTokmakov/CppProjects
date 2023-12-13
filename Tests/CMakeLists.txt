@@ -34,7 +34,7 @@ add_executable(Tests MACOSX_BUNDLE
         DesignPatterns/DesignPatterns.cpp DesignPatterns/DesignPatterns.h
         Iterators/Iterators.cpp Iterators/Iterators.h
         Files_Filesystem/Files.cpp Files_Filesystem/Files.h
-        Helpers/Long.h Helpers/UnorderedPair.h Helpers/Utilities.h  Helpers/Object.h
+        Helpers/Wrapper.h Helpers/UnorderedPair.h Helpers/Utilities.h  Helpers/Object.h
         Strings/Strings.cpp Strings/Strings.h
         DataStructures/LRUCache.cpp DataStructures/LRUCache.h
         DataStructures/MaxStack.cpp DataStructures/MaxStack.h

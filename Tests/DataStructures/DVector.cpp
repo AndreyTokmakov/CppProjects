@@ -26,7 +26,7 @@ Description : DVector.cpp
 #include <fstream>
 #include <format>
 
-#include "../Helpers/Long.h"
+#include "../Helpers/Wrapper.h"
 
 template<typename _Ty>
 struct Allocator: std::allocator<_Ty>
@@ -447,7 +447,7 @@ namespace DVector::Tests
 
     void DestructorTest()
     {
-        DVector<Helpers::Long> dVector;
+        DVector<Helpers::Integer> dVector;
 
         dVector.emplace_back(101);
         dVector.emplace_back(102);

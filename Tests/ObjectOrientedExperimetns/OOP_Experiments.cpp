@@ -38,11 +38,11 @@ namespace OOP
 {
     void MoveTest_CallMoveConstructor()
     {
-        Helpers::Long l1 {111};
+        Helpers::Integer l1 {111};
 
         std::cout << "------------------------------------------------\n";
 
-        Helpers::Long l2 = std::move(l1);
+        Helpers::Integer l2 = std::move(l1);
     }
 
     struct Base {

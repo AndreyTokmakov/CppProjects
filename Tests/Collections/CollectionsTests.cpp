@@ -23,7 +23,7 @@ Description : CollectionsTests
 #include <unordered_set>
 #include <unordered_map>
 
-#include "../Helpers/Long.h"
+#include "../Helpers/Wrapper.h"
 
 namespace CollectionsTests::Utils
 {
@@ -484,15 +484,15 @@ namespace CollectionsTests::UnorderedMap
 
 namespace CollectionsTests::Vector
 {
-    using Helpers::Long;
+    using Helpers::Integer;
 
     void GetRefToBack_And_DeleteLastElement()
     {
-        std::vector<Long> numbers { Long{1}, Long {2}, Long{3}, Long{4}, Long{5}};
+        std::vector<Integer> numbers { Integer{1}, Integer {2}, Integer{3}, Integer{4}, Integer{5}};
 
         std::cout << "----------------------------------------------------------\n";
 
-        Long& last = numbers.back();
+        Integer& last = numbers.back();
         numbers.pop_back();
 
         std::cout << last.getValue() << std::endl;
