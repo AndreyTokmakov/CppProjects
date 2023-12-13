@@ -67,16 +67,22 @@ namespace QueueCV
     public:
         Queue() = default;
 
-        void push(value_type new_value) {
-            std::lock_guard<std::mutex> lock(mutex);
-            data_queue.push(std::move(new_value));
+        void push(value_type new_value)
+        {
+            {
+                std::lock_guard<std::mutex> lock(mutex);
+                data_queue.push_back(std::move(new_value));
+            }
             updated.notify_one();
         }
 
         template <typename... Args>
-        void emplace(Args&& ... args) {
-            std::lock_guard<std::mutex> lock(mutex);
-            data_queue.emplace_back(std::forward<Args>(args)...);
+        void emplace(Args&& ... args)
+        {
+            {
+                std::lock_guard<std::mutex> lock(mutex);
+                data_queue.emplace_back(std::forward<Args>(args)...);
+            }
             updated.notify_one();
         }
 
@@ -88,7 +94,8 @@ namespace QueueCV
         }
         */
 
-        void wait_and_pop(value_type& value) {
+        void wait_and_pop(value_type& value)
+        {
             std::unique_lock<std::mutex> lock(mutex);
             updated.wait(lock, [this] {
                 return false == data_queue.empty();
@@ -106,14 +113,15 @@ namespace QueueCV
             bool ok = updated.wait_for(lock, _Rel_time, [this] {
                 return false == data_queue.empty();
             });
-            if (false == ok)
+            if (!ok)
                 return false;
             value = std::move(data_queue.front());
             data_queue.pop_front();
             return true;
         }
 
-        value_type&& wait_and_pop() {
+        value_type&& wait_and_pop()
+        {
             std::unique_lock<std::mutex> lock(mutex);
             updated.wait(lock, [this] {
                 return false == data_queue.empty();
@@ -123,7 +131,8 @@ namespace QueueCV
             return std::move(entry);
         }
 
-        bool try_pop(value_type& value) {
+        bool try_pop(value_type& value)
+        {
             std::lock_guard<std::mutex> lock(mutex);
             if (data_queue.empty())
                 return false;
@@ -143,13 +152,136 @@ namespace QueueCV
             return result;
         }
 
-        bool empty() const
+        bool empty() const noexcept
         {
             std::lock_guard<std::mutex> lock(mutex);
             return data_queue.empty();
         }
 
-        size_t size() const
+        size_t size() const noexcept
+        {
+            std::lock_guard<std::mutex> lock(mutex);
+            return data_queue.size();
+        }
+    };
+}
+
+namespace QueueAtomic
+{
+    template<typename T>
+    class Queue
+    {
+        using value_type = T;
+        static_assert(!std::is_same_v<value_type, void>, "ERROR: Value type can not be void");
+
+        mutable std::mutex mutex;
+        std::deque<value_type> data_queue;
+        std::atomic_flag updated {false};
+
+    public:
+        Queue() = default;
+
+        void push(value_type new_value)
+        {
+            {
+                std::lock_guard<std::mutex> lock(mutex);
+                data_queue.push_back(std::move(new_value));
+            }
+            updated.test_and_set(std::memory_order_release);
+            updated.notify_one();
+        }
+
+        template <typename... Args>
+        void emplace(Args&& ... args)
+        {
+            {
+                std::lock_guard<std::mutex> lock(mutex);
+                data_queue.emplace_back(std::forward<Args>(args)...);
+            }
+            updated.test_and_set();
+            updated.notify_one();
+        }
+
+        /*
+        template <typename... Args>
+        void AddRange(Args&&... args) {
+            std::lock_guard<std::mtx> lock(mtx);
+            (elements.push_back(args), ...);
+        }
+        */
+
+        void wait_and_pop(value_type& value)
+        {
+            updated.wait(false, std::memory_order_acquire);
+            updated.clear();
+
+            {
+                std::lock_guard<std::mutex> lock(mutex);
+                value = std::move(data_queue.front());
+                data_queue.pop_front();
+            }
+        }
+
+        /*
+        template<class _Rep, class _Period>
+        bool wait_for_and_pop(value_type& value,
+                              const std::chrono::duration<_Rep, _Period>& _Rel_time)
+        {
+            std::unique_lock<std::mutex> lock(mutex);
+            bool ok = updated.wait_for(lock, _Rel_time, [this] {
+                return false == data_queue.empty();
+            });
+            if (!ok)
+                return false;
+            value = std::move(data_queue.front());
+            data_queue.pop_front();
+            return true;
+        }
+        */
+
+        value_type&& wait_and_pop()
+        {
+            updated.wait(false, std::memory_order_acquire);
+            updated.clear();
+
+            {
+                std::lock_guard<std::mutex> lock(mutex);
+                auto&& entry = data_queue.front();
+                data_queue.pop_front();
+                return std::move(entry);
+            }
+        }
+
+        /*
+        bool try_pop(value_type& value)
+        {
+            std::lock_guard<std::mutex> lock(mutex);
+            if (data_queue.empty())
+                return false;
+            value = std::move(data_queue.front());
+            data_queue.pop_front();
+            return true;
+        }
+
+        std::shared_ptr<value_type> try_pop()
+        {
+            std::lock_guard<std::mutex> lock(mutex);
+            if (data_queue.empty())
+                return std::shared_ptr<value_type>();
+            std::shared_ptr<value_type> result =
+                    std::make_shared<value_type>(std::move(data_queue.front()));
+            data_queue.pop_front();
+            return result;
+        }
+        */
+
+        bool empty() const noexcept
+        {
+            std::lock_guard<std::mutex> lock(mutex);
+            return data_queue.empty();
+        }
+
+        size_t size() const noexcept
         {
             std::lock_guard<std::mutex> lock(mutex);
             return data_queue.size();
@@ -158,15 +290,20 @@ namespace QueueCV
 }
 
 
+
 namespace Tests
 {
     using namespace QueueCV;
+    using namespace QueueAtomic;
 
     using Int = Integer<false>;
+    using Queue = QueueAtomic::Queue<Int>;
+    // using Queue = QueueCV::Queue<Int>;
+
 
     void RunTest1()
     {
-        QueueCV::Queue<Int> queue;
+        Queue queue;
 
         std::future<void> producer = std::async(std::launch::async, [&]()-> void {
             THREAD_INFO << "Producer: started." << std::endl;
@@ -190,9 +327,10 @@ namespace Tests
         THREAD_INFO << "Done!!" << std::endl;
     }
 
+    /*
     void RunTest_WaitFor()
     {
-        QueueCV::Queue<Int> queue;
+        Queue queue;
 
         std::future<void> producer = std::async(std::launch::async, [&]()-> void {
             THREAD_INFO << "Producer: started." << std::endl;
@@ -201,30 +339,50 @@ namespace Tests
             THREAD_INFO << "Producer: done" << std::endl;
         });
 
+
         std::future<void> consumer = std::async(std::launch::async, [&]()-> void {
             THREAD_INFO << "Consumer: started" << std::endl;
             Int entry;
             while (true)
             {
-                auto ok = queue.wait_for_and_pop(entry, std::chrono::milliseconds(250));
-                if (ok) {
-                    THREAD_INFO << "Consumer: We've got some" << std::endl;
+                const bool ok = queue.wait_for_and_pop(entry, std::chrono::milliseconds(250));
+                if (ok)
                     break;
-                }
-                else {
-                    THREAD_INFO << "Timeout" << std::endl;
-                }
+                THREAD_INFO << "Timeout" << std::endl;
             }
 
-            std::this_thread::sleep_for(std::chrono::seconds(2));
+            THREAD_INFO << "Consumer: done. Value: ";
             entry.printInfo();
-            THREAD_INFO << "Consumer: done" << std::endl;
         });
 
         producer.wait();
         consumer.wait();
 
         THREAD_INFO << "Done!!" << std::endl;
+    }
+     */
+
+
+    void RunTest_Wait_NoTimeout()
+    {
+        Queue queue;
+
+        std::future<void> producer = std::async(std::launch::async, [&]()-> void {
+            std::this_thread::sleep_for(std::chrono::seconds(1));
+            queue.emplace(1);
+            THREAD_INFO << "Producer: done" << std::endl;
+        });
+
+
+        std::future<void> consumer = std::async(std::launch::async, [&]()-> void {
+            Int entry;
+            queue.wait_and_pop(entry);
+            THREAD_INFO << "Consumer: done. Value: ";
+            entry.printInfo();
+        });
+
+        producer.wait();
+        consumer.wait();
     }
 }
 
@@ -235,5 +393,6 @@ void Queue::TestAll()
     // FoldPrintEx(1, 2, 3);
 
     // Tests::RunTest1();
-    Tests::RunTest_WaitFor();
+    // Tests::RunTest_WaitFor();
+    Tests::RunTest_Wait_NoTimeout();
 };
