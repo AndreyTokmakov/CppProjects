@@ -149,7 +149,6 @@ namespace Helpers
 
     using Long = Wrapper<long, true>;
     using Integer = Wrapper<int, true>;
-
 };
 
 #endif //CPPPROJECTS_HELPERS__H
