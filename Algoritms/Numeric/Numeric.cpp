@@ -740,7 +740,8 @@ namespace Numeric
 
     //---------------------------------------------------------------------------//
 
-    void Kadane() {
+    void Kadane()
+    {
         {
             // Fill vector with maximum sums:
             std::vector<int> Numeric = { 1,-3,2,1,-1 };
@@ -751,10 +752,10 @@ namespace Numeric
         }
 
         {
-            std::vector<int> Numeric = { 1,-3,2,1,-1, 2 };
-            int max_before = Numeric.front(), max = max_before;
-            for (size_t index = 1; index < Numeric.size(); index++) {
-                max_before = std::max(max_before + Numeric[index], Numeric[index]);
+            const std::vector<int> numbers { 1,-3,2,1,-1, 2 };
+            int max_before = numbers.front(), max = max_before;
+            for (size_t index = 1; index < numbers.size(); index++) {
+                max_before = std::max(max_before + numbers[index], numbers[index]);
                 max = std::max(max, max_before);
             }
             std::cout << "max = " << max << std::endl;
@@ -960,37 +961,38 @@ namespace Numeric
     template<typename T, size_t Size>
     class HeapHack {
     private:
-        std::array<T, Size> mins;
+        std::array<T, Size> data {};
 
     public:
-        HeapHack() {
-            mins = {
-                    std::numeric_limits<int>::max(),
-                    std::numeric_limits<int>::max(),
-                    std::numeric_limits<int>::max()
-            };
+        HeapHack()
+        {
+            for (size_t i = 0; i < Size; ++i)
+                data[i] = std::numeric_limits<int>::max();
         }
 
-        void TryAdd(const T& value) {
-            if (mins.front() > value) {
-                mins[0] = value;
-                std::partial_sort(mins.begin(), mins.begin() + 1, mins.end(), std::greater<int>());
+        void add(const T& value)
+        {
+            if (data.front() > value) {
+                data[0] = value;
+                std::partial_sort(data.begin(), data.begin() + 1, data.end(), std::greater<int>());
             }
         }
 
-        void Print() {
-            for (const T& v : mins)
+        void print()
+        {
+            for (const T& v : data)
                 std::cout << v << " ";
             std::cout << std::endl;
         }
     };
 
-    void Find_N_Min_Elements() {
-        const int Numeric[] = { 4,5,6,7,8,9,10,11, 0, -1 };
+    void Find_N_Min_Elements()
+    {
+        const std::vector<int> numbers { 4,5,6,7,8,9,10,11, 0, -1 };
         HeapHack<int, 3> mins;
-        for (const auto v : Numeric)
-            mins.TryAdd(v);
-        mins.Print();
+        for (const auto v : numbers)
+            mins.add(v);
+        mins.print();
     }
 
     //---------------------------------------------------------------------------//
@@ -3317,7 +3319,7 @@ namespace Numeric
 
 void Numeric::TEST_ALL()
 {
-    Numeric::isPowerOf2();
+    // Numeric::isPowerOf2();
     // Numeric::GreatestCommonDivisor();
     // Numeric::LeastCommonMultiple();
     // Numeric::LongestCommonSubsequence();
