@@ -181,7 +181,7 @@ namespace Cpp23_Features
         for (int val: {3, 7})
         {
             const std::optional<std::string> result = getFromCache(val)
-                    .and_then([](const std::string& str) { return std::make_optional<std::string>("OK"); });
+                    .and_then([](const std::string&) { return std::make_optional<std::string>("OK"); });
             std::cout << val << " --> " << result << std::endl;
         }
     }

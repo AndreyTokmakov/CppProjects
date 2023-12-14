@@ -23,6 +23,7 @@
 
 
 #include "StringUtils.h"
+#define TO_INT(enum_val) static_cast<punycode_uint>(enum_val)
 
 namespace Punycode
 {
@@ -689,8 +690,8 @@ namespace ClickHouse
                     for (q = delta, k = base;  ;  k += base)
                     {
                         if (out >= max_out) return punycode_big_output;
-                        t = k <= bias /* + tmin */ ? tmin :     /* +tmin not needed */
-                            k >= bias + tmax ? tmax : k - bias;
+                        t = k <= bias /* + tmin */ ? TO_INT(tmin) :     /* +tmin not needed */
+                            k >= bias + TO_INT(tmax) ? TO_INT(tmax) : k - bias;
                         if (q < t) break;
                         output[out++] = encode_digit(t + (q - t) % (base - t), 0);
                         q = (q - t) / (base - t);
@@ -755,15 +756,18 @@ namespace ClickHouse
 
             for (oldi = i, w = 1, k = base;  ;  k += base)
             {
-                if (in >= input_length) return punycode_bad_input;
+                if (in >= input_length)
+                    return punycode_bad_input;
                 digit = decode_digit(input[in++]);
-                if (digit >= base) return punycode_bad_input;
-                if (digit > (maxint - i) / w) return punycode_overflow;
+                if (digit >= base)
+                    return punycode_bad_input;
+                if (digit > (maxint - i) / w)
+                    return punycode_overflow;
                 i += digit * w;
-                t = k <= bias /* + tmin */ ? tmin :     /* +tmin not needed */
-                    k >= bias + tmax ? tmax : k - bias;
+                t = k <= bias /* + tmin */ ? TO_INT(tmin): k >= bias + TO_INT(tmax) ? TO_INT(tmax) : k - bias;
                 if (digit < t) break;
-                if (w > maxint / (base - t)) return punycode_overflow;
+                if (w > maxint / (base - t))
+                    return punycode_overflow;
                 w *= (base - t);
             }
 

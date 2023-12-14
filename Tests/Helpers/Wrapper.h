@@ -88,10 +88,10 @@ namespace Helpers
             this->value *= right.value;
             return *this;
         }
-
+#if 0
         /** Postfix increment: **/
         Wrapper operator++(value_type) {
-            decltype(auto) prev = *this;
+            const Wrapper prev { *this };
             ++value;
             return prev;
         }
@@ -101,6 +101,7 @@ namespace Helpers
             ++value;
             return *this;
         }
+#endif
 
     public:
 
@@ -134,16 +135,30 @@ namespace Helpers
             return left.value > right.value;
         }
 
-        friend Wrapper operator++(Wrapper& left, value_type) {
-            Wrapper oldValue(left.value);
-            ++left.value;
+        /** Postfix increment: **/
+        friend Wrapper operator++(Wrapper& origin, value_type) {
+            const Wrapper oldValue { origin.value };
+            ++origin.value;
             return oldValue;
         }
 
-        friend Wrapper operator--(Wrapper& left, value_type) {
-            Wrapper oldValue(left.value);
-            left.value--;
+        /** Prefix increment: **/
+        friend Wrapper operator++(Wrapper& origin) {
+            ++origin.value;
+            return origin;
+        }
+
+        /** Postfix decrement: **/
+        friend Wrapper operator--(Wrapper& origin, value_type) {
+            const Wrapper oldValue { origin.value };
+            origin.value--;
             return oldValue;
+        }
+
+        /** Prefix decrement: **/
+        friend Wrapper operator--(Wrapper& origin) {
+            --origin.value;
+            return origin;
         }
     };
 

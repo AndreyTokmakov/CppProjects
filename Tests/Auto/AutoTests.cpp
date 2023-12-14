@@ -45,12 +45,12 @@ namespace AutoTests
 
     void Test_GetReference()
     {
-        Object& obj = getObject();
+        [[maybe_unused]] Object& obj = getObject();
     }
 
     void Test_LoseReference_Copy()
     {
-        auto obj = getObject();
+        [[maybe_unused]] auto obj = getObject();
     }
 }
 

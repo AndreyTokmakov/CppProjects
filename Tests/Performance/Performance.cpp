@@ -62,7 +62,8 @@ namespace Performance::Stack_Vector
                 if (op.first == op_push) {
                     st.push(op.second);
                 } else {
-                    st.top(); st.pop();
+                    [[maybe_unused]] const auto ignored = st.top();
+                    st.pop();
                 }
             });
         }
@@ -77,7 +78,8 @@ namespace Performance::Stack_Vector
                 if (op.first == op_push) {
                     st.push(op.second);
                 } else {
-                    st.top(); st.pop();
+                    [[maybe_unused]] const auto ignored = st.top();
+                    st.pop();
                 }
             });
         }

@@ -249,10 +249,10 @@ void AtomicFlag::TestAll()
 {
     // BasicTests::TestAndSet();
 
-    // Waiting::Notify_and_Wait();
+    Waiting::Notify_and_Wait();
 
     // SpinLock::Test();
-    SpinLock::SpinLock_CounterTest();
+    // SpinLock::SpinLock_CounterTest();
     // SpinLock::SpinLock_WaitingTest_1();
     // SpinLock::SpinLock_WaitingTest_2();    // TODO: Error
 };

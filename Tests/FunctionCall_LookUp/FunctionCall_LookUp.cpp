@@ -32,7 +32,8 @@ namespace FunctionCall_LookUp::Demo1
             float radius = 12;
         };
 
-        void blast(Asteroid *ast, float force)
+        void blast([[maybe_unused]] Asteroid *ast,
+                   [[maybe_unused]] float force)
         {
             INVOKE_INFO
         }
@@ -47,9 +48,10 @@ namespace FunctionCall_LookUp::Demo1
         operator galaxy::Asteroid *() const { return ast; }
     };
 
-    bool blast(Target target)
+    bool blast([[maybe_unused]] Target target)
     {
         INVOKE_INFO
+        return true;
     }
 
     template<typename T>
@@ -81,13 +83,15 @@ namespace FunctionCall_LookUp::Demo1
 namespace FunctionCall_LookUp::Template_vs_NonTemplate
 {
 
-    void foo(int a, int b)
+    void foo([[maybe_unused]] int a,
+             [[maybe_unused]] int b)
     {
         INVOKE_INFO
     }
 
     template<typename T1, typename T2>
-    void foo(T1 a, T2 b)
+    void foo([[maybe_unused]] T1 a,
+             [[maybe_unused]] T2 b)
     {
         INVOKE_INFO
     }

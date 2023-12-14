@@ -19,6 +19,9 @@
 
 #include "StringUtils.h"
 
+#define TO_INT(enum_val) static_cast<punycode_uint>(enum_val)
+
+
 namespace PunycodeFinal
 {
     using punycode_uint = char32_t;
@@ -141,9 +144,10 @@ namespace PunycodeFinal
 
                     for (q = delta, k = base;  ;  k += base)
                     {
-                        if (out >= max_out) return punycode_big_output;
-                        t = k <= bias /* + tmin */ ? tmin :     /* +tmin not needed */
-                            k >= bias + tmax ? tmax : k - bias;
+                        if (out >= max_out)
+                            return punycode_big_output;
+                        t = k <= bias /* + tmin */ ? TO_INT(tmin) :     /* +tmin not needed */
+                            k >= bias + TO_INT(tmax) ? TO_INT(tmax) : k - bias;
                         if (q < t) break;
                         output[out++] = encode_digit(t + (q - t) % (base - t), 0);
                         q = (q - t) / (base - t);
@@ -207,8 +211,8 @@ namespace PunycodeFinal
                 if (digit >= base) return punycode_bad_input;
                 if (digit > (maxint - i) / w) return punycode_overflow;
                 i += digit * w;
-                t = k <= bias /* + tmin */ ? tmin :     /* +tmin not needed */
-                    k >= bias + tmax ? tmax : k - bias;
+                t = k <= bias /* + tmin */ ? TO_INT(tmin) :     /* +tmin not needed */
+                    k >= bias + TO_INT(tmax) ? TO_INT(tmax) : k - bias;
                 if (digit < t) break;
                 if (w > maxint / (base - t)) return punycode_overflow;
                 w *= (base - t);

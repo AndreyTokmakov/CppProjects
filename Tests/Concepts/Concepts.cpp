@@ -60,7 +60,7 @@ namespace Concepts::FoldExpression
     template<typename ... Ts>
     struct Keeper
     {
-        constexpr explicit Keeper(SameAsAnyOf<Ts ...  > auto obj) {
+        constexpr explicit Keeper([[maybe_unused]]  SameAsAnyOf<Ts ...  > auto obj) {
         }
 
         constexpr void setValue(SameAsAnyOf<Ts ...  > auto obj) {

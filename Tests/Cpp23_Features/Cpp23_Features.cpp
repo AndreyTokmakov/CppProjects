@@ -76,12 +76,13 @@ namespace Cpp23_Features
 
     void static_operator_lambda()
     {
+        [[maybe_unused]]
         auto isEven = [](int i) static {return i % 2 == 0;};
 
 
         /** At the same time, you only declare a lambda static if it has no capture,
          *  if it has a capture then the compiler reminds you that you violated the rules: **/
-        const int ratio = 0;
+        [[maybe_unused]]  const int ratio = 0;
         // auto isDivisableBy = [ratio](int i) static {return i % ratio == 0;};
     }
 
@@ -155,7 +156,9 @@ namespace Cpp23_Features
 
     T fn()
     {
+        [[maybe_unused]]
         T t;
+
         return std::move (T{});
     }
 };

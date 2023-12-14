@@ -551,7 +551,7 @@ namespace DVector::Tests::AtMethodMethodTests
             dVector.push_back(i);
 
         try {
-            auto x = dVector.at(10);
+            [[maybe_unused]] auto x = dVector.at(10);
             std::cerr << "Error: Exception shall be thrown\n";
         }
         catch (const std::exception& exc) {

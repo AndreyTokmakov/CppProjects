@@ -96,7 +96,7 @@ namespace Date_Time_Chrono::Experiments
 {
     void test()
     {
-        std::chrono::gps_clock gpsClock;
+        [[maybe_unused]] std::chrono::gps_clock gpsClock;
 
         // std::cout << gpsClock.
 

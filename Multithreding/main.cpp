@@ -58,7 +58,7 @@ int main([[maybe_unused]] int argc,
     // AsyncLaunch::TEST_ALL();
 
     // Atomic::TestAll();
-    // AtomicFlag::TestAll();
+    AtomicFlag::TestAll();
     // Atomic_MemoryOrder::TestAll();
     // Atomic_CompareExchange::TestAll();
     // Atomic_IsLockFree::TestAll();
@@ -73,7 +73,7 @@ int main([[maybe_unused]] int argc,
     // LockFreeQueue::TEST_ALL()
     // Multithreading_Performance::TEST_ALL();
     // Multithreading_Collections::TEST_ALL();
-    Queue::TestAll();
+    // Queue::TestAll();
     // Multithreading_Communication::TEST_ALL();
     // Promise::TEST_ALL();
     // PackagedTask::TEST_ALL();

@@ -63,5 +63,4 @@ add_executable(Tests MACOSX_BUNDLE
         Assembly/AssemblyDemo.cpp
 )
 
- # Link phread library
-TARGET_LINK_LIBRARIES(Tests pthread)
+TARGET_LINK_LIBRARIES(Tests pthread tbb)

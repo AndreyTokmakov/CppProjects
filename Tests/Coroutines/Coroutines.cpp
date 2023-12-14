@@ -124,7 +124,7 @@ namespace Coroutines::DemoTwo
     MyCoroutine simpleCoroutineFixed()
     {
         MyCoroutine::promise_type p {};
-        MyCoroutine coroutine = p.get_return_object();
+        [[maybe_unused]]  MyCoroutine coroutine = p.get_return_object();
 
         try {
             co_await p.initial_suspend();

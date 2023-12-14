@@ -15,6 +15,8 @@
 
 #include "Punycode.h"
 
+#define TO_INT(enum_val) static_cast<punycode_uint>(enum_val)
+
 namespace
 {
     using punycode_uint = char32_t;
@@ -132,12 +134,13 @@ namespace
 
                     for (q = delta, k = base;  ;  k += base)
                     {
-                        if (out >= max_out) return punycode_big_output;
-                        t = k <= bias /* + tmin */ ? tmin :     /* +tmin not needed */
-                            k >= bias + tmax ? tmax : k - bias;
+                        if (out >= max_out)
+                            return punycode_big_output;
+                        t = k <= bias /* + tmin */ ? TO_INT(tmin) :     /* +tmin not needed */
+                            k >= bias + TO_INT(tmax) ? TO_INT(tmax) : k - bias;
                         if (q < t) break;
-                        output[out++] = encodeDigit(t + (q - t) % (base - t), 0);
-                        q = (q - t) / (base - t);
+                        output[out++] = encodeDigit(t + (q - t) % (TO_INT(base) - t), 0);
+                        q = (q - t) / (TO_INT(base) - t);
                     }
 
                     output[out++] = encodeDigit(q, 0);
@@ -193,15 +196,19 @@ namespace
 
             for (oldi = i, w = 1, k = base;  ;  k += base)
             {
-                if (in >= input_length) return punycode_bad_input;
+                if (in >= input_length)
+                    return punycode_bad_input;
                 digit = decodeDigit(input[in++]);
-                if (digit >= base) return punycode_bad_input;
-                if (digit > (maxint - i) / w) return punycode_overflow;
+                if (digit >= base)
+                    return punycode_bad_input;
+                if (digit > (maxint - i) / w)
+                    return punycode_overflow;
                 i += digit * w;
-                t = k <= bias /* + tmin */ ? tmin :     /* +tmin not needed */
-                    k >= bias + tmax ? tmax : k - bias;
+                t = k <= bias /* + tmin */ ? TO_INT(tmin) :     /* +tmin not needed */
+                    k >= bias + TO_INT(tmax) ? TO_INT(tmax) : k - TO_INT(bias);
                 if (digit < t) break;
-                if (w > maxint / (base - t)) return punycode_overflow;
+                if (w > maxint / (base - t))
+                    return punycode_overflow;
                 w *= (base - t);
             }
 
