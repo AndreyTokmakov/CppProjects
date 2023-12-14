@@ -24,19 +24,22 @@ namespace Helpers
         explicit Wrapper(value_type val = value_type{}) : value {val}
         {
             if constexpr (debug)
-                std::cout << __FUNCTION__ << "(" << this->value << ")" << std::endl;
+                std::cout << __FUNCTION__ << "<" << typeid(Type).name() << ','
+                    << std::boolalpha << debug << ">(" << this->value << ")" << std::endl;
         }
 
         Wrapper(const Wrapper &obj): value { obj.value}
         {
             if constexpr (debug)
-                std::cout << __FUNCTION__ << "(" << value << ") [Copy constructor]\n";
+                std::cout << __FUNCTION__ << "<" << typeid(Type).name() << ','
+                          << std::boolalpha << debug << ">(" << value << ") [Copy constructor]\n";
         }
 
         Wrapper(Wrapper &&obj) noexcept: value {std::exchange(obj.value, 0)}
         {
             if constexpr (debug)
-                std::cout << __FUNCTION__ << "(" << value << ") [Move constructor]\n";
+                std::cout << __FUNCTION__ << "<" << typeid(Type).name() << ','
+                          << std::boolalpha << debug << ">(" << value << ") [Move constructor]\n";
         }
 
         inline void setValue(value_type v) noexcept {
@@ -51,13 +54,15 @@ namespace Helpers
         ~Wrapper()
         {
             if constexpr (debug)
-                std::cout << __FUNCTION__ << "(" << this->value << ")" << std::endl;
+                std::cout << __FUNCTION__ << "<" << typeid(Type).name() << ','
+                          << std::boolalpha << debug << ">(" << this->value << ")" << std::endl;
         }
 
         Wrapper &operator=(const Wrapper &right)
         {
             if constexpr (debug) {
-                std::cout << "[Copy assignment] (" << value << " -> " << right.value << ")" << std::endl;
+                std::cout << __FUNCTION__ << "<" << typeid(Type).name() << ',' << std::boolalpha
+                          << debug << ">(" << value << " -> " << right.value << ") [Copy assignment] " << std::endl;
             }
             if (&right != this)
                 value = right.value;
@@ -67,7 +72,8 @@ namespace Helpers
         Wrapper &operator=(value_type val)
         {
             if constexpr (debug) {
-                std::cout << "[Copy assignment (from long)]" << std::endl;
+                std::cout << __FUNCTION__ << "<" << typeid(Type).name() << ',' << std::boolalpha
+                          << debug << ">[Copy assignment (from " << typeid(value_type).name() << ")]" << std::endl;
             }
             this->value = val;
             return *this;
@@ -76,7 +82,8 @@ namespace Helpers
         Wrapper &operator=(Wrapper &&right) noexcept
         {
             if constexpr (debug) {
-                std::cout << "[Move assignment operator]" << std::endl;
+                std::cout << __FUNCTION__ << "<" << typeid(Type).name() << ',' << std::boolalpha
+                          << debug << ">[Move assignment operator]" << std::endl;
             }
             if (this != &right) {
                 this->value = std::exchange(right.value, 0);

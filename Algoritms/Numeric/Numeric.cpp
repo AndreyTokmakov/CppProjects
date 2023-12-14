@@ -94,8 +94,8 @@ namespace Numeric {
 
 
 
-namespace Numeric {
-
+namespace Numeric
+{
     bool __isPowerOf2(int num) {
         return num && !(num & (num - 1));
     }
@@ -3317,7 +3317,7 @@ namespace Numeric
 
 void Numeric::TEST_ALL()
 {
-    // Numeric::isPowerOf2();
+    Numeric::isPowerOf2();
     // Numeric::GreatestCommonDivisor();
     // Numeric::LeastCommonMultiple();
     // Numeric::LongestCommonSubsequence();

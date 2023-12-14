@@ -738,14 +738,24 @@ namespace WrapperTests
         std::cout << obj << std::endl;
     }
 
+    void decrement()
+    {
+        Helpers::Integer obj {3};
+
+        --obj;
+        std::cout << obj << std::endl;
+
+        obj--;
+        std::cout << obj << std::endl;
+    }
+
     void Test()
     {
         // create();
-        increment();
-
+        // increment();
+        decrement();
     }
 }
-
 
 
 int main([[maybe_unused]] int argc,
