@@ -34,22 +34,22 @@ namespace BlochBuilder
         }
 
     public:
-        Widget& set(XPos xPos) {
+        Widget& set([[maybe_unused]] XPos xPos) {
             std::cout << "Setting the xPos" << std::endl;
             return *this;
         }
 
-        Widget& set(YPos yPos) {
+        Widget& set([[maybe_unused]] YPos yPos) {
             std::cout << "Setting the yPos" << std::endl;
             return *this;
         }
 
-        Widget& set(Width width) {
+        Widget& set([[maybe_unused]] Width width) {
             std::cout << "Setting the Width" << std::endl;
             return *this;
         }
 
-        Widget& set(Height height) {
+        Widget& set([[maybe_unused]] Height height) {
             std::cout << "Setting the Height" << std::endl;
             return *this;
         }
@@ -60,17 +60,19 @@ void BlochBuilder_Test()
 {
     using namespace BlochBuilder;
 
+    [[maybe_unused]]
     const Widget w1 ( XPos {12}, YPos {12}, Height {12}, Width {12});
 
     std::cout << std::endl;
 
+    [[maybe_unused]]
     const Widget w2 ( Height {12}, Width {12});
 
     std::cout << std::endl;
 
+    [[maybe_unused]]
     const Widget w3 = Widget{}.set(XPos {12})
             .set(YPos {12})
             .set(Height {12})
             .set(Width {12});
-
 }

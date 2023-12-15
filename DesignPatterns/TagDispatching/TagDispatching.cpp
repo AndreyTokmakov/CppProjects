@@ -100,9 +100,13 @@ namespace TagDispatching::BasesOnValueType
     }
 }
 
+void TagDispatching_RegisterIO_Test();
+
 void TagDispatching::Test()
 {
     // test_1();
 
-    BasesOnValueType::test();
+    // BasesOnValueType::test();
+
+    TagDispatching_RegisterIO_Test();
 }

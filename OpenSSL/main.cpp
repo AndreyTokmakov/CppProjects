@@ -314,12 +314,12 @@ int main([[maybe_unused]] int argc,
 {
     const std::vector<std::string_view> args(argv + 1, argv + argc);
 
-    // Experiments::TestCertificate();
+    Experiments::TestCertificate();
     // Experiments::TestCertificate_PEM();
     // Experiments::TestReadCertificate();
     // Experiments::GetSerialNumber();
 
-    CertificateGenerator::TestAll();
+    // CertificateGenerator::TestAll();
 
     // Keys::Generate_RSA_Keys();
 

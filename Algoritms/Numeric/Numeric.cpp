@@ -1519,31 +1519,25 @@ namespace Numeric
 
     //--------------------------------------------------------------------------------------//
 
-    void Find_Sum_All_Numeric() {
+    void Find_Sum_All_Numeric()
+    {
+        const auto test = [](int max) {
+            std::vector<int> values;
+            values.resize(max);
+            std::iota(values.begin(), values.end(), 1);
 
-        const auto Test = [](int max) {
-            std::vector<int> Numeric;
-            Numeric.reserve(max);
-            for (int i = 1; i <= max; i++)
-                Numeric.push_back(i);
+            const int sum_expected = std::accumulate(values.begin(), values.end(), 0);
+            const int sum_actual = (max* (max + 1)) / 2;
 
-            [[maybe_unused]]
-            int sum_expected = std::accumulate(Numeric.begin(), Numeric.end(), 0);
-
-            // Is this right???
-
-            [[maybe_unused]]
-            int sum_actual = (max* (max + 1)) / 2;
-
-            assert(sum_expected == sum_actual);
-            std::cout << "Test for values [1 - " << max << "]. Passed" << std::endl;
+            if (sum_expected == sum_actual)
+                std::cout << "Test for values [1 - " << max << "]. Passed" << std::endl;
         };
 
         std::vector<int> params;
         FillVecor(params, 20, 20, 1000);
 
         for (auto i : params) {
-            Test(i);
+            test(i);
         }
     }
 
@@ -3367,7 +3361,7 @@ void Numeric::TEST_ALL()
     // Numeric::Is_Array_Elements_Consecutive();
     // Numeric::MiniMaxSum_Of4();
     // Numeric::Find_Sum_All_Numeric();
-    // Numeric::Find_Multiplier_Pair();
+    Numeric::Find_Multiplier_Pair();
     // Numeric::Find_Multiplier_Pair2();
     // Numeric::Find_Pair_SumX_Sorted();
     // Numeric::Find_3_Elements_SumX_Unsorted();

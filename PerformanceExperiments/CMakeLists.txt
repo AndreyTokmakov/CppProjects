@@ -16,4 +16,4 @@ add_executable(PerformanceExperiments
     Collections.h Collections.cpp
 )
 
-TARGET_LINK_LIBRARIES(PerformanceExperiments)
+TARGET_LINK_LIBRARIES(PerformanceExperiments tbb)

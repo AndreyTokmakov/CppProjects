@@ -44,7 +44,7 @@ add_executable(DesignPatterns
 		Builder/HtmlBuilder.cpp
 		TypeErasure/TypeErasure.cpp TypeErasure/TypeErasure.h TypeErasure/TypeErasure_CallOperator.cpp
 		CopyAndSwap/CopyAndSwap.cpp CopyAndSwap/CopyAndSwap.h
-		TagDispatching/TagDispatching.cpp TagDispatching/TagDispatching.h
+		TagDispatching/TagDispatching.cpp TagDispatching/TagDispatching.h TagDispatching/TagDispatching_RegisterIO.cpp
 		Policy/Policy.cpp Policy/Policy.cpp
 		Iterator/Iterator.cpp Iterator/Iterator.h
 		Builder/UserBuilder.cpp
@@ -63,12 +63,13 @@ add_executable(DesignPatterns
 		Visitor/DynamicComponentsVisitor.cpp Visitor/DynamicComponentsVisitor.cpp
 		Observer/ObserverSubject.cpp Visitor/CarVisitor.cpp
 		PImpl/PImpl.h PImpl/PImpl.cpp PImpl/PImplDemo2.cpp
-		Monostate/Monostate.cpp
-		Monostate/Monostate.h Decorator/MoneyTaxesDecoratorOne.cpp Decorator/MoneyTaxesDecoratorOne.h
+		Monostate/Monostate.cpp Monostate/Monostate.h
+		Decorator/MoneyTaxesDecoratorOne.cpp Decorator/MoneyTaxesDecoratorOne.h
 		Decorator/MoneyTaxesDecoratorTwo.cpp Decorator/MoneyTaxesDecoratorTwo.h Observer/LambdaObserver.cpp
 		MVC/ModelViewController.cpp MVC/ModelViewController.h DependencyInjection/DependencyInjection.cpp
 		DependencyInjection/DependencyInjection.h
-		Adapter/ChargingPhoneAdapter.cpp Adapter/ChargingPhoneAdapter.cpp Decorator/WindowDecorator.cpp CRTP/CRTP_Cloneable.cpp CRTP/CRTP_Cloneable.h
+		Adapter/ChargingPhoneAdapter.cpp Adapter/ChargingPhoneAdapter.cpp
+		Decorator/WindowDecorator.cpp CRTP/CRTP_Cloneable.cpp CRTP/CRTP_Cloneable.h
         Prototype/PrototypeDemoTwo.cpp
 )
 

@@ -47,9 +47,15 @@ struct MemoryManager: public  Singleton<MemoryManager>
 
 void SingletonCRTP_Test()
 {
+    [[maybe_unused]]
     FileManager& mgr1 = FileManager::getInstance();
+
+    [[maybe_unused]]
     FileManager& mgr2 = FileManager::getInstance();
 
+    [[maybe_unused]]
     MemoryManager& fileMgr1 = MemoryManager::getInstance();
+
+    [[maybe_unused]]
     MemoryManager& fileMgr2 = MemoryManager::getInstance();
 }

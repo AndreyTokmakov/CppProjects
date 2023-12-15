@@ -24,11 +24,8 @@ Description : DesignPatterns
 #include <thread>
 #include <initializer_list>
 
-
-
 namespace DesignPatterns::Singleton
 {
-
     class FileRepository
     {
     private:
@@ -323,7 +320,6 @@ namespace DesignPatterns::Strategy_Text
     }
 }
 
-
 // Simple Virtual Copy Constructor
 namespace DesignPatterns::CRTP
 {
@@ -430,7 +426,6 @@ namespace DesignPatterns::CRTP
         clone->show();
     }
 }
-
 
 namespace DesignPatterns::Chain_of_Responsibility
 {
@@ -881,7 +876,6 @@ namespace DesignPatterns::State_Visitor
     }
 }
 
-
 namespace DesignPatterns::Builder
 {
 
@@ -1011,7 +1005,6 @@ namespace DesignPatterns::Builder
         */
     }
 };
-
 
 namespace DesignPatterns::Monostate
 {
@@ -1231,7 +1224,6 @@ namespace DesignPatterns::Observer
     }
 }
 
-
 namespace DesignPatterns::Decorator
 {
     struct Money {
@@ -1440,6 +1432,54 @@ namespace DesignPatterns::TypeErasure_VoidType
     }
 }
 
+namespace DesignPatterns::TagDispatching_RegisterIO
+{
+
+    class Read {};
+    class Write {};
+    class ReadWrite : public Read, public Write {};
+
+    template <std::uint32_t Address, typename AccessType>
+    class Register
+    {
+        volatile std::uint32_t* const m_reg = reinterpret_cast<volatile std::uint32_t* const>(Address);
+
+        void write(std::uint32_t value, Write) noexcept {
+            *m_reg = value;
+        }
+
+        [[nodiscard]]
+        std::uint32_t read(Read) const noexcept {
+            return *m_reg;
+        }
+
+    public:
+        Register& operator= (const std::uint32_t value) noexcept {
+            write(value, AccessType{});
+            return *this;
+        }
+
+        operator std::uint32_t() const noexcept {
+            return read(AccessType{});
+        }
+    };
+
+    void TestAll()
+    {
+        Register<0x4000'0000, ReadWrite> r1;  /// OK
+        r1 = 10;                              /// OK
+        std::uint32_t value1 = r1;            /// OK
+
+        Register<0x4000'0000, Write> r2;      /// OK
+        r2 = 10U;                             /// OK
+        // std::uint32_t value2 = r2;         /// ---> Compilation error
+
+        Register<0x4000'0000, Read> r3;        /// OK
+        // r3 = 10;                            /// ---> Compilation error
+        std::uint32_t value3 = r3;             /// OK
+    }
+}
+
 void DesignPatterns::TestAll()
 {
     // Singleton::Test();
@@ -1467,4 +1507,6 @@ void DesignPatterns::TestAll()
     // Decorator::test();
 
     // TypeErasure_VoidType::test();
+
+    TagDispatching_RegisterIO::TestAll();
 }
