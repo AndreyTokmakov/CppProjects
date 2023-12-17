@@ -9,10 +9,11 @@ add_compile_options(-c -Wall -Wextra -O3 -std=c++23)
 
 # include all components
 add_executable(OptimisationPerformanceTuning
-    main.cpp
-    Inspection/CodeInspection.cpp
-    Utilities.h Utilities.cpp
-    FalseSharing/FalseSharingExperiments.cpp FalseSharing/FalseSharingExperiments.h
+        main.cpp
+        Inspection/CodeInspection.cpp
+        Utilities.h Utilities.cpp
+        FalseSharing/FalseSharingExperiments.cpp FalseSharing/FalseSharingExperiments.h
+        Valgrind/ValgrindExperiments.cpp Valgrind/ValgrindExperiments.h
 )
 
 TARGET_LINK_LIBRARIES(OptimisationPerformanceTuning pthread)

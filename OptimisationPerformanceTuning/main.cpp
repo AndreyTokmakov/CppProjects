@@ -9,6 +9,7 @@ Description : C++ Optimisation and Performance Tuning experiments
 
 #include "Utilities.h"
 #include "FalseSharing/FalseSharingExperiments.h"
+#include "Valgrind/ValgrindExperiments.h"
 
 #include <iostream>
 #include <string_view>
@@ -17,22 +18,36 @@ Description : C++ Optimisation and Performance Tuning experiments
 #include <algorithm>
 #include <numeric>
 
-struct point {
-    int x;
-    int y;
-};
+namespace Variables_MemoryLayout
+{
+    struct point {
+        int x;
+        int y;
+    };
 
-struct rectangle1 {
-    bool visible;
-    point p1;
-    point p2;
-};
+    struct rectangle1 {
+        bool flag1;
+        bool flag2;
+        point p1;
+        point p2;
+    };
 
-struct rectangle2 {
-    point p1;
-    point p2;
-    bool visible;
-};
+    struct rectangle2 {
+        point p1;
+        bool flag1;
+        point p2;
+        bool flag2;
+    };
+
+    void TestAll()
+    {
+        std::cout << sizeof(point) << std::endl;
+        std::cout << sizeof(rectangle1) << std::endl;
+        std::cout << sizeof(rectangle2) << std::endl;
+    }
+}
+
+
 
 int main([[maybe_unused]] int argc,
          [[maybe_unused]] char** argv)
@@ -40,31 +55,9 @@ int main([[maybe_unused]] int argc,
     const std::vector<std::string_view> args(argv + 1, argv + argc);
 
     // FalseSharingExperiments::TestAll();
+    // Variables_MemoryLayout::TestAll();
+    ValgrindExperiments::TestAll();
 
-
-    std::cout << sizeof(point) << std::endl;
-    std::cout << sizeof(rectangle1) << std::endl;
-    std::cout << sizeof(rectangle2) << std::endl;
-
-
-    /*
-    const size_t size = 100'000'000;
-
-    int* data = new int[size];
-    std::iota(data, data + size, 0);
-
-    {
-        Utilities::ScopedTimer timer { "DemoThree::test" };;
-        for (int n = 0; n < 100'000; ++n)
-        {
-            uint64_t sum = 0;
-            for (size_t i = 0; i < size; ++i)
-                sum += data[i];
-        }
-    }
-
-    delete [] data;
-    */
 
     return EXIT_SUCCESS;
 }

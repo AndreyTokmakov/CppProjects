@@ -7,6 +7,11 @@ project(${PROJECT_NAME} VERSION ${PROJECT_VERSION} LANGUAGES CXX)
 
 add_compile_options(-c -Wall -Wextra -O3 -std=c++2a)
 
+SET(OPENSSL_ROOT_DIR "/home/andtokm/DiskS/ProjectsUbuntu/third_party/openssl")
+
+link_directories(${OPENSSL_ROOT_DIR})
+include_directories("${OPENSSL_ROOT_DIR}/include")
+
 include_directories(../../third_party/libssh2/include)
 include_directories(../../third_party/libssh2/build/src)
 link_directories(../../third_party/libssh2/build/src)

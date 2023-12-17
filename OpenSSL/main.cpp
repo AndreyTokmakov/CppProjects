@@ -56,7 +56,7 @@
 #include <openssl/x509.h>
 #include <openssl/x509v3.h>
 #include <openssl/crypto.h>
-
+#include <openssl/opensslv.h>
 #include "CertificateGenerator.h"
 
 
@@ -175,12 +175,13 @@ namespace Experiments
     }
 
 
-    void TestCertificate_PEM() {
+    void TestCertificate_PEM()
+    {
         // X509* cert = openPemFile(validPem);
         // std::unique_ptr<FILE, decltype(&fclose)> file (fopen(validPem.data(), "r"), fclose);
 
         const std::vector<char8_t> content = readCertificate(
-                R"(/home/andtokm/DiskS/Projects/ClickHouse/contrib/aws/android-build/cacert.pem)");
+                R"(/home/andtokm/DiskS/ClickHouse/tests/integration/helpers/fake_cert.pem)");
         const auto *data = reinterpret_cast<const unsigned char*>(content.data());
 
         std::unique_ptr<X509, CertificateDeleter> certX509 {
@@ -304,6 +305,42 @@ namespace Keys
 }
 
 
+void printVersionInfo()
+{
+    std::cout << "===========================================================================" << std::endl;
+
+#ifdef OPENSSL_VERSION_NUMBER
+    printf("OPENSSL_VERSION_NUMBER: %#08lx\n", OPENSSL_VERSION_NUMBER);
+#endif
+
+#ifdef LIBRESSL_VERSION_NUMBER
+    printf("LIBRESSL_VERSION_NUMBER: %#08lx\n", LIBRESSL_VERSION_NUMBER);
+#endif
+
+#ifdef LIBRESSL_VERSION_TEXT
+    printf("LIBRESSL_VERSION_TEXT: %s\n", LIBRESSL_VERSION_TEXT);
+#endif
+
+#if OPENSSL_VERSION_NUMBER >= 0x1010000f
+    std::cout << "NUMBER: " << std::hex << OpenSSL_version_num() << std::endl;
+    std::cout << "VERSION: " << OpenSSL_version(OPENSSL_VERSION) << std::endl;
+    std::cout << "BUILT_ON: " << OpenSSL_version(OPENSSL_BUILT_ON) << std::endl;
+    std::cout << "PLATFORM: " << OpenSSL_version(OPENSSL_PLATFORM) << std::endl;
+    std::cout << "CFLAGS: " << OpenSSL_version(OPENSSL_CFLAGS) << std::endl;
+    std::cout << "DIR: " << OpenSSL_version(OPENSSL_DIR) << std::endl;
+    std::cout << "ENGINES_DIR: " << OpenSSL_version(OPENSSL_ENGINES_DIR) << std::endl;
+#endif
+
+    std::cout << "\nSSLeay: " << std::hex << SSLeay() << std::endl;
+    std::cout << "SSLEAY_VERSION: " << SSLeay_version(SSLEAY_VERSION) << std::endl;
+    std::cout << "SSLEAY_CFLAGS: " << SSLeay_version(SSLEAY_CFLAGS) << std::endl;
+    std::cout << "SSLEAY_BUILT_ON: " << SSLeay_version(SSLEAY_BUILT_ON) << std::endl;
+    std::cout << "SSLEAY_PLATFORM: " << SSLeay_version(SSLEAY_PLATFORM) << std::endl;
+    std::cout << "SSLEAY_DIR: " << SSLeay_version(SSLEAY_DIR) << std::endl;
+
+    std::cout << "===========================================================================" << std::endl;
+}
+
 
 /// How to create a self-signed PEM file:
 /// openssl req -newkey rsa:2048 -new -nodes -x509 -days 3650 -keyout key.pem -out cert.pem
@@ -313,9 +350,10 @@ int main([[maybe_unused]] int argc,
          [[maybe_unused]] char** argv)
 {
     const std::vector<std::string_view> args(argv + 1, argv + argc);
+    printVersionInfo();
 
-    Experiments::TestCertificate();
-    // Experiments::TestCertificate_PEM();
+    // Experiments::TestCertificate();
+    Experiments::TestCertificate_PEM();
     // Experiments::TestReadCertificate();
     // Experiments::GetSerialNumber();
 
