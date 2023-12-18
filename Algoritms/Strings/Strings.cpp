@@ -459,7 +459,8 @@ namespace Strings {
 		str.swap(result);
 	}
 
-	void RotateString() {
+	void RotateString()
+    {
 		{
 			std::string text = "567891234";
 			_rotate_string_once(text);
@@ -476,6 +477,22 @@ namespace Strings {
 			std::cout << text << std::endl;
 		}
 	}
+
+    //--------------------------------------------------------------------------------------//
+
+    void reverse_string(std::string& str)
+    {
+        for (size_t idx = 0, size = str.size(); idx < size / 2; ++idx)
+            std::swap(str[idx], str[size - idx - 1]);
+    }
+
+    void ReverseString()
+    {
+        std::string text { "123456789" };
+        reverse_string(text);
+
+        std::cout << text << std::endl;
+    }
 
 	//--------------------------------------------------------------------------------------//
 
@@ -1807,7 +1824,9 @@ void Strings::TestAll()
 	// Strings::Atoi();
 	// Strings::StrLen();
 
+	Strings::ReverseString();
 	// Strings::RotateString();
+
 	// Strings::CheckIfStrings_RotateRotateEquals();
 
     // Strings::FindCommon_PrefixAndPostfix();
