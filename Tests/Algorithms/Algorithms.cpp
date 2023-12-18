@@ -632,6 +632,21 @@ namespace Algorithms::Numbers
 
         std::cout << result << std::endl;
     }
+
+    bool contains_duplicate(const std::vector<int>& nums)
+    {
+        std::unordered_set<int> set (nums.begin(),nums.end());
+        return nums.size() != set.size();
+    }
+
+    void Contains_Duplicate()
+    {
+        for (const std::vector<int>& values: std::vector<std::vector<int>> {
+                {1,2,3,4,5}, {1,2,3,4,5,3}
+        }) {
+            std::cout << std::boolalpha << contains_duplicate(values) << std::endl;
+        }
+    }
 }
 
 namespace Algorithms::Strings
@@ -931,7 +946,8 @@ void Algorithms::TestAll()
 
     // Numbers::printSortedSquaredNumber_InSortedArray();
     // Numbers::LongestIncreasingSubsequence();
-    Numbers::Rank();
+    Numbers::Contains_Duplicate();
+    // Numbers::Rank();
 
     // MaxTree::test();
 

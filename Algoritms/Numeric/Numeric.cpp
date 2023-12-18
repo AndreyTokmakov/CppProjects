@@ -2089,30 +2089,55 @@ namespace Numeric
 
     //--------------------------------------------------------------------------------------//
 
-    void Product_Of_All_Numeric_Exept_N() {
-        int Numeric[] = { 1,2,3,4,5 };
-        // int Numeric[] = { 3, 5,2,1, 3,4,5,1,2,3,7,4,5,8,2,7,2,2,5 };
-
-        {
-            unsigned long all = 1;
-            for (int v : Numeric)
-                all *= v;
-            for (int v : Numeric)
-                std::cout << all / v << ", ";
-            std::cout << std::endl;
+    std::vector<int> product_of_array_except_self(const std::vector<int>& values)
+    {
+        std::vector<int> result(values.size(), 0);
+        int allProd = 1, zeros = 0, zeroIdx = -1;
+        for (int idx = 0; idx < std::ssize(values); ++idx) {
+            if (0 != values[idx])
+                allProd *= values[idx];
+            else {
+                zeroIdx = idx;
+                ++zeros;
+            }
         }
 
-        // Slow solutions
+        if (0 == zeros) {
+            for (int i = 0; i < std::ssize(values); ++i)
+                result[i] = allProd /  values[i];
+        }
+        else if (1 == zeros)
+            result[zeroIdx] = allProd;
 
+        return result;
+    }
+
+    std::vector<int> product_of_array_except_self_ex(const std::vector<int>& values)
+    {
+        const int n = std::ssize(values);
+        std::vector<int> result(n, 1);
+
+        for (int idx = 1; idx != n; ++idx)
+            result[idx] = result[idx - 1] * values[idx - 1];
+
+        for (int r = 1, i = n - 1; i >= 0; --i)
         {
-            size_t length = sizeof(Numeric) / sizeof(int);
-            for (unsigned int i = 0; i < length; i++) {
-                unsigned long product = 1;
-                for (unsigned int n = 0; n < length; n++) {
-                    if (i != n)
-                        product *= Numeric[n];
-                } std::cout << product << ", ";
-            } std::cout << std::endl;
+            result[i] *= r;
+            r *= values[i];
+        }
+
+        return result;
+    }
+
+    void Product_Of_All_Numeric_Except_N()
+    {
+        for (const std::vector<int>& values: std::vector<std::vector<int>> {
+            {1,2,3,4}, {1,2,3,4,5}, {-1,1,0,-3,3}, {-1,1,0,-3,3,0}, {0,0,0}
+        }) {
+            const std::vector<int> result1 = product_of_array_except_self(values);
+            const std::vector<int> result2 = product_of_array_except_self_ex(values);
+
+            std::cout << result1 << std::endl << result2 << std::endl << std::endl;
         }
     }
 
@@ -3361,7 +3386,7 @@ void Numeric::TEST_ALL()
     // Numeric::Is_Array_Elements_Consecutive();
     // Numeric::MiniMaxSum_Of4();
     // Numeric::Find_Sum_All_Numeric();
-    Numeric::Find_Multiplier_Pair();
+    // Numeric::Find_Multiplier_Pair();
     // Numeric::Find_Multiplier_Pair2();
     // Numeric::Find_Pair_SumX_Sorted();
     // Numeric::Find_3_Elements_SumX_Unsorted();
@@ -3410,7 +3435,7 @@ void Numeric::TEST_ALL()
     // Numeric::GroupElements_ByFirstOccurance();
 
     // Numeric::Add_One_To_Integer_ArrayTest();
-    // Numeric::Product_Of_All_Numeric_Exept_N();
+    Numeric::Product_Of_All_Numeric_Except_N();
 
     // Numeric::Missmatch_Sorted_Vectors();
     // Numeric::Missmatch_Tests();

@@ -9,16 +9,19 @@
 
 #define _CRT_SECURE_NO_WARNINGS
 
+#include "Chrono.h"
+
 #include <iostream>
+#include <syncstream>
 #include <chrono>
 #include <thread>
 #include <iomanip>
 #include <ctime>
-#include "Chrono.h"
-#include <time.h>
-#include <stdio.h>
+#include <cstdio>
 
-namespace Chrono {
+
+namespace Chrono
+{
 
     void Duration_TimePoint_Print()
     {
@@ -427,10 +430,47 @@ namespace Chrono::StringFormat
         std::cout << timeStr << std::endl;
     }
 
+    struct CurrentTime
+    {
+        const std::chrono::time_point<std::chrono::high_resolution_clock> now { std::chrono::system_clock::now() };
+    };
+
+    struct SyncTimeStream
+    {
+        const std::chrono::time_point<std::chrono::high_resolution_clock> now { std::chrono::system_clock::now() };
+
+        template<class T>
+        std::osyncstream operator<<(T&& s)
+        {
+            std::osyncstream stream {std::cout} ;
+            stream << std::format("{:%d-%m-%Y %H:%M:%OS}", now) << std::forward<T>(s);
+            return stream;
+        }
+    };
+
+    std::ostream& operator<<(std::ostream& stream, const CurrentTime& time)
+    {
+        stream << std::format("{:%d-%m-%Y %H:%M:%OS}", time.now);
+        return stream;
+    }
+
+
+
     void Format()
     {
         const std::chrono::time_point now = std::chrono::system_clock::now();
         std::cout << std::format("{:%d-%m-%Y %H:%M:%OS}", now) << '\n';
+    }
+
+    void Format2()
+    {
+        std::cout << CurrentTime{} << '\n';
+        std::osyncstream {std::cout} << CurrentTime{} << '\n';
+    }
+
+    void Format3()
+    {
+        SyncTimeStream{} << 2 << "  sds " << 1;
     }
 }
 
@@ -514,13 +554,6 @@ void Chrono::TestAll()
 
     // TimeZones::Test();
 
-    TimeToString::Test();
-
-    // StringFormat::StrfTime();
-    // StringFormat::Asctime();
-    // StringFormat::PutTime_To_String();
-    // StringFormat::CTime_String();
-    // StringFormat::Format();
 
     // Year_Month_Day();
     // Create_Day_Manually();
@@ -531,8 +564,16 @@ void Chrono::TestAll()
 
     // Experiments();
 
-    // auto v =format_date("11:22:33.123123");
-    // std::cout << v << std::endl;
 
+    // TimeToString::Test();
+
+    // StringFormat::StrfTime();
+    // StringFormat::Asctime();
+    // StringFormat::PutTime_To_String();
+    // StringFormat::CTime_String();
+
+    // StringFormat::Format();
+    // StringFormat::Format2();
+    StringFormat::Format3();
 };
 

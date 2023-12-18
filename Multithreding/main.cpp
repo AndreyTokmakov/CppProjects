@@ -58,12 +58,12 @@ int main([[maybe_unused]] int argc,
     // AsyncLaunch::TEST_ALL();
 
     // Atomic::TestAll();
-    AtomicFlag::TestAll();
+    // AtomicFlag::TestAll();
     // Atomic_MemoryOrder::TestAll();
     // Atomic_CompareExchange::TestAll();
     // Atomic_IsLockFree::TestAll();
 
-    // Barrier::TEST_ALL();
+    Barrier::TEST_ALL();
     // CallOnce::TEST_ALL();
     // ConditionVariable::TEST_ALL();
     // Exceptions_Handling::TEST_ALL();

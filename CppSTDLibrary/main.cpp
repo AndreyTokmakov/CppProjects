@@ -80,45 +80,6 @@
 #include "Volatile/VolatileTests.h"
 
 
-namespace Utilities {
-
-    constexpr bool DEBUG_PRINT {false};
-
-    class Integer
-    {
-    private:
-        int value {0};
-
-    public:
-        Integer(int v): value{v} {
-            if constexpr (DEBUG_PRINT) {
-                std::cout << "Utilities(" << value << ")\n";
-            }
-        }
-
-        Integer(const Integer& v): value{v.value} {
-            if constexpr (DEBUG_PRINT) {
-                std::cout << "Copy Utilities(" << value << ")\n";
-            }
-        }
-
-        ~Integer() {
-            if constexpr (DEBUG_PRINT) {
-                std::cout << "~Utilities(" << value << ")\n";
-            }
-        }
-
-        inline int getValue() const noexcept {
-            return value;
-        }
-
-
-        Integer& operator==(const Integer& rhs) = delete;
-        Integer& operator==(Integer&& rhs)  = delete;
-    };
-
-};
-
 
 namespace Multithreading {
 
@@ -231,7 +192,7 @@ int main(int argc, char** argv)
     // BitSet::TestAll();
     // BitwiseOperation::TestAll();
     // Byte::TestAll();
-    // Chrono::TestAll();
+    Chrono::TestAll();
     // Comparators::TestAll();
     // Concepts::TestAll();
     // ConsoleInOut::TestAll();
@@ -269,7 +230,7 @@ int main(int argc, char** argv)
     // StarshipOperator::TestAll();
     // Streams::TestAll();
     // String::TestAll();
-    StringStream::TestAll();
+    // StringStream::TestAll();
     // StringView::TestAll();
     // StructuredBinding::TestAll();
     // StrongTypes::TestAll();

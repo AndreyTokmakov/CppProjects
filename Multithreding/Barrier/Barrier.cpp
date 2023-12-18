@@ -17,10 +17,12 @@
 #include <random>
 #include <future>
 #include <iomanip>
+#include <format>
+#include <chrono>
 
 #include "Barrier.h"
 
-namespace Barrier
+namespace
 {
     int getRandomInteger(int from = 0, int to = 100)
     {
@@ -39,6 +41,69 @@ namespace Barrier
         ss << std::put_time(std::localtime(&in_time_t), "%a %b %d %Y %T")
            << '.' << std::setfill('0') << std::setw(6) << nowMs.count();
         return ss.str();
+    }
+
+    struct SyncTimeStream
+    {
+        const std::chrono::time_point<std::chrono::high_resolution_clock> now { std::chrono::system_clock::now() };
+
+        template<class T>
+        std::osyncstream operator<<(T&& s)
+        {
+            const std::string time {std::format("{:%d-%m-%Y %H:%M:%OS} ", now)};
+            std::osyncstream stream {std::cout} ;
+            stream << time << std::forward<T>(s);
+            return stream;
+        }
+    };
+
+#define synch_cout SyncTimeStream {}
+}
+
+
+namespace Barrier
+{
+    void SimpleTest()
+    {
+        constexpr size_t threadsCount {3};
+        std::barrier barrier(threadsCount);
+
+        auto task = [&](std::string_view name, const uint32_t timeout) {
+            synch_cout << name  <<  " started\n";
+            std::this_thread::sleep_for(std::chrono::seconds(timeout));
+            synch_cout << name  <<  " completed. waiting for others\n";
+            barrier.arrive_and_wait();
+            synch_cout << name  <<  " done\n";
+        };
+
+        std::jthread t1 (task, "T1", getRandomInteger(0, 5));
+        std::jthread t2 (task, "T2", getRandomInteger(0, 5));
+        std::jthread t3 (task, "T3", getRandomInteger(0, 5));
+    }
+
+    void Test_WithCallback()
+    {
+        const auto workers = { "One", "Two", "Three" };
+
+        auto completionCallback = []() noexcept {
+            // locking not needed here
+            static auto phase = "---> Done!! Cleaning up...\n";
+            synch_cout << phase;
+            phase = "... done\n";
+        };
+
+        std::barrier sync_point(std::ssize(workers), completionCallback);
+
+        auto work = [&](const std::string& name) {
+            synch_cout << name + "worked\n";
+            sync_point.arrive_and_wait();
+            synch_cout << name + "cleaned\n";;
+            sync_point.arrive_and_wait();
+        };
+
+        synch_cout << "Starting...\n";
+        for (std::vector<std::jthread> threads; auto const& worker : workers)
+            threads.emplace_back(work, worker);
     }
 
     void Wait_To_All_Thread_Completed()
@@ -102,36 +167,6 @@ namespace Barrier
     }
 
 
-
-    void Test()
-    {
-        const auto workers = { "One", "Two", "Three" };
-
-        auto on_completion = []() noexcept {
-            // locking not needed here
-            static auto phase = "---> Done!! Cleaning up...\n";
-            std::cout << phase;
-            phase = "... done\n";
-        };
-
-        std::barrier sync_point(std::ssize(workers), on_completion);
-
-        auto work = [&](const std::string& name) {
-            std::cout << "  " + name + " worked\n";
-
-            sync_point.arrive_and_wait();
-
-            std::cout << "  " + name + " cleaned\n";;
-
-            sync_point.arrive_and_wait();
-        };
-
-        std::cout << "Starting...\n";
-        for (std::vector<std::jthread> threads; auto const& worker : workers)
-            threads.emplace_back(work, worker);
-    }
-
-
     void Barrier_With_Completion()
     {
         std::vector<std::string> names { "One", "Two", "Three" };
@@ -177,11 +212,12 @@ namespace Barrier
 
 void Barrier::TEST_ALL()
 {
+    SimpleTest();
     // Test();
 
     // Wait_To_All_Thread_Completed();
 
-    Run_CallBack_WhenAllDone();
+    // Run_CallBack_WhenAllDone();
 
     // Barrier_With_Completion();
     // Check_Block_By_Barrier();

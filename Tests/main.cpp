@@ -764,7 +764,7 @@ int main([[maybe_unused]] int argc,
     const std::vector<std::string_view> args(argv + 1, argv + argc);
     // parseInput
 
-    WrapperTests::Test();
+    // WrapperTests::Test();
 
 
     // MoveStringToArray();
@@ -778,7 +778,7 @@ int main([[maybe_unused]] int argc,
     // ReturnClass_MemberRef_CopyCTor::tests();
 
 
-    // Algorithms::TestAll();
+    Algorithms::TestAll();
     // AutoTests::TestAll();
     // Cpp23_Features::TestAll();
     // Concepts::TestAll();
