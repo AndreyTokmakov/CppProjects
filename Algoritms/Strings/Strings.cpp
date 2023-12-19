@@ -672,7 +672,8 @@ namespace Strings {
         return max_len;
     }
 
-	std::string longestUniqueSubstr_1(const std::string& text) {
+	std::string longestUniqueSubstr_1(const std::string& text)
+    {
 		char duplicates[256] = { 0 };
 		size_t beg = 0, length = 0, maxlen = 0;
 		for (size_t index = 0; index < text.length(); index++) {
@@ -702,7 +703,8 @@ namespace Strings {
 		return maxLength;
 	}
 
-    size_t longestUniqueSubstr_3_Map(const std::string& text) {
+    size_t longestUniqueSubstr_3_Map(const std::string& text)
+    {
         std::unordered_map<char, size_t> seen;
         size_t result = 0;
         for (size_t fast = 0, slow = 0; fast < text.size(); ++fast) {
@@ -714,7 +716,8 @@ namespace Strings {
         return result;
     }
 
-    size_t longestUniqueSubstr_4_Tbl(const std::string& text) {
+    size_t longestUniqueSubstr_4_Tbl(const std::string& text)
+    {
         size_t result = 0, indexes[256] {0};
         for (size_t fastIdx = 0, slow = 0; const char c: text) {
             slow = std::max(slow, indexes[c] + 1);
@@ -758,18 +761,20 @@ namespace Strings {
         return maxLen;
     }
 
-
 	void LongestSubstringWithoutRepeatingCharacters()
     {
-		for (const std::string& s: {"abcde", "abcbef", "aaaaaa", "aaabbbccc"})
+        for (const StrNumPair<size_t> & data: std::vector<StrNumPair<size_t> > {
+                {"abcde", 5}, {"abcbef", 4}, {"aaaaaa", 1}, {"aaabbbccc", 2},
+                { "abcabcbb", 3}
+        })
         {
-            std::cout << longestUniqueSubstr_0(s) << " "
-                      << longestUniqueSubstr_1(s) << " "
-                      << longestUniqueSubstr_2(s) << " "
-                      << longestUniqueSubstr_3_Map(s) << " "
-                      << longestUniqueSubstr_4_Tbl(s) << " "
-                      << longestUniqueSubstr_UnFinished(s) << std::endl;
-
+            std::cout << longestUniqueSubstr_0(data.first) << " "
+                      << longestUniqueSubstr_1(data.first) << " "
+                      << longestUniqueSubstr_2(data.first) << " "
+                      << longestUniqueSubstr_3_Map(data.first) << " "
+                      << longestUniqueSubstr_4_Tbl(data.first) << " "
+                      << longestUniqueSubstr_UnFinished(data.first)
+                      << " | " << data.second << std::endl;
         }
 	}
 
@@ -844,7 +849,6 @@ namespace Strings {
         __longestConsecutiveCharacters(text);
         __longestConsecutiveCharacters2(text );
 	}
-
 
     //---------------------------------------------------------------------------//
 
@@ -1882,10 +1886,10 @@ void Strings::TestAll()
 	// Strings::Find_First_Char_Occured_Once();
 	// Strings::Find_First_K_Chars_Occured_Once();
 
-    // Strings::LongestSubstringWithoutRepeatingCharacters();
-    // Strings::LongestSubstringWithoutRepeatingCharacters2();
+    Strings::LongestSubstringWithoutRepeatingCharacters();
+    Strings::LongestSubstringWithoutRepeatingCharacters2();
 	// Strings::Find_LongestSubstring_With_K_DistinctCharacters();
-    Strings::MaxSubstringLength_Of_K_max_Unique_Elements();
+    // Strings::MaxSubstringLength_Of_K_max_Unique_Elements();
     // Strings::LongestConsecutiveCharacters();
 
 
