@@ -36,6 +36,13 @@
 #include <queue>
 #include <ranges>
 
+
+namespace
+{
+    template<typename T>
+    using VectorPair = std::pair<std::vector<T>, std::vector<T>>;
+}
+
 namespace Numeric {
 
     void FillVecor(std::vector<int> &vecor,
@@ -2731,7 +2738,8 @@ namespace Numeric
 
     //----------------------------------------------------------------------------------------//
 
-    bool _is_reversed_equals(std::vector<int>& v1, std::vector<int>& v2) {
+    bool _is_reversed_equals(const std::vector<int>& v1, const std::vector<int>& v2)
+    {
         if (v1.size() != v2.size())
             return false;
         //std::vector<int>::const_iterator iter2 = v2.end() - 1;  // and --iter2 in FOR loop
@@ -2743,34 +2751,31 @@ namespace Numeric
         return true;
     }
 
-    /*
-    bool _is_reversed_equals(std::vector<int>::const_iterator beg1, std::vector<int>::const_iterator end1,
-                             std::vector<int>::const_iterator beg2, std::vector<int>::const_iterator end2) {
-        while (beg1 != end1 || beg2 != end2) {
-            std::cout << *beg1 << "  " << *end2 << std::endl;
-            if (*beg1 != *end2)
+    bool _is_reversed_equals_2(const std::vector<int>& v1, const std::vector<int>& v2)
+    {
+        const int size = static_cast<int>(v1.size());
+        if (size != static_cast<int>(v2.size()))
+            return false;
+
+        for (int left = 0, right = size - 1; left < size; ++left, --right) {
+            if (v1[left] != v2[right])
                 return false;
-            ++beg1;
-            --end2;
         }
+
         return true;
-    }*/
+    }
 
-    void IsReversedEquals() {
-        std::cout << "--------------------- Test1 -------------------\n" << std::endl;
+    void IsReversedEquals()
+    {
+        for (const VectorPair<int>& data: std::vector<VectorPair<int>> {
+                {{ 1,2,3 },{ 3,2,1 }}, {{ 1,2,3 },{ 3,2,2 }},
+                {{ 1,2,3,4,5,6,7,8,9 },{ 9,8,7,6,4,4,3,2,1}}
+        })
         {
-            std::vector<int> v1 = { 1,2,3 }, v2 = {3,2,1};
-            std::cout << std::boolalpha << _is_reversed_equals(v1, v2) << std::endl;
-            //std::cout << std::boolalpha << _is_reversed_equals(v1.begin(), v1.end(), v2.begin(), std::prev(v2.end())) << std::endl;
-
-            // Using STD::EQUALS
-            std::cout << std::boolalpha << std::equal(v1.begin(), v1.end(), v2.rbegin()) << std::endl;
-        }
-        std::cout << "\n--------------------- Test2 -------------------\n" << std::endl;
-        {
-            std::vector<int> v1 = { 1,2,3 }, v2 = { 3,2,2 };
-            std::cout << std::boolalpha << _is_reversed_equals(v1, v2) << std::endl;
-            std::cout << std::boolalpha << std::equal(v1.begin(), v1.end(), v2.rbegin()) << std::endl;
+            std::cout << std::boolalpha
+                << _is_reversed_equals(data.first, data.second) << ' '
+                << _is_reversed_equals_2(data.first, data.second) << ' '
+                << std::equal(data.first.begin(), data.first.end(), data.second.rbegin()) << std::endl;
         }
     }
 
@@ -3336,7 +3341,7 @@ namespace Numeric
 
 }
 
-void Numeric::TEST_ALL()
+void Numeric::TestAll()
 {
     // Numeric::isPowerOf2();
     // Numeric::GreatestCommonDivisor();
@@ -3435,12 +3440,12 @@ void Numeric::TEST_ALL()
     // Numeric::GroupElements_ByFirstOccurance();
 
     // Numeric::Add_One_To_Integer_ArrayTest();
-    Numeric::Product_Of_All_Numeric_Except_N();
+    // Numeric::Product_Of_All_Numeric_Except_N();
 
     // Numeric::Missmatch_Sorted_Vectors();
     // Numeric::Missmatch_Tests();
     // Numeric::IsPermutation();
-    // Numeric::IsReversedEquals();
+    Numeric::IsReversedEquals();
     // Numeric::ReverseToMakeEqual();
     // Numeric::MaxSum_of_NonConsecutive_Elements_In_Array();
 

@@ -27,6 +27,13 @@
 
 #include <cstdint>
 
+namespace
+{
+    template<typename T>
+    using StrNumPair = std::pair<std::string, T>;
+}
+
+
 namespace Strings {
 
     bool _is_palindrome_1(const std::string& str) {
@@ -606,6 +613,44 @@ namespace Strings {
         }
 	}
 
+    //--------------------------------------------------------------------------------------//
+
+    // Необходимо найти максимальную длину подстроки такой что бы в ней было не более чем 'K' уникальных элементов
+    size_t findLenWithMax_K_UniqueChars(const std::string& text,
+                                        const size_t K)
+    {
+        size_t result { 0 }, indexes[256] {};
+        for (size_t right = 0, left = 0, uniqCount = 0; right < text.length(); ++right)
+        {
+            const char c = text[right];
+            if (0 == indexes[c]++)
+                ++uniqCount;
+
+            while (uniqCount > K) {
+                const char ch = text[left++];
+                if (0 == --indexes[ch])
+                    --uniqCount;
+            }
+            result = std::max(result, right - left + 1);
+        }
+        return result;
+    }
+
+    void MaxSubstringLength_Of_K_max_Unique_Elements()
+    {
+        for (const std::pair<StrNumPair<size_t>, size_t>& data: std::vector< std::pair<StrNumPair<size_t>, size_t> > {
+                {{"aba", 2}, 3}, {{"ababaaab", 2}, 8},
+                {{"ababaaacb", 2}, 7}, {{"ababaaacb", 3}, 9},
+                {{"aabbcc", 1}, 2}, {{"aabbcc", 2}, 4},
+                {{"aabbcc", 3}, 6}
+        }){
+            const auto& [str, K] = data.first;
+            const size_t count = findLenWithMax_K_UniqueChars(str, K);
+            std::cout << "Actual: " << count << "  Expected: " << data.second << "  --> "
+                      << std::boolalpha << (count == data.second) << std::endl;
+        }
+    }
+
 	//--------------------------------------------------------------------------------------//
 
     int64_t longestUniqueSubstr_0(const std::string& s)
@@ -732,7 +777,7 @@ namespace Strings {
     {
         uint16_t chars[256] {};
         size_t maxLen = 0;
-        bool hasDuplicates = 0;
+        bool hasDuplicates = false;
         for (size_t left = 0, right = 0; right < str.size(); ++right)
         {
             if (++chars[str[right]] > 1)
@@ -740,9 +785,8 @@ namespace Strings {
 
             while (hasDuplicates)
             {
-                if (2 == chars[str[left]])
+                if (--chars[str[left++]] == 1)
                     hasDuplicates = false;
-                --chars[str[left++]];
             }
             maxLen = std::max(right - left + 1, maxLen);
         }
@@ -751,10 +795,13 @@ namespace Strings {
 
     void LongestSubstringWithoutRepeatingCharacters2()
     {
-        for (const std::string& s: {"abcde", "abcbef", "aaaaaa", "aaabbbccc"})
-        {
-            std::cout << longest_substring_without_repeating_characters(s) << " "
-                      << std::endl;
+        for (const StrNumPair<size_t> & data: std::vector<StrNumPair<size_t> > {
+            {"abcde", 5}, {"abcbef", 4}, {"aaaaaa", 1}, {"aaabbbccc", 2},
+            { "abcabcbb", 3}
+        }){
+            const size_t count = longest_substring_without_repeating_characters(data.first);
+            std::cout << "Actual: " << count << "  Expected: " << data.second << "  --> "
+                      << std::boolalpha << (count == data.second) << std::endl;
         }
     }
 
@@ -831,40 +878,7 @@ namespace Strings {
         getAngleOnClock(timeString);
     }
 
-    //--------------------------------------------------------------------------------------//
 
-    // Необходимо найти максимальную длину подстроки
-    // такой что бы в ней было не более чем 'K' уникальных элементов
-    size_t findLenWithMax_K_UniqueChars(const std::string& text,
-                                        const size_t K)
-    {
-        size_t result { 0 }, indexes[256] {};
-        for (size_t right = 0, left = 0, uniqCount = 0; right < text.length(); ++right)
-        {
-            const char c = text[right];
-            if (0 == indexes[c]++)
-                ++uniqCount;
-
-            while (uniqCount > K) {
-                const char ch = text[left++];
-                if (0 == --indexes[ch])
-                    --uniqCount;
-            }
-            result = std::max(result, right - left + 1);
-        }
-        return result;
-    }
-
-    void MaxSubstringLength_Of_K_max_Unique_Elements()
-    {
-        std::cout << findLenWithMax_K_UniqueChars("aba", 2) << std::endl;         // 3
-        std::cout << findLenWithMax_K_UniqueChars("ababaaab", 2) << std::endl;    // 8
-        std::cout << findLenWithMax_K_UniqueChars("ababaaacb", 2) << std::endl;   // 7
-        std::cout << findLenWithMax_K_UniqueChars("ababaaacb", 3) << std::endl;   // 9
-        std::cout << findLenWithMax_K_UniqueChars("aabbcc", 1) << std::endl;      // 2
-        std::cout << findLenWithMax_K_UniqueChars("aabbcc", 2) << std::endl;      // 4
-        std::cout << findLenWithMax_K_UniqueChars("aabbcc", 3) << std::endl;      // 6
-    }
 
     //--------------------------------------------------------------------------------------//
 
@@ -1138,7 +1152,8 @@ namespace Strings {
 		return 0;
 	}
 
-	void Find_LongestSubstring_With_K_DistinctCharacters() {
+	void Find_LongestSubstring_With_K_DistinctCharacters()
+    {
 		std::string str = "aaabaaaaadddddccccccggggg";
 		find_longestsubstring_with_k_distinctcharacters(str, 2);
 	}
@@ -1466,6 +1481,20 @@ namespace Strings {
 		return true;
 	}
 
+    bool _are_anagrams_faster(const std::string& str1, const std::string& str2)
+    {
+        if (str1.length() != str2.length())
+            return false;
+
+        std::array<int, 32> chars { 0 };
+        for (char c : str1)
+            chars[c - 'a']++;
+        for (char c : str2)
+            if (1 > chars[c - 'a']--)
+                return false;
+        return true;
+    }
+
 	void AreAnagrams()
     {
         std::vector<std::pair<std::pair<std::string, std::string> , bool>> testData {
@@ -1477,7 +1506,8 @@ namespace Strings {
         for (const auto& [data, expected]: testData)
         {
             std::cout << "Is '" << data.first << "' and '" << data.second << "' anagrams: "
-                      << std::boolalpha << _are_anagrams(data.first, data.second)
+                      << std::boolalpha << _are_anagrams(data.first, data.second) << "  "
+                      << std::boolalpha << _are_anagrams_faster(data.first, data.second)
                       << ", expected = " << std::boolalpha << expected << std::endl;
         }
 	}
@@ -1817,14 +1847,12 @@ namespace Strings
 
 void Strings::TestAll()
 {
-	// Strings::LongestConsecutiveCharacters();
-	// Strings::MaxSubstringLength_Of_K_max_Unique_Elements();
 
 	// Strings::AnalogClockAngles();
 	// Strings::Atoi();
 	// Strings::StrLen();
 
-	Strings::ReverseString();
+	// Strings::ReverseString();
 	// Strings::RotateString();
 
 	// Strings::CheckIfStrings_RotateRotateEquals();
@@ -1857,8 +1885,11 @@ void Strings::TestAll()
     // Strings::LongestSubstringWithoutRepeatingCharacters();
     // Strings::LongestSubstringWithoutRepeatingCharacters2();
 	// Strings::Find_LongestSubstring_With_K_DistinctCharacters();
+    Strings::MaxSubstringLength_Of_K_max_Unique_Elements();
+    // Strings::LongestConsecutiveCharacters();
 
-	// Strings::Palindrome_Test();
+
+    // Strings::Palindrome_Test();
 	// Strings::Longest_Palindrome_1();
 	// Strings::Longest_Palindrome_2();
 

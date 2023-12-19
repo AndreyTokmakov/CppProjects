@@ -34,7 +34,7 @@ int main([[maybe_unused]] int argc,
 	// Sorting::TEST_ALL();
 	Strings::TestAll();
 	// Interviews::TEST_ALL();
-    // Numeric::TEST_ALL();
+    // Numeric::TestAll();
     // MultiThreading::TestAll();
 
 	return EXIT_SUCCESS;

@@ -11,7 +11,7 @@
 #define CPPCLIONPROJECTS_NUMERIC_H
 
 namespace Numeric {
-    void TEST_ALL();
+    void TestAll();
 };
 
 #endif // !CPPCLIONPROJECTS_NUMERIC_H
