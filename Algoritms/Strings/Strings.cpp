@@ -29,8 +29,8 @@
 
 namespace
 {
-    template<typename T>
-    using StrNumPair = std::pair<std::string, T>;
+    using StrSizeTPair = std::pair<std::string, size_t>;
+    using StrPair = std::pair<std::string, std::string>;
 }
 
 
@@ -81,7 +81,8 @@ namespace Strings {
 		return length;
 	}
 
-	std::string longestPalindrome(const std::string& str) {
+	std::string longestPalindrome(const std::string& str)
+    {
 		size_t start = 0, end = 0;
 		if (true == str.empty())
 			return "";
@@ -104,8 +105,12 @@ namespace Strings {
 
 	void Longest_Palindrome_1()
 	{
-		std::string str = "ddddd3456654321";
-		std::cout << longestPalindrome(str) << std::endl;
+        for (const StrPair& data: std::vector<StrPair> {
+            {"babad", "aba"}, {"cbbd", "bb"}, {"ddddd3456654321", "34566543"}
+        })
+        {
+            std::cout << longestPalindrome(data.first) << " | " << data.second << std::endl;
+        }
 	}
 
 	//--------------------------------------------------------------------------------------//
@@ -638,7 +643,7 @@ namespace Strings {
 
     void MaxSubstringLength_Of_K_max_Unique_Elements()
     {
-        for (const std::pair<StrNumPair<size_t>, size_t>& data: std::vector< std::pair<StrNumPair<size_t>, size_t> > {
+        for (const std::pair<StrSizeTPair, size_t>& data: std::vector< std::pair<StrSizeTPair, size_t> > {
                 {{"aba", 2}, 3}, {{"ababaaab", 2}, 8},
                 {{"ababaaacb", 2}, 7}, {{"ababaaacb", 3}, 9},
                 {{"aabbcc", 1}, 2}, {{"aabbcc", 2}, 4},
@@ -763,7 +768,7 @@ namespace Strings {
 
 	void LongestSubstringWithoutRepeatingCharacters()
     {
-        for (const StrNumPair<size_t> & data: std::vector<StrNumPair<size_t> > {
+        for (const StrSizeTPair& data: std::vector<StrSizeTPair> {
                 {"abcde", 5}, {"abcbef", 4}, {"aaaaaa", 1}, {"aaabbbccc", 2},
                 { "abcabcbb", 3}
         })
@@ -800,7 +805,7 @@ namespace Strings {
 
     void LongestSubstringWithoutRepeatingCharacters2()
     {
-        for (const StrNumPair<size_t> & data: std::vector<StrNumPair<size_t> > {
+        for (const StrSizeTPair & data: std::vector<StrSizeTPair> {
             {"abcde", 5}, {"abcbef", 4}, {"aaaaaa", 1}, {"aaabbbccc", 2},
             { "abcabcbb", 3}
         }){
@@ -1886,19 +1891,22 @@ void Strings::TestAll()
 	// Strings::Find_First_Char_Occured_Once();
 	// Strings::Find_First_K_Chars_Occured_Once();
 
-    Strings::LongestSubstringWithoutRepeatingCharacters();
-    Strings::LongestSubstringWithoutRepeatingCharacters2();
+
+    // Strings::LongestSubstringWithoutRepeatingCharacters();
+    // Strings::LongestSubstringWithoutRepeatingCharacters2();
 	// Strings::Find_LongestSubstring_With_K_DistinctCharacters();
     // Strings::MaxSubstringLength_Of_K_max_Unique_Elements();
     // Strings::LongestConsecutiveCharacters();
 
 
     // Strings::Palindrome_Test();
-	// Strings::Longest_Palindrome_1();
+	Strings::Longest_Palindrome_1();
 	// Strings::Longest_Palindrome_2();
-
 	// Strings::Find_If_KPalindrome();
 	// Strings::Find_All_Palindrome_In_String();
+
+
+
 	// Strings::FindDuplicateSymbols();
     // Strings::Find_If_String_IsSubstring_OfAnother();
 	// Strings::CalcParentheses();
