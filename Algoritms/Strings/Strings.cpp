@@ -1030,69 +1030,55 @@ namespace Strings {
 
 	//--------------------------------------------------------------------------------------//
 
-	void firstNonRepeatingChar(char* str) {
+	void firstNonRepeatingChar(const std::string& str)
+    {
 		std::pair<int, int> arr[256];
 		for (int i = 0; str[i]; i++) {
 			arr[str[i]].first += 1;
 			arr[str[i]].second = i;
 		}
 
-		int pos = INT64_MAX;
+		int pos = std::numeric_limits<int>::max();
 		for (int i = 0; i < 256; i++) {
-			// First occured once element should have arr[i].first == 1 and arr[i].second -> MIN of all
 			if (arr[i].first == 1) {
 				pos = std::min(pos, arr[i].second);
 			}
 		}
-
 		std::cout << "Result = " << str[pos] << std::endl;
 	}
 
-	void firstNonRepeatingChar_GOOD(char* str) {
-		int chars[256]{ 0 };
-		for (int i = 0; str[i]; i++)
-			chars[str[i]]++;
-
-		char result = '\0';
-		for (int i = 0; str[i]; i++)
-			if (1 == chars[str[i]]) {
-				result = str[i];
-				break;
-			}
-
-		std::cout << "Result = " << result << std::endl;
-	}
-
-	void firstNonRepeatingChar_GOOD_CppStyle(std::string&& str) {
+	void firstNonRepeatingChar_GOOD(const std::string& str)
+    {
 		int chars[256]{ 0 };
 		for (char c : str)
 			chars[c]++;
 
-		for (char c : str)
-			if (1 == chars[c]) {
+		for (char c : str) {
+            if (1 == chars[c]) {
                 std::cout << "Result = " << c << std::endl;
-				break;
-			}
+                break;
+            }
+        }
 	}
 
-	void  Find_First_Char_Occured_Once() {
-
-		char str[] = "geeksforgeeks";
+	void Find_First_Char_Occured_Once()
+    {
+		const std::string str { "geeksforgeeks" };
 		firstNonRepeatingChar(str);
 		firstNonRepeatingChar_GOOD(str);
-		firstNonRepeatingChar_GOOD_CppStyle(str);
 	}
 
     //---------------------------------------------------------------------------------------//
 
-    int find_last_not_of(const std::string& str, const std::string& txt)
+    int find_last_not_of(const std::string& str,
+                         const std::string& txt)
     {
         bool chars[256] {};
         for (char c: txt)
             chars[static_cast<uint8_t>(c)] = true;
 
         for (size_t i = str.size() - 1; i >= 0; --i) {
-            if (chars[str[i]])
+            if (false == chars[str[i]])
                 return i;
         }
         return -1;
@@ -1105,7 +1091,7 @@ namespace Strings {
             chars[charNum / 8] |= (1 << charNum % 8);
 
         for (int i = static_cast<int>(str.size() - 1); i >= 0; --i) {
-            if (chars[str[i] / 8] & (1u << (str[i] % 8)))
+            if (false == (chars[str[i] / 8] & (1u << (str[i] % 8))))
                 return i;
         }
         return -1;
@@ -1113,13 +1099,22 @@ namespace Strings {
 
     void Find_Last_Not_Of()
     {
-        std::cout << find_last_not_of("01234b567a89", "abc") << std::endl; // 9
-        std::cout << find_last_not_of_less_mem("01234b567a89", "abc") << std::endl; // 9
+        for (const StrPair& data: std::vector<StrPair>{
+                {"01234b567a89Zc", "abc"}
+        })
+        {
+            int pos1 = find_last_not_of(data.first, data.second);
+            int pos2 = find_last_not_of_less_mem(data.first, data.second);
+            auto pos3 = std::string(data.first).find_last_not_of(data.second);
+
+            std::cout << data.first[pos1] << " " << data.first[pos2] << " " << data.first[pos3] << std::endl;
+        }
     }
 
     //---------------------------------------------------------------------------------------//
 
-	void Find_First_K_Chars_Occured_Once() {
+	void Find_First_K_Chars_Occured_Once()
+    {
 		std::string str = "AZBCDBAGHCHFAC";
 		int k = 4;
 
@@ -1134,7 +1129,6 @@ namespace Strings {
 			}
 		}
 	}
-
 
 	//--------------------------------------------------------------------------------------//
 
@@ -1888,7 +1882,7 @@ void Strings::TestAll()
 
     // Strings::Find_Last_Not_Of();
 
-	// Strings::Find_First_Char_Occured_Once();
+	Strings::Find_First_Char_Occured_Once();
 	// Strings::Find_First_K_Chars_Occured_Once();
 
 
@@ -1900,7 +1894,7 @@ void Strings::TestAll()
 
 
     // Strings::Palindrome_Test();
-	Strings::Longest_Palindrome_1();
+	// Strings::Longest_Palindrome_1();
 	// Strings::Longest_Palindrome_2();
 	// Strings::Find_If_KPalindrome();
 	// Strings::Find_All_Palindrome_In_String();
