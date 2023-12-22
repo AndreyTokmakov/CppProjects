@@ -38,17 +38,14 @@ namespace Optional {
     };
 
 	template<typename Ty>
-	class Optional {
-	private:
+	class Optional
+    {
 		using data_type = Ty;
 		using pointer   = data_type*;
 
-		/*
-		static_assert(!std::is_same_v<KeyType, void>, "ERROR: Key type can not be void");
-		static_assert(0 != Capacity,  "ERROR: Please try a little bigger buffer");
-		*/
+		static_assert(!std::is_same_v<data_type, void>, "ERROR: Data type can not be void");
+		// static_assert(0 != Capacity,  "ERROR: Please try a little bigger buffer");
 
-	private:
 		char data [sizeof(data_type)]{};
 		bool has_value { false };
 

@@ -175,7 +175,60 @@ namespace Strings {
 		std::cout << std::boolalpha << isKPal(str, k) << std::endl;
 	}
 
-	//--------------------------------------------------------------------------------------//
+    //-------------------------------------------------------------------------------------------------------------
+
+    bool _is_range_palindrome(const std::string& str, int startIndex, int endIndex)
+    {
+        for (int idx = startIndex; idx <= endIndex / 2; ++idx) {
+            if (str[idx] != str[endIndex - idx])
+                return false;
+        }
+        return true;
+    }
+
+    std::string shortest_palindrome(const std::string& str)
+    {
+        const int size = str.size();
+        if (1 >= size)
+            return str;
+        int lastIdx = size - 1;
+        while (!_is_range_palindrome(str, 0, lastIdx)) {
+            --lastIdx;
+        }
+
+        if (size == lastIdx + 1)
+            return str;
+
+        std::string result(2 * size - 1 - lastIdx, '0');
+        for (int idx = 0; idx < size; ++idx)
+            result[idx + size - 1 - lastIdx] = str[idx];
+        for (int idx = 0; idx < size - 1 - lastIdx; ++idx)
+            result[idx] = str[size - 1 - idx];
+
+        return result;
+    }
+
+    /**
+    You are given a string s. You can convert s to a palindrome by adding characters in front of it.
+    Return the shortest palindrome you can find by performing this transformation.
+    Example 1:   Input  : "aacecaaa"       Example 2:   Input  : "abcd"
+                 Output : "aaacecaaa"                   Output : "dcbabcd"
+    */
+
+    void ShortestPalindrome()
+    {
+        for (const std::string& data: std::vector<std::string>{
+            // "aba", "abba", "aa", "ab", "abcba", "aabbaa", "abc"
+            "xyzzyxaac"
+            // "aacecaa"
+        })
+        {
+            // std::cout << data << " -> " << std::boolalpha << _is_range_palindrome(data, 0, data.size() - 1) << std::endl;
+            std::cout << shortest_palindrome(data) << std::endl;
+        }
+    }
+
+	//-------------------------------------------------------------------------------------------------------------
 
 	void _find_all_palindrome_substrings(const std::string& text) {
 		std::set<std::string> palindromes;
@@ -1882,7 +1935,7 @@ void Strings::TestAll()
 
     // Strings::Find_Last_Not_Of();
 
-	Strings::Find_First_Char_Occured_Once();
+	// Strings::Find_First_Char_Occured_Once();
 	// Strings::Find_First_K_Chars_Occured_Once();
 
 
@@ -1897,6 +1950,7 @@ void Strings::TestAll()
 	// Strings::Longest_Palindrome_1();
 	// Strings::Longest_Palindrome_2();
 	// Strings::Find_If_KPalindrome();
+	Strings::ShortestPalindrome();
 	// Strings::Find_All_Palindrome_In_String();
 
 
