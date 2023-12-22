@@ -1956,20 +1956,19 @@ namespace Numeric
         return max + 1;
     }
 
-    int __SmallestMissingPositiveNumber_FAST(std::vector<int> A)
+    int __SmallestMissingPositiveNumber_FAST(std::vector<int> nums)
     {
-        const int size = std::ssize(A);
-        for (int i = 0; i < size; ++i) {
-            while(A[i] >= 1 && A[i] <= size && A[i] != A[A[i]-1])
-                std::swap(A[i], A[A[i] - 1]);
-        }
+        const int size = static_cast<int>(nums.size());
+        std::ios::sync_with_stdio(0); std::cin.tie(0);
+        for (int i = 0; i < size; ++i)
+            while (nums[i] > 0 && nums[i] <= size && nums[i] != nums[nums[i] - 1])
+                std::swap(nums[i], nums[nums[i] - 1]);
 
-        for(int i = 0; i < size; ++ i)
-            if(A[i] != i + 1)
+        for (int i = 0; i < size; ++i)
+            if (nums[i] != i + 1)
                 return i + 1;
 
         return size + 1;
-
     }
 
     void Find_Smallest_Missing_Positive_Number()
@@ -3422,7 +3421,7 @@ void Numeric::TestAll()
     // Numeric::Find_K_MissingNumber();
     // Numeric::Find_Smallest_Missing_Positive_Number();
     // Numeric::Find_Repeating_And_Missing();
-    // Numeric::FindTheDuplicateValue();
+    Numeric::FindTheDuplicateValue();
 
     // Numeric::printSortedSquaredNumber_InSortedArray();
 
@@ -3445,7 +3444,7 @@ void Numeric::TestAll()
     // Numeric::Missmatch_Sorted_Vectors();
     // Numeric::Missmatch_Tests();
     // Numeric::IsPermutation();
-    Numeric::IsReversedEquals();
+    // Numeric::IsReversedEquals();
     // Numeric::ReverseToMakeEqual();
     // Numeric::MaxSum_of_NonConsecutive_Elements_In_Array();
 
