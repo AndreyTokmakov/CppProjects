@@ -1804,7 +1804,8 @@ namespace Numeric
 
     //--------------------------------------------------------------------------------------//
 
-    int Find_DifferentPairs_SumK(const std::vector<int>& data, int K) {
+    int Find_DifferentPairs_SumK(const std::vector<int>& data, int K)
+    {
         std::unordered_map<int, int> tmp;// = { 0,0 };
         for (int i : data)
             tmp[i]++;
@@ -1818,7 +1819,8 @@ namespace Numeric
         return count / 2;
     }
 
-    void Find_DifferentPairs_SumK_2(const std::vector<int>& data, int K) {
+    void Find_DifferentPairs_SumK_2(const std::vector<int>& data, int K)
+    {
         std::unordered_map<int, int> tmp;
         for (int key : data) {
             if (auto iter = tmp.find(K - key); tmp.end() != iter) {
@@ -1833,12 +1835,16 @@ namespace Numeric
             std::cout << k << " = " << v << std::endl;
     }
 
-    void Find_DifferentPairs_SumK() {
-        constexpr int K = 6;
-        const std::vector<int> Numeric = { 2, 4, 2, 4 };
-
-        // Find_DifferentPairs_SumK(Numeric, K);
-        Find_DifferentPairs_SumK_2(Numeric, K);
+    void Find_DifferentPairs_SumK()
+    {
+        using TestData = std::pair<std::vector<int>, int>;
+        for (const TestData& data: std::vector<TestData> {
+                {{1,2,3,4}, 5}
+        })
+        {
+            // Find_DifferentPairs_SumK(Numeric, K);
+            Find_DifferentPairs_SumK_2(data.first, data.second);
+        }
     }
 
     //--------------------------------------------------------------------------------------//
@@ -3394,7 +3400,7 @@ void Numeric::TestAll()
     // Numeric::Find_Multiplier_Pair2();
     // Numeric::Find_Pair_SumX_Sorted();
     // Numeric::Find_3_Elements_SumX_Unsorted();
-    // Numeric::Find_DifferentPairs_SumK();
+    Numeric::Find_DifferentPairs_SumK();
     // Numeric::Find_3_Elements_SumX_Sorted();
 
     // Numeric::RemoveElement();
@@ -3421,7 +3427,7 @@ void Numeric::TestAll()
     // Numeric::Find_K_MissingNumber();
     // Numeric::Find_Smallest_Missing_Positive_Number();
     // Numeric::Find_Repeating_And_Missing();
-    Numeric::FindTheDuplicateValue();
+    // Numeric::FindTheDuplicateValue();
 
     // Numeric::printSortedSquaredNumber_InSortedArray();
 
