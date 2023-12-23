@@ -1950,7 +1950,7 @@ void Strings::TestAll()
 	// Strings::Longest_Palindrome_1();
 	// Strings::Longest_Palindrome_2();
 	// Strings::Find_If_KPalindrome();
-	Strings::ShortestPalindrome();
+	// Strings::ShortestPalindrome();
 	// Strings::Find_All_Palindrome_In_String();
 
 

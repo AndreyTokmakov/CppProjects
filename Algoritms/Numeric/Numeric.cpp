@@ -410,7 +410,8 @@ namespace Numeric
 
     //---------------------------------------------------------------------------//
 
-    void ReverseNumber() {
+    void ReverseNumber()
+    {
         int reverse_number = 0, number = 1234567;
 
         std::cout << number << std::endl;
@@ -419,6 +420,30 @@ namespace Numeric
             number = number / 10;
         }
         std::cout << reverse_number << std::endl;
+    }
+
+    //---------------------------------------------------------------------------//
+
+    bool is_palindrome(const int value)
+    {
+        if (0 > value)
+            return false;
+        long reversed = 0, number = value;
+        while (0 != number) {
+            reversed = reversed * 10 + number % 10;
+            number = number / 10;
+        }
+        return reversed == value;
+    }
+
+    void IsPalindrome()
+    {
+        for (const int v: std::vector<int> {
+            121, 234
+        })
+        {
+            std::cout << "Is (" << v << ") palidrome: " << std::boolalpha << is_palindrome(v) << std::endl;
+        }
     }
 
     //---------------------------------------------------------------------------//
@@ -3358,6 +3383,7 @@ void Numeric::TestAll()
     // Numeric::CountAndSaySequence_Get_Kth_Token();
     // Numeric::CountOrderedPairs();
     // Numeric::ReverseNumber();
+    Numeric::IsPalindrome();
     // Numeric::GetNumberOfDigit();
     // Numeric::RearangeArray();
     // Numeric::FindSmallestWithoutRecursion();
@@ -3400,7 +3426,7 @@ void Numeric::TestAll()
     // Numeric::Find_Multiplier_Pair2();
     // Numeric::Find_Pair_SumX_Sorted();
     // Numeric::Find_3_Elements_SumX_Unsorted();
-    Numeric::Find_DifferentPairs_SumK();
+    // Numeric::Find_DifferentPairs_SumK();
     // Numeric::Find_3_Elements_SumX_Sorted();
 
     // Numeric::RemoveElement();
