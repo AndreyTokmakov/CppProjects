@@ -63,7 +63,7 @@ int main([[maybe_unused]] int argc,
     // Atomic_CompareExchange::TestAll();
     // Atomic_IsLockFree::TestAll();
 
-    Barrier::TEST_ALL();
+    // Barrier::TEST_ALL();
     // CallOnce::TEST_ALL();
     // ConditionVariable::TEST_ALL();
     // Exceptions_Handling::TEST_ALL();
@@ -75,7 +75,7 @@ int main([[maybe_unused]] int argc,
     // Multithreading_Collections::TEST_ALL();
     // Queue::TestAll();
     // Multithreading_Communication::TEST_ALL();
-    // Promise::TEST_ALL();
+    Promise::TEST_ALL();
     // PackagedTask::TEST_ALL();
     // ParallelExecutionAlgoritms::TEST_ALL();
 

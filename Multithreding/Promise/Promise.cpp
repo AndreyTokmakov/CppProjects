@@ -37,9 +37,29 @@ namespace Promise {
         THREAD_INFO << "do_work() done" << std::endl;
     }
 
-    ////////////////////////////////////////////////////////////////
+    //----------------------------------------------------------------------------------------------
 
-    void SimpleTest() {
+    void SimpleTest_0()
+    {
+        std::promise<int> promise;
+
+        std::jthread T1([&promise]{
+            THREAD_INFO << "T1 started" << std::endl;
+            std::this_thread::sleep_for(std::chrono::seconds(1));
+            promise.set_value(123);
+            THREAD_INFO << "T1 done" << std::endl;
+        });
+
+        std::jthread T2([&promise]{
+            THREAD_INFO << "T2 started" << std::endl;
+            std::future fut = promise.get_future();
+            const int result = fut.get();
+            THREAD_INFO << "T2 done. Result = " << result << std::endl;
+        });
+    }
+
+    void SimpleTest()
+    {
         const auto print_int = [](std::future<int>& fut) {
             THREAD_INFO << "func started" << std::endl;
             int x = fut.get();
@@ -56,8 +76,8 @@ namespace Promise {
         promise.set_value(123);
     }
 
-
-    void SimpleTest1() {
+    void SimpleTest1()
+    {
         std::promise<void> promise;
         std::future<void> ready = promise.get_future();
 
@@ -98,7 +118,8 @@ namespace Promise {
     }
 
 
-    void SimpleTest2() {
+    void SimpleTest2()
+    {
         const auto initiazer = [](std::promise<int>* promObj) {
             THREAD_INFO << " Started." << std::endl;
             std::this_thread::sleep_for(std::chrono::seconds(3));
@@ -246,9 +267,10 @@ namespace Promise {
 
 void Promise::TEST_ALL()
 {
+    SimpleTest_0();
     // SimpleTest();
     // SimpleTest1();
-    SimpleTest1_1();
+    // SimpleTest1_1();
     // SimpleTest2();
 
     // ComplexTest();
