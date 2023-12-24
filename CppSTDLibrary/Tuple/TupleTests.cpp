@@ -346,6 +346,17 @@ namespace Tuple::IterateValues2
 	}
 }
 
+
+namespace Tuple
+{
+    void Apply_Sum_Tuple()
+    {
+        std::tuple<int, int, int>  tup(1, 2, 3);
+        auto sum = [](auto a, auto b, auto c) { return a + b + c; };
+        std::cout << std::apply(sum, tup) << std::endl;
+    }
+}
+
 void Tuple::TestAll()
 {
 	// CreateTupleTest();
@@ -368,5 +379,7 @@ void Tuple::TestAll()
 	// PrintValues::Funny_Tuple_Test();
 
 	// IterateValues::IterateTest();
-	IterateValues2::IterateTest();
+	// IterateValues2::IterateTest();
+
+    Apply_Sum_Tuple();
 };

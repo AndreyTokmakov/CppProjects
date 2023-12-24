@@ -766,6 +766,8 @@ int main([[maybe_unused]] int argc,
 
     // WrapperTests::Test();
 
+    constexpr std::string s2 = {};
+
 
     // MoveStringToArray();
     // Experiments::Test({20, 40, 60});
