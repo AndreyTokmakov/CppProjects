@@ -231,19 +231,19 @@ namespace LinkedList {
 		PrintList(root);
 	}
 
-	//----------------------------------------------------------------------//
+	/// ------------------------------------------------------------------------------------------------------------------
 
 	template<typename T>
-	bool check_if_palindrome(Node<T>* root)
+	bool check_if_palindrome(const Node<T>* root)
 	{
-		std::forward_list<int> list;
-		Node<int>* node = root;
+		std::forward_list<T> list;
+        const Node<T>* node = root;
 		while (nullptr != node) {
 			list.push_front(node->data);
 			node = node->next;
 		}
 
-		auto iter = list.cbegin();
+        typename std::forward_list<T>::const_iterator iter = list.cbegin();
 		node = root;
 		while (nullptr != node) {
 			if (node->data != *iter)
@@ -255,39 +255,34 @@ namespace LinkedList {
 	}
 
     template<typename T>
-    bool check_if_palindrome_2(Node<T>* root)
+    bool check_if_palindrome_2(const Node<T>* root)
     {
         std::vector<T> values;
-        Node<T>* node = root;
+        auto * node = root;
         while (nullptr != node) {
             values.push_back(node->data);
             node = node->next;
         }
 
-        for (int idx = 0, size = values.size(); idx < values.size(); ++idx)
+        for (size_t idx = 0, size = values.size(); idx < size /2; ++idx)
             if (values[idx] != values[size - 1 - idx])
                 return false;
 
         return true;
     }
 
-	//----------------------------------------------------------------------//
-
-
-	void Check_If_Palindrom()
+	void Check_If_Palindrome()
     {
+        for (const Node<int>* list: std::vector<Node<int>*> {
+                InitList({ 1,2,3,4,5,6,7,8,9 }), InitList({ 1,2,3,2,1 })
+        })
 		{
-			Node<int>* root = InitList({ 1,2,3,4,5,6,7,8,9 });
-			std::cout << std::boolalpha << check_if_palindrome(root) << std::endl;
-			std::cout << std::boolalpha << check_if_palindrome_2(root) << std::endl;
-		}
-
-		{
-			Node<int>* root = InitList({ 1,2,3,2,1 });
-			std::cout << std::boolalpha << check_if_palindrome(root) << std::endl;
-			std::cout << std::boolalpha << check_if_palindrome_2(root) << std::endl;
+			std::cout << std::boolalpha << check_if_palindrome(list) << "  "
+                << check_if_palindrome_2(list) << std::endl;
 		}
 	}
+
+    /// ------------------------------------------------------------------------------------------------------------------
 
 	template<typename T>
 	size_t _get_length(Node<T>* root) {
@@ -1274,7 +1269,7 @@ void LinkedList::TEST_ALL()
 
 	// LinkedList::GetLength();
 
-	LinkedList::Check_If_Palindrom();
+	LinkedList::Check_If_Palindrome();
 
 	// LinkedList::Merge_Two_Lists();
 	// LinkedList::Merge_Two_Lists_2();
