@@ -935,8 +935,8 @@ namespace LinkedList {
 		}
 	}
 
-
-	void Delete_Duplicates() {
+	void Delete_Duplicates()
+    {
 		std::cout << "--------------------- Test1: ------------------\n" << std::endl;
 		{
 			Node<int>* list = InitList({ 1,2,3,3,4,5,6,6,7,8 });
@@ -1297,7 +1297,7 @@ void LinkedList::TEST_ALL()
 
 	// LinkedList::GetLength();
 
-	LinkedList::Check_If_Palindrome();
+	// LinkedList::Check_If_Palindrome();
 
 	// LinkedList::Merge_Two_Lists();
 	// LinkedList::Merge_Two_Lists_2();
@@ -1316,7 +1316,7 @@ void LinkedList::TEST_ALL()
 
 	// LinkedList::MoveAllOccurrencesToTheEnd_TEST();
 
-	// LinkedList::Delete_Duplicates();
+	LinkedList::Delete_Duplicates();
 	// LinkedList::Delete_Duplicates_InSortedList();
 
     // LinkedList::FindMiddleElement();

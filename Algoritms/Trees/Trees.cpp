@@ -2131,7 +2131,7 @@ namespace Trees::Min_and_Max_Elements
     BinTree::Node* __get_min_Nth_element_NonRecur(BinTree::Node* node, size_t k)
     {
         std::vector<BinTree::Node*> stack {};
-        BinTree::Node *curr = node;
+        BinTree::Node *curr = node, *min = nullptr;
 
         while (nullptr != curr || !stack.empty())
         {
@@ -2142,13 +2142,13 @@ namespace Trees::Min_and_Max_Elements
 
             curr = stack.back();
             stack.pop_back();
+            min = curr;
 
             if (0 == --k)
-                return curr;
-            else
-                curr = curr->right;
+                break;
+            curr = curr->right;
         }
-        return nullptr;
+        return min;
     }
 
     void Find_N_th_MinElement_NonRecur()
@@ -2156,7 +2156,7 @@ namespace Trees::Min_and_Max_Elements
         BinTree::BinaryTree tree { 33,22,85,10,30,54,125,5,8,25,32,45,60,120,130 };
 
         size_t K = 4;
-        auto res = __get_min_Nth_element_NonRecur(tree.getRoot(), K);
+        auto res = __get_min_Nth_element_NonRecur(tree.getRoot(), K);  // --> 22
         std::cout << res->data << std::endl;
     }
 
