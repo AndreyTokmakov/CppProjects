@@ -271,14 +271,42 @@ namespace LinkedList {
         return true;
     }
 
+    template<typename T>
+    bool check_if_palindrome_3(const Node<T>* root)
+    {
+        int size = 0;
+        std::vector<T> values;
+        const Node<T>* node = root, *slow = root;
+        while (nullptr != node)
+        {
+            values.push_back(slow->data);
+            if (0 == size % 2)
+                slow = slow->next;
+            node = node->next;
+        }
+
+        node = root;
+        for (int idx = values.size() - 1; idx > 0; --idx)
+        {
+            if (values[idx] != node->data)
+                return false;
+            node = node->next;
+        }
+
+        return true;
+    }
+
 	void Check_If_Palindrome()
     {
         for (const Node<int>* list: std::vector<Node<int>*> {
                 InitList({ 1,2,3,4,5,6,7,8,9 }), InitList({ 1,2,3,2,1 })
         })
 		{
-			std::cout << std::boolalpha << check_if_palindrome(list) << "  "
-                << check_if_palindrome_2(list) << std::endl;
+			std::cout << std::boolalpha
+                << check_if_palindrome(list) << "  "
+                << check_if_palindrome_2(list) << "  "
+                << check_if_palindrome_3(list)
+                << std::endl;
 		}
 	}
 
