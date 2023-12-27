@@ -64,6 +64,7 @@ add_executable(DesignPatterns
 		Observer/ObserverSubject.cpp Visitor/CarVisitor.cpp
 		PImpl/PImpl.h PImpl/PImpl.cpp PImpl/PImplDemo2.cpp
 		Monostate/Monostate.cpp Monostate/Monostate.h
+		NVI/NVI_SimpleExample.cpp NVI/NVI_SimpleExample.h
 		Decorator/MoneyTaxesDecoratorOne.cpp Decorator/MoneyTaxesDecoratorOne.h
 		Decorator/MoneyTaxesDecoratorTwo.cpp Decorator/MoneyTaxesDecoratorTwo.h Observer/LambdaObserver.cpp
 		MVC/ModelViewController.cpp MVC/ModelViewController.h DependencyInjection/DependencyInjection.cpp

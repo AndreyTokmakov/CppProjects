@@ -1,11 +1,11 @@
-//============================================================================
-// Name        : mainn.cpp
-// Created on  : 30.04.2020
-// Author      : Tokmakov Andrey
-// Version     : 1.0
-// Copyright   : Your copyright notice
-// Description : Software design patterns C++ test project
-//============================================================================
+/**============================================================================
+Name        : main.cpp
+Created on  : 30.04.2020
+Author      : Andrei Tokmakov
+Version     : 1.0
+Copyright   : Your copyright notice
+Description : Software design patterns C++ test project
+============================================================================**/
 
 #include <chrono>
 #include <thread>
@@ -44,6 +44,7 @@
 #include "TagDispatching/TagDispatching.h"
 #include "Policy/Policy.h"
 #include "RAII/RAII.h"
+#include "NVI/NVI_SimpleExample.h"
 #include "VirtualConstructor/VirtualConstructor.h"
 #include "TemplateMethod/TemplateMethod.h"
 #include "LazyInitialization/LazyInitialization.h"
@@ -56,7 +57,7 @@ int main([[maybe_unused]]  int argc,
 {
     /** Creation patterns **/
     // AbstractFactory::TestAll();
-    Builder::TestAll();
+    // Builder::TestAll();
     // FabricMethod::TestAll();
     // Prototype::TestAll();
     // Singleton::TestAll();;
@@ -95,6 +96,7 @@ int main([[maybe_unused]]  int argc,
 
     /** C++ IDIOMS: **/
     // CRTP::Test();
+    NVI_SimpleExample::TestAll();
     // TypeErasure::Test();
     // RAII::Test();
     // CopyAndSwap::TEST_ALL();   ---- TESTs
