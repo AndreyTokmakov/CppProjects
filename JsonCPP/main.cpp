@@ -43,12 +43,8 @@
 #include <fstream>
 #include <iostream>
 
-
-int main([[maybe_unused]] int argc,
-         [[maybe_unused]] char** argv)
+void Test()
 {
-    const std::vector<std::string_view> args(argv + 1, argv + argc);
-
     Json::Value root;
     std::ifstream file(R"(/home/andtokm/DiskS/ProjectsUbuntu/CppProjects/JsonCPP/data/widget.json)");
 
@@ -56,9 +52,19 @@ int main([[maybe_unused]] int argc,
     JSONCPP_STRING errs;
     if (!parseFromStream(builder, file, &root, &errs)) {
         std::cout << errs << std::endl;
-        return EXIT_FAILURE;
+        // return EXIT_FAILURE;
     }
     std::cout << root << std::endl;
+}
+
+
+
+int main([[maybe_unused]] int argc,
+         [[maybe_unused]] char** argv)
+{
+    const std::vector<std::string_view> args(argv + 1, argv + argc);
+
+
 
     // TODO: Do the parsing
 

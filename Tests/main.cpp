@@ -758,13 +758,60 @@ namespace WrapperTests
 }
 
 
+namespace StaticCounter
+{
+    template<typename T>
+    struct TableEntry
+    {
+        static inline size_t uniqueEntryId { 0 };
+        std::string name;
+        size_t id {};
+
+        explicit TableEntry(std::string name): name {std::move(name)} {
+            // First entry shall have ID = 1 not zero
+            id = ++uniqueEntryId;
+        }
+    };
+
+    struct Movie: TableEntry<Movie>
+    {
+        explicit Movie(std::string name): TableEntry {std::move(name)} {
+        }
+    };
+    struct Theater: TableEntry<Theater>
+    {
+        explicit Theater(std::string name): TableEntry {std::move(name)} {
+        }
+    };
+
+    void Test()
+    {
+        Movie a("A"),b("B"),c("C");
+        Theater t1("T1"), t2("T2");
+
+        std::cout << a.id << " " << b.id << " " << c.id << std::endl;
+        std::cout << t1.id << " " << t2.id << std::endl;
+    }
+}
+
+
 int main([[maybe_unused]] int argc,
          [[maybe_unused]] char** argv)
 {
     const std::vector<std::string_view> args(argv + 1, argv + argc);
-    // parseInput
-
     // WrapperTests::Test();
+
+    //StaticCounter::Test();
+
+
+    static constexpr uint16_t seatsCapacityMax { 20 };
+    enum class SeatStatus: bool {
+        Available,
+        Booked
+    };
+
+    std::array<SeatStatus, seatsCapacityMax> seats {};
+    std::cout << sizeof(seats) << std::endl;
 
 
     // MoveStringToArray();

@@ -11,88 +11,103 @@
 #include <string>
 #include <array>
 #include <numeric>
+#include <functional>
 #include <bitset>
 #include <cstdint>
 
 #include "../Integer/Integer.h"
 #include "BitwiseOperation.h"
 
-namespace BitwiseOperation
+
+namespace BitUtils
 {
+
     template<typename T>
-    void showbit_int(T x) {
+    void show_bits(T x)
+    {
         std::cout << x << "  ===>  ";
-        for (int i = (sizeof(x) * 8) - 1; i >= 0; i--)
+        for (int i = (sizeof(T) * 8) - 1; i >= 0; i--)
             std::cout << (x & (1u << i) ? '1' : '0');
         std::cout << std::endl;
     }
 
-    void showbit_char(unsigned char c) {
-        for (int i = (sizeof(c) * 8) - 1; i >= 0; i--)
-            std::cout << (c & (1u << i) ? '1' : '0');
-        std::cout << std::endl;
+    template<typename T>
+    void set_bit(T& num, uint32_t bit)
+    {
+        if (sizeof(T) * 8 > bit - 1 )
+        {
+            num |= (1 << (bit - 1));
+        }
+    }
+}
+
+
+namespace BitwiseOperation
+{
+    using namespace BitUtils;
+
+
+    void ShowBitsTests()
+    {
+        uint16_t val = 5;
+        show_bits(val);
     }
 
-    void ShowBitsTests() {
-        unsigned int val = 1041;
-        std::cout << val << " = "; showbit_int(val);
-    }
-
-    void BaseTests() {
+    void BaseTests()
+    {
         // a = 5(00000101), b = 9(00001001)
-        unsigned char a = 5, b = 9;
+        uint16_t a = 5, b = 9;
 
-        std::cout << 5 << " = "; showbit_char(a);
-        std::cout << 9 << " = "; showbit_char(b);
+        show_bits(a);
+        show_bits(b);
 
         // The result is 00000001 w4
-        std::cout << "\na & b  = " << (a & b) << std::endl;
-        std::cout << "a & b  = "; showbit_char(a & b);
-
+        std::cout << "a & b  = " << (a & b) << std::endl;
+        show_bits(a & b);
 
         // The result is 00001101
         std::cout << "\na | b  = " << (a | b) << std::endl;
-        std::cout << "a | b  = "; showbit_char(a | b);
+        show_bits(a | b);
 
 
         // The result is 00001100
         std::cout << "\na ^ b  = " << (a ^ b) << std::endl;
-        std::cout << "a ^ b  = "; showbit_char(a ^ b);
+        std::cout << "a ^ b  = "; show_bits(a ^ b);
 
         // The result is 11111010
         std::cout << "\n~a   = " << (~a) << std::endl;
-        std::cout << "~a  = "; showbit_char(~a);
+        std::cout << "~a  = "; show_bits(~a);
 
         // The result is 00010010
         std::cout << "\nb<<1   = " << (b << 1) << std::endl;
-        std::cout << "b<<1  = "; showbit_char(b << 1);
+        std::cout << "b<<1  = "; show_bits(b << 1);
 
         {
             std::cout << "'>>' operation.\n";
             int x = 170;
-            std::cout << "\n\nBefore: " << x << " : "; showbit_char(x);
+            std::cout << "\n\nBefore: " << x << " : "; show_bits(x);
             std::cout << "   x >> 1 :\n";
             int result = (x >> 1);
-            std::cout << "After : " << result << "  : "; showbit_char(result);
+            std::cout << "After : " << result << "  : "; show_bits(result);
         }
 
         {
             std::cout << "'>>' operation.\n";
             int x = 170;
-            std::cout << "\n\nBefore: " << x << " : "; showbit_char(x);
+            std::cout << "\n\nBefore: " << x << " : "; show_bits(x);
             std::cout << "   x >> 2 :\n";
             int result = (x >> 2);
-            std::cout << "After : " << result << "  : "; showbit_char(result);
+            std::cout << "After : " << result << "  : "; show_bits(result);
         }
     }
 
     void BaseTests1() {
         unsigned int value = 1;
 
-        showbit_int(value);
+        show_bits(value);
         for (int i = 1; i < ((sizeof(int) * 8)); i++) {
             value <<= 1;
-            showbit_int(value);
+            show_bits(value);
         }
     }
 
@@ -138,41 +153,40 @@ namespace BitwiseOperation
         }
     }
 
-    void Swap_Bits() {
+    void Swap_Bits()
+    {
         unsigned int value = 12345;
-        showbit_int(value);
+        show_bits(value);
 
         unsigned int swaped = ~12345;
-        showbit_int(swaped);
+        show_bits(swaped);
 
 
         std::cout << "\nTest 2" << std::endl;
 
         unsigned char c = 170;
-        std::cout << 170 << " = "; showbit_char(c);
+        std::cout << 170 << " = "; show_bits(c);
 
         c = static_cast<char>(~170);
-        std::cout << "170 (swaped)" << " = "; showbit_char(c);
+        std::cout << "170 (swaped)" << " = "; show_bits(c);
     }
 
     void Swap_Bits_2() {
 
         unsigned char c = 'A';
-        showbit_char(c);
+        show_bits(c);
 
         c = ~c;
-        showbit_char(c);
+        show_bits(c);
     }
 
     void SetBit()
     {
-        constexpr auto set_bit = [](int& num, unsigned short bit) {
-            num |= (1 << (bit - 1));
-        };
-
         int num = 4, bit = 1;
-        set_bit(num, bit);
-        std::cout << (int)(num) << std::endl;
+
+        show_bits(num);
+        set_bit(num, 33);
+        show_bits(num);
     }
 
     void UnSetBit()
@@ -183,11 +197,11 @@ namespace BitwiseOperation
 
         int num = 20, bit = 4;
 
-        showbit_int(num);
+        show_bits(num);
 
         unset_bit(num, bit);
 
-        showbit_int(num);
+        show_bits(num);
     }
 
     void Divide_By_2()
@@ -226,8 +240,8 @@ namespace BitwiseOperation
         {
             std::string text = "AAAAAABBBBBCCCCCDDDDDD";
             std::cout << text << " --> ";
-            for (int i = 0; i < text.length(); i++) {
-                text[i] |= ' ';
+            for (char & i : text) {
+                i |= ' ';
             }
             std::cout << text << std::endl;
         }
@@ -414,7 +428,8 @@ namespace BitwiseOperation
     }
 }
 
-void BitwiseOperation::TestAll() {
+void BitwiseOperation::TestAll()
+{
 
     // InitVariable_BinaryForm();
 
@@ -430,7 +445,7 @@ void BitwiseOperation::TestAll() {
     // Swap_Bits();
     // Swap_Bits_2();
 
-    // SetBit();
+    SetBit();
     // UnSetBit();
 
     // Swap_Two_Numbers();
@@ -451,7 +466,7 @@ void BitwiseOperation::TestAll() {
 
 
     // Bitset::Popcount();
-    Count_Set_Bits();
+    //Count_Set_Bits();
 
     // Count_Zeros();
     // Count_One_s();
