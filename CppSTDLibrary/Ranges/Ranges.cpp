@@ -33,9 +33,10 @@
 #include <span>
 #include <list>
 #include <iomanip>
-using namespace std::literals;
 
-namespace Ranges {
+namespace Ranges
+{
+    using namespace std::literals;
 
     template<typename T>
     std::ostream& operator<<(std::ostream& ostr, const std::list<T>& list) {
@@ -218,7 +219,19 @@ namespace Ranges {
 
             std::get<char&>(elem) += ('a' - 'A'); // modifies the element of z
         }
+    }
 
+    void Split()
+    {
+        constexpr std::string_view words{"Hello^_^C++^_^20^_^!"sv};
+        constexpr std::string_view delim{"^_^"sv};
+
+        for (const auto word : std::views::split(words, delim))
+        {
+            // with string_view's C++23 range constructor:
+            std::cout << std::string_view(word) << std::endl;
+        }
+        std::cout << '\n';
     }
 
     //---------------------------------------------------------------------------//
@@ -681,7 +694,9 @@ void Ranges::TestAll()
 
     // Repeat();
 
-    Zip();
+    // Zip();
+
+    Split();
 
     // Filter_View();
     // Filter_View_Vector();

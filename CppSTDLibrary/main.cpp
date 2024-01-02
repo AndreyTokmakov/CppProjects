@@ -190,7 +190,7 @@ int main(int argc, char** argv)
     // Attributes::TestAll();
     // Auto::TestAll();
     // BitSet::TestAll();
-     BitwiseOperation::TestAll();
+    // BitwiseOperation::TestAll();
     // Byte::TestAll();
     // Chrono::TestAll();
     // Comparators::TestAll();
@@ -225,7 +225,7 @@ int main(int argc, char** argv)
     // Optional::TestAll();
     // PolymorphicMemoryResources::TestAll();
     // Random::TestAll();
-    // Ranges::TestAll();
+    Ranges::TestAll();
     // ReferenceWrapper::TestAll();
     // StarshipOperator::TestAll();
     // Streams::TestAll();
