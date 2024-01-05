@@ -472,10 +472,8 @@ namespace Algorithms
 }
 
 
-namespace Algorithms::Numbers
-{
-    std::vector<int> sortedSquaredArray(const std::vector<int>& numbers)
-    {
+namespace Algorithms::Numbers {
+    std::vector<int> sortedSquaredArray(const std::vector<int> &numbers) {
         int right = 0;
         while (0 > numbers[right]) {
             ++right;
@@ -486,8 +484,7 @@ namespace Algorithms::Numbers
 
         const int size = numbers.size();
         int left = right - 1;
-        while (left >= 0 && size > right)
-        {
+        while (left >= 0 && size > right) {
             const int leftVal = std::pow(numbers[left], 2), rightVal = std::pow(numbers[right], 2);
             if (leftVal > rightVal) {
                 result.push_back(rightVal);
@@ -507,25 +504,24 @@ namespace Algorithms::Numbers
     }
 
 
-    void printSortedSquaredNumber_InSortedArray()
-    {
+    void printSortedSquaredNumber_InSortedArray() {
 
-        std::vector<int> testData {-4, -3, -2, 0 ,1 ,5, 6, 9};
+        std::vector<int> testData{-4, -3, -2, 0, 1, 5, 6, 9};
         std::vector<int> result = sortedSquaredArray(testData);
 
         for (int i: result)
-            std::cout << i <<  ' ';
+            std::cout << i << ' ';
         std::cout << std::endl;
     }
+}
 
-    //--------------------------------------------------------------------
-
-    size_t _longest_increasing_subsequence_1(const std::vector<int>& Numeric) {
+namespace Algorithms::Numbers {
+    size_t _longest_increasing_subsequence_1(const std::vector<int> &Numeric) {
         // create an empty ordered set S. ith element in S is defined as the
         // smallest integer that ends an increasing sequence of length i
         std::set<int> tmp;
 
-        for (int val : Numeric) {
+        for (int val: Numeric) {
             auto [iter, ok] = tmp.insert(val);
             // 1. If element IS NOT inserted at the END, then delete next greater element from set
             // 2. Ignore the current element if already present in the set
@@ -548,8 +544,7 @@ namespace Algorithms::Numbers
     - we won't accidentally skip over potential subsequences
     **/
 
-    size_t _longest_increasing_subsequence_2(const std::vector<int>& numbers)
-    {
+    size_t _longest_increasing_subsequence_2(const std::vector<int> &numbers) {
         std::vector<int> path;
         for (int64_t i = 0; i < std::ssize(numbers); ++i) {
             // Current element is higher than the tail of the path.
@@ -559,7 +554,7 @@ namespace Algorithms::Numbers
             }
 
             // Find the element to overwrite
-            auto it = std::upper_bound(path.begin(), path.end(),numbers[i],[](int l, int r) {
+            auto it = std::upper_bound(path.begin(), path.end(), numbers[i], [](int l, int r) {
                 return l <= r;
             });
 
@@ -569,38 +564,35 @@ namespace Algorithms::Numbers
         return path.size();
     }
 
-    void LongestIncreasingSubsequence()
-    {
-        std::vector<std::pair<std::vector<int>, size_t>> testData {
-                {{ 1, 2, 3 }, 3},
-                {{ 3, 2, 1 }, 1},
-                {{ 2, 8, 4, 1, 9, 3, 5}, 3},
-                {{2, 1, 4, 3, 6, 5, 8, 7, 9}, 5},
-                {{1, 1, 1, 1}, 1},
+    void LongestIncreasingSubsequence() {
+        std::vector<std::pair<std::vector<int>, size_t>> testData{
+                {{1,  2,  3},                         3},
+                {{3,  2,  1},                         1},
+                {{2,  8,  4, 1,  9,  3,  5},          3},
+                {{2,  1,  4, 3,  6,  5,  8,  7,  9},  5},
+                {{1,  1,  1, 1},                      1},
                 {{10, 22, 9, 33, 21, 50, 41, 60, 80}, 6},
-                {{1, 2, 2, 3, 4, 4}, 4}
+                {{1,  2,  2, 3,  4,  4},              4}
         };
-        for (const auto& [data, expectedResult]: testData)
-        {
+        for (const auto &[data, expectedResult]: testData) {
             std::cout << _longest_increasing_subsequence_1(data) << " | "
                       << _longest_increasing_subsequence_2(data) << " | "
                       << expectedResult << std::endl;
         }
     }
+}
 
-
-    uint32_t find_rank(const std::vector<uint32_t>& papers)
-    {
+namespace Algorithms::Numbers {
+    uint32_t find_rank(const std::vector<uint32_t> &papers) {
         std::map<uint32_t, uint32_t> tmp;
         for (uint64_t v: papers)
             ++tmp[v];
 
         uint32_t result = 0, count = 0;
-        for (auto & [rank, ref_count] : std::ranges::reverse_view(tmp))
-        {
+        for (auto &[rank, ref_count]: std::ranges::reverse_view(tmp)) {
             count += ref_count;
             if (count >= rank)
-                result  = std::max(result, rank);
+                result = std::max(result, rank);
         }
 
         return result;
@@ -624,27 +616,130 @@ namespace Algorithms::Numbers
     (что соответствует значению в map-e)
      */
 
-    void Rank()
-    {
-        std::vector<uint32_t> papers {3, 4, 5, 11};
+    void Rank() {
+        std::vector<uint32_t> papers{3, 4, 5, 11};
 
         int result = find_rank(papers);
 
         std::cout << result << std::endl;
     }
 
-    bool contains_duplicate(const std::vector<int>& nums)
-    {
-        std::unordered_set<int> set (nums.begin(),nums.end());
+}
+
+namespace Algorithms::Numbers
+{
+    bool contains_duplicate(const std::vector<int> &nums) {
+        std::unordered_set<int> set(nums.begin(), nums.end());
         return nums.size() != set.size();
     }
 
-    void Contains_Duplicate()
-    {
-        for (const std::vector<int>& values: std::vector<std::vector<int>> {
-                {1,2,3,4,5}, {1,2,3,4,5,3}
+    void Contains_Duplicate() {
+        for (const std::vector<int> &values: std::vector<std::vector<int>>{
+                {1, 2, 3, 4, 5},
+                {1, 2, 3, 4, 5, 3}
         }) {
             std::cout << std::boolalpha << contains_duplicate(values) << std::endl;
+        }
+    }
+}
+
+namespace Algorithms::Numbers
+{
+    struct Stats final
+    {
+        int start {0};
+        int   end {0};
+        int count {0};
+
+        explicit Stats(int start = 0, int end = 0, int count = 0):
+                 start {start}, end {end}, count {count} { }
+    };
+
+
+    /**  Degree of an Array
+     *
+     * Given a non-empty array of non-negative integers nums, the degree of this array is defined
+     * as the maximum frequency of any one of its elements.
+     * Your task is to find the smallest possible length of a (contiguous) subarray of nums, that has the same degree as nums.
+     *
+     * Explanation:
+     *   The input array has a degree of 2 because both elements 1 and 2 appear twice.
+     *   Of the subarrays that have the same degree:  [1, 2, 2, 3, 1], [1, 2, 2, 3], [2, 2, 3, 1], [1, 2, 2], [2, 2, 3], [2, 2]
+     *   The shortest length is 2. So return 2.
+     *
+     *  Explanation:
+     *    The degree is 3 because the element 2 is repeated 3 times.
+     *    So [2,2,3,1,4,2] is the shortest subarray, therefore returning 6.
+     */
+    int degreeOfArray(const std::vector<int>& values)
+    {
+        int maxOccurred = 0;
+        std::unordered_map<int, Stats> counter {};
+        counter.reserve(values.size()/2);
+        for (int idx = 0, size = std::ssize(values); idx < size; ++idx)
+        {
+            const auto [iter, ok] = counter.emplace(values[idx], idx);
+            ++(iter->second.count);
+            iter->second.end = idx;
+            maxOccurred = std::max(maxOccurred, iter->second.count);
+        }
+
+        int minLength = values.size();
+        for (const auto &[key, stats]: counter)
+        {
+            if (stats.count == maxOccurred)
+                minLength = std::min(minLength, stats.end - stats.start + 1);
+        }
+
+        return minLength;
+    }
+
+    void Degree_Of_Array()
+    {
+        for (const std::vector<int>& input: std::vector<std::vector<int>>{
+                {1,2,2,3,1}, // -> 2
+                {2,2,3,1,4,2}, // -> 6
+                {2,1,1,2,1,3,3,3,1,3,1,3,2} // -> 7
+        })
+        {
+            const auto result = degreeOfArray(input);
+            std::cout << "Result = " << result << std::endl;
+        }
+    }
+}
+
+namespace Algorithms::Numbers
+{
+    std::vector<int> _top_K_Frequent(const std::vector<int>& nums, int k)
+    {
+        std::unordered_map<int, int> counter;
+        for (int v: nums)
+            ++counter[v];
+
+        std::map<int, std::vector<int>> freqs;
+        for (const auto [val, N]: counter)
+            freqs[N].emplace_back(val);
+
+        std::vector<int> out;
+        out.reserve(k);
+        for (auto iter = freqs.rbegin(); freqs.rend() != iter; ++iter) {
+            std::sort(iter->second.begin(), iter->second.end());
+            for (auto &&s: iter->second) {
+                out.push_back(s);
+                if (--k == 0)
+                    return out;
+            }
+        }
+        return out;
+    }
+
+    void topKFrequent()
+    {
+        for (const std::pair<std::vector<int>, int>& data: std::vector<std::pair<std::vector<int>, int>> {
+                {{1,1,1,2,2,3}, 2} // ==> { 1,2 }
+        })
+        {
+            std::cout << _top_K_Frequent(data.first, data.second) << std::endl;
         }
     }
 }
@@ -754,6 +849,39 @@ namespace Algorithms::Strings
     }
 }
 
+namespace Algorithms::Strings
+{
+    std::vector<std::string> _top_K_Frequent(const std::vector<std::string>& words,
+                                             int k)
+    {
+        std::unordered_map<std::string, uint32_t> wordsCount;
+        for (const std::string& s: words)
+            ++wordsCount[s];
+
+        std::map<uint32_t, std::vector<std::string>> result;
+        for (const auto& [str, v]: wordsCount)
+            result[v].push_back(str);
+
+        std::vector<std::string> out;
+        out.reserve(k);
+        for (auto iter = result.rbegin(); result.rend() != iter; ++iter) {
+            std::sort(iter->second.begin(), iter->second.end());
+            for (auto &&s: iter->second) {
+                out.push_back(std::move(s));
+                if (--k == 0)
+                    return out;
+            }
+        }
+        return out;
+    }
+
+    void topKFrequent()
+    {
+        const std::vector<std::string> words {"i", "love", "leetcode", "i", "love", "coding"};
+        std::vector<std::string> result = _top_K_Frequent(words, 3);
+        std::cout << result << std::endl;
+    }
+}
 
 namespace Algorithms::Majority
 {
@@ -940,20 +1068,24 @@ namespace Algorithms::Strings
 
 void Algorithms::TestAll()
 {
+
+
     // Algorithms::Devide_SubArray();
     // Algorithms::BinarySearch();
     // Algorithms::PrintAllSubArraysTest();
 
     // Numbers::printSortedSquaredNumber_InSortedArray();
     // Numbers::LongestIncreasingSubsequence();
-    Numbers::Contains_Duplicate();
+    // Numbers::Contains_Duplicate();
     // Numbers::Rank();
+    // Numbers::Degree_Of_Array();
+    Numbers::topKFrequent();
 
     // MaxTree::test();
 
     // Majority::Test();
 
-    // Algorithms::Sqrt();sdsd
+    // Algorithms::Sqrt();
 
     // Contains();
 
@@ -967,5 +1099,6 @@ void Algorithms::TestAll()
 
     // Strings::FindCommon_PrefixAndPostfix();
     // Strings::FindLastNotOf__Benchmark();
+    // Strings::topKFrequent();
 };
 

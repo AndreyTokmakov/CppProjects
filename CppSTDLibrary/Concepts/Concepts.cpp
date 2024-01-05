@@ -838,8 +838,8 @@ namespace Concepts::Requires {
         return i + j;
     }
 
-    int Constrain_Template_Param_Value() {
-
+    void Constrain_Template_Param_Value()
+    {
         std::cout << "sum<20>(2000): " << sum<20>(2000) << std::endl;
         // std::cout << "sum<23>(2000): " << sum<23>(2000) << std::endl; // ERROR
 
@@ -1402,130 +1402,134 @@ namespace Concepts::Function_Constrains {
     }
 }
 
-namespace Concepts::Callables {
-
+namespace Concepts::Callables
+{
     template<std::invocable Func>
     void call(Func func) {
-    func();
-}
+        func();
+    }
 
-template<typename Func>
-void call_2(Func func) requires std::invocable<Func> {
-    func();
-}
+    template<typename Func>
+    void call_2(Func func) requires std::invocable<Func> {
+        func();
+    }
 
+    void Test_Invocable()
+    {
+        auto F = [] { std::cout << "Ok" << std::endl; };
 
-void Test_Invocable() {
-    auto F = [] { std::cout << "Ok" << std::endl; };
+        call(F);
+        call_2(F);
 
-    call(F);
-    call_2(F);
+        std::cout << "----------------- Cassic invokation -------------\n";
 
-    std::cout << "----------------- Cassic invokation -------------\n";
+        std::invoke(F);
+        F();
+    }
 
-    std::invoke(F);
-    F();
-}
+    //-----------------------------------------------------------------------------
 
-//-----------------------------------------------------------------------------
+    template<std::predicate Func>
+    void check_1(Func func) {
+        func();
+    }
 
-template<std::predicate Func>
-void check_1(Func func) {
-    func();
-}
+    template<typename Func>
+    void check_2(Func func) requires std::predicate<Func> {
+        func();
+    }
 
-template<typename Func>
-void check_2(Func func) requires std::predicate<Func> {
-    func();
-}
+    void Test_Predicatee() {
+        auto F = []()-> bool {
+            std::cout << "Ok" << std::endl;
+            return true;
+        };
 
-void Test_Predicatee() {
-    auto F = []()-> bool {
-        std::cout << "Ok" << std::endl;
-        return true;
-    };
+        check_1(F);
+        check_2(F);
 
-    check_1(F);
-    check_2(F);
+        std::cout << "----------------- Cassic invokation -------------\n";
 
-    std::cout << "----------------- Cassic invokation -------------\n";
+        std::invoke(F);
+        F();
+    }
 
-    std::invoke(F);
-    F();
-}
+    //----------------------------------------------------------------------------
 
-//----------------------------------------------------------------------------
+    template<std::predicate<int> Func>
+    void check_with_params_1(Func func, int param)
+    {
+        func(param);
+    }
 
-template<std::predicate<int> Func>
-void check_with_params_1(Func func, int param) {
-    func(param);
-}
+    template<typename Func>
+    void check_with_params_2(Func func, int param) requires std::predicate<Func, int>
+            {
+        func(param);
+    }
 
-template<typename Func>
-void check_with_params_2(Func func, int param) requires std::predicate<Func, int> {
-    func(param);
-}
+    void Test_Predicatee_WithParams() {
+        auto func = [](int x)-> int {
+            std::cout << "Ok" << std::endl;
+            return true;
+        };
 
-void Test_Predicatee_WithParams() {
-    auto func = [](int x)-> int {
-        std::cout << "Ok" << std::endl;
-        return true;
-    };
+        check_with_params_1(func, 1);
+        check_with_params_2(func, 1);
 
-    check_with_params_1(func, 1);
-    check_with_params_2(func, 1);
+        std::cout << "----------------- Cassic invokation -------------\n";
 
-    std::cout << "----------------- Cassic invokation -------------\n";
+        std::invoke(func, 123);
+        func(123);
+    }
 
-    std::invoke(func, 123);
-    func(123);
-}
+    //----------------------------------------------------------------------------
 
-//----------------------------------------------------------------------------
+    template<std::predicate<int>... Func>
+    void check_with_params_varidic_1(Func... func) {
+        (func(123), ...);
+    }
 
-template<std::predicate<int>... Func>
-void check_with_params_varidic_1(Func... func) {
-    (func(123), ...);
-}
+    template<typename... Func>
+    void check_with_params_varidic_2(Func... func)
+    requires (std::predicate<Func, int> && ...)
+    {
+        (func(321), ...);
+    }
 
-template<typename... Func>
-void check_with_params_varidic_2(Func... func)
-requires (std::predicate<Func, int> && ...)
-{
-    (func(321), ...);
-}
+    void Test_Predicatee_WithParams_Variadic()
+    {
+        auto func1 = [](int x)-> bool {
+            std::cout << "Ok 1: " << x << std::endl;
+            return true;
+        };
 
-void Test_Predicatee_WithParams_Variadic() {
-    auto func1 = [](int x)-> bool {
-        std::cout << "Ok 1: " << x << std::endl;
-        return true;
-    };
+        auto func2 = [](int x)-> bool {
+            std::cout << "Ok 2: " << x << std::endl;
+            return true;
+        };
 
-    auto func2 = [](int x)-> bool {
-        std::cout << "Ok 2: " << x << std::endl;
-        return true;
-    };
+        check_with_params_varidic_1(func1, func2);
+        check_with_params_varidic_2(func1, func2);
+    }
 
-    check_with_params_varidic_1(func1, func2);
-    check_with_params_varidic_2(func1, func2);
-}
+    //----------------------------------------------------------------------------
 
-//----------------------------------------------------------------------------
+    void PrintVecIf(const std::vector<int>& vec,
+                    std::predicate<int> auto func)
+    {
+        for (auto& elem : vec)
+            if (func(elem))
+                std::cout << elem << ' ';
+        std::cout << std::endl;
+    }
 
-void PrintVecIf(const std::vector<int>& vec,
-                std::predicate<int> auto func) {
-    for (auto& elem : vec)
-        if (func(elem))
-            std::cout << elem << ' ';
-    std::cout << std::endl;
-}
+    void Test_Predicatee_PrintVector() {
+        std::vector<int> numbers(10);
+        std::iota(numbers.begin(), numbers.end(), 0);
 
-void Test_Predicatee_PrintVector() {
-    std::vector<int> numbers(10);
-    std::iota(numbers.begin(), numbers.end(), 0);
-
-    PrintVecIf(numbers, [](int v) { return v % 2 == 0; });
-}
+        PrintVecIf(numbers, [](int v) { return v % 2 == 0; });
+    }
 }
 
 namespace Concepts::Derived_From {
@@ -2549,7 +2553,7 @@ void Concepts::TestAll()
     // Function_Constrains::Test_Function_Return_Int();
 
 
-    // Callables::Test_Invocable();
+    Callables::Test_Invocable();
     // Callables::Test_Predicatee();
     // Callables::Test_Predicatee_WithParams();
     // Callables::Test_Predicatee_WithParams_Variadic();
@@ -2578,11 +2582,12 @@ void Concepts::TestAll()
     // FoldExpression::Test_All_Params_are_SameType();
     // FoldExpression::Elements_Shall_be_Comparable();
 
+    /*
     CheckAllTypesAreSame::Check_with_Concepts();
     CheckAllTypesAreSame::Check_with_StaticAssert();
     CheckAllTypesAreSame::Check_ALL_Integral();
-
     CheckTypes::CheckThatTypeSameAs();
+    */
 
     // IntegerConcepts::IntegerSum();
 

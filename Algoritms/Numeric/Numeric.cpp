@@ -57,42 +57,48 @@ namespace Numeric {
     }
 
     template<typename T>
-    std::ostream &operator<<(std::ostream &stream, const std::vector<T> &list) {
+    std::ostream &operator<<(std::ostream &stream, const std::vector<T> &list)
+    {
         for (const auto &i: list)
             stream << " " << i;
         return stream;
     }
 
     template<typename T>
-    std::ostream &operator<<(std::ostream &stream, const std::list<T> &list) {
+    std::ostream &operator<<(std::ostream &stream, const std::list<T> &list)
+    {
         for (const auto &i: list)
             stream << " " << i;
         return stream;
     }
 
     template<typename T>
-    std::ostream &operator<<(std::ostream &stream, const std::set<T> &set) {
+    std::ostream &operator<<(std::ostream &stream, const std::set<T> &set)
+    {
         for (const auto &i: set)
             stream << " " << i;
         return stream;
     }
 
     template<typename T>
-    std::ostream &operator<<(std::ostream &stream, const std::unordered_set<T> &set) {
+    std::ostream &operator<<(std::ostream &stream, const std::unordered_set<T> &set)
+    {
         for (const auto &i: set)
             stream << " " << i;
         return stream;
     }
 
     template<typename T>
-    std::ostream &operator<<(std::ostream &stream, const std::deque<T> &list) {
+    std::ostream &operator<<(std::ostream &stream, const std::deque<T> &list)
+    {
         for (const auto &i: list)
             stream << " " << i;
         return stream;
     }
 
     template<typename T>
-    void print_vector(const std::vector<T> &vector, size_t start, size_t end) {
+    void print_vector(const std::vector<T> &vector, size_t start, size_t end)
+    {
         for (size_t i = start; i <= end; i++)
             std::cout << vector[i] << " ";
         std::cout << std::endl;
@@ -101,16 +107,13 @@ namespace Numeric {
 
 
 
-namespace Numeric
-{
+namespace Numeric {
     bool __isPowerOf2(int num) {
         return num && !(num & (num - 1));
     }
 
-    void isPowerOf2()
-    {
-        for (const int32_t value: {8, 64, 61})
-        {
+    void isPowerOf2() {
+        for (const int32_t value: {8, 64, 61}) {
             std::cout << value << " -> " << std::boolalpha << __isPowerOf2(value) << std::endl;
         }
     }
@@ -145,8 +148,8 @@ namespace Numeric
         }
     }
 
-    int __gcd_test__(int a, int b ) {
-        return 0 == b ? a: __gcd_test__(b, a % b);
+    int __gcd_test__(int a, int b) {
+        return 0 == b ? a : __gcd_test__(b, a % b);
     }
 
     void GreatestCommonDivisor() {
@@ -177,22 +180,21 @@ namespace Numeric
     //---------------------------------------------------------------------------//
 
     /* Returns length of LCS for X[0..m-1], Y[0..n-1] */
-    int lcs(const char *X, const char *Y, int m, int n )
-    {
+    int lcs(const char *X, const char *Y, int m, int n) {
         if (m == 0 || n == 0)
             return 0;
-        if (X[m-1] == Y[n-1])
-            return 1 + lcs(X, Y, m-1, n-1);
+        if (X[m - 1] == Y[n - 1])
+            return 1 + lcs(X, Y, m - 1, n - 1);
         else
-            return std::max(lcs(X, Y, m, n-1), lcs(X, Y, m-1, n));
+            return std::max(lcs(X, Y, m, n - 1), lcs(X, Y, m - 1, n));
     }
 
 
-    void LongestCommonSubsequence () {
+    void LongestCommonSubsequence() {
 
         const std::string X = "AGGTAB", Y = "GXTXAYB"; // ---> GTAB
 
-        std::cout<<"Length of LCS is "<< lcs(X.c_str(), Y.c_str(), X.length(), Y.length());
+        std::cout << "Length of LCS is " << lcs(X.c_str(), Y.c_str(), X.length(), Y.length());
     }
 
 
@@ -218,22 +220,22 @@ namespace Numeric
 
         for (int i = 0; i < K - 1; i++) {
             std::vector<std::pair<char, int>> tokens;
-            for (char c : sequence.back()) {
+            for (char c: sequence.back()) {
                 if (false == tokens.empty() && tokens.back().first == c)
                     tokens.back().second++;
                 else
-                    tokens.push_back({ c, 1 });
+                    tokens.push_back({c, 1});
             }
 
             std::string result;
-            for (const auto& p : tokens) {
+            for (const auto &p: tokens) {
                 result.append(std::to_string(p.second));
                 result.append(1, p.first);
             }
             sequence.push_back(result);
         }
 
-        for (const std::string& str : sequence)
+        for (const std::string &str: sequence)
             std::cout << str << std::endl;
     }
 
@@ -246,22 +248,21 @@ namespace Numeric
         std::string token("1");
         while (--K) {
             std::vector<std::pair<char, int>> tokens;
-            for (char c : token) {
+            for (char c: token) {
                 if (false == tokens.empty() && tokens.back().first == c)
                     tokens.back().second++;
                 else
-                    tokens.push_back({ c, 1 });
+                    tokens.push_back({c, 1});
             }
 
             token.clear();
-            for (const auto& p : tokens) {
+            for (const auto &p: tokens) {
                 token.append(std::to_string(p.second));
                 token.append(1, p.first);
             }
         }
-        return  token;
+        return token;
     }
-
 
 
     std::string CountAndSaySequence_Get_Kth_Token_2(int K) {
@@ -270,14 +271,14 @@ namespace Numeric
 
         std::string token("1"), temp;
         while (--K) {
-            std::pair<char, size_t> chars {token.front(), 1};
+            std::pair<char, size_t> chars{token.front(), 1};
             for (size_t i = 1; i < token.length(); ++i) {
                 if (chars.first == token[i])
                     chars.second++;
                 else {
                     temp.append(std::to_string(chars.second));
                     temp.append(1, chars.first);
-                    chars = { token[i] , 1};
+                    chars = {token[i], 1};
                 }
             }
 
@@ -296,8 +297,8 @@ namespace Numeric
 
         std::string token("1"), temp;
         while (--K) {
-            char c { token.front() };
-            size_t repetions {1};
+            char c{token.front()};
+            size_t repetions{1};
             for (size_t i = 1; i < token.length(); ++i) {
                 if (c == token[i])
                     ++repetions;
@@ -335,10 +336,10 @@ namespace Numeric
 
     //---------------------------------------------------------------------------//
 
-    void _find_finabochi_subset(const std::vector<int>& Numeric) {
+    void _find_finabochi_subset(const std::vector<int> &Numeric) {
         int max = *std::max_element(Numeric.begin(), Numeric.end());
         int a = 0, b = 1, c = a + b;
-        std::vector<int> finabochiNumeric{ a,b };
+        std::vector<int> finabochiNumeric{a, b};
 
         while (b < max) {
             c = a + b;
@@ -358,7 +359,7 @@ namespace Numeric
         std::cout << max_len << std::endl;
     }
 
-    void _find_finabochi_subset_2(const std::vector<int>& Numeric) {
+    void _find_finabochi_subset_2(const std::vector<int> &Numeric) {
         size_t max_len = 0, len = 0;
         for (size_t pos = 2; pos < Numeric.size(); ++pos) {
             if ((Numeric[pos - 2] + Numeric[pos - 1]) == Numeric[pos]) {
@@ -374,14 +375,17 @@ namespace Numeric
     void LongestSubset_FinabochiNumeric() {
         {
             // MAX 22
-            std::vector<int> v{ 0,1,1,2,3,5,8,0,1,1,2,3,5,0,1,1,2,3,5,8,13,21,34,55,89,144,233,377,8,8,8,0,1,1,2,3,5,8,13,21,34,55,89,144,233,377,610,987,1597,2584,4181,6765,10946 };
+            std::vector<int> v{0, 1, 1, 2, 3, 5, 8, 0, 1, 1, 2, 3, 5, 0, 1, 1, 2, 3, 5, 8, 13, 21, 34, 55, 89, 144, 233, 377, 8,
+                               8, 8, 0, 1, 1, 2, 3, 5, 8, 13, 21, 34, 55, 89, 144, 233, 377, 610, 987, 1597, 2584, 4181, 6765,
+                               10946};
             _find_finabochi_subset(v);
             _find_finabochi_subset_2(v);
         }
         std::cout << "\nTEST2:\n" << std::endl;
         {
             // MAX 16
-            std::vector<int> v{ 3,34,0,1,1,2,3,5,8,13,3,1343,0,1,1,2,3,5,8,13,21,34,3,2,345,89,144,233,377,610,987,1597,2584,4181,6765,10946,17711,28657,46368,75025,121393 };
+            std::vector<int> v{3, 34, 0, 1, 1, 2, 3, 5, 8, 13, 3, 1343, 0, 1, 1, 2, 3, 5, 8, 13, 21, 34, 3, 2, 345, 89, 144, 233,
+                               377, 610, 987, 1597, 2584, 4181, 6765, 10946, 17711, 28657, 46368, 75025, 121393};
             _find_finabochi_subset(v);
             _find_finabochi_subset_2(v);
         }
@@ -390,11 +394,11 @@ namespace Numeric
     //---------------------------------------------------------------------------//
 
     int _get_num_of_digits(int val) {
-        return  val > 10 ? 1 + _get_num_of_digits(val / 10) : 1;
+        return val > 10 ? 1 + _get_num_of_digits(val / 10) : 1;
     }
 
     int _get_num_of_digits2(int val) {
-        int digits { 1 };
+        int digits{1};
         while (val > 9) {
             val = val / 10;
             ++digits;
@@ -410,8 +414,7 @@ namespace Numeric
 
     //---------------------------------------------------------------------------//
 
-    void ReverseNumber()
-    {
+    void ReverseNumber() {
         int reverse_number = 0, number = 1234567;
 
         std::cout << number << std::endl;
@@ -424,8 +427,7 @@ namespace Numeric
 
     //---------------------------------------------------------------------------//
 
-    bool is_palindrome(const int value)
-    {
+    bool is_palindrome(const int value) {
         if (0 > value)
             return false;
         long reversed = 0, number = value;
@@ -436,12 +438,10 @@ namespace Numeric
         return reversed == value;
     }
 
-    void IsPalindrome()
-    {
-        for (const int v: std::vector<int> {
-            121, 234
-        })
-        {
+    void IsPalindrome() {
+        for (const int v: std::vector<int>{
+                121, 234
+        }) {
             std::cout << "Is (" << v << ") palidrome: " << std::boolalpha << is_palindrome(v) << std::endl;
         }
     }
@@ -450,10 +450,10 @@ namespace Numeric
 
     // Move items to their places
     void RearangeArray() {
-        int Numeric[] = { 8,7,6,3,4,9,2,1,0,5 };
+        int Numeric[] = {8, 7, 6, 3, 4, 9, 2, 1, 0, 5};
         size_t length = std::size(Numeric);
 
-        for (int v : Numeric)
+        for (int v: Numeric)
             std::cout << v;
         std::cout << std::endl;
 
@@ -462,7 +462,7 @@ namespace Numeric
                 std::swap(Numeric[Numeric[i]], Numeric[i]);
         }
 
-        for (unsigned int v : Numeric)
+        for (unsigned int v: Numeric)
             std::cout << v;
         std::cout << std::endl;
     }
@@ -506,19 +506,17 @@ namespace Numeric
     // Print characters along the collection starting from the 0 - end with the specified offset: NULL should be ignored
     //  [1, 2, null, null, 3, 4, 5] -> [3, 4, 4, 4, 5, null, null]  with Offet = 2
     //  [0, 1, 2, null, null, 3, 4, 5] -> [2, 3, 4, 4, 4, 5, null, null] with Offet = 2
-    void leadIgnoreNulls(const std::vector<std::optional<int>>& values,
+    void leadIgnoreNulls(const std::vector<std::optional<int>> &values,
                          const size_t offset) {
-        const size_t size {values.size()};
-        for (size_t i = 0; i < size; ++i)
-        {
-            if ( (i + offset) >= size) {
+        const size_t size{values.size()};
+        for (size_t i = 0; i < size; ++i) {
+            if ((i + offset) >= size) {
                 std::cout << "Null\n";
                 continue;
             }
 
             size_t n = i + 1, steps = 0;
-            while (size > n && offset >= steps)
-            {
+            while (size > n && offset >= steps) {
                 if (!values[n].has_value()) {
                     n++;
                     continue;
@@ -538,7 +536,7 @@ namespace Numeric
         // const std::vector<std::optional<int>> values { 1,2, std::nullopt, std::nullopt,3 ,4 ,5 };
 
         // [0, 1, 2, null, null, 3, 4, 5] -> [2, 3, 4, 4, 4, 5, null, null]
-        const std::vector<std::optional<int>> values { 0,1, 2, std::nullopt, std::nullopt,3 ,4 ,5 };
+        const std::vector<std::optional<int>> values{0, 1, 2, std::nullopt, std::nullopt, 3, 4, 5};
 
         // const std::vector<std::optional<int>> values { 1,2 ,std::nullopt, std::nullopt, 3};
         // const std::vector<std::optional<int>> values { 1,2,3 };
@@ -551,7 +549,7 @@ namespace Numeric
     double getAngleOnClock(std::string_view timeStr) {
         const size_t pos = timeStr.find(':');
         const double hours = atoi(timeStr.substr(0, pos).data());
-        const double minutes = atoi(timeStr.substr(pos + 1, timeStr.length() - pos -1).data());
+        const double minutes = atoi(timeStr.substr(pos + 1, timeStr.length() - pos - 1).data());
 
         /*
          * The whole dial is 360 degrees and each interval is 30 degrees
@@ -560,11 +558,11 @@ namespace Numeric
          * Then 150-7.5=142.5
          */
 
-        auto degrees = std::abs(hours * 30  -  minutes * 6 + (30 * minutes) / 60);
+        auto degrees = std::abs(hours * 30 - minutes * 6 + (30 * minutes) / 60);
         degrees = std::min(degrees, 360 - degrees);
 
         [[maybe_unused]]
-        const double radians = ( degrees * std::numbers::pi ) / 180;
+        const double radians = (degrees * std::numbers::pi) / 180;
 
         // std::cout << "degrees = " << degrees << std::endl;
         // std::cout << "radians = " << radians << std::endl;
@@ -611,7 +609,7 @@ namespace Numeric
     }
 
     int __test2(int A, int B, int K) {
-        int count = (0 == A % K) ? 1 : 0, dev = (A / K)  * K;
+        int count = (0 == A % K) ? 1 : 0, dev = (A / K) * K;
         while (B >= dev) {
             dev += K;
             count++;
@@ -621,7 +619,7 @@ namespace Numeric
 
     void ComputeNumberOfDivisiblsInRange() {
         int A = 8, B = 16, K = 4;
-        std::cout << __test1(A, B ,K) << std::endl;
+        std::cout << __test1(A, B, K) << std::endl;
         std::cout << __test2(A, B, K) << std::endl;
     }
 
@@ -643,7 +641,7 @@ namespace Numeric
 
     //----------------------------------------------------------------------------//
 
-    std::vector<int> _largest_triple_products(const std::vector<int>& number) {
+    std::vector<int> _largest_triple_products(const std::vector<int> &number) {
         std::vector<int> result;
         for (size_t i = 0; i < number.size(); i++) {
             if (1 >= i) {
@@ -651,7 +649,7 @@ namespace Numeric
                 continue;
             }
 
-            std::vector<int> heap = { -1, -1, -1 };
+            std::vector<int> heap = {-1, -1, -1};
             std::make_heap(heap.begin(), heap.end(), [](int x, int y) { return y < x; });
 
             for (size_t n = 0; n <= i; n++) {
@@ -660,7 +658,7 @@ namespace Numeric
                     std::make_heap(heap.begin(), heap.end(), [](int x, int y) { return y < x; });
                 }
             }
-            int product = std::accumulate(heap.begin(), heap.end(), 1, [](int x, int y) {return x * y; });
+            int product = std::accumulate(heap.begin(), heap.end(), 1, [](int x, int y) { return x * y; });
             result.push_back(product);
         }
         return result;
@@ -674,16 +672,16 @@ namespace Numeric
     // arr = [1, 2, 3, 4, 5] ---> output = [-1, -1, 6, 24, 60]
     void Largest_Triple_Products() {
         {
-            std::vector<int> number = { 1, 2, 3, 4, 5};
+            std::vector<int> number = {1, 2, 3, 4, 5};
             std::vector<int> result = _largest_triple_products(number);
-            for (int i : result)
+            for (int i: result)
                 std::cout << i << " ";
             std::cout << std::endl;
         }
         {
-            std::vector<int> number = { 2, 1, 2, 1, 2 };
+            std::vector<int> number = {2, 1, 2, 1, 2};
             std::vector<int> result = _largest_triple_products(number);
-            for (int i : result)
+            for (int i: result)
                 std::cout << i << " ";
             std::cout << std::endl;
         }
@@ -716,9 +714,9 @@ namespace Numeric
     // growthRates = [1.5] -> Result: 52
     // growthRates = [1.1, 1.2, 1.3] -> Result: 79
     void BillionUsers() {
-        std::vector<float> growthRates1 = { 1.5 };
-        std::vector<float> growthRates2 = { 1.1, 1.2, 1.3 };
-        std::vector<float> growthRates3 = { 1.01, 1.02 };
+        std::vector<float> growthRates1 = {1.5};
+        std::vector<float> growthRates2 = {1.1, 1.2, 1.3};
+        std::vector<float> growthRates3 = {1.01, 1.02};
 
         std::cout << getBillionUsersDay(growthRates1) << std::endl;
         std::cout << getBillionUsersDay(growthRates2) << std::endl;
@@ -732,7 +730,7 @@ namespace Numeric
     // arrays is the same, and all of the integers in A are strictly smaller than all of the integers in B.
     // Note: Strictly smaller denotes that every integer in A must be less than, and not equal to, every integer in B.
     void BalancedSplit() {
-        std::vector<int> nums = { 12, 7, 6, 7, 6 };
+        std::vector<int> nums = {12, 7, 6, 7, 6};
 
 
         // int left = 0, right = nums.size() - 1;
@@ -754,12 +752,10 @@ namespace Numeric
             if (leftSum > rightSum) {
                 leftSum -= nums[--pos];
                 rightSum += nums[--pos];
-            }
-            else if (rightSum > leftSum) {
+            } else if (rightSum > leftSum) {
                 rightSum -= nums[pos];
                 leftSum += nums[pos++];
-            }
-            else {
+            } else {
                 if (nums[pos - 1] < nums[pos])
                     std::cout << "OK" << std::endl;
                 else
@@ -772,11 +768,10 @@ namespace Numeric
 
     //---------------------------------------------------------------------------//
 
-    void Kadane()
-    {
+    void Kadane() {
         {
             // Fill vector with maximum sums:
-            std::vector<int> Numeric = { 1,-3,2,1,-1 };
+            std::vector<int> Numeric = {1, -3, 2, 1, -1};
             std::vector<int> max_sums(Numeric);
             for (size_t index = 1; index < max_sums.size(); index++)
                 max_sums[index] = std::max(max_sums[index - 1] + max_sums[index], max_sums[index]);
@@ -784,7 +779,7 @@ namespace Numeric
         }
 
         {
-            const std::vector<int> numbers { 1,-3,2,1,-1, 2 };
+            const std::vector<int> numbers{1, -3, 2, 1, -1, 2};
             int max_before = numbers.front(), max = max_before;
             for (size_t index = 1; index < numbers.size(); index++) {
                 max_before = std::max(max_before + numbers[index], numbers[index]);
@@ -796,7 +791,7 @@ namespace Numeric
 
     //---------------------------------------------------------------------------//
 
-    int __max_sum_subarray(const std::vector<int>& Numeric) {
+    int __max_sum_subarray(const std::vector<int> &Numeric) {
         int max_before = Numeric.front(), max = max_before;
         for (size_t index = 1; index < Numeric.size(); index++) {
             max_before = std::max(max_before + Numeric[index], Numeric[index]);
@@ -807,31 +802,30 @@ namespace Numeric
 
     void MaximumSumSubarray_Kadane() {
         {
-            std::vector<int> Numeric = { 1,-3,2,1,-1 };
+            std::vector<int> Numeric = {1, -3, 2, 1, -1};
             int X = __max_sum_subarray(Numeric);
             assert(3 == X);
-            std::cout << "Max sum subarray for [" << Numeric << "] is = " << X<< std::endl;
+            std::cout << "Max sum subarray for [" << Numeric << "] is = " << X << std::endl;
         }
         {
-            std::vector<int> Numeric = { -1, 4, -2, 5, -5, 2, -20, 6 };
+            std::vector<int> Numeric = {-1, 4, -2, 5, -5, 2, -20, 6};
             int X = __max_sum_subarray(Numeric);
             assert(7 == X);
-            std::cout << "Max sum subarray for [" << Numeric << "] is = " << X<< std::endl;
+            std::cout << "Max sum subarray for [" << Numeric << "] is = " << X << std::endl;
         }
     }
 
     //---------------------------------------------------------------------------//
 
 //---------------------------------------------------------------------------//
-    void printArray(const std::vector<int>& vect, size_t start, size_t end) {
+    void printArray(const std::vector<int> &vect, size_t start, size_t end) {
         std::cout << "[ ";
         while (end >= start)
             std::cout << vect[start++] << " ";
         std::cout << "]" << std::endl;
     }
 
-    void printAllSubArrays(const std::vector<int>& vect)
-    {
+    void printAllSubArrays(const std::vector<int> &vect) {
         for (size_t size = vect.size(), i = 0; i < size; ++i) {
             for (size_t n = i; n < size; ++n)
                 printArray(vect, i, n);
@@ -839,20 +833,18 @@ namespace Numeric
     }
 
     void GetAllSubsequentSubArrays() {
-        printAllSubArrays({1,2,3,4});
+        printAllSubArrays({1, 2, 3, 4});
     }
 
     // ----------------------------------------------------------------------//
-    void printAllSubArrays_NonSequenced(const std::vector<int>& vect)
-    {
+    void printAllSubArrays_NonSequenced(const std::vector<int> &vect) {
         //total number of possible non-empty sub-sequences
-        const size_t set_size = pow(2,vect.size()) - 1 ;
-        for (size_t i = 1; i < set_size; i++)
-        {
-            std::cout <<"[ ";
+        const size_t set_size = pow(2, vect.size()) - 1;
+        for (size_t i = 1; i < set_size; i++) {
+            std::cout << "[ ";
             for (size_t j = 0; j <= vect.size(); j++) {
-                if(i & (1<<j)) {
-                    std::cout << vect[j]<< " ";
+                if (i & (1 << j)) {
+                    std::cout << vect[j] << " ";
                 }
             }
             std::cout << " ]" << std::endl;
@@ -861,7 +853,7 @@ namespace Numeric
 
 
     void GetAllSubArrays_NonSequenced() {
-        printAllSubArrays_NonSequenced({1,2,3,4});
+        printAllSubArrays_NonSequenced({1, 2, 3, 4});
     }
 
     //---------------------------------------------------------------------------//
@@ -908,8 +900,7 @@ namespace Numeric
 
     //---------------------------------------------------------------------------//
 
-    bool _coins_change_problem(std::vector<int> coins, int target)
-    {
+    bool _coins_change_problem(std::vector<int> coins, int target) {
         if (coins.empty())
             return false;
 
@@ -927,7 +918,7 @@ namespace Numeric
     }
 
     void CoinsChangeProblem() {
-        std::vector<int> coins{ 1,1,1,44, 1,1, 36,1,1 };
+        std::vector<int> coins{1, 1, 1, 44, 1, 1, 36, 1, 1};
         constexpr int target = 82;
 
         bool result = _coins_change_problem(coins, target);
@@ -945,7 +936,7 @@ namespace Numeric
             a -= b;
             ++result;
         }
-        return result  * sign;
+        return result * sign;
     }
 
     void _test(int a, int b) {
@@ -993,36 +984,32 @@ namespace Numeric
     template<typename T, size_t Size>
     class HeapHack {
     private:
-        std::array<T, Size> data {};
+        std::array<T, Size> data{};
 
     public:
-        HeapHack()
-        {
+        HeapHack() {
             for (size_t i = 0; i < Size; ++i)
                 data[i] = std::numeric_limits<int>::max();
         }
 
-        void add(const T& value)
-        {
+        void add(const T &value) {
             if (data.front() > value) {
                 data[0] = value;
                 std::partial_sort(data.begin(), data.begin() + 1, data.end(), std::greater<int>());
             }
         }
 
-        void print()
-        {
-            for (const T& v : data)
+        void print() {
+            for (const T &v: data)
                 std::cout << v << " ";
             std::cout << std::endl;
         }
     };
 
-    void Find_N_Min_Elements()
-    {
-        const std::vector<int> numbers { 4,5,6,7,8,9,10,11, 0, -1 };
+    void Find_N_Min_Elements() {
+        const std::vector<int> numbers{4, 5, 6, 7, 8, 9, 10, 11, 0, -1};
         HeapHack<int, 3> mins;
-        for (const auto v : numbers)
+        for (const auto v: numbers)
             mins.add(v);
         mins.print();
     }
@@ -1032,9 +1019,9 @@ namespace Numeric
     void Find_N_Min_Elements_2() {
 
         constexpr int K = 3;
-        const std::vector<int> numbers { 4,5,6,7,8,9,10,11, 0, -1 };
+        const std::vector<int> numbers{4, 5, 6, 7, 8, 9, 10, 11, 0, -1};
 
-        std::array<int, K> mins {};
+        std::array<int, K> mins{};
         std::copy_n(numbers.cbegin(), K, mins.begin());
 
 
@@ -1047,24 +1034,24 @@ namespace Numeric
             }
         }
 
-        for (const auto v : mins)
+        for (const auto v: mins)
             std::cout << v << " ";
         std::cout << std::endl;
     }
 
     //---------------------------------------------------------------------------//
 
-    std::pair<int, int> find_min_max(const std::vector<int>& Numeric) {
-        std::pair<int, int> minmax {std::numeric_limits<int>::max(), std::numeric_limits<int>::min()};
-        for (const auto v : Numeric) {
-            minmax.first = std::min(v , minmax.first);
+    std::pair<int, int> find_min_max(const std::vector<int> &Numeric) {
+        std::pair<int, int> minmax{std::numeric_limits<int>::max(), std::numeric_limits<int>::min()};
+        for (const auto v: Numeric) {
+            minmax.first = std::min(v, minmax.first);
             minmax.second = std::max(v, minmax.second);
         }
         return minmax;
     }
 
     void FindMinMax() {
-        const std::vector<int> Numeric = { 2,6, 5, 8, 12,4,87,24,1 ,13,4,45,1 };
+        const std::vector<int> Numeric = {2, 6, 5, 8, 12, 4, 87, 24, 1, 13, 4, 45, 1};
         auto minmax = find_min_max(Numeric);
         std::cout << "{" << minmax.first << "." << minmax.second << "}" << std::endl;
     }
@@ -1072,7 +1059,7 @@ namespace Numeric
     //---------------------------------------------------------------------------//
 
     void FindTwoSmallestElements() {
-        const int Numeric[] = { 2,6, 5, 8, 12,4,87,24,1 };
+        const int Numeric[] = {2, 6, 5, 8, 12, 4, 87, 24, 1};
         size_t length = std::size(Numeric);
 
         int min1 = Numeric[0], min2 = Numeric[1];
@@ -1082,8 +1069,7 @@ namespace Numeric
             if (min1 > Numeric[pos]) {
                 min2 = min1;
                 min1 = Numeric[pos];
-            }
-            else if (min2 > Numeric[pos])
+            } else if (min2 > Numeric[pos])
                 min2 = Numeric[pos];
         }
 
@@ -1092,7 +1078,7 @@ namespace Numeric
 
     //---------------------------------------------------------------------------//
 
-    void __Find_N_Max_Elements(const int* data, size_t length, size_t N) {
+    void __Find_N_Max_Elements(const int *data, size_t length, size_t N) {
         std::vector<int> max_elements(data, data + N);
         std::make_heap(max_elements.begin(), max_elements.end(), std::greater<>{});
 
@@ -1103,20 +1089,20 @@ namespace Numeric
             }
         }
 
-        for (const auto e : max_elements)
+        for (const auto e: max_elements)
             std::cout << e << " ";
         std::cout << std::endl;
     }
 
     void Find_N_Max_Elements() {
-        const int Numeric[] = { 2,6, 5, 8, 12,4,87,24,1 ,13,4,45,1 };
+        const int Numeric[] = {2, 6, 5, 8, 12, 4, 87, 24, 1, 13, 4, 45, 1};
         __Find_N_Max_Elements(Numeric, std::size(Numeric), 5);
     }
 
 
     //--------------------------------------------------------------------------------------//
 
-    void __Find_N_Max_Element2(const int* data, size_t length, size_t N) {
+    void __Find_N_Max_Element2(const int *data, size_t length, size_t N) {
         std::priority_queue<int, std::vector<int>, std::greater<int>> result(data, data + N);
         for (size_t i = N; i < length; i++) {
             if (data[i] > result.top()) {
@@ -1133,14 +1119,14 @@ namespace Numeric
     }
 
     void Find_N_Max_Elements2() {
-        const int Numeric[] = { 2,6, 5, 8, 12,4,87,24,1 ,13,4,45,1 };
+        const int Numeric[] = {2, 6, 5, 8, 12, 4, 87, 24, 1, 13, 4, 45, 1};
         __Find_N_Max_Element2(Numeric, std::size(Numeric), 5);
     }
 
     //--------------------------------------------------------------------------------------//
 
     void MaxPairSumInArray() {
-        const int Numeric[] = { 4, 2 ,6, 1 };
+        const int Numeric[] = {4, 2, 6, 1};
         size_t length = std::size(Numeric);
 
         int max1 = std::numeric_limits<int>::min(), max2 = std::numeric_limits<int>::min();
@@ -1148,8 +1134,7 @@ namespace Numeric
             if (Numeric[pos] > max1) {
                 max2 = max1;
                 max1 = Numeric[pos];
-            }
-            else if (Numeric[pos] > max2)
+            } else if (Numeric[pos] > max2)
                 max2 = Numeric[pos];
         }
 
@@ -1159,9 +1144,9 @@ namespace Numeric
     //======================================================================================//
 
     template<typename T>
-    void removeElement(std::vector<T>& nums, const T value) {
+    void removeElement(std::vector<T> &nums, const T value) {
         size_t pos = 0;
-        for (T& entry: nums)
+        for (T &entry: nums)
             if (value != entry)
                 std::swap(nums[pos++], entry);
 
@@ -1169,21 +1154,20 @@ namespace Numeric
         nums.shrink_to_fit();
     }
 
-    void RemoveElement()
-    {
+    void RemoveElement() {
         // std::vector nums { 0, 0, 1, 1, 1, 2, 2, 3, 3, 4 };
-        std::vector nums { 1,2,3,1,2,3,1,2,3,4,5,6,7,2,2,2,33};
+        std::vector nums{1, 2, 3, 1, 2, 3, 1, 2, 3, 4, 5, 6, 7, 2, 2, 2, 33};
         std::cout << nums << std::endl;
 
-        removeElement(nums, 2 );
+        removeElement(nums, 2);
         std::cout << nums << std::endl;
     }
 
     //======================================================================================//
 
     template<typename T>
-    void removeDuplicates(std::vector<T>& nums) {
-        std::unordered_set<T> duplicates {};
+    void removeDuplicates(std::vector<T> &nums) {
+        std::unordered_set<T> duplicates{};
         size_t pos = 0;
         for (size_t idx = 0; idx < nums.size(); ++idx)
             if (true == duplicates.insert(nums[idx]).second)
@@ -1193,10 +1177,9 @@ namespace Numeric
         nums.shrink_to_fit();
     }
 
-    void RemoveDuplicates()
-    {
+    void RemoveDuplicates() {
         // std::vector nums { 0, 0, 1, 1, 1, 2, 2, 3, 3, 4 };
-        std::vector nums { 0, 1, 1, 2, 2, 3, 3, 4, 4, 4, 4, 5,5,5,5,5};
+        std::vector nums{0, 1, 1, 2, 2, 3, 3, 4, 4, 4, 4, 5, 5, 5, 5, 5};
         std::cout << nums << std::endl;
 
         removeDuplicates(nums);
@@ -1205,7 +1188,7 @@ namespace Numeric
 
     //======================================================================================//
 
-    void removeDuplicatesSorted(std::vector<int>& nums) {
+    void removeDuplicatesSorted(std::vector<int> &nums) {
         size_t pos = 0;
         for (size_t idx = 1; idx < nums.size(); ++idx) {
             if (nums[pos] != nums[idx]) {
@@ -1217,10 +1200,9 @@ namespace Numeric
         nums.shrink_to_fit();
     }
 
-    void RemoveDuplicates_SortedArray()
-    {
+    void RemoveDuplicates_SortedArray() {
         // std::vector nums { 0, 0, 1, 1, 1, 2, 2, 3, 3, 4 };
-        std::vector nums { 0, 1, 1, 2, 2, 3, 3, 4, 4, 4, 4, 5,5,5,5,5};
+        std::vector nums{0, 1, 1, 2, 2, 3, 3, 4, 4, 4, 4, 5, 5, 5, 5, 5};
         std::cout << nums << std::endl;
 
         removeDuplicatesSorted(nums);
@@ -1230,12 +1212,12 @@ namespace Numeric
     //======================================================================================//
 
     void DeleteFromArray() {
-        std::vector<int> data = {0,1,2,3,4,5,6,7,8,9};
+        std::vector<int> data = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9};
 
         const auto pred = [](int v) { return 0 == v % 2; };
 
         size_t pos = 0;
-        for (auto& v: data) {
+        for (auto &v: data) {
             if (!pred(v))
                 std::swap(data[pos++], v);
         }
@@ -1246,10 +1228,10 @@ namespace Numeric
 
     //======================================================================================//
 
-    size_t _longest_consecutive_sequence(const std::vector<int>& Numeric) {
+    size_t _longest_consecutive_sequence(const std::vector<int> &Numeric) {
         std::unordered_set<int> tmp(Numeric.begin(), Numeric.end());
         size_t count = 0;
-        for (int i : Numeric) {
+        for (int i: Numeric) {
             size_t len = 0;
             int val = i;
             while (tmp.end() != tmp.find(val++))
@@ -1260,7 +1242,7 @@ namespace Numeric
     }
 
     void Longest_Consecutive_Sequence() {
-        const std::vector<int> Numeric = { 100, 4, 200, 1, 3, 2 };
+        const std::vector<int> Numeric = {100, 4, 200, 1, 3, 2};
 
         size_t count = _longest_consecutive_sequence(Numeric);
         std::cout << count << std::endl;
@@ -1268,14 +1250,13 @@ namespace Numeric
 
     //--------------------------------------------------------------------------------------//
 
-    size_t findLongestSubArray(const std::vector<int>& vect1,
-                               const std::vector<int>& vect2)
-    {
-        const size_t size1 {vect1.size()}, size2 {vect2.size()};
-        size_t maxLen {0};
+    size_t findLongestSubArray(const std::vector<int> &vect1,
+                               const std::vector<int> &vect2) {
+        const size_t size1{vect1.size()}, size2{vect2.size()};
+        size_t maxLen{0};
         for (size_t i = 0; i < size1 && (size1 - i) > maxLen; ++i) {
             for (size_t j = 0; j < size2; ++j) {
-                size_t n {i}, m {j};
+                size_t n{i}, m{j};
                 while (size1 > n && size2 > m && vect1[n++] == vect2[m++]) {
                     maxLen = std::max(maxLen, n - i);
                 }
@@ -1285,21 +1266,20 @@ namespace Numeric
     }
 
     void FindLongestSubArray() {
-        const std::vector<int> a = {1, 3, 4, 2 }, b { 1, 2, 3, 4};
+        const std::vector<int> a = {1, 3, 4, 2}, b{1, 2, 3, 4};
 
         std::cout << findLongestSubArray(a, b) << std::endl;
     }
 
     //--------------------------------------------------------------------------------------//
 
-    size_t findLongestSubArrayFromPos(const std::vector<int>& vect1,
+    size_t findLongestSubArrayFromPos(const std::vector<int> &vect1,
                                       const size_t start,
-                                      const std::vector<int>& vect2)
-    {
-        const size_t size1 {vect1.size()}, size2 {vect2.size()};
-        size_t maxLen {0};
+                                      const std::vector<int> &vect2) {
+        const size_t size1{vect1.size()}, size2{vect2.size()};
+        size_t maxLen{0};
         for (size_t j = 0; j < size2; ++j) {
-            size_t n {start}, m {j};
+            size_t n{start}, m{j};
             while (size1 > n && size2 > m && vect1[n++] == vect2[m++]) {
                 maxLen = std::max(maxLen, n - start);
             }
@@ -1307,10 +1287,9 @@ namespace Numeric
         return maxLen;
     }
 
-    size_t splitArray(const std::vector<int>& vect1,
-                      const std::vector<int>& vect2)
-    {
-        size_t count {0}, i {0};
+    size_t splitArray(const std::vector<int> &vect1,
+                      const std::vector<int> &vect2) {
+        size_t count{0}, i{0};
         while (vect1.size() > i) {
             i += findLongestSubArrayFromPos(vect1, i, vect2);
             ++count;
@@ -1320,19 +1299,19 @@ namespace Numeric
 
     // INFO: Assuming that toCut and desired contains the same set of unique numbers
     void SplitArrayToPieces_FindNumber_ByExample() {
-        const std::vector<int> toCut = {1, 3, 4, 2 }, desired { 1, 2, 3, 4};
+        const std::vector<int> toCut = {1, 3, 4, 2}, desired{1, 2, 3, 4};
 
         std::cout << splitArray(toCut, desired) << std::endl;
     }
 
     //--------------------------------------------------------------------------------------//
 
-    size_t _longest_increasing_subsequence_1(const std::vector<int>& Numeric) {
+    size_t _longest_increasing_subsequence_1(const std::vector<int> &Numeric) {
         // create an empty ordered set S. ith element in S is defined as the
         // smallest integer that ends an increasing sequence of length i
         std::set<int> tmp;
 
-        for (int val : Numeric) {
+        for (int val: Numeric) {
             auto [iter, ok] = tmp.insert(val);
             // 1. If element IS NOT inserted at the END, then delete next greater element from set
             // 2. Ignore the current element if already present in the set
@@ -1355,8 +1334,7 @@ namespace Numeric
     - we won't accidentally skip over potential subsequences
     **/
 
-    size_t _longest_increasing_subsequence_2(const std::vector<int>& numbers)
-    {
+    size_t _longest_increasing_subsequence_2(const std::vector<int> &numbers) {
         std::vector<int> path;
         for (int64_t i = 0; i < std::ssize(numbers); ++i) {
             // Current element is higher than the tail of the path.
@@ -1366,7 +1344,7 @@ namespace Numeric
             }
 
             // Find the element to overwrite
-            auto it = std::upper_bound(path.begin(), path.end(),numbers[i],[](int l, int r) {
+            auto it = std::upper_bound(path.begin(), path.end(), numbers[i], [](int l, int r) {
                 return l <= r;
             });
 
@@ -1376,19 +1354,17 @@ namespace Numeric
         return path.size();
     }
 
-    void Find_Longest_Increasing_Subsequence()
-    {
-        std::vector<std::pair<std::vector<int>, size_t>> testData {
-                {{ 1, 2, 3 }, 3},
-                {{ 3, 2, 1 }, 1},
-                {{ 2, 8, 4, 1, 9, 3, 5}, 3},
-                {{2, 1, 4, 3, 6, 5, 8, 7, 9}, 5},
-                {{1, 1, 1, 1}, 1},
+    void Find_Longest_Increasing_Subsequence() {
+        std::vector<std::pair<std::vector<int>, size_t>> testData{
+                {{1,  2,  3},                         3},
+                {{3,  2,  1},                         1},
+                {{2,  8,  4, 1,  9,  3,  5},          3},
+                {{2,  1,  4, 3,  6,  5,  8,  7,  9},  5},
+                {{1,  1,  1, 1},                      1},
                 {{10, 22, 9, 33, 21, 50, 41, 60, 80}, 6},
-                {{1, 2, 2, 3, 4, 4}, 4}
+                {{1,  2,  2, 3,  4,  4},              4}
         };
-        for (const auto& [data, expectedResult]: testData)
-        {
+        for (const auto &[data, expectedResult]: testData) {
             std::cout << _longest_increasing_subsequence_1(data) << " | "
                       << _longest_increasing_subsequence_2(data) << " | "
                       << expectedResult << std::endl;
@@ -1397,16 +1373,16 @@ namespace Numeric
 
     //--------------------------------------------------------------------------------------//
 
-    void find_longest_increasing_subsequence_1(const std::vector<int>& Numeric) {
+    void find_longest_increasing_subsequence_1(const std::vector<int> &Numeric) {
         assert(false == Numeric.empty());
         for (size_t i = 1; i < Numeric.size(); i++) {
             if (Numeric[i - 1] > Numeric[i])
-                std::cout << Numeric[i -1] << std::endl;
+                std::cout << Numeric[i - 1] << std::endl;
         }
     }
 
     void Find_Longest_Increasing_Subsequence_1() {
-        const std::vector<int> Numeric = { 1,2,33,3,4,5,6,66, 7,8,9 };
+        const std::vector<int> Numeric = {1, 2, 33, 3, 4, 5, 6, 66, 7, 8, 9};
         find_longest_increasing_subsequence_1(Numeric);
     }
 
@@ -1414,9 +1390,8 @@ namespace Numeric
 
     // Second-largest element
     // Just using classing min_heap approach
-    void _next_larger_element(const std::vector<int>& numbers)
-    {
-        std::array<int, 2> minHeap {numbers[0], numbers[1]};
+    void _next_larger_element(const std::vector<int> &numbers) {
+        std::array<int, 2> minHeap{numbers[0], numbers[1]};
         for (size_t idx = minHeap.size(); idx < numbers.size(); ++idx) {
             minHeap.front() = minHeap.front() > numbers[idx] ? minHeap.front() : numbers[idx];
             std::make_heap(minHeap.begin(), minHeap.end(), [](int x, int y) { return y < x; });
@@ -1425,9 +1400,8 @@ namespace Numeric
         std::cout << minHeap.front() << std::endl;
     }
 
-    void _next_larger_element2(const std::vector<int>& numbers)
-    {
-        std::array<int, 2> mins {numbers[0], numbers[1]};
+    void _next_larger_element2(const std::vector<int> &numbers) {
+        std::array<int, 2> mins{numbers[0], numbers[1]};
         if (mins[0] > mins[1]) std::swap(mins[0], mins[1]);
 
         for (size_t idx = 2; idx < numbers.size(); ++idx) {
@@ -1439,7 +1413,7 @@ namespace Numeric
     }
 
     void NextLargerElement() {
-        const std::vector<int> Numeric = { 1, 3, 2, 4, 6, 9, 5,11 };
+        const std::vector<int> Numeric = {1, 3, 2, 4, 6, 9, 5, 11};
         _next_larger_element(Numeric);
         _next_larger_element2(Numeric);
     }
@@ -1467,13 +1441,13 @@ namespace Numeric
     }
 
     void Find_All_Distinct_Combinations_LengthK() {
-        const std::vector<int> Numeric = {1,2,3 };
+        const std::vector<int> Numeric = {1, 2, 3};
         recur(Numeric, "", 0, 2);
     }
 
     //--------------------------------------------------------------------------------------//
 
-    bool _is_array_consecutive(const std::vector<int>& array) { // Array shall not contain duplicaties
+    bool _is_array_consecutive(const std::vector<int> &array) { // Array shall not contain duplicaties
         int result = 0, min = array[0];
         // Following loop is to:
         // 1. Determine min value
@@ -1490,7 +1464,7 @@ namespace Numeric
         return 0 == (result + min * array.size());
     }
 
-    bool _is_array_consecutive_2(const std::vector<int>& Numeric) {
+    bool _is_array_consecutive_2(const std::vector<int> &Numeric) {
         std::unordered_set<int> tmp(Numeric.begin(), Numeric.end());
         const auto minmax = std::minmax_element(Numeric.begin(), Numeric.end());
         for (int i = *minmax.first; i < *minmax.second; ++i) {
@@ -1500,7 +1474,7 @@ namespace Numeric
         return true;
     }
 
-    bool _is_array_consecutive_3(const std::vector<int>& Numeric) {
+    bool _is_array_consecutive_3(const std::vector<int> &Numeric) {
         std::set<int> tmp(Numeric.begin(), Numeric.end());
         for (int first = *tmp.begin(), last = *std::prev(tmp.end()); first < last; ++first) {
             if (tmp.end() == tmp.find(first))
@@ -1509,13 +1483,14 @@ namespace Numeric
         return true;
     }
 
-    void Is_Array_Elements_Consecutive()
-    {
-        std::vector<std::vector<int>> testData {
-            { 1,2, 3 }, { -1, -2, -3, -4, -4, -6 },{ 1,2, 4 }, { 5,4,1,3,2}
+    void Is_Array_Elements_Consecutive() {
+        std::vector<std::vector<int>> testData{
+                {1,  2,  3},
+                {-1, -2, -3, -4, -4, -6},
+                {1,  2,  4},
+                {5,  4,  1,  3,  2}
         };
-        for (const std::vector<int>& data: testData)
-        {
+        for (const std::vector<int> &data: testData) {
             std::cout << "\nIs Consecutive 1: " << std::boolalpha << _is_array_consecutive(data) << std::endl;
             std::cout << "Is Consecutive 2: " << std::boolalpha << _is_array_consecutive_2(data) << std::endl;
             std::cout << "Is Consecutive 3: " << std::boolalpha << _is_array_consecutive_3(data) << std::endl;
@@ -1530,7 +1505,7 @@ namespace Numeric
         // start_number - first number of the sequance
         // ( len  + (len + 1) ) / 2 + (start_number * len)
 
-        std::cout << "Sum of 0 - 10: " << (10 * (10 + 1)) / 2  + (0 * 10)<< std::endl;
+        std::cout << "Sum of 0 - 10: " << (10 * (10 + 1)) / 2 + (0 * 10) << std::endl;
         std::cout << "Sum of 5 - 15: " << (10 * (10 + 1)) / 2 + (5 * 10) << std::endl;
         std::cout << "Sum of 15 - 20: " << (5 * (5 + 1)) / 2 + (15 * 5) << std::endl;
     }
@@ -1540,26 +1515,25 @@ namespace Numeric
     void __MiniMaxSum(std::vector<long> v) {
         long long int sum = 0;
         const auto x = std::minmax_element(v.begin(), v.end());
-        for (long long i : v)
+        for (long long i: v)
             sum += i;
         std::cout << sum - *x.second << " " << sum - *x.first << std::endl;
     }
 
     void MiniMaxSum_Of4() {
-        __MiniMaxSum({ 1,2,3,4,5 });
+        __MiniMaxSum({1, 2, 3, 4, 5});
     }
 
     //--------------------------------------------------------------------------------------//
 
-    void Find_Sum_All_Numeric()
-    {
+    void Find_Sum_All_Numeric() {
         const auto test = [](int max) {
             std::vector<int> values;
             values.resize(max);
             std::iota(values.begin(), values.end(), 1);
 
             const int sum_expected = std::accumulate(values.begin(), values.end(), 0);
-            const int sum_actual = (max* (max + 1)) / 2;
+            const int sum_actual = (max * (max + 1)) / 2;
 
             if (sum_expected == sum_actual)
                 std::cout << "Test for values [1 - " << max << "]. Passed" << std::endl;
@@ -1568,21 +1542,19 @@ namespace Numeric
         std::vector<int> params;
         FillVecor(params, 20, 20, 1000);
 
-        for (auto i : params) {
+        for (auto i: params) {
             test(i);
         }
     }
 
     //--------------------------------------------------------------------------------------//
 
-    int find_the_duplicate_value(const std::vector<int>& values)
-    {
+    int find_the_duplicate_value(const std::vector<int> &values) {
         const int sum = std::accumulate(values.cbegin(), values.cend(), 0);
         return sum - static_cast<int>((values.size() * (values.size() - 1)) / 2);
     }
 
-    int find_the_duplicate_value_slow(const std::vector<int>& values)
-    {
+    int find_the_duplicate_value_slow(const std::vector<int> &values) {
         int tortoise = values[0], hare = values[0];
 
         // Advance until the tortoise meets the hare.
@@ -1604,12 +1576,13 @@ namespace Numeric
     /// Given an array of length N + 1 that contains the integers 1..n with one duplicate, return the duplicate.
     /// All values a unique with exception of the one duplicate
     /// Solution should have O(n) time complexity and O(1) space complexity.
-    void FindTheDuplicateValue()
-    {
-        for (const auto& [values, expected]: std::vector<  std::pair<std::vector<int>, int>>{
-            {{1,1,2}, 1}, {{3,1,1,2}, 1}, {{7,1,6,9,3,4,9,5,2,8}, 9}, {{5,1,2,3,4,5}, 5}
-        })
-        {
+    void FindTheDuplicateValue() {
+        for (const auto &[values, expected]: std::vector<std::pair<std::vector<int>, int>>{
+                {{1, 1, 2},                      1},
+                {{3, 1, 1, 2},                   1},
+                {{7, 1, 6, 9, 3, 4, 9, 5, 2, 8}, 9},
+                {{5, 1, 2, 3, 4, 5},             5}
+        }) {
             std::cout << find_the_duplicate_value(values) << " | "
                       << find_the_duplicate_value_slow(values) << " | " << expected << std::endl;
         }
@@ -1617,8 +1590,7 @@ namespace Numeric
 
     //--------------------------------------------------------------------------------------//
 
-    int search(const std::vector<int> data)
-    {
+    int search(const std::vector<int> data) {
         int left = 0, right = data.size() - 1;
         int mid;
         while ((right - left) > 1) {
@@ -1628,30 +1600,30 @@ namespace Numeric
             else if ((data[right] - right) != (data[mid] - mid))
                 left = mid;
         }
-        return (left + data[0]  + 1);
+        return (left + data[0] + 1);
     }
 
     void FindTheMissingNumber_SortedArray() {
         {
-            std::vector<int> data = { 1, 2, 3, 4, 5, 6, 8 };
+            std::vector<int> data = {1, 2, 3, 4, 5, 6, 8};
             std::cout << "Missing number:" << search(data) << std::endl;
         }
         {
-            std::vector<int> data = { 3,4,5,6,7,8,9,10,12,13 };
+            std::vector<int> data = {3, 4, 5, 6, 7, 8, 9, 10, 12, 13};
             std::cout << "Missing number:" << search(data) << std::endl;
         }
     }
 
     //--------------------------------------------------------------------------------------//
 
-    int __search1(const int* data, int size) {
+    int __search1(const int *data, int size) {
         int sum_expected = ((size + 1) * (size + 2)) / 2, sum = 0;
         for (size_t index = 0; index < size; index++)
             sum += data[index];
         return sum_expected - sum;
     }
 
-    int __search2(const int* data, size_t size) {
+    int __search2(const int *data, size_t size) {
         int result = 1;
         for (size_t index = 2; index <= (size + 1); index++) {
             //std::cout << "index = " << index << ". data[index -2 ] = " << data[index - 2] << std::endl;
@@ -1663,7 +1635,7 @@ namespace Numeric
 
     void FindTheMissingNumber_Unsorted() {
         // int ar[] = { 6,2,13,14,15,1,8,9,11,12,3,4,5,10 };
-        int ar[] = { 1,2,3,5 };
+        int ar[] = {1, 2, 3, 5};
         int size = sizeof(ar) / sizeof(ar[0]);
         std::cout << "Missing number (test 1): " << __search1(ar, size) << std::endl;
         std::cout << "Missing number (test 2): " << __search2(ar, size) << std::endl;
@@ -1681,17 +1653,17 @@ namespace Numeric
             sum += (index - Numeric[index - 2]);
             min = std::min(min, Numeric[index - 2]);
         }
-        return (sum + (min - 1)* (Numeric.size() + 1));
+        return (sum + (min - 1) * (Numeric.size() + 1));
     }
 
     int _find_missing_element_2(const std::vector<int> Numeric) {
         int sum = 0, min = std::numeric_limits<int>::max();
-        for (int v : Numeric) {
+        for (int v: Numeric) {
             sum += v;
             min = std::min(min, v);
         }
 
-        int diff = ((Numeric.size() +1)  * (Numeric.size() + 2)) / 2 - sum;
+        int diff = ((Numeric.size() + 1) * (Numeric.size() + 2)) / 2 - sum;
         return (diff + (min - 1) * (Numeric.size() + 1));
     }
 
@@ -1706,13 +1678,13 @@ namespace Numeric
 
     void FindTheMissingNumber_Unsorted_AnyRange() {
         {
-            std::vector<int> Numeric = { 1,2,3,5 };
+            std::vector<int> Numeric = {1, 2, 3, 5};
             std::cout << _find_missing_element(Numeric) << std::endl;
             std::cout << _find_missing_element_2(Numeric) << std::endl;
             std::cout << _find_missing_element_3(Numeric) << std::endl;
         }
         {
-            std::vector<int> Numeric = { 4,5,6,7,8,9,11,12};
+            std::vector<int> Numeric = {4, 5, 6, 7, 8, 9, 11, 12};
             std::cout << _find_missing_element(Numeric) << std::endl;
             std::cout << _find_missing_element_2(Numeric) << std::endl;
             std::cout << _find_missing_element_3(Numeric) << std::endl;
@@ -1721,7 +1693,7 @@ namespace Numeric
 
     //--------------------------------------------------------------------------------------//
 
-    int __Find_K_MissingNumber(const int* data, size_t length, size_t K) {
+    int __Find_K_MissingNumber(const int *data, size_t length, size_t K) {
         auto minmax = std::minmax_element(data, data + length);
         int diff = *minmax.second - *minmax.first, min = *minmax.first;
         std::vector<int> tmp(diff + 1);
@@ -1736,7 +1708,7 @@ namespace Numeric
         return 0;
     }
 
-    void __Find_K_MissingNumber_2(const int* data, size_t length, size_t K) {
+    void __Find_K_MissingNumber_2(const int *data, size_t length, size_t K) {
         auto [min, max] = std::minmax_element(data, data + length);
         std::unordered_set<int> set(data, data + length);
         for (auto i = *min; i < *max; ++i) {
@@ -1749,14 +1721,14 @@ namespace Numeric
     }
 
     void Find_K_MissingNumber() {
-        const int data[] = { 2, 4, 10, 7 };
+        const int data[] = {2, 4, 10, 7};
         __Find_K_MissingNumber(data, std::size(data), 5);
         __Find_K_MissingNumber_2(data, std::size(data), 5);
     }
 
     //--------------------------------------------------------------------------------------//
 
-    int __Find_K_MissingNumber_Sorted(const int* data, size_t length, size_t K) {
+    int __Find_K_MissingNumber_Sorted(const int *data, size_t length, size_t K) {
         int expected = data[0], count = 0;
         for (size_t index = 0; index < length; index++) {
             if (expected++ != data[index]) {
@@ -1768,7 +1740,7 @@ namespace Numeric
         return 0;
     }
 
-    int __Find_K_MissingNumber_Sorted2(const int* data, size_t length, size_t K) {
+    int __Find_K_MissingNumber_Sorted2(const int *data, size_t length, size_t K) {
         int expected = data[0];
         size_t index = 0;
         while (index < length) {
@@ -1784,7 +1756,7 @@ namespace Numeric
     }
 
     void Find_K_MissingNumber_Sorted() {
-        const int data[] = { 1,2,4,5,6,8,10, 13,20 };
+        const int data[] = {1, 2, 4, 5, 6, 8, 10, 13, 20};
         std::cout << "Missing element = " << __Find_K_MissingNumber_Sorted(data, std::size(data), 5) << std::endl;
         std::cout << "Missing element = " << __Find_K_MissingNumber_Sorted2(data, std::size(data), 5) << std::endl;
 
@@ -1796,10 +1768,11 @@ namespace Numeric
 
     void Find_Multiplier_Pair() {
         constexpr int X = 20;
-        const std::vector<int> Numeric = { 1,23,43,52,67,8,2, 99,34,41,76,3,56,34,57,23,4656,2342,11, 456,4, 2,76,9,5 };
+        const std::vector<int> Numeric = {1, 23, 43, 52, 67, 8, 2, 99, 34, 41, 76, 3, 56, 34, 57, 23, 4656, 2342, 11, 456, 4, 2,
+                                          76, 9, 5};
         std::unordered_set<int> tmp;
         auto iter = tmp.begin();
-        for (const auto value : Numeric) {
+        for (const auto value: Numeric) {
             if (0 == X % value) {
                 iter = tmp.find(X / value);
                 if (tmp.end() != iter) {
@@ -1813,15 +1786,15 @@ namespace Numeric
 
     void Find_Multiplier_Pair2() {
         constexpr int X = 2000;
-        const std::vector<int> Numeric = { 1,23,43,5,67,8,2, 200, 99,34,41,76,3,56,34,57,23,4656,2342,11, 456,423, 2,76,9,4, 10 };
+        const std::vector<int> Numeric = {1, 23, 43, 5, 67, 8, 2, 200, 99, 34, 41, 76, 3, 56, 34, 57, 23, 4656, 2342, 11, 456,
+                                          423, 2, 76, 9, 4, 10};
         int tmp[X] = {0};
-        for (const auto value : Numeric) {
+        for (const auto value: Numeric) {
             if (0 == X % value) {
                 if (1 == tmp[X / value]) {
                     std::cout << "{" << X / value << ", " << value << "}" << std::endl;
                     return;
-                }
-                else
+                } else
                     tmp[value] = 1;
             }
         }
@@ -1829,13 +1802,12 @@ namespace Numeric
 
     //--------------------------------------------------------------------------------------//
 
-    int Find_DifferentPairs_SumK(const std::vector<int>& data, int K)
-    {
+    int Find_DifferentPairs_SumK(const std::vector<int> &data, int K) {
         std::unordered_map<int, int> tmp;// = { 0,0 };
-        for (int i : data)
+        for (int i: data)
             tmp[i]++;
         int count = 0;
-        for (int key : data) {
+        for (int key: data) {
             if (auto iter = tmp.find(K - key); tmp.end() != iter) {
                 count += (key == (K - key)) ? iter->second - 1 : iter->second;
                 std::cout << key << "  " << count << std::endl;
@@ -1844,10 +1816,9 @@ namespace Numeric
         return count / 2;
     }
 
-    void Find_DifferentPairs_SumK_2(const std::vector<int>& data, int K)
-    {
+    void Find_DifferentPairs_SumK_2(const std::vector<int> &data, int K) {
         std::unordered_map<int, int> tmp;
-        for (int key : data) {
+        for (int key: data) {
             if (auto iter = tmp.find(K - key); tmp.end() != iter) {
                 iter->second = key;
             } else {
@@ -1856,17 +1827,15 @@ namespace Numeric
             }
         }
 
-        for (const auto& [k, v] : tmp)
+        for (const auto &[k, v]: tmp)
             std::cout << k << " = " << v << std::endl;
     }
 
-    void Find_DifferentPairs_SumK()
-    {
+    void Find_DifferentPairs_SumK() {
         using TestData = std::pair<std::vector<int>, int>;
-        for (const TestData& data: std::vector<TestData> {
-                {{1,2,3,4}, 5}
-        })
-        {
+        for (const TestData &data: std::vector<TestData>{
+                {{1, 2, 3, 4}, 5}
+        }) {
             // Find_DifferentPairs_SumK(Numeric, K);
             Find_DifferentPairs_SumK_2(data.first, data.second);
         }
@@ -1875,7 +1844,7 @@ namespace Numeric
     //--------------------------------------------------------------------------------------//
 
     void Find_Pair_SumX_Sorted() {
-        const std::vector<int> Numeric = { 2,4,5,6,7,8,9,11 };
+        const std::vector<int> Numeric = {2, 4, 5, 6, 7, 8, 9, 11};
         size_t start = 0, end = Numeric.size() - 1;
         int X = 12;
 
@@ -1885,8 +1854,7 @@ namespace Numeric
             if (X == result) {
                 std::cout << "OK: " << Numeric[start] << " " << Numeric[end] << std::endl;
                 return;
-            }
-            else if (result > X)
+            } else if (result > X)
                 end--;
             else
                 start++;
@@ -1898,7 +1866,7 @@ namespace Numeric
     //--------------------------------------------------------------------------------------//
 
     void Find_3_Elements_SumX_Sorted() {
-        const std::vector<int> Numeric = { 1, 4, 45, 6, 10, 8 };
+        const std::vector<int> Numeric = {1, 4, 45, 6, 10, 8};
         int sum = 22;
 
         std::unordered_set<int> set;
@@ -1920,12 +1888,11 @@ namespace Numeric
 
     //--------------------------------------------------------------------------------------//
 
-    void Find_3_Elements_SumX_Unsorted()
-    {
-        const std::vector<int> Numeric = { 1, 4, 45, 6, 10, 8 };
+    void Find_3_Elements_SumX_Unsorted() {
+        const std::vector<int> Numeric = {1, 4, 45, 6, 10, 8};
         int SUM = 20;
 
-        auto have_some = [&Numeric](std::unordered_set<int>& set, const int sum, size_t id_skip) {
+        auto have_some = [&Numeric](std::unordered_set<int> &set, const int sum, size_t id_skip) {
             set.clear();
             for (size_t i = 0; i < Numeric.size(); ++i) {
                 if (id_skip == i)
@@ -1969,7 +1936,7 @@ namespace Numeric
     int __SmallestMissingPositiveNumber2(const std::vector<int> &A) {
         std::unordered_set<int> set;
         int min = std::numeric_limits<int>::max(), max = std::numeric_limits<int>::min();
-        for (int i : A) {
+        for (int i: A) {
             if (i > max)
                 max = i;
             if (min > i)
@@ -1987,10 +1954,10 @@ namespace Numeric
         return max + 1;
     }
 
-    int __SmallestMissingPositiveNumber_FAST(std::vector<int> nums)
-    {
+    int __SmallestMissingPositiveNumber_FAST(std::vector<int> nums) {
         const int size = static_cast<int>(nums.size());
-        std::ios::sync_with_stdio(0); std::cin.tie(0);
+        std::ios::sync_with_stdio(0);
+        std::cin.tie(0);
         for (int i = 0; i < size; ++i)
             while (nums[i] > 0 && nums[i] <= size && nums[i] != nums[nums[i] - 1])
                 std::swap(nums[i], nums[nums[i] - 1]);
@@ -2002,14 +1969,15 @@ namespace Numeric
         return size + 1;
     }
 
-    void Find_Smallest_Missing_Positive_Number()
-    {
-        for (const std::vector<int>& numbers: std::vector<std::vector<int>> {
-                { -1, 0, 1 }, { 1, 3, 6, 4, 1, 2 }, { 3,4,5,6 }, { -999999,4,9999999,6 }
-        })
-        {
+    void Find_Smallest_Missing_Positive_Number() {
+        for (const std::vector<int> &numbers: std::vector<std::vector<int>>{
+                {-1,      0, 1},
+                {1,       3, 6,       4, 1, 2},
+                {3,       4, 5,       6},
+                {-999999, 4, 9999999, 6}
+        }) {
             std::cout << __SmallestMissingPositiveNumber(numbers) << " "
-                      << __SmallestMissingPositiveNumber2(numbers)  << " "
+                      << __SmallestMissingPositiveNumber2(numbers) << " "
                       << __SmallestMissingPositiveNumber_FAST(numbers)
                       << std::endl;
         }
@@ -2018,8 +1986,7 @@ namespace Numeric
     //--------------------------------------------------------------------------------------//
 
     // Note: Sequence should start from 1
-    void _find_repeating_and_missing(const std::vector<int>& values)
-    {
+    void _find_repeating_and_missing(const std::vector<int> &values) {
         std::unordered_set<int> nums;
         int dif = 0, dup_idx = -1;
         for (size_t idx = 0; idx < values.size(); ++idx) {
@@ -2032,10 +1999,10 @@ namespace Numeric
         std::cout << "Reaping symbol: " << dup << ", Missing: " << dup + dif << std::endl;
     }
 
-    void _find_repeating_and_missing_ex(const std::vector<int>& values) {
+    void _find_repeating_and_missing_ex(const std::vector<int> &values) {
         std::unordered_set<int> nums;
         int sum = 0, dup = 0, min = std::numeric_limits<int>::max();
-        for (const int val : values) {
+        for (const int val: values) {
             min = std::min(val, min);
             sum += val;
             if (0 == dup && false == nums.insert(val).second)
@@ -2045,17 +2012,16 @@ namespace Numeric
         auto size = values.size();
         auto sum_expected = (size * (size + 1)) / 2 + size * (min - 1);
 
-        std::cout << "Reaping symbol: " << dup << ", Missing: " << dup + sum_expected  - sum << std::endl;
+        std::cout << "Reaping symbol: " << dup << ", Missing: " << dup + sum_expected - sum << std::endl;
     }
 
-    void Find_Repeating_And_Missing()
-    {
+    void Find_Repeating_And_Missing() {
         {
-            std::vector<int> Numeric = { 8,7,7,4,5,6,2,1 };
+            std::vector<int> Numeric = {8, 7, 7, 4, 5, 6, 2, 1};
             _find_repeating_and_missing(Numeric);
         }
         {
-            std::vector<int> Numeric = { 5,6, 7,6,9};
+            std::vector<int> Numeric = {5, 6, 7, 6, 9};
             _find_repeating_and_missing_ex(Numeric);
         }
     }
@@ -2063,29 +2029,35 @@ namespace Numeric
     //--------------------------------------------------------------------------------------//
 
     struct PairHash {
-        std::size_t operator()(const std::pair<int, int>& p) const noexcept {
+        std::size_t operator()(const std::pair<int, int> &p) const noexcept {
             return std::hash<int>()(p.first) ^ std::hash<int>()(p.second);
         }
     };
 
-    void _find_repeating_and_missing(const std::vector<std::pair<int, int>>& pairs) {
+    void _find_repeating_and_missing(const std::vector<std::pair<int, int>> &pairs) {
         std::unordered_set<std::pair<int, int>, PairHash> duplicates;
 
-        for (const auto& pair : pairs) {
+        for (const auto &pair: pairs) {
             duplicates.insert(pair);
-            if (duplicates.end() != duplicates.find({ pair.second, pair.first}))
-                std::cout << "{" << pair.first << "," << pair.second << "} | " << "{" << pair.second << "," << pair.first << "}" << std::endl;
+            if (duplicates.end() != duplicates.find({pair.second, pair.first}))
+                std::cout << "{" << pair.first << "," << pair.second << "} | " << "{" << pair.second << "," << pair.first << "}"
+                          << std::endl;
         }
     }
 
     void Find_All_Symmetric_Pairs_InArray() {
-        std::vector<std::pair<int, int>> pairs = { {3,4}, {1,2}, {5,2}, {7,10}, {4,3}, {2,5} };
+        std::vector<std::pair<int, int>> pairs = {{3, 4},
+                                                  {1, 2},
+                                                  {5, 2},
+                                                  {7, 10},
+                                                  {4, 3},
+                                                  {2, 5}};
         _find_repeating_and_missing(pairs);
     }
 
     //--------------------------------------------------------------------------------------//
 
-    void __Add_One_To_Integer_Array(int* data, size_t length) {
+    void __Add_One_To_Integer_Array(int *data, size_t length) {
         int pos = static_cast<int>(length);
         while (9 == data[--pos] && pos) {
             data[pos] = 0;
@@ -2103,7 +2075,7 @@ namespace Numeric
 
 
     void __Add_One_To_Integer_Array_2(std::span<int> data) {
-        std::deque<int> result{ data.begin(), data.end()};
+        std::deque<int> result{data.begin(), data.end()};
         int pos = static_cast<int>(result.size());
         while (9 == data[--pos] && pos) {
             result[pos] = 0;
@@ -2118,7 +2090,7 @@ namespace Numeric
     }
 
     void Add_One_To_Integer_ArrayTest() {
-        int data[] = { 1,2,3,4,5,6,7,9,9,4 };
+        int data[] = {1, 2, 3, 4, 5, 6, 7, 9, 9, 4};
 
         // __Add_One_To_Integer_Array(data2, 4);
         __Add_One_To_Integer_Array_2(data);
@@ -2126,8 +2098,7 @@ namespace Numeric
 
     //--------------------------------------------------------------------------------------//
 
-    std::vector<int> product_of_array_except_self(const std::vector<int>& values)
-    {
+    std::vector<int> product_of_array_except_self(const std::vector<int> &values) {
         std::vector<int> result(values.size(), 0);
         int allProd = 1, zeros = 0, zeroIdx = -1;
         for (int idx = 0; idx < std::ssize(values); ++idx) {
@@ -2141,24 +2112,21 @@ namespace Numeric
 
         if (0 == zeros) {
             for (int i = 0; i < std::ssize(values); ++i)
-                result[i] = allProd /  values[i];
-        }
-        else if (1 == zeros)
+                result[i] = allProd / values[i];
+        } else if (1 == zeros)
             result[zeroIdx] = allProd;
 
         return result;
     }
 
-    std::vector<int> product_of_array_except_self_ex(const std::vector<int>& values)
-    {
+    std::vector<int> product_of_array_except_self_ex(const std::vector<int> &values) {
         const int n = std::ssize(values);
         std::vector<int> result(n, 1);
 
         for (int idx = 1; idx != n; ++idx)
             result[idx] = result[idx - 1] * values[idx - 1];
 
-        for (int r = 1, i = n - 1; i >= 0; --i)
-        {
+        for (int r = 1, i = n - 1; i >= 0; --i) {
             result[i] *= r;
             r *= values[i];
         }
@@ -2166,10 +2134,13 @@ namespace Numeric
         return result;
     }
 
-    void Product_Of_All_Numeric_Except_N()
-    {
-        for (const std::vector<int>& values: std::vector<std::vector<int>> {
-            {1,2,3,4}, {1,2,3,4,5}, {-1,1,0,-3,3}, {-1,1,0,-3,3,0}, {0,0,0}
+    void Product_Of_All_Numeric_Except_N() {
+        for (const std::vector<int> &values: std::vector<std::vector<int>>{
+                {1,  2, 3, 4},
+                {1,  2, 3, 4,  5},
+                {-1, 1, 0, -3, 3},
+                {-1, 1, 0, -3, 3, 0},
+                {0,  0, 0}
         }) {
             const std::vector<int> result1 = product_of_array_except_self(values);
             const std::vector<int> result2 = product_of_array_except_self_ex(values);
@@ -2181,30 +2152,32 @@ namespace Numeric
     //--------------------------------------------------------------------------------------//
 
     void Find_Elements_Occured_Once() {
-        int Numeric[] = { 1,1,2,2,3,4,4,5,5,6,6,7,7,8,9,9,9 };
+        int Numeric[] = {1, 1, 2, 2, 3, 4, 4, 5, 5, 6, 6, 7, 7, 8, 9, 9, 9};
 
         std::unordered_set<int> tmp;
-        for (int val : Numeric)
+        for (int val: Numeric)
             if (auto result = tmp.insert(val); false == result.second)
                 tmp.erase(result.first);
 
-        for (int i : tmp)
+        for (int i: tmp)
             std::cout << i << std::endl;
     }
 
 
     void Find_ONE_Element_Occured_Once() {
         {
-            int Numeric[] = { 1,2,3,4,5,6,7,8,9,1,2,3,4,5,6,7,8,9,1,2,3,4,5,6,7,8,9,22,1,2,3,4,5,6,7,8,9 };
+            int Numeric[] = {1, 2, 3, 4, 5, 6, 7, 8, 9, 1, 2, 3, 4, 5, 6, 7, 8, 9, 1, 2, 3, 4, 5, 6, 7, 8, 9, 22, 1, 2, 3, 4, 5,
+                             6, 7, 8, 9};
             int result = 0;
-            for (int val : Numeric)
+            for (int val: Numeric)
                 result ^= val;
             std::cout << result << std::endl;
         }
         {
-            int Numeric[] = { 1,2,3,4,5,6,7,8,9,33,1,2,3,4,5,6,7,8,9,33,1,2,3,4,5,6,7,8,9,33,1,2,3,4,5,6,7,8,9,22,22};
+            int Numeric[] = {1, 2, 3, 4, 5, 6, 7, 8, 9, 33, 1, 2, 3, 4, 5, 6, 7, 8, 9, 33, 1, 2, 3, 4, 5, 6, 7, 8, 9, 33, 1, 2, 3,
+                             4, 5, 6, 7, 8, 9, 22, 22};
             int result = 0;
-            for (int val : Numeric)
+            for (int val: Numeric)
                 result ^= val;
             std::cout << result << std::endl;
         }
@@ -2213,12 +2186,12 @@ namespace Numeric
     //--------------------------------------------------------------------------------------//
 
     template<typename T>
-    std::optional<T> __find_first_element_occurred_odd_times(const std::vector<T>& data) {
+    std::optional<T> __find_first_element_occurred_odd_times(const std::vector<T> &data) {
         std::unordered_map<T, size_t> map;
-        for (T val : data)
+        for (T val: data)
             map[val]++;
 
-        for (T val : data)
+        for (T val: data)
             if (0 != map[val] % 2)
                 return val;
 
@@ -2226,15 +2199,14 @@ namespace Numeric
     }
 
     template<typename T>
-    std::optional<T> __find_first_element_occurred_odd_times_set(const std::vector<T>& data)
-    {
+    std::optional<T> __find_first_element_occurred_odd_times_set(const std::vector<T> &data) {
         std::unordered_set<T> set;
-        for (T val : data) {
+        for (T val: data) {
             if (auto [iter, inserted] = set.insert(val); false == inserted)
                 set.erase(iter);
         }
 
-        for (T val : data) {
+        for (T val: data) {
             if (set.contains(val))
                 return val;
         }
@@ -2243,18 +2215,15 @@ namespace Numeric
     }
 
     template<typename T>
-    std::optional<T> __find_first_element_occurred_odd_times_set_one_iter(const std::vector<T>& data)
-    {
+    std::optional<T> __find_first_element_occurred_odd_times_set_one_iter(const std::vector<T> &data) {
         std::optional<T> result;
         std::unordered_set<T> set;
-        for (int idx = data.size() - 1; idx >= 0; --idx)
-        {
+        for (int idx = data.size() - 1; idx >= 0; --idx) {
             if (auto [iter, inserted] = set.insert(data[idx]); false == inserted) {
                 set.erase(iter);
                 if (result.value() == data[idx])
                     result.reset();
-            }
-            else {
+            } else {
                 result = data[idx];
             }
         }
@@ -2262,44 +2231,39 @@ namespace Numeric
         return result;
     }
 
-    void  Find_First_Element_Occurred_Once()
-    {
-        std::vector<std::pair<std::vector<int>, int>> testData {
-               {{ 1, 2, 3, 2 }, 2},
-               {{ 1, 1, 1, 1 }, -1},
-               {{ 1, 2, 1, 2 }, -1},
-               {{ 1, 2, 3, 4, 5, 1, 2, 3, 4, 5 }, -1},
-               {{ 1, 2, 3, 4, 5, 1, 2, 3, 4, 5, 4, 5}, 4},
-               {{ 1, 2, 3, 5, 4, 1, 2, 3, 4, 5, 4, 5}, 5},
+    void Find_First_Element_Occurred_Once() {
+        std::vector<std::pair<std::vector<int>, int>> testData{
+                {{1, 2, 3, 2},                         2},
+                {{1, 1, 1, 1},                         -1},
+                {{1, 2, 1, 2},                         -1},
+                {{1, 2, 3, 4, 5, 1, 2, 3, 4, 5},       -1},
+                {{1, 2, 3, 4, 5, 1, 2, 3, 4, 5, 4, 5}, 4},
+                {{1, 2, 3, 5, 4, 1, 2, 3, 4, 5, 4, 5}, 5},
         };
-        for (const auto& [values, resultExpected]: testData)
-        {
+        for (const auto &[values, resultExpected]: testData) {
             std::cout << values << ". Expected: " << resultExpected << "\n\t"
-                << ' ' <<   __find_first_element_occurred_odd_times(values).value_or(-1)
-                << ' ' <<   __find_first_element_occurred_odd_times_set(values).value_or(-1)
-                << ' ' <<   __find_first_element_occurred_odd_times_set_one_iter(values).value_or(-1)
-                << std::endl;
+                      << ' ' << __find_first_element_occurred_odd_times(values).value_or(-1)
+                      << ' ' << __find_first_element_occurred_odd_times_set(values).value_or(-1)
+                      << ' ' << __find_first_element_occurred_odd_times_set_one_iter(values).value_or(-1)
+                      << std::endl;
         }
     }
 
     //--------------------------------------------------------------------------------------//
 
     template<typename T>
-    std::optional<T> _find_first_repeating_element(const std::vector<T>& data)
-    {
+    std::optional<T> _find_first_repeating_element(const std::vector<T> &data) {
         int minIdx = -1;
         std::unordered_set<T> set;
-        for (int idx = data.size() - 1; idx >= 0; --idx)
-        {
+        for (int idx = data.size() - 1; idx >= 0; --idx) {
             if (!set.insert(data[idx]).second)
                 minIdx = idx;
         }
         return -1 == minIdx ? std::nullopt : std::make_optional<int>(data[minIdx]);
     }
 
-    void Find_First_Repeating_Element()
-    {
-        std::vector<int> data {10, 5, 3, 4, 3, 5, 6};
+    void Find_First_Repeating_Element() {
+        std::vector<int> data{10, 5, 3, 4, 3, 5, 6};
         // std::vector<int> data {1,2,3};
         std::optional<int> res = _find_first_repeating_element(data);
 
@@ -2309,18 +2273,18 @@ namespace Numeric
 
     //---------------------------------------------------------------------------------------//
 
-    int find_minimum_index_of_repeating_element_GOOD(const std::vector<int>& numbers) {
+    int find_minimum_index_of_repeating_element_GOOD(const std::vector<int> &numbers) {
         std::unordered_map<int, int> dup;
         int pos = numbers.size();
         for (size_t i = 0; i < numbers.size(); i++) {
-            if (auto result = dup.insert({ numbers[i], i }); !result.second)
+            if (auto result = dup.insert({numbers[i], i}); !result.second)
                 pos = std::min(pos, result.first->second);
         }
         return pos == numbers.size() ? -1 : pos;
     }
 
-    long find_minimum_index_of_repeating_element(const std::vector<int>& numbers) {
-        std::unordered_set<int> dup{ numbers.begin(), numbers.end() };
+    long find_minimum_index_of_repeating_element(const std::vector<int> &numbers) {
+        std::unordered_set<int> dup{numbers.begin(), numbers.end()};
         long minIndex = -1;
         for (long i = std::ssize(numbers); i >= 0; i--) {
             if (dup.end() != dup.find(numbers[i]))
@@ -2330,18 +2294,17 @@ namespace Numeric
     }
 
     void Find_Minimum_Index_Of_RepeatingElement() {
-        std::vector<int> numbers = { 5,6,3,4,3,6,4,5 };
+        std::vector<int> numbers = {5, 6, 3, 4, 3, 6, 4, 5};
         std::cout << "Result = " << find_minimum_index_of_repeating_element_GOOD(numbers) << std::endl;
         std::cout << "Result = " << find_minimum_index_of_repeating_element(numbers) << std::endl;
     }
 
     //--------------------------------------------------------------------------------------//
 
-    int binarySearch(const std::vector<int>& numbers,
+    int binarySearch(const std::vector<int> &numbers,
                      const int left,
                      const int right,
-                     const int x)
-    {
+                     const int x) {
         if (right < left)
             return -1;
         const int mid = left + (right - left) / 2;
@@ -2355,7 +2318,7 @@ namespace Numeric
     }
 
     template<typename T>
-    int binary_search(const std::vector<T>& numbers,
+    int binary_search(const std::vector<T> &numbers,
                       const T value) {
         size_t left = 0, right = numbers.size() - 1, idxMid = 0;
         while (right > (left + 1)) {
@@ -2370,9 +2333,8 @@ namespace Numeric
         return -1;
     }
 
-    int countOccurrences(const std::vector<int>& numbers,
-                         const int x)
-    {
+    int countOccurrences(const std::vector<int> &numbers,
+                         const int x) {
         // const int index = binarySearch(numbers, 0, numbers.size() - 1, x);
         const int index = binary_search(numbers, x);
         if (-1 == index)
@@ -2396,7 +2358,7 @@ namespace Numeric
 
     void Count_Number_tOccurrences_SortedArray()
     {
-        const std::vector<int> numbers { 1, 2, 2, 2, 2, 3, 4, 7, 8, 8 };
+        const std::vector<int> numbers{1, 2, 2, 2, 2, 3, 4, 7, 8, 8};
         const int result = countOccurrences(numbers, 2);
 
         std::cout << result << std::endl;
@@ -2404,8 +2366,8 @@ namespace Numeric
 
     //--------------------------------------------------------------------------------------//
 
-    size_t __smallest_subarray_with_sum_greater_X(const std::vector<int>& Numeric, const size_t X) {
-        size_t min_len = Numeric.size(), sum ;
+    size_t __smallest_subarray_with_sum_greater_X(const std::vector<int> &Numeric, const size_t X) {
+        size_t min_len = Numeric.size(), sum;
         for (size_t i = 0; i < Numeric.size(); i++) {
             sum = 0;
             for (size_t n = i; n < Numeric.size() && (n - i + 1) < min_len; n++) {
@@ -2421,7 +2383,7 @@ namespace Numeric
         return min_len;
     }
 
-    size_t __smallest_subarray_with_sum_greater_X_2(const std::vector<int>& Numeric, const size_t X) {
+    size_t __smallest_subarray_with_sum_greater_X_2(const std::vector<int> &Numeric, const size_t X) {
         size_t min_len = Numeric.size(), sum = 0;
 
         // Get first 'mimnimum length' and 'sum' > X
@@ -2448,7 +2410,7 @@ namespace Numeric
         return min_len;
     }
 
-    size_t __smallest_subarray_with_sum_greater_X_3(const std::vector<int>& Numeric, const size_t X) {
+    size_t __smallest_subarray_with_sum_greater_X_3(const std::vector<int> &Numeric, const size_t X) {
         size_t min_len = Numeric.size(), sum = 0;
 
         // Get first 'mimnimum length' and 'sum' > X
@@ -2474,7 +2436,7 @@ namespace Numeric
     }
 
     void SmallestSubarrayWithSumGreaterX() {
-        std::vector<int> Numeric = { 3,4,4,1,9,6,1,3,9,5,1,3,9,10,10, 4,8,3,6,8,4,2,5,8,9 };
+        std::vector<int> Numeric = {3, 4, 4, 1, 9, 6, 1, 3, 9, 5, 1, 3, 9, 10, 10, 4, 8, 3, 6, 8, 4, 2, 5, 8, 9};
         const int X = 10;
 
         size_t len = __smallest_subarray_with_sum_greater_X(Numeric, X);
@@ -2489,14 +2451,14 @@ namespace Numeric
 
     //--------------------------------------------------------------------------------------//
 
-    size_t __largest_subarray_with_sum_greater_X(const std::vector<int>& Numeric,
+    size_t __largest_subarray_with_sum_greater_X(const std::vector<int> &Numeric,
                                                  [[maybe_unused]] const size_t X) {
         size_t min_len = Numeric.size();
         return min_len;
     }
 
     void LargestSubarrayWithSumGreaterX() {
-        std::vector<int> Numeric = { 2, -3, 3, 2, 0, -1 };
+        std::vector<int> Numeric = {2, -3, 3, 2, 0, -1};
         const int X = 10;
 
         size_t len = __largest_subarray_with_sum_greater_X(Numeric, X);
@@ -2508,14 +2470,13 @@ namespace Numeric
     void __count_distinct_pair_diff_K(const std::vector<int> &data, int K) {
         std::unordered_map<int, bool> map;
         auto iter = map.end();
-        for (int i : data) {
+        for (int i: data) {
             if (iter = map.find(i - K); map.end() != iter) {
                 if (false == iter->second) {
                     std::cout << "[" << i - K << ", " << i << "]" << std::endl;
                     iter->second = true;
                 }
-            }
-            else {
+            } else {
                 map.emplace(i, false);
             }
         }
@@ -2524,19 +2485,19 @@ namespace Numeric
     void __count_distinct_pair_diff_K_2(const std::vector<int> &data, int K) {
         std::unordered_set<int> hash;
         std::set<std::pair<int, int>> result;
-        for (int value : data) {
+        for (int value: data) {
             if (hash.end() != hash.find(value - K)) {
                 result.insert({value, value - K});
             } else {
                 hash.insert(value);
             }
         }
-        for (const auto& entry: result)
+        for (const auto &entry: result)
             std::cout << "[" << entry.first << ", " << entry.second << "]" << std::endl;
     }
 
     void CountDistinctPairs_WithDifference_K() {
-        std::vector<int> v = { 8, 12, 16, 4, 0, 20,8,8,8,8,4,4,8,4 };
+        std::vector<int> v = {8, 12, 16, 4, 0, 20, 8, 8, 8, 8, 4, 4, 8, 4};
         __count_distinct_pair_diff_K(v, 4);
         std::cout << "\nTest2\n" << std::endl;
         __count_distinct_pair_diff_K_2(v, 4);
@@ -2547,16 +2508,16 @@ namespace Numeric
     void _GroupElements_ByFirstOccurance_BAD(const std::vector<int> &data) {
         std::unordered_map<int, std::pair<size_t, size_t>> tmp;
         for (size_t pos = 0; pos < data.size(); ++pos) {
-            if (auto iter = tmp.insert({ data[pos], {pos, 1} }); iter.second == false)
+            if (auto iter = tmp.insert({data[pos], {pos, 1}}); iter.second == false)
                 iter.first->second.second++;
         }
 
         std::map<size_t, std::pair<size_t, int>> tmp2;
-        for (const auto& entry: tmp) {
-            tmp2.insert({ entry.second.first, {entry.second.second, entry.first} });
+        for (const auto &entry: tmp) {
+            tmp2.insert({entry.second.first, {entry.second.second, entry.first}});
         }
 
-        for (const auto& entry : tmp2)
+        for (const auto &entry: tmp2)
             for (size_t i = 0; i < entry.second.first; i++)
                 std::cout << entry.second.second << " ";
         std::cout << std::endl;
@@ -2564,9 +2525,9 @@ namespace Numeric
 
     void _rearange_(const std::vector<int> &data) {
         std::unordered_map<int, size_t> freqs;
-        for (auto v : data)
+        for (auto v: data)
             freqs[v]++;
-        for (auto v : data) {
+        for (auto v: data) {
             if (auto iter = freqs.find(v); freqs.end() != iter) {
                 while (iter->second--)
                     std::cout << iter->first << " ";
@@ -2577,15 +2538,15 @@ namespace Numeric
 
     void GroupElements_ByFirstOccurance() {
         {
-            std::vector<int> v = { 1,2,3,1,2,1 };
+            std::vector<int> v = {1, 2, 3, 1, 2, 1};
             _GroupElements_ByFirstOccurance_BAD(v);
         }
         {
-            std::vector<int> v = { 5,4,5,5,3,1,2,2,4};
+            std::vector<int> v = {5, 4, 5, 5, 3, 1, 2, 2, 4};
             _GroupElements_ByFirstOccurance_BAD(v);
         }
         {
-            std::vector<int> v = { 5,4,5,5,3,1,2,2,4 };
+            std::vector<int> v = {5, 4, 5, 5, 3, 1, 2, 2, 4};
             _rearange_(v);
         }
     }
@@ -2593,11 +2554,11 @@ namespace Numeric
     //--------------------------------------------------------------------------------------//
 
     void Greatest_Subarray_AllElements_Greater_K() {
-        std::vector<int> Numeric = { 8, 12, 16, 4, 14, 7,23,8,23,12,23,12,6,2,14,4,83};
+        std::vector<int> Numeric = {8, 12, 16, 4, 14, 7, 23, 8, 23, 12, 23, 12, 6, 2, 14, 4, 83};
 
         int K = 10;
         size_t length = 0, count = 0;
-        for (int v : Numeric) {
+        for (int v: Numeric) {
             if (K > v)
                 count = 0;
             else
@@ -2611,11 +2572,11 @@ namespace Numeric
     //--------------------------------------------------------------------------------------//
 
     void Smallest_Subarray_AllElements_Greater_K() {
-        std::vector<int> Numeric = { 8, 12, 16, 4, 14, 7,23,8,23,12,23,12,6,2,14,4,83 };
+        std::vector<int> Numeric = {8, 12, 16, 4, 14, 7, 23, 8, 23, 12, 23, 12, 6, 2, 14, 4, 83};
 
         int K = 10;
         size_t result = 0;
-        for (int v : Numeric) {
+        for (int v: Numeric) {
             if (v > K) { // check if array element greater then K or not
                 result = 1;
                 break;
@@ -2626,17 +2587,17 @@ namespace Numeric
 
     //--------------------------------------------------------------------------------------//
 
-    bool _is_permutation(std::vector<int>& v1, std::vector<int>& v2) {
+    bool _is_permutation(std::vector<int> &v1, std::vector<int> &v2) {
         if (v1.size() != v2.size())
             return false;
         std::unordered_set<int> set(v1.begin(), v2.end());
-        for (int val : v2)
+        for (int val: v2)
             if (1 != set.erase(val))
                 return false;
         return true;
     }
 
-    bool _is_permutation_good(std::vector<int>& v1, std::vector<int>& v2) {
+    bool _is_permutation_good(std::vector<int> &v1, std::vector<int> &v2) {
         if (v1.size() != v2.size())
             return false;
         std::unordered_map<int, unsigned int> temp;
@@ -2647,7 +2608,7 @@ namespace Numeric
     void IsPermutation() {
         // std::cout << __FUNCTION__ << std::endl;
 
-        std::vector<int> v1 = { 1,2,3,4,5 }, v2 = { 3,4,1,2,5 }, v3 = { 5,5,5,5,5 };
+        std::vector<int> v1 = {1, 2, 3, 4, 5}, v2 = {3, 4, 1, 2, 5}, v3 = {5, 5, 5, 5, 5};
 
         std::cout << std::boolalpha << _is_permutation(v1, v2) << "   " << _is_permutation_good(v1, v2) << std::endl;
         std::cout << std::boolalpha << _is_permutation(v1, v3) << "   " << _is_permutation_good(v1, v3) << std::endl;
@@ -2655,17 +2616,17 @@ namespace Numeric
 
     //----------------------------------------------------------------------------------------//
 
-    bool _are_reversed_equal(std::vector<int>& v1, std::vector<int>& v2) {
+    bool _are_reversed_equal(std::vector<int> &v1, std::vector<int> &v2) {
         if (v1.size() != v2.size())
             return false;
-        size_t start = 0, end = v2.size()- 1;
+        size_t start = 0, end = v2.size() - 1;
 
         /* Get first from START different element: */
-        for (start = 0; start < v2.size() && v1[start] == v2[start]; start++) { }
+        for (start = 0; start < v2.size() && v1[start] == v2[start]; start++) {}
         if ((v1.size() - 1) == start)
             return true;
         /* Get first from END different element: */
-        for (end = v2.size() - 1; end >= start && v1[end] == v2[end]; end--) { }
+        for (end = v2.size() - 1; end >= start && v1[end] == v2[end]; end--) {}
 
         /* Check if */
         for (size_t pos = start, i = 0; pos <= end; pos++, i++) {
@@ -2678,11 +2639,11 @@ namespace Numeric
 
     void ReverseToMakeEqual() {
         {
-            std::vector<int> v1 = { 1, 3, 6,2, 4 }, v2 = { 1, 2, 6, 3, 4 };
+            std::vector<int> v1 = {1, 3, 6, 2, 4}, v2 = {1, 2, 6, 3, 4};
             std::cout << std::boolalpha << _are_reversed_equal(v1, v2) << std::endl;
         }
         {
-            std::vector<int> v1 = { 1, 5, 6, 7, 4 }, v2 = { 1, 7, 6, 5, 4 };
+            std::vector<int> v1 = {1, 5, 6, 7, 4}, v2 = {1, 7, 6, 5, 4};
             std::cout << std::boolalpha << _are_reversed_equal(v1, v2) << std::endl;
         }
     }
@@ -2690,17 +2651,16 @@ namespace Numeric
     //-----------------------------------------------------------------------------//
 
     void Missmatch_Sorted_Vectors() {
-        const std::vector<int> vect1 = { 4,6,8,9 };
-        const std::vector<int> vect2 = { 2,3,4,7,8,123,34 };
+        const std::vector<int> vect1 = {4, 6, 8, 9};
+        const std::vector<int> vect2 = {2, 3, 4, 7, 8, 123, 34};
         std::vector<int> result;
 
         size_t pos = 0;
-        for (int v : vect1) {
+        for (int v: vect1) {
             while (vect2.size() > pos) {
                 if (vect2[pos] == v) {
                     break;
-                }
-                else if (vect2[pos] > v) {
+                } else if (vect2[pos] > v) {
                     result.push_back(v);
                     break;
                 }
@@ -2711,7 +2671,7 @@ namespace Numeric
             }
         }
 
-        for (int v : result)
+        for (int v: result)
             std::cout << v << std::endl;
         std::cout << std::endl;
     }
@@ -2730,12 +2690,12 @@ namespace Numeric
         std::cout << *begin1 << "   " << *begin2 << std::endl;
     }
 
-    template <class InputIterator1, class InputIterator2>
-    void __Missmatch_STD(InputIterator1 first1, InputIterator1 last1, InputIterator2 first2)
-    {
+    template<class InputIterator1, class InputIterator2>
+    void __Missmatch_STD(InputIterator1 first1, InputIterator1 last1, InputIterator2 first2) {
         while ((first1 != last1) && (*first1 == *first2))  // or: pred(*first1,*first2), for version 2
         {
-            ++first1; ++first2;
+            ++first1;
+            ++first2;
         }
         std::cout << *first1 << "   " << *first2 << std::endl;
     }
@@ -2751,16 +2711,16 @@ namespace Numeric
 
     void Missmatch_Tests() {
         {
-            std::vector<int> vect1 = { 1,2,3,6,5 };
-            std::vector<int> vect2 = { 1,2,3,4,5 };
+            std::vector<int> vect1 = {1, 2, 3, 6, 5};
+            std::vector<int> vect2 = {1, 2, 3, 4, 5};
 
             __Missmatch(vect1.begin(), vect1.end(), vect2.begin(), vect2.end());
             __Missmatch_STD(vect1.begin(), vect1.end(), vect2.begin());
         }
 
         {
-            std::vector<int> vect1 = { 1,2,3 };
-            std::vector<int> vect2 = { 1,2,3,110,5 };
+            std::vector<int> vect1 = {1, 2, 3};
+            std::vector<int> vect2 = {1, 2, 3, 110, 5};
 
             __Missmatch2(vect1.begin(), vect1.end(), vect2.begin(), vect2.end());
         }
@@ -2768,8 +2728,7 @@ namespace Numeric
 
     //----------------------------------------------------------------------------------------//
 
-    bool _is_reversed_equals(const std::vector<int>& v1, const std::vector<int>& v2)
-    {
+    bool _is_reversed_equals(const std::vector<int> &v1, const std::vector<int> &v2) {
         if (v1.size() != v2.size())
             return false;
         //std::vector<int>::const_iterator iter2 = v2.end() - 1;  // and --iter2 in FOR loop
@@ -2781,8 +2740,7 @@ namespace Numeric
         return true;
     }
 
-    bool _is_reversed_equals_2(const std::vector<int>& v1, const std::vector<int>& v2)
-    {
+    bool _is_reversed_equals_2(const std::vector<int> &v1, const std::vector<int> &v2) {
         const int size = static_cast<int>(v1.size());
         if (size != static_cast<int>(v2.size()))
             return false;
@@ -2795,23 +2753,22 @@ namespace Numeric
         return true;
     }
 
-    void IsReversedEquals()
-    {
-        for (const VectorPair<int>& data: std::vector<VectorPair<int>> {
-                {{ 1,2,3 },{ 3,2,1 }}, {{ 1,2,3 },{ 3,2,2 }},
-                {{ 1,2,3,4,5,6,7,8,9 },{ 9,8,7,6,4,4,3,2,1}}
-        })
-        {
+    void IsReversedEquals() {
+        for (const VectorPair<int> &data: std::vector<VectorPair<int>>{
+                {{1, 2, 3},                   {3, 2, 1}},
+                {{1, 2, 3},                   {3, 2, 2}},
+                {{1, 2, 3, 4, 5, 6, 7, 8, 9}, {9, 8, 7, 6, 4, 4, 3, 2, 1}}
+        }) {
             std::cout << std::boolalpha
-                << _is_reversed_equals(data.first, data.second) << ' '
-                << _is_reversed_equals_2(data.first, data.second) << ' '
-                << std::equal(data.first.begin(), data.first.end(), data.second.rbegin()) << std::endl;
+                      << _is_reversed_equals(data.first, data.second) << ' '
+                      << _is_reversed_equals_2(data.first, data.second) << ' '
+                      << std::equal(data.first.begin(), data.first.end(), data.second.rbegin()) << std::endl;
         }
     }
 
     //---------------------------------------------------------------------------//
 
-    std::pair<bool, std::pair<size_t, size_t>> _Subarray_With_Given_Sum(const std::vector<int>& data, const int K) {
+    std::pair<bool, std::pair<size_t, size_t>> _Subarray_With_Given_Sum(const std::vector<int> &data, const int K) {
         std::unordered_map<size_t, size_t> map;
         int curr_sum = 0;
 
@@ -2819,35 +2776,34 @@ namespace Numeric
             curr_sum += data[index];
 
             if (curr_sum == K)
-                return { true, { 0, index } };
+                return {true, {0, index}};
             else if (auto iter = map.find(curr_sum - K); iter != map.end()) {
-                return { true, {iter->second + 1, index} };
+                return {true, {iter->second + 1, index}};
             }
 
             map[curr_sum] = index;
         }
-        return { false, {-1, -1} };
+        return {false, {-1, -1}};
     }
 
-    std::pair<bool, std::pair<size_t, size_t>> _Subarray_With_Given_Sum2(const std::vector<int>& data, const int K) {
+    std::pair<bool, std::pair<size_t, size_t>> _Subarray_With_Given_Sum2(const std::vector<int> &data, const int K) {
         std::unordered_multimap<int, size_t> map;
         int curr_sum = 0;
 
         for (size_t index = 0; index < data.size(); index++) {
             curr_sum += data[index];
             if (curr_sum == K)
-                return { true, { 0, index } };
+                return {true, {0, index}};
             else if (auto iter = map.find(curr_sum - K); iter != map.end())
-                return { true, {iter->second + 1, index} };
+                return {true, {iter->second + 1, index}};
 
-            map.insert({ curr_sum , index });
+            map.insert({curr_sum, index});
         }
-        return { false, {-1, -1} };
+        return {false, {-1, -1}};
     }
 
 
-
-    void _Subarray_With_Given_Sum_All(const std::vector<int>& data, const int K) {
+    void _Subarray_With_Given_Sum_All(const std::vector<int> &data, const int K) {
         std::unordered_multimap<int, size_t> map;
         int curr_sum = 0;
 
@@ -2862,17 +2818,16 @@ namespace Numeric
                     iter++;
                 }
             }
-            map.insert({ curr_sum , index });
+            map.insert({curr_sum, index});
         }
     }
 
     //---------------------------------------------------------------------------//
 
-    void Find_SubArrays_WithGivenSum()
-    {
+    void Find_SubArrays_WithGivenSum() {
         {
             // std::pair<std::vector<int>, int> data { std::vector<int>{2,3,4,5,6,7}, 11};
-            const std::pair<std::vector<int>, int> data { std::vector<int> { 1, 4, 20, 3, 10, 5, 11}, 33};
+            const std::pair<std::vector<int>, int> data{std::vector<int>{1, 4, 20, 3, 10, 5, 11}, 33};
 
             auto [success, borders] = _Subarray_With_Given_Sum(data.first, data.second);
             if (success) {
@@ -2900,7 +2855,7 @@ namespace Numeric
 
     //--------------------------------------------------------------------------------------//
 
-    void _find_subArrays_sum_zero_SLOW(const std::vector<int>& Numeric) {
+    void _find_subArrays_sum_zero_SLOW(const std::vector<int> &Numeric) {
         for (size_t i = 0; i < Numeric.size(); i++) {
             for (size_t n = i, sum = 0; n < Numeric.size(); n++) {
                 sum += Numeric[n];
@@ -2911,8 +2866,8 @@ namespace Numeric
         }
     }
 
-    void _find_subArrays_sum_zero(const std::vector<int>& Numeric) {
-        std::unordered_multimap<int, int> map = { { 0, -1 } };
+    void _find_subArrays_sum_zero(const std::vector<int> &Numeric) {
+        std::unordered_multimap<int, int> map = {{0, -1}};
         for (size_t i = 0, sum = 0; i < Numeric.size(); i++) {
             sum += Numeric[i];
 
@@ -2924,13 +2879,13 @@ namespace Numeric
                     iter++;
                 }
             }
-            map.insert({ sum, i });
+            map.insert({sum, i});
         }
     }
 
     void Find_SubArrays_SumZero() {
         // const std::vector<int> Numeric = { 3,4,-7,3,1,3,1,-4,-2,-2};
-        const std::vector<int> Numeric = { 1,3,2,-5, 3 };
+        const std::vector<int> Numeric = {1, 3, 2, -5, 3};
         _find_subArrays_sum_zero(Numeric);
         std::cout << std::endl;
         _find_subArrays_sum_zero_SLOW(Numeric);
@@ -2938,18 +2893,16 @@ namespace Numeric
 
     //----------------------------------------------------------------------------------------------------------
 
-    void findCommon(const std::vector<int>& ar1,
-                        const std::vector<int>& ar2,
-                        const std::vector<int>& ar3)
-    {
-        for (size_t i = 0, j = 0, k = 0; i < ar1.size() && j < ar2.size()  && k < ar3.size(); /** **/)
-        {
+    void findCommon(const std::vector<int> &ar1,
+                    const std::vector<int> &ar2,
+                    const std::vector<int> &ar3) {
+        for (size_t i = 0, j = 0, k = 0; i < ar1.size() && j < ar2.size() && k < ar3.size(); /** **/) {
             if (ar1[i] == ar2[j] && ar2[j] == ar3[k]) { // If x = y and y = z, print any of them and move ahead in all arrays
                 std::cout << ar1[i] << " ";
-                ++i; ++j; ++k;
-            }
-
-            else if (ar1[i] < ar2[j])  // x < y
+                ++i;
+                ++j;
+                ++k;
+            } else if (ar1[i] < ar2[j])  // x < y
                 i++;
             else if (ar2[j] < ar3[k])  // y < z
                 j++;
@@ -2959,11 +2912,10 @@ namespace Numeric
     }
 
     // Find common elements in three sorted arrays
-    void FindCommonElements_3_SortedArrays()
-    {
-        std::vector<int> array1 { 1, 5, 10, 20, 40, 80 },
-                         array2 { 6, 7, 20, 80, 100 },
-                         array3 { 3, 4, 15, 20, 30, 70, 80, 120 };
+    void FindCommonElements_3_SortedArrays() {
+        std::vector<int> array1{1, 5, 10, 20, 40, 80},
+                array2{6, 7, 20, 80, 100},
+                array3{3, 4, 15, 20, 30, 70, 80, 120};
 
         std::cout << "Common Elements are ";
         findCommon(array1, array2, array3);
@@ -2977,7 +2929,7 @@ namespace Numeric
     // These contiguous subarrays must either start from or end on index i.
     // arr = [3, 4, 1, 6, 2] ----> [1, 3, 1, 5, 1]
     void Subarrays_WithCurrentMaxElement() {
-        std::vector<int> Numeric = { 3, 4, 1, 6, 2 };
+        std::vector<int> Numeric = {3, 4, 1, 6, 2};
         for (size_t i = 0; i < Numeric.size(); i++) {
             int count = -1;
             for (int n = i; n >= 0 && Numeric[i] >= Numeric[n]; n--, count++) {}
@@ -2986,54 +2938,105 @@ namespace Numeric
         }
         std::cout << "Done" << std::endl;
     }
+}
 
+namespace Numeric
+{
+    struct Stats final
+    {
+        int count{0};
+        int start{0};
+        int end{0};
 
-    //----------------------------------------------------------------------------//
-
-    struct Info final {
-        unsigned int count {0};
-        unsigned int start {0};
-        unsigned int end {0};
+        explicit Stats(int start = 0) : start{start} {}
     };
 
-
-    unsigned int degreeOfArray(const std::vector<int>& vect)
+    int degreeOfArray(const std::vector<int>& values)
     {
-        unsigned int maxOccurred = 0, minLength = vect.size();
-        std::unordered_map<int, Info> counter {};
-        for (size_t idx = 0; idx < vect.size(); ++idx) {
-            auto& info = counter[vect[idx]];
-            if (0 == info.count++)
-                info.start = idx;
-            else
-                info.end = idx;
-            maxOccurred = std::max(maxOccurred, info.count);
+        int maxOccurred = 0;
+        std::unordered_map<int, Stats> counter{};
+        for (int idx = 0; idx < values.size(); ++idx) {
+            const auto [iter, ok] = counter.emplace(values[idx], idx);
+            ++(iter->second.count);
+            iter->second.end = idx;
+            maxOccurred = std::max(maxOccurred, iter->second.count);
         }
 
-        std::for_each(counter.cbegin(), counter.cend(), [&](const auto& entry) {
-            if (entry.second.count == maxOccurred)
-                minLength = std::min(minLength, entry.second.end - entry.second.start + 1);
-        });
-
+        int minLength = values.size();
+        for (const auto &[key, stats]: counter) {
+            if (stats.count == maxOccurred)
+                minLength = std::min(minLength, stats.end - stats.start + 1);
+        }
 
         return minLength;
     }
 
-    /*
-    The array degree is the maximum number of duplicate elements.
-    For example for [1, 2 , 1, 3] --> 2 ( since 1 is repeated twice)
-    Task: you need to find the minimum length of a subarray with the same degree as the degree of the main array
+    /**  Degree of an Array
+     *
+     * Given a non-empty array of non-negative integers nums, the degree of this array is defined
+     * as the maximum frequency of any one of its elements.
+     * Your task is to find the smallest possible length of a (contiguous) subarray of nums, that has the same degree as nums.
+     *
+     * Explanation:
+     *   The input array has a degree of 2 because both elements 1 and 2 appear twice.
+     *   Of the subarrays that have the same degree:  [1, 2, 2, 3, 1], [1, 2, 2, 3], [2, 2, 3, 1], [1, 2, 2], [2, 2, 3], [2, 2]
+     *   The shortest length is 2. So return 2.
+     *
+     *  Explanation:
+     *    The degree is 3 because the element 2 is repeated 3 times.
+     *    So [2,2,3,1,4,2] is the shortest subarray, therefore returning 6.
     */
+    void Min_Length_SubArray_WithSameDegree()
+    {
+        for (const std::vector<int> &input: std::vector<std::vector<int>>{
+                {1, 2, 2, 3, 1}, // -> 2
+                {2, 2, 3, 1, 4, 2}, // -> 6
+                {2, 1, 1, 2, 1, 3, 3, 3, 1, 3, 1, 3, 2} // -> 7
+        }) {
+            const auto result = degreeOfArray(input);
+            std::cout << "Result = " << result << std::endl;
+        }
+    }
+}
 
-    void Min_Length_SubArray_WithSameDegree() {
-        std::vector<int> vect{1, 2, 1, 2};
+namespace Numeric
+{
+    std::vector<int> _top_K_Frequent(const std::vector<int>& nums, int k)
+    {
+        std::unordered_map<int, int> counter;
+        for (int v: nums)
+            ++counter[v];
 
-        auto d = degreeOfArray(vect);
-        std::cout << d << std::endl;
+        std::map<int, std::vector<int>> freqs;
+        for (const auto [val, N]: counter)
+            freqs[N].emplace_back(val);
+
+        std::vector<int> out;
+        out.reserve(k);
+        for (auto iter = freqs.rbegin(); freqs.rend() != iter; ++iter) {
+            std::sort(iter->second.begin(), iter->second.end());
+            for (auto &&s: iter->second) {
+                out.push_back(s);
+                if (--k == 0)
+                    return out;
+            }
+        }
+        return out;
     }
 
-    //-----------------------------------------------------------------------------------
+    void Find_Top_K_Frequent_Numbers()
+    {
+        for (const std::pair<std::vector<int>, int>& data: std::vector<std::pair<std::vector<int>, int>> {
+                {{1,1,1,2,2,3}, 2} // ==> { 1,2 }
+        })
+        {
+            std::cout << _top_K_Frequent(data.first, data.second) << std::endl;
+        }
+    }
+}
 
+namespace Numeric
+{
     bool canJump(const std::vector<int>& nums) {
         size_t step = 0;
         for (size_t idx = 0; idx < nums.size(); ++idx) {
@@ -3383,7 +3386,7 @@ void Numeric::TestAll()
     // Numeric::CountAndSaySequence_Get_Kth_Token();
     // Numeric::CountOrderedPairs();
     // Numeric::ReverseNumber();
-    Numeric::IsPalindrome();
+    // Numeric::IsPalindrome();
     // Numeric::GetNumberOfDigit();
     // Numeric::RearangeArray();
     // Numeric::FindSmallestWithoutRecursion();
@@ -3465,6 +3468,8 @@ void Numeric::TestAll()
     // Numeric::Find_First_Repeating_Element();
     // Numeric::Find_Minimum_Index_Of_RepeatingElement();
 
+    Numeric::Find_Top_K_Frequent_Numbers();
+
     // Numeric::Count_Number_tOccurrences_SortedArray();
 
     // Numeric::CountDistinctPairs_WithDifference_K();
@@ -3486,7 +3491,8 @@ void Numeric::TestAll()
 
     // Random::BiasedCoin();
 
-    // Numeric::Min_Length_SubArray_WithSameDegree();  // degreeOfArray: With same occurrences of duplicated elements
+    // Numeric::Min_Length_SubArray_WithSameDegree();  // Degree_Of_Array
+                                                    // degreeOfArray: With same occurrences of duplicated elements
 
     // Numeric::CanJump();  // With same occurrences of duplicated elements
 

@@ -194,7 +194,7 @@ int main(int argc, char** argv)
     // Byte::TestAll();
     // Chrono::TestAll();
     // Comparators::TestAll();
-    // Concepts::TestAll();
+    Concepts::TestAll();
     // ConsoleInOut::TestAll();
     // ConstConstexprMutable::TestAll();
     // CopyElision::TestAll();
@@ -225,7 +225,7 @@ int main(int argc, char** argv)
     // Optional::TestAll();
     // PolymorphicMemoryResources::TestAll();
     // Random::TestAll();
-    Ranges::TestAll();
+    // Ranges::TestAll();
     // ReferenceWrapper::TestAll();
     // StarshipOperator::TestAll();
     // Streams::TestAll();

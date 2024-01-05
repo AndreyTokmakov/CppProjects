@@ -795,24 +795,14 @@ namespace StaticCounter
 }
 
 
+
+
 int main([[maybe_unused]] int argc,
          [[maybe_unused]] char** argv)
 {
     const std::vector<std::string_view> args(argv + 1, argv + argc);
     // WrapperTests::Test();
-
-    //StaticCounter::Test();
-
-
-    static constexpr uint16_t seatsCapacityMax { 20 };
-    enum class SeatStatus: bool {
-        Available,
-        Booked
-    };
-
-    std::array<SeatStatus, seatsCapacityMax> seats {};
-    std::cout << sizeof(seats) << std::endl;
-
+    // StaticCounter::Test();
 
     // MoveStringToArray();
     // Experiments::Test({20, 40, 60});
@@ -825,9 +815,8 @@ int main([[maybe_unused]] int argc,
     // ReturnClass_MemberRef_CopyCTor::tests();
 
 
-    
 
-    // Algorithms::TestAll();
+    Algorithms::TestAll();
     // AutoTests::TestAll();
     // Cpp23_Features::TestAll();
     // Concepts::TestAll();
