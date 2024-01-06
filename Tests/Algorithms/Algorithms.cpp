@@ -15,6 +15,7 @@ Description : Algorithms
 #include <vector>
 #include <optional>
 #include <algorithm>
+#include <numeric>
 
 #include <array>
 #include <numeric>
@@ -623,7 +624,6 @@ namespace Algorithms::Numbers {
 
         std::cout << result << std::endl;
     }
-
 }
 
 namespace Algorithms::Numbers
@@ -639,6 +639,57 @@ namespace Algorithms::Numbers
                 {1, 2, 3, 4, 5, 3}
         }) {
             std::cout << std::boolalpha << contains_duplicate(values) << std::endl;
+        }
+    }
+}
+
+namespace Algorithms::Numbers
+{
+    int find_duplicate(const std::vector<int> &values)
+    {
+        std::unordered_set<int> uniques;
+        uniques.reserve(values.size());
+        for (int v: values)
+            if (!uniques.emplace(v).second)
+                return v;
+        return 0;
+    }
+
+    void FindDuplicate()
+    {
+        for (const std::vector<int> &values: std::vector<std::vector<int>>{
+                {1,3,4,2,2}, // 2
+                {3,1,3,4,2}, // 3
+        }) {
+            std::cout << find_duplicate(values) << std::endl;
+        }
+    }
+}
+
+namespace Algorithms::Numbers
+{
+    int missing_number(const std::vector<int>& values)
+    {
+        const int sum = std::accumulate(values.cbegin(), values.cend(), 0);
+        return static_cast<int>((values.size()  * (values.size() + 1)) / 2) - sum;
+    }
+
+    /**
+     * Given an array nums containing n distinct numbers in the range [0, n],
+     * return the only number in the range that is missing from the array.
+     * Example 1:
+     *   nums = [3,0,1] -> 2
+     *   nums = [0,1]   -> 2
+     *   nums = [9,6,4,2,3,5,7,0,1]   -> 8
+    */
+    void MissingNumber()
+    {
+        for (const std::vector<int> &values: std::vector<std::vector<int>>{
+                {3,0,1}, // 2
+                {0,1},   // 2
+                {9,6,4,2,3,5,7,0,1},   // 8
+        }) {
+            std::cout << missing_number(values) << std::endl;
         }
     }
 }
@@ -1077,9 +1128,11 @@ void Algorithms::TestAll()
     // Numbers::printSortedSquaredNumber_InSortedArray();
     // Numbers::LongestIncreasingSubsequence();
     // Numbers::Contains_Duplicate();
+    // Numbers::FindDuplicate();
+    Numbers::MissingNumber();
     // Numbers::Rank();
     // Numbers::Degree_Of_Array();
-    Numbers::topKFrequent();
+    // Numbers::topKFrequent();
 
     // MaxTree::test();
 

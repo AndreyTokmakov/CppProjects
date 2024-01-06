@@ -1587,10 +1587,10 @@ namespace Numeric {
                       << find_the_duplicate_value_slow(values) << " | " << expected << std::endl;
         }
     }
+}
 
-    //--------------------------------------------------------------------------------------//
-
-    int search(const std::vector<int> data) {
+namespace Numeric {
+    int search(const std::vector<int> &data) {
         int left = 0, right = data.size() - 1;
         int mid;
         while ((right - left) > 1) {
@@ -1613,67 +1613,75 @@ namespace Numeric {
             std::cout << "Missing number:" << search(data) << std::endl;
         }
     }
+}
 
-    //--------------------------------------------------------------------------------------//
-
-    int __search1(const int *data, int size) {
-        int sum_expected = ((size + 1) * (size + 2)) / 2, sum = 0;
-        for (size_t index = 0; index < size; index++)
-            sum += data[index];
+namespace Numeric
+{
+    int __search1(const std::vector<int>& values)
+    {
+        int sum_expected = ((values.size() + 1) * (values.size() + 2)) / 2;
+        const int sum = std::accumulate(values.begin(), values.end(), 0);
         return sum_expected - sum;
     }
 
-    int __search2(const int *data, size_t size) {
+    int __search2(const std::vector<int>& values)
+    {
         int result = 1;
-        for (size_t index = 2; index <= (size + 1); index++) {
+        for (size_t index = 2; index <= (values.size() + 1); index++) {
             //std::cout << "index = " << index << ". data[index -2 ] = " << data[index - 2] << std::endl;
             result += index;
-            result -= data[index - 2];
+            result -= values[index - 2];
         }
         return result;
     }
 
-    void FindTheMissingNumber_Unsorted() {
-        // int ar[] = { 6,2,13,14,15,1,8,9,11,12,3,4,5,10 };
-        int ar[] = {1, 2, 3, 5};
-        int size = sizeof(ar) / sizeof(ar[0]);
-        std::cout << "Missing number (test 1): " << __search1(ar, size) << std::endl;
-        std::cout << "Missing number (test 2): " << __search2(ar, size) << std::endl;
+    void FindTheMissingNumber_Unsorted()
+    {
+        for (const std::vector<int> &values: std::vector<std::vector<int>>{
+                {1,2,3,5}, // 4
+                {5,4,3,1},   // 2
+        }) {
+            std::cout << __search1(values) << "  " << __search2(values) << std::endl;
+        }
     }
+}
 
-    //--------------------------------------------------------------------------------------//
-
-    int _find_missing_element(const std::vector<int> Numeric) {
+namespace Numeric
+{
+    int _find_missing_element(const std::vector<int>& values)
+    {
         int sum = 1, min = std::numeric_limits<int>::max();
 
         // Loop to determine min value in the given array and
         // sum will keep value of the missing element in suggestion that
         // array has elements from (1 ... till ... length)
-        for (size_t index = 2; index < (Numeric.size() + 2); index++) {
-            sum += (index - Numeric[index - 2]);
-            min = std::min(min, Numeric[index - 2]);
+        for (size_t index = 2; index < (values.size() + 2); index++) {
+            sum += (index - values[index - 2]);
+            min = std::min(min, values[index - 2]);
         }
-        return (sum + (min - 1) * (Numeric.size() + 1));
+        return (sum + (min - 1) * (values.size() + 1));
     }
 
-    int _find_missing_element_2(const std::vector<int> Numeric) {
+    int _find_missing_element_2(const std::vector<int>& values)
+    {
         int sum = 0, min = std::numeric_limits<int>::max();
-        for (int v: Numeric) {
+        for (int v: values) {
             sum += v;
             min = std::min(min, v);
         }
 
-        int diff = ((Numeric.size() + 1) * (Numeric.size() + 2)) / 2 - sum;
-        return (diff + (min - 1) * (Numeric.size() + 1));
+        const int diff = ((values.size() + 1) * (values.size() + 2)) / 2 - sum;
+        return (diff + (min - 1) * (values.size() + 1));
     }
 
 
-    int _find_missing_element_3(const std::vector<int> Numeric) {
-        auto min = *std::min_element(Numeric.begin(), Numeric.end());
-        auto sum = std::accumulate(Numeric.begin(), Numeric.end(), 0);
+    int _find_missing_element_3(const std::vector<int>& values)
+    {
+        auto min = *std::min_element(values.begin(), values.end());
+        auto sum = std::accumulate(values.begin(), values.end(), 0);
 
-        int diff = ((Numeric.size() + 1) * (Numeric.size() + 2)) / 2 - sum;
-        return (diff + (min - 1) * (Numeric.size() + 1));
+        int diff = ((values.size() + 1) * (values.size() + 2)) / 2 - sum;
+        return (diff + (min - 1) * (values.size() + 1));
     }
 
     void FindTheMissingNumber_Unsorted_AnyRange() {
@@ -1690,10 +1698,40 @@ namespace Numeric {
             std::cout << _find_missing_element_3(Numeric) << std::endl;
         }
     }
+}
 
-    //--------------------------------------------------------------------------------------//
+namespace Numeric
+{
+    int missing_number(const std::vector<int>& values)
+    {
+        const int sum = std::accumulate(values.cbegin(), values.cend(), 0);
+        return static_cast<int>((values.size()  * (values.size() + 1)) / 2) - sum;
+    }
 
-    int __Find_K_MissingNumber(const int *data, size_t length, size_t K) {
+    /**
+     * Given an array nums containing n distinct numbers in the range [0, n],
+     * return the only number in the range that is missing from the array.
+     * Example 1:
+     *   nums = [3,0,1] -> 2
+     *   nums = [0,1]   -> 2
+     *   nums = [9,6,4,2,3,5,7,0,1]   -> 8
+    */
+    void MissingNumber()
+    {
+        for (const std::vector<int> &values: std::vector<std::vector<int>>{
+                {3,0,1}, // 2
+                {0,1},   // 2
+                {9,6,4,2,3,5,7,0,1},   // 8
+        }) {
+            std::cout << missing_number(values) << std::endl;
+        }
+    }
+}
+
+namespace Numeric
+{
+    int __Find_K_MissingNumber(const int *data, size_t length, size_t K)
+    {
         auto minmax = std::minmax_element(data, data + length);
         int diff = *minmax.second - *minmax.first, min = *minmax.first;
         std::vector<int> tmp(diff + 1);
@@ -3450,10 +3488,12 @@ void Numeric::TestAll()
     // Numeric::FindCommonElements_3_SortedArrays();
 
     // Numeric::FindTheMissingNumber_SortedArray();
-    // Numeric::FindTheMissingNumber_Unsorted();
+    Numeric::FindTheMissingNumber_Unsorted();
     // Numeric::FindTheMissingNumber_Unsorted_AnyRange();
+    // Numeric::MissingNumber();
     // Numeric::Find_K_MissingNumber_Sorted();
     // Numeric::Find_K_MissingNumber();
+
     // Numeric::Find_Smallest_Missing_Positive_Number();
     // Numeric::Find_Repeating_And_Missing();
     // Numeric::FindTheDuplicateValue();
@@ -3468,7 +3508,7 @@ void Numeric::TestAll()
     // Numeric::Find_First_Repeating_Element();
     // Numeric::Find_Minimum_Index_Of_RepeatingElement();
 
-    Numeric::Find_Top_K_Frequent_Numbers();
+    // Numeric::Find_Top_K_Frequent_Numbers();
 
     // Numeric::Count_Number_tOccurrences_SortedArray();
 
