@@ -655,13 +655,21 @@ namespace Algorithms::Numbers
         return 0;
     }
 
+
+    int find_duplicate_2(std::vector<int> &values)
+    {
+        while(values[0]!=values[values[0]])
+            std::swap(values[0],values[values[0]]);
+        return values.front();
+    }
+
     void FindDuplicate()
     {
-        for (const std::vector<int> &values: std::vector<std::vector<int>>{
+        for (std::vector<int> &values: std::vector<std::vector<int>>{
                 {1,3,4,2,2}, // 2
                 {3,1,3,4,2}, // 3
         }) {
-            std::cout << find_duplicate(values) << std::endl;
+            std::cout << find_duplicate(values) << "  " << find_duplicate_2(values) << std::endl;
         }
     }
 }
@@ -1128,8 +1136,8 @@ void Algorithms::TestAll()
     // Numbers::printSortedSquaredNumber_InSortedArray();
     // Numbers::LongestIncreasingSubsequence();
     // Numbers::Contains_Duplicate();
-    // Numbers::FindDuplicate();
-    Numbers::MissingNumber();
+    Numbers::FindDuplicate();
+    // Numbers::MissingNumber();
     // Numbers::Rank();
     // Numbers::Degree_Of_Array();
     // Numbers::topKFrequent();
