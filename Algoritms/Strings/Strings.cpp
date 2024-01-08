@@ -1979,7 +1979,7 @@ void Strings::TestAll()
 
 	// Strings::Find_K_MostFrequentCharacter();
 	// Strings::Find_K_MostFrequentCharacter_2();
-    Strings::topKFrequent(); /** Find_K_Most_Frequent_Words **/
+    // Strings::topKFrequent(); /** Find_K_Most_Frequent_Words **/
 
     // Strings::Find_Last_Not_Of();
 

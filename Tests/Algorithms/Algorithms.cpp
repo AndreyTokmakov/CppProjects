@@ -942,6 +942,23 @@ namespace Algorithms::Strings
     }
 }
 
+
+namespace Algorithms::Strings
+{
+    void printAllSubstrings(const std::string& str)
+    {
+        for (size_t size = str.size(), i = 0; i < size; ++i) {
+            for (size_t n = i + 1; n <= size; ++n)
+                std::cout << std::string_view(str.data() + i, n - i) << std::endl;
+        }
+    }
+
+    void PrintAllSubStrings()
+    {
+        printAllSubstrings("102030405");
+    }
+}
+
 namespace Algorithms::Numbers
 {
     int find_max_three_numbers_product(const std::vector<int>& values)
@@ -1203,5 +1220,6 @@ void Algorithms::TestAll()
     // Strings::FindCommon_PrefixAndPostfix();
     // Strings::FindLastNotOf__Benchmark();
     // Strings::topKFrequent();
+    Strings::PrintAllSubStrings();
 };
 

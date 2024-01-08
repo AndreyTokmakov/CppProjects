@@ -32,9 +32,9 @@ int main([[maybe_unused]] int argc,
 	// Queues::TEST_ALL();
 	// Stack::TEST_ALL();
 	// Sorting::TEST_ALL();
-	// Strings::TestAll();
+	Strings::TestAll();
 	// Interviews::TEST_ALL();
-    Numeric::TestAll();
+    // Numeric::TestAll();
     // MultiThreading::TestAll();
 
 	return EXIT_SUCCESS;
