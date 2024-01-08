@@ -942,6 +942,48 @@ namespace Algorithms::Strings
     }
 }
 
+namespace Algorithms::Numbers
+{
+    int find_max_three_numbers_product(const std::vector<int>& values)
+    {
+        int maxProduct = values[0] * values[1] * values[2];
+        const int size = values.size();
+        for (int i = 0; i < size; ++i)
+        {
+            for (int m = 0; m < size; ++m)
+            {
+                for (int n = 0; n < size; ++n)
+                {
+                    if (n == m || i == m || i == n)
+                        continue;
+                    maxProduct = std::max( maxProduct, values[i] * values[m] * values[n]);
+                }
+            }
+        }
+        return maxProduct;
+    }
+
+    int find_max_three_numbers_product_2(std::vector<int>& values)
+    {
+        std::sort(values.begin(), values.end(), std::greater<int>{});
+        return values[0] * values[1] * values[2];
+    }
+
+    void MaximumProduct_of_ThreeNumbers()
+    {
+        for (std::vector<int>& v: std::vector<std::vector<int>> {
+                {1, 2, 3},
+                {1, 2, 3, 4},
+                {-1, -2, -3},
+                {-1, -2, -3, -4, -5, 6},
+        })
+        {
+            std::cout << find_max_three_numbers_product(v) <<  " "
+                      << find_max_three_numbers_product_2(v) << std::endl;
+        }
+    }
+}
+
 namespace Algorithms::Majority
 {
     /** Problem:
@@ -1136,7 +1178,7 @@ void Algorithms::TestAll()
     // Numbers::printSortedSquaredNumber_InSortedArray();
     // Numbers::LongestIncreasingSubsequence();
     // Numbers::Contains_Duplicate();
-    Numbers::FindDuplicate();
+    // Numbers::FindDuplicate();
     // Numbers::MissingNumber();
     // Numbers::Rank();
     // Numbers::Degree_Of_Array();
