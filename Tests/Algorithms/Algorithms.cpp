@@ -955,7 +955,37 @@ namespace Algorithms::Strings
 
     void PrintAllSubStrings()
     {
-        printAllSubstrings("102030405");
+        printAllSubstrings("101");
+    }
+}
+
+namespace Algorithms::Strings
+{
+    int count_binary_substrings(const std::string& str)
+    {
+        int result = 0;
+        for (int size = str.size(), i = 0; i < size; ++i) {
+            for (int n = i + 1, counter = 0; n <= size; ++n, counter = 0)
+            {
+                if (2 > n - i)
+                    continue;
+                for (int idx = i; idx <= n - 1; ++idx)
+                    counter += str[idx] == '1' ? 1 : -1;
+                if (0 == counter)
+                    ++result;
+            }
+        }
+        return result;
+    }
+
+    void CountBinarySubstrings()
+    {
+        for (const std::string& str: std::vector<std::string>{
+            "101", "1", "0", "1010", "10101"
+        })
+        {
+            std::cout << str << " -> " << count_binary_substrings(str) << std::endl;
+        }
     }
 }
 
@@ -1220,6 +1250,7 @@ void Algorithms::TestAll()
     // Strings::FindCommon_PrefixAndPostfix();
     // Strings::FindLastNotOf__Benchmark();
     // Strings::topKFrequent();
-    Strings::PrintAllSubStrings();
+    // Strings::PrintAllSubStrings();
+    Strings::CountBinarySubstrings();
 };
 
