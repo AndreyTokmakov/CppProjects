@@ -128,6 +128,44 @@ namespace Expected
     }
 }
 
+namespace Expected
+{
+    std::expected<std::string, std::error_condition> read_input() {
+        std::string s;
+        if (not (std::cin >> s))
+            return std::unexpected{std::make_error_condition(std::io_errc::stream)};
+        return s;
+    }
+
+    std::expected<int, std::error_condition> to_int(const std::string& s) {
+        try {
+            return std::stoi(s);
+        } catch (std::exception& e) {
+            return std::unexpected{std::make_error_condition(std::errc::argument_out_of_domain)};
+        }
+    }
+
+    int add_ten(int v) { return v + 10; }
+
+    std::expected<int, std::error_condition> log_error(const std::error_condition& err) {
+        std::cerr << "Operation failed : " << err.message() << "\n";
+        return std::unexpected{err};
+    }
+
+    void transform__and_then()
+    {
+        std::expected result = read_input()
+                .and_then(to_int)    // invoked if the expected contains a value  the callable has to return a std::expected,
+                                        // but can change the type std::expected<T,Err> -> std::expected<U,Err>
+                .transform(add_ten)  // invoked if the expected contains a value
+                                        // the callable can return any type std::expected<T,Err> -> std::expected<U,Err>
+                .or_else(log_error); // invoked if the expected contains an error the callable has to return a std::expected,
+                                        // but can change the type std::expected<V,T> -> std::expected<V,U>
+
+        std::cout << *result << std::endl;
+    }
+}
+
 void Expected::TestAll()
 {
     // BasicFunctions();
@@ -139,6 +177,8 @@ void Expected::TestAll()
 
     // Emplace();
 
-    Expected::Transform();
+    // Expected::Transform();
+
+    transform__and_then();
 };
 
