@@ -5,41 +5,42 @@ project(VTK_Experiments)
 SET(CMAKE_C_FLAGS_RELEASE "${CMAKE_C_FLAGS_RELEASE} -pthread")
 
 include_directories(/home/andtokm/DiskS/ProjectsUbuntu/third_party/Eigen/Eigen)
+include_directories(/home/andtokm/DiskS/ProjectsUbuntu/third_party/VTK/Common/Color)
+include_directories(/home/andtokm/DiskS/ProjectsUbuntu/third_party/VTK/build/Common/Color)
 
-find_package(VTK COMPONENTS
-        vtkCommonColor
-        vtkCommonCore
-        vtkCommonDataModel
-        vtkFiltersCore
-        vtkIOParallel
-        vtkInteractionStyle
-    #   vtkRenderingContextOpenGL2
-        vtkRenderingCore
-        vtkRenderingFreeType
-    #   vtkRenderingGL2PSOpenGL2
-        vtkRenderingLOD
-        vtkRenderingOpenGL2
-        vtkFiltersSources
-        vtkIOGeometry
-        vtkIOLegacy
-        vtkIOPLY
-        vtkIOXML
-        vtkIOImage
-        vtkImagingSources
-        vtkFiltersExtraction
-        vtkCommonMath
-        vtkFiltersFlowPaths
-        vtkFiltersModeling
-        vtkInteractionWidgets
-        vtkFiltersGeneral
-        vtkFiltersGeometry
-        vtkCommonTransforms
-        vtkRenderingAnnotation
-        vtkImagingCore
-        vtkRenderingVolume
-        vtkRenderingVolumeOpenGL2
-        vtkImagingHybrid
-        QUIET
+find_package(VTK
+        # vtkCommonColor
+        # vtkCommonCore
+        # vtkCommonDataModel
+        # vtkFiltersCore
+        # vtkIOParallel
+        # vtkInteractionStyle
+        # vtkRenderingContextOpenGL2
+        # vtkRenderingCore
+        # vtkRenderingFreeType
+        # vtkRenderingGL2PSOpenGL2
+        # vtkRenderingLOD
+        # vtkRenderingOpenGL2
+        # vtkFiltersSources
+        # vtkIOGeometry
+        # vtkIOLegacy
+        # vtkIOPLY
+        # vtkIOXML
+        # vtkIOImage
+        # vtkImagingSources
+        # vtkFiltersExtraction
+        # vtkCommonMath
+        # vtkFiltersFlowPaths
+        # vtkFiltersModeling
+        # vtkInteractionWidgets
+        # vtkFiltersGeneral
+        # vtkFiltersGeometry
+        # vtkCommonTransforms
+        # vtkRenderingAnnotation
+        # vtkImagingCore
+        # vtkRenderingVolume
+        # vtkRenderingVolumeOpenGL2
+        # vtkImagingHybrid
 )
 
 if (NOT VTK_FOUND)
@@ -65,7 +66,29 @@ find_package(Boost REQUIRED COMPONENTS
 
 add_executable(VTK_Experiments
         main.cpp
-        Utilities/Utilities.cpp Utilities/Utilities.h Types.cpp Types.h Intersection/IntersectionTests.cpp Intersection/IntersectionTests.h VtkMatrices/VtkMatrices.cpp VtkMatrices/VtkMatrices.h VtkHeaders.h Curvatures/Curvatures.cpp Curvatures/Curvatures.h Text/Text.cpp Text/Text.h OBBTreeTests/OBBTreeTests.cpp OBBTreeTests/OBBTreeTests.h BoundsAndBorders/BoundsAndBorders.cpp BoundsAndBorders/BoundsAndBorders.h CovnexHull/CovnexHull.cpp CovnexHull/CovnexHull.h Holes/Holes.cpp Holes/Holes.h Lines/Lines.cpp Lines/Lines.h Edges/Edges.cpp Edges/Edges.h Isosurface/Isosurface.cpp Isosurface/Isosurface.h Cutters/Cutters.cpp Cutters/Cutters.h Splitter/Splitter.cpp Splitter/Splitter.h TestsAndExperiments/TestsAndExperiments.cpp TestsAndExperiments/TestsAndExperiments.h Distances/Distances.cpp Distances/Distances.h GeometricFigures/GeometricFigures.cpp GeometricFigures/GeometricFigures.h Rotation/Rotation.cpp Rotation/Rotation.h Objects_Geometry/PointsAndLines.cpp Objects_Geometry/PointsAndLines.h main.cpp)
+        VtkHeaders.h
+        Utilities/Utilities.cpp Utilities/Utilities.h
+        Types.cpp Types.h
+        Intersection/IntersectionTests.cpp Intersection/IntersectionTests.h
+        VtkMatrices/VtkMatrices.cpp VtkMatrices/VtkMatrices.h
+        Curvatures/Curvatures.cpp Curvatures/Curvatures.h
+        Text/Text.cpp Text/Text.h
+        OBBTreeTests/OBBTreeTests.cpp OBBTreeTests/OBBTreeTests.h
+        BoundsAndBorders/BoundsAndBorders.cpp BoundsAndBorders/BoundsAndBorders.h
+        CovnexHull/CovnexHull.cpp CovnexHull/CovnexHull.h
+        Holes/Holes.cpp Holes/Holes.h
+        Lines/Lines.cpp Lines/Lines.h
+        Edges/Edges.cpp Edges/Edges.h
+        Isosurface/Isosurface.cpp Isosurface/Isosurface.h
+        Cutters/Cutters.cpp Cutters/Cutters.h
+        Splitter/Splitter.cpp Splitter/Splitter.h
+        TestsAndExperiments/TestsAndExperiments.cpp TestsAndExperiments/TestsAndExperiments.h
+        Distances/Distances.cpp Distances/Distances.h
+        GeometricFigures/GeometricFigures.cpp GeometricFigures/GeometricFigures.h
+        Rotation/Rotation.cpp Rotation/Rotation.h
+        Objects_Geometry/PointsAndLines.cpp Objects_Geometry/PointsAndLines.h
+)
 
 target_link_libraries(VTK_Experiments PRIVATE ${VTK_LIBRARIES})
+
 vtk_module_autoinit(TARGETS VTK_Experiments MODULES ${VTK_LIBRARIES})

@@ -1421,14 +1421,41 @@ namespace Concepts::Callables
         call(F);
         call_2(F);
 
-        std::cout << "----------------- Cassic invokation -------------\n";
+        std::cout << "----------------- Classic invocable -------------\n";
 
         std::invoke(F);
         F();
     }
+}
 
-    //-----------------------------------------------------------------------------
+namespace Concepts::Callables
+{
+    template<std::regular_invocable Func>
+    void call_regular(Func func) {
+        func();
+    }
 
+    template<typename Func>
+    void call_regular_2(Func func) requires std::regular_invocable<Func> {
+        func();
+    }
+
+    void Test_Invocable_Regular()
+    {
+        auto F = [] { std::cout << "Ok" << std::endl; };
+
+        call_regular(F);
+        call_regular_2(F);
+
+        std::cout << "----------------- Classic invocable -------------\n";
+
+        std::invoke(F);
+        F();
+    }
+}
+
+namespace Concepts::Callables
+{
     template<std::predicate Func>
     void check_1(Func func) {
         func();
@@ -1439,7 +1466,7 @@ namespace Concepts::Callables
         func();
     }
 
-    void Test_Predicatee() {
+    void Test_Predicate() {
         auto F = []()-> bool {
             std::cout << "Ok" << std::endl;
             return true;
@@ -1468,7 +1495,7 @@ namespace Concepts::Callables
         func(param);
     }
 
-    void Test_Predicatee_WithParams() {
+    void Test_Predicate_WithParams() {
         auto func = [](int x)-> int {
             std::cout << "Ok" << std::endl;
             return true;
@@ -1497,7 +1524,7 @@ namespace Concepts::Callables
         (func(321), ...);
     }
 
-    void Test_Predicatee_WithParams_Variadic()
+    void Test_Predicate_WithParams_Variadic()
     {
         auto func1 = [](int x)-> bool {
             std::cout << "Ok 1: " << x << std::endl;
@@ -1524,7 +1551,7 @@ namespace Concepts::Callables
         std::cout << std::endl;
     }
 
-    void Test_Predicatee_PrintVector() {
+    void Test_Predicate_PrintVector() {
         std::vector<int> numbers(10);
         std::iota(numbers.begin(), numbers.end(), 0);
 
@@ -2517,16 +2544,6 @@ void Concepts::TestAll()
     // Custom_Concepts::CheckCollection_HasPushBack_Method_2(); // not working
     // Custom_Concepts::Check_BaseType_ContainsMethod_ReturnValue();
 
-
-
-    // Derived_From::Test();
-
-    // Concepts_With_Auto::Test();
-    // Concepts_With_Auto::Print_Tests();
-
-    // Concepts_With_Lambdas::Params_Concepts();
-
-
     // Requires::FunctionDefinition_Examples();
     // Requires::SimpleTest();
     // Requires::Test1();
@@ -2542,6 +2559,26 @@ void Concepts::TestAll()
     // Requires_With_Constexpr::Constexpr_Check_Method();
     // RequiresSequence::Test1();
 
+    // Callables::Test_Invocable();
+    Callables::Test_Invocable_Regular();
+    // Callables::Test_Predicate();
+    // Callables::Test_Predicate_WithParams();
+    // Callables::Test_Predicate_WithParams_Variadic();
+    // Callables::Test_Predicate_PrintVector();
+
+
+
+
+    // Derived_From::Test();
+
+    // Concepts_With_Auto::Test();
+    // Concepts_With_Auto::Print_Tests();
+
+    // Concepts_With_Lambdas::Params_Concepts();
+
+
+
+
     // ConceptsAsInterface::passClassObjAsInterface();
 
     // NestedConcepts::CheckMethodReturnType();
@@ -2552,12 +2589,6 @@ void Concepts::TestAll()
 
     // Function_Constrains::Test_Function_Return_Int();
 
-
-    Callables::Test_Invocable();
-    // Callables::Test_Predicatee();
-    // Callables::Test_Predicatee_WithParams();
-    // Callables::Test_Predicatee_WithParams_Variadic();
-    // Callables::Test_Predicatee_PrintVector();
 
     // Conversations::String_Test();
     // Conversations::Convertible_To_Tests();
