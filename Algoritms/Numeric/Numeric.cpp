@@ -105,9 +105,48 @@ namespace Numeric {
     }
 }
 
+namespace Numeric
+{
+    template<typename T>
+    void show_bits(T x)
+    {
+        std::cout << x << "  ===>  ";
+        for (int i = (sizeof(T) * 8) - 1; i >= 0; i--)
+            std::cout << (x & (1u << i) ? '1' : '0');
+        std::cout << std::endl;
+    }
+
+    /**
+    Reverse bits of a given 32 bits unsigned integer.
+    Input: n = 00000010100101000001111010011100
+    Output:    964176192 (00111001011110000010100101000000)
+    Input: n = 11111111111111111111111111111101
+    Output:   3221225471 (10111111111111111111111111111111)
+    **/
+
+    uint32_t reverseBits(uint32_t input)
+    {
+        uint32_t output = 0;
+        for (int i = (sizeof(uint32_t) * 8) - 1, n = 0; i >= 0; --i, ++n)
+        {
+            if ((input & (1u << i))) {
+                output |= (1 << n);
+            }
+        }
+        return output;
+    }
+
+    void ReverseBits()
+    {
+        uint32_t val = reverseBits(5);
+        show_bits(5);
+        show_bits(val);
+    }
+}
 
 
-namespace Numeric {
+namespace Numeric
+{
     bool __isPowerOf2(int num) {
         return num && !(num & (num - 1));
     }
@@ -3440,6 +3479,8 @@ namespace Numeric
 
 void Numeric::TestAll()
 {
+    // Numeric::ReverseBits();
+
     // Numeric::isPowerOf2();
     // Numeric::GreatestCommonDivisor();
     // Numeric::LeastCommonMultiple();

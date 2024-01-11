@@ -511,6 +511,59 @@ namespace Memory::MakeUnique_ForOverwrite
     }
 };
 
+namespace Memory::UniquePtr_BAD
+{
+    template<typename T>
+    struct VectorPtr
+    {
+        using pointer_type = std::unique_ptr<T[]>;
+        using size_type = std::vector<T>::size_type;
+
+        pointer_type data_ = nullptr;
+        size_type length_ = 0;
+
+        explicit VectorPtr(std::vector<T>& vector):
+            data_(std::make_unique<T[]>(vector.size())), length_(vector.size())
+        {
+            std::copy(vector.begin(), vector.end(), data_.get());
+        }
+
+        T& operator[](size_type index)
+        {
+            if (index >= length_)
+                throw std::out_of_range("Out of range");
+            return data_[index];
+        }
+
+        [[nodiscard]]
+        constexpr size_type size() const
+        {
+            return length_;
+        }
+    };
+
+    void Test()
+    {
+        /*
+        using Helpers::Integer;
+
+        using PtrType = int*;
+
+        std::vector<Helpers::Integer> myVec { Helpers::Integer(1), Helpers::Integer(2), Helpers::Integer(3) };
+        // std::vector<PtrType> myVec { new int(1), new int(2), new int(3)};
+
+        VectorPtr<Helpers::Integer> ptr(myVec);
+        */
+
+        std::vector<int> myVec { 1, 2 ,3, 4, 5 };
+        VectorPtr<int> ptr(myVec);
+
+        std::cout << "myVec size: " << myVec.size() << ", ptr size: " << ptr.size()  << std::endl;
+        myVec.push_back(6);
+        std::cout << "myVec size: " << myVec.size() << ", ptr size: " << ptr.size()  << std::endl;
+    }
+}
+
 void Memory::TestAll()
 {
     // CleanUP_Exception_Test();
@@ -536,5 +589,7 @@ void Memory::TestAll()
 
     // SharedPtr_MemoryAllocationTests::TestAllocations();
 
-    MakeUnique_ForOverwrite::AllocateArray_AndInitialize();
+    // MakeUnique_ForOverwrite::AllocateArray_AndInitialize();
+
+    UniquePtr_BAD::Test();
 }
