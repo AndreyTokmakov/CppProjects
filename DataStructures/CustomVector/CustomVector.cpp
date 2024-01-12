@@ -64,7 +64,8 @@ namespace CustomVector {
         // Vector(size_t s): data { allocator.allocate(s) }, capacity { s }  {
         // }
 
-        explicit Vector(const size_t s = initialCapacity) {
+        explicit Vector(const size_t s = initialCapacity)
+        {
             capacity = s > 0 ? s : initialCapacity;
             data = allocator.allocate(capacity);
         }
@@ -79,34 +80,33 @@ namespace CustomVector {
         }
 
         Vector(const Vector<object_type, Allocator>& other):
-                capacity { other.capacity }, size { other.size } {
+                capacity { other.capacity }, size { other.size }
+        {
             std::cout << "Vector(copy constructor)\n";
             data = allocator.allocate(other.capacity);
-            // std::copy_n(other.data, size, data);
+            std::copy_n(other.data, size, data);
         }
 
         Vector(Vector<object_type, Allocator>&& other) noexcept:
                 data { std::exchange(other.data, nullptr)},
                 capacity { std::exchange(other.capacity, 0) },
-                size { std::exchange(other.size, 0) } {
+                size { std::exchange(other.size, 0) }
+        {
             // std::cout << "Vector(move constructor)\n";
         }
 
-        Vector<object_type, Allocator>& operator=(const Vector<object_type, Allocator>& other) {
-            if (&other != this) {
-                Vector localCopy(other);
-                Vector::swap(localCopy, *this);
-            }
+        Vector<object_type, Allocator>& operator=(const Vector<object_type, Allocator>& other)
+        {
+            Vector copy(other);
+            Vector::swap(copy, *this);
             return *this;
         }
 
-        Vector<object_type, Allocator>& operator=(Vector<object_type, Allocator>&& other) noexcept {
-            if (&other != this)
-            {
-                data = std::exchange(other.data, nullptr);
-                capacity = std::exchange(other.capacity, 0);
-                size = std::exchange(other.size, 0);
-            }
+        Vector<object_type, Allocator>& operator=(Vector<object_type, Allocator>&& other) noexcept
+         {
+            data = std::exchange(other.data, nullptr);
+            capacity = std::exchange(other.capacity, 0);
+            size = std::exchange(other.size, 0);
             return *this;
         }
 
@@ -299,17 +299,17 @@ namespace CustomVector::Testing
     void Copy_Constructor()
     {
         Vector<Long> original;
-        for (int i: {1, 2, 3, 4 ,5})
+        for (int i = 0; i < 3; ++i)
             original.emplace_back(i);
 
-        Vector<Long> movedTo = original;
+        Vector<Long> copy = original;
 
         std::cout << "------------------------ original --------------------------- \n";
         for (const auto& v: original)
             std::cout << v << std::endl;
 
         std::cout << "------------------------ movedTo --------------------------- \n";
-        for (const auto& v: movedTo)
+        for (const auto& v: copy)
             std::cout << v << std::endl;
     }
 

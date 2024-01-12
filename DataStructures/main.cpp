@@ -48,14 +48,14 @@ int main([[maybe_unused]] int argc,
          [[maybe_unused]] char** argv)
 {
     /// Unimplemented
-    BinaryTree::TestAll();
+    // BinaryTree::TestAll();
 
 
     // Array::TEST_ALL();
     // BitSet::TEST_ALL();
     // CategoryTree::TEST_ALL();
     // CircularBuffers::TEST_ALL();
-    // CustomVector::TestAll();
+    CustomVector::TestAll();
     // ExecutorAdapter::TestAll();
     // ExecutorAdapter2::TestAll();
     // Function::Test();

@@ -63,21 +63,15 @@ namespace Array {
         }
 
         Array &operator=(const Array &other) {
-            if (&other == this)
-                return *this;
-
-            Array localCopy(other);
+            Array copy(other);
             // swap(localCopy);
-            Array::swap(localCopy, *this);
+            Array::swap(copy, *this);
             return *this;
         }
 
         Array &operator=(Array &&other) noexcept {
-            if (this != &other) {
-                /// delete[] data; ????
-                data = std::exchange(other.data, nullptr);
-                size = std::exchange(other.size, 0);
-            }
+            data = std::exchange(other.data, nullptr);
+            size = std::exchange(other.size, 0);
             return *this;
         }
 
@@ -259,9 +253,9 @@ namespace Array::Tests {
     }
 
 
-    void SelfAssignment() {
+    void SelfAssignment()
+    {
         Array<int> numbers1 {5};
-
         std::iota(numbers1.Data(), numbers1.Data() + numbers1.Size(), 1);
 
         numbers1 = numbers1;
