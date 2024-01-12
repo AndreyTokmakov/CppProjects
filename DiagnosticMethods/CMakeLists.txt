@@ -68,7 +68,7 @@ find_package(Boost REQUIRED COMPONENTS
 add_compile_options(-c -Wall -Wextra -O3 -std=c++2a )
 
 # include all components
-add_executable(DiagnosticMethods MACOSX_BUNDLE 
+add_executable(${PROJECT_NAME} MACOSX_BUNDLE
     main.cpp
     VtkHeaders.h
     Utilities/Utilities.cpp Utilities/Utilities.h
@@ -77,5 +77,5 @@ add_executable(DiagnosticMethods MACOSX_BUNDLE
     TreatmentPlan/TreatmentPlan_UnitTests.cpp
         Model/Tooth.cpp Model/Tooth.h Model/Jaw.cpp Model/Jaw.h Model/ToothAxis.cpp Model/ToothAxis.h Model/Common.h Model/FDI.cpp Model/FDI.h Methods/SpeeСurve.cpp Methods/SpeeСurve.h)
 
-target_link_libraries(DiagnosticMethods PRIVATE ${VTK_LIBRARIES} pthread)
+target_link_libraries(${PROJECT_NAME} PRIVATE ${VTK_LIBRARIES} pthread)
 vtk_module_autoinit(TARGETS DiagnosticMethods MODULES ${VTK_LIBRARIES})

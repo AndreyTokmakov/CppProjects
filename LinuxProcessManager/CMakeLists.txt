@@ -25,11 +25,11 @@ add_compile_options(-c -Wall -Wextra -O3 -std=c++23)
 
 qt5_generate_moc(ProcessManager.cpp ProcessManager.moc)
 
-add_executable(LinuxProcessManager 
+add_executable(${PROJECT_NAME}
         main.cpp
         ProcessManager.cpp ProcessManager.h ProcessManager.moc
 )
 
-TARGET_LINK_LIBRARIES(LinuxProcessManager pthread ${Qt5Widgets_LIBRARIES})
+TARGET_LINK_LIBRARIES(${PROJECT_NAME} pthread ${Qt5Widgets_LIBRARIES})
 
 

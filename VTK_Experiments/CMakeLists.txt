@@ -64,7 +64,7 @@ find_package(Boost REQUIRED COMPONENTS
         program_options
 )
 
-add_executable(VTK_Experiments
+add_executable(${PROJECT_NAME}
         main.cpp
         VtkHeaders.h
         Utilities/Utilities.cpp Utilities/Utilities.h
@@ -89,6 +89,6 @@ add_executable(VTK_Experiments
         Objects_Geometry/PointsAndLines.cpp Objects_Geometry/PointsAndLines.h
 )
 
-target_link_libraries(VTK_Experiments PRIVATE ${VTK_LIBRARIES})
+target_link_libraries(${PROJECT_NAME} PRIVATE ${VTK_LIBRARIES})
 
 vtk_module_autoinit(TARGETS VTK_Experiments MODULES ${VTK_LIBRARIES})

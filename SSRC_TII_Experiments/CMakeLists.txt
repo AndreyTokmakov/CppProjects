@@ -9,16 +9,16 @@ project(${PROJECT_NAME} VERSION ${PROJECT_VERSION} LANGUAGES CXX)
 add_compile_options(-c -Wall -Wextra -O3 -std=c++2a)
 
 # LibSerial headers:
-include_directories(/home/andtokm/DiskS/Unikie/TII/libserial/src)
-include_directories(/home/andtokm/DiskS/Unikie/TII/libserial/src/libserial)
-link_directories(/home/andtokm/DiskS/Unikie/TII/libserial/build/lib)
+include_directories(../../third_party/libserial/src)
+include_directories(../../third_party/libserial/src/libserial)
+link_directories(../../third_party/libserial/build/lib)
 
 # LibPCAP
 # include_directories(/home/andtokm/DiskS/ProjectsUbuntu/third_party/libpcap)
 # link_directories(/home/andtokm/DiskS/ProjectsUbuntu/third_party/libpcap/build)
 
 # include all components
-add_executable(SSRC_TII_Experiments MACOSX_BUNDLE 
+add_executable(${PROJECT_NAME} MACOSX_BUNDLE
     main.cpp
         Networking/Headers/ARPHeader.h
         Networking/Headers/EthernetHeader.h
@@ -38,7 +38,7 @@ add_executable(SSRC_TII_Experiments MACOSX_BUNDLE
         WiFi/WiFiScanner.cpp WiFi/WiFiScanner.h ContikiDCube/ContikiDCube.cpp ContikiDCube/ContikiDCube.h)
 
 # Link pthread library
-TARGET_LINK_LIBRARIES(SSRC_TII_Experiments
+TARGET_LINK_LIBRARIES(${PROJECT_NAME}
         -ldl
         libserial.a
         libpcap.a

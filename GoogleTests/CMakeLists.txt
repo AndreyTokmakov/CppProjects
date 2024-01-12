@@ -20,6 +20,10 @@ add_library(myLib STATIC ${APP_SOURCES})
 # include all components
 add_executable(GoogleTests
         src/main.cpp
-        ${APP_SOURCES})
+        ${APP_SOURCES}
+)
 
-TARGET_LINK_LIBRARIES(GoogleTests)
+# Link libraries to the project/executable
+target_link_libraries(${PROJECT_NAME} PUBLIC
+        pthread
+)

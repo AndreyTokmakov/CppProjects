@@ -26,9 +26,16 @@ message (STATUS "   OPENSSL_APPLINK_SOURCE: ${OPENSSL_APPLINK_SOURCE}")
 add_compile_options(-c -Wall -Wextra -O3 -std=c++2a)
 
 # include all components
-add_executable(OpenSSL  
-    main.cpp
-        CertificateGenerator.cpp CertificateGenerator.h)
+add_executable(${PROJECT_NAME}
+        main.cpp
+        CertificateGenerator.cpp CertificateGenerator.h
+)
 
  # Link phread library
-TARGET_LINK_LIBRARIES(OpenSSL pthread rt crypt crypto ssl)
+TARGET_LINK_LIBRARIES(${PROJECT_NAME}
+        pthread
+        rt
+        crypt
+        crypto
+        ssl
+)

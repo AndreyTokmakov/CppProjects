@@ -8,7 +8,7 @@ project(${PROJECT_NAME} VERSION ${PROJECT_VERSION} LANGUAGES CXX)
 add_compile_options(-c -Wall -Wextra -O3 -std=c++23)
 
 # include all components
-add_executable(OptimisationPerformanceTuning
+add_executable(${PROJECT_NAME}
         main.cpp
         Inspection/CodeInspection.cpp
         Utilities.h Utilities.cpp
@@ -16,4 +16,6 @@ add_executable(OptimisationPerformanceTuning
         Valgrind/ValgrindExperiments.cpp Valgrind/ValgrindExperiments.h
 )
 
-TARGET_LINK_LIBRARIES(OptimisationPerformanceTuning pthread)
+TARGET_LINK_LIBRARIES(${PROJECT_NAME}
+        pthread
+)

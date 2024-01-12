@@ -11,8 +11,8 @@ include_directories(/usr/include/python3.8)
 include_directories(/usr/local/lib/python3.8/dist-packages/numpy/core/include)
 
 # include all components
-add_executable(MatplotlibCpp MACOSX_BUNDLE 
+add_executable(${PROJECT_NAME}
     main.cpp
 )
 
-TARGET_LINK_LIBRARIES(MatplotlibCpp python3.8)
+TARGET_LINK_LIBRARIES(${PROJECT_NAME} python3.8)

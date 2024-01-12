@@ -9,8 +9,9 @@ project(${PROJECT_NAME} VERSION ${PROJECT_VERSION} LANGUAGES CXX)
 add_compile_options(-c -Wall -Wextra -O3 -std=c++2a)
 
 # include all components
-add_executable(DnsHEXConverter 
-    main.cpp
-        dns_parser.cpp)
+add_executable(${PROJECT_NAME}
+        main.cpp
+        dns_parser.cpp
+)
 
-TARGET_LINK_LIBRARIES(DnsHEXConverter)
+TARGET_LINK_LIBRARIES(${PROJECT_NAME})

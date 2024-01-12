@@ -12,10 +12,15 @@ include_directories(../../third_party/Catch2/build/generated-includes)
 link_directories(../../third_party/Catch2/build/src)
 
 # include all components
-add_executable(Catch2Tests
+add_executable(${PROJECT_NAME}
         main.cpp
-        factorial_tests.cpp test_sections_1.cpp matchers.cpp asserts.cpp test_controller.h)
+        factorial_tests.cpp test_sections_1.cpp
+        matchers.cpp
+        asserts.cpp
+        test_controller.h
+)
 
-
-# Link phread library
-TARGET_LINK_LIBRARIES(Catch2Tests pthread libCatch2.a )
+TARGET_LINK_LIBRARIES(${PROJECT_NAME}
+        pthread
+        libCatch2.a
+)

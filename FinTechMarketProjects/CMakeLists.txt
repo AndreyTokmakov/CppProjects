@@ -8,13 +8,21 @@ project(${PROJECT_NAME} VERSION ${PROJECT_VERSION} LANGUAGES CXX)
 add_compile_options(-c -Wall -Wextra -O3 -std=c++2a)
 
 # include all components
-add_executable(FinTechMarketProjects 
-    main.cpp
-    Experiments/Experiments.cpp Experiments/Experiments.h
-    MatchingOrderBook/MatchingOrderBook.cpp MatchingOrderBook/MatchingOrderBook.h
-    MatchingOrderBookEx/MatchingOrderBookEx.cpp MatchingOrderBookEx/MatchingOrderBookEx.h
-    OrderBook/OrderBook.cpp OrderBook/OrderBook.h
-    OrderBook2/OrderBook2.cpp OrderBook2/OrderBook2.h
-        OrderBook3/OrderBook3.cpp OrderBook3/OrderBook3.h Utilities/Utilities.cpp Utilities/Utilities.h DaVinchiTest/DaVinchiTest.cpp DaVinchiTest/DaVinchiTest.h DaVinchiTest/DaVinchiTest_LinkedList.cpp DaVinchiTest/DaVinchiTest_LinkedList.h TestTask_OrderBook/TestTask_OrderBook.cpp TestTask_OrderBook/TestTask_OrderBook.h)
+add_executable(${PROJECT_NAME}
+        main.cpp
+        Experiments/Experiments.cpp Experiments/Experiments.h
+        MatchingOrderBook/MatchingOrderBook.cpp MatchingOrderBook/MatchingOrderBook.h
+        MatchingOrderBookEx/MatchingOrderBookEx.cpp MatchingOrderBookEx/MatchingOrderBookEx.h
+        OrderBook/OrderBook.cpp OrderBook/OrderBook.h
+        OrderBook2/OrderBook2.cpp OrderBook2/OrderBook2.h
+        OrderBook3/OrderBook3.cpp OrderBook3/OrderBook3.h
+        Utilities/Utilities.cpp Utilities/Utilities.h
+        DaVinchiTest/DaVinchiTest.cpp DaVinchiTest/DaVinchiTest.h
+        DaVinchiTest/DaVinchiTest_LinkedList.cpp DaVinchiTest/DaVinchiTest_LinkedList.h
+        TestTask_OrderBook/TestTask_OrderBook.cpp TestTask_OrderBook/TestTask_OrderBook.h
+)
 
-TARGET_LINK_LIBRARIES(FinTechMarketProjects pthread)
+# Link libraries to the project/executable
+target_link_libraries(${PROJECT_NAME} PUBLIC
+        pthread
+)

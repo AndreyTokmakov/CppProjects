@@ -9,9 +9,13 @@ project(${PROJECT_NAME} VERSION ${PROJECT_VERSION} LANGUAGES CXX)
 add_compile_options(-c -Wall -Wextra -O3 -std=c++2a)
 
 # include all components
-add_executable(Encoding 
-    main.cpp
-        Base64/Base64.cpp Base64/Base64.h URL/URLEncoding.cpp URL/URLEncoding.h)
+add_executable(${PROJECT_NAME}
+        main.cpp
+        Base64/Base64.cpp Base64/Base64.h
+        URL/URLEncoding.cpp URL/URLEncoding.h
+)
 
- # Link phread library
-TARGET_LINK_LIBRARIES(Encoding pthread)
+# Link libraries to the project/executable
+target_link_libraries(${PROJECT_NAME} PUBLIC
+        pthread
+)

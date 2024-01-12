@@ -9,7 +9,7 @@ project(${PROJECT_NAME} VERSION ${PROJECT_VERSION} LANGUAGES CXX)
 add_compile_options(-c -Wall -Wextra -O3 -std=c++2a)
 
 # include all components
-add_executable(MathLibrary MACOSX_BUNDLE 
+add_executable(${PROJECT_NAME} MACOSX_BUNDLE
     main.cpp
     LinearRegression.cpp LinearRegression.h
 	Types/Types.cpp Types/Types.h
@@ -21,4 +21,4 @@ add_executable(MathLibrary MACOSX_BUNDLE
 )
 
  # Link phread library
-TARGET_LINK_LIBRARIES(MathLibrary pthread)
+TARGET_LINK_LIBRARIES(${PROJECT_NAME} pthread)

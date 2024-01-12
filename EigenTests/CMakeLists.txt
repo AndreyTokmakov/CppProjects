@@ -10,9 +10,11 @@ include_directories(../../third_party/eigen/Eigen)
 project(${PROJECT_NAME} VERSION ${PROJECT_VERSION} LANGUAGES CXX)
 
 # include all components
-add_executable(${PROJECT_NAME} MACOSX_BUNDLE 
-    main.cpp
-    LeastSquares/LeastSquares.cpp LeastSquares/LeastSquares.h
-    Matrices/Matrices.cpp Matrices/Matrices.h
-    Vectors/Vectors.cpp Vectors/Vectors.h
-        Quaternion/Quaternion.cpp Quaternion/Quaternion.h Arrays/Arrays.cpp Arrays/Arrays.h)
+add_executable(${PROJECT_NAME}
+        main.cpp
+        LeastSquares/LeastSquares.cpp LeastSquares/LeastSquares.h
+        Matrices/Matrices.cpp Matrices/Matrices.h
+        Vectors/Vectors.cpp Vectors/Vectors.h
+        Quaternion/Quaternion.cpp Quaternion/Quaternion.h
+        Arrays/Arrays.cpp Arrays/Arrays.h
+)

@@ -9,11 +9,13 @@ project(${PROJECT_NAME} VERSION ${PROJECT_VERSION} LANGUAGES CXX)
 add_compile_options(-c -Wall -Wextra -O3 -std=c++2a)
 
 # include all components
-add_executable(PerformanceExperiments 
+add_executable(${PROJECT_NAME}
     main.cpp
     Integer.h Integer.cpp
     MemoryPool.h
     Collections.h Collections.cpp
 )
 
-TARGET_LINK_LIBRARIES(PerformanceExperiments tbb)
+TARGET_LINK_LIBRARIES(${PROJECT_NAME}
+        tbb
+)

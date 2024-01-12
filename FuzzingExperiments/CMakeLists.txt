@@ -9,8 +9,11 @@ project(${PROJECT_NAME} VERSION ${PROJECT_VERSION} LANGUAGES CXX)
 add_compile_options(-c -Wall -Wextra -O3 -std=c++2a)
 
 # include all components
-add_executable(FuzzingExperiments 
+add_executable(${PROJECT_NAME}
     main.cpp
 )
 
-TARGET_LINK_LIBRARIES(FuzzingExperiments pthread)
+# Link libraries to the project/executable
+target_link_libraries(${PROJECT_NAME} PUBLIC
+        pthread
+)

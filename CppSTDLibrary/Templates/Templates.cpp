@@ -391,7 +391,7 @@ namespace Templates::ClassSpecialization_RawArrays
     void Specialize_ForRawArrays()
     {
         int a[42];
-        extern int x[];
+        int x[1];
 
         foo(a, a, a, x, x, x, x);
     }

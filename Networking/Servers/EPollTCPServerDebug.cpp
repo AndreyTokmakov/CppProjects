@@ -177,16 +177,16 @@ namespace EPollTCPServerDebug::Old
                     const int32_t clientSock = epollEvents[i].data.fd;
                     const uint32_t events = epollEvents[i].events;
 
-                    printStateFlags(events);
+                    // printStateFlags(events);
 
                     if ((events & EPOLLERR) || (events & EPOLLHUP))
                     {   // TODO: handle EPOLL_CTL_DEL
-                        debug("Closing connection. Socket = ", clientSock, "[epoll_wait error]");
+                        // debug("Closing connection. Socket = ", clientSock, "[epoll_wait error]");
                         ::close(clientSock);
                     }
                     else if (events & EPOLLRDHUP)
                     {  // TODO: handle EPOLL_CTL_DEL
-                        debug("Closing connection. Socket = ", clientSock);
+                        // debug("Closing connection. Socket = ", clientSock);
                         ::close(clientSock);
                     }
                     else if (events & EPOLLIN)
@@ -199,17 +199,17 @@ namespace EPollTCPServerDebug::Old
                             total += bytes;
                         }
 
-                        debug(total, "bytes received: ", message, "| events: ", events);
+                        // debug(total, "bytes received: ", message, "| events: ", events);
                         if (0 != bytes)
                         {
-                            reply.assign("Reply:" + message);
+                            reply.assign(message);
                             bytes = ::send(clientSock, reply.data(), reply.length(), 0);
-                            debug(bytes, "bytes send");
+                            // debug(bytes, "bytes send");
                         }
                     }
                     else if (events & EPOLLOUT)
                     {   // TODO: handle EPOLL_CTL_DEL
-                        debug("Socket(", clientSock, ") is valid for writing");
+                        // debug("Socket(", clientSock, ") is valid for writing");
                     }
                 }
             }
