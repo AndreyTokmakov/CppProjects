@@ -8,7 +8,7 @@ project(${PROJECT_NAME} VERSION ${PROJECT_VERSION} LANGUAGES CXX)
 add_compile_options(-c -Wall -Wextra -O3 -std=c++2a)
 
 # include all components
-add_executable(Collections MACOSX_BUNDLE 
+add_executable(${PROJECT_NAME} MACOSX_BUNDLE
     main.cpp
     Array/Array.cpp Array/Array.h
     BinaryTrees/BinaryTrees.cpp BinaryTrees/BinaryTrees.h
@@ -29,5 +29,5 @@ add_executable(Collections MACOSX_BUNDLE
     Vector/Vector.cpp Vector/Vector.h
         MultiMap/MultiMap.cpp MultiMap/MultiMap.h)
 
- # Link phread library
-TARGET_LINK_LIBRARIES(Collections pthread)
+# include all components
+TARGET_LINK_LIBRARIES(${PROJECT_NAME} pthread)

@@ -62,4 +62,7 @@ add_executable(${PROJECT_NAME}
         Assembly/AssemblyDemo.cpp
 )
 
-TARGET_LINK_LIBRARIES(${PROJECT_NAME} pthread tbb)
+TARGET_LINK_LIBRARIES(${PROJECT_NAME}
+        pthread
+        tbb
+)

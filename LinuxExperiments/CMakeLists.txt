@@ -9,7 +9,7 @@ find_package(OpenSSL REQUIRED)
 add_compile_options(-c -Wall -Wextra -O3 -std=c++2a)
 
 # include all components
-add_executable(LinuxExperiments
+add_executable(${PROJECT_NAME}
         main.cpp
         Files/Files.cpp Files/Files.h
         Processes/Processes.cpp Processes/Processes.h
@@ -30,4 +30,11 @@ add_executable(LinuxExperiments
         Modules/Modules.cpp Modules/Modules.h
         OpenSSL/OpenSSL.cpp OpenSSL/OpenSSL.h Networking/Utilities.cpp Networking/Utilities.h TestsAndExperiments/TestAndExperiments.cpp TestsAndExperiments/TestAndExperiments.h TestsAndExperiments/FindProcessForTCPConnection.cpp TestsAndExperiments/FindProcessForTCPConnection.h Processes/ProcessManager.cpp Processes/ProcessManager.h ModulesKernel/ModulesKernel.cpp ModulesKernel/ModulesKernel.h)
 
-TARGET_LINK_LIBRARIES(LinuxExperiments pthread rt crypt crypto ssl)
+# Link libraries to the project/executable
+target_link_libraries(${PROJECT_NAME} PUBLIC
+        pthread
+        rt
+        crypt
+        crypto
+        ssl
+)

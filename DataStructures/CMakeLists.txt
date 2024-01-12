@@ -8,7 +8,7 @@ project(${PROJECT_NAME} VERSION ${PROJECT_VERSION} LANGUAGES CXX)
 add_compile_options(-c -Wall -Wextra -O3 -std=c++2a)
 
 # include all components
-add_executable(DataStructures MACOSX_BUNDLE 
+add_executable(${PROJECT_NAME}
     main.cpp
 	BitSet/BitSet.cpp BitSet/BitSet.h
 	CircularBuffers/CircularBuffers.cpp CircularBuffers/CircularBuffers.h
@@ -39,5 +39,7 @@ add_executable(DataStructures MACOSX_BUNDLE
 		Heap_WithComparator/HeapWithComparator.cpp
 		Heap_WithComparator/HeapWithComparator.h)
 
- # Link phread library
-TARGET_LINK_LIBRARIES(DataStructures pthread)
+# Link libraries to the project/executable
+target_link_libraries(${PROJECT_NAME} PUBLIC
+		pthread
+)

@@ -75,7 +75,7 @@ int main([[maybe_unused]] int argc,
     // EPollTCPServer::Tests();
     // EPollTCPServerTwo::Tests();
     // EPollTCPServerEx::Tests();
-    // EPollTCPServerDebug::Tests();
+    EPollTCPServerDebug::Tests();
     // EPollTCPServerMultithreaded::Tests();
 
     // PcapAnalyzer::TestAll();
@@ -84,7 +84,7 @@ int main([[maybe_unused]] int argc,
 
     // SSL_Experiments::TestAll();
     // TCP_SSL_Server::TestAll();
-    HTTPS_Server::TestAll();
+    // HTTPS_Server::TestAll();
     // HTTPS_AsyncServer::TestAll();
     // HTTPS_ServerMultithreaded::TestAll();
     // HTTPS_Server_ThreadPool::TestAll();

@@ -3,7 +3,7 @@ project(CppSTDLibrary)
 
 set(CMAKE_CXX_STANDARD 23)
 
-add_executable(CppSTDLibrary
+add_executable(${PROJECT_NAME}
         main.cpp
 		Types.cpp Types.h
 		AggregateInitialization/AggregateInitialization.cpp AggregateInitialization/AggregateInitialization.h
@@ -78,4 +78,8 @@ add_executable(CppSTDLibrary
 		Templates/ConditionalExplicit.h Templates/ConditionalExplicit.cpp
 )
 
-target_link_libraries(CppSTDLibrary PUBLIC pthread tbb)
+# Link libraries to the project/executable
+target_link_libraries(${PROJECT_NAME} PUBLIC
+		pthread
+		tbb
+)

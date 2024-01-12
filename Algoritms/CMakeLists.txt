@@ -8,7 +8,7 @@ project(${PROJECT_NAME} VERSION ${PROJECT_VERSION} LANGUAGES CXX)
 add_compile_options(-c -Wall -Wextra -O3 -std=c++2a)
 
 # include all components
-add_executable(Algoritms
+add_executable(${PROJECT_NAME}
     	main.cpp
 		Graphs/Graphs.cpp Graphs/Graphs.h
 		Heap/Heap.cpp Heap/Heap.h
@@ -24,4 +24,6 @@ add_executable(Algoritms
         MultiThreading/MultiThreading.cpp MultiThreading/MultiThreading.h
 )
 
-TARGET_LINK_LIBRARIES(Algoritms pthread)
+TARGET_LINK_LIBRARIES(${PROJECT_NAME}
+		pthread
+)

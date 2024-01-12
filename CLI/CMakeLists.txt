@@ -9,8 +9,11 @@ project(${PROJECT_NAME} VERSION ${PROJECT_VERSION} LANGUAGES CXX)
 add_compile_options(-c -Wall -Wextra -O3 -std=c++23)
 
 # include all components
-add_executable(CLI 
+add_executable(${PROJECT_NAME}
     main.cpp
 )
 
-TARGET_LINK_LIBRARIES(CLI pthread)
+# Link libraries to the project/executable
+target_link_libraries(${PROJECT_NAME}
+        pthread
+)
