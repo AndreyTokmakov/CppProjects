@@ -26,19 +26,20 @@ namespace CustomVector {
     private:
         using object_type = Type;
         using pointer = object_type*;
+        using size_type = size_t;
 
         static_assert(!std::is_same_v<object_type, void>,
                       "Type of the Objects in the pool can not be void");
 
-        static constexpr size_t initialCapacity { 10 };
-        static constexpr size_t growthFactor { 2 };
+        static constexpr size_type initialCapacity { 10 };
+        static constexpr size_type growthFactor { 2 };
 
     private:
         /** Elements collection block: **/
         pointer data { nullptr };
 
         /** Capacity: **/
-        size_t capacity { 0 };
+        size_type capacity { 0 };
 
         /** Count of elements: **/
         size_t size { 0 };
@@ -47,27 +48,51 @@ namespace CustomVector {
         Allocator allocator;
 
     private:
-        void increaseCapacity()
-        {
-            capacity *= growthFactor;
-            pointer newData { allocator.allocate(capacity) };
 
-            // std::move(data, data + size, newData);
+        void grow_vector(const size_type capacityDesired)
+        {
+            /** Allocate a new chunk of memory. **/
+            pointer newData { allocator.allocate(capacityDesired) };
+
+            /** Move all data from original location to the new one. **/
             std::uninitialized_move_n(data, size, newData);
+
+            /** Swap data pointers. **/
             std::swap(data, newData);
 
+            /** Call destructors for the old data and de-allocate old storage **/
             std::destroy_n(newData, size);
             allocator.deallocate(newData, capacity);
+
+            /** set capacity to the new value **/
+            capacity = capacityDesired;
+        }
+
+        void increaseCapacity()
+        {
+            grow_vector(capacity * growthFactor);
         }
 
     public:
+
+        void reserve(const size_type capacityDesired)
+        {
+            if (capacityDesired > capacity)
+                grow_vector(capacityDesired);
+        }
+
         // Vector(size_t s): data { allocator.allocate(s) }, capacity { s }  {
         // }
 
-        explicit Vector(const size_t s = initialCapacity)
+        explicit Vector(const size_type s = initialCapacity)
         {
             capacity = s > 0 ? s : initialCapacity;
             data = allocator.allocate(capacity);
+        }
+
+        Vector(const std::initializer_list<object_type>& args) {
+            for (const auto v: args)
+                push_back(v);
         }
 
         ~Vector()
@@ -112,17 +137,17 @@ namespace CustomVector {
 
     public:
         [[nodiscard]]
-        object_type& operator[] (size_t index) {
+        object_type& operator[] (size_type index) {
             return this->data[index];
         }
 
         [[nodiscard]]
-        inline size_t Size() const noexcept {
+        inline size_type Size() const noexcept {
             return size;
         }
 
         [[nodiscard]]
-        inline size_t Capacity() const noexcept {
+        inline size_type Capacity() const noexcept {
             return capacity;
         }
 
@@ -131,7 +156,8 @@ namespace CustomVector {
             return 0 == size;
         }
 
-        void push_back(const object_type& v) {
+        void push_back(const object_type& v)
+        {
             if (size >= capacity)
                 increaseCapacity();
 
@@ -139,7 +165,8 @@ namespace CustomVector {
             ++size;
         }
 
-        void push_back(object_type&& v) {
+        void push_back(object_type&& v)
+        {
             if (size >= capacity)
                 increaseCapacity();
 
@@ -148,7 +175,8 @@ namespace CustomVector {
         }
 
         template<typename ... Args>
-        object_type& emplace_back(Args&& ...  params) {
+        object_type& emplace_back(Args&& ...  params)
+        {
             if (size >= capacity)
                 increaseCapacity();
 
@@ -157,14 +185,16 @@ namespace CustomVector {
             return data[size++];
         }
 
-        void swap(Vector<object_type, Allocator> &other) noexcept {
+        void swap(Vector<object_type, Allocator> &other) noexcept
+        {
             std::swap(this->data, other.data);
             std::swap(this->size, other.size);
             std::swap(this->capacity, other.capacity);
         }
 
         static void swap(Vector<object_type, Allocator> &first,
-                         Vector<object_type, Allocator> &second) noexcept {
+                         Vector<object_type, Allocator> &second) noexcept
+        {
             std::swap(first.data, second.data);
             std::swap(first.size, second.size);
             std::swap(first.capacity, second.capacity);
@@ -259,8 +289,28 @@ namespace CustomVector {
 
 namespace CustomVector::Testing
 {
+    void AccessElements()
+    {
+        Vector<Integer> values (0);
+        for (int i: {1,2,3})
+            values.emplace_back(i);
 
-    void IteratorTests() {
+        for (int i = 0; i < 3; ++i)
+            std::cout << values[i] << ' ';
+        std::cout << std::endl;
+    }
+
+    void AccessElementsConst()
+    {
+        Vector<int> values (std::initializer_list<int>{1,2,3,4,5});
+
+        for (int i = 0; i < 3; ++i)
+            std::cout << values[i] << ' ';
+        std::cout << std::endl;
+    }
+
+    void IteratorTests()
+    {
         Vector<Integer> data(0);
 
         for (int i: {1,2,3})
@@ -288,12 +338,32 @@ namespace CustomVector::Testing
 
     void PushBack()
     {
-        Vector<Long> data;
-        //std::vector<Long> data;
-        for (int i: {1, 2, 3})
+        Vector<int> data;
+
+        for (int i = 0; i < 11; ++i)
         {
-            data.push_back(Long{i});
+            data.emplace_back(i);
         }
+    }
+
+    void Reserve()
+    {
+        Vector<int> data;
+        for (int i = 0; i < 5; ++i)
+            data.emplace_back(i);
+
+        std::cout << "size = " << data.Size() << ", capacity: " << data.Capacity() << std::endl;
+        data.reserve(20);
+
+        std::cout << "size = " << data.Size() << ", capacity: " << data.Capacity() << std::endl;
+        for (int i = 0; i < 5; ++i) {
+            if (i != data[i]) {
+                std::cerr << "ERROR: " << i << " != " << data[i] << std::endl;
+                return;
+            }
+        }
+
+        std::cout << "OK\n";
     }
 
     void Copy_Constructor()
@@ -308,7 +378,7 @@ namespace CustomVector::Testing
         for (const auto& v: original)
             std::cout << v << std::endl;
 
-        std::cout << "------------------------ movedTo --------------------------- \n";
+        std::cout << "------------------------ copy --------------------------- \n";
         for (const auto& v: copy)
             std::cout << v << std::endl;
     }
@@ -369,16 +439,23 @@ namespace CustomVector::Testing
 
 void CustomVector::TestAll()
 {
+
+    // Testing::AccessElements();
+    // Testing::AccessElementsConst();
+
+    // Testing::PushBack();
+    Testing::Reserve();
+
+
     // Testing::IteratorTests();
     // Testing::IteratorTest2();
 
-    Testing::Copy_Constructor();
+    // Testing::Copy_Constructor();
     // Testing::Move_Constructor();
 
     // Testing::CopyVector();
     // Testing::MoveVector();
 
-    // Testing::PushBack();
 
 
     /*
