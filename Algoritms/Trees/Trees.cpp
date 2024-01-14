@@ -1950,7 +1950,8 @@ namespace Trees::Level_Order
         level_order_traversal_map(node->right, lvls, level + 1);
     }
 
-    void level_order_traversal_map(const BinTree::Node* node) {
+    void level_order_traversal_map(const BinTree::Node* node)
+    {
         std::map<size_t, std::vector<int>> lvls;
         level_order_traversal_map(node, lvls, 0);
 
@@ -2221,7 +2222,7 @@ void Trees::TEST_ALL()
 
 
     // Level_Order::Level_Order_Traversal();
-    // Level_Order::Level_Order_Traversal_Vector();
+    Level_Order::Level_Order_Traversal_Vector();
     // Level_Order::Level_Order_Traversal_MAP();
     // Level_Order::Largest_Value_In_Each_Level();
 

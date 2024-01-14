@@ -357,6 +357,27 @@ namespace Tuple
     }
 }
 
+
+namespace PrintTupleTests
+{
+    template <size_t N = 0, typename... Ts>
+    constexpr void print(std::tuple<Ts...> tup)
+    {
+        if constexpr (N < sizeof...(Ts)) {
+            std::cout << get<N>(tup) << ' ';
+            print<N+1>(tup);
+        }
+    }
+
+    void PrintTestTuple()
+    {
+        std::tuple<int, char, std::string> tup = std::make_tuple<int, char, std::string>(1, 'c', "qweertt");
+        print(tup);
+    }
+}
+
+
+
 void Tuple::TestAll()
 {
 	// CreateTupleTest();
@@ -381,5 +402,7 @@ void Tuple::TestAll()
 	// IterateValues::IterateTest();
 	// IterateValues2::IterateTest();
 
-    Apply_Sum_Tuple();
+    // Apply_Sum_Tuple();
+
+    PrintTupleTests::PrintTestTuple();
 };

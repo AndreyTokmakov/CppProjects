@@ -795,6 +795,24 @@ namespace StaticCounter
 }
 
 
+namespace PrintTupleTests
+{
+    template <size_t N = 0, typename... Ts>
+    constexpr void print(std::tuple<Ts...> tup)
+    {
+        if constexpr (N < sizeof...(Ts)) {
+            std::cout << get<N>(tup) << ' ';
+            print<N+1>(tup);
+        }
+    }
+
+    void PrintTestTuple()
+    {
+        std::tuple<int, char, std::string> tup = std::make_tuple<int, char, std::string>(1, 'c', "qweertt");
+        print(tup);
+    }
+}
+
 
 
 int main([[maybe_unused]] int argc,
@@ -808,13 +826,15 @@ int main([[maybe_unused]] int argc,
     // Experiments::Test({20, 40, 60});
     // FindMinMaxValues::TestAll();
 
+    PrintTupleTests::PrintTestTuple();
+
     /** * * * * *  Move to lib * * * * * **/
     // OperatorCall_ExplicitTypeSpecialization::Test();
     // ReturnTypeCast::tests();
     // CallFunctionByName::Test();
     // ReturnClass_MemberRef_CopyCTor::tests();
 
-    Algorithms::TestAll();
+    // Algorithms::TestAll();
     // AutoTests::TestAll();
     // Cpp23_Features::TestAll();
     // Concepts::TestAll();

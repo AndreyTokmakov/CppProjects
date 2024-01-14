@@ -344,7 +344,11 @@ namespace CustomVector::Testing
 
     void Construct_InitializerList()
     {
-        Vector<int> values (std::initializer_list<int>{1,2,3});
+        using Allocator = CountingAllocator<int>;
+        Vector<int, Allocator> values (std::initializer_list<int>{1,2,3});
+
+        std::cout << values << std::endl;
+        std::cout << Allocator::allocated << std::endl;
     }
 
     void AccessElements()
