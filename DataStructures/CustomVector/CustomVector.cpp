@@ -18,12 +18,33 @@
 #include "../Utilities/Integer.h"
 #include "../Utilities/Long.h"
 
-namespace CustomVector {
+namespace CustomVector
+{
+    template<typename _Ty>
+    struct CountingAllocator: std::allocator<_Ty>
+    {
+        static inline size_t allocated = 0;
+
+        _Ty* allocate(size_t size)
+        {
+            allocated += size;
+            // return new _Ty[size];
+            return std::allocator<_Ty>::allocate(size);
+        }
+
+        void deallocate(_Ty* ptr, size_t size)
+        {
+            //delete[] ptr;
+            std::allocator<_Ty>::deallocate(ptr, size);
+        }
+    };
 
     template<typename Type,
              typename Allocator = std::allocator<Type>>
     class Vector
     {
+    public:
+
         using object_type = Type;
         using pointer = object_type*;
         using size_type = size_t;
@@ -81,7 +102,10 @@ namespace CustomVector {
             data = allocator.allocate(capacity);
         }
 
-        Vector(const std::initializer_list<object_type>& args) {
+        Vector(const std::initializer_list<object_type>& args):
+            capacity {args.size()}
+        {
+            data = allocator.allocate(capacity);
             for (const auto v: args)
                 push_back(v);
         }
@@ -111,10 +135,23 @@ namespace CustomVector {
             // std::cout << "Vector(move constructor)\n";
         }
 
+#if 0
+        // CAS
         Vector<object_type, Allocator>& operator=(const Vector<object_type, Allocator>& other)
         {
             Vector copy(other);
             Vector::swap(copy, *this);
+            return *this;
+        }
+#endif
+
+        Vector<object_type, Allocator>& operator=(const Vector<object_type, Allocator>& other)
+        {
+            if (other.capacity > capacity)
+                grow_vector(other.capacity);
+            std::destroy_n(data, size);
+            size  = other.size;
+            std::copy_n(other.data, size, data);
             return *this;
         }
 
@@ -127,8 +164,15 @@ namespace CustomVector {
         }
 
     public:
+
         [[nodiscard]]
         object_type& operator[] (size_type index)
+        {
+            return this->data[index];
+        }
+
+        [[nodiscard]]
+        const object_type& operator[] (size_type index) const
         {
             return this->data[index];
         }
@@ -290,6 +334,19 @@ namespace CustomVector {
 
 namespace CustomVector::Testing
 {
+    template<typename T, typename Allocator = std::allocator<T>>
+    std::ostream &operator<<(std::ostream &stream, const Vector<T, Allocator> &coll)
+    {
+        for (typename Vector<T>::size_type i = 0; i < coll.Size(); ++i)
+            std::cout << coll[i] << ' ';
+        return stream;
+    }
+
+    void Construct_InitializerList()
+    {
+        Vector<int> values (std::initializer_list<int>{1,2,3});
+    }
+
     void AccessElements()
     {
         Vector<Integer> values (0);
@@ -384,6 +441,34 @@ namespace CustomVector::Testing
             std::cout << v << std::endl;
     }
 
+    void Copy_Assignment()
+    {
+        using Allocator = CountingAllocator<Long>;
+        Vector<Long, Allocator> original;
+        for (int i = 1; i <= 3; ++i)
+            original.emplace_back(i + 10);
+
+        Vector<Long, Allocator> dest;
+        for (int i = 1; i <= 5; ++i)
+            dest.emplace_back(i);
+
+
+        std::cout << "------------------------ original --------------------------- \n";
+        std::cout << original << std::endl << std::endl;
+
+        std::cout << "------------------------ dest --------------------------- \n";
+        std::cout << dest << std::endl << std::endl;
+
+        std::cout << "------------------------ assignment --------------------------- \n";
+        dest = original;
+
+        std::cout << "------------------------ dest --------------------------- \n";
+        std::cout << dest << std::endl << std::endl;
+
+        std::cout << "--------------------------------------------------------------------\n";
+        std::cout << "Allocated: " << Allocator::allocated << std::endl;
+    }
+
     void Move_Constructor()
     {
         Vector<Long> original;
@@ -440,31 +525,22 @@ namespace CustomVector::Testing
 
 void CustomVector::TestAll()
 {
-
-    // Testing::AccessElements();
-    // Testing::AccessElementsConst();
+    Testing::Construct_InitializerList();
 
     // Testing::PushBack();
     // Testing::Reserve();
 
-
     // Testing::IteratorTests();
     // Testing::IteratorTest2();
+
+    // Testing::AccessElements();
+    // Testing::AccessElementsConst();
 
     // Testing::Copy_Constructor();
     // Testing::Move_Constructor();
 
+    // Testing::Copy_Assignment();
+
     // Testing::CopyVector();
     // Testing::MoveVector();
-
-
-    std::vector<int> values {1,2,3,4,5};
-    values.resize(10);
-
-    std::cout << values.size() << std::endl;
-    std::cout << values.capacity() << std::endl;
-
-    for (int i: values)
-        std::cout << i << std::endl;
-
 };
