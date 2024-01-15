@@ -19,6 +19,7 @@
 #include <cassert>
 #include <utility>
 #include <cstdint>
+#include <vector>
 
 namespace ConstConstexprMutable::Compile_Time_IF {
 
@@ -379,6 +380,43 @@ namespace ConstConstexprMutable::ConstexprArray {
 #endif
 	}
 
+}
+
+namespace ConstConstexprMutable::CompileTimeComputations
+{
+    template <ino64_t N>
+    struct Factorial
+    {
+        enum : ino64_t { value = Factorial<N-1>::value * N };
+
+        static void create_sequence(std::vector<ino64_t>& v) {
+            Factorial<N-1>::create_sequence(v);
+            v.emplace_back(value);
+        }
+    };
+
+    template<>
+    struct Factorial<0LL>
+    {
+        enum : ino64_t { value = 1 };
+
+        static void create_sequence(std::vector<ino64_t>& v) {
+            v.emplace_back(value);
+        }
+    };
+
+    void FibonacciSequence_ToVector()
+    {
+        std::vector<ino64_t> sequence;
+        sequence.reserve(5);
+        Factorial<5>::create_sequence(sequence);
+
+        for (const auto& v : sequence)
+            std::cout << v << " ";
+        std::cout << "\n";                         /// >> 1 1 2 6 24 120
+
+        std::cout << Factorial<10>::value << "\n"; /// >> 3628800
+    }
 }
 
 
@@ -748,7 +786,8 @@ namespace Constexpr_STL_Containers {
 }
 
 
-namespace Tests {
+namespace Tests
+{
 
 	constexpr int getValue() {
 		return 1;
@@ -843,7 +882,7 @@ void ConstConstexprMutable::TestAll()
 
 	// ConstexprSwitch::TEST();
 	
-	//ConstexprObjects::Test();
+	// ConstexprObjects::Test();
 
 	//------------------------------------------------------------------------------------//
 
@@ -851,8 +890,9 @@ void ConstConstexprMutable::TestAll()
 	// ConstexprFuncs::Factorial_Test();
 	// ConstexprFuncs::Check_IF_Constexpr();
 
-
 	// Constexpr_Tests::Test_Array_Sum();
+
+    CompileTimeComputations::FibonacciSequence_ToVector();
 
 	//-------------------------------------------------------------------------------------//
 

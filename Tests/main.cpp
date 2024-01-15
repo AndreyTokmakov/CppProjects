@@ -97,7 +97,10 @@ Description : Tests C++ project
 #include "FindMinMaxValues/FindMinMaxValues.h"
 #include "FunctionCall_LookUp/FunctionCall_LookUp.h"
 
-struct AnyBase {
+#define PRINT_LINE   std::cout.width(128); std::cout.fill('='); std::cout << '\n';
+
+struct AnyBase
+{
     virtual const std::type_info& type() = 0;
     virtual void copy_to(std::any&) = 0;
     virtual void move_to(std::any&) = 0;
@@ -224,7 +227,8 @@ std::string FormatString(const std::string& s) {
 
 
 
-namespace RecursiveLambda {
+namespace RecursiveLambda
+{
 
     template<class Function>
     class y_combinator_result {
@@ -274,8 +278,8 @@ public:
 #endif
 
 
-namespace InvokeTest {
-
+namespace InvokeTest
+{
     template<typename F>
     concept FunctionPointer = std::is_member_function_pointer_v<F>;
 
@@ -520,7 +524,6 @@ void parseInputParams(const char** argv, const size_t size)
     std::cout << std::endl;
 }
 
-
 namespace Conversation
 {
     struct B {};
@@ -540,13 +543,30 @@ namespace Conversation
     }
 }
 
-
-
 namespace MoveExperiments
 {
     using Helpers::Integer;
 
-    std::vector<std::string> logs {};
+    template<typename _Ty>
+    struct CountingAllocator: std::allocator<_Ty>
+    {
+        static inline size_t allocated = 0;
+
+        _Ty* allocate(size_t size)
+        {
+            allocated += size;
+            // return new _Ty[size];
+            return std::allocator<_Ty>::allocate(size);
+        }
+
+        void deallocate(_Ty* ptr, size_t size)
+        {
+            //delete[] ptr;
+            std::allocator<_Ty>::deallocate(ptr, size);
+        }
+    };
+
+    // std::vector<std::string> logs {};
     std::vector<Integer> storage {};
 
     template<typename T> requires std::convertible_to<T, Integer>
@@ -555,16 +575,15 @@ namespace MoveExperiments
         storage.push_back(std::forward<T>(v));
     }
 
-    void store(const Integer & str)
+    void store(const Integer& obj)
     {
-        storage.push_back(str);
+        storage.push_back(obj);
     }
 
-    void store(Integer && str)
+    void store(Integer&& obj)
     {
-        storage.push_back(std::move(str));
+        storage.push_back(std::move(obj));
     }
-
 
     void test_overload()
     {
@@ -572,12 +591,14 @@ namespace MoveExperiments
             Integer l{1};
             store(l);
         }
-        std::cout << std::endl;
+
+        PRINT_LINE
 
         {
-            store(Integer{1});
+            store(Integer{2});
         }
-        std::cout << std::endl;
+
+        PRINT_LINE
     }
 
     void test_perfect_forwarding()
@@ -586,49 +607,53 @@ namespace MoveExperiments
             Integer l{1};
             store_new(l);
         }
+
+        PRINT_LINE
+
+        {
+            store_new(Integer{2});
+        }
+
+        PRINT_LINE
+    }
+
+    void MoveStringToArray_Segfault()
+    {
+        constexpr size_t capacity {10};
+
+        {
+            std::string text {"123456789"};
+            std::cout << std::quoted(text) << std::endl;
+
+            std::string* data = new std::string[capacity];
+
+            std::cout << std::quoted(data[5]) << " --> ";
+            data[5] = std::move(text);
+            std::cout << std::quoted(data[5]) << std::endl;
+
+            delete[] data;
+        }
+
         std::cout << std::endl;
 
         {
-            store_new(Integer{1});
+            std::string text {"123456789"};
+            std::cout << std::quoted(text) << std::endl;
+
+            auto allocator = CountingAllocator<std::string>{};
+            std::string* data = allocator.allocate(capacity);
+
+
+            std::cout << data << std::endl;
+
+            std::cout << std::quoted(data[5]) << " --> ";
+            data[5] = std::move(text);
+            std::cout << std::quoted(data[5]) << std::endl;
+
+            allocator.deallocate(data, capacity);
         }
-        std::cout << std::endl;
     }
 }
-
-template<typename _Ty>
-struct Allocator: std::allocator<_Ty>
-{
-    _Ty* allocate(size_t size)
-    {
-        return new _Ty[size];
-    }
-
-    void deallocate(_Ty* ptr)
-    {
-        delete[] ptr;
-    }
-};
-
-void MoveStringToArray()
-{
-    constexpr size_t capacity {10};
-
-    std::string text {"12345"};
-
-    auto allocator = Allocator<std::string>{};
-
-    std::string* data = allocator.allocate(capacity);
-    // std::string* data = new std::string("qwerty");
-    // std::string* data = new std::string[capacity];
-
-    std::cout << std::quoted(data[5]) << std::endl;
-
-    // *data = std::move(text);
-    data[5] = std::move(text);
-
-    std::cout << std::quoted(data[5]) << std::endl;
-}
-
 
 namespace ReturnClass_MemberRef_CopyCTor
 {
@@ -795,24 +820,47 @@ namespace StaticCounter
 }
 
 
-namespace PrintTupleTests
+namespace ErrorCodes
 {
-    template <size_t N = 0, typename... Ts>
-    constexpr void print(std::tuple<Ts...> tup)
+    void Make_Error_Code()
     {
-        if constexpr (N < sizeof...(Ts)) {
-            std::cout << get<N>(tup) << ' ';
-            print<N+1>(tup);
-        }
+        std::error_code err = std::make_error_code(std::errc::not_enough_memory);
+
+        std::cout << err << std::endl;
+        std::cout << err.category().name() << std::endl; /// "generic"
+        std::cout << err.message() << std::endl;         /// "Cannot allocate memory"
+        std::cout << err.value() << std::endl;           /// ENOMEM
     }
 
-    void PrintTestTuple()
+    void Construct_Error_Code()
     {
-        std::tuple<int, char, std::string> tup = std::make_tuple<int, char, std::string>(1, 'c', "qweertt");
-        print(tup);
+        std::error_code err = std::error_code(std::to_underlying(std::errc::not_enough_memory),
+                                              std::generic_category());
+
+        std::cout << err << std::endl;
+        std::cout << err.category().name() << std::endl; /// "generic"
+        std::cout << err.message() << std::endl;         /// "Cannot allocate memory"
+        std::cout << err.value() << std::endl;           /// ENOMEM
+    }
+
+    void Test2()
+    {
+        using namespace std::string_view_literals;
+
+        const std::error_code err = std::make_error_code(std::errc::not_enough_memory);
+        const std::error_code err_e = std::error_code(std::to_underlying(std::errc::not_enough_memory),
+                                                      std::generic_category());
+        std::cout << ((err == err_e) ? "Equal"sv : "Different"sv) << std::endl;
+
+        // Note that the text is implementation specific, however, specifically for std::errc the values map to errno.
+        std::cout << err.category().name() << " error (" << err.value() << ") " << std::quoted(err.message()) << "\n";
+
+        const std::error_code future = std::make_error_code(std::future_errc::promise_already_satisfied);
+        // future.category().name() == "future" and err.message() == "Promise already satisfied"
+
+        std::cout << future.category().name() << " error (" << future.value() << ") " << std::quoted(future.message()) << "\n";
     }
 }
-
 
 
 int main([[maybe_unused]] int argc,
@@ -822,11 +870,19 @@ int main([[maybe_unused]] int argc,
     // WrapperTests::Test();
     // StaticCounter::Test();
 
-    // MoveStringToArray();
+    // MoveExperiments::MoveStringToArray_Segfault();
+    // MoveExperiments::test_perfect_forwarding();
+    // MoveExperiments::test_overload();
+
+    ErrorCodes::Make_Error_Code();
+    ErrorCodes::Construct_Error_Code();
+    // ErrorCodes::Test2();
+
+
+
+
     // Experiments::Test({20, 40, 60});
     // FindMinMaxValues::TestAll();
-
-    PrintTupleTests::PrintTestTuple();
 
     /** * * * * *  Move to lib * * * * * **/
     // OperatorCall_ExplicitTypeSpecialization::Test();
