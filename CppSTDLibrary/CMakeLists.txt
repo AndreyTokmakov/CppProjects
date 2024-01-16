@@ -25,6 +25,7 @@ add_executable(${PROJECT_NAME}
 		CopyElision/CopyElision.cpp CopyElision/CopyElision.h
 		EnumTests/EnumTests.cpp EnumTests/EnumTests.h
 		Exceptions/Exceptions.cpp Exceptions/Exceptions.h
+		Errors/Errors.cpp Errors/Errors.h
 		FilesStreams/FilesStreams.cpp FilesStreams/FilesStreams.h
 		Filesystem/Filesystem.cpp Filesystem/Filesystem.h
 		Format/Format.cpp Format/Format.h

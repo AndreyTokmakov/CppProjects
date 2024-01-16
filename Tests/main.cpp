@@ -820,48 +820,6 @@ namespace StaticCounter
 }
 
 
-namespace ErrorCodes
-{
-    void Make_Error_Code()
-    {
-        std::error_code err = std::make_error_code(std::errc::not_enough_memory);
-
-        std::cout << err << std::endl;
-        std::cout << err.category().name() << std::endl; /// "generic"
-        std::cout << err.message() << std::endl;         /// "Cannot allocate memory"
-        std::cout << err.value() << std::endl;           /// ENOMEM
-    }
-
-    void Construct_Error_Code()
-    {
-        std::error_code err = std::error_code(std::to_underlying(std::errc::not_enough_memory),
-                                              std::generic_category());
-
-        std::cout << err << std::endl;
-        std::cout << err.category().name() << std::endl; /// "generic"
-        std::cout << err.message() << std::endl;         /// "Cannot allocate memory"
-        std::cout << err.value() << std::endl;           /// ENOMEM
-    }
-
-    void Test2()
-    {
-        using namespace std::string_view_literals;
-
-        const std::error_code err = std::make_error_code(std::errc::not_enough_memory);
-        const std::error_code err_e = std::error_code(std::to_underlying(std::errc::not_enough_memory),
-                                                      std::generic_category());
-        std::cout << ((err == err_e) ? "Equal"sv : "Different"sv) << std::endl;
-
-        // Note that the text is implementation specific, however, specifically for std::errc the values map to errno.
-        std::cout << err.category().name() << " error (" << err.value() << ") " << std::quoted(err.message()) << "\n";
-
-        const std::error_code future = std::make_error_code(std::future_errc::promise_already_satisfied);
-        // future.category().name() == "future" and err.message() == "Promise already satisfied"
-
-        std::cout << future.category().name() << " error (" << future.value() << ") " << std::quoted(future.message()) << "\n";
-    }
-}
-
 
 int main([[maybe_unused]] int argc,
          [[maybe_unused]] char** argv)
@@ -873,11 +831,6 @@ int main([[maybe_unused]] int argc,
     // MoveExperiments::MoveStringToArray_Segfault();
     // MoveExperiments::test_perfect_forwarding();
     // MoveExperiments::test_overload();
-
-    ErrorCodes::Make_Error_Code();
-    ErrorCodes::Construct_Error_Code();
-    // ErrorCodes::Test2();
-
 
 
 

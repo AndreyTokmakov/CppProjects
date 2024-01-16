@@ -33,6 +33,8 @@
 #include "Format/Format.h"
 #include "EnumTests/EnumTests.h"
 #include "Expected/Expected.h"
+#include "Errors/Errors.h"
+#include "Exceptions/Exceptions.h"
 #include "Hashing/Hashing.h"
 #include "InitializerList/InitializerList.h"
 #include "InlineVariables/InlineVariables.h"
@@ -194,12 +196,14 @@ int main(int argc, char** argv)
     // Byte::TestAll();
     // Chrono::TestAll();
     // Comparators::TestAll();
-    Concepts::TestAll();
+    // Concepts::TestAll();
     // ConsoleInOut::TestAll();
     // ConstConstexprMutable::TestAll();
     // CopyElision::TestAll();
     // DateAndTime::TestAll();
     // EnumTests::TestAll();
+    Errors::TestAll();
+    // Exceptions::TestAll();
     // Expected::TestAll();
     // StrongTypes::TestAll();
     // InitializerList::TestAll();
