@@ -16,6 +16,8 @@ namespace Date_Time_Chrono
 {
     using namespace std::chrono;
     using namespace std::literals;
+    using namespace std::chrono_literals;
+
 
     std::ostream& operator<<(std::ostream& stream,
                              const std::chrono::year_month_day& ymd)
@@ -52,6 +54,19 @@ namespace Date_Time_Chrono
         std::cout << "Europe switching to summer time on "
                   << year_month_day{2023y/March/Sunday[last]} << "\n\n";
 
+    }
+
+    void Year_Month_Day_Test_2()
+    {
+        const std::chrono::year_month_day day1 = std::chrono::April/7/2018;
+        std::cout << "'" << day1 << "' is " << std::format("{:%A}\n", std::chrono::weekday(day1));
+
+        const std::chrono::year_month_day day2 = 2018y/April/8;
+        std::cout << "'" << day2 << "' is " << std::format("{:%A}\n", std::chrono::weekday(day2));
+
+        const std::chrono::year_month_day bad_day = January/0/2024;
+        if (!bad_day.ok())
+            std::cout << "'" << bad_day << "' is not a valid day\n";
     }
 }
 
@@ -107,9 +122,12 @@ void Date_Time_Chrono::TestAll()
 {
     // ChronoTests();
     // Year_Month_Day_Test();
+    // Year_Month_Day_Test_2();
 
     // TimeToString::Test();
 
+    //  Experiments::test();
 
-    Experiments::test();
+
+
 }
