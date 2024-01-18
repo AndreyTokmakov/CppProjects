@@ -308,8 +308,9 @@ namespace EPollTCPServerDebug::New
                 {   // TODO: Refactor
                     clientSock = epollEvents[i].data.fd;
                     events = epollEvents[i].events;
+                    printStateFlags(events);
 
-                    if ((events & EPOLLERR) || (events & EPOLLHUP))
+                    if (events & EPOLLERR)
                     {   // TODO: handle EPOLL_CTL_DEL
                         debug("Closing connection. Socket = ", clientSock, "[epoll_wait error]");
                         ::close(clientSock);
@@ -318,16 +319,8 @@ namespace EPollTCPServerDebug::New
                             Error("***** ERROR *****: epoll_ctl() failed. (EPOLL_CTL_DEL)");
                         }
                     }
-                    else if (events & EPOLLRDHUP)
-                    {  // TODO: handle EPOLL_CTL_DEL
-                        debug("Closing connection. Socket = ", clientSock);
-                        ::close(clientSock);
 
-                        if (SOCKET_ERROR == epoll_ctl(epollFd, EPOLL_CTL_DEL, clientSock, nullptr)) {
-                            Error("***** ERROR *****: epoll_ctl() failed. (EPOLL_CTL_DEL)");
-                        }
-                    }
-                    else if (events & EPOLLIN)
+                    if (events & EPOLLIN)
                     {
                         total = 0;
                         message.clear();
@@ -343,6 +336,26 @@ namespace EPollTCPServerDebug::New
                             reply.assign("Reply:" + message);
                             bytes = ::send(clientSock, reply.data(), reply.length(), 0);
                             debug(bytes, "bytes send");
+                        }
+                    }
+
+                    if (events & EPOLLHUP)
+                    {   // TODO: handle EPOLL_CTL_DEL
+                        debug("Closing connection. Socket = ", clientSock, "[epoll_wait error]");
+                        ::close(clientSock);
+
+                        if (SOCKET_ERROR == epoll_ctl(epollFd, EPOLL_CTL_DEL, clientSock, nullptr)) {
+                            Error("***** ERROR *****: epoll_ctl() failed. (EPOLL_CTL_DEL)");
+                        }
+                    }
+
+                    if (events & EPOLLRDHUP) {  // TODO: handle EPOLL_CTL_DEL
+                        debug("Closing connection. Socket = ", clientSock);
+                        ::close(clientSock);
+
+                        // int err = EBADF;
+                        if (SOCKET_ERROR == epoll_ctl(epollFd, EPOLL_CTL_DEL, clientSock, nullptr)) {
+                            Error("***** ERROR *****: epoll_ctl() failed. (EPOLL_CTL_DEL)");
                         }
                     }
                     else if (events & EPOLLOUT)
@@ -429,8 +442,8 @@ namespace EPollTCPServerDebug::New
 
 void EPollTCPServerDebug::Tests()
 {
-    using namespace Old;
-    // using namespace New;
+    // using namespace Old;
+    using namespace New;
 
     startSerer();
 };
