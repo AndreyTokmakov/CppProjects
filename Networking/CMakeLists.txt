@@ -53,6 +53,7 @@ add_executable(${PROJECT_NAME}
         Servers/EPollTCPServerTwo.h Servers/EPollTCPServerEx.cpp Servers/EPollTCPServerEx.h
         Servers/EPollTCPServerDebug.cpp Servers/EPollTCPServerDebug.h
         Servers/EPollTCPServerMultithreaded.cpp Servers/EPollTCPServerMultithreaded.h
+        Servers/EPollTCPServerContext.cpp Servers/EPollTCPServerContext.h
         RawSockets/CaptureTraffic.cpp RawSockets/CaptureTraffic.h
         PcapAnalyzer/PcapAnalyzer.cpp PcapAnalyzer/PcapAnalyzer.h
         WiFi/WiFiExperiments.cpp WiFi/WiFiExperiments.h
@@ -63,6 +64,8 @@ add_executable(${PROJECT_NAME}
         SSL/HTTPS_AsyncServer.cpp SSL/HTTPS_AsyncServer.h
         SSL/HTTPS_ServerMultithreaded.cpp SSL/HTTPS_ServerMultithreaded.h
         SSL/HTTPS_Server_ThreadPool.cpp SSL/HTTPS_Server_ThreadPool.h
+        Servers/EPollTCPServerContext.cpp
+        Servers/EPollTCPServerContext.h
 )
 
 TARGET_LINK_LIBRARIES(${PROJECT_NAME}
