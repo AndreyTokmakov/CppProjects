@@ -262,9 +262,51 @@ namespace EPollTCPServerDebug::New
         std::string hostAddress;
         uint16_t listenPort {};
 
+        static std::string errCodeToStr(int errCode)
+        {
+            switch (errCode)
+            {
+                case EPERM: return "EPERM";
+                case ENOENT:  return "ENOENT";
+                case ESRCH:  return "ESRCH";
+                case EINTR:  return "EINTR";
+                case EIO:  return "EIO";
+                case ENXIO:  return "ENXIO";
+                case E2BIG:  return "E2BIG";
+                case ENOEXEC:  return "ENOEXEC";
+                case EBADF:  return "EBADF";
+                case ECHILD:  return "ECHILD";
+                case EAGAIN:  return "EAGAIN";
+                case ENOMEM:  return "ENOMEM";
+                case EACCES:  return "EACCES";
+                case EFAULT:  return "EFAULT";
+                case ENOTBLK:  return "ENOTBLK";
+                case EBUSY:  return "EBUSY";
+                case EEXIST:  return "EEXIST";
+                case EXDEV:  return "EXDEV";
+                case ENODEV:  return "ENODEV";
+                case ENOTDIR:  return "ENOTDIR";
+                case EISDIR:  return "EISDIR";
+                case EINVAL: return "EINVAL";
+                case ENFILE:  return "ENFILE";
+                case EMFILE:  return "EMFILE";
+                case ETXTBSY:  return "ETXTBSY";
+                case EFBIG:  return "EFBIG";
+                case ENOSPC:  return "ENOSPC";
+                case ESPIPE:  return "ESPIPE";
+                case EROFS:  return "EROFS";
+                case EMLINK:  return "EMLINK";
+                case EPIPE:  return "EPIPE";
+                case EDOM:  return "EDOM";
+                case ERANGE:  return "ERANGE";
+                default:  return "Unknown error";
+            }
+        }
+
         static int32_t Error(std::string_view text)
         {
-            std::cerr << text << ". Error = " << errno << std::endl;
+            std::cerr << text << ". Error = " << errno << "(" << errCodeToStr(errno) << ")\n";
+
             return SOCKET_ERROR;
         }
 
@@ -291,6 +333,7 @@ namespace EPollTCPServerDebug::New
             return 0;
         }
 
+        // TODO: Store session data --> HashTable
         void eventsPoller()
         {
             std::array<epoll_event, kMaxEvents>  epollEvents {};
@@ -308,15 +351,16 @@ namespace EPollTCPServerDebug::New
                 {   // TODO: Refactor
                     clientSock = epollEvents[i].data.fd;
                     events = epollEvents[i].events;
-                    printStateFlags(events);
+                    // printStateFlags(events);
 
                     if (events & EPOLLERR)
-                    {   // TODO: handle EPOLL_CTL_DEL
-                        debug("Closing connection. Socket = ", clientSock, "[epoll_wait error]");
-                        ::close(clientSock);
-
+                    {
+                        // debug("EPOLLHUP: Closing connection. Socket = ", clientSock, "[epoll_wait error]");
                         if (SOCKET_ERROR == epoll_ctl(epollFd, EPOLL_CTL_DEL, clientSock, nullptr)) {
-                            Error("***** ERROR *****: epoll_ctl() failed. (EPOLL_CTL_DEL)");
+                            Error("epoll_ctl() failed. (EPOLL_CTL_DEL)");
+                        }
+                        if (SOCKET_ERROR == ::close(clientSock)) {
+                            Error("close() failed");
                         }
                     }
 
@@ -330,37 +374,46 @@ namespace EPollTCPServerDebug::New
                             total += bytes;
                         }
 
-                        debug(total, "bytes received: ", message, "| events: ", events);
+                        // debug(total, "bytes received: ", message);
+
+                        /*
                         if (0 != bytes)
                         {
                             reply.assign("Reply:" + message);
                             bytes = ::send(clientSock, reply.data(), reply.length(), 0);
                             debug(bytes, "bytes send");
                         }
+                        */
                     }
 
                     if (events & EPOLLHUP)
-                    {   // TODO: handle EPOLL_CTL_DEL
-                        debug("Closing connection. Socket = ", clientSock, "[epoll_wait error]");
-                        ::close(clientSock);
-
+                    {
+                        // debug("EPOLLHUP: Closing connection. Socket = ", clientSock, "[epoll_wait error]");
                         if (SOCKET_ERROR == epoll_ctl(epollFd, EPOLL_CTL_DEL, clientSock, nullptr)) {
-                            Error("***** ERROR *****: epoll_ctl() failed. (EPOLL_CTL_DEL)");
+                            Error("epoll_ctl() failed. (EPOLL_CTL_DEL)");
+                        }
+                        if (SOCKET_ERROR == ::close(clientSock)) {
+                            Error("close() failed");
                         }
                     }
 
-                    if (events & EPOLLRDHUP) {  // TODO: handle EPOLL_CTL_DEL
-                        debug("Closing connection. Socket = ", clientSock);
-                        ::close(clientSock);
-
-                        // int err = EBADF;
+                    if (events & EPOLLRDHUP)
+                    {
+                        // debug("EPOLLRDHUP: Closing connection. Socket = ", clientSock);
                         if (SOCKET_ERROR == epoll_ctl(epollFd, EPOLL_CTL_DEL, clientSock, nullptr)) {
-                            Error("***** ERROR *****: epoll_ctl() failed. (EPOLL_CTL_DEL)");
+                            Error("epoll_ctl() failed. (EPOLL_CTL_DEL)");
+                        }
+                        if (SOCKET_ERROR == ::close(clientSock)) {
+                            Error("close() failed");
                         }
                     }
                     else if (events & EPOLLOUT)
-                    {   // TODO: handle EPOLL_CTL_DEL
-                        debug("Socket(", clientSock, ") is valid for writing");
+                    {
+                        // debug("Socket(", clientSock, ") is valid for writing");
+
+                        reply = "PONG";
+                        bytes = ::send(clientSock, reply.data(), reply.length(), 0);
+                        // debug(bytes, "bytes send");
                     }
                 }
             }
@@ -422,7 +475,8 @@ namespace EPollTCPServerDebug::New
                     break;
 
                 // TODO: Need to use EPOLL_CTL_DEL on delete event
-                if (SOCKET_ERROR == setEpollEvents(epollFd, EPOLL_CTL_ADD, clientSocket, EPOLLIN | EPOLLRDHUP | EPOLLET)) {
+                if (SOCKET_ERROR == setEpollEvents(epollFd, EPOLL_CTL_ADD, clientSocket,
+                                                   EPOLLIN | EPOLLOUT | EPOLLRDHUP | EPOLLET)) {
                     // if something goes wrong, close this new socket
                     Error("epoll_ctl() failed");
                     break;
