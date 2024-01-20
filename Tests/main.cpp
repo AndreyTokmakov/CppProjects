@@ -855,14 +855,14 @@ int main([[maybe_unused]] int argc,
     // Files::TestAll();
     // ConstexprMap::TestAll()
     // DesignPatterns::TestAll();
-    Date_Time_Chrono::TestAll();
+    // Date_Time_Chrono::TestAll();
     // MaxStack::TestAll();
     // MinStack::TestAll();
     // RateLimiter::TestAll();
     // DebugLogger::TestAll();
     // PointsAndLines::TestAll();           // Geometry
     // UniquePtr_Size::SizeTest();
-    // CollectionsTests::TestAll();
+    CollectionsTests::TestAll();
     // Templates::TestAll();
     // ExpressionTemplates::TestAll();
     // CopyElision_RVO::TestAll();

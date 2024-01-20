@@ -118,6 +118,22 @@ namespace EPollTCPServerContext
 
 namespace EPollTCPServerContext
 {
+    enum class State
+    {
+        Open,
+        Closed
+    };
+
+    struct Session
+    {
+        std::string buffer;
+        State state { State::Closed };
+
+        Session(State state = State::Open): state {state} {
+            std::cout << "Session created\n";
+        }
+    };
+
     class TCPServer
     {
         static inline constexpr uint32_t BACKLOG { 10 };
@@ -125,6 +141,7 @@ namespace EPollTCPServerContext
 
         // TODO: Choose different value?
         static constexpr uint32_t kEpollWaitTime { 10 };  // epoll wait timeout 10 ms
+
         // TODO: Refactor ?
         static constexpr uint32_t kMaxEvents { 1024 };    // epoll wait return max size
 
@@ -133,6 +150,8 @@ namespace EPollTCPServerContext
 
         std::string hostAddress;
         uint16_t listenPort {};
+
+        std::unordered_map<int32_t, Session> sessions;
 
         static int32_t setNonBlock(int32_t handle)
         {
@@ -157,11 +176,12 @@ namespace EPollTCPServerContext
             return 0;
         }
 
-        static void closeClientSocket(int32_t socket)
+        void closeClientSocket(int32_t socket, Session& session)
         {
             if (SOCKET_ERROR == ::close(socket)) {
                 Error("close() failed");
             }
+            session.state = State::Closed;
         }
 
         // TODO: Store session data --> HashTable
@@ -169,40 +189,41 @@ namespace EPollTCPServerContext
         {
             std::array<epoll_event, kMaxEvents>  epollEvents {};
             std::array<char, BUFFER_SIZE> buffer {};
-            ssize_t bytes {0}, total {0};
-            std::string message, reply = "PONG";
+            ssize_t bytes {0};
+            std::string reply = "PONG";
             auto [clientSock, events] = std::make_pair<int32_t, uint32_t>(0,0);
 
             while (true)
             {   // TODO: Check TimeOut for performance
                 // TODO: Check num != -1
                 const int num = epoll_wait(epollFd, epollEvents.data(), kMaxEvents, kEpollWaitTime);
-
                 for (int i = 0; i < num; ++i)
                 {   // TODO: Refactor
                     clientSock = epollEvents[i].data.fd;
                     events = epollEvents[i].events;
-                    // printStateFlags(events);
+                    printStateFlags(events);
+
+                    const auto [iter, ok] = sessions.try_emplace(clientSock, State::Closed);
+                    Session& session = iter->second;
 
                     if (events & EPOLLERR)
                     {
-                        // debug("EPOLLHUP: Closing connection. Socket = ", clientSock, "[epoll_wait error]");
                         if (SOCKET_ERROR == epoll_ctl(epollFd, EPOLL_CTL_DEL, clientSock, nullptr)) {
                             Error("epoll_ctl() failed. (EPOLL_CTL_DEL)");
                         }
-                        closeClientSocket(clientSock);
+                        closeClientSocket(clientSock, session);
                     }
 
                     if (events & EPOLLIN)
                     {
-                        total = 0;
-                        message.clear();
-
                         while ((bytes = ::read(clientSock, buffer.data(), buffer.size())) > 0) {
-                            message.append(buffer.data(), bytes);
-                            total += bytes;
+                            session.buffer.append(buffer.data(), bytes);
+                            // total += bytes;
                         }
+
+                        std::cout << '[' << session.buffer << ']' << std::endl;
                     }
+
                     if (events & EPOLLOUT)
                     {
                         bytes = ::send(clientSock, reply.data(), reply.length(), 0);
@@ -213,20 +234,18 @@ namespace EPollTCPServerContext
 
                     if (events & EPOLLHUP)
                     {
-                        // debug("EPOLLHUP: Closing connection. Socket = ", clientSock, "[epoll_wait error]");
                         if (SOCKET_ERROR == epoll_ctl(epollFd, EPOLL_CTL_DEL, clientSock, nullptr)) {
                             Error("epoll_ctl() failed. (EPOLL_CTL_DEL)");
                         }
-                        closeClientSocket(clientSock);
+                        closeClientSocket(clientSock, session);
                     }
 
                     if (events & EPOLLRDHUP)
                     {
-                        // debug("EPOLLRDHUP: Closing connection. Socket = ", clientSock);
                         if (SOCKET_ERROR == epoll_ctl(epollFd, EPOLL_CTL_DEL, clientSock, nullptr)) {
                             Error("epoll_ctl() failed. (EPOLL_CTL_DEL)");
                         }
-                        closeClientSocket(clientSock);
+                        closeClientSocket(clientSock, session);
                     }
                 }
             }
@@ -309,5 +328,5 @@ namespace EPollTCPServerContext
 
 void EPollTCPServerContext::TestAll()
 {
-
+    startSerer();
 }

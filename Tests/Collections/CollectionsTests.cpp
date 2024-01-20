@@ -480,6 +480,37 @@ namespace CollectionsTests::UnorderedMap
         res = numbers.erase(1);
         std::cout << res << std::endl;
     }
+
+    enum class State
+    {
+        Open,
+        Closed
+    };
+
+    struct Session
+    {
+        std::string buffer;
+        State state { State::Closed };
+
+        Session(State state = State::Closed): state {state} {
+            std::cout << "Session created\n";
+        }
+    };
+
+    void Try_Emplace_Existing()
+    {
+        std::unordered_map<int, Session> sessions;
+
+        {
+            auto [iter, ok] = sessions.try_emplace(1);
+            std::cout << std::boolalpha << ok << std::endl;
+        }
+
+        {
+            auto [iter, ok] = sessions.try_emplace(1);
+            std::cout << std::boolalpha << ok << std::endl;
+        }
+    }
 }
 
 namespace CollectionsTests::Vector
@@ -518,6 +549,7 @@ void CollectionsTests::TestAll()
     // Trie::PerformanceTests();
 
     // UnorderedMap::DeletedNotExisting();
+    UnorderedMap::Try_Emplace_Existing();
 
-    Vector::GetRefToBack_And_DeleteLastElement();
+    // Vector::GetRefToBack_And_DeleteLastElement();
 };
