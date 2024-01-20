@@ -27,8 +27,11 @@ Description : EPollTCPServerContext
 #include <utility>
 #include <thread>
 
-namespace EPollTCPServerContext::Utilities
+namespace EPollTCPServerContext
 {
+    constexpr int32_t  INVALID_SOCKET { -1 };
+    constexpr int32_t  SOCKET_ERROR { -1 };
+
     static std::string errCodeToStr(int errCode)
     {
         switch (errCode)
@@ -92,6 +95,12 @@ namespace EPollTCPServerContext::Utilities
         std::cout << "\n==========================================================================\n";
     }
 
+    int32_t Error(std::string_view text)
+    {
+        std::cerr << text << ". Error = " << errno << "(" << errCodeToStr(errno) << ")\n";
+        return SOCKET_ERROR;
+    }
+
     template<typename T>
     auto addSpace(const T& arg) -> decltype(auto)
     {
@@ -109,12 +118,8 @@ namespace EPollTCPServerContext::Utilities
 
 namespace EPollTCPServerContext
 {
-    using namespace Utilities;
-
     class TCPServer
     {
-        static inline constexpr int32_t  INVALID_SOCKET { -1 };
-        static inline constexpr int32_t  SOCKET_ERROR { -1 };
         static inline constexpr uint32_t BACKLOG { 10 };
         static inline constexpr size_t   BUFFER_SIZE { 1024 * 4 };
 
@@ -128,13 +133,6 @@ namespace EPollTCPServerContext
 
         std::string hostAddress;
         uint16_t listenPort {};
-
-        static int32_t Error(std::string_view text)
-        {
-            std::cerr << text << ". Error = " << errno << "(" << Utilities::errCodeToStr(errno) << ")\n";
-
-            return SOCKET_ERROR;
-        }
 
         static int32_t setNonBlock(int32_t handle)
         {
@@ -157,6 +155,13 @@ namespace EPollTCPServerContext
                 return Error("epoll_ctl() failed. (F_SETFL && O_NONBLOCK)");
             }
             return 0;
+        }
+
+        static void closeClientSocket(int32_t socket)
+        {
+            if (SOCKET_ERROR == ::close(socket)) {
+                Error("close() failed");
+            }
         }
 
         // TODO: Store session data --> HashTable
@@ -185,9 +190,7 @@ namespace EPollTCPServerContext
                         if (SOCKET_ERROR == epoll_ctl(epollFd, EPOLL_CTL_DEL, clientSock, nullptr)) {
                             Error("epoll_ctl() failed. (EPOLL_CTL_DEL)");
                         }
-                        if (SOCKET_ERROR == ::close(clientSock)) {
-                            Error("close() failed");
-                        }
+                        closeClientSocket(clientSock);
                     }
 
                     if (events & EPOLLIN)
@@ -200,7 +203,6 @@ namespace EPollTCPServerContext
                             total += bytes;
                         }
                     }
-
                     if (events & EPOLLOUT)
                     {
                         bytes = ::send(clientSock, reply.data(), reply.length(), 0);
@@ -215,9 +217,7 @@ namespace EPollTCPServerContext
                         if (SOCKET_ERROR == epoll_ctl(epollFd, EPOLL_CTL_DEL, clientSock, nullptr)) {
                             Error("epoll_ctl() failed. (EPOLL_CTL_DEL)");
                         }
-                        if (SOCKET_ERROR == ::close(clientSock)) {
-                            Error("close() failed");
-                        }
+                        closeClientSocket(clientSock);
                     }
 
                     if (events & EPOLLRDHUP)
@@ -226,9 +226,7 @@ namespace EPollTCPServerContext
                         if (SOCKET_ERROR == epoll_ctl(epollFd, EPOLL_CTL_DEL, clientSock, nullptr)) {
                             Error("epoll_ctl() failed. (EPOLL_CTL_DEL)");
                         }
-                        if (SOCKET_ERROR == ::close(clientSock)) {
-                            Error("close() failed");
-                        }
+                        closeClientSocket(clientSock);
                     }
                 }
             }
