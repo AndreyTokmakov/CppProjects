@@ -189,7 +189,7 @@ namespace EPollTCPServerContext
         {
             std::array<epoll_event, kMaxEvents>  epollEvents {};
             std::array<char, BUFFER_SIZE> buffer {};
-            ssize_t bytes {0};
+            ssize_t bytes {0}, total {0};
             std::string reply = "PONG";
             auto [clientSock, events] = std::make_pair<int32_t, uint32_t>(0,0);
 
@@ -216,12 +216,12 @@ namespace EPollTCPServerContext
 
                     if (events & EPOLLIN)
                     {
+                        total = 0;
                         while ((bytes = ::read(clientSock, buffer.data(), buffer.size())) > 0) {
                             session.buffer.append(buffer.data(), bytes);
-                            // total += bytes;
+                            total += bytes;
                         }
-
-                        std::cout << '[' << session.buffer << ']' << std::endl;
+                        std::cout << '[' << session.buffer << "] total = " << total << std::endl;
                     }
 
                     if (events & EPOLLOUT)
