@@ -185,6 +185,7 @@ namespace EPollTCPServerContext
         }
 
         // TODO: Store session data --> HashTable
+        [[noreturn]]
         void eventsPoller()
         {
             std::array<epoll_event, kMaxEvents>  epollEvents {};
@@ -208,10 +209,10 @@ namespace EPollTCPServerContext
 
                     if (events & EPOLLERR)
                     {
-                        if (SOCKET_ERROR == epoll_ctl(epollFd, EPOLL_CTL_DEL, clientSock, nullptr)) {
+                        if (SOCKET_ERROR == epoll_ctl(epollFd, EPOLL_CTL_DEL, clientSock, nullptr))
                             Error("epoll_ctl() failed. (EPOLL_CTL_DEL)");
-                        }
                         closeClientSocket(clientSock, session);
+                        continue;
                     }
 
                     if (events & EPOLLIN)
@@ -221,31 +222,33 @@ namespace EPollTCPServerContext
                             session.buffer.append(buffer.data(), bytes);
                             total += bytes;
                         }
-                        std::cout << '[' << session.buffer << "] total = " << total << std::endl;
+
+                        if (total)
+                            session.state = State::Open;
+                        else if (events & EPOLLHUP || events & EPOLLRDHUP) {
+                            closeClientSocket(clientSock, session);
+                            continue;
+                        }
                     }
 
                     if (events & EPOLLOUT)
                     {
-                        bytes = ::send(clientSock, reply.data(), reply.length(), 0);
-                        if (SOCKET_ERROR == bytes) {
-                            Error("send() failed");
+                        if (State::Open == session.state)
+                        {
+                            if (SOCKET_ERROR == ::send(clientSock, reply.data(), reply.length(), 0))
+                                Error("send() failed");
+                            session.buffer.clear();
                         }
+
+
                     }
 
-                    if (events & EPOLLHUP)
+                    if (events & EPOLLHUP || events & EPOLLRDHUP)
                     {
-                        if (SOCKET_ERROR == epoll_ctl(epollFd, EPOLL_CTL_DEL, clientSock, nullptr)) {
+                        if (SOCKET_ERROR == epoll_ctl(epollFd, EPOLL_CTL_DEL, clientSock, nullptr))
                             Error("epoll_ctl() failed. (EPOLL_CTL_DEL)");
-                        }
                         closeClientSocket(clientSock, session);
-                    }
-
-                    if (events & EPOLLRDHUP)
-                    {
-                        if (SOCKET_ERROR == epoll_ctl(epollFd, EPOLL_CTL_DEL, clientSock, nullptr)) {
-                            Error("epoll_ctl() failed. (EPOLL_CTL_DEL)");
-                        }
-                        closeClientSocket(clientSock, session);
+                        continue;
                     }
                 }
             }

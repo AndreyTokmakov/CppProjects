@@ -26,6 +26,7 @@
 #include <unordered_map>
 
 #include <cstdint>
+#include <iomanip>
 
 namespace
 {
@@ -501,232 +502,237 @@ namespace Strings
     }
 }
 
-namespace Strings
-{
-	void _removeDuplicates(std::string& text) {
-		char tmp[256] = { 0 };
-		size_t u_index = 0;
-		for (size_t pos = 0; pos < text.length(); pos++) {
-			if (1 == tmp[text[pos]]) {
-				continue;
-			}
-			else if (u_index != pos) {
-				text[u_index] = text[pos];
-			}
-			tmp[text[pos]] = 1;
-			u_index++;
-		}
-		text.resize(u_index);
-	}
+namespace Strings {
+    void _removeDuplicates(std::string &text) {
+        char tmp[256] = {0};
+        size_t u_index = 0;
+        for (size_t pos = 0; pos < text.length(); pos++) {
+            if (1 == tmp[text[pos]]) {
+                continue;
+            } else if (u_index != pos) {
+                text[u_index] = text[pos];
+            }
+            tmp[text[pos]] = 1;
+            u_index++;
+        }
+        text.resize(u_index);
+    }
 
-	void _removeDuplicates2(std::string& text) {
-		char tmp[256] = { 0 };
-		size_t index = 0;
-		for (char c : text) {
-			if (0 == tmp[c]++)
-				text[index++] = c;
-		}
-		text.resize(index);
-	}
-
-    void _removeDuplicates3(std::string& text) {
+    void _removeDuplicates2(std::string &text) {
+        char tmp[256] = {0};
         size_t index = 0;
-        for (char tmp[256] { 0 }; char c : text)
+        for (char c: text) {
             if (0 == tmp[c]++)
                 text[index++] = c;
+        }
+        text.resize(index);
+    }
+
+    void _removeDuplicates3(std::string &text) {
+        size_t index = 0;
+        for (char tmp[256]{0}; char c : text)
+        if (0 == tmp[c]++)
+            text[index++] = c;
         text.resize(index);
     }
 
 
-	void RemoveDuplicates()
-    {
-        for (const std::string& str: {"aaaaabbbbbb", "abcabcabcabcabc"})
-        {
-            { std::string s {str}; std::cout << s << " --> "; _removeDuplicates(s); std::cout << s << '\n';}
-            { std::string s {str}; std::cout << s << " --> "; _removeDuplicates2(s); std::cout << s << '\n';}
-            { std::string s {str}; std::cout << s << " --> "; _removeDuplicates3(s); std::cout << s << '\n';}
+    void RemoveDuplicates() {
+        for (const std::string &str: {"aaaaabbbbbb", "abcabcabcabcabc"}) {
+            {
+                std::string s{str};
+                std::cout << s << " --> ";
+                _removeDuplicates(s);
+                std::cout << s << '\n';
+            }
+            {
+                std::string s{str};
+                std::cout << s << " --> ";
+                _removeDuplicates2(s);
+                std::cout << s << '\n';
+            }
+            {
+                std::string s{str};
+                std::cout << s << " --> ";
+                _removeDuplicates3(s);
+                std::cout << s << '\n';
+            }
         }
-	}
-	//--------------------------------------------------------------------------------------//
+    }
+    //--------------------------------------------------------------------------------------//
 
-	void _rotate_string_once(std::string& str) {
-		char tmp = str.back();
-		memcpy(str.data() + 1, str.data(), str.length() - 1);
-		str.front() = tmp;
-	}
+    void _rotate_string_once(std::string &str) {
+        char tmp = str.back();
+        memcpy(str.data() + 1, str.data(), str.length() - 1);
+        str.front() = tmp;
+    }
 
-	void _rotate_string_K(std::string& str, size_t K) {
-		K = K % str.length();
-		char* tmp = new char[K];
-		memcpy(tmp, str.data() + K + 1, K);
-		memcpy(str.data() + K, str.data(), str.length() - K);
-		memcpy(str.data(), tmp, K);
-		delete[] tmp;
-	}
+    void _rotate_string_K(std::string &str, size_t K) {
+        K = K % str.length();
+        char *tmp = new char[K];
+        memcpy(tmp, str.data() + K + 1, K);
+        memcpy(str.data() + K, str.data(), str.length() - K);
+        memcpy(str.data(), tmp, K);
+        delete[] tmp;
+    }
 
-	void _rotate_string_K_2(std::string& str, size_t K) {
-		std::string result(str);
-		for (size_t pos = 0; pos < str.size(); pos++, K++)
-			result[K % str.size()] = str[pos];
-		str.swap(result);
-	}
+    void _rotate_string_K_2(std::string &str, size_t K) {
+        std::string result(str);
+        for (size_t pos = 0; pos < str.size(); pos++, K++)
+            result[K % str.size()] = str[pos];
+        str.swap(result);
+    }
 
-	void RotateString()
-    {
-		{
-			std::string text = "567891234";
-			_rotate_string_once(text);
-			std::cout << text << std::endl;
-		}
-		{
-			std::string text = "567891234";
-			_rotate_string_K(text, 4 + text.length());
-			std::cout << text << std::endl;
-		}
-		{
-			std::string text = "567891234";
-			_rotate_string_K_2(text, 4);
-			std::cout << text << std::endl;
-		}
-	}
+    void RotateString() {
+        {
+            std::string text = "567891234";
+            _rotate_string_once(text);
+            std::cout << text << std::endl;
+        }
+        {
+            std::string text = "567891234";
+            _rotate_string_K(text, 4 + text.length());
+            std::cout << text << std::endl;
+        }
+        {
+            std::string text = "567891234";
+            _rotate_string_K_2(text, 4);
+            std::cout << text << std::endl;
+        }
+    }
 
     //--------------------------------------------------------------------------------------//
 
-    void reverse_string(std::string& str)
-    {
+    void reverse_string(std::string &str) {
         for (size_t idx = 0, size = str.size(); idx < size / 2; ++idx)
             std::swap(str[idx], str[size - idx - 1]);
     }
 
-    void ReverseString()
-    {
-        std::string text { "123456789" };
+    void ReverseString() {
+        std::string text{"123456789"};
         reverse_string(text);
 
         std::cout << text << std::endl;
     }
 
-	//--------------------------------------------------------------------------------------//
+    //--------------------------------------------------------------------------------------//
 
-	bool _is_K_rotate_equals(const std::string& str1, const std::string& str2, size_t K) {
-		for (size_t pos = 0; pos < str1.size(); pos++, K++)
-			if (str2[K % str1.size()] != str1[pos])
-				return false;
-		return true;
-	}
+    bool _is_K_rotate_equals(const std::string &str1, const std::string &str2, size_t K) {
+        for (size_t pos = 0; pos < str1.size(); pos++, K++)
+            if (str2[K % str1.size()] != str1[pos])
+                return false;
+        return true;
+    }
 
-	int _Find_K_Rotates_To_Make_Equal(const std::string& str1, const std::string& str2) {
-		if (str1.size() != str2.size())
-			return -1;
-		for (size_t pos = 0; pos < str1.size(); pos++)
-			if (_is_K_rotate_equals(str1, str2, pos))
-				return pos;
-		return -1;
-	}
+    int _Find_K_Rotates_To_Make_Equal(const std::string &str1, const std::string &str2) {
+        if (str1.size() != str2.size())
+            return -1;
+        for (size_t pos = 0; pos < str1.size(); pos++)
+            if (_is_K_rotate_equals(str1, str2, pos))
+                return pos;
+        return -1;
+    }
 
-	void CheckIfStrings_RotateRotateEquals()
-    {
-        std::vector<std::pair<std::pair<std::string, std::string> , size_t>> testData {
+    void CheckIfStrings_RotateRotateEquals() {
+        std::vector<std::pair<std::pair<std::string, std::string>, size_t>> testData{
                 {{"123456789", "789123456"}, 3},
-                {{"00001", "01000"}, 3},
+                {{"00001",     "01000"},     3},
         };
 
-        for (const auto& [data, result_expected]: testData)
-        {
+        for (const auto &[data, result_expected]: testData) {
             const int rotationsCount = _Find_K_Rotates_To_Make_Equal(data.first, data.second);
             std::cout << "from '" << data.first << "' to '" << data.second << "' -> " << rotationsCount << std::endl;
         }
-	}
+    }
 
-	//--------------------------------------------------------------------------------------//
+    //--------------------------------------------------------------------------------------//
 
-	void _moveAtEnd1(std::string str,
+    void _moveAtEnd1(std::string str,
                      unsigned int i,
                      unsigned int l,
                      const char char_to_move = 'x') {
-		if (i >= l)
-			return;
+        if (i >= l)
+            return;
 
-		char curr = str[i];
-		if (curr != char_to_move)
-			std::cout << curr;
-		_moveAtEnd1(str, i + 1, l, char_to_move);
-		if (curr == char_to_move)
-			std::cout << curr;
-	}
+        char curr = str[i];
+        if (curr != char_to_move)
+            std::cout << curr;
+        _moveAtEnd1(str, i + 1, l, char_to_move);
+        if (curr == char_to_move)
+            std::cout << curr;
+    }
 
-	void _moveAtEnd2(const std::string& str, const char char_to_move = 'x') {
-		int count = str.length();
-		for (auto c : str) {
-			if (char_to_move != c) {
-				count--;
-				std::cout << c;
-			}
-		}
-		while (count--)
-			std::cout << 'x';
-		std::cout << std::endl;
-	}
+    void _moveAtEnd2(const std::string &str, const char char_to_move = 'x') {
+        int count = str.length();
+        for (auto c: str) {
+            if (char_to_move != c) {
+                count--;
+                std::cout << c;
+            }
+        }
+        while (count--)
+            std::cout << 'x';
+        std::cout << std::endl;
+    }
 
-    void _moveAtEnd3_GOOD(const std::string& str, const char char_to_move = 'x') {
-        std::string strLocal {str};
-        for (size_t pos = 0; char& c: strLocal)
+    void _moveAtEnd3_GOOD(const std::string &str, const char char_to_move = 'x') {
+        std::string strLocal{str};
+        for (size_t pos = 0; char &c: strLocal)
             if (char_to_move != c)
                 std::swap(strLocal[pos++], c);
         std::cout << strLocal << std::endl;
     }
 
-	void MoveCharsToEnd()
-    {
-        for (const std::string& testStr: {"geekxsforgexxeksxx"})
-        {
-            std::string text {testStr};
-            _moveAtEnd1(text, 0, text.length(), 'x'); std::cout << std::endl;
+    void MoveCharsToEnd() {
+        for (const std::string &testStr: {"geekxsforgexxeksxx"}) {
+            std::string text{testStr};
+            _moveAtEnd1(text, 0, text.length(), 'x');
+            std::cout << std::endl;
             _moveAtEnd2(text, 'x');
             _moveAtEnd3_GOOD(text, 'x');
         }
-	}
+    }
 
 
-	//--------------------------------------------------------------------------------------//
+    //--------------------------------------------------------------------------------------//
 
-	void _move_zeros_to_end(std::string& str) {
-		size_t pos = 0;
-		for (size_t i = 0; i < str.length(); i++)
-			if ('0' != str[i])
-				str[pos++] = str[i];
-		for (size_t i = pos; i < str.length(); i++)
-			str[i] = '0';
-	}
+    void _move_zeros_to_end(std::string &str) {
+        size_t pos = 0;
+        for (size_t i = 0; i < str.length(); i++)
+            if ('0' != str[i])
+                str[pos++] = str[i];
+        for (size_t i = pos; i < str.length(); i++)
+            str[i] = '0';
+    }
 
-    void _move_zeros_to_end_EX(std::string& str) {
-        for (size_t pos = 0; char& c: str)
+    void _move_zeros_to_end_EX(std::string &str) {
+        for (size_t pos = 0; char &c: str)
             if ('0' != c)
                 std::swap(str[pos++], c);
     }
 
-	void MoveZerosToEnd()
-    {
-        for (const std::string& testStr: {"a0b0c0d0e"})
-        {
+    void MoveZerosToEnd() {
+        for (const std::string &testStr: {"a0b0c0d0e"}) {
             {
-                auto s { testStr}; _move_zeros_to_end(s); std::cout << testStr << " --> " << s << '\n';
+                auto s{testStr};
+                _move_zeros_to_end(s);
+                std::cout << testStr << " --> " << s << '\n';
             }
             {
-                auto s { testStr}; _move_zeros_to_end_EX(s); std::cout << testStr << " --> " << s << '\n';
+                auto s{testStr};
+                _move_zeros_to_end_EX(s);
+                std::cout << testStr << " --> " << s << '\n';
             }
         }
-	}
+    }
 
     //--------------------------------------------------------------------------------------//
 
     // Необходимо найти максимальную длину подстроки такой что бы в ней было не более чем 'K' уникальных элементов
-    size_t findLenWithMax_K_UniqueChars(const std::string& text,
-                                        const size_t K)
-    {
-        size_t result { 0 }, indexes[256] {};
-        for (size_t right = 0, left = 0, uniqCount = 0; right < text.length(); ++right)
-        {
+    size_t findLenWithMax_K_UniqueChars(const std::string &text,
+                                        const size_t K) {
+        size_t result{0}, indexes[256]{};
+        for (size_t right = 0, left = 0, uniqCount = 0; right < text.length(); ++right) {
             const char c = text[right];
             if (0 == indexes[c]++)
                 ++uniqCount;
@@ -741,29 +747,30 @@ namespace Strings
         return result;
     }
 
-    void MaxSubstringLength_Of_K_max_Unique_Elements()
-    {
-        for (const std::pair<StrSizeTPair, size_t>& data: std::vector< std::pair<StrSizeTPair, size_t> > {
-                {{"aba", 2}, 3}, {{"ababaaab", 2}, 8},
-                {{"ababaaacb", 2}, 7}, {{"ababaaacb", 3}, 9},
-                {{"aabbcc", 1}, 2}, {{"aabbcc", 2}, 4},
-                {{"aabbcc", 3}, 6}
-        }){
-            const auto& [str, K] = data.first;
+    void MaxSubstringLength_Of_K_max_Unique_Elements() {
+        for (const std::pair<StrSizeTPair, size_t> &data: std::vector<std::pair<StrSizeTPair, size_t> >{
+                {{"aba",       2}, 3},
+                {{"ababaaab",  2}, 8},
+                {{"ababaaacb", 2}, 7},
+                {{"ababaaacb", 3}, 9},
+                {{"aabbcc",    1}, 2},
+                {{"aabbcc",    2}, 4},
+                {{"aabbcc",    3}, 6}
+        }) {
+            const auto &[str, K] = data.first;
             const size_t count = findLenWithMax_K_UniqueChars(str, K);
             std::cout << "Actual: " << count << "  Expected: " << data.second << "  --> "
                       << std::boolalpha << (count == data.second) << std::endl;
         }
     }
 
-	//--------------------------------------------------------------------------------------//
+    //--------------------------------------------------------------------------------------//
 
-    int64_t longestUniqueSubstr_0(const std::string& s)
-    {
+    int64_t longestUniqueSubstr_0(const std::string &s) {
         int64_t max_len = 0, left = -1;
         // initial left border, before the start of the string
         // storage for last instance of each character
-        std::vector<int64_t> arr(256,-1);
+        std::vector<int64_t> arr(256, -1);
         for (int64_t right = 0; right < std::ssize(s); ++right) {
             // last seen is in between left and right
             // this is a duplicate, move left to the duplicate
@@ -772,44 +779,41 @@ namespace Strings
             // remember the new last seen
             arr[unsigned(s[right])] = right;
             // left to right, but not including the character at left
-            max_len = std::max(max_len, right-left);
+            max_len = std::max(max_len, right - left);
         }
         return max_len;
     }
 
-	std::string longestUniqueSubstr_1(const std::string& text)
-    {
-		char duplicates[256] = { 0 };
-		size_t beg = 0, length = 0, maxlen = 0;
-		for (size_t index = 0; index < text.length(); index++) {
+    std::string longestUniqueSubstr_1(const std::string &text) {
+        char duplicates[256] = {0};
+        size_t beg = 0, length = 0, maxlen = 0;
+        for (size_t index = 0; index < text.length(); index++) {
             const char c = text[index];
-			if (1 == duplicates[c]) {
-				length = 1;
-				memset(duplicates, 0, sizeof(duplicates));
-			}
-			else {
-				if (++length > maxlen) {
-					maxlen = length;
-					beg = index - length + 1;
-				}
-			}
-			duplicates[text[index]] = 1;
-		}
-		return text.substr(beg, maxlen);
-	}
+            if (1 == duplicates[c]) {
+                length = 1;
+                memset(duplicates, 0, sizeof(duplicates));
+            } else {
+                if (++length > maxlen) {
+                    maxlen = length;
+                    beg = index - length + 1;
+                }
+            }
+            duplicates[text[index]] = 1;
+        }
+        return text.substr(beg, maxlen);
+    }
 
-    size_t longestUniqueSubstr_2(const std::string& text) {
-		size_t maxLength = 0, repeat_count = 0, indexes[256] = { 0 };
-		for (size_t idx = 0; char c: text) {
-			repeat_count = std::max(repeat_count, indexes[c] + 1);
-			maxLength = std::max(maxLength, idx - repeat_count + 1);
-			indexes[c] = idx++;
-		}
-		return maxLength;
-	}
+    size_t longestUniqueSubstr_2(const std::string &text) {
+        size_t maxLength = 0, repeat_count = 0, indexes[256] = {0};
+        for (size_t idx = 0; char c: text) {
+            repeat_count = std::max(repeat_count, indexes[c] + 1);
+            maxLength = std::max(maxLength, idx - repeat_count + 1);
+            indexes[c] = idx++;
+        }
+        return maxLength;
+    }
 
-    size_t longestUniqueSubstr_3_Map(const std::string& text)
-    {
+    size_t longestUniqueSubstr_3_Map(const std::string &text) {
         std::unordered_map<char, size_t> seen;
         size_t result = 0;
         for (size_t fast = 0, slow = 0; fast < text.size(); ++fast) {
@@ -821,9 +825,8 @@ namespace Strings
         return result;
     }
 
-    size_t longestUniqueSubstr_4_Tbl(const std::string& text)
-    {
-        size_t result = 0, indexes[256] {0};
+    size_t longestUniqueSubstr_4_Tbl(const std::string &text) {
+        size_t result = 0, indexes[256]{0};
         for (size_t fastIdx = 0, slow = 0; const char c: text) {
             slow = std::max(slow, indexes[c] + 1);
             indexes[c] = fastIdx++;
@@ -832,8 +835,8 @@ namespace Strings
         return result;
     }
 
-    size_t longestUniqueSubstr_4_Tbl_Debug(const std::string& text) {
-        size_t result = 0, indexes[256] {0};
+    size_t longestUniqueSubstr_4_Tbl_Debug(const std::string &text) {
+        size_t result = 0, indexes[256]{0};
         for (size_t fastIdx = 0, slow = 0; const char c: text) {
             slow = std::max(slow, indexes[c] + 1);
             indexes[c] = fastIdx++;
@@ -848,11 +851,9 @@ namespace Strings
     // 2. Как только количество встреч данного символа в рамках (cтрока от left до right) более чем один выполняем
     //    while цикл в котором двигаем left право пока количество встреч символа по индексу right не станет равным == 1
 
-    size_t longestUniqueSubstr_UnFinished(const std::string& text)
-    {
-        size_t maxLen = 0, table[256] {0};
-        for (size_t left = 0, right = 0, size = text.size(); right < size; ++right)
-        {
+    size_t longestUniqueSubstr_UnFinished(const std::string &text) {
+        size_t maxLen = 0, table[256]{0};
+        for (size_t left = 0, right = 0, size = text.size(); right < size; ++right) {
             const size_t charIdx = static_cast<size_t>(text[right]);
             if (++table[charIdx] == 1) { // Its a first occurrence of the char == text[right]
                 maxLen = std::max(maxLen, right - left + 1);
@@ -866,13 +867,14 @@ namespace Strings
         return maxLen;
     }
 
-	void LongestSubstringWithoutRepeatingCharacters()
-    {
-        for (const StrSizeTPair& data: std::vector<StrSizeTPair> {
-                {"abcde", 5}, {"abcbef", 4}, {"aaaaaa", 1}, {"aaabbbccc", 2},
-                { "abcabcbb", 3}
-        })
-        {
+    void LongestSubstringWithoutRepeatingCharacters() {
+        for (const StrSizeTPair &data: std::vector<StrSizeTPair>{
+                {"abcde",     5},
+                {"abcbef",    4},
+                {"aaaaaa",    1},
+                {"aaabbbccc", 2},
+                {"abcabcbb",  3}
+        }) {
             std::cout << longestUniqueSubstr_0(data.first) << " "
                       << longestUniqueSubstr_1(data.first) << " "
                       << longestUniqueSubstr_2(data.first) << " "
@@ -881,20 +883,17 @@ namespace Strings
                       << longestUniqueSubstr_UnFinished(data.first)
                       << " | " << data.second << std::endl;
         }
-	}
+    }
 
-    size_t longest_substring_without_repeating_characters(const std::string& str)
-    {
-        uint16_t chars[256] {};
+    size_t longest_substring_without_repeating_characters(const std::string &str) {
+        uint16_t chars[256]{};
         size_t maxLen = 0;
         bool hasDuplicates = false;
-        for (size_t left = 0, right = 0; right < str.size(); ++right)
-        {
+        for (size_t left = 0, right = 0; right < str.size(); ++right) {
             if (++chars[str[right]] > 1)
                 hasDuplicates = true;
 
-            while (hasDuplicates)
-            {
+            while (hasDuplicates) {
                 if (--chars[str[left++]] == 1)
                     hasDuplicates = false;
             }
@@ -903,29 +902,29 @@ namespace Strings
         return maxLen;
     }
 
-    void LongestSubstringWithoutRepeatingCharacters2()
-    {
-        for (const StrSizeTPair & data: std::vector<StrSizeTPair> {
-            {"abcde", 5}, {"abcbef", 4}, {"aaaaaa", 1}, {"aaabbbccc", 2},
-            { "abcabcbb", 3}
-        }){
+    void LongestSubstringWithoutRepeatingCharacters2() {
+        for (const StrSizeTPair &data: std::vector<StrSizeTPair>{
+                {"abcde",     5},
+                {"abcbef",    4},
+                {"aaaaaa",    1},
+                {"aaabbbccc", 2},
+                {"abcabcbb",  3}
+        }) {
             const size_t count = longest_substring_without_repeating_characters(data.first);
             std::cout << "Actual: " << count << "  Expected: " << data.second << "  --> "
                       << std::boolalpha << (count == data.second) << std::endl;
         }
     }
 
-	//--------------------------------------------------------------------------------------//
+    //--------------------------------------------------------------------------------------//
 
-    void __longestConsecutiveCharacters(const std::string& text)
-    {
-        char c {};
+    void __longestConsecutiveCharacters(const std::string &text) {
+        char c{};
         size_t max_len = 1;
         for (size_t idx = 1, len = 1; idx < text.length(); ++idx) {
             if (text[idx - 1] != text[idx]) {
                 len = 1;
-            }
-            else {
+            } else {
                 if (++len > max_len) {
                     max_len = len;
                     c = text[idx];
@@ -935,12 +934,10 @@ namespace Strings
         std::cout << " Max = " << max_len << " of " << c << std::endl;
     }
 
-    void __longestConsecutiveCharacters2(const std::string& text)
-    {
+    void __longestConsecutiveCharacters2(const std::string &text) {
         size_t max_len = 0;
         char prev = text.back();
-        for (size_t len = 0; const char c: text)
-        {
+        for (size_t len = 0; const char c: text) {
             len = (c == prev) ? len + 1 : 1;
             max_len = std::max(len, max_len);
             prev = c;
@@ -948,19 +945,18 @@ namespace Strings
         std::cout << " Max = " << max_len << " of " << prev << std::endl;
     }
 
-	void LongestConsecutiveCharacters()
-    {
-        const std::string& text { "aabbbbbcccc" };
+    void LongestConsecutiveCharacters() {
+        const std::string &text{"aabbbbbcccc"};
         __longestConsecutiveCharacters(text);
-        __longestConsecutiveCharacters2(text );
-	}
+        __longestConsecutiveCharacters2(text);
+    }
 
     //---------------------------------------------------------------------------//
 
     double getAngleOnClock(std::string_view timeStr) {
         const size_t pos = timeStr.find(':');
         const double hours = atoi(timeStr.substr(0, pos).data());
-        const double minutes = atoi(timeStr.substr(pos + 1, timeStr.length() - pos -1).data());
+        const double minutes = atoi(timeStr.substr(pos + 1, timeStr.length() - pos - 1).data());
 
         /*
          * The whole dial is 360 degrees and each interval is 30 degrees
@@ -969,11 +965,11 @@ namespace Strings
          * Then 150-7.5=142.5
          */
 
-        auto degrees = std::abs(hours * 30  -  minutes * 6 + (30 * minutes) / 60);
+        auto degrees = std::abs(hours * 30 - minutes * 6 + (30 * minutes) / 60);
         degrees = std::min(degrees, 360 - degrees);
 
         [[maybe_unused]]
-        const double radians = ( degrees * std::numbers::pi ) / 180;
+        const double radians = (degrees * std::numbers::pi) / 180;
 
         // std::cout << "degrees = " << degrees << std::endl;
         // std::cout << "radians = " << radians << std::endl;
@@ -986,12 +982,12 @@ namespace Strings
 
         getAngleOnClock(timeString);
     }
+}
 
-
-
-    //--------------------------------------------------------------------------------------//
-
-    unsigned int _atoi(const char* str) {
+namespace Strings
+{
+    unsigned int _atoi(const char* str)
+    {
         unsigned int result {0};
         char c = *str;
         while (c >= '0' && c <= '9') {
@@ -1001,7 +997,8 @@ namespace Strings
         return result;
     }
 
-    unsigned int _atoi2(const char* c) {
+    unsigned int _atoi2(const char* c)
+    {
         unsigned int result {0};
         while (*c >= '0' && *c <= '9')
             result = result * 10 + (*(c++) - '0');
@@ -1010,13 +1007,59 @@ namespace Strings
 
     void Atoi()
     {
-        for (const auto& str: {"123", "1203", "931aa"}) {
-            std::cout << _atoi(str) <<  "    " << _atoi2(str) << std::endl;
+        for (const auto& str: {
+            "123", "1203", "931aa", "00123", "  -123 hh", "42"
+            // "-91283472332"
+        }) {
+            std::cout << str << " -> " << _atoi(str) <<  "    " << _atoi2(str) <<  "    " <<  std::endl;
         }
     }
+}
 
-    //--------------------------------------------------------------------------------------//
+namespace Strings
+{
+    int32_t _atoi_ex(const std::string& str)
+    {
+        int32_t number {0}, size = str.size(), idx = 0, sign = 0;
+        while (size > idx)
+        {
+            if (str[idx] == ' ') {
+                if (0 != sign)
+                    return -1;
+            }
+            else if (str[idx] == '+') {
+                if (0 != sign)
+                    return -1;
+                sign = 1;
+            }
+            else if (str[idx] == '-') {
+                if (0 != sign)
+                    return -1;
+                sign = -1;
+            } else break;
+            ++idx;
+        }
 
+        while (size > idx && str[idx] >= '0' && str[idx] <= '9') {
+            number = number * 10 + (str[idx++]  - '0');
+        }
+
+        return number * (sign ? sign : 1);
+    }
+
+    void Atoi_Extended()
+    {
+        for (const auto& str: {
+            "123", "1203", "931aa", "00123","  -123 hh","  -+123 hh", "42", "-91283472332"
+        }) {
+            std::cout << std::left << std::setfill(' ') << std::setw(14) << std::quoted(str)
+                    << " -> " << _atoi_ex(str) <<  std::endl;
+        }
+    }
+}
+
+namespace Strings
+{
     size_t _str_len(const char* str)
     {
         size_t count = 0;
@@ -1953,6 +1996,7 @@ void Strings::TestAll()
 
 	// Strings::AnalogClockAngles();
 	// Strings::Atoi();
+	Strings::Atoi_Extended();
 	// Strings::StrLen();
 
 	// Strings::ReverseString();

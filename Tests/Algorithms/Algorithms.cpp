@@ -156,9 +156,11 @@ namespace Algorithms
     bool __contains(const std::string& text,
                     const std::string& str)
     {
-        for (size_t idx = 0, m = 0, n= 0; idx < text.size() - str.size(); ++idx)
+        for (int idx = 0, m = 0, n= 0; idx <= std::ssize(text) - std::ssize(str); ++idx)
         {
+            std::cout << idx << std::endl;
             for (m = 0, n = idx; m < str.size(); ++m, ++n) {
+                std::cout << '\t' << n << " - " << m << std::endl;
                 if (str[m] != text[n])
                     break;
             }
@@ -169,7 +171,7 @@ namespace Algorithms
     }
 
     void Contains() {
-        std::string text = "aaaaaabbaaaaaa", str = "bbb";
+        std::string text = "aaa", str = "aaaa";
 
         std::cout << std::boolalpha << __contains(text, str) << std::endl;
 
@@ -1275,7 +1277,7 @@ void Algorithms::TestAll()
     // Strings::PrintAllSubStrings();
     // Strings::CountBinarySubstrings();
 
-    Bits::ReverseBits();
+    // Bits::ReverseBits();
 
     // MaxTree::test();
 
@@ -1283,7 +1285,7 @@ void Algorithms::TestAll()
 
     // Algorithms::Sqrt();
 
-    // Contains();
+    Contains();
 
     // CalcParentheses_3_BRacket();
 
