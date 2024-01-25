@@ -1047,6 +1047,12 @@ namespace Strings
         return number * (sign ? sign : 1);
     }
 
+    // Read in and ignore any leading whitespace.
+    //
+    // Check if the next character (if not already at the end of the string) is '-' or '+'.
+    // Read this character in if it is either. This determines if the final result is negative or positive respectively.
+    // Assume the result is positive if neither is present.777777
+
     void Atoi_Extended()
     {
         for (const auto& str: {
