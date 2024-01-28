@@ -75,7 +75,7 @@ int main([[maybe_unused]] int argc,
     // Multithreading_Collections::TEST_ALL();
     // Queue::TestAll();
     // Multithreading_Communication::TEST_ALL();
-    Promise::TEST_ALL();
+    // Promise::TEST_ALL();
     // PackagedTask::TEST_ALL();
     // ParallelExecutionAlgoritms::TEST_ALL();
 
@@ -93,7 +93,7 @@ int main([[maybe_unused]] int argc,
     // ThreadPoolBlocking::TEST_ALL();
     // ThreadPoolLimited::TestAll();
 
-    // Threads::TEST_ALL();
+    Threads::TEST_ALL();
     // JThreads::TEST_ALL();
 
     // FalseSharingExperiments::TEST_ALL();

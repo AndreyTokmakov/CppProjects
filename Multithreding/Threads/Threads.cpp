@@ -182,9 +182,10 @@ namespace Threads {
     }
 }
 
-namespace Threads::ThreadLocalStorage {
-    struct Params {
-    public:
+namespace Threads::ThreadLocalStorage
+{
+    struct Params
+    {
         // unique in program
         inline static std::string gName = "global";
 
@@ -195,7 +196,8 @@ namespace Threads::ThreadLocalStorage {
         std::string lName = "local";
 
     public:
-        void print(const std::string& msg) const {
+        void print(const std::string& msg) const
+        {
             std::cout << msg << std::endl;
             std::cout << "- gName: " << gName << std::endl;
             std::cout << "- tName: " << tName << std::endl;
@@ -248,6 +250,35 @@ namespace Threads::ThreadLocalStorage {
 
         a.join();
         b.join();
+    }
+
+
+
+    struct Worker
+    {
+        inline static thread_local std::vector<int> numbers {};
+
+        void process(int values)
+        {
+            for (int i = 0; i < values; ++i) {
+                std::this_thread::sleep_for(std::chrono::milliseconds (100));
+                numbers.push_back(i);
+            }
+            std::cout << "Address: " << &numbers << ", size: " << numbers.size() << std::endl;
+        }
+
+        void run()
+        {
+            std::jthread thread1(&Worker::process, this, 5);
+            std::jthread thread2(&Worker::process, this, 5 * 2);
+        }
+    };
+
+
+    void Test3()
+    {
+        Worker w;
+        w.run();
     }
 }
 
@@ -321,6 +352,7 @@ void Threads::TEST_ALL()
 
     // ThreadLocalStorage::Test();
     // ThreadLocalStorage::Test2();
+    ThreadLocalStorage::Test3();
 
     // VariousTests::Test();
 

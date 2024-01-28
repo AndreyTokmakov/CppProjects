@@ -58,9 +58,7 @@ namespace Format
 
         std::string str3 = std::format("AAAA_{}_BBBB_{}", 123, 456);
         std::cout << str2 << std::endl;
-
     }
-
 
     void Format_To()
     {
@@ -76,6 +74,20 @@ namespace Format
         std::cout << buffer;
     }
 
+    void Format_to_N()
+    {
+        {
+            std::string buffer;
+            std::format_to_n(std::back_inserter(buffer), 5, "Hello, C++{}!\n", "20");
+            std::cout << buffer << '\n';
+        }
+
+        {
+            std::string buffer;
+            std::format_to_n(std::back_inserter(buffer), 7, "123456789", "qwerty");
+            std::cout << buffer << '\n';
+        }
+    }
 
     void Format_To_2()
      {
@@ -89,6 +101,22 @@ namespace Format
         std::cout << buffer;
     }
 
+    void VFormatTest1()
+    {
+        std::string formatString = "Hello, C++{}!\n";
+        std::cout << std::vformat(formatString, std::make_format_args("23")) << '\n';
+    }
+
+    template<typename... Args>
+    inline void println(const std::format_string<Args...> fmt, Args&&... args)
+    {
+        std::cout << std::vformat(fmt.get(), std::make_format_args(args...)) << '\n';
+    }
+
+    void VFormatPrint()
+    {
+        println("{}{} {}{}{}", "Hello", ',', "C++", -1 + 2 * 3 * 4, '!');
+    }
 
     void Make_Path()
     {
@@ -192,6 +220,10 @@ void Format::TestAll()
 
     // Format_To();
     // Format_To_2();
+    Format_to_N();
+    // Format::VFormatTest1();
+    // Format::VFormatPrint();
+
 
     // SimpleTest();
     // Test_2();
@@ -202,6 +234,6 @@ void Format::TestAll()
 
     // Experiments();
 
-    Date_and_Time::FormatTime();
-    Date_and_Time::Format_TimePoint();
+    // Date_and_Time::FormatTime();
+    // Date_and_Time::Format_TimePoint();
 }

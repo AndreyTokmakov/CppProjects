@@ -17,6 +17,9 @@ Description : OOP_Experiments
 
 #include <cstring>
 
+using Integer = Helpers::Integer;
+using Long = Helpers::Long;
+
 namespace OOP_Experiments::FriendTests
 {
     class A {
@@ -340,7 +343,44 @@ namespace ObjectOrientedExperiments::CopyObjects
     }
 }
 
+namespace ObjectOrientedExperiments::DefaultConstructor_VariablesInitialization
+{
+    struct Keeper
+    {
+        Integer first {1};
+        Integer second {2};
 
+        Keeper() = default;
+        explicit Keeper(int a): first {a}, second {200} {
+        }
+
+        /*
+        Keeper(int a, int b): Keeper(), first{1} {
+        }
+        */
+    };
+
+    void Test()
+    {
+        {
+            Keeper obj{};
+        }
+
+        std::cout << std::endl;
+
+        {
+            Keeper obj { 100};
+        }
+
+        /*
+        std::cout << std::endl;
+
+        {
+            Keeper obj { 100, 200};
+        }
+        */
+    }
+}
 
 void ObjectOrientedExperiments::OOP_Experiments::TestAll()
 {
@@ -356,10 +396,7 @@ void ObjectOrientedExperiments::OOP_Experiments::TestAll()
     // Clear_NonTrivial_Objects::clearTest();
     // Clear_NonTrivial_Objects::perfTest();
 
-    CopyObjects::createSocket();
+    // CopyObjects::createSocket();
 
-    /*
-    uint8_t  sender_mac[6]{};
-    std::fill_n(sender_mac, 6, 0);
-     */
+    DefaultConstructor_VariablesInitialization::Test();
 };

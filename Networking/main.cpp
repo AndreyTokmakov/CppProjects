@@ -36,6 +36,7 @@ Description : Tests C++ project
 #include "Servers/EPollTCPServerEx.h"
 #include "Servers/EPollTCPServerDebug.h"
 #include "Servers/EPollTCPServerContext.h"
+#include "Servers/EPollTCPServerContextEx.h"
 #include "Servers/EPollTCPServerMultithreaded.h"
 
 #include "ssh/SshExperiments.h"
@@ -77,7 +78,8 @@ int main([[maybe_unused]] int argc,
     // EPollTCPServerTwo::Tests();
     // EPollTCPServerEx::Tests();
     // EPollTCPServerDebug::Tests();
-    EPollTCPServerContext::TestAll();
+    // EPollTCPServerContext::TestAll();
+    EPollTCPServerContextEx::TestAll();
     // EPollTCPServerMultithreaded::Tests();
 
     // PcapAnalyzer::TestAll();

@@ -202,7 +202,7 @@ int main(int argc, char** argv)
     // CopyElision::TestAll();
     // DateAndTime::TestAll();
     // EnumTests::TestAll();
-    Errors::TestAll();
+    // Errors::TestAll();
     // Exceptions::TestAll();
     // Expected::TestAll();
     // StrongTypes::TestAll();
@@ -212,7 +212,7 @@ int main(int argc, char** argv)
     // IteratorTests::TestAll();
     // FilesStreams::TestAll();
     // Filesystem::TestAll();
-    // Format::TestAll();
+    Format::TestAll();
     // FunctionObjects::TestAll();
     // Hashing::TestAll();
     // Lambdas::TestAll();

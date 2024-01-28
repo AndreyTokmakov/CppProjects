@@ -279,10 +279,49 @@ namespace CountingIterator
     }
 }
 
+namespace Cpp23_Features::Format
+{
+    void Format_to_N()
+    {
+        {
+            std::string buffer;
+            std::format_to_n(std::back_inserter(buffer), 5, "Hello, C++{}!\n", "20");
+            std::cout << buffer << '\n';
+        }
+
+        {
+            std::string buffer;
+            std::format_to_n(std::back_inserter(buffer), 7, "123456789", "qwerty");
+            std::cout << buffer << '\n';
+        }
+    }
+
+
+    void VFormatTest1()
+    {
+        std::string formatString = "Hello, C++{}!\n";
+        std::cout << std::vformat(formatString, std::make_format_args("23")) << '\n';
+    }
+
+    template<typename... Args>
+    inline void println(const std::format_string<Args...> fmt, Args&&... args)
+    {
+        std::cout << std::vformat(fmt.get(), std::make_format_args(args...)) << '\n';
+    }
+
+    void VFormatPrint()
+    {
+        println("{}{} {}{}{}", "Hello", ',', "C++", -1 + 2 * 3 * 4, '!');
+    }
+}
 
 
 void Cpp23_Features::TestAll()
 {
+
+    Format::Format_to_N();
+    // Format::VFormatTest1();
+    // Format::VFormatPrint();
 
     // static_operator();
     // static_operator_lambda();
@@ -304,6 +343,6 @@ void Cpp23_Features::TestAll()
     Expected::No_DefaultValue();
     */
 
-    CountingIterator::test_simple();
+    // CountingIterator::test_simple();
     // CountingIterator::test_print();
 };

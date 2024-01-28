@@ -54,6 +54,7 @@ add_executable(${PROJECT_NAME}
         Servers/EPollTCPServerDebug.cpp Servers/EPollTCPServerDebug.h
         Servers/EPollTCPServerMultithreaded.cpp Servers/EPollTCPServerMultithreaded.h
         Servers/EPollTCPServerContext.cpp Servers/EPollTCPServerContext.h
+        Servers/EPollTCPServerContextEx.cpp Servers/EPollTCPServerContextEx.h
         RawSockets/CaptureTraffic.cpp RawSockets/CaptureTraffic.h
         PcapAnalyzer/PcapAnalyzer.cpp PcapAnalyzer/PcapAnalyzer.h
         WiFi/WiFiExperiments.cpp WiFi/WiFiExperiments.h

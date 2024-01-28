@@ -842,7 +842,7 @@ int main([[maybe_unused]] int argc,
     // CallFunctionByName::Test();
     // ReturnClass_MemberRef_CopyCTor::tests();
 
-    Algorithms::TestAll();
+    // Algorithms::TestAll();
     // AutoTests::TestAll();
     // Cpp23_Features::TestAll();
     // Concepts::TestAll();
@@ -867,7 +867,7 @@ int main([[maybe_unused]] int argc,
     // ExpressionTemplates::TestAll();
     // CopyElision_RVO::TestAll();
     // ObjectOrientedExperiments::RAIIWrapper::TestAll();
-    // ObjectOrientedExperiments::OOP_Experiments::TestAll();
+    ObjectOrientedExperiments::OOP_Experiments::TestAll();
     // ObjectOrientedExperiments::VirtualTables::TestAll();
     // Optional::TestAll();
     // Math::TestAll();

@@ -1,13 +1,13 @@
 /**============================================================================
-Name        : EPollTCPServerContext.h
-Created on  : 19.01.2024
+Name        : EPollTCPServerContextEx.cpp
+Created on  : 28.01.2024
 Author      : Andrei Tokmakov
 Version     : 1.0
 Copyright   : Your copyright notice
-Description : EPollTCPServerContext
+Description : EPollTCPServerContextEx.cpp
 ============================================================================**/
 
-#include "EPollTCPServerContext.h"
+#include "EPollTCPServerContextEx.h"
 
 #include <arpa/inet.h>
 #include <cerrno>
@@ -21,16 +21,20 @@ Description : EPollTCPServerContext
 
 #include <iostream>
 #include <string>
+#include <deque>
+#include <vector>
 #include <thread>
 #include <memory>
 #include <functional>
 #include <utility>
 #include <thread>
 
-namespace EPollTCPServerContext
+namespace
 {
-    constexpr int32_t  INVALID_SOCKET { -1 };
-    constexpr int32_t  SOCKET_ERROR { -1 };
+    using Socket = int32_t;
+
+    constexpr Socket INVALID_SOCKET { -1 };
+    constexpr Socket SOCKET_ERROR { -1 };
 
     static std::string errCodeToStr(int errCode)
     {
@@ -91,14 +95,15 @@ namespace EPollTCPServerContext
         if (events & EPOLLWAKEUP)    std::cout << "EPOLLWAKEUP ";
         if (events & EPOLLONESHOT)   std::cout << "EPOLLONESHOT ";
         if (events & EPOLLET)        std::cout << "EPOLLET ";
-        //else                              std::cout << "Unknown!!!\n";
+        else                         std::cout << " **** Unknown * * * * * !!!\n";
         std::cout << "\n==========================================================================\n";
     }
 
-    int32_t Error(std::string_view text)
+    template<typename _Ty = Socket>
+    _Ty Error(std::string_view text, const _Ty exitError = SOCKET_ERROR)
     {
         std::cerr << text << ". Error = " << errno << "(" << errCodeToStr(errno) << ")\n";
-        return SOCKET_ERROR;
+        return exitError;
     }
 
     template<typename T>
@@ -109,64 +114,96 @@ namespace EPollTCPServerContext
     };
 
     template<typename ...Args>
-    void debug(Args&&... args)
+    void DEBUG(Args&&... args)
     {
         std::cout << "DEBUG ";
         (std::cout << ... << addSpace(std::forward<Args>(args))) << std::endl;
     }
 }
 
-namespace EPollTCPServerContext
+namespace EPollTCPServerContextEx
 {
     enum class State
     {
         Idle,
         Open,
-        // Reading,
-        // Writing,
         Closed,
         ClosedWithError
     };
 
+    enum class EventType
+    {
+        None,
+        Read,
+        ReadClose,
+        Write,
+        WriteClose,
+        ReadWrite,
+        ReadWriteClose,
+        Error,
+        Close
+    };
+
     struct Session
     {
+        Socket clientSocket {INVALID_SOCKET};
+        State state{State::Idle};
         // TODO: Replace with std::vector<std::byte> ????
         std::string buffer;
-        State state { State::Closed };
 
-        explicit Session(State state = State::Open): state {state} {
-            std::cout << "Session created\n";
+        Session(Socket socket, State state = State::Open) :
+            clientSocket {socket}, state {state} {
         }
+    };
+
+    // TODO: Check alignment
+    struct Event
+    {
+        EventType type { EventType::None };
+        Session& session;
     };
 
     class TCPServer
     {
-        static inline constexpr uint32_t BACKLOG { 10 };
+        using PortType = uint16_t;
+        using SizeType = uint32_t;
+
+        static inline constexpr SizeType backLog { 10 };
 
         // TODO: BUFFER_SIZE --> MTU ???
-        static inline constexpr size_t BUFFER_SIZE { 1024 * 4 };
+        static inline constexpr SizeType readBufferSize { 1024 * 2 };
 
         // TODO: Choose different value?
-        static constexpr uint32_t kEpollWaitTime { 10 };  // epoll wait timeout 10 ms
+        static inline constexpr SizeType kEpollWaitTime { 10 };  /** epoll wait timeout 10 ms **/
+        static inline constexpr SizeType kMaxEvents { 1024 };    /** epoll wait return max size **/
 
-        // TODO: Refactor ?
-        static constexpr uint32_t kMaxEvents { 1024 };    // epoll wait return max size
+        /** Maximum number of request handler workers: **/
+        // static inline const size_t threadsCount { std::thread::hardware_concurrency() };
+        static inline const SizeType threadsCount { 1 };
 
-        // TODO: Char --> std::byte ??
-        inline static thread_local std::array<char, BUFFER_SIZE> buffer {};
+        static inline const std::chrono::duration<int64_t, std::ratio<1, 1000>> QUEUE_TIMEOUT {
+                std::chrono::milliseconds(2000)
+        };
 
-        std::unordered_map<int32_t, Session> sessions;
+        Socket epollFd { INVALID_SOCKET };
+        Socket serverSocket { INVALID_SOCKET };
 
-        int32_t epollFd { INVALID_SOCKET };
-        int32_t serverSocket { INVALID_SOCKET };
+        std::string hostAddress { "0.0.0.0" };
+        PortType listenPort { 52525 };
 
-        std::string hostAddress;
-        uint16_t listenPort {};
+        // TODO: uint8_t --> std::byte ??
+        inline static thread_local std::array<uint8_t , readBufferSize> buffer {};
 
-        // FIXME: Remove -- its temporary
-        const std::string reply = "PONG";
+        std::unordered_map<Socket, Session> sessions;
 
-        static int32_t setNonBlock(int32_t handle)
+        std::vector<std::jthread> workers {};
+        std::atomic_bool run { true };
+        std::deque<Event> eventQueue;
+        mutable std::mutex eventQueueMutex;
+
+    public:
+
+        static Socket setNonBlock(Socket handle)
         {
             const int flags = ::fcntl(handle, F_GETFL, 0);
             if (flags < 0) {
@@ -180,7 +217,7 @@ namespace EPollTCPServerContext
         }
 
         // TODO: Rename to subscribe ?
-        static int32_t setEpollEvents(int efd, int op, int handle, uint32_t events)
+        static Socket setEpollEvents(int efd, int op, int handle, uint32_t events)
         {
             epoll_event event { events, {.fd = handle} };
             if (SOCKET_ERROR == epoll_ctl(efd, op, handle, &event)) {
@@ -189,7 +226,7 @@ namespace EPollTCPServerContext
             return 0;
         }
 
-        void closeClientSocket(int32_t socket,
+        void closeClientSocket(Socket socket,
                                Session& session,
                                State finalState = State::Closed)
         {
@@ -199,17 +236,30 @@ namespace EPollTCPServerContext
             session.state = finalState;
         }
 
-        // TODO: Store session data --> HashTable
+        [[noreturn]]
+        void sessionHandler()
+        {
+            while (run.load(std::memory_order_acquire))
+            {
+                std::cout << "sessionHandler()\n";
+                std::this_thread::sleep_for(std::chrono::seconds(1));
+            }
+        }
+
         [[noreturn]]
         void eventsPoller()
         {
-            std::array<epoll_event, kMaxEvents>  epollEvents {};
-            ssize_t bytes {0}, total {0};
+            std::array<epoll_event, kMaxEvents> epollEvents {};
             auto [clientSock, events] = std::make_pair<int32_t, uint32_t>(0,0);
 
-            while (true)
-            {   // TODO: Check TimeOut for performance
+            while (run.load(std::memory_order_acquire))
+            {
+                std::cout << "eventsPoller()\n";
+                std::this_thread::sleep_for(std::chrono::seconds(1));
+
+                // TODO: Check TimeOut for performance
                 // TODO: Check num != -1
+                /*
                 const int num = epoll_wait(epollFd, epollEvents.data(), kMaxEvents, kEpollWaitTime);
                 for (int i = 0; i < num; ++i)
                 {   // TODO: Refactor
@@ -264,53 +314,57 @@ namespace EPollTCPServerContext
                         continue;
                     }
                 }
+                 */
             }
         }
 
     public:
 
         TCPServer(std::string address, uint16_t port):
-                hostAddress { std::move(address) }, listenPort {port} {
+                hostAddress { std::move(address) }, listenPort {port}
+        {
+            for (size_t i = 0; i < threadsCount; ++i) {
+                workers.emplace_back(&TCPServer::sessionHandler, this);
+            }
         }
 
+        [[nodiscard]]
         bool createSockets()
         {
+            return true;
+
             epollFd = epoll_create1(0);
-            if (INVALID_SOCKET == epollFd) {
-                std::cerr << "epoll_create1(0) failed. Error = " << errno << std::endl;
-                return false;
-            }
+            if (INVALID_SOCKET == epollFd)
+                return Error("epoll_create1(0) failed.", false);
 
             serverSocket = ::socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
-            if (INVALID_SOCKET == serverSocket) {
-                Error("Failed to create socket");
-                return false;
-            }
+            if (INVALID_SOCKET == serverSocket)
+                return Error("Failed to create socket", false);
 
             sockaddr_in server {PF_INET, htons(listenPort), {.s_addr = inet_addr(hostAddress.data())}, {}};
-            if (SOCKET_ERROR == ::bind(serverSocket, reinterpret_cast<sockaddr*>(&server), sizeof(server))) {
-                Error("Failed to bind socket");
-                return false;
-            }
+            if (SOCKET_ERROR == ::bind(serverSocket, reinterpret_cast<sockaddr*>(&server), sizeof(server)))
+                return Error("Failed to bind socket", false);
 
-            if (SOCKET_ERROR == ::listen(serverSocket, BACKLOG)) {
-                Error("Failed to Listen the socket.");
-                return false;
-            }
+            if (SOCKET_ERROR == ::listen(serverSocket, backLog))
+                return Error("Failed to Listen the socket.", false);
 
             return true;
         }
 
         void runServer()
         {
-            // TODO: To class member ???
             std::jthread thread(&TCPServer::eventsPoller, this);
 
-            sockaddr_in clientAddr{};
+            sockaddr_in clientAddr {};
             socklen_t addLen { sizeof(clientAddr) };
             int32_t clientSocket { INVALID_SOCKET };
-            while (true)
+
+            while (run.load(std::memory_order_acquire))
             {
+                std::cout << "runServer() accepting connections\n";
+                std::this_thread::sleep_for(std::chrono::seconds(1));
+
+                /*
                 debug("Waiting for next connection ....");
                 clientSocket = ::accept(serverSocket, reinterpret_cast<sockaddr*>(&clientAddr), &addLen);
                 if (INVALID_SOCKET == clientSocket) {
@@ -329,10 +383,10 @@ namespace EPollTCPServerContext
                     Error("epoll_ctl() failed");
                     break;
                 }
+                */
             }
         }
     };
-
 
     void startSerer()
     {
@@ -342,7 +396,8 @@ namespace EPollTCPServerContext
     }
 }
 
-void EPollTCPServerContext::TestAll()
+
+void EPollTCPServerContextEx::TestAll()
 {
     startSerer();
 }
