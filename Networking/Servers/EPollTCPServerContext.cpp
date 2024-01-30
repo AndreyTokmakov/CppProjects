@@ -215,7 +215,7 @@ namespace EPollTCPServerContext
                 {   // TODO: Refactor
                     clientSock = epollEvents[i].data.fd;
                     events = epollEvents[i].events;
-                    printStateFlags(events);
+                    //printStateFlags(events);
 
                     const auto [iter, ok] = sessions.try_emplace(clientSock, State::Closed);
                     Session& session = iter->second;

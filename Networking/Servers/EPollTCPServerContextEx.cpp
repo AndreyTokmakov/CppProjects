@@ -23,11 +23,14 @@ Description : EPollTCPServerContextEx.cpp
 #include <string>
 #include <deque>
 #include <vector>
-#include <thread>
+#include <chrono>
+#include <format>
+#include <memory>
 #include <memory>
 #include <functional>
 #include <utility>
 #include <thread>
+#include <condition_variable>
 
 namespace
 {
@@ -95,7 +98,6 @@ namespace
         if (events & EPOLLWAKEUP)    std::cout << "EPOLLWAKEUP ";
         if (events & EPOLLONESHOT)   std::cout << "EPOLLONESHOT ";
         if (events & EPOLLET)        std::cout << "EPOLLET ";
-        else                         std::cout << " **** Unknown * * * * * !!!\n";
         std::cout << "\n==========================================================================\n";
     }
 
@@ -116,7 +118,8 @@ namespace
     template<typename ...Args>
     void DEBUG(Args&&... args)
     {
-        std::cout << "DEBUG ";
+        const std::chrono::time_point now = std::chrono::system_clock::now();
+        std::cout << std::format("{:%d-%m-%Y %H:%M:%OS}", now) << " DEBUG ";
         (std::cout << ... << addSpace(std::forward<Args>(args))) << std::endl;
     }
 }
@@ -160,7 +163,8 @@ namespace EPollTCPServerContextEx
     struct Event
     {
         EventType type { EventType::None };
-        Session& session;
+        // TODO: ref ??  ptr ??
+        Session* session { nullptr };
     };
 
     class TCPServer
@@ -179,7 +183,7 @@ namespace EPollTCPServerContextEx
 
         /** Maximum number of request handler workers: **/
         // static inline const size_t threadsCount { std::thread::hardware_concurrency() };
-        static inline const SizeType threadsCount { 1 };
+        static inline const SizeType threadsCount { 8 };
 
         static inline const std::chrono::duration<int64_t, std::ratio<1, 1000>> QUEUE_TIMEOUT {
                 std::chrono::milliseconds(2000)
@@ -191,15 +195,17 @@ namespace EPollTCPServerContextEx
         std::string hostAddress { "0.0.0.0" };
         PortType listenPort { 52525 };
 
-        // TODO: uint8_t --> std::byte ??
-        inline static thread_local std::array<uint8_t , readBufferSize> buffer {};
+        // TODO: char --> uint8_t ?? uint8_t --> std::byte ??
+        inline static thread_local std::array<char , readBufferSize> buffer {};
 
         std::unordered_map<Socket, Session> sessions;
+        std::deque<Event> eventQueue;
+
+        mutable std::mutex eventQueueMutex;
 
         std::vector<std::jthread> workers {};
         std::atomic_bool run { true };
-        std::deque<Event> eventQueue;
-        mutable std::mutex eventQueueMutex;
+        std::condition_variable eventCV;
 
     public:
 
@@ -226,6 +232,25 @@ namespace EPollTCPServerContextEx
             return 0;
         }
 
+        template<class Rep, class Period>
+        bool getNextEvent(Event &event,
+                          const std::chrono::duration<Rep, Period> &timeout) noexcept {
+            std::unique_lock<std::mutex> lock { eventQueueMutex };
+            if (!eventCV.wait_for(lock, timeout, [this] { return !eventQueue.empty(); }))
+                return false;
+            event = eventQueue.front();
+            eventQueue.pop_front();
+            eventCV.notify_all();
+            return true;
+        }
+
+        void enqueueSessionEvent(EventType eventType, Session* session) noexcept
+        {
+            std::lock_guard<std::mutex> lock(eventQueueMutex);
+            eventQueue.emplace_back(eventType, session);
+            eventCV.notify_one();
+        }
+
         void closeClientSocket(Socket socket,
                                Session& session,
                                State finalState = State::Closed)
@@ -239,10 +264,67 @@ namespace EPollTCPServerContextEx
         [[noreturn]]
         void sessionHandler()
         {
-            while (run.load(std::memory_order_acquire))
+            ssize_t bytes {0}, total {0};
+            Event event;
+            std::string reply;
+
+            // TODO: Check for performance
+            // while (run.load(std::memory_order_acquire))
+            while (true)
             {
-                std::cout << "sessionHandler()\n";
-                std::this_thread::sleep_for(std::chrono::seconds(1));
+
+                if (bool result = getNextEvent(event, QUEUE_TIMEOUT); result)
+                {
+                    // DEBUG("Handling new event");
+
+                    Session& session = *event.session;
+                    if (EventType::ReadWrite == event.type)
+                    {
+                        //DEBUG("Handling new event: Read");
+                        while ((bytes = ::read(session.clientSocket, buffer.data(), buffer.size())) > 0) {
+                            session.buffer.append(buffer.data(), bytes);
+                            total += bytes;
+                        }
+
+                        reply.append("[").append(session.buffer).append("]");
+                        if (SOCKET_ERROR == ::send(session.clientSocket, reply.data(), reply.length(), 0))
+                            Error("send() failed");
+
+                        session.buffer.clear();
+                        reply.clear();
+                    }
+                    else if (EventType::Read == event.type)
+                    {
+                        //DEBUG("Handling new event: Read");
+                        while ((bytes = ::read(session.clientSocket, buffer.data(), buffer.size())) > 0) {
+                            session.buffer.append(buffer.data(), bytes);
+                            total += bytes;
+                        }
+                    }
+                    else if (EventType::Write == event.type)
+                    {
+                        //DEBUG("Handling new event: Write");
+                        reply.append("[").append(session.buffer).append("]");
+                        if (SOCKET_ERROR == ::send(session.clientSocket, reply.data(), reply.length(), 0))
+                            Error("send() failed");
+
+                        session.buffer.clear();
+                        reply.clear();
+                    }
+                    else if (EventType::Close == event.type)
+                    {
+                        //DEBUG("Handling new event: Close");
+                        closeClientSocket(session.clientSocket, session);
+                    }
+                    else if (EventType::Error == event.type)
+                    {
+                        //DEBUG("Handling new event: Error");
+                        closeClientSocket(session.clientSocket, session, State::ClosedWithError);
+                    } else
+                    {
+                        DEBUG("Handling new event: ELSE");
+                    }
+                }
             }
         }
 
@@ -252,69 +334,61 @@ namespace EPollTCPServerContextEx
             std::array<epoll_event, kMaxEvents> epollEvents {};
             auto [clientSock, events] = std::make_pair<int32_t, uint32_t>(0,0);
 
-            while (run.load(std::memory_order_acquire))
+            // TODO: Check for performance
+            // while (run.load(std::memory_order_acquire))
+            while (true)
             {
-                std::cout << "eventsPoller()\n";
-                std::this_thread::sleep_for(std::chrono::seconds(1));
-
                 // TODO: Check TimeOut for performance
                 // TODO: Check num != -1
-                /*
                 const int num = epoll_wait(epollFd, epollEvents.data(), kMaxEvents, kEpollWaitTime);
                 for (int i = 0; i < num; ++i)
                 {   // TODO: Refactor
                     clientSock = epollEvents[i].data.fd;
                     events = epollEvents[i].events;
-                    printStateFlags(events);
+                    // printStateFlags(events);
 
-                    const auto [iter, ok] = sessions.try_emplace(clientSock, State::Closed);
+                    const auto [iter, ok] = sessions.try_emplace(clientSock, clientSock);
                     Session& session = iter->second;
 
                     if (events & EPOLLERR)
                     {
                         if (SOCKET_ERROR == epoll_ctl(epollFd, EPOLL_CTL_DEL, clientSock, nullptr))
                             Error("epoll_ctl() failed. (EPOLL_CTL_DEL)");
-                        closeClientSocket(clientSock, session, State::ClosedWithError);
-                        continue;
+                        enqueueSessionEvent(EventType::Close, &session);
                     }
 
-                    if (events & EPOLLIN)
-                    {
-                        total = 0;
-                        while ((bytes = ::read(clientSock, buffer.data(), buffer.size())) > 0) {
-                            session.buffer.append(buffer.data(), bytes);
-                            total += bytes;
-                        }
-
-                        if (total)
-                            session.state = State::Open;
-                        else if (events & EPOLLHUP || events & EPOLLRDHUP) {
-                            closeClientSocket(clientSock, session);
-                            continue;
-                        }
+                    // session.state = State::Open;
+                    if (events & EPOLLIN && events & EPOLLOUT && (events & EPOLLHUP || events & EPOLLRDHUP)) {
+                        enqueueSessionEvent(EventType::ReadWriteClose, &session);
                     }
-
-                    if (events & EPOLLOUT)
+                    else if (events & EPOLLIN && (events & EPOLLHUP || events & EPOLLRDHUP))
                     {
-                        if (State::Open == session.state)
-                        {
-                            if (SOCKET_ERROR == ::send(clientSock, reply.data(), reply.length(), 0))
-                                Error("send() failed");
-                            session.buffer.clear();
-                        }
-
-
+                        enqueueSessionEvent(EventType::ReadClose, &session);
+                    }
+                    else if (events & EPOLLOUT && (events & EPOLLHUP || events & EPOLLRDHUP))
+                    {
+                        enqueueSessionEvent(EventType::WriteClose, &session);
+                    }
+                    else if (events & EPOLLIN && events & EPOLLOUT)
+                    {
+                        enqueueSessionEvent(EventType::ReadWrite, &session);
+                    }
+                    else if (events & EPOLLIN)
+                    {
+                        enqueueSessionEvent(EventType::Read, &session);
+                    }
+                    else if (events & EPOLLOUT)
+                    {
+                        enqueueSessionEvent(EventType::Write, &session);
                     }
 
                     if (events & EPOLLHUP || events & EPOLLRDHUP)
                     {
                         if (SOCKET_ERROR == epoll_ctl(epollFd, EPOLL_CTL_DEL, clientSock, nullptr))
                             Error("epoll_ctl() failed. (EPOLL_CTL_DEL)");
-                        closeClientSocket(clientSock, session);
-                        continue;
+                        enqueueSessionEvent(EventType::Close, &session);
                     }
                 }
-                 */
             }
         }
 
@@ -331,8 +405,6 @@ namespace EPollTCPServerContextEx
         [[nodiscard]]
         bool createSockets()
         {
-            return true;
-
             epollFd = epoll_create1(0);
             if (INVALID_SOCKET == epollFd)
                 return Error("epoll_create1(0) failed.", false);
@@ -359,20 +431,17 @@ namespace EPollTCPServerContextEx
             socklen_t addLen { sizeof(clientAddr) };
             int32_t clientSocket { INVALID_SOCKET };
 
+            // TODO: Check for performance
             while (run.load(std::memory_order_acquire))
             {
-                std::cout << "runServer() accepting connections\n";
-                std::this_thread::sleep_for(std::chrono::seconds(1));
-
-                /*
-                debug("Waiting for next connection ....");
+                DEBUG("Waiting for next connection ....");
                 clientSocket = ::accept(serverSocket, reinterpret_cast<sockaddr*>(&clientAddr), &addLen);
                 if (INVALID_SOCKET == clientSocket) {
                     Error("Failed to create client socket");
                     break;
                 }
 
-                debug("Client connected", inet_ntoa(clientAddr.sin_addr), ':', htons(clientAddr.sin_port));
+                DEBUG("Client connected", inet_ntoa(clientAddr.sin_addr), ':', htons(clientAddr.sin_port));
                 if (SOCKET_ERROR == setNonBlock(clientSocket))
                     break;
 
@@ -383,7 +452,6 @@ namespace EPollTCPServerContextEx
                     Error("epoll_ctl() failed");
                     break;
                 }
-                */
             }
         }
     };

@@ -338,23 +338,28 @@ namespace CustomTraits {
 	}
 }
 
-namespace TypeTraits::Decltype_and_Declval {
-
-	struct Default { 
-		int foo() const { 
+namespace TypeTraits::Decltype_and_Declval
+{
+	struct Default
+    {
+		[[nodiscard]]
+        int foo() const {
 			return 1; 
 		} 
 	};
 
-	struct NonDefault {
+	struct NonDefault
+    {
 		NonDefault() = delete;
 
-		int foo() const { 
+		[[nodiscard]]
+        int foo() const {
 			return 1; 
 		}
 	};
 
-	void Test() {
+	void Test()
+    {
 		std::vector<int> v;
 		std::cout << "'v' variable type is: " << typeid(v).name() << std::endl;
 
@@ -368,7 +373,35 @@ namespace TypeTraits::Decltype_and_Declval {
 		decltype(some_int) other_integer_variable = 5;
 	}
 
-	void Declval_Test() {
+    void BasicTests()
+    {
+        std::vector<int> data{1,2,3,4,5};
+        const struct X {
+            int x = 42;
+        } x;
+
+        // lvalue expression -> T&
+        static_assert(std::is_same_v<decltype(data[2]), int&>);
+        static_assert(std::is_same_v<decltype(std::as_const(data)[2]), const int&>);
+
+        // prvalue expression -> T
+        static_assert(std::is_same_v<decltype(1+2), int>);
+
+        // xvalue expression -> T&&
+        static_assert(std::is_same_v<decltype(std::move(data)), std::vector<int>&&>);
+
+
+        // id or member -> the declared type
+        static_assert(std::is_same_v<decltype(x), const X>);
+        static_assert(std::is_same_v<decltype(x.x), int>);
+
+        // we can treat ids/members as expressions
+        static_assert(std::is_same_v<decltype((x)), const X&>);
+        static_assert(std::is_same_v<decltype((x.x)), const int&>);
+    }
+
+	void Declval_Test()
+    {
 
 		// OK: type of n1 is int
 		decltype(Default().foo()) n1 {};
@@ -734,10 +767,11 @@ void TypeTraits::TestAll()
 
 	// CustomTraits::Void_Test();
 	// CustomTraits::Is_Pointer();
-	CustomTraits::Is_Pointer_2();
+	// CustomTraits::Is_Pointer_2();
 	// CustomTraits::Color_Test();
 
-	// Decltype_and_Declval::Test();
+	Decltype_and_Declval::BasicTests();
+	Decltype_and_Declval::Test();
 	// Decltype_and_Declval::Test2();
 	// Decltype_and_Declval::Declval_Test();
 

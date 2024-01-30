@@ -1047,6 +1047,32 @@ namespace Strings
         return number * (sign ? sign : 1);
     }
 
+    constexpr int parseInt(std::string_view str)
+    {
+        const size_t start = str.find_first_not_of(' ');
+        if (start == std::string_view::npos)
+            return 0;
+
+        int sign = 1;
+        size_t index = start;
+
+        if (str[start] == '-' || str[start] == '+') {
+            sign = (str[start] == '-') ? -1 : 1;
+            ++index;
+        }
+
+        int val = 0;
+        for (; index < str.size(); ++index) {
+            char ch = str[index];
+            if (ch < '0' || ch > '9') {
+                break;
+            }
+            val = val * 10 + (ch - '0');
+        }
+
+        return sign * val;
+    }
+
     // Read in and ignore any leading whitespace.
     //
     // Check if the next character (if not already at the end of the string) is '-' or '+'.
@@ -1059,7 +1085,7 @@ namespace Strings
             "123", "1203", "931aa", "00123","  -123 hh","  -+123 hh", "42", "-91283472332"
         }) {
             std::cout << std::left << std::setfill(' ') << std::setw(14) << std::quoted(str)
-                    << " -> " << _atoi_ex(str) <<  std::endl;
+                    << " -> " << _atoi_ex(str) << "    " << parseInt(str) <<  std::endl;
         }
     }
 }
