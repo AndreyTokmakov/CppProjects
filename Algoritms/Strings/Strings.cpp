@@ -1018,32 +1018,18 @@ namespace Strings
 
 namespace Strings
 {
-    int32_t _atoi_ex(const std::string& str)
+    int32_t _atoi_ex(std::string_view str)
     {
         int32_t number {0}, size = str.size(), idx = 0, sign = 0;
-        while (size > idx)
-        {
-            if (str[idx] == ' ') {
-                if (0 != sign)
-                    return -1;
-            }
-            else if (str[idx] == '+') {
-                if (0 != sign)
-                    return -1;
-                sign = 1;
-            }
-            else if (str[idx] == '-') {
-                if (0 != sign)
-                    return -1;
-                sign = -1;
-            } else break;
-            ++idx;
+        for (idx = 0; idx < size && sign == 0; ++idx) {
+            if (str[idx] == ' ') {}
+            else if (str[idx] == '+') sign = 1;
+            else if (str[idx] == '-') sign = -1;
+            else break;
         }
 
-        while (size > idx && str[idx] >= '0' && str[idx] <= '9') {
+        while (size > idx && str[idx] >= '0' && str[idx] <= '9')
             number = number * 10 + (str[idx++]  - '0');
-        }
-
         return number * (sign ? sign : 1);
     }
 

@@ -204,7 +204,7 @@ int main(int argc, char** argv)
     // EnumTests::TestAll();
     // Errors::TestAll();
     // Exceptions::TestAll();
-    // Expected::TestAll();
+    Expected::TestAll();
     // StrongTypes::TestAll();
     // InitializerList::TestAll();
     // InlineVariables::TestAll();
@@ -243,7 +243,7 @@ int main(int argc, char** argv)
     // SharedPtr_Tests::TestAll();
     // Variant::TestAll();
     // VolatileTests::TestAll();
-    TypeTraits::TestAll();
+    // TypeTraits::TestAll();
     // Tuple::TestAll();
     // TypeCast::TestAll();
     // Int::TestAll();
