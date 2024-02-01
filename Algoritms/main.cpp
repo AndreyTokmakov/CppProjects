@@ -21,6 +21,7 @@
 #include "Interviews/Interviews.h"
 #include "Numeric/Numeric.h"
 #include "MultiThreading/MultiThreading.h"
+#include "UnikieInterviews/UnikieInterviews.h"
 
 int main([[maybe_unused]] int argc,
 		 [[maybe_unused]] char** argv)
@@ -32,10 +33,12 @@ int main([[maybe_unused]] int argc,
 	// Queues::TEST_ALL();
 	// Stack::TEST_ALL();
 	// Sorting::TEST_ALL();
-	Strings::TestAll();
+	// Strings::TestAll();
 	// Interviews::TEST_ALL();
     // Numeric::TestAll();
     // MultiThreading::TestAll();
+
+    UnikieInterviews::TestAll();
 
 	return EXIT_SUCCESS;
 }
