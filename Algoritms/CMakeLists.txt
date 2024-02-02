@@ -22,7 +22,6 @@ add_executable(${PROJECT_NAME}
 		Numeric/Numeric.cpp Numeric/Numeric.h
 		Utilities/Utilities.cpp Utilities/Utilities.h
         MultiThreading/MultiThreading.cpp MultiThreading/MultiThreading.h
-		UnikieInterviews/UnikieInterviews.cpp UnikieInterviews/UnikieInterviews.h
 )
 
 TARGET_LINK_LIBRARIES(${PROJECT_NAME}
