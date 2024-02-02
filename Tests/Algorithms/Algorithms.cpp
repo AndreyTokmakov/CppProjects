@@ -158,9 +158,9 @@ namespace Algorithms
     {
         for (int idx = 0, m = 0, n= 0; idx <= std::ssize(text) - std::ssize(str); ++idx)
         {
-            std::cout << idx << std::endl;
+            // std::cout << idx << std::endl;
             for (m = 0, n = idx; m < str.size(); ++m, ++n) {
-                std::cout << '\t' << n << " - " << m << std::endl;
+                // std::cout << '\t' << n << " - " << m << std::endl;
                 if (str[m] != text[n])
                     break;
             }
@@ -170,10 +170,26 @@ namespace Algorithms
         return false;
     }
 
-    void Contains() {
-        std::string text = "aaa", str = "aaaa";
+    int find(const std::string& haystack, const std::string& needle)
+    {
+        const int textSize = std::ssize(haystack), searchBlockSize = std::ssize(needle);
+        for (int idx = 0, m = 0, n = 0; idx <= textSize - searchBlockSize; ++idx)
+        {
+            for (m = 0, n = idx; m < searchBlockSize; ++m, ++n) {
+                if (needle[m] != haystack[n])
+                    break;
+            }
+            if (m == searchBlockSize)
+                return idx;
+        }
+        return -1;
+    }
 
-        std::cout << std::boolalpha << __contains(text, str) << std::endl;
+    void Contains() {
+        std::string text = "bcaa", to_find = "aa";
+
+        std::cout << std::boolalpha << __contains(text, to_find) << std::endl;
+        std::cout << find(text, to_find) << std::endl;
 
     }
 
