@@ -842,7 +842,7 @@ int main([[maybe_unused]] int argc,
     // CallFunctionByName::Test();
     // ReturnClass_MemberRef_CopyCTor::tests();
 
-    Algorithms::TestAll();
+    // Algorithms::TestAll();
     // AutoTests::TestAll();
     // Cpp23_Features::TestAll();
     // Concepts::TestAll();
@@ -854,7 +854,7 @@ int main([[maybe_unused]] int argc,
     // Iterators::TestAll();
     // Files::TestAll();
     // ConstexprMap::TestAll()
-    // DesignPatterns::TestAll();
+    DesignPatterns::TestAll();
     // Date_Time_Chrono::TestAll();
     // MaxStack::TestAll();
     // MinStack::TestAll();
