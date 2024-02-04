@@ -78,6 +78,7 @@ int main([[maybe_unused]]  int argc,
     // Proxy::CarTest();
     // Proxy::DocumentTest();
     // Proxy::SubjectTest();
+    Proxy::DatabaseProxyTest();
 
     /** Behaviour patterns **/
     // Strategy::Test();
@@ -96,7 +97,7 @@ int main([[maybe_unused]]  int argc,
 
     /** C++ IDIOMS: **/
     // CRTP::Test();
-    NVI_SimpleExample::TestAll();
+    // NVI_SimpleExample::TestAll();
     // TypeErasure::Test();
     // RAII::Test();
     // CopyAndSwap::TEST_ALL();   ---- TESTs

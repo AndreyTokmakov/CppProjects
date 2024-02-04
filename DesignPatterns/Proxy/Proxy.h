@@ -18,6 +18,7 @@ namespace Proxy
     void CarTest();
     void DocumentTest();
     void SubjectTest();
+    void DatabaseProxyTest();
 }
 
 #endif /* PROXY_PATTERN_TESTS__H_ */

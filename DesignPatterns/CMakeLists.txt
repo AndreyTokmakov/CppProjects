@@ -72,6 +72,7 @@ add_executable(${PROJECT_NAME}
 		Adapter/ChargingPhoneAdapter.cpp Adapter/ChargingPhoneAdapter.cpp
 		Decorator/WindowDecorator.cpp CRTP/CRTP_Cloneable.cpp CRTP/CRTP_Cloneable.h
         Prototype/PrototypeDemoTwo.cpp
+		Proxy/DatabaseProxy.cpp
 )
 
 # Link libraries to the project/executable
