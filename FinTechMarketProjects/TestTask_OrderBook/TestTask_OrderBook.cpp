@@ -11,6 +11,7 @@ Description : TestTask_OrderBook
 
 #include <iostream>
 #include <string_view>
+#include <utility>
 #include <vector>
 #include <deque>
 #include <ostream>
@@ -38,7 +39,8 @@ namespace TestTask_OrderBook
     };
 
     [[nodiscard]]
-    OrderType getOrderType(std::string_view method) {
+    OrderType getOrderType(std::string_view method)
+    {
         if (buyOrderString == method)
             return OrderType::Buy;
         else if (sellOrderString == method)
@@ -56,7 +58,8 @@ namespace TestTask_OrderBook
         return std::strtod(str.data(), nullptr);
     }
 
-    struct Order final {
+    struct Order final
+    {
         /** TODO: 'timestamp' type --> size_t or something more suitable to store timestamp **/
         std::string timestamp {};
         std::string id {};
@@ -68,16 +71,15 @@ namespace TestTask_OrderBook
         Order() = default;
 
         // INFO: All strings in the example fits string SSO --> no use for move
-        Order(const std::string& time,
-              const std::string& id,
-              size_t idHash,
-              const std::string& volume,
-              const std::string& price):
-                timestamp {time}, id {id}, idHash {idHash}, volume {str2Number(volume)}, price {str2Number(price)} {
+        Order(std::string  time, std::string  id,
+              size_t idHash, const std::string& volume, const std::string& price):
+                timestamp { std::move(time)}, id {std::move(id)},
+                idHash {idHash}, volume {str2Number(volume)}, price {str2Number(price)} {
         }
     };
 
-    std::ostream& operator<<(std::ostream& stream, const Order& order) {
+    std::ostream& operator<<(std::ostream& stream, const Order& order)
+    {
         stream << "Order [id: " << order.id << ", Price: "
                << order.price << ", Volume: "
                << order.volume << ", Timestamp: "
@@ -85,8 +87,8 @@ namespace TestTask_OrderBook
         return stream;
     }
 
-    struct Orders {
-        // [ std::vector VS std::deque ]
+    struct Orders
+    {   // [ std::vector VS std::deque ]
         // vector showed a little better performance (2-3%) in given test data regardless of the
         // significant amount of deletion of elements in the middle (not on the back) of the vector
         //
@@ -104,9 +106,8 @@ namespace TestTask_OrderBook
         }
     };
 
-
-    class OrderBook  {
-    private:
+    class OrderBook
+    {
         std::unordered_map<std::string, Orders> book {};
 
         /** OrderID hashing strategy: P.S. we should use DI here instead. **/
@@ -118,10 +119,11 @@ namespace TestTask_OrderBook
         };
 
         constexpr static size_t maxTopOrdersCount { 3 };
-        constexpr static size_t orderParts { 7 };
+        constexpr static size_t orderPartsNum { 7 };
 
         /** For csv file column matching: **/
-        struct OrderFields final {
+        struct OrderFields final
+        {
             static constexpr size_t Timestamp {0};
             static constexpr size_t Symbol {1};
             static constexpr size_t OrderID {2};
@@ -135,7 +137,9 @@ namespace TestTask_OrderBook
         };
 
     public:
-        bool readOrders(std::string_view path) {
+
+        bool readOrders(std::string_view path)
+        {
             std::vector<std::string> ordersData {};
             if (std::fstream file = std::fstream(path.data()); file.is_open() && file.good()) {
                 while (std::getline(file, ordersData.emplace_back())) { /* */ }
@@ -149,14 +153,14 @@ namespace TestTask_OrderBook
             return true;
         }
 
-
     public:
         /**
          * Counts the total number of orders per symbol.
          * Prints out (in the freestyle) the total number of orders (buy + sell) for each symbol
          * @return  None
          */
-        void OrderCounts() const {
+        void OrderCounts() const
+        {
             for (const auto& [symbol, orders]: book) {
                 std::cout << symbol << "  " << orders.getOrdersTotal() << std::endl;
             }
@@ -176,7 +180,8 @@ namespace TestTask_OrderBook
          */
         void BiggestBuyOrders(const std::string& symbol) const
         {
-            if (const auto iter = book.find(symbol); book.end() != iter) {
+            if (const auto iter = book.find(symbol); book.end() != iter)
+            {
                 const Orders::OrdersList & buyOrders = iter->second.buyOrders;
                 std::cout << "Top " << maxTopOrdersCount << " BUY orders for '" << symbol << "'\n";
                 if (maxTopOrdersCount >= buyOrders.size()) {
@@ -215,8 +220,10 @@ namespace TestTask_OrderBook
          */
         // INFO: According the description method shall ignore microseconds in input timestamp
         void BestSellAtTime(const std::string& symbol,
-                            const std::string& timestamp) const  {
-            if (const auto iter = book.find(symbol); book.end() != iter) {
+                            const std::string& timestamp) const
+        {
+            if (const auto iter = book.find(symbol); book.end() != iter)
+            {
                 std::cout << "Best sell for '" << symbol << "' at " << timestamp << ":\n";
                 const Orders::OrdersList &sellOrders = iter->second.sellOrders;
                 if (sellOrders.empty()) {
@@ -227,7 +234,7 @@ namespace TestTask_OrderBook
                 Order bestSell {};
                 bestSell.price = std::numeric_limits<double>::min();
                 std::for_each(sellOrders.cbegin(), sellOrders.cend(), [&bestSell, &timestamp] (const auto& order) {
-                    if (compareTimestampNoMsec(timestamp, order.timestamp) && order.price > bestSell.price) {
+                    if (compareTimestampNoMSec(timestamp, order.timestamp) && order.price > bestSell.price) {
                         bestSell = order;
                     }
                 });
@@ -243,10 +250,12 @@ namespace TestTask_OrderBook
 
     private:
 
-        void parseOrders(const std::vector<std::string>& orders) {
+        void parseOrders(const std::vector<std::string>& orders)
+        {
             // TODO: Try use:std::array<std::string_view> ???
-            for (const auto& rawOrder: orders) {
-                const std::array<std::string, orderParts> order { splitOrder(rawOrder) };
+            for (const auto& rawOrder: orders)
+            {
+                const std::array<std::string, orderPartsNum> order { splitOrder(rawOrder) };
                 const OrderType type = getOrderType(order[OrderFields::Side]);
 
                 Orders& clientOrders = book[order[OrderFields::Symbol]];
@@ -255,8 +264,9 @@ namespace TestTask_OrderBook
             }
         }
 
-        static void handleOrder(const std::array<std::string, orderParts>& orderParts,
-                                Orders::OrdersList& orders ) {
+        static void handleOrder(const std::array<std::string, orderPartsNum>& orderParts,
+                                Orders::OrdersList& orders )
+        {
             const Operation operation = getOperation(orderParts[OrderFields::Operation]);
             const auto idHash = hasher(orderParts[OrderFields::OrderID]);
             if (Operation::Insert == operation) {
@@ -283,8 +293,9 @@ namespace TestTask_OrderBook
         }
 
         [[nodiscard]]
-        static bool compareTimestampNoMsec(std::string_view time1,
-                                           std::string_view time2) noexcept {
+        static bool compareTimestampNoMSec(std::string_view time1,
+                                           std::string_view time2) noexcept
+        {
             const size_t pos1 = time1.find('.'), pos2 = time2.find('.');
             if (pos1 != pos2)
                 return false;
@@ -294,8 +305,9 @@ namespace TestTask_OrderBook
         // TODO: Check perf!!! String vs String_View
         // TODO: Run test against split() with std::vector<T>
         [[nodiscard]]
-        static std::array<std::string, orderParts> splitOrder(std::string_view str) {
-            std::array<std::string, orderParts> parts {};
+        static std::array<std::string, orderPartsNum> splitOrder(std::string_view str)
+        {
+            std::array<std::string, orderPartsNum> parts {};
             size_t pos = 0, prev = 0, idx = 0;
             while ((pos = str.find(';', prev)) != std::string::npos) {
                 parts[idx++].assign(str, prev, pos - prev);
