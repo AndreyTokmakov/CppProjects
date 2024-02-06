@@ -69,7 +69,7 @@ int main([[maybe_unused]] int argc,
     // Exceptions_Handling::TEST_ALL();
     // Future::TEST_ALL();
 
-    // Latch::TEST_ALL();
+    Latch::TEST_ALL();
     // LockFreeQueue::TEST_ALL()
     // Multithreading_Performance::TEST_ALL();
     // Multithreading_Collections::TEST_ALL();
@@ -93,7 +93,7 @@ int main([[maybe_unused]] int argc,
     // ThreadPoolBlocking::TEST_ALL();
     // ThreadPoolLimited::TestAll();
 
-    Threads::TEST_ALL();
+    // Threads::TEST_ALL();
     // JThreads::TEST_ALL();
 
     // FalseSharingExperiments::TEST_ALL();

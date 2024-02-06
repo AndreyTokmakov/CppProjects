@@ -19,52 +19,30 @@
 #include <thread>
 #include <chrono>
 #include <iomanip>
+#include <syncstream>
 
-#include "../ThreadHelperUtilities/ThreadHelperUtilities.h"
 
 
-namespace Latch::Utils
+namespace
 {
-    struct synch_stream final : public std::stringstream {
-    private:
-        static inline std::mutex mtx;
-        const static inline std::thread::id mainThreadId { std::this_thread::get_id() };
-        constexpr static inline std::string_view FORMAT { "%Y-%m-%d %X" };
+    template<typename ...Args>
+    void debug1(Args&&... args) {
+        std::osyncstream {std::cout} << std::format("{:%d-%m-%Y %H:%M:%OS}", std::chrono::system_clock::now()) << " ";
+        (std::osyncstream {std::cout}  << ... << std::forward<Args>(args)) << std::endl;
+    }
 
-    private:
+    std::mutex mtx;
 
-        [[nodiscard]]
-        static std::string getCurrentTime() noexcept {
-            auto now = std::chrono::system_clock::now();
-            auto in_time_t = std::chrono::system_clock::to_time_t(now);
-            std::stringstream ss;
-            ss << std::put_time(std::localtime(&in_time_t), FORMAT.data());
-            return ss.str();
-        }
-
-    public:
-        ~synch_stream() override {
-            const auto currId = std::this_thread::get_id();
-
-            // TODO: Prepare string before lock
-            std::string info("[");
-            info.append(getCurrentTime()).append("] Thread [");
-
-            std::lock_guard<std::mutex> lock{mtx};
-
-            std::cout << info;
-            if (mainThreadId == currId)
-                std::cout << std::setiosflags(std::ios::left) << std::setw(9) << "Main";
-            else
-                std::cout << "Id: " << std::setiosflags(std::ios::left) << std::setw(5) << currId;
-
-            std::cout << "] " << rdbuf();
-            std::cout.flush();
-        }
-    };
+    template<typename ...Args>
+    void debug(Args&&... args) {
+        std::lock_guard<std::mutex> lock {mtx};
+        std::cout << std::format("{:%d-%m-%Y %H:%M:%OS}", std::chrono::system_clock::now()) << " ";
+        (std::cout  << ... << std::forward<Args>(args)) << std::endl;
+    }
 }
 
-namespace Latch {
+namespace Latch
+{
 
     void Wait_Test()
     {
@@ -73,19 +51,18 @@ namespace Latch {
 
         std::vector<std::jthread> workers;
         auto task = [&](unsigned int timeout)-> void {
-            Utils::synch_stream{} << "Waiting for " << timeout << " seconds.\n";
+            debug("Waiting for ", timeout, " seconds");
             std::this_thread::sleep_for(std::chrono::seconds(timeout));
             completion_latch.count_down();
         };
 
-        Utils::synch_stream{} << "Starting threads....\n";
+        debug("Starting threads....");
         while (max_workers--)
             workers.emplace_back(task, rand() % 8);
 
-
-        Utils::synch_stream{} << "Block with latch.wait() until work is done.\n";
+        debug("Block with latch.wait() until work is done.");
         completion_latch.wait();
-        Utils::synch_stream{} << "\n ****** Latch.wait() done. ***** \n\n";
+        debug( "\n ****** Latch.wait() done. ***** \n");
     }
 
     void TryWait_Test()
@@ -95,25 +72,23 @@ namespace Latch {
 
         std::vector<std::jthread> workers;
         auto task = [&](unsigned int timeout)-> void {
-            Utils::synch_stream{} << "Waiting for " << timeout << " seconds.\n";
+            debug("Waiting for ", timeout, " seconds");
             std::this_thread::sleep_for(std::chrono::seconds(timeout));
-            Utils::synch_stream{} << "Thread done\n";
+            debug("Thread done");
             completion_latch.count_down();
 
         };
 
-        Utils::synch_stream{}<< "Starting threads....\n";
+        debug("Starting threads....");
         while (max_workers--)
             workers.emplace_back(task, rand() % 8);
 
 
-        Utils::synch_stream{} << "Block with latch.wait() until work is done.\n";
-
+        debug("Block with latch.wait() until work is done.");
         while (!completion_latch.try_wait()) {
             std::this_thread::sleep_for(std::chrono::microseconds(10));
-            // std::cout << ".";
         }
-        Utils::synch_stream{} << "Done\n";
+        debug("Done");
     }
 };
 
