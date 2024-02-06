@@ -204,7 +204,7 @@ int main(int argc, char** argv)
     // EnumTests::TestAll();
     // Errors::TestAll();
     // Exceptions::TestAll();
-    Expected::TestAll();
+    // Expected::TestAll();
     // StrongTypes::TestAll();
     // InitializerList::TestAll();
     // InlineVariables::TestAll();
@@ -233,7 +233,7 @@ int main(int argc, char** argv)
     // ReferenceWrapper::TestAll();
     // StarshipOperator::TestAll();
     // Streams::TestAll();
-    // String::TestAll();
+    String::TestAll();
     // StringStream::TestAll();
     // StringView::TestAll();
     // StructuredBinding::TestAll();

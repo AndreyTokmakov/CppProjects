@@ -1480,7 +1480,7 @@ void String::TestAll()
 	// Split_String2();
 	// Split_String3();
 
-	// Performance_Tests::SplitTest();
+	Performance_Tests::SplitTest();
 	// Performance_Tests::SplitTest();
 	// Performance_Tests::Compare();
 
@@ -1526,5 +1526,5 @@ void String::TestAll()
     // Application_Examples::TrimString();
     // Application_Examples::IsPalindrome();
 
-    ParsingTests::GetNumericPart();
+    // ParsingTests::GetNumericPart();
 };

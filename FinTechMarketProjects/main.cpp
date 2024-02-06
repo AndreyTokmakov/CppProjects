@@ -17,6 +17,7 @@
 #include "DaVinchiTest/DaVinchiTest_LinkedList.h"
 
 #include "TestTask_OrderBook/TestTask_OrderBook.h"
+#include "DataParsers/DataParsers.h"
 
 #include <iostream>
 #include <fstream>
@@ -250,7 +251,9 @@ int main([[maybe_unused]] int argc,
     // book.BiggestBuyOrders("TEST8");
     // book.BestSellAtTime("TEST8", "15:38");
 
-    TestTask_OrderBook::TestAll();
+    // TestTask_OrderBook::TestAll();
+
+    DataParsers::TestAll();
 
     // Tests::splitTest();
 
