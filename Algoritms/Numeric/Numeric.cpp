@@ -3554,6 +3554,36 @@ namespace Numeric
     }
 }
 
+
+namespace Numeric
+{
+    int single_number(const std::vector<int>& nums)
+    {
+        int singleNum = 0;
+        for (int num : nums) {
+            singleNum ^= num;
+        }
+        return singleNum;
+    }
+
+    /**
+    Given a non-empty array of integers nums, every element appears twice except for one. Find that single one.
+    You must implement a solution with a linear runtime complexity and use only constant extra space.
+
+    Example 1: Input: nums = [2,2,1] |  Example 2:    Input: nums = [4,1,2,1,2]  |  Example 3:  Input: nums = [1]
+               Output: 1             |                Output: 4                  |              Output: 1
+    */
+    void Single_Number()
+    {
+        for (const std::pair<std::vector<int>, int>& data:  std::vector<std::pair<std::vector<int>, int>>{
+                {{2, 2, 1}, 1}, {{4,1,2,1,2}, 4}, {{1}, 1}
+        })
+        {
+            std::cout << single_number(data.first) << std::endl;
+        }
+    }
+}
+
 void Numeric::TestAll()
 {
     // Numeric::ReverseBits();
@@ -3677,7 +3707,9 @@ void Numeric::TestAll()
 
     // Median_of_Two_Sorted_Arrays();
 
-    Best_Time_Buy_and_Sell_Stock();
+    // Best_Time_Buy_and_Sell_Stock();
+
+    Single_Number();
 
     // Numeric::Min_Length_SubArray_WithSameDegree();  // Degree_Of_Array
                                                     // degreeOfArray: With same occurrences of duplicated elements
