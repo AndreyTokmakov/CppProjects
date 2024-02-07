@@ -18,10 +18,10 @@ Description : DataParsers
 namespace Paths
 {
     constexpr std::string_view dataFilePath {
-        "/home/andtokm/DiskS/ProjectsUbuntu/CppProjects/FinTechMarketProjects/data/orders1.dat"
+            "/home/andtokm/Projects/CppProjects/FinTechMarketProjects/data/orders1.dat"
     };
     constexpr std::string_view dataFilePathPart {
-        "/home/andtokm/DiskS/ProjectsUbuntu/CppProjects/FinTechMarketProjects/data/orders_part.csv"
+            "/home/andtokm/DiskS/ProjectsUbuntu/CppProjects/FinTechMarketProjects/data/orders_part.csv"
     };
 }
 
@@ -45,7 +45,6 @@ namespace
 
     void split_to(const std::string &str,
                   std::vector<std::string_view>& params,
-                  const size_t partsExpected = 10,
                   const std::string& delimiter = std::string {";"})
     {
         params.clear();
@@ -71,16 +70,33 @@ namespace DataParsers
             }
         }
     }
+
+    void processOrder(std::vector<std::string_view>& params)
+    {
+        for (auto& s: params)
+            std::cout << s << ' ';
+        std::cout << std::endl;
+    }
+
+    void readData2(std::string_view path)
+    {
+        if (std::fstream file {path.data()}; file.is_open() && file.good())
+        {
+            std::string line;
+            std::vector<std::string_view> params;
+            while (std::getline(file, line))
+            {
+                split_to(line, params);
+                processOrder(params);
+            }
+        }
+    }
 }
 
 
 void DataParsers::TestAll()
 {
     // DataParsers::readData(Paths::dataFilePathPart);
-
-    std::string text { "123456789" };
-
-    std::string_view view (text.data() + 2, 2);
-    std::cout << view << std::endl;
+    DataParsers::readData2(Paths::dataFilePathPart);
 
 }
