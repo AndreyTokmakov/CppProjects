@@ -1082,6 +1082,42 @@ namespace Algorithms::Strings
     }
 }
 
+namespace Algorithms::Strings
+{
+    void split_to(const std::string &str,
+                  std::vector<std::string_view>& params,
+                  const std::string& delimiter = std::string {" "})
+    {
+        params.clear();
+        size_t pos = 0, prev = 0;
+        while ((pos = str.find(delimiter, prev)) != std::string::npos) {
+            if (pos > prev + 1)
+                params.emplace_back(str.data() + prev, pos - prev);
+            prev = pos + delimiter.length();
+        }
+        params.emplace_back(str.data() + prev, str.length() - prev);
+    }
+
+    void reverse_words_in_string(const std::string& str)
+    {
+        std::vector<std::string_view> params;
+        split_to(str, params);
+
+        for (const auto& s: params)
+            std::cout << "[" << s << "]";
+        std::cout << std::endl;
+    }
+
+    void Reverse_Words_in_String()
+    {
+        const std::string str { "the sky is blue" };
+        const std::string str1 { "a good   example    " };
+
+        reverse_words_in_string(str);
+        reverse_words_in_string(str1);
+    }
+}
+
 namespace Algorithms::Numbers
 {
     int find_max_three_numbers_product(const std::vector<int>& values)
@@ -1323,13 +1359,14 @@ void Algorithms::TestAll()
     // Numbers::Rank();
     // Numbers::Degree_Of_Array();
     // Numbers::topKFrequent();
-    Numbers::Median_of_Two_Sorted_Arrays();
+    // Numbers::Median_of_Two_Sorted_Arrays();
 
     // Strings::FindCommon_PrefixAndPostfix();
     // Strings::FindLastNotOf__Benchmark();
     // Strings::topKFrequent();
     // Strings::PrintAllSubStrings();
     // Strings::CountBinarySubstrings();
+    Strings::Reverse_Words_in_String();
 
     // Bits::ReverseBits();
 

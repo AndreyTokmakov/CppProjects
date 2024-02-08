@@ -2014,10 +2014,10 @@ void Strings::TestAll()
 
 	// Strings::AnalogClockAngles();
 	// Strings::Atoi();
-	Strings::Atoi_Extended();
+	// Strings::Atoi_Extended();
 	// Strings::StrLen();
 
-	// Strings::ReverseString();
+	Strings::ReverseString();
 	// Strings::RotateString();
 
 	// Strings::CheckIfStrings_RotateRotateEquals();
