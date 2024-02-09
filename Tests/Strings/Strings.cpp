@@ -179,8 +179,8 @@ namespace Strings
 
 namespace Strings::Literals
 {
-
-    class Literal {
+    class Literal
+    {
         const char* const mData{};
         const size_t      mLen{};
 

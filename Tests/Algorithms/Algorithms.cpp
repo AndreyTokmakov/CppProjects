@@ -1091,8 +1091,7 @@ namespace Algorithms::Strings
         params.clear();
         size_t pos = 0, prev = 0;
         while ((pos = str.find(delimiter, prev)) != std::string::npos) {
-            if (pos > prev + 1)
-                params.emplace_back(str.data() + prev, pos - prev);
+            params.emplace_back(str.data() + prev, pos - prev);
             prev = pos + delimiter.length();
         }
         params.emplace_back(str.data() + prev, str.length() - prev);
@@ -1103,18 +1102,58 @@ namespace Algorithms::Strings
         std::vector<std::string_view> params;
         split_to(str, params);
 
-        for (const auto& s: params)
-            std::cout << "[" << s << "]";
-        std::cout << std::endl;
+        std::string result;
+        for (auto it = params.rbegin(); it != params.rend(); ++it) {
+            std::cout << *it << std::endl;
+            result.append(std::string(*it)).append(" ");
+        }
+
+        result.erase(result.size() - 1);
+        std::cout << std::quoted(result) << std::endl;
     }
 
     void Reverse_Words_in_String()
     {
         const std::string str { "the sky is blue" };
-        const std::string str1 { "a good   example    " };
+        const std::string str1 { "a  good   example   " };
+        const std::string str2 { " asdasd df f"};
 
-        reverse_words_in_string(str);
-        reverse_words_in_string(str1);
+        // reverse_words_in_string(str);
+        // reverse_words_in_string(str1);
+        reverse_words_in_string(str2);
+    }
+}
+
+namespace Algorithms::Strings
+{
+    void reverse_words_in_string2(const std::string& str)
+    {
+        std::string result;
+        result.reserve(str.size());
+
+        size_t pos = 0, prev = 0;
+        while ((pos = str.find(' ', prev)) != std::string::npos) {
+            if (pos > prev)
+                result.insert(0, str, prev, pos - prev).insert(0, " ");
+            prev = pos + 1;
+        }
+        result.insert(0, str, prev, str.length() - prev);
+
+        result.shrink_to_fit();
+        std::cout << std::quoted(result) << std::endl;
+    }
+
+    void Reverse_Words_in_String2()
+    {
+        const std::string str { "the sky is blue" };
+        const std::string str1 { "a  good   example   " };
+        const std::string str2 { " asdasd df f"};
+        const std::string str3 { "  hello world  "};
+
+        // reverse_words_in_string(str);
+        // reverse_words_in_string(str1);
+        // reverse_words_in_string2(str2);
+        reverse_words_in_string2(str3);
     }
 }
 
@@ -1366,7 +1405,8 @@ void Algorithms::TestAll()
     // Strings::topKFrequent();
     // Strings::PrintAllSubStrings();
     // Strings::CountBinarySubstrings();
-    Strings::Reverse_Words_in_String();
+    // Strings::Reverse_Words_in_String();
+    Strings::Reverse_Words_in_String2();
 
     // Bits::ReverseBits();
 
