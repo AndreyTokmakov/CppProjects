@@ -1,11 +1,11 @@
-//============================================================================
-// Name        : String.cpp
-// Created on  : 30.04.2020
-// Author      : Tokmakov Andrey
-// Version     : 1.0
-// Copyright   : Your copyright notice
-// Description : String libraty src
-//============================================================================
+/**============================================================================
+Name        : String.cpp
+Created on  : 30.04.2020
+Author      : Andrei Tokmakov
+Version     : 1.0
+Copyright   : Your copyright notice
+Description : String.cpp
+============================================================================**/
 
 #define _CRT_SECURE_NO_WARNINGS
 
@@ -31,8 +31,10 @@
 #include <iomanip>
 
 #include "String.h"
+#include "StringUtilities.h"
 
-namespace String {
+namespace String
+{
 	void Create_Test() {
 
 		std::string s0("Initial string");
@@ -414,40 +416,34 @@ namespace String {
 
 	//--------------------------------------------------------------------------------------------------------------//
 
-	void Trim(std::string& str) {
-		size_t beg = 0, end = str.length();
-		for (; end > beg & str[beg] == ' '; beg++) {}
-		for (; end > 0 && str[--end] == ' '; ) {}
-		str = str.substr(beg, end - beg + 1);
+
+	void Trim()
+    {
+        for (const std::string& base: std::vector<std::string>{
+            "   Some   Sample    String  "
+        })
+        {   std::cout << "Input: " << std::quoted(base) << std::endl;
+
+            if (std::string str(base); not str.empty())
+            {
+                StringUtilities::trim_1(str);
+                std::cout << std::quoted(str) << std::endl;
+            }
+            if (std::string str(base); not str.empty())
+            {
+                StringUtilities::trim_2(str);
+                std::cout << std::quoted(str) << std::endl;
+            }
+            if (std::string str(base); not str.empty())
+            {
+                StringUtilities::trim_3(str);
+                std::cout << std::quoted(str) << std::endl;
+            }
+        }
 	}
 
-	void Trim_2(std::string& str) {
-		str.erase(0, str.find_first_not_of(' '));
-		std::reverse(str.begin(), str.end());
-		str.erase(0, str.find_first_not_of(' '));
-		std::reverse(str.begin(), str.end());
-	}
-
-	void Trim() {
-		const std::string base = "   Some   Sample    String  ";
-		std::cout << "'" << base << "'" << std::endl << std::endl;
-
-		std::cout << "-------------------------- Test 1:" << std::endl;
-		{
-			std::string str(base);
-			Trim_2(str);
-			std::cout << "'" << str << "'" << std::endl;
-		}
-
-		std::cout << "\n-------------------------- Test 2:" << std::endl;
-		{
-			std::string str(base);
-			Trim(str);
-			std::cout << "'" << str << "'" << std::endl;
-		}
-	}
-
-	void Trim_Performance() {
+	void Trim_Performance()
+    {
 		const std::string base = "   Some   Sample    String  ";
 
 		{
@@ -455,7 +451,7 @@ namespace String {
 			for (int i = 0; i < 10000; i++) {
 				for (int n = 0; n < 10000; n++) {
 					std::string str(base);
-					Trim(str);
+                    StringUtilities::trim_1(str);
 				}
 			}
 			auto end = std::chrono::high_resolution_clock::now();
@@ -468,13 +464,27 @@ namespace String {
 			for (int i = 0; i < 10000; i++) {
 				for (int n = 0; n < 10000; n++) {
 					std::string str(base);
-					Trim_2(str);
+                    StringUtilities::trim_2(str);
 				}
 			}
 			auto end = std::chrono::high_resolution_clock::now();
 			auto durtion = std::chrono::duration_cast<std::chrono::microseconds>(end - start).count();
 			std::cout << "Result: " << durtion << std::endl;
 		}
+
+
+        {
+            auto start = std::chrono::high_resolution_clock::now();
+            for (int i = 0; i < 10000; i++) {
+                for (int n = 0; n < 10000; n++) {
+                    std::string str(base);
+                    StringUtilities::trim_3(str);
+                }
+            }
+            auto end = std::chrono::high_resolution_clock::now();
+            auto durtion = std::chrono::duration_cast<std::chrono::microseconds>(end - start).count();
+            std::cout << "Result: " << durtion << std::endl;
+        }
 	}
 
 	void Size_Storage() {
@@ -1456,7 +1466,7 @@ void String::TestAll()
 	// Assign__Substr_vs_Iterators();
 
 
-	// Trim();
+	Trim();
 	// Trim_Performance();
 
 	// Size_Storage();
@@ -1480,7 +1490,7 @@ void String::TestAll()
 	// Split_String2();
 	// Split_String3();
 
-	Performance_Tests::SplitTest();
+	// Performance_Tests::SplitTest();
 	// Performance_Tests::SplitTest();
 	// Performance_Tests::Compare();
 

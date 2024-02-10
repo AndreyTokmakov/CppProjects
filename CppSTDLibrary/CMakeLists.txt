@@ -54,6 +54,7 @@ add_executable(${PROJECT_NAME}
 		Span/Span.cpp Span/Span.h
 		Streams/Streams.cpp Streams/Streams.h
 		String/String.cpp String/String.h
+		String/StringUtilities.cpp String/StringUtilities.h
 		StringStream/StringStreamTests.cpp StringStream/StringStreamTests.h
 		StringView/StringViewTests.cpp StringView/StringViewTests.h
 		StructuredBinding/StructuredBinding.cpp StructuredBinding/StructuredBinding.h
