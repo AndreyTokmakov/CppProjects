@@ -35,6 +35,7 @@ add_executable(${PROJECT_NAME}
         Files_Filesystem/Files.cpp Files_Filesystem/Files.h
         Helpers/Wrapper.h Helpers/UnorderedPair.h Helpers/Utilities.h  Helpers/Object.h
         Strings/Strings.cpp Strings/Strings.h
+        Strings/StringUtilities.cpp Strings/StringUtilities.h
         DataStructures/LRUCache.cpp DataStructures/LRUCache.h
         DataStructures/MaxStack.cpp DataStructures/MaxStack.h
         DataStructures/DVector.cpp DataStructures/DVector.h
