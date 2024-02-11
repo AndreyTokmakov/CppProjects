@@ -39,6 +39,8 @@ namespace StringUtilities
     std::string_view trim(const std::string& str);
 
     void remove_chars_from_string(std::string& str);
+
+    void slice_string(std::string &str, size_t from, size_t until);
 };
 
 #endif //CPPPROJECTS_STRINGUTILITIES_H

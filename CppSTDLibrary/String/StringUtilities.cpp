@@ -146,3 +146,17 @@ namespace StringUtilities
     }
 }
 
+namespace StringUtilities
+{
+    void slice_string(std::string &str, size_t from, size_t until)
+    {
+        if (!(str.length() > until && until > from))
+            return;
+
+        size_t pos = 0;
+        for (size_t idx = from; idx <= until; ++idx)
+            str[pos++] = str[idx];
+        str.resize(pos);
+        str.shrink_to_fit();
+    }
+}

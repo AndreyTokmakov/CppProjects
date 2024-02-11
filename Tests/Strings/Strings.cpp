@@ -109,6 +109,23 @@ namespace Strings::Literals
     }
 }
 
+
+namespace StringUtilities
+{
+    void slice_string(std::string &str, size_t from, size_t until)
+    {
+        if (!(str.length() > until && until > from))
+            return;
+
+        size_t pos = 0;
+        for (size_t idx = from; idx <= until; ++idx)
+            str[pos++] = str[idx];
+        str.resize(pos);
+        str.shrink_to_fit();
+    }
+}
+
+
 namespace Strings::UtilitiesTests
 {
     using namespace StringUtilities;
@@ -176,16 +193,15 @@ namespace Strings::UtilitiesTests
         remove_chars_from_string(str1);
         std::cout << std::quoted(str1) << std::endl;
     }
-}
 
-namespace StringUtilities
-{
-
-    void update_string(std::string &str, size_t from, size_t until)
+    void Update_string_test()
     {
-        if (from >= until || until > str.length() - 1)
-            return;
+        std::string str { "0123456789___________________" };
+        std::cout << std::quoted(str) << "  " << str.capacity() << std::endl;
 
+        slice_string(str, 3, 8);
+
+        std::cout << std::quoted(str) << "  " << str.capacity() << std::endl;
     }
 }
 
@@ -198,11 +214,8 @@ void Strings::TestAll()
     // UtilitiesTests::strip_string_test();
     // UtilitiesTests::trim_string_test();
     // UtilitiesTests::remove_chars_from_string_test();
+    UtilitiesTests::Update_string_test();
 
 
-    /*
-    constexpr std::array<char, 5> symbols { ' ', '\t', '\n', '\r', '\n'};
-    const bool result = std::any_of(symbols.cbegin(), symbols.cend(), [](const char c) { return c == ' '; });
-    std::cout << std::boolalpha << result << std::endl;
-    */
+
 };
