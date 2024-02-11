@@ -1382,6 +1382,32 @@ namespace Algorithms::Strings
 }
 
 
+namespace Algorithms::Strings
+{
+    void Compare_Version_Numbers()
+    {
+        const std::string version1 = "1.01.33", version2 = "1.001.33";
+
+        int count  = 0;
+
+        std::pair<size_t, size_t> pos1 {0, pos1.second = version1.find('.')}, pos2 {0, version2.find('.')};
+        while (std::string::npos != pos1.second && std::string::npos != pos2.second )
+        {
+            std::cout << pos1.second << " " << pos2.second << std::endl;
+
+            pos1.first = pos1.second + 1;
+            pos2.first = pos2.second + 1;
+
+            pos1.second = version1.find('.', pos1.first);
+            pos2.second = version2.find('.', pos2.first);
+
+            if (++count > 5)
+                break;
+        }
+    }
+}
+
+
 void Algorithms::TestAll()
 {
 
@@ -1406,7 +1432,8 @@ void Algorithms::TestAll()
     // Strings::PrintAllSubStrings();
     // Strings::CountBinarySubstrings();
     // Strings::Reverse_Words_in_String();
-    Strings::Reverse_Words_in_String2();
+    // Strings::Reverse_Words_in_String2();
+    Strings::Compare_Version_Numbers();
 
     // Bits::ReverseBits();
 

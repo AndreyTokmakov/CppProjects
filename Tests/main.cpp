@@ -841,7 +841,7 @@ int main([[maybe_unused]] int argc,
     // CallFunctionByName::Test();
     // ReturnClass_MemberRef_CopyCTor::tests();
 
-    // Algorithms::TestAll();
+    Algorithms::TestAll();
     // AutoTests::TestAll();
     // Cpp23_Features::TestAll();
     // Concepts::TestAll();
@@ -877,7 +877,7 @@ int main([[maybe_unused]] int argc,
     // Convertaion_UTF8_UTF32::TestAll();    // Encoding
     // Unicode::TestAll();                   // Encoding
     // StringUtils::TestAll();               // Encoding
-    Strings::TestAll();
+    // Strings::TestAll();
     // Performance::TestAll();
     // BinaryAnalyzer::TestAll();
     // ThinkCell::IntervalMapTest();

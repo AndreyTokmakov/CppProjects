@@ -9,7 +9,7 @@
 
 #include "Adapter.h"
 
-#define interface class
+#define interface struct
 
 namespace Adapter::Classic {
 	
@@ -24,9 +24,8 @@ namespace Adapter::Classic {
 		}
 	};
 
-
-	interface ISensor {
-	public:
+	interface ISensor
+    {
 		virtual ~ISensor() = default;
 		virtual float getTemperature() = 0;
 	};
@@ -77,8 +76,8 @@ namespace Adapter::PrivateInheritance {
 		}
 	};
 
-	interface ISensor {
-	public:
+	interface ISensor
+    {
 		virtual ~ISensor() = default;
 		virtual float getTemperature() = 0;
 		virtual void adjust(float t) = 0;

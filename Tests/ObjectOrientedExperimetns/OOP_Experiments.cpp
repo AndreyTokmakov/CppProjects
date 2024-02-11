@@ -382,6 +382,33 @@ namespace ObjectOrientedExperiments::DefaultConstructor_VariablesInitialization
     }
 }
 
+namespace Change_Overrided_Method_Visibility
+{
+
+    struct Base
+    {
+        virtual void info() {
+            std::cout << "Public Base::Info()\n";
+        }
+
+        virtual ~Base() = default;
+    };
+
+    struct Derived: Base
+    {
+    private:
+        void info() override {
+            std::cout << "Private Derived::Info()\n";
+        }
+    };
+
+    void Test()
+    {
+        std::unique_ptr<Base> obj{std::make_unique<Derived>()};
+        obj->info();
+    }
+}
+
 void ObjectOrientedExperiments::OOP_Experiments::TestAll()
 {
     // OOP_Experiments::FriendTests
@@ -398,5 +425,7 @@ void ObjectOrientedExperiments::OOP_Experiments::TestAll()
 
     // CopyObjects::createSocket();
 
-    DefaultConstructor_VariablesInitialization::Test();
+    // DefaultConstructor_VariablesInitialization::Test();
+
+    Change_Overrided_Method_Visibility::Test();
 };

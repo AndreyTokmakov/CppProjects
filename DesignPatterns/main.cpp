@@ -67,7 +67,7 @@ int main([[maybe_unused]]  int argc,
     // LazyInitialization::TestAll();
 
     /** Structural patterns: **/
-    // Adapter::TestAll();
+     Adapter::TestAll();
     // Bridge::TestAll();
     // PImpl::TestAll();
     // Composite::Test();
@@ -78,7 +78,7 @@ int main([[maybe_unused]]  int argc,
     // Proxy::CarTest();
     // Proxy::DocumentTest();
     // Proxy::SubjectTest();
-    Proxy::DatabaseProxyTest();
+    // Proxy::DatabaseProxyTest();
 
     /** Behaviour patterns **/
     // Strategy::Test();
