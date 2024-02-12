@@ -841,7 +841,7 @@ int main([[maybe_unused]] int argc,
     // CallFunctionByName::Test();
     // ReturnClass_MemberRef_CopyCTor::tests();
 
-    Algorithms::TestAll();
+    //Algorithms::TestAll();
     // AutoTests::TestAll();
     // Cpp23_Features::TestAll();
     // Concepts::TestAll();
@@ -857,7 +857,7 @@ int main([[maybe_unused]] int argc,
     // Date_Time_Chrono::TestAll();
     // MaxStack::TestAll();
     // MinStack::TestAll();
-    // RateLimiter::TestAll();
+    RateLimiter::TestAll();
     // DebugLogger::TestAll();
     // PointsAndLines::TestAll();           // Geometry
     // UniquePtr_Size::SizeTest();
