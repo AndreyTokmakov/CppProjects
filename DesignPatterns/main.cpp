@@ -67,7 +67,7 @@ int main([[maybe_unused]]  int argc,
     // LazyInitialization::TestAll();
 
     /** Structural patterns: **/
-     Adapter::TestAll();
+    // Adapter::TestAll();
     // Bridge::TestAll();
     // PImpl::TestAll();
     // Composite::Test();
@@ -84,7 +84,7 @@ int main([[maybe_unused]]  int argc,
     // Strategy::Test();
     // Policy::Test();
     // ChainOfResponsibility::TestAll();
-    // Command::TestAll();
+    Command::TestAll();
     // Iterator::Test();
     // Interpreter::Test();
     // Mediator::TestAll();

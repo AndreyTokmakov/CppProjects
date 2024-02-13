@@ -36,34 +36,36 @@ namespace Command::Switch_ON_OFF_Light
         virtual ~Light() = default;
     };
 
-    // Command for turning on the light
-    struct LightOnCommand: ICommand
+    struct LightControlCommand: ICommand
     {
-        explicit LightOnCommand(std::shared_ptr<Light> light) : mLight(std::move(light)) {
+        explicit LightControlCommand(std::shared_ptr<Light> light) : mLight(std::move(light)) {
         }
+
+        void execute() override = 0;
+
+        std::shared_ptr<Light> mLight;
+    };
+
+    // Command for turning on the light
+    struct LightOnCommand: LightControlCommand
+    {
+        using LightControlCommand::LightControlCommand;
 
         void execute() override {
             std::cout << "LightOnCommand::execute()\n";
             this->mLight->on();
         }
-
-    private:
-        std::shared_ptr<Light> mLight;
     };
 
     // Command for turning off the light
-    struct LightOffCommand: ICommand
+    struct LightOffCommand: LightControlCommand
     {
-        explicit LightOffCommand(std::shared_ptr<Light> light) : mLight(std::move(light)) {
-        }
+        using LightControlCommand::LightControlCommand;
 
         void execute() override {
             std::cout << "LightOffCommand::execute()\n";
             this->mLight->off();
         }
-
-    private:
-        std::shared_ptr<Light> mLight;
     };
 
     // Invoker: Stores the ConcreteCommand object

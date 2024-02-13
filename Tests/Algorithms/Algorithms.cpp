@@ -1384,9 +1384,12 @@ namespace Algorithms::Strings
 
 namespace Algorithms::Strings
 {
-    void Compare_Version_Numbers()
+    int Compare_Version_Numbers()
     {
-        const std::string version1 = "1.014.33", version2 = "1.0012.33";
+        std::string version1 = "1.014.33", version2 = "1.014.33";
+
+        version1 += ".1";
+        version2 += ".1";
 
         int16_t v1 = 0, v2 = 0, strt1 = 0, strt2 = 0;
         std::pair<size_t, size_t> pos1 {0, pos1.second = version1.find('.')}, pos2 {0, version2.find('.')};
@@ -1398,11 +1401,14 @@ namespace Algorithms::Strings
             std::from_chars(version1.data() + strt1, version1.data() + pos1.second, v1);
             std::from_chars(version2.data() + strt2, version2.data() + pos2.second, v2);
 
-            std::cout << v1 << " " << v2 << std::endl;
+
+            if (v1 != v2)
+                return v1 > v2 ? 1 : -1;
 
             pos1.second = version1.find('.', pos1.first = pos1.second + 1);
             pos2.second = version2.find('.', pos2.first = pos2.second + 1);
         }
+        return 0;
     }
 }
 
