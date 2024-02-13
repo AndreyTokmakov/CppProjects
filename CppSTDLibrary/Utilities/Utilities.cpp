@@ -270,8 +270,13 @@ namespace Utilities::ToAddress
     }
 }
 
+
+void Bind_Utilities();
+
 void Utilities::TestAll()
 {
+    Bind_Utilities();
+
 	// ApplyTests::Apply_Sum_Test();
 	// ApplyTests::Apply_Sum_Lambda_Test();
 	// ApplyTests::Apply_Sum_Tuple();
@@ -281,7 +286,7 @@ void Utilities::TestAll()
 	// Invoke_Tests::Is_Invocable();
 	// Invoke_Tests::Invoke_Functor();
 	// Invoke_Tests::Invoke_Class_Method_FromMethod();
-	//Invoke_Tests::Invoke_Class_Method_FromMethod_Delegate();
+	// Invoke_Tests::Invoke_Class_Method_FromMethod_Delegate();
 
 	// Make_Tuples::Test();
 	// Make_Tuples::Test2();
@@ -297,6 +302,7 @@ void Utilities::TestAll()
 	Integer_Comparison_Functions::Tests();
     */
 
+    // ToAddress::to_address_tests();
 
-    ToAddress::to_address_tests();
+
 };

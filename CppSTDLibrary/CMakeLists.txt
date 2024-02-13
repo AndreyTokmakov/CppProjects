@@ -65,7 +65,7 @@ add_executable(${PROJECT_NAME}
 		TypeCast/TypeCast.cpp TypeCast/TypeCast.h
 		TypeTraits/TypeTraits.cpp TypeTraits/TypeTraits.h
 		UniquePtr/UniquePtr.cpp UniquePtr/UniquePtr.h
-		Utilities/Utilities.cpp Utilities/Utilities.h
+		Utilities/Utilities.cpp Utilities/Utilities.h Utilities/Bind.cpp
 		Variant/Variant.cpp Variant/Variant.h
 		WeakPtr/WeakPtr.cpp WeakPtr/WeakPtr.h
         Volatile/VolatileTests.cpp Volatile/VolatileTests.h

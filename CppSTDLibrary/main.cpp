@@ -233,7 +233,7 @@ int main(int argc, char** argv)
     // ReferenceWrapper::TestAll();
     // StarshipOperator::TestAll();
     // Streams::TestAll();
-    String::TestAll();
+    // String::TestAll();
     // StringStream::TestAll();
     // StringView::TestAll();
     // StructuredBinding::TestAll();
@@ -248,7 +248,7 @@ int main(int argc, char** argv)
     // TypeCast::TestAll();
     // Int::TestAll();
     // Templates::TestAll();
-    // Utilities::TestAll();
+    Utilities::TestAll();
     // UniquePtr_Tests::TestAll();
 
     // WeakPtr::TestAll();
