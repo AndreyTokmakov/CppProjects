@@ -49,9 +49,10 @@ namespace LRUCache::Original
                 items.pop_back();                // Evict last item from the list
             }
 
-            /* Insert the new item at front of the list: */
+            /** Insert the new item at front of the list: **/
             items.emplace_front(key, value);
-            /* Insert {key->item_iterator} in the map: */
+
+            /** Insert {key->item_iterator} in the map: **/
             cache.emplace(key, items.begin());
 
             return true;
@@ -93,25 +94,30 @@ namespace LRUCache::Original
 };
 
 
-namespace LRUCache::Simple {
+namespace LRUCache::Simple
+{
 
-    class LRUCache {
-    public:
-        using KeyType = int;
-        using ValueType = int;
+    template<typename K, typename V>
+    struct LRUCache
+    {
+        using KeyType = K;
+        using ValueType = V;
+        using SizeType = size_t;
         using Item = std::pair<KeyType, ValueType>;
         using ListIter = typename std::list<Item>::iterator;
 
         std::list<Item> items {};
         std::unordered_map<KeyType, ListIter> cache {};
-        size_t size {0};
 
-    public:
-        explicit LRUCache(size_t capacity): size {capacity} {
+        SizeType maxCapacity {0};
+
+        explicit LRUCache(SizeType capacity): maxCapacity {capacity} {
             // Write your code here
         }
 
-        int get(int key) {
+        [[nodiscard]]
+        ValueType get(KeyType key)
+        {
             const auto iter = cache.find(key);
             if (cache.end() == iter)
                 return -1;
@@ -121,9 +127,11 @@ namespace LRUCache::Simple {
         }
 
         // INFO: We may want to update element if it exists?
-        void put(int key, int value) {
-            if (const auto iter = cache.find(key); cache.end() == iter) {
-                if (items.size() == size) {
+        void put(KeyType key, ValueType value)
+        {
+            if (const auto iter = cache.find(key); cache.end() == iter)
+            {
+                if (items.size() == maxCapacity) {
                     /* Erase the last item key from the map */
                     cache.erase(items.back().first);
                     /* Evict last item from the list */
@@ -133,15 +141,17 @@ namespace LRUCache::Simple {
                 items.emplace_front(key, value);
                 cache.emplace(key, items.begin());
             } else {
-                // TODO: Update existing value?
-                // iter->second->second = value;
+                iter->second->second = value;
+                items.splice(items.begin(), items, iter->second);
             }
         }
     };
 
-    void Test() {
-        LRUCache cache {2};
+    void Test()
+    {
+        LRUCache<int, int> cache {2};
 
+        /*
         cache.put(1, 1);
         cache.put(2, 2);
 
@@ -157,12 +167,33 @@ namespace LRUCache::Simple {
         std::cout << cache.get(1) << std::endl;
         std::cout << cache.get(3) << std::endl;
         std::cout << cache.get(4) << std::endl;
+        */
+
+        /*
+        cache.put(2, 1);
+        cache.put(2, 2);
+
+        std::cout << cache.get(2) << std::endl;
+
+        cache.put(1, 1);
+        cache.put(4, 1);
+
+        std::cout << cache.get(2) << std::endl;
+        */
+
+        cache.put(2, 1);
+        cache.put(1, 1);
+        cache.put(2, 3);
+        cache.put(4, 1);
+
+        std::cout << cache.get(1) << std::endl;
+        std::cout << cache.get(2) << std::endl;
     }
 }
 
 void LRUCache::TestAll()
 {
-    Original::Test();
+    // Original::Test();
 
-    // Simple::Test();
+    Simple::Test();
 };
