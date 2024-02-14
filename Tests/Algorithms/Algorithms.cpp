@@ -997,6 +997,36 @@ namespace Algorithms::Numbers
     }
 }
 
+namespace Algorithms::Numbers
+{
+    int add_digits(int value)
+    {
+        int tmp = 0;
+        while (value >= 10) {
+            tmp = value; value = 0;
+            while (tmp > 9) {
+                value += tmp % 10;
+                tmp = tmp / 10;
+            }
+            value += tmp;
+        }
+        return value;
+    }
+
+    /**
+    Given an integer num, repeatedly add all its digits until the result has only one digit, and return it.
+    Example 1:  Input: num = 38     Explanation: The process is
+                Output: 2           38 --> 3 + 8 --> 11
+                                    11 --> 1 + 1 --> 2
+                                    Since 2 has only one digit, return it.
+    */
+    void AddDigits()
+    {
+        int v = add_digits(10);
+        std::cout << v << std::endl;
+    }
+}
+
 namespace Algorithms::Bits
 {
     template<typename T>
@@ -1430,6 +1460,7 @@ void Algorithms::TestAll()
     // Numbers::Degree_Of_Array();
     // Numbers::topKFrequent();
     // Numbers::Median_of_Two_Sorted_Arrays();
+    Numbers::AddDigits();
 
     // Strings::FindCommon_PrefixAndPostfix();
     // Strings::FindLastNotOf__Benchmark();
@@ -1438,7 +1469,7 @@ void Algorithms::TestAll()
     // Strings::CountBinarySubstrings();
     // Strings::Reverse_Words_in_String();
     // Strings::Reverse_Words_in_String2();
-    Strings::Compare_Version_Numbers();
+    // Strings::Compare_Version_Numbers();
 
     // Bits::ReverseBits();
 

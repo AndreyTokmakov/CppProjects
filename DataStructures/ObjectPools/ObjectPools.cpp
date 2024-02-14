@@ -439,7 +439,8 @@ namespace ObjectPools::GoodPools_Tests {
 		size_type _size { 0 };
 		size_type _capacity { 0 };
 
-		void addChunk() {
+		void addChunk()
+        {
 			// Allocate a new chunk of uninitialized memory
 			pointer newBlock { m_allocator.allocate(_new_block_size) };
 
@@ -482,8 +483,8 @@ namespace ObjectPools::GoodPools_Tests {
 			// Trivial
 		}
 
-		virtual ~ObjectPool() {
-			// Note: this implementation assumes that all objects handed out by this
+		virtual ~ObjectPool()
+        {   // Note: this implementation assumes that all objects handed out by this
 			// pool have been returned to the pool before the pool is destroyed.
 			// The following statement asserts if that is not the case.
 			assert(available.size() == DEFAULT_CHUNK_SIZE * (std::pow(2, pool.size()) - 1));
