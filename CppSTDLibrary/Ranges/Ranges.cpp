@@ -34,6 +34,29 @@
 #include <list>
 #include <iomanip>
 
+namespace
+{
+    /*
+    template <std::ranges::input_range RangeType>
+    void print(RangeType&& range)
+    {
+        std::ranges::for_each(print, [](const auto& v) {
+            std::cout << v << ' ';
+        });
+        std::cout << '\n';
+    }
+     */
+
+    template <typename T>
+    void print(T&& range_or_view)
+    {
+        std::ranges::for_each(range_or_view, [](const auto& v) {
+            std::cout << v << ' ';
+        });
+        std::cout << '\n';
+    }
+}
+
 namespace Ranges
 {
     using namespace std::literals;
@@ -234,29 +257,6 @@ namespace Ranges
         std::cout << '\n';
     }
 
-    //---------------------------------------------------------------------------//
-
-    void _TESTS_() {
-        std::vector<int> numbers{ 0,1,2,3,4,5};
-
-        {
-            std::ranges::take_view view {numbers, 3};
-            std::ranges::for_each(view, [](auto v) { std::cout << v << ' '; });
-            std::cout << std::endl;
-        }
-
-        {
-            auto view = std::ranges::take_view{ numbers, 3 };
-            std::ranges::for_each(view, [](auto v) { std::cout << v << ' '; });
-            std::cout << std::endl;
-        }
-
-        {
-            std::ranges::take_view view{ numbers, 35 };
-            std::ranges::for_each(view, [](auto v) { std::cout << v << ' '; });
-            std::cout << std::endl;
-        }
-    }
 }
 
 namespace Ranges::Filters {
@@ -321,8 +321,8 @@ namespace Ranges::Filters {
 }
 
 
-namespace Ranges::Take {
-
+namespace Ranges::Take
+{
     /*
     template <std::ranges::input_range RangeType>
     std::ostream& operator<<(std::ostream& stream, const RangeType& range) {
@@ -333,20 +333,8 @@ namespace Ranges::Take {
     }
     */
 
-    template <std::ranges::input_range RangeType>
-    void print_range(RangeType&& rng,
-        const std::string& text = std::string(""))
+    void Take_View()
     {
-        if (std::ranges::empty(rng)) {
-            std::cout << "Empty.";
-            return;
-        }
-
-        std::ranges::for_each(rng, [](const auto& v) { std::cout << v << ' '; });
-        std::cout << '\n';
-    }
-
-    void Take_View() {
         std::vector<int> numbers{ 0,1,2,3,4,5 };
 
         {
@@ -379,12 +367,22 @@ namespace Ranges::Take {
         }
     }
 
-    void Take_Test() {
-        const std::array<std::string, 22>
-            // const std::vector<std::string>
-            contacts{ "Ariana", "Avery", "Bruce", "Brian", "Caroline", "Carl",
-             "Daniel", "Donald", "Diana", "Eric", "Emma", "Florence", "George", "Harry", "Isabella", "James", "Jackson"
-             "Jennifer", "Logan", "Linda", "Lucy", "Michael" };
+    void Take_Test_0()
+    {
+        const std::vector<int> numbers {1, 2, 3, 4, 5, 6, 7, 8, 9};
+        const std::ranges::take_view<std::ranges::ref_view<const std::vector<int>>> first_5 = std::views::take(numbers, 5);
+
+        print_range(first_5);
+        print_range(numbers | std::views::take(5));
+    }
+
+    void Take_Test()
+    {
+        const std::array<std::string, 22> contacts {
+            "Ariana", "Avery", "Bruce", "Brian", "Caroline", "Carl",
+            "Daniel", "Donald", "Diana", "Eric", "Emma", "Florence", "George", "Harry", "Isabella", "James", "Jackson"
+            "Jennifer", "Logan", "Linda", "Lucy", "Michael"
+        };
 
 
         auto name_filter = [](const auto& name) { return 5 == name.size(); };
@@ -396,20 +394,20 @@ namespace Ranges::Take {
 
         print_range(res1);
 
-        auto res_limit_5 = contacts |
-            std::views::filter(name_filter) |
-            std::ranges::views::transform(add_symbol) |
-            std::ranges::views::take(5);
+        auto res_limit_5 = contacts | std::views::filter(name_filter) |
+                                                  std::ranges::views::transform(add_symbol) |
+                                                  std::ranges::views::take(5);
 
         std::ranges::for_each(res_limit_5, [](const auto& e) { std::cout << e << " "; });
         std::cout << '\n';
     }
 }
 
-namespace Ranges::Transform {
+namespace Ranges::Transform
+{
 
     template <std::ranges::input_range RangeType>
-    void print_range(RangeType&& rng, 
+    void print_range(RangeType&& rng,
                      const std::string& text = std::string(""))
     {
         if (std::ranges::empty(rng)) {
@@ -684,6 +682,39 @@ namespace Ranges::Algorithms
     }
 }
 
+namespace Ranges::Iota
+{
+    void CreateView_DropAndTake()
+    {
+        auto from_3_to_10 = std::views::iota(1)
+                            | std::views::drop(3) | std::views::take(7);
+
+        print(from_3_to_10);
+    }
+
+
+    void CreateView_WithTransform()
+    {
+        auto result = std::views::iota(1)
+                      | std::views::filter([](int element) { return 0 == element % 2; })
+                      | std::views::drop(3) | std::views::take(7);
+
+        print(result);
+    }
+}
+
+
+namespace Ranges
+{
+    void Experiments()
+    {
+        auto from_3_to_10 = std::views::iota(1)
+                | std::views::drop(3) | std::views::take(7);
+
+        print(from_3_to_10);
+    }
+}
+
 void Ranges::TestAll()
 {
     // For_Each();
@@ -696,7 +727,7 @@ void Ranges::TestAll()
 
     // Zip();
 
-    Split();
+    // Split();
 
     // Filter_View();
     // Filter_View_Vector();
@@ -727,8 +758,12 @@ void Ranges::TestAll()
     // Transform::Transform_View();
     // Transform::Test();
 
+    // Iota::CreateView_DropAndTake();
+    Iota::CreateView_WithTransform();
+
     // Take::Take_View();
+    // Take::Take_Test_0();
     // Take::Take_Test();
 
-    // _TESTS_();
+    // Experiments();
 }

@@ -44,53 +44,54 @@
 
 #include "LockFreeQueue.h"
 
-namespace LockFreeQueue {
+namespace LockFreeQueue
+{
     template<class T, size_t N>
-    class LockFreeQueue {
-    public:
-        LockFreeQueue() : size_{0}, read_pos_{0}, write_pos_{0} {
+    struct LockFreeQueue
+    {
+        LockFreeQueue() : size {0}, read_pos{0}, write_pos{0} {
             //assert(size_.is_lock_free());
-            if (!size_.is_lock_free()) {
+            if (!size.is_lock_free()) {
                 std::cout << "ERROR!\n";
             }
         }
 
         [[nodiscard]]
-        auto size() const {
-            return size_.load();
+        auto Size() const {
+            return size.load();
         }
 
         auto push(const T &t) {
-            if (size_.load() >= N) {
+            if (size.load() >= N) {
                 throw std::overflow_error("Queue is full");
             }
-            buffer_[write_pos_] = t;
-            write_pos_ = (write_pos_ + 1) % N;
-            size_.fetch_add(1);
+            data[write_pos] = t;
+            write_pos = (write_pos + 1) % N;
+            size.fetch_add(1);
         }
 
         [[nodiscard]]
         auto& front() const {
-            const auto s = size_.load();
+            const auto s = size.load();
             if (s == 0) {
                 throw std::underflow_error("Queue is empty");
             }
-            return buffer_[read_pos_];
+            return data[read_pos];
         }
 
         auto pop() {
-            if (size_.load() == 0) {
+            if (size.load() == 0) {
                 throw std::underflow_error("Queue is empty");
             }
-            read_pos_ = (read_pos_ + 1) % N;
-            size_.fetch_sub(1);
+            read_pos = (read_pos + 1) % N;
+            size.fetch_sub(1);
         }
 
     private:
-        std::array <T, N> buffer_{}; // Used by both threads
-        std::atomic <size_t> size_{}; // Used by both threads
-        size_t read_pos_ = 0;
-        size_t write_pos_ = 0;
+        std::array<T, N> data {};
+        std::atomic<size_t> size {};
+        size_t read_pos = 0;
+        size_t write_pos = 0;
     };
 
 }
@@ -101,5 +102,5 @@ void LockFreeQueue::TEST_ALL() {
     queue.push(1);
     queue.push(2);
 
-    std::cout << queue.size() << std::endl;
+    std::cout << queue.Size() << std::endl;
 }

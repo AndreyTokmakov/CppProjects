@@ -55,7 +55,7 @@ int main([[maybe_unused]] int argc,
     // BitSet::TEST_ALL();
     // CategoryTree::TEST_ALL();
     // CircularBuffers::TEST_ALL();
-    CustomVector::TestAll();
+    // CustomVector::TestAll();
     // ExecutorAdapter::TestAll();
     // ExecutorAdapter2::TestAll();
     // Function::Test();
@@ -87,5 +87,5 @@ int main([[maybe_unused]] int argc,
 
 	// TTLCache::TEST_ALL();
 
-    // LockFreeQueue::TEST_ALL();
+    LockFreeQueue::TEST_ALL();
 }
