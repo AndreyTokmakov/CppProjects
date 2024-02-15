@@ -1002,7 +1002,7 @@ namespace Algorithms::Numbers
     int add_digits(int value)
     {
         int tmp = 0;
-        while (value >= 10) {
+        while (value > 9) {
             tmp = value; value = 0;
             while (tmp > 9) {
                 value += tmp % 10;
