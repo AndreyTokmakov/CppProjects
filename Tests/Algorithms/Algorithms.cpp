@@ -992,6 +992,37 @@ namespace Algorithms::Numbers
     }
 }
 
+namespace Algorithms::Numbers
+{
+    void rotate_array(std::vector<int>& nums, uint32_t k)
+    {
+        std::vector<int> result (nums.size(), 0);
+        for (int i = 0, size = nums.size(); i < size; ++i)
+            result[(k + i) % size] = nums[i];
+        std::swap(nums, result);
+    }
+
+    void rotate_array_ex(std::vector<int>& nums, uint32_t k)
+    {
+        k = k % nums.size();
+        if (nums.size() < 2 || 0 == k || k >= nums.size())
+            return;
+        std::vector<int> head (nums.end() - k, nums.end());
+        for (uint32_t idx = nums.size() - 1; idx >= k; --idx)
+            nums[idx] = nums[idx - k];
+        for (uint32_t idx = 0; idx < k; ++idx)
+            nums[idx] = head[idx];
+    }
+
+    void Rotate_Array()
+    {
+        std::vector<int> values {1, 2};
+        rotate_array_ex(values, 1);
+
+        std::cout << values << std::endl;
+    }
+}
+
 namespace Algorithms::Bits
 {
     template<typename T>
@@ -1615,6 +1646,7 @@ void Algorithms::TestAll()
     // Numbers::topKFrequent();
     // Numbers::Median_of_Two_Sorted_Arrays();
     // Numbers::AddDigits();
+    Numbers::Rotate_Array();
 
     // Strings::FindCommon_PrefixAndPostfix();
     // Strings::FindLastNotOf__Benchmark();
@@ -1625,10 +1657,9 @@ void Algorithms::TestAll()
     // Strings::Reverse_Words_in_String2();
     // Strings::Compare_Version_Numbers();    // INFO: Unfinished yet | --> TODO
     // Strings::Contains();
-
     // Strings::Longest_Word();
     // Strings::Intersperse_String();
-    Strings::Count_Anagrams();
+    // Strings::Count_Anagrams();
 
     // Bits::ReverseBits();
 

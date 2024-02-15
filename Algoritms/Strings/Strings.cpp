@@ -32,6 +32,7 @@ namespace
 {
     using StrSizeTPair = std::pair<std::string, size_t>;
     using StrPair = std::pair<std::string, std::string>;
+    using StringPair = std::pair<std::string, std::string>;
 
     template<typename _Ty>
     std::ostream& operator<<(std::ostream& stream, const std::vector<_Ty>& vec)
@@ -47,6 +48,22 @@ namespace
         for (const auto & v: vec)
             stream << v << ' ';
         return stream;
+    }
+}
+
+namespace StringUtilities
+{
+    void split_to(const std::string &str,
+                  std::vector<std::string_view> &parts,
+                  const std::string &delimiter)
+    {
+        parts.clear();
+        size_t pos = 0, prev = 0;
+        while ((pos = str.find(delimiter, prev)) != std::string::npos) {
+            parts.emplace_back(str.data() + prev, pos - prev);
+            prev = pos + delimiter.length();
+        }
+        parts.emplace_back(str.data() + prev, str.length() - prev);
     }
 }
 
@@ -2052,6 +2069,197 @@ namespace Strings
     }
 }
 
+namespace Strings
+{
+    bool __contains(const std::string& text,
+                    const std::string& str)
+    {
+        for (int idx = 0, m = 0, n= 0; idx <= std::ssize(text) - std::ssize(str); ++idx)
+        {
+            // std::cout << idx << std::endl;
+            for (m = 0, n = idx; m < str.size(); ++m, ++n) {
+                // std::cout << '\t' << n << " - " << m << std::endl;
+                if (str[m] != text[n])
+                    break;
+            }
+            if (m == str.size())
+                return true;
+        }
+        return false;
+    }
+
+    int find(const std::string& haystack, const std::string& needle)
+    {
+        const int textSize = std::ssize(haystack), searchBlockSize = std::ssize(needle);
+        for (int idx = 0, m = 0, n = 0; idx <= textSize - searchBlockSize; ++idx)
+        {
+            for (m = 0, n = idx; m < searchBlockSize; ++m, ++n) {
+                if (needle[m] != haystack[n])
+                    break;
+            }
+            if (m == searchBlockSize)
+                return idx;
+        }
+        return -1;
+    }
+
+    void Contains()
+    {
+        std::string text = "bcaa", to_find = "aa";
+
+        std::cout << "Contains: " << std::boolalpha << __contains(text, to_find)
+                  << ". Pos = "   << find(text, to_find) << std::endl;
+    }
+}
+
+
+namespace Strings
+{
+    std::string longest_word(const std::string& input)
+    {
+        std::vector<std::string_view> words;
+        StringUtilities::split_to(input, words, " ");
+
+        size_t longestIdx = 0;
+        for (size_t idx = 0, maxLen = 0; idx < words.size(); ++idx)
+        {
+            if (words[idx].size() > maxLen) {
+                longestIdx = idx;
+                maxLen = words[idx].size();
+            }
+        }
+
+        return std::string{words[longestIdx]};
+    }
+
+    void Longest_Word()
+    {
+        for (const auto  &[value, expected]: std::vector<StringPair> {
+                {"11 222 33", "222"},
+                {"1", "1"},
+                {"", ""},
+                {"Hello world aaaaaa bbbbbb", "aaaaaa"},
+
+        })
+        {
+            const std::string actual = longest_word(value);
+            if (expected != actual) {
+                std::cerr << expected << " != " << actual << std::endl;
+                return;
+            }
+        }
+        std::cout << "OK: All tests passed\n";
+    }
+}
+
+namespace Strings
+{
+    std::string intersperse_strings(const std::string& str1,
+                                    const std::string& str2)
+    {
+        std::string result {};
+        result.reserve(str1.size() + str2.size());
+
+        for (size_t idx1 = 0, idx2 = 0, size1 = str1.size(), size2 = str2.size(); idx1 < size1 || idx2 < size2;)
+        {
+            if (idx1 < size1 && idx2 < size2)
+            {
+                result.append(1, str1[idx1++]);
+                result.append(1, str2[idx2++]);
+            }
+            else if (idx1 < size1)
+                result.append(1, str1[idx1++]);
+            else if (idx2 < size2)
+                result.append(1, str2[idx2++]);
+        }
+
+        return result;
+    }
+
+    void Intersperse_String()
+    {
+        for (const auto  &[values, expected]: std::vector<std::pair<StringPair, std::string>> {
+                {{"12345", "abcde"}, "1a2b3c4d5e"},
+                {{"12345", "a"}, "1a2345"},
+                {{"", "12345"}, "12345"},
+                {{"abcd", ""}, "abcd"},
+                {{"123456789", "z9y08regqa57"}, "1z293y40586r7e8g9qa57"},
+        })
+        {
+            const std::string actual = intersperse_strings(values.first, values.second);
+            if (expected != actual) {
+                std::cerr << expected << " != " << actual << std::endl;
+                return;
+            }
+        }
+        std::cout << "OK: All tests passed\n";
+    }
+}
+
+
+namespace Strings
+{
+    int are_anagrams(const std::string_view& str1,
+                     const std::string_view& str2)
+    {
+        if (str1 == str2 || str1.length() != str2.length())
+            return 0;
+
+        int chars[256] = { 0 };
+        for (char c : str1)
+            chars[c]++;
+        for (char c : str2)
+            if (1 > chars[c]--)
+                return 0;
+        return 1;
+    }
+
+    int count_anagrams(const std::string& input)
+    {
+        std::vector<std::string_view> words;
+        StringUtilities::split_to(input, words, " ");
+
+        int count = 0;
+        for (int i = 0; i < words.size(); ++i ){
+            for (int n = 0; n < words.size(); ++n)
+                count += are_anagrams(words[i], words[n]);
+        }
+
+        return count / 2;
+    }
+
+    /**
+     * Have the function CountingAnagrams(str) take the str parameter and determine how many anagrams exist in the string.
+     * An anagram is a new word that is produced from rearranging the characters in a different word,
+     * Program should determine how many anagrams exist in a given string and return the total number.
+     * For example: if str is "aa aa odg dog gdo" then your program should return 2 because "dog" and "gdo" are
+     * anagrams of "odg".
+     * The word "aa" occurs twice in the string but it isn't an anagram because it is the same word just repeated.
+     * The string will contain only spaces and lowercase letters, no punctuation, numbers, or uppercase letters.
+    */
+    void Count_Anagrams()
+    {
+        for (const auto  &[value, expected]: std::vector<std::pair<std::string, int>> {
+                {"cars are very cool so are arcs and my os", 2},
+                {"a c b c run urn", 1},
+                {"aa aa ab ba dog god", 2},
+                {"ab ba run run run", 1},
+                // {"abcd abdc bcda adbc abbc", 3},
+
+        })
+        {
+            const int actual = count_anagrams(value);
+
+            std::cout << actual << std::endl;
+            if (expected != actual) {
+                std::cerr << expected << " != " << actual << std::endl;
+                return;
+            }
+        }
+        std::cout << "OK: All tests passed\n";
+    }
+}
+
 void Strings::TestAll()
 {
 
@@ -2063,7 +2271,15 @@ void Strings::TestAll()
     // Strings::ReverseString();
     // Strings::RotateString();
 
-    Strings::Reverse_Words_in_String();
+    // Strings::Reverse_Words_in_String();
+
+    // Strings::Contains();
+
+    // Strings::Longest_Word();
+
+    // Strings::Intersperse_String();
+
+    Strings::Count_Anagrams();
 
     // Strings::CheckIfStrings_RotateRotateEquals();
 
