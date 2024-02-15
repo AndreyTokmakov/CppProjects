@@ -97,7 +97,7 @@ namespace LRUCache::Original
 namespace LRUCache::Simple
 {
 
-    template<typename K, typename V>
+    template<typename K = int, typename V = int>
     struct LRUCache
     {
         using KeyType = K;
@@ -120,13 +120,12 @@ namespace LRUCache::Simple
         {
             const auto iter = cache.find(key);
             if (cache.end() == iter)
-                return -1;
+                return -1; // TODO: What to return ???
 
             items.splice(items.begin(), items, iter->second);
             return iter->second->second;
         }
 
-        // INFO: We may want to update element if it exists?
         void put(KeyType key, ValueType value)
         {
             if (const auto iter = cache.find(key); cache.end() == iter)
@@ -149,7 +148,7 @@ namespace LRUCache::Simple
 
     void Test()
     {
-        LRUCache<int, int> cache {2};
+        LRUCache cache {2};
 
         /*
         cache.put(1, 1);

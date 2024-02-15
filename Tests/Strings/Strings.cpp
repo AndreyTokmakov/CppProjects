@@ -214,8 +214,7 @@ void Strings::TestAll()
     // UtilitiesTests::strip_string_test();
     // UtilitiesTests::trim_string_test();
     // UtilitiesTests::remove_chars_from_string_test();
-    UtilitiesTests::Update_string_test();
-
-
+    // UtilitiesTests::Update_string_test();
+    
 
 };
