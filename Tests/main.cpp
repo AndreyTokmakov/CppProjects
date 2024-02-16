@@ -831,6 +831,17 @@ int main([[maybe_unused]] int argc,
     // MoveExperiments::test_perfect_forwarding();
     // MoveExperiments::test_overload();
 
+    size_t v = 10;
+    int x = -1;
+
+    if (x < v)
+    {
+        std::cout << "-1 < v\n";
+    } else
+    {
+        std::cout << "Surprise X = " << x << "\n";
+    }
+
 
     // Experiments::Test({20, 40, 60});
     // FindMinMaxValues::TestAll();
@@ -846,7 +857,7 @@ int main([[maybe_unused]] int argc,
     // Cpp23_Features::TestAll();
     // Concepts::TestAll();
     // Comparators::TestAll();
-    CollectionsTests::TestAll();
+    // CollectionsTests::TestAll();
     // Coroutines::TestAll();
     // ConstexprMap::TestAll()
     // Heap::TestAll();
