@@ -774,6 +774,161 @@ namespace UnorderedMap::InvalidateIterators
     }
 }
 
+namespace UnorderedMap::HeterogeneousLookup
+{
+    struct Wrapped
+    {
+        int64_t value {0};
+
+        static Wrapped create(int64_t v) {
+            return Wrapped{v};
+        }
+
+    private:
+        explicit Wrapped(int64_t v) : value(v) {
+            std::cout << "Wrapped(" << v << ")\n";
+        };
+    };
+
+    struct Hasher
+    {
+        using is_transparent = void;
+
+        size_t operator()(int64_t value) const {
+            return std::hash<int64_t>{}(value);
+        }
+
+        size_t operator()(const Wrapped& wrapped) const {
+            return std::hash<int64_t>{}(wrapped.value);
+        }
+    };
+
+    struct Comparator
+    {
+        using is_transparent = void;
+
+        bool operator()(int64_t left, const Wrapped& right) const {
+            return left == right.value;
+        }
+
+        bool operator()(const Wrapped& left, const Wrapped& right) const {
+            return left.value == right.value;
+        }
+    };
+
+    void Test()
+    {
+        std::unordered_map<Wrapped, std::string, Hasher, Comparator> data;
+
+        data.insert_or_assign(Wrapped::create(10), std::string {"Hello World!"});
+        data.insert_or_assign(Wrapped::create(5), std::string {"Goodbye!"});
+
+        std::cout << "\tbefore find(5)" <<  std::endl;
+
+        auto j = data.find(5z);
+        // j->first == Wrapped{5}, j->second == "Goodbye!"
+
+        std::cout << "j->first.value == " << j->first.value << ", j->second == " << j->second << "\n";
+        // j->first.value == 5, j->second == Goodbye!
+
+    }
+}
+
+
+namespace UnorderedMap::HeterogeneousLookup2
+{
+    struct Int
+    {
+        using ValueType = int32_t;
+        ValueType value {0};
+
+        ~Int() {
+            std::cout << "~Int::Int(" << value << ")\n";
+        }
+
+        Int() {
+            std::cout << "Int::Int(" << value << ")\n";
+        }
+
+        explicit Int(ValueType v) : value {v} {
+            std::cout << "Int::Int(" << value << ")\n";
+        };
+
+        Int(const Int& obj): value {obj.value}
+        {
+            std::cout << "Copy constructor: Int::Int(" << value << ")\n";
+        }
+
+        Int& operator=(const Int& obj)
+        {
+            std::cout << "Copy Assignment operator: Int::Int(" << value << ")\n";
+            this->value = obj.value;
+            return *this;
+        }
+
+        Int(Int&& obj) noexcept: value { std::exchange(obj.value, 0)}
+        {
+            std::cout << "Copy constructor: Int::Int(" << value << ")\n";
+        }
+
+        Int& operator=(Int&& obj) noexcept
+        {
+            std::cout << "Move Assignment operator: Int::Int(" << value << ")\n";
+            this->value = obj.value;
+            return *this;
+        }
+
+        friend Int createInt(Int::ValueType value);
+    };
+
+    Int createInt(Int::ValueType value)
+    {
+        return Int {value};
+    }
+
+    struct Hasher
+    {
+        using is_transparent = void;
+
+        size_t operator()(int32_t value) const {
+            return std::hash<int32_t>{}(value);
+        }
+
+        size_t operator()(const Int& integer) const {
+            return std::hash<int32_t>{}(integer.value);
+        }
+    };
+
+    struct Comparator
+    {
+        using is_transparent = void;
+
+        bool operator()(int64_t left, const Int& right) const {
+            return left == right.value;
+        }
+
+        bool operator()(const Int& left, const Int& right) const {
+            return left.value == right.value;
+        }
+    };
+
+    void Test()
+    {
+        std::unordered_map<Int, std::string, Hasher, Comparator> data;
+
+        data.emplace(10, std::string {"Hello World!"});
+        data.emplace(5, std::string {"Goodbye!"});
+
+        std::cout << "\tbefore find(5)" <<  std::endl;
+
+        auto j = data.find(5z);
+        // Output: j->first == Wrapped{5}, j->second == "Goodbye!"
+
+        std::cout << "j->first.value == " << j->first.value << ", j->second == " << j->second << "\n";
+        // Output:j->first.value == 5, j->second == Goodbye!
+    }
+}
+
 void UnorderedMap::TEST_ALL()
 {
 	// Constructors_Tests();
@@ -798,7 +953,7 @@ void UnorderedMap::TEST_ALL()
 	// Erase_Loop();
 
 	// Try_Emplace();
-    Try_Emplace_CustomType();
+    // Try_Emplace_CustomType();
 	// Try_Emplace_Ptr();
 
 	// Extract();
@@ -815,8 +970,10 @@ void UnorderedMap::TEST_ALL()
     // TransparentComparators::MapWith_String_Key();
     // TransparentComparators::PerformanceTest();
 
-    // InvalidateIterators::CheckValueIterators_MAP();
+    HeterogeneousLookup::Test();
+    HeterogeneousLookup2::Test();
 
+    // InvalidateIterators::CheckValueIterators_MAP();
 
     // Tests();
 }

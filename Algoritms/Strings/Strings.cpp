@@ -31,7 +31,6 @@
 namespace
 {
     using StrSizeTPair = std::pair<std::string, size_t>;
-    using StrPair = std::pair<std::string, std::string>;
     using StringPair = std::pair<std::string, std::string>;
 
     template<typename _Ty>
@@ -132,7 +131,7 @@ namespace Strings
     }
 
     void Longest_Palindrome_1() {
-        for (const StrPair &data: std::vector<StrPair>{
+        for (const StringPair &data: std::vector<StringPair>{
                 {"babad",           "aba"},
                 {"cbbd",            "bb"},
                 {"ddddd3456654321", "34566543"}
@@ -1277,7 +1276,7 @@ namespace Strings
 
     void Find_Last_Not_Of()
     {
-        for (const StrPair& data: std::vector<StrPair>{
+        for (const StringPair& data: std::vector<StringPair>{
                 {"01234b567a89Zc", "abc"}
         })
         {

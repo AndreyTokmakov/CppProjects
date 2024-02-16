@@ -841,18 +841,19 @@ int main([[maybe_unused]] int argc,
     // CallFunctionByName::Test();
     // ReturnClass_MemberRef_CopyCTor::tests();
 
-    Algorithms::TestAll();
+    // Algorithms::TestAll();
     // AutoTests::TestAll();
     // Cpp23_Features::TestAll();
     // Concepts::TestAll();
     // Comparators::TestAll();
+    CollectionsTests::TestAll();
     // Coroutines::TestAll();
+    // ConstexprMap::TestAll()
     // Heap::TestAll();
     // Multithreading::TestAll();
     // Memory::TestAll();
     // Iterators::TestAll();
     // Files::TestAll();
-    // ConstexprMap::TestAll()
     // DesignPatterns::TestAll();
     // Date_Time_Chrono::TestAll();
     // MaxStack::TestAll();
@@ -861,7 +862,7 @@ int main([[maybe_unused]] int argc,
     // DebugLogger::TestAll();
     // PointsAndLines::TestAll();           // Geometry
     // UniquePtr_Size::SizeTest();
-    // CollectionsTests::TestAll();
+
     // Templates::TestAll();
     // ExpressionTemplates::TestAll();
     // CopyElision_RVO::TestAll();
