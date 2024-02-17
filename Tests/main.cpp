@@ -820,6 +820,54 @@ namespace StaticCounter
 }
 
 
+namespace TT
+{
+    inline bool isDebugMode()
+    {
+#if defined(QT_DEBUG)
+        return false;
+#else
+        return true;
+#endif
+    }
+
+
+    class UTMSPLogger
+            {
+    public:
+        UTMSPLogger(std::string  level) : logLevel(std::move(level)) {}
+
+        ~UTMSPLogger() {
+            if (logLevel != "Debug" || isDebugMode()) {
+                std::cout << logLevel << ": " << ss.str() << std::endl;
+            }
+        }
+
+        template <typename T>
+        UTMSPLogger& operator<<(const T& msg) {
+            ss << msg;
+            return *this;
+        }
+
+    private:
+        std::string logLevel;   // --> enum class .. нехорошо типы делать в виде строки.
+        //            1. очень неэффективно с точки зрения производительности: сраврение двух ENUM-ов куда быстрее сравнения двух STRING-ов
+        //            2.
+        std::stringstream ss;
+    };
+
+    enum class LogLevel
+    {
+        Trace,
+        Debug,
+        Info,
+        Warning,
+        Error
+    };
+}
+
+
+
 int main([[maybe_unused]] int argc,
          [[maybe_unused]] char** argv)
 {
@@ -831,16 +879,9 @@ int main([[maybe_unused]] int argc,
     // MoveExperiments::test_perfect_forwarding();
     // MoveExperiments::test_overload();
 
-    size_t v = 10;
-    int x = -1;
+    std::stringstream ss;
 
-    if (x < v)
-    {
-        std::cout << "-1 < v\n";
-    } else
-    {
-        std::cout << "Surprise X = " << x << "\n";
-    }
+    std::cout << ss.str() << std::endl;
 
 
     // Experiments::Test({20, 40, 60});
