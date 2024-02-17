@@ -13,6 +13,7 @@
 #include <iostream>
 #include <mutex>
 #include <memory>
+#include <array>
 #include <optional>
 #include <vector>
 #include <cassert>
@@ -149,37 +150,40 @@ namespace CircularBuffers::Demo1
 
 	// template <class T, size_t Capacity> class RingBuffer {};
 
-	template <class T, size_t _Size>
-	class RingBuffer {
-	private:
+	template <class T, size_t Capacity>
+	class RingBuffer
+    {
 		using value_type = T;
 		using size_type = size_t;
 
 		static_assert(!std::is_same_v<T, void>, "Type of the RingBuffer can not be void");
-		static_assert(0 != _Size, "Please try a little bigger buffer");
+		static_assert(0 != Capacity, "Please try a little bigger buffer");
 
 	private:
-		//std::mutex mtx;
-		value_type ring_buffer[_Size]{};
+		// std::mutex mtx;
+        std::array<value_type, Capacity> buffer {};
 
 		size_type head{ 0 };
 		size_type tail{ 0 };
 
-		bool full{ false };
+		bool full { false };
 
 	public:
 
-		void put(value_type item) noexcept {
+        RingBuffer& put(value_type item) noexcept
+        {
 			//std::lock_guard<std::mutex> lock(mtx);
-			ring_buffer[head++] = item;
+            buffer[head] = item;
 
 			// If we buffer already full we have to advance the  'tail' position
 			if (full) {
-				tail = (tail + 1) % _Size;
+				tail = (tail + 1) % Capacity;
 			}
 
-			head = head % _Size;
+			head = (head + 1) % Capacity;
 			full = (head == tail);
+
+            return *this;
 		}
 
 		void reset() noexcept {
@@ -188,99 +192,97 @@ namespace CircularBuffers::Demo1
 			full = false;
 		}
 
-		std::optional<value_type> get() noexcept {
-			//std::lock_guard<std::mutex> lock(mtx);
+        [[nodiscard]]
+        std::optional<value_type> get() noexcept
+        {
+			// std::lock_guard<std::mutex> lock(mtx);
 
 			if (true == empty())
 				return std::nullopt;
 
 			// Read data and advance the tail (we now have a free space)
 			std::optional<value_type> value =
-				std::make_optional<value_type>(ring_buffer[tail]);
+				std::make_optional<value_type>(buffer[tail]);
 
 			full = false;
-			tail = (tail + 1) % _Size;
+			tail = (tail + 1) % Capacity;
+
+            std::cout << "Tail: " << tail << std::endl;
 
 			return value;
 		}
 
-		inline bool empty() const noexcept {
+		[[nodiscard]]
+        inline bool empty() const noexcept {
 			// if head and tail are equal, we are empty
 			return (!full && (head == tail));
 		}
 
-		inline bool isFull() const noexcept {
+        inline bool isFull() const noexcept {
 			return full;
 		}
 
-		inline size_type capacity() const noexcept {
+        inline size_type capacity() const noexcept {
 			// Max size is the capacity of the collection.
-			return _Size;
+			return Capacity;
 		}
 
-		size_type size() const noexcept {
-			size_type size{ _Size };
+		[[nodiscard]]
+        size_type size() const noexcept
+        {
+			size_type size { Capacity };
 
 			if (false == full) {
 				if (head >= tail)
 					size = head - tail;
 				else
-					size = _Size + head - tail;
+					size = Capacity + head - tail;
 			}
 			return size;
 		}
 	};
 
-
-
-	void Test1() {
+	void Test1()
+    {
 		RingBuffer<int, 5> ringBuffer;
 
-		/*
-		ringBuffer.reset();
+        ringBuffer.put(1).put(2).put(3);
 
-		for (int i = 1; i < 15; i++) {
-			ringBuffer.put(i);
-			std::cout << "add " << i << ". size = " << ringBuffer.size() << "\n";
-		}
-		*/
+        std::cout << ringBuffer.get().value() << std::endl;
+        std::cout << ringBuffer.get().value() << std::endl;
+        std::cout << ringBuffer.get().value() << std::endl;
+        std::cout << ringBuffer.get().value() << std::endl;
 
-		/*
-		auto x = ringBuffer.get();
-		std::cout << x << std::endl;
-
-		x = ringBuffer.get();
-		std::cout << x << std::endl;
-
-		std::cout << "Size = " << ringBuffer.size() << "\n";
-		*/
 	}
 }
 
 
-namespace CircularBuffers::SimpleRingArray {
+namespace CircularBuffers::SimpleRingArray
+{
 
-	template<typename T = int, size_t _Size = 10>
-	class RingArray {
-	private:
+	template<typename T = int, size_t Size = 10>
+	class RingArray
+    {
 		using value_type = T;
 		using size_type = size_t;
 
 		static_assert(!std::is_same_v<T, void>, "Type of the RingBuffer can not be void");
-		static_assert(0 != _Size, "Please try a little bigger buffer");
+		static_assert(0 != Size, "Please try a little bigger buffer");
 
 	private:
-		value_type buffer[_Size]{};
+		value_type buffer[Size]{};
 		size_t head{ 0 };
 		// size_t tail {0};
 
 	public:
-		inline constexpr size_type size() const {
-			return _Size;
+
+		[[nodiscard]]
+        inline constexpr size_type size() const {
+			return Size;
 		}
 
 		void put(value_type item) {
-			head = head % _Size;
+			head = head % Size;
 			buffer[head++] = item;
 		}
 
@@ -291,7 +293,8 @@ namespace CircularBuffers::SimpleRingArray {
 		}
 	};
 
-	void Test() {
+	void Test()
+    {
 		RingArray<int, 5> ringArray;
 
 		ringArray.printContent();
@@ -363,10 +366,10 @@ void CircularBuffers::TEST_ALL()
 {
 	// Base::Test1();
 
-	// Demo1::Test1();
+	Demo1::Test1();
 
 	// PerformanceTests::TestVector();
 	// PerformanceTests::TestRingBuffer();
 
-	SimpleRingArray::Test();
+	// SimpleRingArray::Test();
 }
