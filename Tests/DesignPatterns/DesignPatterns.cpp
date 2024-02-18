@@ -1552,6 +1552,7 @@ namespace DesignPatterns::Proxy
 
 void DesignPatterns::TestAll()
 {
+
     // Singleton::Test();
 
     // Strategy::Test();
