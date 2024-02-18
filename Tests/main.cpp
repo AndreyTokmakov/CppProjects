@@ -819,10 +819,6 @@ namespace StaticCounter
     }
 }
 
-int midpoint(int a, int b)
-{
-    return a / 2 + b / 2 + static_cast<int>((a & 1) && (b & 1));
-}
 
 
 int main([[maybe_unused]] int argc,
@@ -836,17 +832,6 @@ int main([[maybe_unused]] int argc,
     // MoveExperiments::test_perfect_forwarding();
     // MoveExperiments::test_overload();
 
-    // std::cout << midpoint(7, 7) << std::endl;
-
-
-    if (std::fstream file (R"(/home/andtokm/DiskS/Temp/test_data.txt)"); file.is_open() && file.good())
-    {
-        std::string text;
-        std::getline(file, text);
-        // std::cout << text << std::endl;
-        std::cout << firstUniqChar(text) << std::endl;
-
-    }
 
 
     // Experiments::Test({20, 40, 60});
@@ -873,7 +858,7 @@ int main([[maybe_unused]] int argc,
     // Date_Time_Chrono::TestAll();
     // Heap::TestAll();
     // Iterators::TestAll();
-    // Files::TestAll();
+    Files::TestAll();
     // FunctionCall_LookUp::TestAll();
     // RateLimiter::TestAll();
     // LRUCache::TestAll();

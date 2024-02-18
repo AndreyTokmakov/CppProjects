@@ -126,6 +126,46 @@ namespace Files
     }
 };
 
+namespace FileUtilities
+{
+    constexpr size_t readBlockSize { 1024 };
+
+    void PrintFile(const std::filesystem::path &filePath)
+    {
+        if (std::ifstream file(filePath); file.is_open() && file.good())
+        {
+            std::string line;
+            while (std::getline(file, line)) {
+                std::cout << line << std::endl;
+            }
+        }
+    }
+
+    std::string ReadFile(const std::filesystem::path &filePath)
+    {
+        if (std::ifstream file(filePath); file.is_open() && file.good())
+        {
+            file.seekg(0, std::ios_base::end);
+            size_t fileSize = file.tellg(), bytesRead = 0;
+            file.seekg(0, std::ios_base::beg);
+
+            std::string text(fileSize, '\0');
+            while ((bytesRead += file.readsome(text.data() + bytesRead, readBlockSize)) < fileSize) { }
+            return text;
+        }
+        return {};
+    }
+}
+
+namespace FileUtilities_Tests
+{
+    void ReadFile()
+    {
+        // auto x = FileUtilities::ReadFile("/home/andtokm/Temp/Folder_For_Testsing/trace.log");
+        std::string text = FileUtilities::ReadFile("/home/andtokm/Temp/Folder_For_Testsing/test_file.txt");
+        std::cout << text << std::endl;
+    }
+}
 
 
 void Files::TestAll()
@@ -135,7 +175,9 @@ void Files::TestAll()
     // ReadFileBlocks();
 
     // Experiments();
-    testFilePermissions();
+    // testFilePermissions();
+
+    FileUtilities_Tests::ReadFile();
 };
 
 
