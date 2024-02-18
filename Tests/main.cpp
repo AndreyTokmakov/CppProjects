@@ -819,53 +819,10 @@ namespace StaticCounter
     }
 }
 
-
-namespace TT
+int midpoint(int a, int b)
 {
-    inline bool isDebugMode()
-    {
-#if defined(QT_DEBUG)
-        return false;
-#else
-        return true;
-#endif
-    }
-
-
-    class UTMSPLogger
-            {
-    public:
-        UTMSPLogger(std::string  level) : logLevel(std::move(level)) {}
-
-        ~UTMSPLogger() {
-            if (logLevel != "Debug" || isDebugMode()) {
-                std::cout << logLevel << ": " << ss.str() << std::endl;
-            }
-        }
-
-        template <typename T>
-        UTMSPLogger& operator<<(const T& msg) {
-            ss << msg;
-            return *this;
-        }
-
-    private:
-        std::string logLevel;   // --> enum class .. нехорошо типы делать в виде строки.
-        //            1. очень неэффективно с точки зрения производительности: сраврение двух ENUM-ов куда быстрее сравнения двух STRING-ов
-        //            2.
-        std::stringstream ss;
-    };
-
-    enum class LogLevel
-    {
-        Trace,
-        Debug,
-        Info,
-        Warning,
-        Error
-    };
+    return a / 2 + b / 2 + static_cast<int>((a & 1) && (b & 1));
 }
-
 
 
 int main([[maybe_unused]] int argc,
@@ -879,9 +836,17 @@ int main([[maybe_unused]] int argc,
     // MoveExperiments::test_perfect_forwarding();
     // MoveExperiments::test_overload();
 
-    std::stringstream ss;
+    // std::cout << midpoint(7, 7) << std::endl;
 
-    std::cout << ss.str() << std::endl;
+
+    if (std::fstream file (R"(/home/andtokm/DiskS/Temp/test_data.txt)"); file.is_open() && file.good())
+    {
+        std::string text;
+        std::getline(file, text);
+        // std::cout << text << std::endl;
+        std::cout << firstUniqChar(text) << std::endl;
+
+    }
 
 
     // Experiments::Test({20, 40, 60});
@@ -892,52 +857,49 @@ int main([[maybe_unused]] int argc,
     // ReturnTypeCast::tests();
     // CallFunctionByName::Test();
     // ReturnClass_MemberRef_CopyCTor::tests();
-
     // Algorithms::TestAll();
     // AutoTests::TestAll();
+    // BinaryAnalyzer::TestAll();
     // Cpp23_Features::TestAll();
     // Concepts::TestAll();
     // Comparators::TestAll();
     // CollectionsTests::TestAll();
     // Coroutines::TestAll();
+    // CopyElision_RVO::TestAll();
     // ConstexprMap::TestAll()
-    // Heap::TestAll();
-    // Multithreading::TestAll();
-    // Memory::TestAll();
-    // Iterators::TestAll();
-    // Files::TestAll();
+    // DebugLogger::TestAll();
+    // DVector::TestAll();
     // DesignPatterns::TestAll();
     // Date_Time_Chrono::TestAll();
+    // Heap::TestAll();
+    // Iterators::TestAll();
+    // Files::TestAll();
+    // FunctionCall_LookUp::TestAll();
+    // RateLimiter::TestAll();
+    // LRUCache::TestAll();
+    // Multithreading::TestAll();
+    // Memory::TestAll();
     // MaxStack::TestAll();
     // MinStack::TestAll();
-    // RateLimiter::TestAll();
-    // DebugLogger::TestAll();
-    // PointsAndLines::TestAll();           // Geometry
+    // Math::TestAll();
     // UniquePtr_Size::SizeTest();
-
-    // Templates::TestAll();
     // ExpressionTemplates::TestAll();
-    // CopyElision_RVO::TestAll();
     // ObjectOrientedExperiments::RAIIWrapper::TestAll();
     // ObjectOrientedExperiments::OOP_Experiments::TestAll();
     // ObjectOrientedExperiments::VirtualTables::TestAll();
     // Optional::TestAll();
-    // Math::TestAll();
-    // LRUCache::TestAll();
+    // PointsAndLines::TestAll();           // Geometry
     // EventLoop::TestAll();
-    // DVector::TestAll();
     // Iterators::TestAll();
+    // Strings::TestAll();
+    // Performance::TestAll();
+    // Templates::TestAll();
+    // ThinkCell::IntervalMapTest();
+    // TableFormatter::TestAll();
+
     // Convertaion_UTF8_UTF32::TestAll();    // Encoding
     // Unicode::TestAll();                   // Encoding
     // StringUtils::TestAll();               // Encoding
-    // Strings::TestAll();
-    // Performance::TestAll();
-    // BinaryAnalyzer::TestAll();
-    // ThinkCell::IntervalMapTest();
-    // TableFormatter::TestAll();
-    // FunctionCall_LookUp::TestAll();
-
-
 
     // InvokeTest::Test();
 

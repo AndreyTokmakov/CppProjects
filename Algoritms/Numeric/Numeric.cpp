@@ -156,9 +156,35 @@ namespace Numeric
             std::cout << value << " -> " << std::boolalpha << __isPowerOf2(value) << std::endl;
         }
     }
+}
 
-    //------------------------------------------------------
+namespace Numeric
+{
+    int midpoint(int a, int b) {
+        return a / 2 + b / 2 + static_cast<int>((a & 1) && (b & 1));
+    }
 
+    void MidPoint()
+    {
+        for (const auto& [values, expected]: std::vector<std::pair<std::pair<int, int>, int>>{
+                {{1,1}, 1}, {{2,2}, 2},
+                {{3,5}, 4},
+                {{8,5}, 6},
+
+        })
+        {
+            const int actual = midpoint(values.first, values.second);
+            if (expected != actual) {
+                std::cerr << expected << " != " << actual << std::endl;
+                return;
+            }
+        }
+        std::cout << "OK: All tests passed\n";
+    }
+}
+
+namespace Numeric
+{
     int __gcd__(int a, int b) {
         return 0 == b ? a : __gcd__(b, a % b);
     }
@@ -3629,6 +3655,9 @@ void Numeric::TestAll()
     // Numeric::ReverseBits();
 
     // Numeric::isPowerOf2();
+
+    Numeric::MidPoint();
+
     // Numeric::GreatestCommonDivisor();
     // Numeric::LeastCommonMultiple();
     // Numeric::LongestCommonSubsequence();
@@ -3751,7 +3780,7 @@ void Numeric::TestAll()
 
     // Single_Number();
 
-    AddDigits();
+    // AddDigits();
 
     // Numeric::Min_Length_SubArray_WithSameDegree();  // Degree_Of_Array
                                                     // degreeOfArray: With same occurrences of duplicated elements

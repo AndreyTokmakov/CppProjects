@@ -39,6 +39,14 @@ namespace BitUtils
             num |= (1 << (bit - 1));
         }
     }
+
+    constexpr bool is_odd(const int value) {
+        return value & 1;
+    }
+
+    constexpr bool is_even(const int value) {
+        return ! (value & 1);
+    }
 }
 
 
@@ -111,9 +119,6 @@ namespace BitwiseOperation
         }
     }
 
-    bool __CheckIsOdd(int value) {
-        return value & 1;
-    }
 
     int __Find_Element_Occured_Only_once(int arr[], int length)
     {
@@ -137,9 +142,17 @@ namespace BitwiseOperation
         std::cout << std::endl;
     }
 
-    void IsOdd_Test() {
+    void IsOdd_Test()
+    {
         for (int i = 0; i < 10; i++) {
-            std::cout << i << " is odd ? = " << __CheckIsOdd(i) << std::endl;
+            std::cout << i << " is odd ? = " << BitUtils::is_odd(i) << std::endl;
+        }
+    }
+
+    void IsEven_Test()
+    {
+        for (int i = 0; i < 10; i++) {
+            std::cout << i << " is even ? = " << BitUtils::is_even(i) << std::endl;
         }
     }
 
@@ -440,15 +453,17 @@ void BitwiseOperation::TestAll()
     // Print_Integer_Value_Bits_Test();
 
     // IsOdd_Test();
+    // IsEven_Test();
+
     // Find_Element_Occured_Only_once_Test();
 
     // Swap_Bits();
     // Swap_Bits_2();
 
-    SetBit();
+    // SetBit();
     // UnSetBit();
 
-    // Swap_Two_Numbers();
+    Swap_Two_Numbers();
 
     // Divide_By_2();
     // Multiplying_By_2();
@@ -466,7 +481,7 @@ void BitwiseOperation::TestAll()
 
 
     // Bitset::Popcount();
-    //Count_Set_Bits();
+    // Count_Set_Bits();
 
     // Count_Zeros();
     // Count_One_s();

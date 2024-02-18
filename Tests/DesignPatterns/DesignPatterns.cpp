@@ -1578,7 +1578,7 @@ void DesignPatterns::TestAll()
 
     // TypeErasure_VoidType::test();
 
-    Proxy::Test();
+    // Proxy::Test();
 
     // TagDispatching_RegisterIO::TestAll();
 }
