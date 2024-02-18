@@ -54,7 +54,7 @@ int main([[maybe_unused]] int argc,
     // Array::TEST_ALL();
     // BitSet::TEST_ALL();
     // CategoryTree::TEST_ALL();
-    // CircularBuffers::TEST_ALL();
+    CircularBuffers::TEST_ALL();
     // CustomVector::TestAll();
     // ExecutorAdapter::TestAll();
     // ExecutorAdapter2::TestAll();
@@ -63,7 +63,7 @@ int main([[maybe_unused]] int argc,
     // LinkedLists::TEST_ALL();
     // Logging::TEST_ALL();
 	// LRUCache::TEST_ALL();
-    ObjectPools::TEST_ALL();
+    // ObjectPools::TEST_ALL();
     // Optional::TEST_ALL();
     // PriorityList::TEST_ALL();
     // RAII_CommitWrapper::TEST_ALL();
