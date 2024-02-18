@@ -13,8 +13,8 @@
 #include <utility>
 
 
-
-namespace Filter {
+namespace Filter
+{
 
     /** Person class: **/
     class Person {

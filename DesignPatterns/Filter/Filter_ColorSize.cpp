@@ -37,7 +37,7 @@ namespace Filter_ColorSize
     template <typename T>
     struct Specification
     {
-        virtual bool isSatisfied(T* item) const noexcept = 0;
+        virtual bool isSatisfied(const T* item) const noexcept = 0;
 
         AndSpecification<T> operator && (Specification&& other)
         {
@@ -84,7 +84,7 @@ namespace Filter_ColorSize
         }
 
         // TODO: To std::all ?
-        bool isSatisfied(T* item) const noexcept override
+        bool isSatisfied(const T* item) const noexcept override
         {
             return first.isSatisfied(item) && second.isSatisfied(item);
         }
@@ -97,7 +97,7 @@ namespace Filter_ColorSize
         explicit ColorSpecification(Color color) : color { color } {
         }
 
-        bool isSatisfied(Product* item) const noexcept override {
+        bool isSatisfied(const Product* item) const noexcept override {
             return item->color == color;
         }
     };
@@ -109,7 +109,7 @@ namespace Filter_ColorSize
         explicit SizeSpecification(Size size) : size { size } {
         }
 
-        bool isSatisfied(Product* item) const noexcept override {
+        bool isSatisfied(const Product* item) const noexcept override {
             return item->size == size;
         }
     };

@@ -84,7 +84,7 @@ int main([[maybe_unused]]  int argc,
     // Strategy::Test();
     // Policy::Test();
     // ChainOfResponsibility::TestAll();
-    Command::TestAll();
+    // Command::TestAll();
     // Iterator::Test();
     // Interpreter::Test();
     // Mediator::TestAll();
@@ -107,6 +107,6 @@ int main([[maybe_unused]]  int argc,
 
     // ExecutorAdapter::TestAll();
 	// NamedParameter::Test();
-    // Filter::TestAll();
+    Filter::TestAll();
 }
 
