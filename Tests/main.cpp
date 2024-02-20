@@ -856,7 +856,7 @@ int main([[maybe_unused]] int argc,
     // Date_Time_Chrono::TestAll();
     // Heap::TestAll();
     // Iterators::TestAll();
-    Files::TestAll();
+    // Files::TestAll();
     // FunctionCall_LookUp::TestAll();
     // RateLimiter::TestAll();
     // LRUCache::TestAll();
@@ -874,7 +874,7 @@ int main([[maybe_unused]] int argc,
     // PointsAndLines::TestAll();           // Geometry
     // EventLoop::TestAll();
     // Iterators::TestAll();
-    // Strings::TestAll();
+    Strings::TestAll();
     // Performance::TestAll();
     // Templates::TestAll();
     // ThinkCell::IntervalMapTest();
