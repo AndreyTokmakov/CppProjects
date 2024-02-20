@@ -20,6 +20,7 @@
 #include <utility>
 #include <cstdint>
 #include <vector>
+#include <random>
 
 namespace ConstConstexprMutable::Compile_Time_IF {
 
@@ -873,9 +874,66 @@ namespace ConstConstexprMutable::Returning_ConstExpr_Array_SizeAsParameter
     }
 }
 
+namespace Constexpr_Consteval
+{
+    std::string random_string_run_time(size_t size = 16)
+    {
+        std::random_device rd{};
+        std::mt19937 generator = std::mt19937 {rd()};
+        auto ud = std::uniform_int_distribution<> {(int)'a', (int)'z'};
+
+        std::string str;
+        str.reserve(size);
+        while (size-- > 0)
+            str.push_back(static_cast<char>(ud(generator)));
+        return str;
+    }
+
+    size_t get_number_run_time()
+    {
+        std::random_device randomDevice {};
+        std::mt19937 generator = std::mt19937 { randomDevice() };
+        return std::uniform_int_distribution<int>{0, 100}(generator);
+    }
+
+    constexpr int divide(int a, int b)
+    {
+        if (b == 0) {
+            printf("Divide by zero\n");
+            return 0;
+        } else {
+            return a / b;
+        }
+    }
+
+    /** This is a pure compile-time function. **/
+    consteval size_t strlen_ct(const char* s) {
+        size_t n = 0;
+        for (; s[n] != '\0'; ++n);
+        return n;
+    }
+
+
+    void Constexpr_Static_Vs_RunTime()
+    {
+        static_assert(divide(6, 3) == 2);  // Ok
+        static_assert(divide(0, 3) == 0);  // Ok
+
+        /** Error: call to runtime function `printf` **/
+        // static_assert( divide(0, 0) == 0 );
+    }
+
+    void Call_Consteval_RunTime(const std::string& str)
+    {
+        strlen_ct(""); // OK. Allowed but only if all arguments are constant expressions.
+
+        /** Call to consteval function 'Constexpr_Consteval::strlen_ct' is not a constant expression **/
+        // strlen_ct(str.data());   // Compile error
+    }
+}
+
 void ConstConstexprMutable::TestAll()
 {
-
     // ConstexprMap::Test();
 
 	// ConstexprArray::Test();
@@ -914,24 +972,19 @@ void ConstConstexprMutable::TestAll()
 	// Const_Pointers::ConstPointer();
 	// Const_Pointers::ConstPointerValue();
 
-	//---------------------------------- STL Constexpr Containers ----------------------------------//
-
 	// Constexpr_STL_Containers::Test_Vector();
-
-
-	//---------------------------------- ConstEval: ------------------------------------------------//
 
 	// Consteval::GetConstString();
 	// Consteval::SimpleTests();
 	// Consteval::Fibonachi_Old_Test();
 
+    Constexpr_Consteval::Call_Consteval_RunTime("");
+    Constexpr_Consteval::Constexpr_Static_Vs_RunTime();
 
 	// As_Const::String_As_Const();
-
 
 	// Tests::ForLoop();
 	// Tests::Test_Constexpr_Integer();
 
-
-    Returning_ConstExpr_Array_SizeAsParameter::createArray();
+    // Returning_ConstExpr_Array_SizeAsParameter::createArray();
 };

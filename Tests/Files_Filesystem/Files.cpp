@@ -12,6 +12,7 @@ Description : Files
 #include <iostream>
 #include <fstream>
 #include <filesystem>
+#include <random>
 
 namespace Files
 {
@@ -130,7 +131,7 @@ namespace FileUtilities
 {
     constexpr size_t readBlockSize { 1024 };
 
-    void PrintFile(const std::filesystem::path &filePath)
+    void PrintFileContent(const std::filesystem::path &filePath)
     {
         if (std::ifstream file(filePath); file.is_open() && file.good())
         {
@@ -155,15 +156,62 @@ namespace FileUtilities
         }
         return {};
     }
+
+    bool ReadFile2String(const std::filesystem::path &filePath,
+                         std::string& dst)
+    {
+        if (std::ifstream file(filePath); file.is_open() && file.good())
+        {
+            file.seekg(0, std::ios_base::end);
+            size_t fileSize = file.tellg(), bytesRead = 0;
+            file.seekg(0, std::ios_base::beg);
+
+            dst.resize(fileSize);
+            while ((bytesRead += file.readsome(dst.data() + bytesRead, readBlockSize)) < fileSize) { }
+            return true;
+        }
+        return false;
+    }
+
+    std::size_t getFileSize(const std::filesystem::path &filePath)
+    {
+        if (std::ifstream file(filePath); file.is_open() && file.good())
+        {
+            file.seekg(0, std::ios_base::end);
+            const size_t fileSize = file.tellg();
+            file.seekg(0, std::ios_base::beg);
+            return fileSize;
+        }
+        return std::string::npos;
+    }
+
+    std::size_t getFileSizeFS(const std::filesystem::path &filePath)
+    {
+        return std::filesystem::file_size(filePath);
+    }
 }
 
 namespace FileUtilities_Tests
 {
+    const std::string testFilePath { R"(/home/andtokm/DiskS/Temp/Folder_For_Testing/test_file.txt)" };
+
     void ReadFile()
     {
-        // auto x = FileUtilities::ReadFile("/home/andtokm/Temp/Folder_For_Testsing/trace.log");
-        std::string text = FileUtilities::ReadFile("/home/andtokm/Temp/Folder_For_Testsing/test_file.txt");
+        std::string text = FileUtilities::ReadFile(testFilePath);
         std::cout << text << std::endl;
+    }
+
+    void ReadFile2String()
+    {
+        std::string text;
+        FileUtilities::ReadFile2String(testFilePath, text);
+        std::cout << text << std::endl;
+    }
+
+    void FileSize()
+    {
+        std::cout << FileUtilities::getFileSize(testFilePath) << std::endl;
+        std::cout << FileUtilities::getFileSizeFS(testFilePath) << std::endl;
     }
 }
 
@@ -177,7 +225,10 @@ void Files::TestAll()
     // Experiments();
     // testFilePermissions();
 
-    FileUtilities_Tests::ReadFile();
+    // FileUtilities_Tests::ReadFile();
+    FileUtilities_Tests::ReadFile2String();
+    // FileUtilities_Tests::FileSize();
+
 };
 
 

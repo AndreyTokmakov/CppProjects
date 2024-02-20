@@ -3650,13 +3650,48 @@ namespace Numeric
     }
 }
 
+namespace Numeric
+{
+    void rotate_array(std::vector<int>& nums, uint32_t k)
+    {
+        std::vector<int> result (nums.size(), 0);
+        for (int i = 0, size = nums.size(); i < size; ++i)
+            result[(k + i) % size] = nums[i];
+        std::swap(nums, result);
+    }
+
+    void rotate_array_ex(std::vector<int>& nums, uint32_t k)
+    {
+        k = k % nums.size();
+        if (nums.size() < 2 || 0 == k || k >= nums.size())
+            return;
+        std::vector<int> head (nums.end() - k, nums.end());
+        for (uint32_t idx = nums.size() - 1; idx >= k; --idx)
+            nums[idx] = nums[idx - k];
+        for (uint32_t idx = 0; idx < k; ++idx)
+            nums[idx] = head[idx];
+    }
+
+    void Rotate_Array()
+    {
+        std::vector<int> values {1, 2};
+        std::cout << values << " ==> ";
+
+        rotate_array_ex(values, 1);
+
+        std::cout << values << std::endl;
+    }
+}
+
 void Numeric::TestAll()
 {
     // Numeric::ReverseBits();
 
     // Numeric::isPowerOf2();
 
-    Numeric::MidPoint();
+    // Numeric::MidPoint();
+
+    Numeric::Rotate_Array();
 
     // Numeric::GreatestCommonDivisor();
     // Numeric::LeastCommonMultiple();

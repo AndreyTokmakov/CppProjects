@@ -11,9 +11,23 @@ Description : StringUtilities.cpp
 
 #include <array>
 #include <algorithm>
+#include <random>
 
 namespace StringUtilities
 {
+    std::string randomString(size_t size)
+    {
+        std::random_device rd{};
+        std::mt19937 generator = std::mt19937 {rd()};
+        auto ud = std::uniform_int_distribution<> {(int)'a', (int)'z'};
+
+        std::string str;
+        str.reserve(size);
+        while (size-- > 0)
+            str.push_back(static_cast<char>(ud(generator)));
+        return str;
+    }
+
     std::vector<std::string> split(std::string_view input,
                                    std::string_view delimiter)
     {

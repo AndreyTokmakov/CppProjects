@@ -41,6 +41,9 @@ namespace StringUtilities
     void strip(std::string &str);
 
     void remove_chars_from_string(std::string& str);
+
+    [[nodiscard("Could be expensive to call. Do not discard the result")]]
+    std::string randomString(size_t size = 16);
 };
 
 #endif //CPPPROJECTS_STRINGUTILITIES_H

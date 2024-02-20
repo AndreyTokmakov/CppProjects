@@ -203,6 +203,12 @@ namespace Strings::UtilitiesTests
 
         std::cout << std::quoted(str) << "  " << str.capacity() << std::endl;
     }
+
+    void Random_String()
+    {
+        for (int i = 10; i < 20; ++i)
+            std::cout << randomString(i) << std::endl;
+    }
 }
 
 void Strings::TestAll()
@@ -215,6 +221,6 @@ void Strings::TestAll()
     // UtilitiesTests::trim_string_test();
     // UtilitiesTests::remove_chars_from_string_test();
     // UtilitiesTests::Update_string_test();
-    
+    UtilitiesTests::Random_String();
 
 };
