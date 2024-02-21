@@ -192,7 +192,7 @@ int main(int argc, char** argv)
     // Attributes::TestAll();
     // Auto::TestAll();
     // BitSet::TestAll();
-    BitwiseOperation::TestAll();
+    // BitwiseOperation::TestAll();
     // Byte::TestAll();
     // Chrono::TestAll();
     // Comparators::TestAll();
@@ -212,7 +212,7 @@ int main(int argc, char** argv)
     // IteratorTests::TestAll();
     // FilesStreams::TestAll();
     // Filesystem::TestAll();
-    // Format::TestAll();
+    Format::TestAll();
     // FunctionObjects::TestAll();
     // Hashing::TestAll();
     // Lambdas::TestAll();

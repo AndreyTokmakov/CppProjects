@@ -11,6 +11,7 @@
 #include <string>
 #include <format>
 #include <chrono>
+#include <iterator>
 
 #include "Format.h"
 
@@ -89,6 +90,17 @@ namespace Format
         }
     }
 
+    void Format_to_N_2()
+    {
+        std::array<char, 32> static_buffer{};
+        std::format_to_n(static_buffer.begin(), 32,
+                         "Today is {}, Expected temperature is {} Celsius",
+                         "Tuesday", 51);
+
+        std::string_view str2(static_buffer.begin(), static_buffer.end());
+        std::cout << str2 << "\n"; // Today is Tuesday, Expected tempe
+    }
+
     void Format_To_2()
      {
         std::string buffer;
@@ -99,6 +111,21 @@ namespace Format
                         "\n",                       //< arg {2}
                         "extra param(s)...");       //< unused
         std::cout << buffer;
+     }
+
+    void Format_To_Vector_Str()
+    {
+        std::vector<char> buffer;
+        int x = 42;
+        std::format_to(std::back_inserter(buffer), "x ---> {}", x);
+
+        std::string_view str1(buffer.begin(), buffer.end());
+        std::cout << str1 << "\n"; // str1 == "x ---> 42"
+    }
+
+    void Format_To_STD_Cout()
+    {
+        std::format_to(std::ostream_iterator<char>(std::cout), "x ---> {}\n", 123); // x ---> 123
     }
 
     void VFormatTest1()
@@ -220,7 +247,12 @@ void Format::TestAll()
 
     // Format_To();
     // Format_To_2();
-    Format_to_N();
+    // Format_To_Vector_Str();
+    // Format_To_STD_Cout();
+
+    // Format_to_N();
+    Format_to_N_2();
+
     // Format::VFormatTest1();
     // Format::VFormatPrint();
 
