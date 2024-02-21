@@ -33,6 +33,7 @@ add_executable(${PROJECT_NAME}
         DesignPatterns/DesignPatterns.cpp DesignPatterns/DesignPatterns.h
         Iterators/Iterators.cpp Iterators/Iterators.h
         Files_Filesystem/Files.cpp Files_Filesystem/Files.h
+        Files_Filesystem/FileUtilities.cpp Files_Filesystem/FileUtilities.h
         Helpers/Wrapper.h Helpers/UnorderedPair.h Helpers/Utilities.h  Helpers/Object.h
         Strings/Strings.cpp Strings/Strings.h
         Strings/StringUtilities.cpp Strings/StringUtilities.h

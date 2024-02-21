@@ -223,9 +223,4 @@ void Strings::TestAll()
     // UtilitiesTests::Update_string_test();
     // UtilitiesTests::Random_String();
 
-    std::string str;
-
-    std::cout << str.capacity() << std::endl;
-    std::cout << sizeof() << std::endl;
-
 };
