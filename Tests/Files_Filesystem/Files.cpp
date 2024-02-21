@@ -149,6 +149,17 @@ namespace FileUtilities_Tests
         std::cout << FileUtilities::getFileSize(testFilePath) << std::endl;
         std::cout << FileUtilities::getFileSizeFS(testFilePath) << std::endl;
     }
+
+    void WriteToFile()
+    {
+        int32_t bytesWriten = FileUtilities::WriteToFile(testFilePath, "12345");
+    }
+
+    void AppendToFile()
+    {
+        int32_t bytesWriten = FileUtilities::AppendToFile(testFilePath, "12345");
+        std::cout << bytesWriten << std::endl;
+    }
 }
 
 
@@ -162,8 +173,11 @@ void Files::TestAll()
     // testFilePermissions();
 
     // FileUtilities_Tests::ReadFile();
-    FileUtilities_Tests::ReadFile2String();
+    // FileUtilities_Tests::ReadFile2String();
     // FileUtilities_Tests::FileSize();
+
+    // FileUtilities_Tests::WriteToFile();
+    FileUtilities_Tests::AppendToFile();
 
 };
 

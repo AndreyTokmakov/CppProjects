@@ -74,4 +74,29 @@ namespace FileUtilities
     {
         return std::filesystem::file_size(filePath);
     }
+
+    int32_t WriteToFile(const std::filesystem::path& filePath,
+                        const std::string& text,
+                        std::ios_base::openmode mode)
+    {
+        if (std::ofstream file(filePath, mode); file.is_open() && file.good())
+        {
+            const int32_t pos = static_cast<int32_t>(file.tellp());
+            file.write(text.data(), std::ssize(text));
+            return static_cast<int32_t>(file.tellp()) - pos;
+        }
+        return -1;
+    }
+
+    int32_t WriteToFile(const std::filesystem::path& filePath,
+                        const std::string& text)
+    {
+        return WriteToFile(filePath, text, std::ios_base::trunc);
+    }
+
+    int32_t AppendToFile(const std::filesystem::path& filePath,
+                         const std::string& text)
+    {
+        return WriteToFile(filePath, text, std::ios_base::app);
+    }
 }

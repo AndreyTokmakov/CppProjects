@@ -19,6 +19,12 @@ namespace FileUtilities
     [[nodiscard]]
     std::string ReadFile(const std::filesystem::path& filePath);
 
+    int32_t WriteToFile(const std::filesystem::path& filePath,
+                        const std::string& text);
+
+    int32_t AppendToFile(const std::filesystem::path& filePath,
+                         const std::string& text);
+
     bool ReadFile2String(const std::filesystem::path& filePath,
                          std::string& dst);
 
