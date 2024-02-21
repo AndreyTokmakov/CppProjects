@@ -129,7 +129,7 @@ namespace Files
 
 namespace FileUtilities_Tests
 {
-    const std::string testFilePath { R"(/home/andtokm/DiskS/Temp/Folder_For_Testing/test_file.txt)" };
+    const std::string testFilePath { R"(/home/andtokm/Temp/Folder_For_Testing/test_file.txt)" };
 
     void ReadFile()
     {

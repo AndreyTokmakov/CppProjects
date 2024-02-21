@@ -840,7 +840,7 @@ int main([[maybe_unused]] int argc,
     // ReturnTypeCast::tests();
     // CallFunctionByName::Test();
     // ReturnClass_MemberRef_CopyCTor::tests();
-    // Algorithms::TestAll();
+    Algorithms::TestAll();
     // AutoTests::TestAll();
     // BinaryAnalyzer::TestAll();
     // Cpp23_Features::TestAll();
@@ -856,7 +856,7 @@ int main([[maybe_unused]] int argc,
     // Date_Time_Chrono::TestAll();
     // Heap::TestAll();
     // Iterators::TestAll();
-    Files::TestAll();
+    // Files::TestAll();
     // FunctionCall_LookUp::TestAll();
     // RateLimiter::TestAll();
     // LRUCache::TestAll();
