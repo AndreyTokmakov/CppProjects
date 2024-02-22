@@ -819,6 +819,7 @@ namespace StaticCounter
     }
 }
 
+
 int main([[maybe_unused]] int argc,
          [[maybe_unused]] char** argv)
 {
@@ -830,8 +831,6 @@ int main([[maybe_unused]] int argc,
     // MoveExperiments::test_perfect_forwarding();
     // MoveExperiments::test_overload();
 
-
-
     // Experiments::Test({20, 40, 60});
     // FindMinMaxValues::TestAll();
 
@@ -840,7 +839,7 @@ int main([[maybe_unused]] int argc,
     // ReturnTypeCast::tests();
     // CallFunctionByName::Test();
     // ReturnClass_MemberRef_CopyCTor::tests();
-    Algorithms::TestAll();
+    // Algorithms::TestAll();
     // AutoTests::TestAll();
     // BinaryAnalyzer::TestAll();
     // Cpp23_Features::TestAll();
