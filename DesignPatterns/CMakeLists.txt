@@ -45,7 +45,7 @@ add_executable(${PROJECT_NAME}
 		TypeErasure/TypeErasure.cpp TypeErasure/TypeErasure.h TypeErasure/TypeErasure_CallOperator.cpp
 		CopyAndSwap/CopyAndSwap.cpp CopyAndSwap/CopyAndSwap.h
 		TagDispatching/TagDispatching.cpp TagDispatching/TagDispatching.h TagDispatching/TagDispatching_RegisterIO.cpp
-		Policy/Policy.cpp Policy/Policy.cpp
+		Policy/Policy.cpp Policy/Policy.cpp Policy/CheckingPolicy.cpp
 		Iterator/Iterator.cpp Iterator/Iterator.h
 		Builder/UserBuilder.cpp
 		RAII/RAII.cpp RAII/RAII.h

@@ -42,15 +42,21 @@ namespace Policy
             std::cout << "To file: " << message << '\n';
         }
     };
-
 };
+
+
+void CheckingPolicy_Test(); /** from  CheckingPolicy.cpp **/
 
 void Policy::Test()
 {
+    /*
     Message<WriteToStdOut> messageCout {};
     messageCout.write("Hello world");
 
     Message<WriteToFile> messageFile {};
     messageFile.write("Hello world");
+    */
+
+    CheckingPolicy_Test();
 };
 

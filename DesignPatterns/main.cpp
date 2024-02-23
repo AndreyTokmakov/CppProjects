@@ -82,7 +82,7 @@ int main([[maybe_unused]]  int argc,
 
     /** Behaviour patterns **/
     // Strategy::Test();
-    // Policy::Test();
+    Policy::Test();
     // ChainOfResponsibility::TestAll();
     // Command::TestAll();
     // Iterator::Test();
@@ -107,6 +107,6 @@ int main([[maybe_unused]]  int argc,
 
     // ExecutorAdapter::TestAll();
 	// NamedParameter::Test();
-    Filter::TestAll();
+    // Filter::TestAll();
 }
 
