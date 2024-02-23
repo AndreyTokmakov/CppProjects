@@ -3397,11 +3397,15 @@ namespace Numeric
     }
 }
 
-namespace Numeric::Boundaries {
-    size_t max_area(const std::vector<long> &height) {
+namespace Numeric::Boundaries
+{
+    size_t max_area(const std::vector<long> &height)
+    {
         size_t max = 0;
-        for (size_t left = 0, right = height.size() - 1; left != right;) {
-            max = std::max(max, std::min(height[left], height[right]) * (right - left));
+        for (size_t left = 0, right = height.size() - 1, area = 0; left != right;)
+        {
+            area = std::min(height[left], height[right]) * (right - left);
+            max = std::max(max, area);
             if (height[left] <= height[right])
                 ++left;
             else
@@ -3410,16 +3414,17 @@ namespace Numeric::Boundaries {
         return max;
     }
 
-    long max_area_iter(const std::vector<long> &height) {
-        std::vector<long>::const_iterator l = height.begin();
-        std::vector<long>::const_iterator r = std::prev(height.end());
+    long max_area_iter(const std::vector<long> &height)
+    {
+        auto left = height.begin();
+        auto right = std::prev(height.end());
         long max = 0;
-        while (l != r) {
-            max = std::max(max, std::min(*l, *r) * (r - l));
-            if (*l <= *r)
-                ++l;
+        while (left != right) {
+            max = std::max(max, std::min(*left, *right) * (right - left));
+            if (*left <= *right)
+                ++left;
             else
-                --r;
+                --right;
         }
         return max;
     }
@@ -3447,6 +3452,7 @@ namespace Numeric::Boundaries {
                 {{1, 3, 8,  10, 3, 1},                 9},
                 {{1, 3, 8,  8,  3, 1},                 9},
                 {{1, 3, 10, 10, 3, 1},                 10},
+                {{1, 8, 6,  2,  5, 4,  8 ,3, 7},       49},
                 {{1, 2, 5,  3,  2, 12, 1, 3, 7, 8, 2}, 35}
         }) {
             std::cout << max_area(heights) << " " << max_area_iter(heights)
@@ -3691,7 +3697,7 @@ void Numeric::TestAll()
 
     // Numeric::MidPoint();
 
-    Numeric::Rotate_Array();
+    // Numeric::Rotate_Array();
 
     // Numeric::GreatestCommonDivisor();
     // Numeric::LeastCommonMultiple();
@@ -3803,7 +3809,7 @@ void Numeric::TestAll()
     // Numeric::ReverseToMakeEqual();
     // Numeric::MaxSum_of_NonConsecutive_Elements_In_Array();
 
-    // Boundaries::Maximum_Area_Between_Boundaries();
+    Boundaries::Maximum_Area_Between_Boundaries();
 
     // Numeric::Rank();
 
