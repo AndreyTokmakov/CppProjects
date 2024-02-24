@@ -1,0 +1,22 @@
+https://valgrind.org/downloads/repository.html
+
+The Current Repository
+If you want to browse the current repository you can use the web interface.
+
+To clone (via anonymous, read-only git access) and build without installing the compiled binaries (the common development case), do this:
+
+  git clone https://sourceware.org/git/valgrind.git
+  cd valgrind
+  ./autogen.sh
+  ./configure
+  make
+Then run the ./vg-in-place binary built at the root of the clone.
+
+Alternatively, to clone, build, and install, do this:
+
+  git clone https://sourceware.org/git/valgrind.git
+  cd valgrind
+  ./autogen.sh
+  ./configure --prefix=<installation-directory>
+  make
+  make install
