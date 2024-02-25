@@ -183,8 +183,7 @@ namespace Numeric
     }
 }
 
-namespace Numeric
-{
+namespace Numeric {
     int __gcd__(int a, int b) {
         return 0 == b ? a : __gcd__(b, a % b);
     }
@@ -476,22 +475,38 @@ namespace Numeric
         std::cout << val << " = " << _get_num_of_digits(val) << std::endl;
         std::cout << val << " = " << _get_num_of_digits2(val) << std::endl;
     }
+}
 
-    //---------------------------------------------------------------------------//
-
-    void ReverseNumber() {
-        int reverse_number = 0, number = 1234567;
-
-        std::cout << number << std::endl;
+namespace Numeric
+{
+    int reverse_number(int number)
+    {
+        int reversed = 0;
         while (0 != number) {
-            reverse_number = reverse_number * 10 + number % 10;
+            reversed = reversed * 10 + number % 10;
             number = number / 10;
         }
-        std::cout << reverse_number << std::endl;
+        return reversed;
     }
 
-    //---------------------------------------------------------------------------//
+    void ReverseNumber()
+    {
+        for (const auto& [value, expected]: std::vector<std::pair<int, int>>{
+                {123, 321}, {210, 12}, { -173, -371}
+        })
+        {
+            const int actual = reverse_number(value);
+            if (expected != actual) {
+                std::cerr << expected << " != " << actual << std::endl;
+                return;
+            }
+        }
+        std::cout << "OK: All tests passed\n";
+    }
+}
 
+namespace Numeric
+{
     bool is_palindrome(const int value) {
         if (0 > value)
             return false;
@@ -3707,7 +3722,7 @@ void Numeric::TestAll()
     // Numeric::CountAndSaySequence_Generate();
     // Numeric::CountAndSaySequence_Get_Kth_Token();
     // Numeric::CountOrderedPairs();
-    // Numeric::ReverseNumber();
+    Numeric::ReverseNumber();
     // Numeric::IsPalindrome();
     // Numeric::GetNumberOfDigit();
     // Numeric::RearangeArray();
@@ -3809,7 +3824,7 @@ void Numeric::TestAll()
     // Numeric::ReverseToMakeEqual();
     // Numeric::MaxSum_of_NonConsecutive_Elements_In_Array();
 
-    Boundaries::Maximum_Area_Between_Boundaries();
+    // Boundaries::Maximum_Area_Between_Boundaries();
 
     // Numeric::Rank();
 
