@@ -1,11 +1,16 @@
 /**============================================================================
-Name        : MinStack_Vector.cpp
-Created on  : 27.09.2023
+Name        : MinStack.cpp
+Created on  : 28.09.2023
 Author      : Andrei Tokmakov
 Version     : 1.0
 Copyright   : Your copyright notice
-Description : MinStack_Vector.cpp
+Description : MinStack
 ============================================================================**/
+
+#include "MinStack.h"
+
+
+
 
 #include "MinStack.h"
 
@@ -97,6 +102,79 @@ namespace MinStack::Two_Vectors
     }
 };
 
+
+namespace MinStack::Two_Vectors_GOOD
+{
+    template<typename _Ty>
+    class MinStack
+    {
+        using value_type = _Ty;
+        static_assert(!std::is_same_v<value_type, void>,
+                      "Type of the Objects in the stack can not be void");
+
+        std::vector<value_type> store;
+        std::vector<value_type> minStore;
+
+    public:
+        MinStack& push(int value)
+        {
+            store.push_back(value);
+            if (minStore.empty() || value <= minStore.back())
+                minStore.push_back(value);
+            return *this;
+        }
+
+        void pop() noexcept
+        {
+            if (store.empty())
+                return;
+
+            const value_type poppedElement { store.back() };
+            store.pop_back();
+
+            if (poppedElement == minStore.back())
+                minStore.pop_back();
+        }
+
+        [[nodiscard]]
+        value_type top() const noexcept
+        {
+            if (!store.empty())
+                return store.back();
+            throw std::runtime_error("Stack is empty");
+        }
+
+        [[nodiscard]]
+        value_type getMin() const noexcept
+        {
+            if (!minStore.empty())
+                return minStore.back();
+            throw std::runtime_error("Stack is empty");
+        }
+    };
+
+
+    void Tests()
+    {
+        MinStack<int> stack;
+        stack.push(10).push(12).push(6).push(4).push(5);
+
+        for (int i = 0; i < 3; ++i) {
+            std::cout << "Min: " << stack.getMin() << ". Top: " << stack.top() << std::endl;
+            stack.pop();
+        }
+
+        stack.push(1).push(3);
+
+
+        for (int i = 0; i < 2; ++i) {
+            std::cout << "Min: " << stack.getMin() << ". Top: " << stack.top() << std::endl;
+            stack.pop();
+        }
+    }
+};
+
+
 namespace MinStack::Vector_List
 {
     template<typename _Ty>
@@ -108,7 +186,7 @@ namespace MinStack::Vector_List
 
         using Item = std::pair<object_type, typename std::list<object_type>::iterator>;
 
-        std::list<Item> store;
+        std::vector<Item> store;
         std::list<object_type> mins;
 
     public:
@@ -166,9 +244,7 @@ namespace MinStack::Vector_List
 
 void MinStack::TestAll()
 {
-    Two_Vectors::Tests();
-
-    std::cout << "----------------------------------\n";
-
+    Two_Vectors::Tests();       std::cout << "----------------------------------\n";
+    Two_Vectors_GOOD::Tests();  std::cout << "----------------------------------\n";
     Vector_List::Tests();
 };

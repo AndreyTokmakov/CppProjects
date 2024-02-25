@@ -54,7 +54,7 @@ int main([[maybe_unused]] int argc,
     // Array::TEST_ALL();
     // BitSet::TEST_ALL();
     // CategoryTree::TEST_ALL();
-    CircularBuffers::TEST_ALL();
+    // CircularBuffers::TEST_ALL();
     // CustomVector::TestAll();
     // ExecutorAdapter::TestAll();
     // ExecutorAdapter2::TestAll();
@@ -69,7 +69,7 @@ int main([[maybe_unused]] int argc,
     // RAII_CommitWrapper::TEST_ALL();
     // ReferenceWrapper::Test();
     // TwoSidedVector::TestAll();
-    // MinStack::TestAll();
+    MinStack::TestAll();
     // MinHeap::TestAll();
     // HeapWithComparator::TestAll();
 
