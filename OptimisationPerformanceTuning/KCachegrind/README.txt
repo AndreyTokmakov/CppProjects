@@ -38,3 +38,10 @@ vg-in-place --tool=callgrind \
 1. after each valgrind 'callgrind.out.*' file will be created
 2. then run 'kcachegrind' command
 
+---------------------------------------------------------------------------------------------
+        Memcheck
+---------------------------------------------------------------------------------------------
+
+
+vg-in-place --tool=memcheck  ./test_app
+vg-in-place --tool=memcheck -v ./test_app

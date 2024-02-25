@@ -30,7 +30,7 @@ LIBS = # -lpthread
 CXXSOURCES = main.cpp
 CXXOBJECTS = $(CXXSOURCES:.cpp=.o)  # expands to list of object files
 CXXFLAGS = -std=c++23 -DESRI_UNIX $(INCLUDEDIRS)
-CXXFLAGS += -DDEBUG -ggdb -gdwarf-3
+CXXFLAGS += -DDEBUG -ggdb -gdwarf-3 -g
 CXX = g++-13.1
 
 LDFLAGS = $(LIBDIRS) $(LIBS)

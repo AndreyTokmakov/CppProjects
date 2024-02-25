@@ -16,7 +16,7 @@ make
 
 >  valgrind --leak-check=yes ./mem_leak_binary
 >  valgrind --leak-check=full -v ./mem_leak_binary
-
+   valgrind --leak-check=full --show-leak-kinds=all ./hello
 
 # Detect unclosed file descriptors.
 
