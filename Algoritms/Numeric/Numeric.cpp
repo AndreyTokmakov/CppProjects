@@ -41,6 +41,8 @@ namespace
 {
     template<typename T>
     using VectorPair = std::pair<std::vector<T>, std::vector<T>>;
+
+    using IntPair = std::pair<int, int>;
 }
 
 namespace Numeric {
@@ -171,10 +173,8 @@ namespace Numeric
                 {{3,5}, 4},
                 {{8,5}, 6},
 
-        })
-        {
-            const int actual = midpoint(values.first, values.second);
-            if (expected != actual) {
+        }) {
+            if (const int actual = midpoint(values.first, values.second); expected != actual) {
                 std::cerr << expected << " != " << actual << std::endl;
                 return;
             }
@@ -491,12 +491,12 @@ namespace Numeric
 
     void ReverseNumber()
     {
-        for (const auto& [value, expected]: std::vector<std::pair<int, int>>{
-                {123, 321}, {210, 12}, { -173, -371}
-        })
-        {
-            const int actual = reverse_number(value);
-            if (expected != actual) {
+        for (const auto& [value, expected]: std::vector<IntPair> {
+                {123, 321}, {210, 12}, { -173, -371},
+                {1234567, 7654321},
+                {-4030, -304},
+        }) {
+            if (const auto actual = reverse_number(value); expected != actual) {
                 std::cerr << expected << " != " << actual << std::endl;
                 return;
             }
@@ -507,7 +507,8 @@ namespace Numeric
 
 namespace Numeric
 {
-    bool is_palindrome(const int value) {
+    bool is_palindrome(const int value)
+    {
         if (0 > value)
             return false;
         long reversed = 0, number = value;
@@ -3590,10 +3591,8 @@ namespace Numeric
         for (const std::pair<std::vector<int>, int>& data: std::vector<std::pair<std::vector<int>, int>>{
                 {{7,1,5,3,6,4}, 5},
                 {{7,6,4,3,1}, 0},
-        })
-        {
-            const int actual = best_time_buy_and_sell_stock(data.first);
-            if (actual != data.second)
+        }) {
+            if (const auto actual = best_time_buy_and_sell_stock(data.first); actual != data.second)
             {
                 std::cout << "Expected value is " << data.second << ", Actual: " << actual << std::endl;
             }
@@ -3659,10 +3658,8 @@ namespace Numeric
         for (const auto& [value, expected]: std::vector<std::pair<int, int>>{
             {10, 1}, {38, 2}, {123, 6}, {1234, 1},
             {8888, 5}, {99992, 2}
-        })
-        {
-            const int actual = add_digits(value);
-            if (expected != actual) {
+        }) {
+            if (const auto actual = add_digits(value); expected != actual) {
                 std::cerr << expected << " != " << actual << std::endl;
                 return;
             }
