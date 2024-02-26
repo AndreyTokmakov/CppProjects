@@ -505,10 +505,8 @@ namespace Numeric
     }
 }
 
-namespace Numeric
-{
-    bool is_palindrome(const int value)
-    {
+namespace Numeric {
+    bool is_palindrome(const int value) {
         if (0 > value)
             return false;
         long reversed = 0, number = value;
@@ -1266,33 +1264,45 @@ namespace Numeric
         removeDuplicates(nums);
         std::cout << nums << std::endl;
     }
+}
 
-    //======================================================================================//
-
-    void removeDuplicatesSorted(std::vector<int> &nums) {
+namespace Numeric
+{
+    size_t remove_duplicates_sorted(std::vector<int> &nums)
+    {
         size_t pos = 0;
         for (size_t idx = 1; idx < nums.size(); ++idx) {
-            if (nums[pos] != nums[idx]) {
-                if (idx > ++pos)
-                    std::swap(nums[pos], nums[idx]);
+            if (nums[pos] != nums[idx] && idx > ++pos) {
+                nums[pos] = nums[idx];
             }
         }
         nums.resize(++pos);
         nums.shrink_to_fit();
+        return pos;
     }
 
-    void RemoveDuplicates_SortedArray() {
-        // std::vector nums { 0, 0, 1, 1, 1, 2, 2, 3, 3, 4 };
-        std::vector nums{0, 1, 1, 2, 2, 3, 3, 4, 4, 4, 4, 5, 5, 5, 5, 5};
-        std::cout << nums << std::endl;
-
-        removeDuplicatesSorted(nums);
-        std::cout << nums << std::endl;
+    void RemoveDuplicates_SortedArray()
+    {
+        for (auto& [values, expected]: std::vector<VectorPair<int>> {
+                {{0, 1, 2}, {0, 1, 2}},
+                {{0, 0, 1, 1, 1, 2, 2, 3, 3, 4}, {0, 1, 2, 3, 4}} ,
+                {{0, 1, 1, 2, 2, 3, 3, 4, 4, 4, 4, 5, 5, 5, 5, 5}, {0, 1, 2, 3, 4, 5}}
+        })
+        {
+            remove_duplicates_sorted(values);
+            if (values != expected) {
+                std::cerr << expected << " != " << expected << std::endl;
+                return;
+            }
+        }
+        std::cout << "OK: All tests passed\n";
     }
+}
 
-    //======================================================================================//
-
-    void DeleteFromArray() {
+namespace Numeric
+{
+    void DeleteFromArray()
+    {
         std::vector<int> data = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9};
 
         const auto pred = [](int v) { return 0 == v % 2; };
@@ -3719,7 +3729,7 @@ void Numeric::TestAll()
     // Numeric::CountAndSaySequence_Generate();
     // Numeric::CountAndSaySequence_Get_Kth_Token();
     // Numeric::CountOrderedPairs();
-    Numeric::ReverseNumber();
+    // Numeric::ReverseNumber();
     // Numeric::IsPalindrome();
     // Numeric::GetNumberOfDigit();
     // Numeric::RearangeArray();
@@ -3768,7 +3778,7 @@ void Numeric::TestAll()
 
     // Numeric::RemoveElement();
     // Numeric::RemoveDuplicates();
-    // Numeric::RemoveDuplicates_SortedArray();
+    Numeric::RemoveDuplicates_SortedArray();
     // Numeric::DeleteFromArray();
 
     // Numeric::Find_The_Majority_Element();

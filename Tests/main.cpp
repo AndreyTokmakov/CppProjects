@@ -827,7 +827,6 @@ int main([[maybe_unused]] int argc,
     // WrapperTests::Test();
     // StaticCounter::Test();
 
-
     // MoveExperiments::MoveStringToArray_Segfault();
     // MoveExperiments::test_perfect_forwarding();
     // MoveExperiments::test_overload();
