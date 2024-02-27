@@ -4,6 +4,12 @@ export PATH=${GCC_13_PATH}/bin:${PATH}
 export LD_LIBRARY_PATH=/home/andtokm/DiskS/Utils/bin/gcc-13.1/lib64
 export CC=gcc-13.1 CXX=g++-13.1
 
+# apt-get install valgrind kcachegrind
+
+----------------------------- Links ---------------------------------------------------------
+
+# Profiling with Valgrind : https://developer.mantidproject.org/ProfilingWithValgrind.html
+
 ---------------------------------------------------------------------------------------------
 
 # This is the simplest mode of operation

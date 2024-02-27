@@ -505,8 +505,10 @@ namespace Numeric
     }
 }
 
-namespace Numeric {
-    bool is_palindrome(const int value) {
+namespace Numeric
+{
+    bool is_palindrome(const int value)
+    {
         if (0 > value)
             return false;
         long reversed = 0, number = value;

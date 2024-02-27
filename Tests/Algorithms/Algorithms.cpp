@@ -32,6 +32,7 @@ Description : Algorithms
 namespace
 {
     using StringPair = std::pair<std::string, std::string>;
+    using IntPair = std::pair<int, int>;
 }
 
 namespace Algorithms
@@ -1152,6 +1153,44 @@ namespace Algorithms::Numbers
     }
 }
 
+namespace Algorithms::Numbers
+{
+    long divide(long dividend, long divisor)
+    {
+        const short s1 = dividend > 0 ? 1 : -1;
+        const short s2 = divisor > 0 ? 1 : -1;
+
+        dividend *= s1;
+        divisor *= s2;
+
+        if (1 == divisor)
+            return s1 * s2 * dividend;
+
+        int result = 0;
+        while (dividend >= divisor) {
+            dividend -= divisor;
+            ++result;
+        }
+        return s1 * s2 * result;
+    }
+
+    void Divide_Numbers()
+    {
+        for (const auto  &[values, expected]: std::vector<std::pair<IntPair, int>> {
+                {{1, 1}, 1}, {{1, -1}, -1}, {{-1, 1}, -1}, {{-1, -1}, 1},
+                {{7, 2}, 3},
+                {{7, -3}, -2},
+                {{-2147483648, -1}, -44},
+        }) {
+            if (const auto actual = divide(values.first, values.second); expected != actual) {
+                std::cerr << expected << " != " << actual << std::endl;
+                return;
+            }
+        }
+        std::cout << "OK: All tests passed\n";
+    }
+}
+
 
 namespace Algorithms::Bits
 {
@@ -1778,7 +1817,8 @@ void Algorithms::TestAll()
     // Numbers::AddDigits();
     // Numbers::Rotate_Array();
     // Numbers::IntToRoman();
-    Numbers::RomanToInt();
+    // Numbers::RomanToInt();
+    Numbers::Divide_Numbers();
 
     // Strings::FindCommon_PrefixAndPostfix();
     // Strings::FindLastNotOf__Benchmark();

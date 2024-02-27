@@ -715,6 +715,38 @@ namespace Ranges
     }
 }
 
+
+namespace Ranges::Views
+{
+    /**
+    * The C++20 std::views::elements takes a range of tuple-like objects and produces
+    * a view over the n-th element from each tuple.
+    * The concept of tuple-like was formalized in C++23 and includes std::array, std::complex (C++26),
+    * std::pair, std::tuple and std::ranges::subrange.
+    **/
+    void Elements()
+    {
+        std::vector<std::pair<int,double>> data{{1,2.7}, {3, 4.2}, {-1, 3.3}};
+
+        for (auto v : data | std::views::elements<0>) {
+            std::cout << v << ' ';
+        } // 1, 3, -1
+
+        std::cout << std::endl;
+
+        for (auto v : data | std::views::elements<1>) {
+            std::cout << v << ' ';
+        } // 2.7, 4.2, 3.3
+        std::cout << std::endl;
+
+        std::array<std::array<int,3>,3> grid{1,2,3,4,5,6,7,8,9};
+        for (auto v : grid | std::views::elements<2>) {
+            std::cout << v << ' ';
+        } // 3, 6, 9
+
+        std::cout << std::endl;}
+}
+
 void Ranges::TestAll()
 {
     // For_Each();
@@ -734,6 +766,8 @@ void Ranges::TestAll()
 
     // View_DropWhile();
     // Join_View();
+
+    Views::Elements();
 
     // Algorithms::For_Each();
     // Algorithms::Find_IF();

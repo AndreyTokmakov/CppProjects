@@ -20,3 +20,11 @@ Alternatively, to clone, build, and install, do this:
   ./configure --prefix=<installation-directory>
   make
   make install
+
+
+=================================================================================================
+
+Valgrind needs the system debug symbols installed in order for it to work
+On Ubuntu, to install libc debug symbols, type:
+
+>  sudo apt-get install libc6-dbg
