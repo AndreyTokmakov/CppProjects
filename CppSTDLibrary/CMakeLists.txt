@@ -78,6 +78,8 @@ add_executable(${PROJECT_NAME}
 		NameSpaces/InlineNamespaces.cpp NameSpaces/InlineNamespaces.h
 		Comparators/Comparators.cpp Comparators/Comparators.h
 		Templates/ConditionalExplicit.h Templates/ConditionalExplicit.cpp
+		Templates/FoldExpressions.cpp
+		Templates/FoldExpressions.h
 )
 
 # Link libraries to the project/executable

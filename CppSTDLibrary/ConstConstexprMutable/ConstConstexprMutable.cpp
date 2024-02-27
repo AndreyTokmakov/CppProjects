@@ -700,6 +700,27 @@ namespace ConstConstexprMutable::Consteval {
 		}
 		*/
 	}
+
+    template<uint32_t N, class ... Nums>
+    consteval uint32_t factorial(Nums ... values)
+    {
+        if constexpr (sizeof ... (values) == N)
+        {
+            return (values * ... * 1);
+        }
+        else
+        {
+            return factorial<N>(sizeof ... (values) + 1, values...);
+        }
+    }
+
+    void Factorial_Test()
+    {
+        static_assert(1 == factorial<0>());
+        static_assert(1 == factorial<1>());
+        static_assert(6 == factorial<3>());
+        static_assert(720 == factorial<6>());
+    }
 }
 
 
@@ -950,7 +971,7 @@ void ConstConstexprMutable::TestAll()
 
 	// Constexpr_Tests::Test_Array_Sum();
 
-    CompileTimeComputations::FibonacciSequence_ToVector();
+    // CompileTimeComputations::FibonacciSequence_ToVector();
 
 	//-------------------------------------------------------------------------------------//
 
@@ -976,10 +997,10 @@ void ConstConstexprMutable::TestAll()
 
 	// Consteval::GetConstString();
 	// Consteval::SimpleTests();
-	// Consteval::Fibonachi_Old_Test();
+	Consteval::Factorial_Test();
 
-    Constexpr_Consteval::Call_Consteval_RunTime("");
-    Constexpr_Consteval::Constexpr_Static_Vs_RunTime();
+    // Constexpr_Consteval::Call_Consteval_RunTime("");
+    // Constexpr_Consteval::Constexpr_Static_Vs_RunTime();
 
 	// As_Const::String_As_Const();
 
