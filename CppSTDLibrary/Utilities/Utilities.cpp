@@ -54,21 +54,21 @@ namespace Utilities::ApplyTests {
 	}
 }
 
-namespace Utilities::Invoke_Tests {
+namespace Utilities::Invoke
+{
 
-	class Utilities {
-	public:
+	struct Utilities
+    {
 		int value;
 
-	public:
-		Utilities(int val) : value(val) {
+		explicit Utilities(int val) : value(val) {
 		}
 
 		void add_and_print(const std::string& text) const {
 			std::cout << text << std::endl;
 		}
 
-		int getValue() {
+		int getValue() const {
 			return this->value;
 		}
 
@@ -77,16 +77,16 @@ namespace Utilities::Invoke_Tests {
 		}
 	};
 
-	class Functor {
-	public:
+	struct Functor
+    {
 		void operator() (int a) {
 			std::cout << a << std::endl;
 		}
 	};
 
-	///////////////////////////////////////////////////////////////////////////
 
-	void Call_Class_Method() {
+	void Call_Class_Method()
+    {
 		const Utilities utils(314159);
 
 		utils.printValue();
@@ -94,7 +94,8 @@ namespace Utilities::Invoke_Tests {
 		utils.printValue();
 	}
 
-	void Invoke_Functor() {
+	void Invoke_Functor()
+    {
 		const auto sum = [](int a, int b)-> int { return a + b; };
 
 		std::cout << "is_invocable<Functor(): "<< std::boolalpha << std::is_invocable<Functor()>::value << std::endl;
@@ -103,7 +104,8 @@ namespace Utilities::Invoke_Tests {
 		std::invoke([]() { std::cout << "hello" << std::endl;; });
 	}
 
-	void Access_Member() {
+	void Access_Member()
+    {
 		const Utilities utils(12345);
 		// invoke (access) a data member
 		std::cout << "Value : " << std::invoke(&Utilities::value, utils) << std::endl;
@@ -155,26 +157,83 @@ namespace Utilities::Invoke_Tests {
     {
         SomeType{}.invokeWithDelegate();
     }
+
+    void Call_Lambda()
+    {
+        auto printer = [] <typename ... Types>(Types&& ... args) {
+            auto add_space = []<typename T>(const T& arg) {
+                std::cout << ' ';
+                return arg;
+            };
+            (std::cout << ... << add_space(std::forward<Types>(args))) << std::endl;
+        };
+
+        // printer(1);
+        // printer(1, "Two");
+        // printer(1, "Two", "III");
+
+        std::invoke(printer, 1);
+        std::invoke(printer, 1, "Two");
+        std::invoke(printer, 1, "Two", "III");
+    }
 }
 
-namespace Utilities::Make_Tuples {
+namespace Utilities::InvokeR
+{
+    struct Base {};
+    struct Derived : Base {};
 
-	struct Foo {
+    Base base {};
+    Derived derived {};
+
+    Base& fun(int) { return base; }
+    Derived& fun(double) { return derived; }
+
+    /** Wrapper for the overload set **/
+    auto wrapped = [](auto arg) -> decltype(auto) {
+        return fun(arg);
+    };
+
+    void Deduce_Invocation_Return_Type()
+    {
+        auto& i1 = std::invoke(wrapped, 42);           // calls fun(int)    --> Base&
+        auto& i2 = std::invoke(wrapped, 4.2);        // calls fun(double) --> Derived&
+
+        static_assert(std::is_same_v<decltype(i1), Base&>);
+        static_assert(not std::is_same_v<decltype(i1), Derived&>);
+        static_assert(std::is_same_v<decltype(i2), Derived&>);
+        static_assert(not std::is_same_v<decltype(i2), Base&>);
+
+        auto& i3 = std::invoke_r<Base&>(wrapped, 42);  // calls fun(int)    --> Base&
+        auto& i4 = std::invoke_r<Base&>(wrapped, 4.2); // calls fun(double) --> Base&
+
+        static_assert(std::is_same_v<decltype(i3), Base&>);
+        static_assert(not std::is_same_v<decltype(i3), Derived&>);
+        static_assert(std::is_same_v<decltype(i4), Base&>);
+        static_assert(not std::is_same_v<decltype(i4), Derived&>);
+    }
+}
+
+namespace Utilities::Make_Tuples
+{
+	struct Foo
+    {
 		Foo(int first, float second, int third) {
 			std::cout << first << ", " << second << ", " << third << std::endl;
 		}
 	};
 
-	class Object {
-	private:
+	class Object
+    {
 		std::string str1;
 		std::string str2;
 
 	public:
-		Object(const std::string& s1, const std::string& s2 ): str1(s1), str2(s2) {
+		Object(std::string  s1, std::string  s2 ): str1(std::move(s1)), str2(std::move(s2)) {
 		}
 
-		std::string toString() const noexcept {
+		[[nodiscard]]
+        std::string toString() const noexcept {
 			return "{" + str1 + "," + str2 + "}";
 		}
 	};
@@ -275,18 +334,21 @@ void Bind_Utilities();
 
 void Utilities::TestAll()
 {
-    Bind_Utilities();
+    // Bind_Utilities();
 
 	// ApplyTests::Apply_Sum_Test();
 	// ApplyTests::Apply_Sum_Lambda_Test();
 	// ApplyTests::Apply_Sum_Tuple();
 
-	// Invoke_Tests::Access_Member();
-	// Invoke_Tests::Call_Class_Method();
-	// Invoke_Tests::Is_Invocable();
-	// Invoke_Tests::Invoke_Functor();
-	// Invoke_Tests::Invoke_Class_Method_FromMethod();
-	// Invoke_Tests::Invoke_Class_Method_FromMethod_Delegate();
+	// Invoke::Access_Member();
+	// Invoke::Call_Class_Method();
+	// Invoke::Is_Invocable();
+	// Invoke::Invoke_Functor();
+	// Invoke::Invoke_Class_Method_FromMethod();
+	// Invoke::Invoke_Class_Method_FromMethod_Delegate();
+	// Invoke::Call_Lambda();
+
+    InvokeR::Deduce_Invocation_Return_Type();
 
 	// Make_Tuples::Test();
 	// Make_Tuples::Test2();

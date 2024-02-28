@@ -198,7 +198,7 @@ int main(int argc, char** argv)
     // Comparators::TestAll();
     // Concepts::TestAll();
     // ConsoleInOut::TestAll();
-    ConstConstexprMutable::TestAll();
+    // ConstConstexprMutable::TestAll();
     // CopyElision::TestAll();
     // DateAndTime::TestAll();
     // EnumTests::TestAll();
@@ -248,7 +248,7 @@ int main(int argc, char** argv)
     // TypeCast::TestAll();
     // Int::TestAll();
     // Templates::TestAll();
-    // Utilities::TestAll();
+    Utilities::TestAll();
     // UniquePtr_Tests::TestAll();
 
     // WeakPtr::TestAll();

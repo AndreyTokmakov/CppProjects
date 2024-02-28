@@ -849,7 +849,7 @@ int main([[maybe_unused]] int argc,
     // CollectionsTests::TestAll();
     // Coroutines::TestAll();
     // CopyElision_RVO::TestAll();
-    // ConstexprMap::TestAll()
+    ConstexprMap::TestAll();
     // DebugLogger::TestAll();
     // DVector::TestAll();
     // DesignPatterns::TestAll();
