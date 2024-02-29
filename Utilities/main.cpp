@@ -184,6 +184,76 @@ namespace FileUtilities_Tests
 }
 
 
+namespace CSV_Reader
+{
+    // Shows 3-4x worse performance comparing to the 'parseLine'
+    void parseLineOld(const std::string& line,
+                      std::vector<std::string>& parts)
+    {
+        if (line.empty())
+            return;
+
+        parts.emplace_back();
+        bool sQuotes { false },  dQuotes { false };
+        for (const char ch: line)
+        {
+            if ('"' == ch) {
+                dQuotes = !dQuotes;
+            } else if ('\'' == ch) {
+                sQuotes = !sQuotes;
+            } else if (',' == ch && !dQuotes && !sQuotes) {
+                parts.emplace_back();
+                continue;
+            }
+
+            parts.back().append(1,ch);
+        }
+    }
+
+    size_t parseLine(const std::string& line,
+                     std::vector<std::string>& parts)
+    {
+        if (line.empty())
+            return 0;
+
+        bool sQuotes { false },  dQuotes { false };
+        size_t prev {0}, idx {0};
+        for (; idx < line.size(); ++idx)
+        {
+            const char ch { line[idx] };
+            if ('"' == ch) {
+                dQuotes = !dQuotes;
+            } else if ('\'' == ch) {
+                sQuotes = !sQuotes;
+            } else if (',' == ch && !dQuotes && !sQuotes) {
+                parts.emplace_back(line, prev, idx - prev);
+                prev = idx + 1;
+                continue;
+            }
+        }
+        parts.emplace_back(line, prev, idx - prev);
+        return parts.size();
+    }
+
+    void Test_ParseLine()
+    {
+        std::vector<std::string> parts;
+        const std::string line { R"(1,2.4,Jonh,Dow,"Street, 1-22-3",123,"my name is 'Max'")"};
+
+        parseLine(line, parts);
+
+        for (const auto& p: parts)
+            std::cout << p << std::endl;
+    }
+}
+
+
+// TODO: BitUtils
+//      - check bit is set
+//      - set bit
+//      - unset bit
+//      - check is Odd
+//      - check is Even
 
 int main([[maybe_unused]] int argc,
          [[maybe_unused]] char** argv)
@@ -198,11 +268,13 @@ int main([[maybe_unused]] int argc,
     // StringUtilitiesTests::Random_String();
 
     // FileUtilities_Tests::ReadFile();
-    FileUtilities_Tests::ReadFile2String();
+    // FileUtilities_Tests::ReadFile2String();
     // FileUtilities_Tests::FileSize();
 
     // FileUtilities_Tests::WriteToFile();
     // FileUtilities_Tests::AppendToFile();
+
+    CSV_Reader::Test_ParseLine();
 
     return EXIT_SUCCESS;
 }
