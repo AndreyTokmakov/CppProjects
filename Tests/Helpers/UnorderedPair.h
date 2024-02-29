@@ -12,7 +12,7 @@ Description : UnorderedPair
 
 #include <iostream>
 
-namespace Utilities
+namespace UnorderedPair::Utilities
 {
     template<typename T>
     struct UnorderedPair: std::pair<T, T> {

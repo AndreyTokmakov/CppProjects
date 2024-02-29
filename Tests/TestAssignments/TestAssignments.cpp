@@ -1,17 +1,20 @@
 /**============================================================================
-Name        : ThinkCell.h
+Name        : TestAssignments.cpp
 Created on  : 11.06.2023
 Author      : Andrei Tokmakov
 Version     : 1.0
 Copyright   : Your copyright notice
-Description : ThinkCell test task
+Description : Test assignments and tasks from companies interviews
 ============================================================================**/
 
-#ifndef CPPPROJECTS_THINKCELL_H
-#define CPPPROJECTS_THINKCELL_H
+#include "TestAssignments.h"
 
-namespace ThinkCell {
-    void TestAll();
+void Bullish_Tests();
+void ThinkCell_Tests();
+
+void TestAssignments::TestAll()
+{
+    Bullish_Tests();
+    // ThinkCell_Tests();
 };
 
-#endif // !CPPPROJECTS_THINKCELL_H

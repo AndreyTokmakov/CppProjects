@@ -26,10 +26,11 @@ Description : Multithreading
 #include <syncstream>
 #include <random>
 
-#include "../Helpers/Utilities.h"
+#include "../Helpers/Helpers.h"
 
 using namespace std::literals; // for duration literals
 
+namespace PairUtils = UnorderedPair::Utilities;
 
 namespace SynchStream
 {
@@ -132,9 +133,9 @@ namespace Multithreading::Experiments
     void CalcTeethContactPoints()
     {
         std::mutex mtx;
-        std::unordered_map<Utilities::UnorderedPair<int>,
-                std::array<double, 3>,
-                Utilities::PairHashUnordered<int>> contactPoints;
+        std::unordered_map<PairUtils::UnorderedPair<int>,
+                           std::array<double, 3>,
+                           PairUtils::PairHashUnordered<int>> contactPoints;
 
         constexpr std::array<int, 14> lowerIDs { 47, 46, 45, 44, 43, 42, 41, 31, 32, 33, 34, 35, 36, 37 };
         constexpr std::array<int, 14> upperIDs { 17, 16, 15, 14, 13, 12, 11, 21, 22, 23, 24, 25, 26, 27 };
@@ -155,7 +156,7 @@ namespace Multithreading::Experiments
                     std::lock_guard<std::mutex> lock {mtx};
                     // TODO: Calculate contact point
                     std::array<double,3> pt {1, 2, 3};
-                    contactPoints.emplace(Utilities::UnorderedPair<int>{id1, id2}, pt);
+                    contactPoints.emplace(PairUtils::UnorderedPair<int>{id1, id2}, pt);
                     std::cout << id1 << ", " << id2 << std::endl;
                 }
                 std::this_thread::sleep_for(std::chrono::milliseconds(250));

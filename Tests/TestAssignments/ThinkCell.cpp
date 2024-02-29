@@ -7,7 +7,7 @@ Copyright   : Your copyright notice
 Description : ThinkCell test task
 ============================================================================**/
 
-#include "ThinkCell.h"
+#include "TestAssignments.h"
 
 
 #include <iostream>
@@ -399,34 +399,29 @@ namespace ThinkCell
         testKeyValueRange(imap, 10, 20,'A', false);
         testKeyValueRange(imap, 20, 30,'X', false);
     }
-
-    void IntervalMapTest()
-    {
-        ThinkCell::singleElementInterval_One();
-        ThinkCell::singleElementInterval_Two();
-        ThinkCell::singleElementInterval_Two_Ex();
-        ThinkCell::singleElementInterval_Two_Separated();
-
-        ThinkCell::justOneInterval();
-        ThinkCell::justOne_BiggerThenExising();
-        ThinkCell::justOne_BiggerThenExising_Two();
-
-        ThinkCell::twoIntervals_OverlapLeft();
-        ThinkCell::reAssignInterval();
-        ThinkCell::insertIntervalInMiddle();
-
-        ThinkCell::TwoIntervals_NonIntersect();
-        ThinkCell::ThreeIntervals_NonIntersect();
-
-        ThinkCell::TwoIntervals_Intersect();
-
-        ThinkCell::BordersCheckTests();
-
-        ThinkCell::printTestSummary();
-    }
 }
 
-void ThinkCell::TestAll()
+void ThinkCell_Tests()
 {
+    ThinkCell::singleElementInterval_One();
+    ThinkCell::singleElementInterval_Two();
+    ThinkCell::singleElementInterval_Two_Ex();
+    ThinkCell::singleElementInterval_Two_Separated();
 
-};
+    ThinkCell::justOneInterval();
+    ThinkCell::justOne_BiggerThenExising();
+    ThinkCell::justOne_BiggerThenExising_Two();
+
+    ThinkCell::twoIntervals_OverlapLeft();
+    ThinkCell::reAssignInterval();
+    ThinkCell::insertIntervalInMiddle();
+
+    ThinkCell::TwoIntervals_NonIntersect();
+    ThinkCell::ThreeIntervals_NonIntersect();
+
+    ThinkCell::TwoIntervals_Intersect();
+
+    ThinkCell::BordersCheckTests();
+
+    ThinkCell::printTestSummary();
+}

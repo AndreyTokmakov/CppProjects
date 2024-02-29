@@ -10,6 +10,7 @@ add_compile_options(-c -Wall -Wextra -O3 -std=c++23)
 # include all components
 add_executable(${PROJECT_NAME}
         main.cpp
+        Assembly/AssemblyDemo.cpp
         ExpressionTemplates/ExpressionTemplates.h ExpressionTemplates/ExpressionTemplates.cpp
         Punycode/Punycode.h Punycode/Punycode.cpp
         Encoding/Enconding.cpp Encoding/Enconding.h
@@ -34,7 +35,7 @@ add_executable(${PROJECT_NAME}
         Iterators/Iterators.cpp Iterators/Iterators.h
         Files_Filesystem/Files.cpp Files_Filesystem/Files.h
         Files_Filesystem/FileUtilities.cpp Files_Filesystem/FileUtilities.h
-        Helpers/Wrapper.h Helpers/UnorderedPair.h Helpers/Utilities.h  Helpers/Object.h
+        Helpers/Wrapper.h Helpers/UnorderedPair.h Helpers/Helpers.h
         Strings/Strings.cpp Strings/Strings.h
         Strings/StringUtilities.cpp Strings/StringUtilities.h
         DataStructures/LRUCache.cpp DataStructures/LRUCache.h
@@ -45,7 +46,8 @@ add_executable(${PROJECT_NAME}
         Performance/Performance.cpp Performance/Performance.h
         Memory/Memory.cpp Memory/Memory.h
         BinaryAnalyzer/BinaryAnalyzer.cpp BinaryAnalyzer/BinaryAnalyzer.h
-        ThinkCell/ThinkCell.cpp ThinkCell/ThinkCell.h
+        TestAssignments/TestAssignments.h  TestAssignments/TestAssignments.cpp
+        TestAssignments/ThinkCell.cpp TestAssignments/Bullish.cpp
         TableFormatter/TableFormatter.cpp TableFormatter/TableFormatter.h
         Coroutines/Coroutines.cpp Coroutines/Coroutines.h
         Date_Time_Chrono/Date_Time_Chrono.cpp Date_Time_Chrono/Date_Time_Chrono.h
@@ -61,7 +63,6 @@ add_executable(${PROJECT_NAME}
         DataStructures/RateLimiter.cpp DataStructures/RateLimiter.h
         DataStructures/BitReader.cpp DataStructures/BitReader.h
         FunctionCall_LookUp/FunctionCall_LookUp.cpp FunctionCall_LookUp/FunctionCall_LookUp.h
-        Assembly/AssemblyDemo.cpp
 )
 
 TARGET_LINK_LIBRARIES(${PROJECT_NAME}

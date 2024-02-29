@@ -15,9 +15,8 @@ Description : C++ Memory test
 #include <chrono>
 #include <cstring>
 
-#include "../Helpers/Utilities.h"
+#include "../Helpers/Helpers.h"
 #include "../Helpers/Wrapper.h"
-#include "../Helpers/Object.h"
 
 
 namespace Memory
