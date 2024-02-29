@@ -13,6 +13,7 @@ Description : C++ Utilities
 #include <array>
 #include <list>
 #include <iomanip>
+#include <fstream>
 
 #include "StringUtilities.h"
 #include "FileUtilities.h"
@@ -186,9 +187,27 @@ namespace FileUtilities_Tests
 
 namespace CSV_Reader
 {
+    // using Row = std::vector<std::string>;
+    // using CSVData = std::vector<Row>;
+
+    struct Row: std::vector<std::string> {
+    };
+
+    struct CSVData
+    {
+        Row header;
+        std::vector<Row> rows;
+
+        [[nodiscard]]
+        std::size_t size() const noexcept {
+            return rows.size();
+        }
+    };
+
+
     // Shows 3-4x worse performance comparing to the 'parseLine'
     void parseLineOld(const std::string& line,
-                      std::vector<std::string>& parts)
+                      Row& parts)
     {
         if (line.empty())
             return;
@@ -211,7 +230,7 @@ namespace CSV_Reader
     }
 
     size_t parseLine(const std::string& line,
-                     std::vector<std::string>& parts)
+                     Row& parts)
     {
         if (line.empty())
             return 0;
@@ -235,15 +254,50 @@ namespace CSV_Reader
         return parts.size();
     }
 
+    CSVData readCsv(const std::filesystem::path& filePath,
+                    bool skipHeader = false)
+    {
+        CSVData csvData {};
+        if (std::ifstream file {filePath}; file.is_open() && file.good())
+        {
+            std::string line;
+
+            // Reading the header line
+            if (!skipHeader) {
+                if (std::getline(file, line))
+                    parseLine(line, csvData.header);
+                else
+                    return csvData;
+            }
+
+            // Read the remaining lines of the CSV file.
+            while (std::getline(file, line)) {
+                parseLine(line, csvData.rows.emplace_back());
+            }
+        }
+        return csvData;
+    }
+
     void Test_ParseLine()
     {
-        std::vector<std::string> parts;
+        Row parts;
         const std::string line { R"(1,2.4,Jonh,Dow,"Street, 1-22-3",123,"my name is 'Max'")"};
 
         parseLine(line, parts);
 
         for (const auto& p: parts)
             std::cout << p << std::endl;
+    }
+
+    void Test_ParseFile()
+    {
+        constexpr std::string_view csvFile { R"(../../Utilities/data/anime.csv)"};
+        CSVData data = readCsv(csvFile);
+
+        for (const Row& row: data.rows)
+        {
+            std::cout << row << std::endl;
+        }
     }
 }
 
@@ -274,7 +328,8 @@ int main([[maybe_unused]] int argc,
     // FileUtilities_Tests::WriteToFile();
     // FileUtilities_Tests::AppendToFile();
 
-    CSV_Reader::Test_ParseLine();
+    // CSV_Reader::Test_ParseLine();
+    CSV_Reader::Test_ParseFile();
 
     return EXIT_SUCCESS;
 }
