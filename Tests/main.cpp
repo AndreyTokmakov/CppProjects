@@ -820,6 +820,100 @@ namespace StaticCounter
 }
 
 
+namespace LockFreeQueue
+{
+    template<typename T>
+    struct lock_free_queue
+    {
+        struct node
+        {
+            std::shared_ptr<T> data;
+            std::atomic<node*> next;
+            node() : next(nullptr) {}  //  initialise the node
+        };
+
+        std::atomic<node*> head;
+        std::atomic<node*> tail;
+
+        void enqueue(T value)
+        {
+            std::shared_ptr<T> new_data = std::make_shared<T>(value);
+            node* new_node = new node();
+            new_node->data = new_data;
+
+            //  do an infinite loop to change the tail
+            while (true)
+            {
+                node* current_tail = this->tail.load(std::memory_order_acquire);
+                node* tail_next = current_tail->next;
+
+                //  everything is correct so far, attempt the swap
+                if (current_tail->next.compare_exchange_strong( tail_next, new_node, std::memory_order_release)) {
+                    this->tail = new_node;
+                    break;
+                }
+            }
+        }
+
+        std::shared_ptr<T> dequeue()
+        {
+            std::shared_ptr<T> return_value = nullptr;
+
+            //  do an infinite loop the change the head
+            while (true)
+            {
+                node* current_head = this->head.load(std::memory_order_acquire);
+                node* next_node = current_head->next;
+
+                if (this->head.compare_exchange_strong(current_head, next_node, std::memory_order_release)) {
+                    return_value.swap(next_node->data);
+                    delete current_head;
+                    break;
+                }
+            }
+            return return_value;
+        }
+    };
+
+    void Test()
+    {
+        lock_free_queue<int> queue;
+
+        queue.enqueue(1);
+    }
+
+}
+
+
+namespace Maga_Super_IF_Else_Switch_Hack
+{
+    using namespace std::string_view_literals;
+
+    void processProd(std::string_view) {}
+    void processRC(std::string_view) {}
+    void processBeta(std::string_view) {}
+
+    void processThisString1(std::string_view input)
+    {
+        if (input == "production"sv) {
+            processProd(input);
+        } else if (input == "RC"sv) {
+            processRC(input);
+        } else if (input == "beta"sv)
+            processBeta(input);
+    }
+
+    void processThisString2(std::string_view input)
+    {
+        constexpr uint32_t i { 0 };
+        switch (input[i]) {
+            case "production"[i]: processProd(input); break;
+            case "RC"[i]: processRC(input); break;
+            case "beta"[i]: processBeta(input); break;
+        }
+    }
+}
+
 int main([[maybe_unused]] int argc,
          [[maybe_unused]] char** argv)
 {
@@ -835,6 +929,7 @@ int main([[maybe_unused]] int argc,
     // FindMinMaxValues::TestAll();
 
 
+    // LockFreeQueue::Test();
 
 
     /** * * * * *  Move to lib * * * * * **/
