@@ -315,11 +315,38 @@ namespace Cpp23_Features::Format
     }
 }
 
+namespace Cpp23_Features::SizeT_Literals
+{
+    void Test()
+    {
+
+        std::vector<int> values {1,2,3};
+        for (auto i = 0uz, count = values.size(); i < values.size(); ++i)
+        {
+            // i --> size_t
+            static_assert(std::is_same_v<decltype(i), size_t>);
+        }
+    }
+}
+
+
+namespace ExplicitObjectParameters
+{
+    struct X
+    {
+        //template<typename Self>
+        void foo(this X& self, int) {
+
+        }
+    };
+
+}
+
 
 void Cpp23_Features::TestAll()
 {
 
-    Format::Format_to_N();
+    // Format::Format_to_N();
     // Format::VFormatTest1();
     // Format::VFormatPrint();
 
@@ -345,4 +372,6 @@ void Cpp23_Features::TestAll()
 
     // CountingIterator::test_simple();
     // CountingIterator::test_print();
+
+    // SizeT_Literals::Test();
 };

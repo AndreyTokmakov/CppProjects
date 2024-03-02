@@ -329,6 +329,41 @@ namespace Utilities::ToAddress
     }
 }
 
+namespace Utilities::Unreachable
+{
+    enum class RGB {
+        Red,
+        Green,
+        Blue,
+
+        NotAllowed
+    };
+
+    std::string colorToStr(RGB color) {
+        using
+        enum RGB;
+        switch (color) {
+            case Red:
+                return "Red";
+            case Green:
+                return "Green";
+            case Blue:
+                return "Blue";
+            default:
+                std::unreachable();
+        }
+    }
+
+    void Test()
+    {
+        std::cout << colorToStr(RGB::Red) << std::endl;
+        std::cout << colorToStr(RGB::Green) << std::endl;
+        std::cout << colorToStr(RGB::Blue) << std::endl;
+        std::cout << colorToStr(RGB::NotAllowed) << std::endl;
+
+        std::cout << "Will not get here\n";
+    }
+}
 
 void Bind_Utilities();
 
@@ -348,7 +383,7 @@ void Utilities::TestAll()
 	// Invoke::Invoke_Class_Method_FromMethod_Delegate();
 	// Invoke::Call_Lambda();
 
-    InvokeR::Deduce_Invocation_Return_Type();
+    //InvokeR::Deduce_Invocation_Return_Type();
 
 	// Make_Tuples::Test();
 	// Make_Tuples::Test2();
@@ -366,5 +401,5 @@ void Utilities::TestAll()
 
     // ToAddress::to_address_tests();
 
-
+    Unreachable::Test();
 };

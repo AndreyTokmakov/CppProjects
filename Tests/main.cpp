@@ -929,6 +929,7 @@ int main([[maybe_unused]] int argc,
     // FindMinMaxValues::TestAll();
 
 
+
     // LockFreeQueue::Test();
 
 
@@ -940,7 +941,7 @@ int main([[maybe_unused]] int argc,
     // Algorithms::TestAll();
     // AutoTests::TestAll();
     // BinaryAnalyzer::TestAll();
-    // Cpp23_Features::TestAll();
+    Cpp23_Features::TestAll();
     // Concepts::TestAll();
     // Comparators::TestAll();
     // CollectionsTests::TestAll();

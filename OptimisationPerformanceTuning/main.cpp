@@ -10,6 +10,7 @@ Description : C++ Optimisation and Performance Tuning experiments
 #include "Utilities.h"
 #include "FalseSharing/FalseSharingExperiments.h"
 #include "Valgrind/ValgrindExperiments.h"
+#include "CacheLineAccessEffects/CacheLineAccessEffects.h"
 
 #include <iostream>
 #include <string_view>
@@ -48,7 +49,6 @@ namespace Variables_MemoryLayout
 }
 
 
-
 int main([[maybe_unused]] int argc,
          [[maybe_unused]] char** argv)
 {
@@ -56,7 +56,8 @@ int main([[maybe_unused]] int argc,
 
     // FalseSharingExperiments::TestAll();
     // Variables_MemoryLayout::TestAll();
-    ValgrindExperiments::TestAll();
+    // ValgrindExperiments::TestAll();
+    CacheLineAccessEffects::TestAll();
 
 
     return EXIT_SUCCESS;
