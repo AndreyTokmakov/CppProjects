@@ -12,6 +12,7 @@ Description : C++ Utilities
 #include <vector>
 #include <array>
 #include <list>
+#include <map>
 #include <iomanip>
 #include <fstream>
 
@@ -190,44 +191,63 @@ namespace CSV_Reader
     // using Row = std::vector<std::string>;
     // using CSVData = std::vector<Row>;
 
-    struct Row: std::vector<std::string> {
+    using Headers = std::map<std::string, uint16_t>;
+
+    // TODO: operator[](std::string& str)
+    // TODO: operator[](std::string&& str)
+    struct Row
+    {
+        std::vector<std::string> values {};
+        Headers* headers {nullptr};
+
+        explicit Row(Headers* headersPtr = nullptr): headers {headersPtr} {
+        };
+
+        [[nodiscard]]
+        size_t size() const noexcept {
+            return values.size();
+        }
+
+        template<class ... Args>
+        void emplaceValue(Args&& ... params)
+        {
+            values.emplace_back(std::forward<Args>(params)...);
+        }
+
+        // TODO: return optional ?
+        std::string operator[](const std::string& hdr) const
+        {
+            if (headers) {
+                if (const auto iter = headers->find(hdr); headers->end() != iter) {
+                    return values[iter->second];
+                }
+                return  {}; // TODO: std::nullopt
+            }
+            return  {}; // TODO: std::nullopt
+        }
+
+        std::string operator[](const size_t idx) const
+        {
+            return values[idx];
+        }
     };
 
     struct CSVData
     {
-        Row header;
+        Headers headers;
         std::vector<Row> rows;
 
         [[nodiscard]]
         std::size_t size() const noexcept {
             return rows.size();
         }
-    };
 
-
-    // Shows 3-4x worse performance comparing to the 'parseLine'
-    void parseLineOld(const std::string& line,
-                      Row& parts)
-    {
-        if (line.empty())
-            return;
-
-        parts.emplace_back();
-        bool sQuotes { false },  dQuotes { false };
-        for (const char ch: line)
+        [[nodiscard]]
+        bool hasHeaders() const noexcept
         {
-            if ('"' == ch) {
-                dQuotes = !dQuotes;
-            } else if ('\'' == ch) {
-                sQuotes = !sQuotes;
-            } else if (',' == ch && !dQuotes && !sQuotes) {
-                parts.emplace_back();
-                continue;
-            }
-
-            parts.back().append(1,ch);
+            return !headers.empty();
         }
-    }
+    };
 
     size_t parseLine(const std::string& line,
                      Row& parts)
@@ -245,12 +265,12 @@ namespace CSV_Reader
             } else if ('\'' == ch) {
                 sQuotes = !sQuotes;
             } else if (',' == ch && !dQuotes && !sQuotes) {
-                parts.emplace_back(line, prev, idx - prev);
+                parts.emplaceValue(line, prev, idx - prev);
                 prev = idx + 1;
                 continue;
             }
         }
-        parts.emplace_back(line, prev, idx - prev);
+        parts.emplaceValue(line, prev, idx - prev);
         return parts.size();
     }
 
@@ -263,16 +283,21 @@ namespace CSV_Reader
             std::string line;
 
             // Reading the header line
-            if (!skipHeader) {
+            if (!skipHeader)
+            {
+                Row header;
                 if (std::getline(file, line))
-                    parseLine(line, csvData.header);
+                    parseLine(line, header);
                 else
                     return csvData;
+
+                for (uint16_t idx {0}; std::string& hdr: header.values)
+                    csvData.headers[std::move(hdr)] = idx++;
             }
 
             // Read the remaining lines of the CSV file.
             while (std::getline(file, line)) {
-                parseLine(line, csvData.rows.emplace_back());
+                parseLine(line, csvData.rows.emplace_back(&csvData.headers));
             }
         }
         return csvData;
@@ -285,8 +310,10 @@ namespace CSV_Reader
 
         parseLine(line, parts);
 
+        /*
         for (const auto& p: parts)
             std::cout << p << std::endl;
+        */
     }
 
     void Test_ParseFile()
@@ -294,9 +321,12 @@ namespace CSV_Reader
         constexpr std::string_view csvFile { R"(../../Utilities/data/anime.csv)"};
         CSVData data = readCsv(csvFile);
 
+        // for (const auto& [hdr, idx]: data.headers)
+        //    std::cout << hdr << " = " << idx << std::endl;
+
         for (const Row& row: data.rows)
         {
-            std::cout << row << std::endl;
+            std::cout << row["anime_id"] << "    " <<  row["name"] << "  " << row["episodes"] << std::endl;
         }
     }
 }
