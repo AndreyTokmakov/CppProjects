@@ -332,6 +332,7 @@ namespace Cpp23_Features::SizeT_Literals
 
 namespace ExplicitObjectParameters
 {
+#if 0
     struct X
     {
         //template<typename Self>
@@ -339,7 +340,7 @@ namespace ExplicitObjectParameters
 
         }
     };
-
+#endif
 }
 
 
