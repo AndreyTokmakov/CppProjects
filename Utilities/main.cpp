@@ -188,13 +188,12 @@ namespace FileUtilities_Tests
 
 namespace CSV_Reader
 {
-    // using Row = std::vector<std::string>;
-    // using CSVData = std::vector<Row>;
-
     using Headers = std::map<std::string, uint16_t>;
 
-    // TODO: operator[](std::string& str)
-    // TODO: operator[](std::string&& str)
+    constexpr char delimiter { ',' };
+    constexpr char dQuotesSymbol { '"' };
+    constexpr char sQuotesSymbol { '\'' };
+
     struct Row
     {
         std::vector<std::string> values {};
@@ -217,13 +216,13 @@ namespace CSV_Reader
         // TODO: return optional ?
         std::string operator[](const std::string& hdr) const
         {
-            if (headers) {
-                if (const auto iter = headers->find(hdr); headers->end() != iter) {
-                    return values[iter->second];
-                }
-                return  {}; // TODO: std::nullopt
-            }
-            return  {}; // TODO: std::nullopt
+            if (nullptr == headers)
+                return {}; // TODO: std::nullopt
+
+            if (const auto iter = headers->find(hdr); headers->end() != iter)
+               return values[iter->second];
+
+           return  {}; // TODO: std::nullopt
         }
 
         std::string operator[](const size_t idx) const
@@ -260,11 +259,11 @@ namespace CSV_Reader
         for (; idx < line.size(); ++idx)
         {
             const char ch { line[idx] };
-            if ('"' == ch) {
+            if (dQuotesSymbol == ch) {
                 dQuotes = !dQuotes;
-            } else if ('\'' == ch) {
+            } else if (sQuotesSymbol == ch) {
                 sQuotes = !sQuotes;
-            } else if (',' == ch && !dQuotes && !sQuotes) {
+            } else if (delimiter == ch && !dQuotes && !sQuotes) {
                 parts.emplaceValue(line, prev, idx - prev);
                 prev = idx + 1;
                 continue;
@@ -302,6 +301,11 @@ namespace CSV_Reader
         }
         return csvData;
     }
+}
+
+namespace CSV_Reader_Tests
+{
+    using namespace CSV_Reader;
 
     void Test_ParseLine()
     {
@@ -358,8 +362,8 @@ int main([[maybe_unused]] int argc,
     // FileUtilities_Tests::WriteToFile();
     // FileUtilities_Tests::AppendToFile();
 
-    // CSV_Reader::Test_ParseLine();
-    CSV_Reader::Test_ParseFile();
+    // CSV_Reader_Tests::Test_ParseLine();
+    CSV_Reader_Tests::Test_ParseFile();
 
     return EXIT_SUCCESS;
 }
