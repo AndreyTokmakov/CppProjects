@@ -15,6 +15,8 @@ Description : C++ Utilities
 #include <map>
 #include <iomanip>
 #include <fstream>
+#include <charconv>
+#include <optional>
 
 #include "StringUtilities.h"
 #include "FileUtilities.h"
@@ -194,9 +196,36 @@ namespace CSV_Reader
     constexpr char dQuotesSymbol { '"' };
     constexpr char sQuotesSymbol { '\'' };
 
+    struct Value
+    {
+        std::string data;
+
+        template<typename ... Args>
+        explicit Value(Args&& ... param): data { std::forward<Args>(param)... } {
+        }
+
+        friend std::ostream& operator<<(std::ostream& stream, const Value& val)
+        {
+            stream << val.data;
+            return stream;
+        }
+
+        template<typename T>
+        [[nodiscard]]
+        std::optional<T> get() const
+        {
+            T value {};
+            if (const auto [ptr, error_code] = std::from_chars(data.data(), data.data() + data.size(), value);
+                std::errc{} != error_code) {
+                return std::nullopt;
+            }
+            return value;
+        }
+    };
+
     struct Row
     {
-        std::vector<std::string> values {};
+        std::vector<Value> values {};
         Headers* headers {nullptr};
 
         explicit Row(Headers* headersPtr = nullptr): headers {headersPtr} {
@@ -214,18 +243,18 @@ namespace CSV_Reader
         }
 
         // TODO: return optional ?
-        std::string operator[](const std::string& hdr) const
+        Value operator[](const std::string& hdr) const
         {
             if (nullptr == headers)
-                return {}; // TODO: std::nullopt
+                return Value{}; // TODO: std::nullopt
 
             if (const auto iter = headers->find(hdr); headers->end() != iter)
                return values[iter->second];
 
-           return  {}; // TODO: std::nullopt
+           return Value{}; // TODO: std::nullopt
         }
 
-        std::string operator[](const size_t idx) const
+        Value operator[](const size_t idx) const
         {
             return values[idx];
         }
@@ -290,8 +319,8 @@ namespace CSV_Reader
                 else
                     return csvData;
 
-                for (uint16_t idx {0}; std::string& hdr: header.values)
-                    csvData.headers[std::move(hdr)] = idx++;
+                for (uint16_t idx {0}; Value& hdr: header.values)
+                    csvData.headers[std::move(hdr.data)] = idx++;
             }
 
             // Read the remaining lines of the CSV file.
@@ -306,6 +335,8 @@ namespace CSV_Reader
 namespace CSV_Reader_Tests
 {
     using namespace CSV_Reader;
+
+
 
     void Test_ParseLine()
     {
@@ -332,6 +363,12 @@ namespace CSV_Reader_Tests
         {
             std::cout << row["anime_id"] << "    " <<  row["name"] << "  " << row["episodes"] << std::endl;
         }
+    }
+
+    void Value_Tests()
+    {
+        Value val {"123"};
+        std::cout << val.get<int>().value() << std::endl;
     }
 }
 
@@ -363,7 +400,8 @@ int main([[maybe_unused]] int argc,
     // FileUtilities_Tests::AppendToFile();
 
     // CSV_Reader_Tests::Test_ParseLine();
-    CSV_Reader_Tests::Test_ParseFile();
+    // CSV_Reader_Tests::Test_ParseFile();
+    CSV_Reader_Tests::Value_Tests();
 
     return EXIT_SUCCESS;
 }
