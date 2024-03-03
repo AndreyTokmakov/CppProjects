@@ -12,6 +12,10 @@ add_executable(${PROJECT_NAME}
         main.cpp
         StringUtilities.h StringUtilities.cpp
         FileUtilities.h FileUtilities.cpp
+        CSVReader/CSVReader.cpp
+        CSVReader/CSVReader.h
+        CSVReader/Tests.cpp
+        CSVReader/Tests.h
 )
 
 TARGET_LINK_LIBRARIES(${PROJECT_NAME}
