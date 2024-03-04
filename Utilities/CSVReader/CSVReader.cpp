@@ -164,3 +164,13 @@ namespace CSVReader
         return csvData;
     }
 }
+
+
+void Value_Tests()
+{
+    using namespace CSVReader;
+
+    Value val {"123.45"};
+    std::cout << val.asInt() << std::endl;
+    // std::cout << val.asDouble() << std::endl;
+}
