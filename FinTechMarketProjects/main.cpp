@@ -19,6 +19,9 @@
 #include "TestTask_OrderBook/TestTask_OrderBook.h"
 #include "DataParsers/DataParsers.h"
 
+#include "NEW/OrderBookNew.h"
+
+
 #include <iostream>
 #include <fstream>
 #include <vector>
@@ -253,9 +256,11 @@ int main([[maybe_unused]] int argc,
 
     // TestTask_OrderBook::TestAll();
 
-    DataParsers::TestAll();
+    // DataParsers::TestAll();
 
     // Tests::splitTest();
+
+    OrderBookNew::TestAll();
 
     return EXIT_SUCCESS;
 }

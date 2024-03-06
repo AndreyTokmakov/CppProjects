@@ -20,8 +20,8 @@ add_executable(${PROJECT_NAME}
         DaVinchiTest/DaVinchiTest.cpp DaVinchiTest/DaVinchiTest.h
         DaVinchiTest/DaVinchiTest_LinkedList.cpp DaVinchiTest/DaVinchiTest_LinkedList.h
         TestTask_OrderBook/TestTask_OrderBook.cpp TestTask_OrderBook/TestTask_OrderBook.h
-        DataParsers/DataParsers.cpp
-        DataParsers/DataParsers.h
+        DataParsers/DataParsers.cpp  DataParsers/DataParsers.h
+        NEW/OrderBookNew.h NEW/OrderBookNew.cpp
 )
 
 # Link libraries to the project/executable

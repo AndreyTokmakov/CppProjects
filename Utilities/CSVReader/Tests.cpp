@@ -36,12 +36,14 @@ namespace CSV_Reader_Tests
 void CSV_Reader_Tests::TestAll()
 {
     // CSV_Reader_Tests::Test_ParseLine();
-    // CSV_Reader_Tests::Test_ParseFile();
+    CSV_Reader_Tests::Test_ParseFile();
     // CSV_Reader_Tests::Value_Tests();
 
+    /*
     std::cout << std::source_location::current().file_name() << '\n'; // requires C++20
     std::cout << __FILE__ << '\n';
 
     std::cout << std::filesystem::current_path() << '\n';
     std::cout << std::filesystem::path(__FILE__).remove_filename() << '\n';
+    */
 }
