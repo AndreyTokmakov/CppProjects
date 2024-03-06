@@ -83,7 +83,6 @@ namespace OrderBookNew
     {
         //order.timestamp.assign(params[0].data(), params[0].size());
         order.symbol.assign(params[1].data(), params[1].size());
-
         std::from_chars(params[2].data(), params[2].data() + params[2].size(), order.id);
 
         switch (params[3][0]) {
@@ -100,8 +99,7 @@ namespace OrderBookNew
         std::from_chars(params[5].data(), params[5].data() + params[5].size(), order.volume);
         std::from_chars(params[6].data(), params[6].data() + params[6].size(), order.price);
 
-        for (auto& s: params) std::cout << s << ' '; std::cout << std::endl;
-
+        // for (auto& s: params) std::cout << s << ' '; std::cout << std::endl;
         return true;
     }
 
@@ -137,12 +135,10 @@ namespace OrderBookNew
 
 void OrderBookNew::TestAll()
 {
-    // OrderBookNew::readData(dataFilePathPart);
+    OrderBookNew::readData(dataFilePathPart);
 
-
-    std::cout << sizeof(Order) << std::endl;
-    std::cout << std::hardware_destructive_interference_size << std::endl;
-
+    // std::cout << sizeof(Order) << std::endl;
+    // std::cout << std::hardware_destructive_interference_size << std::endl;
     // std::cout << sizeof(uint64_t) << std::endl;
     // std::cout << sizeof(std::string) << std::endl;
 }
