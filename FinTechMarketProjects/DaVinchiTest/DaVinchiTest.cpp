@@ -226,7 +226,7 @@ namespace DaVinchiTest {
                 if (ordersById.end() == iter) {
                     std::cout << "ERROR Cancel" << std::endl;
                     printOrder(order);
-                }
+                  }
 
                 orders.erase(iter->second);
                 ordersById.erase(iter);

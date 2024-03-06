@@ -14,6 +14,8 @@ Description : OrderBookNew.cpp
 #include <vector>
 #include <filesystem>
 #include <fstream>
+#include <map>
+#include <unordered_map>
 #include <charconv>
 
 /*
@@ -78,6 +80,109 @@ namespace OrderBookNew
         OrderSide side { OrderSide::Buy };
     };
 
+    void printOrder(const Order& order)
+    {
+        std::cout << "Order("
+                  << "\n\ttimestamp: " << order.timestamp
+                  << "\n\tsymbol: " << order.symbol
+                  << "\n\tid: " << order.id
+                  << "\n\toperation: " << static_cast<char>(order.operation)
+                  << "\n\tside: " << (order.side == OrderSide::Buy ? "BUY" : "SELL")
+                  << "\n\tvolume: " << order.volume
+                  << "\n\tprice: " << order.price
+                  <<"\n)\n";
+    }
+
+    struct SymbolOrders final
+    {
+        using OrdersList = std::map<double, Order>;
+        using OrderIter = typename OrdersList::iterator;
+
+        OrdersList buyOrders {};
+        OrdersList sellOrders {};
+
+        // SymbolOrders() { std::cout << "SymbolOrders" << std::endl; }
+
+        [[nodiscard]]
+        inline OrdersList& getOrders(OrderSide side) noexcept {
+            return (OrderSide::Buy == side) ? buyOrders : sellOrders;
+        }
+
+        [[nodiscard]]
+        inline const OrdersList& getOrders(OrderSide side) const noexcept {
+            return (OrderSide::Buy == side) ? buyOrders : sellOrders;
+        }
+
+        [[nodiscard]]
+        inline bool empty() const noexcept {
+            return buyOrders.empty() && sellOrders.empty();
+        }
+
+        [[nodiscard]]
+        inline size_t size() const noexcept {
+            return buyOrders.size() + sellOrders.size();
+        }
+    };
+
+    struct OrderBook
+    {
+        std::unordered_map<std::string, SymbolOrders> orderBook;
+        std::unordered_map<uint64_t, SymbolOrders::OrderIter> ordersById;
+
+        void processOrder(const Order& order)
+        {
+            SymbolOrders &ordersBySymbol = orderBook[order.symbol];
+            SymbolOrders::OrdersList& orders = ordersBySymbol.getOrders(order.side);
+
+            if (Operation::Cancel == order.operation)
+            {
+                // TODO: Check if we can replace find() with erase()
+                if (const auto iter = ordersById.find(order.id); ordersById.end() != iter) {
+                    orders.erase(iter->second);
+                    ordersById.erase(iter);
+                }
+                else {
+                    std::cerr << "Cancel order failed: No order with " << order.id << " found\n";
+                }
+            }
+            else if (Operation::Amend == order.operation)
+            {
+                if (auto orderIter = ordersById.find(order.id); ordersById.end() != orderIter) {
+                    // Price has changed
+                    if (order.price != orderIter->second->second.price) {
+                        orders.erase(orderIter->second);
+                        auto [iter, ok] = orders.try_emplace(order.price, std::move(order));
+                        orderIter->second = iter;
+                    }
+                    else {
+                        orderIter->second->second.volume = order.volume;
+                    }
+                }
+                else {
+                    std::cerr << "ERROR Amend" << std::endl;
+                    printOrder(order);
+                }
+            }
+            else if (Operation::Insert == order.operation)
+            {
+                // TODO: Try to find match here  ???
+
+                auto [iter, ok] = orders.try_emplace(order.price);
+                if (ok) {
+                    ordersById[order.id] = iter;
+                    iter->second = std::move(order);
+                    // debugCounter++;
+                }
+                else {
+                    std::cout << "Duplicate price "; printOrder(order);
+                    for (const auto & [k, v]: orders) {
+                        std::cout << "            " << k << "  "; printOrder(v);
+                    }
+                }
+            }
+        }
+    };
+
     bool parseOrder(std::vector<std::string_view>& params,
                     Order& order)
     {
@@ -103,21 +208,11 @@ namespace OrderBookNew
         return true;
     }
 
-    void processOrder(const Order& order)
-    {
-        std::cout << "Order("
-            << "\n\ttimestamp: " << order.timestamp
-            << "\n\tsymbol: " << order.symbol
-            << "\n\tid: " << order.id
-            << "\n\toperation: " << static_cast<char>(order.operation)
-            << "\n\tside: " << (order.side == OrderSide::Buy ? "BUY" : "SELL")
-            << "\n\tvolume: " << order.volume
-            << "\n\tprice: " << order.price
-            <<"\n)\n";
-    }
 
+    // TODO: Renames
     void readData(const std::filesystem::path& path)
     {
+        OrderBook orderBook;
         if (std::fstream file {path}; file.is_open() && file.good())
         {
             Order order;
@@ -127,7 +222,7 @@ namespace OrderBookNew
             {
                 split_to(line, params);
                 parseOrder(params, order);
-                processOrder(order);
+                orderBook.processOrder(order);
             }
         }
     }

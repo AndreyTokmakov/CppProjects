@@ -914,14 +914,15 @@ namespace Map {
 		}
 	}
 
-	void Erase_ByVal() {
+	void Erase_ByVal()
+    {
 		std::map<std::string, int> mymap;
 
 		mymap.insert({ "One", 1 });
 		mymap.insert({ "Two", 2 });
 		mymap.insert({ "Three", 3 });
 
-		auto result = mymap.erase("One");
+		auto result = mymap.erase("Onxe");
 		std::cout << result << std::endl;
 
 		for (const auto&[k, v] : mymap)
@@ -1080,7 +1081,7 @@ namespace Map::Test {
 void Map::TEST_ALL()
 {
 	// test_loops();
-	test_loops_backwards();
+	// test_loops_backwards();
 
     // emplace_duplicate_entry();
     // try_emplace_duplicate_entry();
@@ -1121,7 +1122,7 @@ void Map::TEST_ALL()
 	// KeyCompare();
 	// KeyValue();
 
-	// Erase_ByVal();
+	Erase_ByVal();
 	// Erase();
     // Erase_Interval();
 
