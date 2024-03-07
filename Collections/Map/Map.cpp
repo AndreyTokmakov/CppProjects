@@ -695,12 +695,13 @@ namespace Map {
 		} while (mymap.value_comp()(*it++, highest));
 	}
 
-	void ExtractValue() {
-		std::map<std::string, std::string> dictionary;
-
-		dictionary.try_emplace("Key1", "Value1");
-		dictionary.try_emplace("Key2", "Value2");
-		dictionary.try_emplace("Key3", "Value3");
+	void Extract()
+    {
+		std::map<std::string, std::string> dictionary {
+            {"Key1", "Value1"},
+            {"Key2", "Value2"},
+            {"Key3", "Value3"},
+        };
 
 		auto node = dictionary.extract("Key32");
 		if (node.empty()) {
@@ -716,8 +717,69 @@ namespace Map {
 			std::cout << "Node extracted: {" << node.key() << ", " << node.mapped()  << "}" << std::endl;
 		}
 		print_map_info(dictionary, "\nAfter:");
-	
-	}
+    }
+
+    void Extract_And_UpdateKey()
+    {
+        std::map<uint32_t , std::string> dict {
+            {1, "Value1"},
+            {2, "Value2"},
+            {3, "Value3"}
+        };
+
+        constexpr uint32_t keyVal { 2 };
+        auto iter_key_2 = dict.find(keyVal);
+        std::cout << iter_key_2->second << std::endl<< std::endl;
+
+        auto node = dict.extract(keyVal);
+        if (node.empty()) {
+            std::cerr << "Error!\n";
+            return;
+        }
+
+        node.key() = 22;
+        node.mapped().assign("Value22");
+        auto [newEntryIter, b, c] = dict.insert(std::move(node));
+
+        std::cout << dict << std::endl;
+
+        auto iter_key_22 = dict.find(22);
+        std::cout << iter_key_22->second << std::endl;
+
+        std::cout << std::boolalpha << (iter_key_2 == iter_key_22) << std::endl;
+        std::cout << std::boolalpha << (newEntryIter == iter_key_22) << std::endl;
+    }
+
+    void Extract_ByITer_And_UpdateKey()
+    {
+        std::map<uint32_t , std::string> dict {
+                {1, "Value1"},
+                {2, "Value2"},
+                {3, "Value3"}
+        };
+
+        constexpr uint32_t keyVal { 2 }, keyValNew { 22 };
+        const auto iter_key_2 = dict.find(keyVal);
+        std::cout << iter_key_2->second << std::endl<< std::endl;
+
+        auto node = dict.extract(iter_key_2);
+        if (node.empty()) {
+            std::cerr << "Error!\n";
+            return;
+        }
+
+        node.key() = keyValNew;
+        node.mapped().assign("Value22");
+        auto [newEntryIter, b, c] = dict.insert(std::move(node));
+
+        std::cout << dict << std::endl;
+
+        const auto iter_key_22 = dict.find(keyValNew);
+        std::cout << iter_key_22->second << std::endl;
+
+        std::cout << std::boolalpha << (iter_key_2 == iter_key_22) << std::endl;
+        std::cout << std::boolalpha << (newEntryIter == iter_key_22) << std::endl;
+    }
 
 	void UpdateValue() {
 		std::map<std::string, std::string> dictionary;
@@ -732,12 +794,13 @@ namespace Map {
 		print_map_info(dictionary, "\nAfter:");
 	}
 
-	void LowerBound(){
+	void LowerBound()
+    {
 		{
 			const std::map<int, std::string> map {
                     {1, "I"},
                     {2, "II"},
-                    //{3, "III"},
+                    {3, "III"},
                     {4, "IV"},
                     {5, "V"},
                     {6, "VI"},
@@ -916,16 +979,16 @@ namespace Map {
 
 	void Erase_ByVal()
     {
-		std::map<std::string, int> mymap;
+		std::map<std::string, int> myMap {
+            { "One", 10 },
+            { "Two", 20 },
+            { "Three", 30 }
+        };
 
-		mymap.insert({ "One", 1 });
-		mymap.insert({ "Two", 2 });
-		mymap.insert({ "Three", 3 });
+		const size_t countDeleted = myMap.erase("Two");
+		std::cout << countDeleted << std::endl;
 
-		auto result = mymap.erase("Onxe");
-		std::cout << result << std::endl;
-
-		for (const auto&[k, v] : mymap)
+		for (const auto&[k, v] : myMap)
 			std::cout << k << " = " << v << std::endl;
 	}
 
@@ -1122,14 +1185,17 @@ void Map::TEST_ALL()
 	// KeyCompare();
 	// KeyValue();
 
-	Erase_ByVal();
+	// Erase_ByVal();
 	// Erase();
     // Erase_Interval();
 
 	// UpdateValue();
-	// ExtractValue();
 
-	// LowerBound();
+    // Extract();
+    // Extract_And_UpdateKey();
+    // Extract_ByITer_And_UpdateKey();
+
+	LowerBound();
 	// UpperBound();
 
 	// Modify_Value();

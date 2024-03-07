@@ -38,6 +38,8 @@ namespace
 {
     constexpr std::string_view dataFilePath {"../../FinTechMarketProjects/data/orders1.dat" };
     constexpr std::string_view dataFilePathPart {"../../FinTechMarketProjects/data/orders_part.csv" };
+    constexpr std::string_view dataFilePathPartDebug {"../../FinTechMarketProjects/data/orders_part_debug.csv" };
+    constexpr std::string_view dataFile_Test1 {"../../FinTechMarketProjects/data/orders_test_1.csv" };
 
     void split_to(const std::string &str,
                   std::vector<std::string_view>& params,
@@ -114,6 +116,16 @@ namespace OrderBookNew
         }
 
         [[nodiscard]]
+        inline OrdersList& getOppositeOrders(OrderSide side) noexcept {
+            return (OrderSide::Buy == side) ? sellOrders : buyOrders;
+        }
+
+        [[nodiscard]]
+        inline const OrdersList& getOppositeOrders(OrderSide side) const noexcept  {
+            return (OrderSide::Buy == side) ? sellOrders : buyOrders;
+        }
+
+        [[nodiscard]]
         inline bool empty() const noexcept {
             return buyOrders.empty() && sellOrders.empty();
         }
@@ -124,116 +136,187 @@ namespace OrderBookNew
         }
     };
 
-    struct OrderBook
+    class OrderBook
     {
         std::unordered_map<std::string, SymbolOrders> orderBook;
         std::unordered_map<uint64_t, SymbolOrders::OrderIter> ordersById;
 
-        void processOrder(const Order& order)
+    public:
+
+        void cancelOrder(const Order& order,
+                         SymbolOrders& ordersBySymbol)
+        {
+            if (const auto iter = ordersById.find(order.id); ordersById.end() != iter)
+            {
+                SymbolOrders::OrdersList& orders = ordersBySymbol.getOrders(order.side);
+                orders.erase(iter->second);
+                ordersById.erase(iter);
+            }
+            else {
+                std::cerr << "Error: Failed to Cancel order with " << order.id << ". Not found\n";
+            }
+        }
+
+        void modifyOrder(const Order& order,
+                         SymbolOrders& ordersBySymbol)
+        {
+            if (auto orderIter = ordersById.find(order.id); ordersById.end() != orderIter)
+            {   /** Price has changed **/
+                if (order.price != orderIter->second->second.price)
+                {
+                    SymbolOrders::OrdersList& orders = ordersBySymbol.getOrders(order.side);
+                    if (auto orderNode = orders.extract(orderIter->second); orderNode)
+                    {
+                        orderNode.key() = order.price;
+                        orderNode.mapped() = order;
+                        auto [iter, b, c] = orders.insert(std::move(orderNode));
+                    } else {
+                        std::cerr << "Error: Failed to update order. Extract order node error\n";
+                    }
+                }
+                else {
+                    orderIter->second->second.volume = order.volume;
+                }
+
+                // TODO: Try to find match | Do the trade
+            }
+            else {
+                std::cerr << "Error: Failed to Amend order with " << order.id << ". Not found\n";
+            }
+        }
+
+        void addOrder(Order&& order,
+                      SymbolOrders& ordersBySymbol)
+        {
+            SymbolOrders::OrdersList& ordersToMatch = ordersBySymbol.getOppositeOrders(order.side);
+
+            // TODO: Try to find match | Do the trade
+
+            SymbolOrders::OrdersList& orders = ordersBySymbol.getOrders(order.side);
+            if (auto [iter, inserted] = orders.try_emplace(order.price); inserted) {
+                ordersById[order.id] = iter;
+                iter->second = std::move(order);
+            }
+            else {
+                std::cout << "Duplicate price "; printOrder(order);
+                for (const auto & [k, v]: orders) {
+                    std::cout << "            " << k << "  "; printOrder(v);
+                }
+            }
+        }
+
+        void processOrder(Order&& order)
         {
             SymbolOrders &ordersBySymbol = orderBook[order.symbol];
-            SymbolOrders::OrdersList& orders = ordersBySymbol.getOrders(order.side);
+            if (Operation::Cancel == order.operation) {
+                cancelOrder(order, ordersBySymbol);
+            } else if (Operation::Amend == order.operation) {
+                modifyOrder(order, ordersBySymbol);
+            } else if (Operation::Insert == order.operation) {
+                addOrder(std::move(order), ordersBySymbol);
+            }
+        }
 
-            if (Operation::Cancel == order.operation)
+        bool parseOrder(std::vector<std::string_view>& params,
+                        Order& order)
+        {
+            //order.timestamp.assign(params[0].data(), params[0].size());
+            order.symbol.assign(params[1].data(), params[1].size());
+            std::from_chars(params[2].data(), params[2].data() + params[2].size(), order.id);
+
+            switch (params[3][0]) {
+                case 'I': order.operation = Operation::Insert; break;
+                case 'A': order.operation = Operation::Amend; break;
+                case 'C': order.operation = Operation::Cancel; break;
+            }
+
+            switch (params[4][0]) {
+                case 'S': order.side = OrderSide::Sell; break;
+                case 'B': order.side = OrderSide::Buy; break;
+            }
+
+            std::from_chars(params[5].data(), params[5].data() + params[5].size(), order.volume);
+            std::from_chars(params[6].data(), params[6].data() + params[6].size(), order.price);
+
+            // for (auto& s: params) std::cout << s << ' '; std::cout << std::endl;
+            return true;
+        }
+
+        // TODO: Renames
+        void readData(const std::filesystem::path& path)
+        {
+            if (std::fstream file {path }; file.is_open() && file.good())
             {
-                // TODO: Check if we can replace find() with erase()
-                if (const auto iter = ordersById.find(order.id); ordersById.end() != iter) {
-                    orders.erase(iter->second);
-                    ordersById.erase(iter);
-                }
-                else {
-                    std::cerr << "Cancel order failed: No order with " << order.id << " found\n";
+                Order order;
+                std::string line;
+                std::vector<std::string_view> params;
+                while (std::getline(file, line))
+                {
+                    split_to(line, params);
+                    parseOrder(params, order);
+
+                    // TODO: Check if its OK to std::move order here ???
+                    processOrder(std::move(order));
                 }
             }
-            else if (Operation::Amend == order.operation)
-            {
-                if (auto orderIter = ordersById.find(order.id); ordersById.end() != orderIter) {
-                    // Price has changed
-                    if (order.price != orderIter->second->second.price) {
-                        orders.erase(orderIter->second);
-                        auto [iter, ok] = orders.try_emplace(order.price, std::move(order));
-                        orderIter->second = iter;
-                    }
-                    else {
-                        orderIter->second->second.volume = order.volume;
-                    }
-                }
-                else {
-                    std::cerr << "ERROR Amend" << std::endl;
-                    printOrder(order);
-                }
-            }
-            else if (Operation::Insert == order.operation)
-            {
-                // TODO: Try to find match here  ???
+        }
 
-                auto [iter, ok] = orders.try_emplace(order.price);
-                if (ok) {
-                    ordersById[order.id] = iter;
-                    iter->second = std::move(order);
-                    // debugCounter++;
-                }
-                else {
-                    std::cout << "Duplicate price "; printOrder(order);
-                    for (const auto & [k, v]: orders) {
-                        std::cout << "            " << k << "  "; printOrder(v);
-                    }
-                }
+        friend struct Tester;
+    };
+
+    struct Tester
+    {
+        const OrderBook& orderBook;
+
+        explicit Tester(const OrderBook& book): orderBook { book } {}
+
+        void printBook()
+        {
+            for (const auto & [symbol, orders] : orderBook.orderBook)
+            {
+                std::cout << "-------------------------- " << symbol << " ----------------------------------\n";
+                std::cout << "Buy:\n";
+                for (const auto& [price, order] : orders.buyOrders)
+                    std::cout << "\tPrice:" << price << ", Volume: " << order.volume << std::endl;
+                std::cout << "Sell:\n";
+                for (const auto& [price, order] : orders.sellOrders)
+                    std::cout << "\tPrice:" << price << ", Volume: " << order.volume << std::endl;
             }
         }
     };
-
-    bool parseOrder(std::vector<std::string_view>& params,
-                    Order& order)
-    {
-        //order.timestamp.assign(params[0].data(), params[0].size());
-        order.symbol.assign(params[1].data(), params[1].size());
-        std::from_chars(params[2].data(), params[2].data() + params[2].size(), order.id);
-
-        switch (params[3][0]) {
-            case 'I': order.operation = Operation::Insert; break;
-            case 'A': order.operation = Operation::Amend; break;
-            case 'C': order.operation = Operation::Cancel; break;
-        }
-
-        switch (params[4][0]) {
-            case 'S': order.side = OrderSide::Sell; break;
-            case 'B': order.side = OrderSide::Buy; break;
-        }
-
-        std::from_chars(params[5].data(), params[5].data() + params[5].size(), order.volume);
-        std::from_chars(params[6].data(), params[6].data() + params[6].size(), order.price);
-
-        // for (auto& s: params) std::cout << s << ' '; std::cout << std::endl;
-        return true;
-    }
-
-
-    // TODO: Renames
-    void readData(const std::filesystem::path& path)
-    {
-        OrderBook orderBook;
-        if (std::fstream file {path}; file.is_open() && file.good())
-        {
-            Order order;
-            std::string line;
-            std::vector<std::string_view> params;
-            while (std::getline(file, line))
-            {
-                split_to(line, params);
-                parseOrder(params, order);
-                orderBook.processOrder(order);
-            }
-        }
-    }
 }
 
 void OrderBookNew::TestAll()
 {
-    OrderBookNew::readData(dataFilePathPart);
+    // TODO: Buy and Sell order Maps need to be sorted in different way
 
-    // std::cout << sizeof(Order) << std::endl;
-    // std::cout << std::hardware_destructive_interference_size << std::endl;
-    // std::cout << sizeof(uint64_t) << std::endl;
-    // std::cout << sizeof(std::string) << std::endl;
+    /*
+    OrderBook book;
+    book.readData(dataFile_Test1);
+
+    Tester tester {book};
+    tester.printBook();
+    */
+
+
+    std::map<double, uint16_t, std::greater<>> selOrders {
+            {10.0, 5},
+            {15.0, 12},
+            {17.9, 7},
+            {20.0, 8},
+            {25.0, 3}
+    };
+
+    std::pair<double, uint16_t> buy {17.5, 10};
+
+    for (const auto & [price, volume]: selOrders)
+        std::cout << price << " - " << volume << std::endl;
+
+
+    auto lower = selOrders.lower_bound(buy.first);
+    std::cout << "Lower bound (3): [" << lower->first << "," << lower->second << "]" << std::endl;
+
+    // TODO:
+    //  1. Сделать тесты проверяющий по списку Order_ов --> полученные Trade-ы
+    //     Видимо в виде списка из того какой ORder пришел и какие сделки по нему были совершены
 }
