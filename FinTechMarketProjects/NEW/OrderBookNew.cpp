@@ -41,6 +41,15 @@ namespace
     constexpr std::string_view dataFilePathPartDebug {"../../FinTechMarketProjects/data/orders_part_debug.csv" };
     constexpr std::string_view dataFile_Test1 {"../../FinTechMarketProjects/data/orders_test_1.csv" };
 
+
+    template<typename K, typename V, typename Comparator>
+    std::ostream& operator<<(std::ostream& stream, const std::map<K, V, Comparator>& map)
+    {
+        for (const auto & [k,v]: map)
+            stream << '(' << k << ", " << v << ')' << std::endl;
+        return stream;
+    }
+
     void split_to(const std::string &str,
                   std::vector<std::string_view>& params,
                   const char delimiter = ';')
@@ -298,25 +307,29 @@ void OrderBookNew::TestAll()
     tester.printBook();
     */
 
-
-    std::map<double, uint16_t, std::greater<>> selOrders {
-            {10.0, 5},
-            {15.0, 12},
-            {17.9, 7},
-            {20.0, 8},
-            {25.0, 3}
+    std::map<double, uint16_t, std::less<>> selOrders {
+        {10.0, 3},
+        {15.0, 5},
+        {17.0, 5},
+        {17.9, 7},
+        {20.0, 8},
+        {25.0, 3}
     };
 
     std::pair<double, uint16_t> buy {17.5, 10};
 
-    for (const auto & [price, volume]: selOrders)
-        std::cout << price << " - " << volume << std::endl;
+    std::cout << selOrders << std::endl << std::endl;
 
+    for (auto iter = selOrders.begin(); iter != selOrders.end()  && buy.second;)
+    {
+        if (buy.second >= iter->second) {
+            buy.second -= iter->second;
+            selOrders.erase(iter++);
+        } else {
+            iter->second -= buy.second;
+            buy.second = 0;
+        }
+    }
 
-    auto lower = selOrders.lower_bound(buy.first);
-    std::cout << "Lower bound (3): [" << lower->first << "," << lower->second << "]" << std::endl;
-
-    // TODO:
-    //  1. Сделать тесты проверяющий по списку Order_ов --> полученные Trade-ы
-    //     Видимо в виде списка из того какой ORder пришел и какие сделки по нему были совершены
+    std::cout << selOrders << std::endl << std::endl;
 }
