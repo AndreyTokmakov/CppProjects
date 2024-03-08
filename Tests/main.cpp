@@ -50,6 +50,7 @@ Description : Tests C++ project
 #include <iomanip>
 
 #include <experimental/socket>
+#include <experimental/scope>
 
 #include "Algorithms/Algorithms.h"
 #include "Geometry/PointsAndLines.h"
@@ -914,6 +915,46 @@ namespace Maga_Super_IF_Else_Switch_Hack
     }
 }
 
+namespace ScopeExit
+{
+    void delete_backup()
+    {
+         std::cout << "Deleting BackUp\n";
+    }
+
+    void restore_backup()
+    {
+        std::cout << "Deleting Restoring\n";
+    }
+
+    void modify(int value)
+    {
+        if (value < 0) {
+            std::cerr << "Value is negative\n";
+            throw std::runtime_error("Can not write negative value");
+        }
+
+        std::cout << "Success: New value is " << value << std::endl;
+    }
+
+    void updateDatabaseSafe(int value)
+    {
+        std::experimental::scope_exit ok ( [&](){ delete_backup(); } );
+        std::experimental::scope_fail failure ( [&](){ restore_backup(); } );
+
+        modify(value);
+
+        // failure.release();
+        // ok.release();
+    }
+
+    void ScopeExit()
+    {
+        // updateDatabaseSafe(10);
+        updateDatabaseSafe(-10);
+    }
+}
+
 int main([[maybe_unused]] int argc,
          [[maybe_unused]] char** argv)
 {
@@ -931,6 +972,7 @@ int main([[maybe_unused]] int argc,
 
     // LockFreeQueue::Test();
 
+    ScopeExit::ScopeExit();
 
     /** * * * * *  Move to lib * * * * * **/
     // OperatorCall_ExplicitTypeSpecialization::Test();
@@ -940,7 +982,7 @@ int main([[maybe_unused]] int argc,
     // Algorithms::TestAll();
     // AutoTests::TestAll();
     // BinaryAnalyzer::TestAll();
-    Cpp23_Features::TestAll();
+    // Cpp23_Features::TestAll();
     // Concepts::TestAll();
     // Comparators::TestAll();
     // CollectionsTests::TestAll();

@@ -17,6 +17,7 @@ Description : OrderBookNew.cpp
 #include <map>
 #include <unordered_map>
 #include <charconv>
+#include <format>
 
 /*
     I = Insert / new order - his is a new order added to the book; it will have a new/unique order-id.
@@ -295,6 +296,79 @@ namespace OrderBookNew
     };
 }
 
+namespace Experiments
+{
+    void printMaps(const std::map<double, uint16_t, std::less<>>& ordersOne,
+                   const std::map<double, uint16_t, std::less<>>& ordersTwo)
+    {
+        constexpr size_t width {10};
+        auto iterOne = ordersOne.cbegin();
+        auto iterTwo = ordersTwo.cbegin();
+
+        auto printOrder = [](const auto it) {
+            std::cout << std::left << std::setfill(' ') << std::setw(width)
+                << std::format("({}, {})", it->first, it->second);
+        };
+
+        while (!(ordersOne.cend() == iterOne && ordersTwo.cend() == iterTwo))
+        {
+            if (ordersOne.cend() != iterOne) {
+                printOrder(iterOne);
+                ++iterOne;
+            } else {
+                std::cout << std::left << std::setfill(' ') << std::setw(width) << "";
+            }
+
+            std::cout << "      ";
+
+            if (ordersTwo.cend() != iterTwo) {
+                printOrder(iterTwo);
+                ++iterTwo;
+            } else {
+                std::cout << std::left << std::setfill(' ') << std::setw(width) << "";
+            }
+
+            std::cout << std::endl;
+        }
+    }
+
+
+    void Foo()
+    {
+        std::map<double, uint16_t, std::less<>> sellOrders{
+                {10.0, 3},
+                {15.0, 5},
+                {17.0, 5},
+                {17.9, 7},
+                {20.0, 8},
+                {25.0, 3}
+        };
+
+        std::map<double, uint16_t, std::less<>> buyOrders{
+                {17.5, 10},
+        };
+
+        printMaps(buyOrders, sellOrders);
+
+
+        for (auto buyIter = buyOrders.begin(); buyIter != buyOrders.end(); ++buyIter)
+        {
+            for (auto sellIter = sellOrders.begin(); sellIter != sellOrders.end() && buy.second;) {
+                if (buyIter->second >= sellIter->second) {
+                    buyIter->second -= sellIter->second;
+                    sellOrders.erase(sellIter++);
+                } else {
+                    sellIter->second -= buy.second;
+                    buy.second = 0;
+                }
+            }
+        }
+
+        std::cout << std::endl;
+        printMaps(buyOrders, sellOrders);
+    }
+}
+
 void OrderBookNew::TestAll()
 {
     // TODO: Buy and Sell order Maps need to be sorted in different way
@@ -307,29 +381,6 @@ void OrderBookNew::TestAll()
     tester.printBook();
     */
 
-    std::map<double, uint16_t, std::less<>> selOrders {
-        {10.0, 3},
-        {15.0, 5},
-        {17.0, 5},
-        {17.9, 7},
-        {20.0, 8},
-        {25.0, 3}
-    };
+    Experiments::Foo();
 
-    std::pair<double, uint16_t> buy {17.5, 10};
-
-    std::cout << selOrders << std::endl << std::endl;
-
-    for (auto iter = selOrders.begin(); iter != selOrders.end()  && buy.second;)
-    {
-        if (buy.second >= iter->second) {
-            buy.second -= iter->second;
-            selOrders.erase(iter++);
-        } else {
-            iter->second -= buy.second;
-            buy.second = 0;
-        }
-    }
-
-    std::cout << selOrders << std::endl << std::endl;
 }
