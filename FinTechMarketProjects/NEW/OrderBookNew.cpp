@@ -310,6 +310,7 @@ namespace Experiments
                 << std::format("({}, {})", it->first, it->second);
         };
 
+        std::cout << std::string(100, '=') << std::endl;
         while (!(ordersOne.cend() == iterOne && ordersTwo.cend() == iterTwo))
         {
             if (ordersOne.cend() != iterOne) {
@@ -346,25 +347,34 @@ namespace Experiments
 
         std::map<double, uint16_t, std::less<>> buyOrders{
                 {17.5, 10},
+                {19, 13},
         };
 
         printMaps(buyOrders, sellOrders);
 
-
-        for (auto buyIter = buyOrders.begin(); buyIter != buyOrders.end(); ++buyIter)
+        for (auto buyIter = buyOrders.begin(); buyIter != buyOrders.end();)
         {
-            for (auto sellIter = sellOrders.begin(); sellIter != sellOrders.end() && buy.second;) {
+            for (auto sellIter = sellOrders.begin();
+                sellIter != sellOrders.end() && buyIter->second && buyIter->first >= sellIter->first;)
+            {
                 if (buyIter->second >= sellIter->second) {
                     buyIter->second -= sellIter->second;
                     sellOrders.erase(sellIter++);
-                } else {
-                    sellIter->second -= buy.second;
-                    buy.second = 0;
+                    // TODO: Trade
+                }
+                else {
+                    sellIter->second -= buyIter->second;
+                    buyIter->second = 0;
+                    // TODO: Trade
                 }
             }
+
+            if (0 == buyIter->second)
+                buyOrders.erase(buyIter++);
+            else
+                ++buyIter;
         }
 
-        std::cout << std::endl;
         printMaps(buyOrders, sellOrders);
     }
 }
