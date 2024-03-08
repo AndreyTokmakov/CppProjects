@@ -51,6 +51,14 @@ namespace
         return stream;
     }
 
+    template<typename K, typename V>
+    std::ostream& operator<<(std::ostream& stream, const std::pair<K, V>& pair)
+    {
+        stream << '{' << pair.first << ", " << pair.second << '}';
+        return stream;
+    }
+
+
     void split_to(const std::string &str,
                   std::vector<std::string_view>& params,
                   const char delimiter = ';')
@@ -333,7 +341,6 @@ namespace Experiments
         }
     }
 
-
     void Foo()
     {
         std::map<double, uint16_t, std::less<>> sellOrders{
@@ -377,10 +384,93 @@ namespace Experiments
 
         printMaps(buyOrders, sellOrders);
     }
+
+    template<typename K, typename V, typename Comparator>
+    void foo(std::map<K, V, Comparator>& orders,
+             std::pair<K, V>& order,
+             typename std::map<K, V, Comparator>::iterator& iter)
+    {
+        if (order.second >= iter->second) {
+            order.second -= iter->second;
+            orders.erase(iter++);
+            // TODO: Trade
+        }
+        else {
+            iter->second -= order.second;
+            order.second = 0;
+            // TODO: Trade
+        }
+    }
+
+
+    void handleBuyOrder()
+    {
+        std::map<double, uint16_t, std::less<>> sellOrders {
+            {10.0, 3}, {15.0, 5}, {17.0, 5},
+            {17.9, 7}, {20.0, 8}, {25.0, 3}
+        };
+
+        std::pair<double, uint16_t> buyOrder  {17.5, 15};
+
+        for (auto sellIter = sellOrders.begin();
+             sellIter != sellOrders.end() && buyOrder.second && buyOrder.first >= sellIter->first;)
+        {
+            if (buyOrder.second >= sellIter->second) {
+                buyOrder.second -= sellIter->second;
+                sellOrders.erase(sellIter++);
+                // TODO: Trade
+            }
+            else {
+                sellIter->second -= buyOrder.second;
+                buyOrder.second = 0;
+                // TODO: Trade
+            }
+        }
+
+        std::cout << buyOrder << std::endl << std::endl;
+        std::cout << sellOrders << std::endl;
+    }
+
+    void handleSellOrder()
+    {
+        std::map<double, uint16_t, std::greater<>> buyOrders {
+                {10.0, 3}, {15.0, 5}, {17.0, 5},
+                {17.9, 7}, {20.0, 8}, {25.0, 3}
+        };
+
+        std::pair<double, uint16_t> sellOrder {17.5, 20};
+
+        std::cout << sellOrder << std::endl;
+        std::cout << buyOrders << std::endl;
+
+        for (auto buyIter = buyOrders.begin();
+             buyIter != buyOrders.end() && sellOrder.second && buyIter->first >= sellOrder.first;)
+        {
+            /*
+            if (sellOrder.second >= buyIter->second) {
+                sellOrder.second -= buyIter->second;
+                buyOrders.erase(buyIter++);
+                // TODO: Trade
+            }
+            else {
+                buyIter->second -= sellOrder.second;
+                sellOrder.second = 0;
+                // TODO: Trade
+            }*/
+
+            foo(buyOrders, sellOrder, buyIter);
+        }
+
+        std::cout << sellOrder << std::endl << std::endl;
+        std::cout << buyOrders << std::endl;
+    }
 }
 
 void OrderBookNew::TestAll()
 {
+    // TODO: может нужно использовать std::multimap вместо map - что бы обрабатывать ордеры с одинаковой ценой
+    //       но разными timestamp-ами
+
     // TODO: Buy and Sell order Maps need to be sorted in different way
 
     /*
@@ -391,6 +481,8 @@ void OrderBookNew::TestAll()
     tester.printBook();
     */
 
-    Experiments::Foo();
+    // Experiments::Foo();
+    // Experiments::handleBuyOrder();
+    Experiments::handleSellOrder();
 
 }
