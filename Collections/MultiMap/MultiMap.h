@@ -10,8 +10,9 @@ Description : MultiMap
 #ifndef CPPPROJECTS_MULTIMAP_H
 #define CPPPROJECTS_MULTIMAP_H
 
-namespace MultiMap {
-    void TEST_ALL();
+namespace MultiMap
+{
+    void TestAll();
 };
 
 #endif /* CPPPROJECTS_MULTIMAP_H */

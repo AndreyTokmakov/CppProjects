@@ -341,67 +341,27 @@ namespace Experiments
         }
     }
 
-    void Foo()
+    template<typename K, typename V, typename Comparator,
+            std::predicate<double, double> Predicate>
+    void makeTrade(std::map<K, V, Comparator> &orders,
+                   std::pair<K, V> &order,
+                   Predicate predicate)
     {
-        std::map<double, uint16_t, std::less<>> sellOrders{
-                {10.0, 3},
-                {15.0, 5},
-                {17.0, 5},
-                {17.9, 7},
-                {20.0, 8},
-                {25.0, 3}
-        };
-
-        std::map<double, uint16_t, std::less<>> buyOrders{
-                {17.5, 10},
-                {19, 13},
-        };
-
-        printMaps(buyOrders, sellOrders);
-
-        for (auto buyIter = buyOrders.begin(); buyIter != buyOrders.end();)
+        for (auto sellIter = orders.begin();
+             sellIter != orders.end() && order.second && predicate(order.first, sellIter->first); /* */)
         {
-            for (auto sellIter = sellOrders.begin();
-                sellIter != sellOrders.end() && buyIter->second && buyIter->first >= sellIter->first;)
-            {
-                if (buyIter->second >= sellIter->second) {
-                    buyIter->second -= sellIter->second;
-                    sellOrders.erase(sellIter++);
-                    // TODO: Trade
-                }
-                else {
-                    sellIter->second -= buyIter->second;
-                    buyIter->second = 0;
-                    // TODO: Trade
-                }
+            if (order.second >= sellIter->second) {
+                order.second -= sellIter->second;
+                orders.erase(sellIter++);
+                // TODO: Trade
             }
-
-            if (0 == buyIter->second)
-                buyOrders.erase(buyIter++);
-            else
-                ++buyIter;
-        }
-
-        printMaps(buyOrders, sellOrders);
-    }
-
-    template<typename K, typename V, typename Comparator>
-    void foo(std::map<K, V, Comparator>& orders,
-             std::pair<K, V>& order,
-             typename std::map<K, V, Comparator>::iterator& iter)
-    {
-        if (order.second >= iter->second) {
-            order.second -= iter->second;
-            orders.erase(iter++);
-            // TODO: Trade
-        }
-        else {
-            iter->second -= order.second;
-            order.second = 0;
-            // TODO: Trade
+            else {
+                sellIter->second -= order.second;
+                order.second = 0;
+                // TODO: Trade
+            }
         }
     }
-
 
     void handleBuyOrder()
     {
@@ -412,23 +372,8 @@ namespace Experiments
 
         std::pair<double, uint16_t> buyOrder  {17.5, 15};
 
-        for (auto sellIter = sellOrders.begin();
-             sellIter != sellOrders.end() && buyOrder.second && buyOrder.first >= sellIter->first;)
-        {
-            if (buyOrder.second >= sellIter->second) {
-                buyOrder.second -= sellIter->second;
-                sellOrders.erase(sellIter++);
-                // TODO: Trade
-            }
-            else {
-                sellIter->second -= buyOrder.second;
-                buyOrder.second = 0;
-                // TODO: Trade
-            }
-        }
-
-        std::cout << buyOrder << std::endl << std::endl;
-        std::cout << sellOrders << std::endl;
+        makeTrade(sellOrders, buyOrder, std::greater_equal{});
+        std::cout << buyOrder << "\n\n" << sellOrders << std::endl;
     }
 
     void handleSellOrder()
@@ -437,32 +382,25 @@ namespace Experiments
                 {10.0, 3}, {15.0, 5}, {17.0, 5},
                 {17.9, 7}, {20.0, 8}, {25.0, 3}
         };
-
         std::pair<double, uint16_t> sellOrder {17.5, 20};
 
-        std::cout << sellOrder << std::endl;
-        std::cout << buyOrders << std::endl;
+        makeTrade(buyOrders, sellOrder, std::less_equal{});
+        std::cout << sellOrder << "\n\n" << buyOrders << std::endl;
+    }
+}
 
-        for (auto buyIter = buyOrders.begin();
-             buyIter != buyOrders.end() && sellOrder.second && buyIter->first >= sellOrder.first;)
-        {
-            /*
-            if (sellOrder.second >= buyIter->second) {
-                sellOrder.second -= buyIter->second;
-                buyOrders.erase(buyIter++);
-                // TODO: Trade
-            }
-            else {
-                buyIter->second -= sellOrder.second;
-                sellOrder.second = 0;
-                // TODO: Trade
-            }*/
+namespace Predicates
+{
+    template<typename T, std::predicate<double, double> Predicate>
+    void check(T a, T b, Predicate fun)
+    {
+        fun(a, b);
+    }
 
-            foo(buyOrders, sellOrder, buyIter);
-        }
+    void tests()
+    {
 
-        std::cout << sellOrder << std::endl << std::endl;
-        std::cout << buyOrders << std::endl;
+        check(1, 2, std::less_equal{});
     }
 }
 
@@ -481,8 +419,8 @@ void OrderBookNew::TestAll()
     tester.printBook();
     */
 
-    // Experiments::Foo();
-    // Experiments::handleBuyOrder();
-    Experiments::handleSellOrder();
+    Experiments::handleBuyOrder();
+    // Experiments::handleSellOrder();
 
+    // Predicates::tests();
 }

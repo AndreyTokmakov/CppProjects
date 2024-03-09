@@ -969,10 +969,11 @@ int main([[maybe_unused]] int argc,
     // Experiments::Test({20, 40, 60});
     // FindMinMaxValues::TestAll();
 
-
     // LockFreeQueue::Test();
 
-    ScopeExit::ScopeExit();
+    // ScopeExit::ScopeExit();
+
+
 
     /** * * * * *  Move to lib * * * * * **/
     // OperatorCall_ExplicitTypeSpecialization::Test();
