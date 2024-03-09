@@ -51,6 +51,16 @@ namespace
         return stream;
     }
 
+
+    template<typename K, typename V, typename Comparator>
+    std::ostream& operator<<(std::ostream& stream, const std::multimap<K, V, Comparator>& map)
+    {
+        for (const auto & [k,v]: map)
+            stream << '(' << k << ", " << v << ')' << std::endl;
+        return stream;
+    }
+
+
     template<typename K, typename V>
     std::ostream& operator<<(std::ostream& stream, const std::pair<K, V>& pair)
     {
@@ -115,7 +125,7 @@ namespace OrderBookNew
 
     struct SymbolOrders final
     {
-        using OrdersList = std::map<double, Order>;
+        using OrdersList = std::multimap<double, Order>;
         using OrderIter = typename OrdersList::iterator;
 
         OrdersList buyOrders {};
@@ -304,7 +314,7 @@ namespace OrderBookNew
     };
 }
 
-namespace Experiments
+namespace OrderBookNew::Experiments
 {
     void printMaps(const std::map<double, uint16_t, std::less<>>& ordersOne,
                    const std::map<double, uint16_t, std::less<>>& ordersTwo)
@@ -343,7 +353,7 @@ namespace Experiments
 
     template<typename K, typename V, typename Comparator,
             std::predicate<double, double> Predicate>
-    void makeTrade(std::map<K, V, Comparator> &orders,
+    void makeTrade(std::multimap<K, V, Comparator> &orders,
                    std::pair<K, V> &order,
                    Predicate predicate)
     {
@@ -365,8 +375,8 @@ namespace Experiments
 
     void handleBuyOrder()
     {
-        std::map<double, uint16_t, std::less<>> sellOrders {
-            {10.0, 3}, {15.0, 5}, {17.0, 5},
+        std::multimap<double, uint16_t, std::less<>> sellOrders {
+            {10.0, 3}, {15.0, 5}, {17.0, 4}, {17.0, 2},
             {17.9, 7}, {20.0, 8}, {25.0, 3}
         };
 
@@ -378,7 +388,7 @@ namespace Experiments
 
     void handleSellOrder()
     {
-        std::map<double, uint16_t, std::greater<>> buyOrders {
+        std::multimap<double, uint16_t, std::greater<>> buyOrders {
                 {10.0, 3}, {15.0, 5}, {17.0, 5},
                 {17.9, 7}, {20.0, 8}, {25.0, 3}
         };
@@ -387,6 +397,39 @@ namespace Experiments
         makeTrade(buyOrders, sellOrder, std::less_equal{});
         std::cout << sellOrder << "\n\n" << buyOrders << std::endl;
     }
+
+    struct SymbolOrdersEx final
+    {
+        template<std::predicate<bool,bool> Comparator>
+        using OrdersList = std::multimap<double, Order, Comparator>;
+
+        template<std::predicate<bool,bool> Comparator>
+        using OrderIter = typename OrdersList<Comparator>::iterator;
+
+        OrdersList<std::greater<>> buyOrders {};
+        OrdersList<std::less<>> sellOrders {};
+    };
+
+
+    struct SymbolOrdersEx2 final
+    {
+        template<std::predicate<double,double> Comparator>
+        using OrdersList = std::multimap<double, Order, Comparator>;
+
+        using OrderIter =  std::multimap<double, Order>::iterator;
+
+        OrdersList<std::greater<>> buyOrders {};
+        OrdersList<std::less<>> sellOrders {};
+    };
+
+    void SymbolOrdersTests()
+    {
+
+        std::unordered_map<uint64_t, SymbolOrdersEx2::OrderIter> ordersById;
+
+        ordersById[order.id] = iter;
+
+    };
 }
 
 namespace Predicates
@@ -411,15 +454,15 @@ void OrderBookNew::TestAll()
 
     // TODO: Buy and Sell order Maps need to be sorted in different way
 
-    /*
+
     OrderBook book;
     book.readData(dataFile_Test1);
 
     Tester tester {book};
     tester.printBook();
-    */
 
-    Experiments::handleBuyOrder();
+
+    // Experiments::handleBuyOrder();
     // Experiments::handleSellOrder();
 
     // Predicates::tests();
