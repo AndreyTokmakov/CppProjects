@@ -41,7 +41,7 @@ namespace
     constexpr std::string_view dataFilePathPart {"../../FinTechMarketProjects/data/orders_part.csv" };
     constexpr std::string_view dataFilePathPartDebug {"../../FinTechMarketProjects/data/orders_part_debug.csv" };
     constexpr std::string_view dataFile_Test1 {"../../FinTechMarketProjects/data/orders_test_1.csv" };
-
+    constexpr std::string_view dataFile_CancelTest {"../../FinTechMarketProjects/data/orders_test_cancel.csv" };
 
     template<typename K, typename V, typename Comparator>
     std::ostream& operator<<(std::ostream& stream, const std::map<K, V, Comparator>& map)
@@ -506,9 +506,9 @@ namespace Base::DemoTwo
         {
             SymbolOrders &ordersBySymbol = orderBook[order.symbol];
             if (Operation::Cancel == order.operation) {
-                // cancelOrder(order, ordersBySymbol);
+                cancelOrder(order, ordersBySymbol);
             } else if (Operation::Amend == order.operation) {
-                modifyOrder(order, ordersBySymbol);
+                modifyOrder(std::move(order), ordersBySymbol);
             } else if (Operation::Insert == order.operation) {
                 addOrder(std::move(order), ordersBySymbol);
             }
@@ -529,34 +529,58 @@ namespace Base::DemoTwo
             }
         }
 
+        template<typename K, typename V, typename Comparator>
+        void modifyOrder(std::multimap<K, V, Comparator> & orders,
+                         const std::multimap<K, V, Comparator>::iterator iter,
+                         Order&& order)
+        {   /** Price has changed **/
+            if (order.price != iter->second.price)
+            {
+                if (auto orderNode = orders.extract(iter); orderNode)
+                {
+                    orderNode.key() = order.price;
+                    orderNode.mapped() = order;  // TODO: Move order ???
+                    orders.insert(std::move(orderNode));
+                } else {
+                    std::cerr << "Error: Failed to update order. Extract order node error\n";
+                }
+            }
+            else {
+                iter->second.volume = order.volume;
+            }
+        }
 
-        void modifyOrder(const Order& order,
+        void modifyOrder(Order&& order,
                          SymbolOrders& ordersBySymbol)
         {
             if (auto orderIter = ordersById.find(order.id); ordersById.end() != orderIter)
-            {   /** Price has changed **/
-                if (order.price != orderIter->second->second.price)
-                {
-                    /*
-                    SymbolOrders::OrdersList& orders = ordersBySymbol.getOrders(order.side);
-                    if (auto orderNode = orders.extract(orderIter->second); orderNode)
-                    {
-                        orderNode.key() = order.price;
-                        orderNode.mapped() = order;
-                        auto [iter, b, c] = orders.insert(std::move(orderNode));
-                    } else {
-                        std::cerr << "Error: Failed to update order. Extract order node error\n";
-                    }
-                    */
+            {
+                if (OrderSide::Buy == order.side) {
+                    modifyOrder(ordersBySymbol.buyOrders, orderIter->second, std::move(order));
+                } else {
+                    modifyOrder(ordersBySymbol.sellOrders, orderIter->second, std::move(order));
                 }
-                else {
-                    orderIter->second->second.volume = order.volume;
-                }
-
                 // TODO: Try to find match | Do the trade
             }
             else {
                 std::cerr << "Error: Failed to Amend order with " << order.id << ". Not found\n";
+            }
+        }
+
+        void cancelOrder(const Order& order,
+                         SymbolOrders& ordersBySymbol)
+        {
+            if (const auto iter = ordersById.find(order.id); ordersById.end() != iter)
+            {
+                if (OrderSide::Buy == order.side) {
+                    ordersBySymbol.buyOrders.erase(iter->second);
+                } else {
+                    ordersBySymbol.sellOrders.erase(iter->second);
+                }
+                ordersById.erase(iter);
+            }
+            else {
+                std::cerr << "Error: Failed to Cancel order with " << order.id << ". Not found\n";
             }
         }
 
@@ -588,7 +612,8 @@ namespace Base::DemoTwo
     void Test()
     {
         OrderBookTwo book;
-        book.readData(dataFile_Test1);
+        // book.readData(dataFile_Test1);
+        book.readData(dataFile_CancelTest);
 
         Tester tester {book};
         tester.printBook();
