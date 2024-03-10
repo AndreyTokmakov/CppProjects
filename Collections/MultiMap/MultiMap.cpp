@@ -11,6 +11,7 @@ Description : MultiMap
 
 #include <iostream>
 #include <map>
+#include <unordered_map>
 #include <string>
 
 namespace
@@ -26,6 +27,15 @@ namespace
 
 namespace MultiMap
 {
+    struct Entry
+    {
+        int value {0};
+        std::string name;
+
+        explicit Entry(int v): value {v} {}
+    };
+
+
     void Add_Iterate_Order()
     {
         std::multimap<int, std::string> dict;
@@ -40,10 +50,48 @@ namespace MultiMap
 
         std::cout << dict << std::endl;
     }
+
+    void Emplace()
+    {
+        std::multimap<int, Entry> dict;
+
+        Entry obj {1};
+
+        // auto [iter, ok] = dict.emplace(1, std::move(obj));
+    }
+}
+
+namespace MultiMap::CustomComparator
+{
+    struct Comparator
+    {
+        inline bool operator()(const int a, const int b) const noexcept
+        {
+            return a >= b;
+        }
+    };
+
+
+    void Test()
+    {
+        std::multimap<int, std::string , Comparator> dict;
+
+        dict.emplace(1, "One");
+        dict.emplace(2, "Two_0");
+        dict.emplace(3, "Three");
+
+        dict.emplace_hint(std::next(dict.find(2)), 2, "Two_1");
+        dict.emplace_hint(std::prev(dict.find(2)), 2, "Two_2");
+
+        std::cout << dict << std::endl;
+    }
 }
 
 
 void MultiMap::TestAll()
 {
-    Add_Iterate_Order();
+    // Add_Iterate_Order();
+    // Emplace();
+
+    CustomComparator::Test();
 };

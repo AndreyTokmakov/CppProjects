@@ -83,7 +83,8 @@ namespace
     }
 }
 
-namespace OrderBookNew
+
+namespace Base
 {
     enum class OrderSide : char {
         Buy,
@@ -123,9 +124,62 @@ namespace OrderBookNew
                   <<"\n)\n";
     }
 
+    struct OrderBookBase
+    {
+        virtual void processOrder(Order&& order) = 0;
+
+        bool parseOrder(std::vector<std::string_view>& params,
+                        Order& order)
+        {
+            //order.timestamp.assign(params[0].data(), params[0].size());
+            order.symbol.assign(params[1].data(), params[1].size());
+            std::from_chars(params[2].data(), params[2].data() + params[2].size(), order.id);
+
+            switch (params[3][0]) {
+                case 'I': order.operation = Operation::Insert; break;
+                case 'A': order.operation = Operation::Amend; break;
+                case 'C': order.operation = Operation::Cancel; break;
+            }
+
+            switch (params[4][0]) {
+                case 'S': order.side = OrderSide::Sell; break;
+                case 'B': order.side = OrderSide::Buy; break;
+            }
+
+            std::from_chars(params[5].data(), params[5].data() + params[5].size(), order.volume);
+            std::from_chars(params[6].data(), params[6].data() + params[6].size(), order.price);
+
+            // for (auto& s: params) std::cout << s << ' '; std::cout << std::endl;
+            return true;
+        }
+
+        // TODO: Renames
+        void readData(const std::filesystem::path& path)
+        {
+            if (std::fstream file {path }; file.is_open() && file.good())
+            {
+                Order order;
+                std::string line;
+                std::vector<std::string_view> params;
+                while (std::getline(file, line))
+                {
+                    split_to(line, params);
+                    parseOrder(params, order);
+
+                    // TODO: Check if its OK to std::move order here ???
+                    processOrder(std::move(order));
+                }
+            }
+        }
+    };
+}
+
+namespace Base::DemoOne
+{
     struct SymbolOrders final
     {
-        using OrdersList = std::multimap<double, Order>;
+        // using OrdersList = std::multimap<double, Order>;
+        using OrdersList = std::map<double, Order>;
         using OrderIter = typename OrdersList::iterator;
 
         OrdersList buyOrders {};
@@ -164,7 +218,7 @@ namespace OrderBookNew
         }
     };
 
-    class OrderBook
+    class OrderBook final : public OrderBookBase
     {
         std::unordered_map<std::string, SymbolOrders> orderBook;
         std::unordered_map<uint64_t, SymbolOrders::OrderIter> ordersById;
@@ -233,7 +287,7 @@ namespace OrderBookNew
             }
         }
 
-        void processOrder(Order&& order)
+        void processOrder(Order&& order) override
         {
             SymbolOrders &ordersBySymbol = orderBook[order.symbol];
             if (Operation::Cancel == order.operation) {
@@ -242,50 +296,6 @@ namespace OrderBookNew
                 modifyOrder(order, ordersBySymbol);
             } else if (Operation::Insert == order.operation) {
                 addOrder(std::move(order), ordersBySymbol);
-            }
-        }
-
-        bool parseOrder(std::vector<std::string_view>& params,
-                        Order& order)
-        {
-            //order.timestamp.assign(params[0].data(), params[0].size());
-            order.symbol.assign(params[1].data(), params[1].size());
-            std::from_chars(params[2].data(), params[2].data() + params[2].size(), order.id);
-
-            switch (params[3][0]) {
-                case 'I': order.operation = Operation::Insert; break;
-                case 'A': order.operation = Operation::Amend; break;
-                case 'C': order.operation = Operation::Cancel; break;
-            }
-
-            switch (params[4][0]) {
-                case 'S': order.side = OrderSide::Sell; break;
-                case 'B': order.side = OrderSide::Buy; break;
-            }
-
-            std::from_chars(params[5].data(), params[5].data() + params[5].size(), order.volume);
-            std::from_chars(params[6].data(), params[6].data() + params[6].size(), order.price);
-
-            // for (auto& s: params) std::cout << s << ' '; std::cout << std::endl;
-            return true;
-        }
-
-        // TODO: Renames
-        void readData(const std::filesystem::path& path)
-        {
-            if (std::fstream file {path }; file.is_open() && file.good())
-            {
-                Order order;
-                std::string line;
-                std::vector<std::string_view> params;
-                while (std::getline(file, line))
-                {
-                    split_to(line, params);
-                    parseOrder(params, order);
-
-                    // TODO: Check if its OK to std::move order here ???
-                    processOrder(std::move(order));
-                }
             }
         }
 
@@ -314,7 +324,7 @@ namespace OrderBookNew
     };
 }
 
-namespace OrderBookNew::Experiments
+namespace Base::Experiments
 {
     void printMaps(const std::map<double, uint16_t, std::less<>>& ordersOne,
                    const std::map<double, uint16_t, std::less<>>& ordersTwo)
@@ -411,25 +421,48 @@ namespace OrderBookNew::Experiments
     };
 
 
-    struct SymbolOrdersEx2 final
-    {
-        template<std::predicate<double,double> Comparator>
-        using OrdersList = std::multimap<double, Order, Comparator>;
-
-        using OrderIter =  std::multimap<double, Order>::iterator;
-
-        OrdersList<std::greater<>> buyOrders {};
-        OrdersList<std::less<>> sellOrders {};
-    };
 
     void SymbolOrdersTests()
     {
 
+        /*
+        std::unordered_map<std::string, SymbolOrdersEx2> orderBook;
         std::unordered_map<uint64_t, SymbolOrdersEx2::OrderIter> ordersById;
 
-        ordersById[order.id] = iter;
+        Order order {};
 
+        SymbolOrdersEx2 &ordersBySymbol = orderBook[order.symbol];
+
+        auto& orders = ordersBySymbol.buyOrders;
+        if (auto [iter, inserted] = orders.emplace(order.price, {}); inserted) {
+            ordersById[order.id] = iter;
+            iter->second = std::move(order);
+        }
+        */
     };
+
+    struct BaseObj
+    {
+        void start() { func(); }
+    private:
+        virtual void func() = 0;
+    };
+
+    class Impl1: public BaseObj
+    {
+        void func() override { std::cout << "Impl1::func()\n"; }
+    };
+
+    class Impl2: public BaseObj
+    {
+        void func() override { std::cout << "Impl2::func()\n"; }
+    };
+
+    void CallOverridenFunction()
+    {
+        Impl1{}.start();
+        Impl2{}.start();
+    }
 }
 
 namespace Predicates
@@ -447,23 +480,144 @@ namespace Predicates
     }
 }
 
+
+namespace Base::DemoTwo
+{
+
+    struct SymbolOrders final
+    {
+        template<std::predicate<double,double> Comparator>
+        using OrdersList = std::multimap<double, Order, Comparator>;
+
+        using OrderIter = std::multimap<double, Order>::iterator;
+
+        OrdersList<std::greater<>> buyOrders {};
+        OrdersList<std::less<>> sellOrders {};
+    };
+
+    class OrderBookTwo final : public OrderBookBase
+    {
+        std::unordered_map<std::string, SymbolOrders> orderBook;
+        std::unordered_map<uint64_t, SymbolOrders::OrderIter> ordersById;
+
+    public:
+
+        void processOrder(Order&& order) override
+        {
+            SymbolOrders &ordersBySymbol = orderBook[order.symbol];
+            if (Operation::Cancel == order.operation) {
+                // cancelOrder(order, ordersBySymbol);
+            } else if (Operation::Amend == order.operation) {
+                modifyOrder(order, ordersBySymbol);
+            } else if (Operation::Insert == order.operation) {
+                addOrder(std::move(order), ordersBySymbol);
+            }
+        }
+
+        void addOrder(Order&& order,
+                      SymbolOrders& ordersBySymbol)
+        {
+            // SymbolOrders::OrdersList& ordersToMatch = ordersBySymbol.getOppositeOrders(order.side);
+
+            // printOrder(order);
+            // TODO: Try to find match | Do the trade
+
+            if (const uint64_t orderId { order.id }; OrderSide::Buy == order.side) {
+                ordersById[orderId] = ordersBySymbol.buyOrders.insert({order.price, std::move(order)});;
+            } else {
+                ordersById[orderId] = ordersBySymbol.sellOrders.insert({order.price, std::move(order)});;
+            }
+        }
+
+
+        void modifyOrder(const Order& order,
+                         SymbolOrders& ordersBySymbol)
+        {
+            if (auto orderIter = ordersById.find(order.id); ordersById.end() != orderIter)
+            {   /** Price has changed **/
+                if (order.price != orderIter->second->second.price)
+                {
+                    /*
+                    SymbolOrders::OrdersList& orders = ordersBySymbol.getOrders(order.side);
+                    if (auto orderNode = orders.extract(orderIter->second); orderNode)
+                    {
+                        orderNode.key() = order.price;
+                        orderNode.mapped() = order;
+                        auto [iter, b, c] = orders.insert(std::move(orderNode));
+                    } else {
+                        std::cerr << "Error: Failed to update order. Extract order node error\n";
+                    }
+                    */
+                }
+                else {
+                    orderIter->second->second.volume = order.volume;
+                }
+
+                // TODO: Try to find match | Do the trade
+            }
+            else {
+                std::cerr << "Error: Failed to Amend order with " << order.id << ". Not found\n";
+            }
+        }
+
+        friend struct Tester;
+    };
+
+
+    struct Tester
+    {
+        const OrderBookTwo& orderBook;
+
+        explicit Tester(const OrderBookTwo& book): orderBook { book } {}
+
+        void printBook()
+        {
+            for (const auto & [symbol, orders] : orderBook.orderBook)
+            {
+                std::cout << "-------------------------- " << symbol << " ----------------------------------\n";
+                std::cout << "Buy:\n";
+                for (const auto& [price, order] : orders.buyOrders)
+                    std::cout << "\tPrice:" << price << ", Volume: " << order.volume << std::endl;
+                std::cout << "Sell:\n";
+                for (const auto& [price, order] : orders.sellOrders)
+                    std::cout << "\tPrice:" << price << ", Volume: " << order.volume << std::endl;
+            }
+        }
+    };
+
+    void Test()
+    {
+        OrderBookTwo book;
+        book.readData(dataFile_Test1);
+
+        Tester tester {book};
+        tester.printBook();
+    }
+}
+
 void OrderBookNew::TestAll()
 {
+    using namespace Base;
+    
     // TODO: может нужно использовать std::multimap вместо map - что бы обрабатывать ордеры с одинаковой ценой
     //       но разными timestamp-ами
 
     // TODO: Buy and Sell order Maps need to be sorted in different way
 
-
+    /*
     OrderBook book;
     book.readData(dataFile_Test1);
 
     Tester tester {book};
     tester.printBook();
-
+    */
 
     // Experiments::handleBuyOrder();
     // Experiments::handleSellOrder();
+    // Experiments::SymbolOrdersTests();
+    // Experiments::CallOverridenFunction();
+
+    DemoTwo::Test();
 
     // Predicates::tests();
 }
