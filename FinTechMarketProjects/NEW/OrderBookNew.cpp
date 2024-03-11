@@ -539,15 +539,15 @@ namespace Base::DemoTwo
         void addOrder(Order&& order,
                       SymbolOrders& ordersBySymbol)
         {
-            // SymbolOrders::OrdersList& ordersToMatch = ordersBySymbol.getOppositeOrders(order.side);
-
             // printOrder(order);
             // TODO: Try to find match | Do the trade
 
+            // TODO: Check if price == 0
             if (const uint64_t orderId { order.id }; OrderSide::Buy == order.side) {
                 makeTrade(ordersBySymbol.sellOrders, order, std::greater_equal{});
                 ordersById[orderId] = ordersBySymbol.buyOrders.insert({order.price, std::move(order)});;
             } else {
+                makeTrade(ordersBySymbol.buyOrders, order, std::less_equal{});
                 ordersById[orderId] = ordersBySymbol.sellOrders.insert({order.price, std::move(order)});;
             }
         }
@@ -636,7 +636,7 @@ namespace Base::DemoTwo
     {
         OrderBookTwo book;
         // book.readData(dataFile_Test1);
-        book.readData(dataFile_CancelTest);
+        book.readData(dataFile_Test1);
 
         Tester tester {book};
         tester.printBook();
