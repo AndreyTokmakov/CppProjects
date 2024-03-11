@@ -502,6 +502,28 @@ namespace Base::DemoTwo
 
     public:
 
+        template<typename K, typename V, typename Comparator,
+                std::predicate<double, double> Predicate>
+        void makeTrade(std::multimap<K, V, Comparator> &orders,
+                       Order &order,
+                       Predicate predicate)
+        {
+            for (auto orderIter = orders.begin();
+                 orderIter != orders.end() && order.volume && predicate(order.price, orderIter->first);)
+            {
+                if (order.volume >= orderIter->second.volume) {
+                    order.volume -= orderIter->second.volume;
+                    orders.erase(orderIter++);
+                    // TODO: Trade
+                }
+                else {
+                    orderIter->second.volume -= order.volume;
+                    order.volume = 0;
+                    // TODO: Trade
+                }
+            }
+        }
+
         void processOrder(Order&& order) override
         {
             SymbolOrders &ordersBySymbol = orderBook[order.symbol];
@@ -523,6 +545,7 @@ namespace Base::DemoTwo
             // TODO: Try to find match | Do the trade
 
             if (const uint64_t orderId { order.id }; OrderSide::Buy == order.side) {
+                makeTrade(ordersBySymbol.sellOrders, order, std::greater_equal{});
                 ordersById[orderId] = ordersBySymbol.buyOrders.insert({order.price, std::move(order)});;
             } else {
                 ordersById[orderId] = ordersBySymbol.sellOrders.insert({order.price, std::move(order)});;
