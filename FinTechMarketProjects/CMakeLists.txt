@@ -22,6 +22,8 @@ add_executable(${PROJECT_NAME}
         TestTask_OrderBook/TestTask_OrderBook.cpp TestTask_OrderBook/TestTask_OrderBook.h
         DataParsers/DataParsers.cpp  DataParsers/DataParsers.h
         NEW/OrderBookNew.h NEW/OrderBookNew.cpp
+        Asymptoto/Asymptoto.cpp
+        Asymptoto/Asymptoto.h
 )
 
 # Link libraries to the project/executable

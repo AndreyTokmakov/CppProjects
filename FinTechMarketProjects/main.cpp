@@ -20,6 +20,7 @@
 #include "DataParsers/DataParsers.h"
 
 #include "NEW/OrderBookNew.h"
+#include "Asymptoto/Asymptoto.h"
 
 
 #include <iostream>
@@ -260,7 +261,9 @@ int main([[maybe_unused]] int argc,
 
     // Tests::splitTest();
 
-    OrderBookNew::TestAll();
+    // OrderBookNew::TestAll();
+
+    Asymptoto::TestAll();
 
     return EXIT_SUCCESS;
 }
