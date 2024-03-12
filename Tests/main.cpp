@@ -955,6 +955,41 @@ namespace ScopeExit
     }
 }
 
+
+namespace PermissionsTest
+{
+    enum class Permission : uint8_t {
+        Read = 1,
+        Write,
+        Execute,
+    };
+
+    template<typename T>
+    requires(std::is_enum_v<T>and requires(T e) {
+        // look for enable_bitmask_operator_or to enable this operator
+        enable_bitmask_operator_or(e);
+    })
+    constexpr auto operator|(const T lhs, const T rhs)
+    {
+        using underlying = std::underlying_type_t<T>;
+        return static_cast<T>(static_cast<underlying>(lhs) | static_cast<underlying>(rhs));
+    }
+
+    void enable_bitmask_operator_or(Permission permission)
+    {
+
+    }
+
+
+    void Test()
+    {
+        Permission mask = Permission::Read | Permission::Write;
+        enable_bitmask_operator_or(mask);
+    }
+}
+
+
+
 int main([[maybe_unused]] int argc,
          [[maybe_unused]] char** argv)
 {
