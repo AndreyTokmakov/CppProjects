@@ -11,7 +11,6 @@ include_directories(../../third_party/json/include)
 link_directories(../../third_party/jsoncpp/build/lib)
 link_directories(../../third_party/jsoncpp/build/lib)
 
-
 add_compile_options(-c -Wall -Wextra -O3 -std=c++2a)
 
 # include all components

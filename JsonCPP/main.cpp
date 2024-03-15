@@ -39,6 +39,11 @@
 #include <unordered_map>
 #include <span>
 
+// cd Project/third_party
+// git clone git@github.com:open-source-parsers/jsoncpp.git
+// git clone git@github.com:nlohmann/json.git
+
+
 #include "json/json.h"
 #include <nlohmann/json.hpp>
 
@@ -200,15 +205,18 @@ namespace Nlohmann
     void ParseJson_File()
     {
         std::string jsonString;
-        FileUtilities::ReadFile2String(R"(../../JsonCPP/data/widget.json)", jsonString);
+        FileUtilities::ReadFile2String(R"(../../JsonCPP/data/snapshot.json)", jsonString);
 
         std::cout << json::parse(jsonString) << std::endl;
+    }
+
+    void ParseJson_File2()
+    {
+        std::cout << json::parse(std::ifstream (R"(../../JsonCPP/data/snapshot.json)")) << std::endl;
     }
 }
 
 
-// git clone git@github.com:open-source-parsers/jsoncpp.git
-// git clone git@github.com:nlohmann/json.git
 
 int main([[maybe_unused]] int argc,
          [[maybe_unused]] char** argv)
@@ -219,7 +227,9 @@ int main([[maybe_unused]] int argc,
 
     // Nlohmann::checkIsValid();
     // Nlohmann::ParseJson_StringStream();
+
     Nlohmann::ParseJson_File();
+    // Nlohmann::ParseJson_File2();
 
 
     return EXIT_SUCCESS;

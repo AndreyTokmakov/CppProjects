@@ -28,6 +28,7 @@ namespace Utilities
     int randomIntegerInRange(int from = 0, int until = 1000) {
         return std::uniform_int_distribution<int>{from, until}(generator);
     }
+
 }
 
 

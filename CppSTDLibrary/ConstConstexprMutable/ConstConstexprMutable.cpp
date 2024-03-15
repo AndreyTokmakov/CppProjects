@@ -953,6 +953,76 @@ namespace Constexpr_Consteval
     }
 }
 
+namespace ConstConstexprMutable::UndefinedBehaviour
+{
+    /**
+     *  Compile-time constant expressions are not permitted to invoke undefined behaviour.
+     *  This includes constexpr functions that are evaluated at compile-time.
+     *  This property can be used to statically test code, ensuring that the code doesn't invoke undefined behaviour.
+    **/
+
+    constexpr int midpoint(int a, int b)
+    {
+        return (a + b)/2; // can overflow, int overlow is UB
+    }
+
+    constexpr int generate()
+    {
+        std::vector<int> data = {1};
+        auto it = data.begin();
+        for (int i = 0; i < 10; i++)
+            data.push_back(i); // invalidates it
+        return *it;            // accessing invalid iterator
+        /** Local variable 'it' may point to invalidated memory **/
+    }
+
+    constexpr int process()
+    {
+        int* buffer = new int[10];
+        for (int i = 0; i < 10; i++)
+            buffer[i] = i;
+        int sum = 0;
+        for (int i = 0; i < 10; i++)
+            sum += i;
+        return sum; // we memory leak buffer
+        /** Check that the noun 'memory' after the pronoun 'we' is correct.
+         * It's possible that you may need to switch to a possessive pronoun, or use another part of speech **/
+    }
+
+    constexpr int cnt_space(const char* str, size_t sz)
+    {
+        int cnt = 0;
+        for (size_t i = 0; i < sz ; ++i) {
+            if (str[i] == ' ')
+                ++cnt; // out-of-bounds
+        }
+        return cnt;
+
+        /** Read of de-referenced one-past-the-end pointer is not allowed in a constant
+         * expression static assertion expression is not an integral constant expression **/
+    }
+
+    void TryInvokeUB()
+    {
+        constexpr int a = std::numeric_limits<int>::max();
+        constexpr int b = a - 2;
+        constexpr int c = a - 1;
+
+
+        // Wouldn't compile: "overflow in constant expression"
+        // static_assert(midpoint(a, b) == c);
+
+        // Wouldn't compile "use of storage after deallocation"
+        // static_assert(generate() == 1);
+
+        // Wouldn't compile "storage has not been deallocated"
+        // static_assert(process() == 45);
+
+        // Wouldn't compile "array subscript value '8' is outside the bounds of array type 'const char [8]'"
+        // static_assert(cnt_space("a b c d", 9) == 3);
+    }
+}
+
 void ConstConstexprMutable::TestAll()
 {
     // ConstexprMap::Test();
@@ -997,7 +1067,7 @@ void ConstConstexprMutable::TestAll()
 
 	// Consteval::GetConstString();
 	// Consteval::SimpleTests();
-	Consteval::Factorial_Test();
+	// Consteval::Factorial_Test();
 
     // Constexpr_Consteval::Call_Consteval_RunTime("");
     // Constexpr_Consteval::Constexpr_Static_Vs_RunTime();
@@ -1008,4 +1078,6 @@ void ConstConstexprMutable::TestAll()
 	// Tests::Test_Constexpr_Integer();
 
     // Returning_ConstExpr_Array_SizeAsParameter::createArray();
+
+    UndefinedBehaviour::TryInvokeUB();
 };
