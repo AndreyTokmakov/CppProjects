@@ -42,10 +42,17 @@
 // cd Project/third_party
 // git clone git@github.com:open-source-parsers/jsoncpp.git
 // git clone git@github.com:nlohmann/json.git
-
+// git clone git@github.com:Tencent/rapidjson.git
 
 #include "json/json.h"
 #include <nlohmann/json.hpp>
+
+#include "rapidjson/document.h"
+#include "rapidjson/writer.h"
+#include "rapidjson/stringbuffer.h"
+#include "rapidjson/istreamwrapper.h"
+#include "rapidjson/ostreamwrapper.h"
+
 
 #include <fstream>
 #include <iostream>
@@ -217,6 +224,42 @@ namespace Nlohmann
 }
 
 
+namespace RapidJson
+{
+    void ReadAndParse()
+    {
+        constexpr std::string_view jsonFile { R"(../../JsonCPP/data/snapshot.json)" };
+
+        rapidjson::Document document;
+        if (std::ifstream ifs(jsonFile.data()); ifs.is_open() && ifs.good())
+        {
+            rapidjson::IStreamWrapper isw(ifs);
+            document.ParseStream(isw);
+            // Can be removed: filebuf object is RAII
+            ifs.close();
+        }
+
+        if (document.IsNull() || !document.IsObject())
+        {
+            std::cout << "Failed to read document " << jsonFile << std::endl;
+            return;
+        }
+
+        std::cout << document.IsArray() << std::endl;
+
+        constexpr std::string_view tagParamerName {"lastUpdateId"};
+        if (document.HasMember(tagParamerName.data()) && document[tagParamerName.data()].IsString())
+        {
+            const std::string patientTag = document[tagParamerName.data()].GetString();
+            std::cout << tagParamerName << " = " << patientTag << std::endl;
+        }
+        else {
+            std::cout << "Not found\n";
+        }
+    }
+}
+
+
 
 int main([[maybe_unused]] int argc,
          [[maybe_unused]] char** argv)
@@ -228,9 +271,10 @@ int main([[maybe_unused]] int argc,
     // Nlohmann::checkIsValid();
     // Nlohmann::ParseJson_StringStream();
 
-    Nlohmann::ParseJson_File();
+    // Nlohmann::ParseJson_File();
     // Nlohmann::ParseJson_File2();
 
+    RapidJson::ReadAndParse();
 
     return EXIT_SUCCESS;
 }

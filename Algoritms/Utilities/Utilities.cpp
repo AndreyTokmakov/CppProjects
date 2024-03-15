@@ -9,6 +9,7 @@ Description : Utilities.h
 
 #include "Utilities.h"
 #include <iostream>
+#include <iomanip>
 
 [[nodiscard]]
 int Utilities::randomIntegerInRange(int from, int until) {

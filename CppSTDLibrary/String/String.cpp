@@ -910,8 +910,8 @@ namespace String::Conversations {
 
 		const char* str = "12 monkeys";
 		int value;
-		if (auto[ptr, error_code] = std::from_chars(str, str + 10, value); 
-			) {
+		if (auto[ptr, error_code] = std::from_chars(str, str + 10, value);
+            std::errc{} != error_code) {
 			std::cout << "Errror" << std::endl;
 		}
 

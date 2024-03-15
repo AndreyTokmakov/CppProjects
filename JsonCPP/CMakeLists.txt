@@ -7,6 +7,8 @@ project(${PROJECT_NAME} VERSION ${PROJECT_VERSION} LANGUAGES CXX)
 
 include_directories(../../third_party/jsoncpp/include)
 include_directories(../../third_party/json/include)
+include_directories(../../third_party/rapidjson/include)
+
 
 link_directories(../../third_party/jsoncpp/build/lib)
 link_directories(../../third_party/jsoncpp/build/lib)

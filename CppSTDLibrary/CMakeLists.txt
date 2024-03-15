@@ -39,7 +39,7 @@ add_executable(${PROJECT_NAME}
 		Literals/Literals.cpp Literals/Literals.h
 		Locale/Locale.cpp Locale/Locale.h
 		Math/Math.cpp Math/Math.h
-		Memory/Memory.cpp Memory/Memory.h
+		Memory/Memory.cpp Memory/Memory.h Memory/MemoryUsageMonitor.cpp Memory/MemoryUsageMonitor.h
 		MoveSemantics_RuleOfFive/MoveSemantics_RuleOfFive.cpp MoveSemantics_RuleOfFive/MoveSemantics_RuleOfFive.h
 		Numbers/Numbers.cpp Numbers/Numbers.h
 		NumericLimits/NumericLimits.cpp NumericLimits/NumericLimits.h

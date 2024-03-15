@@ -78,6 +78,7 @@
 #include "TypeCast/TypeCast.h"
 #include "Metaprogramming/Metaprogramming.h"
 #include "Memory/Memory.h"
+#include "Memory/MemoryUsageMonitor.h"
 #include "Templates/Templates.h"
 #include "Volatile/VolatileTests.h"
 
@@ -222,6 +223,7 @@ int main(int argc, char** argv)
     // Numbers::TestAll();
     // Math::TestAll();
     // Memory::TestAll();
+    MemoryUsageMonitor::TestAll();
     // Metaprogramming::TestAll();
     // InlineNamespaces::TestAll();
     // NumericLimits::TestAll();
@@ -248,7 +250,7 @@ int main(int argc, char** argv)
     // TypeCast::TestAll();
     // Int::TestAll();
     // Templates::TestAll();
-    Utilities::TestAll();
+    // Utilities::TestAll();
     // UniquePtr_Tests::TestAll();
 
     // WeakPtr::TestAll();
