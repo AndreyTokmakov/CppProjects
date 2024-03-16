@@ -1012,7 +1012,7 @@ int main([[maybe_unused]] int argc,
     // ReturnTypeCast::tests();
     // CallFunctionByName::Test();
     // ReturnClass_MemberRef_CopyCTor::tests();
-    // Algorithms::TestAll();
+    Algorithms::TestAll();
     // AutoTests::TestAll();
     // BinaryAnalyzer::TestAll();
     // Cpp23_Features::TestAll();
@@ -1032,7 +1032,7 @@ int main([[maybe_unused]] int argc,
     // FunctionCall_LookUp::TestAll();
     // RateLimiter::TestAll();
     // LRUCache::TestAll();
-    Multithreading::TestAll();
+    // Multithreading::TestAll();
     // Memory::TestAll();
     // MaxStack::TestAll();
     // MinStack::TestAll();

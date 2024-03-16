@@ -500,7 +500,8 @@ namespace Algorithms::Numbers {
     }
 }
 
-namespace Algorithms::Numbers {
+namespace Algorithms::Numbers
+{
     size_t _longest_increasing_subsequence_1(const std::vector<int> &Numeric) {
         // create an empty ordered set S. ith element in S is defined as the
         // smallest integer that ends an increasing sequence of length i
@@ -1797,10 +1798,36 @@ namespace Algorithms::Strings
     }
 }
 
+
+namespace Algorithms::Strings
+{
+    bool is_interleaving_string(const std::string& str1,
+                                const std::string& str2,
+                                const std::string& dest)
+    {
+        for (size_t idx = 0, i = 0, n = 0; idx < dest.size(); ++idx)
+        {
+            if (str1[i] != dest[idx] && str2[n] != dest[idx])
+                return false;
+            else if (str1.size() > i && str1[i] == dest[idx])
+                ++i;
+            else if (str2.size() > n && str2[n] == dest[idx])
+                ++n;
+
+            std::cout << idx << "  "  << i << " " << n << " " << dest[idx] << std::endl;
+        }
+        return true;
+    }
+
+    void Interleaving_String()
+    {
+
+        std::cout << is_interleaving_string("aabcc", "dbbca", "aadbbcbcac") << std::endl;
+    }
+}
+
 void Algorithms::TestAll()
 {
-
-
     // Algorithms::Devide_SubArray();
     // Algorithms::BinarySearch();
     // Algorithms::PrintAllSubArraysTest();
@@ -1818,7 +1845,7 @@ void Algorithms::TestAll()
     // Numbers::Rotate_Array();
     // Numbers::IntToRoman();
     // Numbers::RomanToInt();
-    Numbers::Divide_Numbers();
+    // Numbers::Divide_Numbers();
 
     // Strings::FindCommon_PrefixAndPostfix();
     // Strings::FindLastNotOf__Benchmark();
@@ -1832,6 +1859,7 @@ void Algorithms::TestAll()
     // Strings::Longest_Word();
     // Strings::Intersperse_String();
     // Strings::Count_Anagrams();
+    Strings::Interleaving_String();
 
     // Bits::ReverseBits();
 
