@@ -1032,7 +1032,7 @@ int main([[maybe_unused]] int argc,
     // FunctionCall_LookUp::TestAll();
     // RateLimiter::TestAll();
     // LRUCache::TestAll();
-    // Multithreading::TestAll();
+    Multithreading::TestAll();
     // Memory::TestAll();
     // MaxStack::TestAll();
     // MinStack::TestAll();

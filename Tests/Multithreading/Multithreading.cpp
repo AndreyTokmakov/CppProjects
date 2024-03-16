@@ -729,36 +729,57 @@ namespace Future
     }
 }
 
+namespace WaitFree
+{
+    template<typename T, size_t N>
+    class WaitFreeQueue
+    {
+        T data[N];
+        std::atomic<size_t> readSequence { 0 };
+        std::atomic<size_t> writeSequence { 1 };
+
+    public:
+
+        bool tryWrite(T value)
+        {
+            const auto nextWriteIndex = writeSequence % N;
+            const auto currentReadIndex = readSequence % N;
+            const bool noRoomLeft = (nextWriteIndex == currentReadIndex);
+            if (noRoomLeft) {
+                return false;
+            }
+            data[nextWriteIndex] = std::move(value);
+            writeSequence.store(nextWriteIndex + 1);
+            return true;
+        }
+
+        T* tryRead()
+        {
+            const auto nextReadIndex = (readSequence + 1) % N;
+            const auto nextWriteIndex = writeSequence % N;
+            const bool noNewData = (nextReadIndex == nextWriteIndex);
+            if (noNewData) {
+                return nullptr;
+            }
+            readSequence.store(nextReadIndex);
+            return & data[nextReadIndex];
+        }
+    };
+
+    void Test()
+    {
+
+    }
+}
+
 void Multithreading::TestAll()
 {
-    /*
-    // create stop_source and stop_token:
-    std::stop_source ssrc;
-    std::stop_token stok{ssrc.get_token()};
-
-    // register callback:
-    std::stop_callback cb{stok, []{
-        std::cout << "- STOP requested in main()\n" << std::flush;
-    }};
-
-    // in the background call func() a couple of times:
-    auto fut = std::async([stok] {
-        for (int num = 1; num < 10; ++num) {
-            func(stok, num);
-        }
-    });
-
-    // after a while, request stop:
-    std::this_thread::sleep_for(120ms);
-    ssrc.request_stop();
-    */
-
+    WaitFree::Test();
 
     // SwitchingThreads::Test();
 
     // Experiments::CalcTeethContactPoints();
     // Experiments::Debug("33", 333);
-
 
     // Experiments::LockFreeTest();  <-------------- FIXME
 
