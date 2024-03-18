@@ -1801,20 +1801,98 @@ namespace Algorithms::Strings
 
 namespace Algorithms::Strings
 {
+    bool is_interleaving_string_DEBUG(const std::string& str1,
+                                      const std::string& str2,
+                                      const std::string& dest)
+    {
+        int stopCounter = 0;
+
+        int idx1 = -1, i1 = -1, n1 = -1, branch = 0;
+        for (int idx = 0, i = 0, n = 0; idx < dest.size(); ++idx)
+        {
+            if (++stopCounter > 100) break;
+
+            if (0 == branch && str1.size() > i && str1[i] == dest[idx])
+            {
+                if (-1 == idx1 && str2.size() > n && str1[i] == str2[n])
+                {
+                    std::cout << "MEMO (idx: " << idx << ", i: " << i << ", n: " << n << ") "
+                         << "[" << dest[idx] << ", " << str1[i] << ", " << str2[n] << "]\n";
+                    idx1 = idx; i1 = i; n1 = n;
+                }
+
+                std::cout << "dest[" << idx << "]:" <<  dest[idx] << " | using str1[" << i << "]:" << str1[i]
+                          << " | (str2[" << n << "]: " << str2[n] << ") | branch: " << branch<< std::endl;
+                ++i;
+            }
+            else if (str2.size() > n && str2[n] == dest[idx])
+            {
+                if (1 == branch) {
+                    idx = idx1, i = i1, n = n1;
+                    idx1 = -1; i1 = -1; n1 = -1;
+
+                    std::cout << "USE RESTORE: (idx: " << idx << ", i: " << i << ", n: " << n << ")\n";
+                    branch = 0;
+                }
+                std::cout << "dest[" << idx << "]:" <<  dest[idx] << " | using str2[" << n << "]:" << str2[n]
+                          << " | (str1[" << i << "]: " << str1[i] << ") | branch: " << branch<< std::endl;
+                ++n;
+
+            }
+            else
+            {
+                std::cout << "ELSE : dest[" << idx << "]: " <<  dest[idx] << " | str1[" << i << "]: "
+                          << str1[i] << ", str2[" << n << "] = " << str2[n] << " | branch: " << branch << std::endl;
+
+                if (-1 != idx1 && 0 == branch) {
+                    branch = 1;
+                    idx = idx1 - 1, i = i1, n = n1;
+
+                    std::cout << "APPLY RESTORE (idx: " << idx1 << ", i: " << i1 << ", n: " << n1 << ")\n";
+                }
+                else
+                    return false;
+
+            }
+
+        }
+        return true;
+    }
+
+
     bool is_interleaving_string(const std::string& str1,
                                 const std::string& str2,
                                 const std::string& dest)
     {
-        for (size_t idx = 0, i = 0, n = 0; idx < dest.size(); ++idx)
-        {
-            if (str1[i] != dest[idx] && str2[n] != dest[idx])
-                return false;
-            else if (str1.size() > i && str1[i] == dest[idx])
-                ++i;
-            else if (str2.size() > n && str2[n] == dest[idx])
-                ++n;
+        if (dest.size() != str1.size() + str2.size())
+            return false;
 
-            std::cout << idx << "  "  << i << " " << n << " " << dest[idx] << std::endl;
+        int idx1 = -1, i1 = -1, n1 = -1, branch = 0;
+        for (int idx = 0, i = 0, n = 0; idx < dest.size(); ++idx)
+        {
+
+            if (0 == branch && str1.size() > i && str1[i] == dest[idx])
+            {
+                if (-1 == idx1 && str2.size() > n && str1[i] == str2[n]) {
+                    idx1 = idx; i1 = i; n1 = n;
+                }
+                ++i;
+            }
+            else if (str2.size() > n && str2[n] == dest[idx])
+            {
+                if (1 == branch) {
+                    idx = idx1, i = i1, n = n1;
+                    idx1 = -1; i1 = -1; n1 = -1;
+                    branch = 0;
+                }
+                ++n;
+            } else {
+                if (-1 != idx1 && 0 == branch) {
+                    branch = 1;
+                }
+                else
+                    return false;
+            }
         }
         return true;
     }
@@ -1822,7 +1900,10 @@ namespace Algorithms::Strings
     void Interleaving_String()
     {
 
-        std::cout << is_interleaving_string("aabcc", "dbbca", "aadbbcbcac") << std::endl;
+        std::cout << std::boolalpha << is_interleaving_string_DEBUG("aabcc", "dbbca", "aadbcbbcac") << std::endl;
+        // std::cout << std::boolalpha << is_interleaving_string("aabcc", "dbbca", "aadbbbaccc") << std::endl;
+        // std::cout << std::boolalpha << is_interleaving_string("", "", "") << std::endl;
+
     }
 }
 

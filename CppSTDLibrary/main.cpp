@@ -223,7 +223,7 @@ int main(int argc, char** argv)
     // Numbers::TestAll();
     // Math::TestAll();
     // Memory::TestAll();
-    MemoryUsageMonitor::TestAll();
+    // MemoryUsageMonitor::TestAll();
     // Metaprogramming::TestAll();
     // InlineNamespaces::TestAll();
     // NumericLimits::TestAll();
@@ -249,7 +249,7 @@ int main(int argc, char** argv)
     // Tuple::TestAll();
     // TypeCast::TestAll();
     // Int::TestAll();
-    // Templates::TestAll();
+    Templates::TestAll();
     // Utilities::TestAll();
     // UniquePtr_Tests::TestAll();
 

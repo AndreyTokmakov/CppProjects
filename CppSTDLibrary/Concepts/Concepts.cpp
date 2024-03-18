@@ -1804,6 +1804,57 @@ namespace Concepts::Noexcept
     }
 }
 
+namespace Concepts::Noexcept
+{
+    struct UnsafeToMoveType
+    {
+        UnsafeToMoveType() = default;
+        UnsafeToMoveType(UnsafeToMoveType&&) {}
+        UnsafeToMoveType& operator=(UnsafeToMoveType&&) { return *this; }
+    };
+
+    struct SafeToMoveType
+    {
+        SafeToMoveType() = default;
+        SafeToMoveType(SafeToMoveType&&) noexcept {}
+        SafeToMoveType& operator=(SafeToMoveType&&) noexcept { return *this; }
+    };
+
+    template <typename T>
+    void unsafe_swap(T& left, T& right)
+    {
+        auto tmp = std::move(left);
+        left = std::move(right); // What happens if this move throws? left was moved from, and moving it back might throw again
+        right = std::move(tmp);
+    }
+
+    template<typename T>
+    concept NoexceptMove = requires (T& a, T& b) {
+        { a = std::move(b) } noexcept;
+    };
+
+    template <NoexceptMove T>
+    void safe_swap(T& left, T& right)
+    {
+        auto tmp = std::move(left);
+        left = std::move(right);
+        right = std::move(tmp);
+    }
+
+    void Check_If_Type_CanBe_Noexcept_Swapped()
+    {
+        SafeToMoveType a, b;
+        safe_swap(a, b); // OK
+
+        UnsafeToMoveType x, y;
+
+        /** Wouldn't compile **/
+        // safe_swap(x, y);      // ====> UnsafeType doesn't satisfy the noexcept requirement
+        unsafe_swap(x, y); // UnsafeType doesn't satisfy the noexcept requirement
+    }
+}
+
+
 
 namespace Concepts::FoldExpression
 {
@@ -2560,12 +2611,15 @@ void Concepts::TestAll()
     // RequiresSequence::Test1();
 
     // Callables::Test_Invocable();
-    Callables::Test_Invocable_Regular();
+    // Callables::Test_Invocable_Regular();
     // Callables::Test_Predicate();
     // Callables::Test_Predicate_WithParams();
     // Callables::Test_Predicate_WithParams_Variadic();
     // Callables::Test_Predicate_PrintVector();
 
+    // Noexcept::Tests();
+    //Noexcept::ChecK_Assignment_Cant_Throw();
+    Noexcept::Check_If_Type_CanBe_Noexcept_Swapped();
 
 
 
@@ -2623,9 +2677,6 @@ void Concepts::TestAll()
     // IntegerConcepts::IntegerSum();
 
     // Iterators::SortCollections_RandomAccessIterator();
-
-    // Noexcept::Tests();
-    // Noexcept::ChecK_Assignment_Cant_Throw();
 
     // ClassMethods::DisableClassMethods();
 

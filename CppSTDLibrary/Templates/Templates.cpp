@@ -2402,8 +2402,8 @@ void Templates::TestAll()
     // ClassSpecialization::Test();
     // ClassSpecialization::Test2();
 
-    Specialization::Test();
-    Specialization::PrintOperator_TemplateSpecialisation_Ostream();
+    // Specialization::Test();
+    // Specialization::PrintOperator_TemplateSpecialisation_Ostream();
 
     // PartialSpecialization::Test();
     // PartialSpecialization::Test2();

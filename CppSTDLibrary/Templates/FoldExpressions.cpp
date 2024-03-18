@@ -335,7 +335,8 @@ namespace FoldExpressions
 
     /////////////////////////////////////////////////////////
 
-    void Init_Vector_Class() {
+    void Init_Vector_Class()
+    {
         std::cout << "---------------------------------------------------- Test1: ----------------------------------\n" << std::endl;
         {
             Blob blob(5, "C++ Truths");
@@ -441,12 +442,11 @@ namespace FoldExpressions
     }
 }
 
-namespace FoldExpressions
+namespace FoldExpressions::Classes
 {
-
     template<typename... Bases>
-    class MultiBase : private Bases... {
-    public:
+    struct MultiBase : private Bases...
+    {
         void print() {
             // call print() of all base classes:
             (..., Bases::print());
@@ -465,17 +465,46 @@ namespace FoldExpressions
         void print() { std::cout << "C::print()\n"; }
     };
 
-    void FoldClassMethod() {
+    void FoldClassMethod()
+    {
         MultiBase<A, B, C> mb;
         mb.print();
         // MultiBase<A, B, C>().print();
     }
+}
 
-    //==============================================================================================
+namespace FoldExpressions::Classes
+{
+    struct One {
+        One() { std::cout << "One::One()\n"; }
+    };
+
+    struct Two {
+        Two() { std::cout << "Two::Two()\n"; }
+    };
+
+    struct Three {
+        Three() { std::cout << "Three::Three()\n"; }
+    };
+
+    template<typename ...Base>
+    struct MyStruct :  Base... {
+        MyStruct() : Base()... {}
+    };
+
+
+    void Call_All_Base_Class_Constructor()
+    {
+        MyStruct<One, Two, Three> s{};
+    }
+}
+
+namespace FoldExpressions
+{
 
     template<typename T>
-    class Base {
-    private:
+    class Base
+    {
         T value{};
 
     public:
@@ -518,7 +547,8 @@ namespace FoldExpressions
 
     //==============================================================================================
 
-    struct Node {
+    struct Node
+    {
         int value;
         Node* left;
         Node* right;
@@ -546,34 +576,36 @@ namespace FoldExpressions
 void FoldExpressions::TestAll()
 {
 
-    Test();
-    PrintTest();
-    PrintTest_Spaces();
-    Print_Size_Test();
-    PrintTest1();
-    FillVector();
-    FillVector2();
-    Make_Vector();
+    // Test();
+    // PrintTest();
+    // PrintTest_Spaces();
+    // Print_Size_Test();
+    // PrintTest1();
+    // FillVector();
+    // FillVector2();
+    // Make_Vector();
 
-    GetFirstElementType_CreateVector();
+    // GetFirstElementType_CreateVector();
 
-    CallFunction();
-    CallFunctionList();
-    PassParamsToFunction();
+    // CallFunction();
+    // CallFunctionList();
+    // PassParamsToFunction();
 
-    OperatorsTests();
-    IsContainsZero();
-    Init_Vector_Class();
+    // OperatorsTests();
+    // IsContainsZero();
+    // Init_Vector_Class();
 
-    FoldClassMethod();
-    FoldedPathTraversals();
-    FoldedMultiClassConstructors();
+    // Classes::FoldClassMethod();
+    Classes::Call_All_Base_Class_Constructor();
 
-    Average();
-    For_Each();
-    CountMatches_Compiletime();
-    SumElements_Default();
-    InvokeFunc_WithFolds();
+    // FoldedPathTraversals();
+    // FoldedMultiClassConstructors();
 
-    FoldExpressions::Factorial_Test();
+    // Average();
+    // For_Each();
+    // CountMatches_Compiletime();
+    // SumElements_Default();
+    // InvokeFunc_WithFolds();
+
+    // FoldExpressions::Factorial_Test();
 }
