@@ -11,8 +11,8 @@
 
 namespace Composite::Pages
 {
-    class IPage {
-    public:
+    struct IPage
+    {
         virtual void Add([[maybe_unused]] IPage& page) noexcept {}
         virtual void Remove() noexcept {}
         virtual void Delete([[maybe_unused]] IPage& page) noexcept {}
@@ -36,7 +36,8 @@ namespace Composite::Pages
     };
 
 
-    class Copy : public IPage {
+    class Copy : public IPage
+    {
         std::vector<IPage> copyPages;
 
     public:

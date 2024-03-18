@@ -188,6 +188,28 @@ namespace Format
     }
 };
 
+
+namespace Format::Doubles
+{
+    void Format_Doubles_Precision()
+    {
+        // Typical formatting options are present (e.g. precision)
+        auto pi5 = std::format("{:.5}", std::numbers::pi);   // pi5 == "3.1416"
+
+        std::cout << "pi5 == " << std::quoted(pi5) << "\n";
+
+
+        // [width, precision] Formatting arguments can be provided as part of the argument list
+        for (const std::pair<int, int>& formatParams: std::vector<std::pair<int, int>>{{
+            {10, 3}, {11, 4}, {12, 5}
+        }})
+        {
+            auto pivar = std::format("{: ^{}.{}}", std::numbers::pi, formatParams.first, formatParams.second);
+            std::cout << "pivar == " << std::quoted(pivar) << "\n";
+        }
+    }
+}
+
 namespace Format::Date_and_Time
 {
     using namespace std::literals;
@@ -310,6 +332,8 @@ void Format::TestAll()
     // Format::VFormatTest1();
     // Format::VFormatPrint();
 
+    Doubles::Format_Doubles_Precision();
+
 
     // SimpleTest();
     // Test_2();
@@ -324,5 +348,5 @@ void Format::TestAll()
     // Date_and_Time::Format_TimePoint();
 
 
-    BitFieldStructFormatter::Test();
+    // BitFieldStructFormatter::Test();
 }
