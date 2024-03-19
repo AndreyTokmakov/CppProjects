@@ -28,6 +28,7 @@ add_executable(${PROJECT_NAME} MACOSX_BUNDLE
         Valarray/Valarray.cpp Valarray/Valarray.h
         Vector/Vector.cpp Vector/Vector.h
         MultiMap/MultiMap.cpp MultiMap/MultiMap.h
+        Helpers/Helpers.h Helpers/Wrapper.h
  )
 
 # include all components

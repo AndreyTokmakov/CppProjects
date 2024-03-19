@@ -1012,13 +1012,13 @@ int main([[maybe_unused]] int argc,
     // ReturnTypeCast::tests();
     // CallFunctionByName::Test();
     // ReturnClass_MemberRef_CopyCTor::tests();
-    Algorithms::TestAll();
+    // Algorithms::TestAll();
     // AutoTests::TestAll();
     // BinaryAnalyzer::TestAll();
     // Cpp23_Features::TestAll();
     // Concepts::TestAll();
     // Comparators::TestAll();
-    // CollectionsTests::TestAll();
+    CollectionsTests::TestAll();
     // Coroutines::TestAll();
     // CopyElision_RVO::TestAll();
     // ConstexprMap::TestAll();

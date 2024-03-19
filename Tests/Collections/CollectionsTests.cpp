@@ -596,53 +596,13 @@ namespace CollectionsTests::HeterogeneousLookup
 
 namespace CollectionsTests::HeterogeneousLookup2
 {
-    struct Int
+
+    using Helpers::Integer;
+
+
+    Integer createInt(Integer::value_type value)
     {
-        using ValueType = int32_t;
-        ValueType value {0};
-
-        ~Int() {
-            std::cout << "~Int::Int(" << value << ")\n";
-        }
-
-        Int() {
-            std::cout << "Int::Int(" << value << ")\n";
-        }
-
-        explicit Int(ValueType v) : value {v} {
-            std::cout << "Int::Int(" << value << ")\n";
-        };
-
-        Int(const Int& obj): value {obj.value}
-        {
-            std::cout << "Copy constructor: Int::Int(" << value << ")\n";
-        }
-
-        Int& operator=(const Int& obj)
-        {
-            std::cout << "Copy Assignment operator: Int::Int(" << value << ")\n";
-            this->value = obj.value;
-            return *this;
-        }
-
-        Int(Int&& obj) noexcept: value { std::exchange(obj.value, 0)}
-        {
-            std::cout << "Copy constructor: Int::Int(" << value << ")\n";
-        }
-
-        Int& operator=(Int&& obj) noexcept
-        {
-            std::cout << "Move Assignment operator: Int::Int(" << value << ")\n";
-            this->value = obj.value;
-            return *this;
-        }
-
-        friend Int createInt(Int::ValueType value);
-    };
-
-    Int createInt(Int::ValueType value)
-    {
-        return Int {value};
+        return Integer {value};
     }
 
     struct Hasher
@@ -653,8 +613,14 @@ namespace CollectionsTests::HeterogeneousLookup2
             return std::hash<int32_t>{}(value);
         }
 
-        size_t operator()(const Int& integer) const {
+        size_t operator()(const Integer& integer) const {
             return std::hash<int32_t>{}(integer.value);
+        }
+    };
+
+    struct IntegerHash {
+        std::size_t operator()(const Integer& s) const noexcept {
+            return std::hash<int>{}(s.getValue());
         }
     };
 
@@ -662,26 +628,42 @@ namespace CollectionsTests::HeterogeneousLookup2
     {
         using is_transparent = void;
 
-        bool operator()(int64_t left, const Int& right) const {
+        bool operator()(int64_t left, const Integer& right) const {
             return left == right.value;
         }
 
-        bool operator()(const Int& left, const Int& right) const {
+        bool operator()(const Integer& left, const Integer& right) const {
             return left.value == right.value;
         }
     };
 
-    void Test()
+
+    void Test_Bad()
     {
-        std::unordered_map<Int, std::string, Hasher, Comparator> data;
+        std::unordered_map<Integer, std::string, IntegerHash> data;
 
         data.emplace(10, std::string {"Hello World!"});
         data.emplace(5, std::string {"Goodbye!"});
 
-        std::cout << "\tbefore find(5)" <<  std::endl;
+        std::cout << " ---------------------- before find(5) -----------------------" <<  std::endl;
+        auto j = data.find(5);
+        std::cout << " ---------------------- after -----------------------" <<  std::endl;
 
+
+        std::cout << "j->first.value == " << j->first.value << ", j->second == " << j->second << "\n";
+        // Output:j->first.value == 5, j->second == Goodbye!
+    }
+
+    void Test_OK()
+    {
+        std::unordered_map<Integer, std::string, Hasher, Comparator> data;
+
+        data.emplace(10, std::string {"Hello World!"});
+        data.emplace(5, std::string {"Goodbye!"});
+
+        std::cout << " ---------------------- before find(5) -----------------------" <<  std::endl;
         auto j = data.find(5z);
-        // Output: j->first == Wrapped{5}, j->second == "Goodbye!"
+        std::cout << " ---------------------- after -----------------------" <<  std::endl;
 
         std::cout << "j->first.value == " << j->first.value << ", j->second == " << j->second << "\n";
         // Output:j->first.value == 5, j->second == Goodbye!
@@ -709,5 +691,6 @@ void CollectionsTests::TestAll()
     // Vector::GetRefToBack_And_DeleteLastElement();
 
     // HeterogeneousLookup::Test();
-    HeterogeneousLookup2::Test();
+    // HeterogeneousLookup2::Test_Bad();
+    HeterogeneousLookup2::Test_OK();
 };

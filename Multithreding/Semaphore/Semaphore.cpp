@@ -16,6 +16,7 @@
 #include <chrono>
 #include <semaphore>
 #include <syncstream>
+#include <queue>
 
 
 using namespace std::literals;
@@ -180,6 +181,33 @@ namespace Semaphore::BinarySemaphore
 
 namespace Semaphore::CountingSemaphore
 {
+    std::string time() {
+        return std::format("{:%d-%m-%Y %H:%M:%OS} ", std::chrono::system_clock::now());
+    }
+
+    void BasicTest()
+    {
+        std::counting_semaphore<> semaphore {0};
+
+        auto producer = [&]() {
+            std::this_thread::sleep_for(std::chrono::seconds(2));
+            std::osyncstream(std::cout) << time() << "Producer: releasing the semaphore" << '\n';
+            semaphore.release();
+        };
+
+        auto consumer = [&] {
+            std::osyncstream(std::cout) << time() << "Consumer: trying to acquire semaphore" << '\n';
+            // Try to atomically decrease the counter in the semaphore. If the counter is already 0, blocks.
+            semaphore.acquire();
+            std::osyncstream(std::cout) << time() << "Consumer: Done" << '\n';
+        };
+
+        std::jthread t1(producer), t2(consumer);
+    }
+}
+
+namespace Semaphore::CountingSemaphore
+{
     void Producer_Consumer()
     {
         std::vector<int> myVec{};
@@ -210,6 +238,77 @@ namespace Semaphore::CountingSemaphore
 };
 
 
+namespace Semaphore::CountingSemaphore
+{
+    struct Data {};
+
+    // Simple unbounded thread-safe many<->many producer/consumer queue
+    struct WorkQueue
+    {
+        std::deque<Data> queue {};
+        std::mutex mutex {};
+        std::counting_semaphore<> semaphore {0};
+
+        void push(std::convertible_to<Data> auto&& data)
+        {   // Push a new element into the queue
+            {
+                std::lock_guard lock {mutex};
+                queue.push_back(std::forward<decltype(data)>(data));
+            }
+
+            // Atomically increase the counter in the semaphore.
+            // If any threads are blocked on acquire, they will be notified.
+            semaphore.release();
+        }
+
+        Data pop()
+        {   // Try to atomically decrease the counter in the semaphore. If the counter is already 0, blocks.
+            semaphore.acquire();
+
+            // At this point we are guaranteed available data, still need to synchronize against other consumers.
+            std::lock_guard lock {mutex};
+            Data result = std::move(queue.front());
+            queue.pop_front();
+            return result;
+        }
+    };
+
+    void WorkQueue_Demo()
+    {
+        WorkQueue q;
+
+        auto producer = std::jthread{[&q]
+        {
+            std::this_thread::sleep_for(200ms);
+
+            std::cout << "Producer: publishing data" << std::endl;
+            q.push(Data{});
+
+            std::this_thread::sleep_for(200ms);
+
+            for (int i = 0; i < 2; ++i)
+            {
+                std::cout << "Producer: publishing data" << std::endl;
+                q.push(Data{});
+            }
+        }};
+
+        auto consumer = [&q](const std::string& name)
+        {
+            for (int i = 0; i < 2; ++i)
+            {
+                std::cout << name << ": attempting to read data" << std::endl;
+                auto _ = q.pop();
+                std::cout << name << ": succeeded in reading data" << std::endl;
+            }
+        };
+
+        std::jthread consumer1 {consumer, "Consumer1"},
+                     consumer2 {consumer, "Consumer2"};
+    }
+}
+
+
 void Semaphore::TEST_ALL()
 {
     // BinarySemaphore::Release_Acquire_BasicTest();
@@ -219,6 +318,8 @@ void Semaphore::TEST_ALL()
     // BinarySemaphore::Simple_Acquire_Release();
     // BinarySemaphore::Semaphore_VS_ConditionalVariable();
 
-    CountingSemaphore::Producer_Consumer();
+    CountingSemaphore::BasicTest();
+    // CountingSemaphore::Producer_Consumer();
+    // CountingSemaphore::WorkQueue_Demo();
 };
 

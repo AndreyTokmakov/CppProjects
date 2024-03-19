@@ -69,7 +69,7 @@ int main([[maybe_unused]] int argc,
     // Exceptions_Handling::TEST_ALL();
     // Future::TEST_ALL();
 
-    Latch::TEST_ALL();
+    // Latch::TEST_ALL();
     // LockFreeQueue::TEST_ALL()
     // Multithreading_Performance::TEST_ALL();
     // Multithreading_Collections::TEST_ALL();
@@ -79,7 +79,7 @@ int main([[maybe_unused]] int argc,
     // PackagedTask::TEST_ALL();
     // ParallelExecutionAlgoritms::TEST_ALL();
 
-    // Semaphore::TEST_ALL();
+    Semaphore::TEST_ALL();
     // Synchronization::TEST_ALL();
     // SynchStream::TEST_ALL();
     // SynchStream_Custom::TEST_ALL();
