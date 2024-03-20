@@ -1018,7 +1018,33 @@ namespace Exceptions
         // якобы теперь ОК
         // Helpers::~Integer() will never be called
     }
+}
 
+
+namespace TT
+{
+    template <typename T>
+    struct Class
+            {
+        void f() {
+            this->asdfadfa();
+
+            **** T:: adsf[234] . sdf;
+
+            // class; // incorrect syntax
+        }
+
+        void b() {
+            std::cout << T() << std::endl;
+        }
+    };
+
+    void wtf()
+    {
+        Class<int> c;
+        c.b();
+        // c.f();
+    }
 }
 
 int main([[maybe_unused]] int argc,
@@ -1039,7 +1065,7 @@ int main([[maybe_unused]] int argc,
 
     // ScopeExit::ScopeExit();
 
-    Exceptions::test();
+    // Exceptions::test();
 
 
 

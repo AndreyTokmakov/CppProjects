@@ -388,6 +388,51 @@ namespace Templates::Templated_Templates
     }
 }
 
+namespace Templates::TemplatedSpecialisation
+{
+    template <typename T>
+    struct MyClass
+    {
+        using type = T;
+
+        MyClass() {
+            std::cout << "MyClass<T>" << std::endl;
+        }
+    };
+
+    template <typename T>
+    struct MyClass<T*>
+    {
+        using type = T*;
+
+        explicit MyClass(type p) : ptr(p) {
+            std::cout << "MyClass<T*>" << std::endl;
+        }
+
+        type getPtr() {
+            return ptr;
+        }
+
+    private:
+        type ptr;
+    };
+
+    void Test()
+    {
+        MyClass<int> generic;
+        MyClass<int*> ci(nullptr);
+        MyClass<long*> cl(nullptr);
+        MyClass<std::pair<char, float>*> cp(0);
+
+        /**
+           MyClass<T>
+           MyClass<T*>
+           MyClass<T*>
+           MyClass<T*>
+         */
+    }
+}
+
 void Templates::TestAll()
 {
     // FoldExpressions::MatchingTests();
@@ -402,5 +447,7 @@ void Templates::TestAll()
     // Specialization::Test();
     // Specialization::PrintOperator_TemplateSpecialisation_Ostream();
 
-    Templated_Templates::Container_WithTemplated_Types();
+    // Templated_Templates::Container_WithTemplated_Types();
+
+    TemplatedSpecialisation::Test();
 }
