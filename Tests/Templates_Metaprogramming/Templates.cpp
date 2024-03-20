@@ -15,6 +15,7 @@
 #include <functional>
 #include <utility>
 #include <cstdint>
+#include <list>
 
 namespace
 {
@@ -351,6 +352,42 @@ namespace Traits
 }
 
 
+namespace Templates::Templated_Templates
+{
+    template <typename T,
+              template <typename, typename> typename Container>
+    class MyClass
+    {
+        Container<T, std::allocator<T>> container;
+
+    public:
+        void push(const T& value)
+        {
+            container.push_back(value);
+        }
+
+        T pop()
+        {
+            T value = container.back();
+            container.pop_back();
+            return value;
+        }
+    };
+
+    void Container_WithTemplated_Types()
+    {
+        MyClass<int, std::vector> with_vector;
+        with_vector.push(1);
+        with_vector.push(2);
+        with_vector.push(3);
+
+        MyClass<int, std::list> with_list;
+        with_list.push(4);
+        with_list.push(5);
+        with_list.push(6);
+    }
+}
+
 void Templates::TestAll()
 {
     // FoldExpressions::MatchingTests();
@@ -364,4 +401,6 @@ void Templates::TestAll()
 
     // Specialization::Test();
     // Specialization::PrintOperator_TemplateSpecialisation_Ostream();
+
+    Templated_Templates::Container_WithTemplated_Types();
 }
