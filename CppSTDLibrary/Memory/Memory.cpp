@@ -1147,8 +1147,8 @@ namespace Memory::OperatorNew {
     }
 }
 
-namespace Memory::Reload_New_and_Delete {
-
+namespace Memory::Reload_New_and_Delete
+{
 	class Object {
 	public:
 		int value;
@@ -1260,13 +1260,73 @@ namespace Memory::Reload_New_and_Delete {
 		//std::cout << obj->getValue() << std::endl;
 		//delete obj;
 	}
+}
 
+namespace Memory::Reload_New_and_Delete
+{
+    struct Deleters
+    {
+        void* operator new(std::size_t size) noexcept {
+            decltype(auto) memBlock = malloc(size);
+            return memBlock ? memBlock: throw std::bad_alloc{};
+        }
 
-	//--------------------------- Relead global NEW and DELETE ------------------------------------------
+        void operator delete(void* ptr, std::size_t size) noexcept {
+            std::cout << "free: " << size << std::endl;
+            free(ptr);
+        }
+    };
 
+    struct Base: Deleters
+    {
+        std::array<std::byte, 8> buffer {};
+        virtual ~Base() = default;
+        virtual void f() {}
+    };
+
+    struct BaseBad: Deleters
+    {
+        std::array<std::byte, 8> buffer {};
+        virtual void f() {}
+    };
+
+    struct Derived : public Base
+    {
+        std::array<std::byte, 8> buffer2 {};
+    };
+
+    struct DerivedBad : public BaseBad
+    {
+        std::array<std::byte, 8> buffer2 {};
+    };
+
+    void deleteOne(Base* base) {
+        delete base;
+    }
+
+    void deleteTwo(BaseBad* base) {
+        delete base;
+    }
+
+    void Delete_Object_Size()
+    {
+        deleteOne(new Base());
+        deleteOne(new Derived());
+
+        deleteTwo(new DerivedBad());
+
+        /**
+            free: 16
+            free: 24
+            free: 16
+        **/
+    }
 
 }
 
+
+
+//--------------------------- Relead global NEW and DELETE ------------------------------------------
 /*
 void* operator new(size_t count) {
 	std::cout << "allocating " << count << " bytes\n";
@@ -1775,9 +1835,13 @@ void Memory::TestAll()
 	// Reload_New_and_Delete::TestOverloadedNew();
 	// Reload_New_and_Delete::Disable_New__UseOnly_MakeUnique();
 
+    Reload_New_and_Delete::Delete_Object_Size(); /** calling delete(size) depending of the Size of the object **/
+
 	// OffSet::Class_Params_OFFSET_OF();
 
 	// ReleoadGlobal_NEW_DELETE::Test();
+
+    // RestrictObjectHeapCreation::CreateObjects_PrivateFunc();
 
 	//------------------------------------------------------------------------//
 
@@ -1802,6 +1866,4 @@ void Memory::TestAll()
 	// Alligned_New_Delete::Simple_OverAlligned_New();
 	// Alligned_New_Delete::Custom_Alligned_New();
 
-
-    RestrictObjectHeapCreation::CreateObjects_PrivateFunc();
 };

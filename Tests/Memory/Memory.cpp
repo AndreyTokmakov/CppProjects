@@ -563,6 +563,8 @@ namespace Memory::UniquePtr_BAD
     }
 }
 
+
+
 void Memory::TestAll()
 {
     // CleanUP_Exception_Test();
@@ -590,5 +592,6 @@ void Memory::TestAll()
 
     // MakeUnique_ForOverwrite::AllocateArray_AndInitialize();
 
-    UniquePtr_BAD::Test();
+    // UniquePtr_BAD::Test();
+
 }

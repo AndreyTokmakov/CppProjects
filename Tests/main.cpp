@@ -987,6 +987,39 @@ namespace PermissionsTest
     }
 }
 
+namespace Exceptions
+{
+    struct BadClass
+    {
+        bool throwException {false};
+
+        explicit BadClass(bool bad): throwException {bad} {
+            std::cout << "BadClass created\n";
+        }
+        ~BadClass() {
+            throw std::runtime_error("it's actually impossible to catch");
+            std::cout << "BadClass created\n";
+        }
+    };
+
+    void test()
+    {
+        Helpers::Integer integer {12345};
+
+        try {
+            BadClass obj {true};
+            /** **/
+        } catch (const std::exception& exc) {
+            std::cout << "Error: " << exc.what() << std::endl;
+        } catch (...) {
+            std::cout << "Unknown error" << std::endl;
+        }
+
+        // якобы теперь ОК
+        // Helpers::~Integer() will never be called
+    }
+
+}
 
 int main([[maybe_unused]] int argc,
          [[maybe_unused]] char** argv)
@@ -1006,6 +1039,9 @@ int main([[maybe_unused]] int argc,
 
     // ScopeExit::ScopeExit();
 
+    Exceptions::test();
+
+
 
     /** * * * * *  Move to lib * * * * * **/
     // OperatorCall_ExplicitTypeSpecialization::Test();
@@ -1018,7 +1054,7 @@ int main([[maybe_unused]] int argc,
     // Cpp23_Features::TestAll();
     // Concepts::TestAll();
     // Comparators::TestAll();
-    CollectionsTests::TestAll();
+    // CollectionsTests::TestAll();
     // Coroutines::TestAll();
     // CopyElision_RVO::TestAll();
     // ConstexprMap::TestAll();
