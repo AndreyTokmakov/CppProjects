@@ -1670,6 +1670,27 @@ namespace Algorithms::Strings
         return std::string{words[longestIdx]};
     }
 
+    std::string longest_word_fast(const std::string& input)
+    {
+        uint32_t startMax {0}, endMax {0}, prev {0}, idx {};
+        for (; idx < input.size(); ++idx) {
+            if (' ' == input[idx]) {
+                if (idx - prev > endMax - startMax) {
+                    startMax = prev;
+                    endMax = idx;
+                }
+                prev = idx + 1;
+            }
+        }
+
+        if (idx - prev > endMax - startMax) {
+            startMax = prev;
+            endMax = idx;
+        }
+
+        return {input,startMax ,endMax - startMax};
+    }
+
     void Longest_Word()
     {
         for (const auto  &[value, expected]: std::vector<StringPair> {
@@ -1680,9 +1701,15 @@ namespace Algorithms::Strings
 
         })
         {
-            const std::string actual = longest_word(value);
-            if (expected != actual) {
-                std::cerr << expected << " != " << actual << std::endl;
+            const std::string actual1 = longest_word(value);
+            if (expected != actual1) {
+                std::cerr << expected << " != " << actual1 << std::endl;
+                return;
+            }
+
+            const std::string actual2= longest_word_fast(value);
+            if (expected != actual2) {
+                std::cerr << expected << " != " << actual2 << std::endl;
                 return;
             }
         }
@@ -1937,10 +1964,10 @@ void Algorithms::TestAll()
     // Strings::Reverse_Words_in_String2();
     // Strings::Compare_Version_Numbers();    // INFO: Unfinished yet | --> TODO
     // Strings::Contains();
-    // Strings::Longest_Word();
+    Strings::Longest_Word();
     // Strings::Intersperse_String();
     // Strings::Count_Anagrams();
-    Strings::Interleaving_String();
+    // Strings::Interleaving_String();
 
     // Bits::ReverseBits();
 

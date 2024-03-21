@@ -2131,6 +2131,27 @@ namespace Strings
         return std::string{words[longestIdx]};
     }
 
+    std::string longest_word_fast(const std::string& input)
+    {
+        uint32_t startMax {0}, endMax {0}, prev {0}, idx {};
+        for (; idx < input.size(); ++idx) {
+            if (' ' == input[idx]) {
+                if (idx - prev > endMax - startMax) {
+                    startMax = prev;
+                    endMax = idx;
+                }
+                prev = idx + 1;
+            }
+        }
+
+        if (idx - prev > endMax - startMax) {
+            startMax = prev;
+            endMax = idx;
+        }
+
+        return {input,startMax ,endMax - startMax};
+    }
+
     void Longest_Word()
     {
         for (const auto  &[value, expected]: std::vector<StringPair> {
@@ -2141,9 +2162,15 @@ namespace Strings
 
         })
         {
-            const std::string actual = longest_word(value);
-            if (expected != actual) {
-                std::cerr << expected << " != " << actual << std::endl;
+            const std::string actual1 = longest_word(value);
+            if (expected != actual1) {
+                std::cerr << expected << " != " << actual1 << std::endl;
+                return;
+            }
+
+            const std::string actual2= longest_word_fast(value);
+            if (expected != actual2) {
+                std::cerr << expected << " != " << actual2 << std::endl;
                 return;
             }
         }
@@ -2259,6 +2286,135 @@ namespace Strings
     }
 }
 
+
+namespace Strings
+{
+    using namespace std::string_view_literals;
+
+    int roman_to_int(const std::string& str)
+    {
+        int result = 0;
+        for (size_t idx = 0, size = str.size(); idx < str.size(); ++idx)
+        {
+            const char c = str[idx];
+            if ('M' == c)      result += 1000;
+            else if ('D' == c) result += 500;
+            else if ('C' == c) {
+                if (size > idx && str[idx + 1] == 'D') {
+                    result += 400;
+                    ++idx;
+                } else if (size > idx && str[idx + 1] == 'M') {
+                    result += 900;
+                    ++idx;
+                } else {
+                    result += 100;
+                }
+            }
+            else if ('L' == c) result += 50;
+            else if ('X' == c) {
+                if (size > idx && str[idx + 1] == 'L') {
+                    result += 40;
+                    ++idx;
+                } else if (size > idx && str[idx + 1] == 'C') {
+                    result += 90;
+                    ++idx;
+                } else {
+                    result += 10;
+                }
+            }
+            else if ('V' == c) result += 5;
+            else if ('I' == c) {
+                if (size > idx && str[idx + 1] == 'V') {
+                    result += 4;
+                    ++idx;
+                } else if (size > idx && str[idx + 1] == 'X') {
+                    result += 9;
+                    ++idx;
+                } else {
+                    result += 1;
+                }
+            }
+        }
+        return result;
+    }
+
+
+    void RomanToInt()
+    {
+        for (const auto  &[roman_num_str, expected]: std::vector<std::pair<std::string, int>> {
+                { "LVIII", 58},
+                { "MCMXCIV", 1994}
+        })
+        {
+            const int actual = roman_to_int(roman_num_str);
+            // std::cout << actual << std::endl;
+            if (expected != actual) {
+                std::cerr << expected << " != " << actual << std::endl;
+                return;
+            }
+        }
+        std::cout << "OK: All tests passed\n";
+    }
+}
+
+namespace Strings
+{
+    using namespace std::string_view_literals;
+
+    std::string int_to_roman(int value)
+    {
+        constexpr std::array<std::pair<std::string_view, u_int16_t>, 14> numerals {{
+                                                                                           {"M"sv, 1000}, {"CM"sv, 900}, {"D"sv, 500}, {"CD"sv, 400},
+                                                                                           {"C"sv, 100}, {"XC"sv, 90}, {"LX"sv, 60}, {"L"sv, 50},
+                                                                                           {"XL"sv, 40}, {"X"sv, 10}, {"IX"sv, 9}, {"V"sv, 5}, {"IV"sv, 4}, {"I"sv, 1}
+                                                                                   }};
+
+        std::string result;
+        while (value) {
+            for (const auto& [ch, val]: numerals) {
+                if (value >= val) {
+                    value -= val;
+                    result.append(ch.data());
+                    break;
+                }
+            }
+        }
+        return result;
+    }
+
+    /**
+    Roman numerals are represented by seven different symbols: I, V, X, L, C, D and M.
+        Symbol       Value
+        I             1
+        V             5
+        X             10
+        L             50
+        C             100
+        D             500
+        M             1000
+
+     For example, 2 is written as II in Roman numeral, just two one's added together.
+     12 is written as XII, which is simply X + II. The number 27 is written as XXVII, which is XX + V + II.
+    */
+    void IntToRoman()
+    {
+        for (const auto  &[roman_number, expected]: std::vector<std::pair<int, std::string>> {
+                {110, "CX"},
+                {1650, "MDCL"},
+                {1994, "MCMXCIV"},
+        })
+        {
+            std::string actual = int_to_roman(roman_number);
+            if (expected != actual) {
+                std::cerr << expected << " != " << actual << std::endl;
+                return;
+            }
+        }
+        std::cout << "OK: All tests passed\n";
+    }
+}
+
+
 void Strings::TestAll()
 {
 
@@ -2278,7 +2434,10 @@ void Strings::TestAll()
 
     // Strings::Intersperse_String();
 
-    Strings::Count_Anagrams();
+    // Strings::RomanToInt();
+    // Strings::IntToRoman();
+
+    // Strings::Count_Anagrams();
 
     // Strings::CheckIfStrings_RotateRotateEquals();
 
