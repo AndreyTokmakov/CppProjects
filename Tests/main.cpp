@@ -1021,29 +1021,29 @@ namespace Exceptions
 }
 
 
-namespace TT
+namespace UBBook
 {
-    template <typename T>
-    struct Class
-            {
-        void f() {
-            this->asdfadfa();
-
-            **** T:: adsf[234] . sdf;
-
-            // class; // incorrect syntax
-        }
-
-        void b() {
-            std::cout << T() << std::endl;
-        }
+    struct User
+    {
+        std::string name;
+        std::vector<int> tokens;
     };
 
-    void wtf()
+    User get_user()
     {
-        Class<int> c;
-        c.b();
-        // c.f();
+        return {
+                "Hello world",
+                {1,2,3,4,5}
+        };
+    }
+
+    void Test()
+    {
+        std::string&& name = get_user().name;
+        auto& v = *(std::vector<int>*)( (char*)(&name) + sizeof(std::string) );
+        for (int x : v) {
+            std::cout << x;
+        }
     }
 }
 
@@ -1067,6 +1067,7 @@ int main([[maybe_unused]] int argc,
 
     // Exceptions::test();
 
+    UBBook::Test();
 
 
     /** * * * * *  Move to lib * * * * * **/
@@ -1074,7 +1075,7 @@ int main([[maybe_unused]] int argc,
     // ReturnTypeCast::tests();
     // CallFunctionByName::Test();
     // ReturnClass_MemberRef_CopyCTor::tests();
-    Algorithms::TestAll();
+    // Algorithms::TestAll();
     // AutoTests::TestAll();
     // BinaryAnalyzer::TestAll();
     // Cpp23_Features::TestAll();
