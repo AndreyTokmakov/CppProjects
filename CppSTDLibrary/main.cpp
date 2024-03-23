@@ -1,13 +1,11 @@
-
-#include <iostream>
-#include <memory>
-#include <algorithm>
-#include <thread>
-#include <future>
-#include <vector>
-#include <fstream>
-#include <string>
-#include <atomic>
+/**============================================================================
+Name        : main.cpp
+Created on  : 29.02.2016
+Author      : Andrei Tokmakov
+Version     : 1.0
+Copyright   : Your copyright notice
+Description : Cpp STD lib
+============================================================================**/
 
 #include "Types.h"
 #include "AggregateInitialization/AggregateInitialization.h"
@@ -46,6 +44,7 @@
 #include "FunctionObjects/FunctionObjects.h"
 #include "IteratorTests/IteratorTests.h"
 #include "Lambdas/Lambdas.h"
+#include "LifetimeExtension/LifetimeExtension.h"
 #include "Locale/Locale.h"
 #include "Literals/Literals.h"
 #include "Math/Math.h"
@@ -83,106 +82,11 @@
 #include "Volatile/VolatileTests.h"
 
 
-
-namespace Multithreading {
-
-    void Process_All_CPUs()
-    {
-        std::vector<std::string> values;
-        for (int i = 0; i < 50; ++i) {
-            values.push_back(std::string("Value_").append(std::to_string(i)));
-        }
-
-        std::atomic<unsigned long> counter {0};
-        auto task = [&]()
-        {
-            size_t id { counter++ };
-            while (values.size() > id) {
-                const auto& val = values[id];
-                std::cout << val << std::endl;
-                // std::this_thread::sleep_for(std::chrono::seconds(1));
-                id = counter++;
-            }
-            std::cout << "Thread " << std::this_thread::get_id() << " Done" << std::endl;
-        };
-
-        std::vector<std::future<void>> workers;
-        const unsigned int threadsCount = std::thread::hardware_concurrency();
-        for (unsigned int i = 0; i < threadsCount; ++i) {
-            workers.emplace_back(std::async(task));
-        }
-
-        std::for_each(workers.cbegin(), workers.cend(), [](const auto& s) { s.wait(); } );
-    }
-
-
-    void Atomic_Tests() {
-        std::atomic<unsigned long> counter {3};
-
-        std::cout << counter << std::endl;
-
-        auto result = counter.fetch_add(1, std::memory_order_relaxed);
-        std::cout << "result = " << result << std::endl;
-
-        std::cout << counter << std::endl;
-    }
-}
-
-namespace StdAlgoritms
+int main([[maybe_unused]] int argc,
+         [[maybe_unused]] char** argv)
 {
-    void Unique() {
-        std::vector<int> numbers {1, 2, 2, 3, 4, 3 ,5};
-        const auto last = std::unique(numbers.begin(), numbers.end());
+    const std::vector<std::string_view> args(argv + 1, argv + argc);
 
-        for (auto iter = numbers.cbegin(); last != iter; ++iter)
-            std::cout << *iter << " ";
-        std::cout << std::endl;
-    }
-}
-
-
-namespace Files {
-
-    void ReadFile() {
-        constexpr std::string_view filePath {
-            R"(/home/andtokm/Projects/CppProjects/CppSTDLibrary/data/test_file.txt)"};
-
-        std::vector<std::string> inputLines, outputLines;
-        std::fstream file (filePath.data());
-
-        // Replace "[....]" ---> [....]
-        while (std::getline(file, inputLines.emplace_back())) { /** Read file lines **/ }
-        for (auto&& s: inputLines) {
-            if (auto start = s.find(R"("[)"); std::string::npos != start) {
-                if (auto end = s.find(R"(]")", start); std::string::npos != end) {
-                    s.erase(s.begin() + start);
-                    s.erase(s.begin() + end);
-                }
-            }
-            outputLines.emplace_back(s);
-        }
-
-        constexpr std::string_view filePathOut {
-                R"(/home/andtokm/Projects/CppProjects/CppSTDLibrary/data/test_file_out.txt)"};
-        std::fstream outFile (filePathOut.data(), std::ios::out);
-        for (auto s: outputLines)
-            outFile << s << '\n';
-        outFile.close();
-    }
-}
-
-
-
-int main(int argc, char** argv)
-{
-    // Types::Tests();
-    // Multithreading::Process_All_CPUs();
-    // Multithreading::Atomic_Tests();
-    // Strings::Parse_Automodeling_StepFileName();
-    // StdAlgoritms::Unique();
-
-
-    // Files::ReadFile();
     // AggregateInitialization::TestAll();
     // Algorithms::TestAll();
     // Alignment::TestAll();
@@ -195,7 +99,7 @@ int main(int argc, char** argv)
     // BitSet::TestAll();
     // BitwiseOperation::TestAll();
     // Byte::TestAll();
-    Chrono::TestAll();
+    // Chrono::TestAll();
     // Comparators::TestAll();
     // Concepts::TestAll();
     // ConsoleInOut::TestAll();
@@ -217,6 +121,7 @@ int main(int argc, char** argv)
     // FunctionObjects::TestAll();
     // Hashing::TestAll();
     // Lambdas::TestAll();
+    LifetimeExtension::TestAll();
     // Locale::TestAll();
     // Literals::TestAll();
     // MoveSemantics_RuleOfFive::TestAll();
@@ -246,13 +151,13 @@ int main(int argc, char** argv)
     // Variant::TestAll();
     // VolatileTests::TestAll();
     // TypeTraits::TestAll();
+    // Types::Tests();
     // Tuple::TestAll();
     // TypeCast::TestAll();
     // Int::TestAll();
     // Templates::TestAll();
     // Utilities::TestAll();
     // UniquePtr_Tests::TestAll();
-
     // WeakPtr::TestAll();
 
     return EXIT_SUCCESS;

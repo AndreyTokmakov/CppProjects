@@ -36,6 +36,7 @@ add_executable(${PROJECT_NAME}
 		Integer/Integer.cpp Integer/Integer.h
 		IteratorTests/IteratorTests.cpp IteratorTests/IteratorTests.h
 		Lambdas/Lambdas.cpp Lambdas/Lambdas.h
+		LifetimeExtension/LifetimeExtension.cpp LifetimeExtension/LifetimeExtension.h
 		Literals/Literals.cpp Literals/Literals.h
 		Locale/Locale.cpp Locale/Locale.h
 		Math/Math.cpp Math/Math.h

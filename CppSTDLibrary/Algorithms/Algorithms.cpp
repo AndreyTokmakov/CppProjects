@@ -1342,18 +1342,18 @@ namespace Algorithms::ModifyingSequenceOperations
         std::cout << numbers << std::endl;
     }
 
-    void Unique() {
-        std::cout << "TEST1:" << std::endl;
+    void Unique()
+    {
         {
-            std::vector<int> ints = { 1,2,3,1,2,3,3,4,5,4,5,6,7 };
-            print_vector_ex(ints, "Vector contains (Before): ");
-            std::sort(ints.begin(), ints.end()); // 1 1 2 2 3 3 3 4 4 5 5 6 7
-            auto last = std::unique(ints.begin(), ints.end());
-            ints.erase(last, ints.end());
-            print_vector_ex(ints, "Vector contains (After) : ");
-        }
+            std::vector<int> values { 1,2,3,1,2,3,3,4,5,4,5,6,7 };
+            std::cout << values << std::endl;
 
-        std::cout << "\nTEST2:\n" << std::endl;
+            std::sort(values.begin(), values.end()); // 1 1 2 2 3 3 3 4 4 5 5 6 7
+            const auto last = std::unique(values.begin(), values.end());
+            values.erase(last, values.end());
+
+            std::cout << values << std::endl << std::endl;
+        }
 
         {
             std::string s = "wanna go    to      space?";
@@ -1688,7 +1688,7 @@ void Algorithms::TestAll()
     // ModifyingSequenceOperations::Erase();
     // ModifyingSequenceOperations::Erase_IF();
     // ModifyingSequenceOperations::Rotate();
-    // ModifyingSequenceOperations::Unique();
+    ModifyingSequenceOperations::Unique();
     // ModifyingSequenceOperations::UniqueCopy();
     // ModifyingSequenceOperations::Generate();
     // ModifyingSequenceOperations::Swap_Ranges();
@@ -1715,7 +1715,7 @@ void Algorithms::TestAll()
     // BinarySearch::BinarySearch();
     // BinarySearch::UpperBound();
     // BinarySearch::UpperBound1();
-    BinarySearch::LowerBound_UpperBound();
+    // BinarySearch::LowerBound_UpperBound();
     // BinarySearch::EqualRange();
     // BinarySearch::Set_Union();
 
