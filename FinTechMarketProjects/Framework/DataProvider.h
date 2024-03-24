@@ -12,15 +12,19 @@ Description : DataProvider.h
 
 #include "OrderBook.h"
 
+#include <filesystem>
+
 namespace Framework
 {
     struct DataProvider
     {
         OrderBookBase& orderBook;
 
+        std::filesystem::path path;
+
         DataProvider(OrderBookBase& book);
 
-        void setStream();
+        void setStream(const std::filesystem::path& path);
 
         // TODO: Rename
         void start();

@@ -21,6 +21,7 @@ Description : C++ Utilities
 #include "StringUtilities.h"
 #include "FileUtilities.h"
 #include "CSVReader/Tests.h"
+#include "Base64.h"
 
 namespace
 {
@@ -188,6 +189,16 @@ namespace FileUtilities_Tests
     }
 }
 
+namespace Base64Tests
+{
+    void Test()
+    {
+        const std::string result = Base64::base64Encode("sdsdsdsd");
+        std::cout << result << std::endl;
+
+    }
+}
+
 // TODO: BitUtils
 //      - check bit is set
 //      - set bit
@@ -214,7 +225,9 @@ int main([[maybe_unused]] int argc,
     // FileUtilities_Tests::WriteToFile();
     // FileUtilities_Tests::AppendToFile();
 
-    CSV_Reader_Tests::TestAll();
+    Base64Tests::Test();
+
+    // CSV_Reader_Tests::TestAll();
 
     return EXIT_SUCCESS;
 }
