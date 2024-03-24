@@ -22,6 +22,8 @@
 #include "NEW/OrderBookNew.h"
 #include "Asymptoto/Asymptoto.h"
 
+#include "Framework/AppMain.h"
+
 
 #include <iostream>
 #include <fstream>
@@ -263,7 +265,9 @@ int main([[maybe_unused]] int argc,
 
     // OrderBookNew::TestAll();
 
-    Asymptoto::TestAll();
+    //Asymptoto::TestAll();
+
+    AppMain::TestAll(args);
 
     return EXIT_SUCCESS;
 }

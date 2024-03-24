@@ -1067,7 +1067,7 @@ int main([[maybe_unused]] int argc,
 
     // Exceptions::test();
 
-    UBBook::Test();
+    // UBBook::Test();
 
 
 
@@ -1104,7 +1104,7 @@ int main([[maybe_unused]] int argc,
     // UniquePtr_Size::SizeTest();
     // ExpressionTemplates::TestAll();
     // ObjectOrientedExperiments::RAIIWrapper::TestAll();
-    // ObjectOrientedExperiments::OOP_Experiments::TestAll();
+    ObjectOrientedExperiments::OOP_Experiments::TestAll();
     // ObjectOrientedExperiments::VirtualTables::TestAll();
     // Optional::TestAll();
     // PointsAndLines::TestAll();           // Geometry

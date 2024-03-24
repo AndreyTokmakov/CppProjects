@@ -409,6 +409,41 @@ namespace Change_Overrided_Method_Visibility
     }
 }
 
+namespace ObjectOrientedExperiments::ShadowingMemberVariable
+{
+    struct Base
+    {
+        int a {0};
+
+        void printA() const noexcept {
+            std::cout << a << std::endl;
+        }
+    };
+
+    struct Derived: Base
+    {
+        int a {0};
+
+        void setA(int v) noexcept {
+            a = v;
+        }
+    };
+
+    void Test()
+    {
+        Derived d;
+
+        d.printA();
+        std::cout << d.a << std::endl;
+
+        d.setA(123);
+        std::cout << std::endl;
+
+        d.printA();
+        std::cout << d.a << std::endl;
+    }
+}
+
 void ObjectOrientedExperiments::OOP_Experiments::TestAll()
 {
     // OOP_Experiments::FriendTests
@@ -427,5 +462,7 @@ void ObjectOrientedExperiments::OOP_Experiments::TestAll()
 
     // DefaultConstructor_VariablesInitialization::Test();
 
-    Change_Overrided_Method_Visibility::Test();
+    // Change_Overrided_Method_Visibility::Test();
+
+    ShadowingMemberVariable::Test();
 };
