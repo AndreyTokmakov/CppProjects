@@ -24,7 +24,7 @@ namespace
             '4', '5', '6', '7', '8', '9', '+', '/'
     };
 
-    constexpr char PADDING { '=' };
+    // constexpr char PADDING { '=' };
     constexpr size_t MAX_BITS_TO_ENCODE {6};
     constexpr size_t BITS_IN_BYTE {8};
 }

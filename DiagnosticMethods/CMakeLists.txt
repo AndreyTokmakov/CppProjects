@@ -75,7 +75,7 @@ add_executable(${PROJECT_NAME} MACOSX_BUNDLE
     TreatmentPlan/TreatmentPlan.cpp
     TreatmentPlan/TreatmentPlan.h TreatmentPlan/TreatmentPlan_Tests.cpp
     TreatmentPlan/TreatmentPlan_UnitTests.cpp
-        Model/Tooth.cpp Model/Tooth.h Model/Jaw.cpp Model/Jaw.h Model/ToothAxis.cpp Model/ToothAxis.h Model/Common.h Model/FDI.cpp Model/FDI.h Methods/SpeeСurve.cpp Methods/SpeeСurve.h)
+        Model/Tooth.cpp Model/Tooth.h Model/Jaw.cpp Model/Jaw.h Model/ToothAxis.cpp Model/ToothAxis.h Model/Common.h Model/FDI.cpp Model/FDI.h Methods/SpeeСurve.cpp Methods/SpeeСurve.h ../../../../../../Base64.cpp)
 
 target_link_libraries(${PROJECT_NAME} PRIVATE ${VTK_LIBRARIES} pthread)
 vtk_module_autoinit(TARGETS DiagnosticMethods MODULES ${VTK_LIBRARIES})

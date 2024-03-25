@@ -193,7 +193,7 @@ namespace Base64Tests
 {
     void Test()
     {
-        const std::string result = Base64::base64Encode("sdsdsdsd");
+        const std::string result = Base64::base64Encode("111111111122222222222223333333333333");
         std::cout << result << std::endl;
 
     }
