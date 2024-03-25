@@ -8,7 +8,9 @@ Description : Base64.h
 ============================================================================**/
 
 #include "Base64.h"
+#include <iostream>
 #include <array>
+#include <cstdint>
 
 namespace
 {
@@ -56,5 +58,18 @@ namespace Base64
         result.append(1, ENCODING_TABLE[encodedByte]);
         result.append(2 == str.size() % 3 ? 1 : 2, '=');
         return result;
+    }
+
+    std::string base64Encode2(const std::string &str)
+    {
+        std::cout << str << std::endl;
+
+        for (uint32_t idx = 0, size = str.size(); idx + 3 < size; ++idx)
+        {
+
+        }
+
+
+        return {};
     }
 };

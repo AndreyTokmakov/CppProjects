@@ -11,6 +11,7 @@ add_compile_options(-c -Wall -Wextra -O3 -std=c++23)
 add_executable(${PROJECT_NAME}
         main.cpp
         Assembly/AssemblyDemo.cpp
+        BinManipulation/BinManipulation.cpp BinManipulation/BinManipulation.h
         ExpressionTemplates/ExpressionTemplates.h ExpressionTemplates/ExpressionTemplates.cpp
         Punycode/Punycode.h Punycode/Punycode.cpp
         Encoding/Enconding.cpp Encoding/Enconding.h

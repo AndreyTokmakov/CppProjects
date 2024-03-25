@@ -53,6 +53,7 @@ Description : Tests C++ project
 #include <experimental/scope>
 
 #include "Algorithms/Algorithms.h"
+#include "BinManipulation/BinManipulation.h"
 #include "Geometry/PointsAndLines.h"
 #include "Concepts//Concepts.h"
 #include "Encoding/Unicode.h"
@@ -1069,15 +1070,17 @@ int main([[maybe_unused]] int argc,
 
     // UBBook::Test();
 
-
-
     /** * * * * *  Move to lib * * * * * **/
+
     // OperatorCall_ExplicitTypeSpecialization::Test();
     // ReturnTypeCast::tests();
     // CallFunctionByName::Test();
     // ReturnClass_MemberRef_CopyCTor::tests();
+
+
     // Algorithms::TestAll();
     // AutoTests::TestAll();
+    BinManipulation::TestAll();
     // BinaryAnalyzer::TestAll();
     // Cpp23_Features::TestAll();
     // Concepts::TestAll();
@@ -1104,7 +1107,7 @@ int main([[maybe_unused]] int argc,
     // UniquePtr_Size::SizeTest();
     // ExpressionTemplates::TestAll();
     // ObjectOrientedExperiments::RAIIWrapper::TestAll();
-    ObjectOrientedExperiments::OOP_Experiments::TestAll();
+    //ObjectOrientedExperiments::OOP_Experiments::TestAll();
     // ObjectOrientedExperiments::VirtualTables::TestAll();
     // Optional::TestAll();
     // PointsAndLines::TestAll();           // Geometry

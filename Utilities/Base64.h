@@ -15,6 +15,7 @@ Description : Base64.h
 namespace Base64
 {
     std::string base64Encode(const std::string &str);
+    std::string base64Encode2(const std::string &str);
 };
 
 #endif //CPPPROJECTS_BASE64_H
