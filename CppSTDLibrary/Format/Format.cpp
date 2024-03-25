@@ -186,6 +186,35 @@ namespace Format
         const auto min_buffer_size_3 = std::formatted_size(formatter, 1'000'000, 2'000'000, 3'000'000);
         std::cout << min_buffer_size_3 << std::endl;
     }
+
+    void Formatted_Size_2()
+    {
+        using namespace std::numbers;
+
+        // calculate the required size to store the formatted text
+        size_t sz = std::formatted_size("pi == {}", pi_v<double>);
+
+        // allocate a big enough buffer (+ 1 for '\0')
+        std::unique_ptr<char[]> buffer { std::make_unique_for_overwrite<char[]>(sz+1) };
+
+        // format text into the buffer
+        std::format_to(buffer.get(), "pi == {}", pi_v<double>);
+        buffer[sz] = '\0'; // terminate the string
+
+        // buffer.get() == "pi == 3.141592653589793"
+
+        std::cout << buffer.get() << "\n";
+    }
+
+    void Formatted_Size_3()
+    {
+        using namespace std::numbers;
+
+        const size_t sz = std::formatted_size("pi == {}", pi_v<double>);
+        std::vector<char> buffer (sz + 1, '\0');
+        std::format_to(buffer.data(), "pi == {}", pi_v<double>);
+        std::cout << buffer.data() << "\n";
+    }
 };
 
 
@@ -341,6 +370,8 @@ void Format::TestAll()
     // Make_Path();
 
     // Formatted_Size();
+    Formatted_Size_2();
+    Formatted_Size_3();
 
     // Experiments();
 
