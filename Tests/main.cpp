@@ -67,6 +67,7 @@ Description : Tests C++ project
 #include "DataStructures/EventLoop.h"
 #include "DataStructures/MaxStack.h"
 #include "DataStructures/MinStack.h"
+#include "DataStructures/MinMaxStack.h"
 #include "DataStructures/DVector.h"
 #include "DataStructures/RateLimiter.h"
 #include "DataStructures/BitReader.h"
@@ -1060,7 +1061,6 @@ int main([[maybe_unused]] int argc,
     // MoveExperiments::test_perfect_forwarding();
     // MoveExperiments::test_overload();
 
-    // Experiments::Test({20, 40, 60});
     // FindMinMaxValues::TestAll();
 
     // LockFreeQueue::Test();
@@ -1084,7 +1084,7 @@ int main([[maybe_unused]] int argc,
 
     // Algorithms::TestAll();
     // AutoTests::TestAll();
-    BinManipulation::TestAll();
+    // BinManipulation::TestAll();
     // BinaryAnalyzer::TestAll();
     // Cpp23_Features::TestAll();
     // Concepts::TestAll();
@@ -1106,12 +1106,13 @@ int main([[maybe_unused]] int argc,
     // Multithreading::TestAll();
     // Memory::TestAll();
     // MaxStack::TestAll();
+    MinMaxStack::TestAll();
     // MinStack::TestAll();
     // Math::TestAll();
     // UniquePtr_Size::SizeTest();
     // ExpressionTemplates::TestAll();
     // ObjectOrientedExperiments::RAIIWrapper::TestAll();
-    //ObjectOrientedExperiments::OOP_Experiments::TestAll();
+    // ObjectOrientedExperiments::OOP_Experiments::TestAll();
     // ObjectOrientedExperiments::VirtualTables::TestAll();
     // Optional::TestAll();
     // PointsAndLines::TestAll();           // Geometry

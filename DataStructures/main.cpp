@@ -24,6 +24,7 @@
 #include "Logger/Logger.h"
 #include "MinHeap/MinHeap.h"
 #include "MinStack/MinStack.h"
+#include "MinMaxStack/MinMaxStack.h"
 #include "Heap_WithComparator/HeapWithComparator.h"
 #include "ReferenceWrapper/ReferenceWrapper.h"
 #include "CustomVector/CustomVector.h"
@@ -69,7 +70,8 @@ int main([[maybe_unused]] int argc,
     // RAII_CommitWrapper::TEST_ALL();
     // ReferenceWrapper::Test();
     // TwoSidedVector::TestAll();
-    MinStack::TestAll();
+    // MinStack::TestAll();
+    MinMaxStack::TestAll();
     // MinHeap::TestAll();
     // HeapWithComparator::TestAll();
 

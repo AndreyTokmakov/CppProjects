@@ -40,10 +40,11 @@ add_executable(${PROJECT_NAME}
         Strings/Strings.cpp Strings/Strings.h
         Strings/StringUtilities.cpp Strings/StringUtilities.h
         DataStructures/LRUCache.cpp DataStructures/LRUCache.h
-        DataStructures/MaxStack.cpp DataStructures/MaxStack.h
         DataStructures/DVector.cpp DataStructures/DVector.h
         DataStructures/EventLoop.cpp DataStructures/EventLoop.h
+        DataStructures/MaxStack.cpp DataStructures/MaxStack.h
         DataStructures/MinStack.cpp DataStructures/MinStack.h
+        DataStructures/MinMaxStack.cpp DataStructures/MinMaxStack.h
         Performance/Performance.cpp Performance/Performance.h
         Memory/Memory.cpp Memory/Memory.h
         BinaryAnalyzer/BinaryAnalyzer.cpp BinaryAnalyzer/BinaryAnalyzer.h

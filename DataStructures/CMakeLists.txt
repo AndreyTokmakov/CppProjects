@@ -42,6 +42,7 @@ add_executable(${PROJECT_NAME}
 		Utilities/Long.cpp Utilities/Long.h
         TwoSidedVector/TwoSidedVector.cpp
         TwoSidedVector/TwoSidedVector.h
+		MinMaxStack/MinMaxStack.cpp
 		MinStack/MinStack.cpp
 		MinStack/MinStack.h
 		MinHeap/MinHeap.cpp

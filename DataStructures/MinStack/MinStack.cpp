@@ -175,76 +175,11 @@ namespace MinStack::Two_Vectors_GOOD
 };
 
 
-namespace MinStack::Vector_List
-{
-    template<typename _Ty>
-    class MinStack
-    {
-        using object_type = _Ty;
-        static_assert(!std::is_same_v<object_type, void>,
-                      "Type of the Objects in the pool can not be void");
-
-        using Item = std::pair<object_type, typename std::list<object_type>::iterator>;
-
-        std::vector<Item> store;
-        std::list<object_type> mins;
-
-    public:
-        MinStack& push(int val)
-        {
-            store.emplace_back(val, mins.end());
-            if (mins.empty() || mins.back() > val) {
-                mins.push_back(val);
-                store.back().second = std::prev(mins.end());
-            }
-            return *this;
-        }
-
-        void pop() noexcept
-        {
-            auto& [val, iter] = store.back();
-            if (mins.end() != iter)
-                mins.erase(iter);
-            store.pop_back();
-        }
-
-        [[nodiscard]]
-        object_type top() const noexcept
-        {
-            return store.back().first;
-        }
-
-        [[nodiscard]]
-        object_type getMin() const noexcept
-        {
-            return mins.back();
-        }
-    };
-
-
-    void Tests()
-    {
-        MinStack<int> stack;
-        stack.push(10).push(12).push(6).push(4).push(5);
-
-        for (int i = 0; i < 3; ++i) {
-            std::cout << "Min: " << stack.getMin() << ". Top: " << stack.top() << std::endl;
-            stack.pop();
-        }
-
-        stack.push(1).push(3);
-
-
-        for (int i = 0; i < 2; ++i) {
-            std::cout << "Min: " << stack.getMin() << ". Top: " << stack.top() << std::endl;
-            stack.pop();
-        }
-    }
-};
-
 void MinStack::TestAll()
 {
-    Two_Vectors::Tests();       std::cout << "----------------------------------\n";
-    Two_Vectors_GOOD::Tests();  std::cout << "----------------------------------\n";
-    Vector_List::Tests();
+    Two_Vectors::Tests();
+
+    std::cout << std::endl;
+
+    Two_Vectors_GOOD::Tests();
 };
