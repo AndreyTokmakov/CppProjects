@@ -53,12 +53,22 @@ void BinManipulation::TestAll()
     // Detect_If_Two_Integers_Have_Opposite_Signs();
     // ComputeAbsoluteValue();
 
-    const unsigned int n {3};          // numerator
-    const unsigned int s {17};
-    const unsigned int d = 1U << s; // So d will be one of: 1, 2, 4, 8, 16, 32, ...
+    /*
+    const unsigned int n = 9;
+    const unsigned int s = 7;
+    const unsigned int d = 1U << s;     // So, `d` is one of 1, 2, 4, 8, 16, 32, …
 
-    unsigned int m = n & (d - 1);
-    std::cout << m << std::endl;
-    std::cout << s % n << std::endl;
+    unsigned int m =  n & ((1U << s) - 1);
+
+    std::cout << n << " % " <<  s << " = " << m << std::endl;
+    */
+
+    const unsigned int n = 9, s = 7;
+
+    const unsigned int d = 1U << s;     // So, `d` is one of 1, 2, 4, 8, 16, 32, …
+
+    unsigned int m  = n & (d - 1);
+
+    printf("%d %% %d = %d", n, d, m);
 
 }

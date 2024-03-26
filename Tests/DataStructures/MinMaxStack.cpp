@@ -13,12 +13,14 @@ Description : MinMaxStack.cpp
 #include <vector>
 #include <list>
 #include <concepts>
+#include <random>
+#include <algorithm>
 
 
 namespace MinMaxStack
 {
     template<typename T>
-    concept Comparable = requires(T const& a, T const& b)
+    concept Comparable = requires(const T& a, const T& b)
     {
         { a < b }  -> std::same_as<bool>;
         { a <= b } -> std::same_as<bool>;
@@ -32,6 +34,9 @@ namespace MinMaxStack
 
         { a == b } -> std::same_as<bool>;
         { a == b } noexcept -> std::convertible_to<bool>;
+
+        { b == a } -> std::same_as<bool>;
+        { b == a } noexcept -> std::convertible_to<bool>;
     };
 
 
@@ -96,6 +101,24 @@ namespace MinMaxStack
 
 namespace MinMaxStack::Test
 {
+    int32_t randomIntegerInRange(int32_t from, int32_t until)
+    {
+        std::random_device randomDevice{};
+        std::mt19937 generator(randomDevice());
+        return std::uniform_int_distribution<int>{from, until}(generator);
+    }
+
+    std::vector<int> getRandomValues(size_t size = 10)
+    {
+        std::vector<int> values;
+        values.reserve(size);
+        for (size_t idx = 0; idx < size; ++idx)
+        {
+            values.push_back(randomIntegerInRange(0, size * 2));
+        }
+        return values;
+    }
+
     template<typename T>
     std::ostream& operator<<(std::ostream& stream,
                              const MinMaxStack<T>& stack)
@@ -104,7 +127,6 @@ namespace MinMaxStack::Test
             std::cout << value << ' ';
         return stream;
     }
-
 
     void TestOne()
     {
@@ -125,10 +147,48 @@ namespace MinMaxStack::Test
             stack.pop();
         }
     }
-}
 
+    void GenericTest()
+    {
+        // Doing 100 tests
+        for (int i = 0; i < 100; ++i)
+        {
+            // Getting random size value and generating input collection of 'size' random values
+            const int size {randomIntegerInRange(0, 1000)};
+            std::vector<int> values {getRandomValues(size)};
+
+            MinMaxStack<int> stack;
+            for (const auto v: values)
+                stack.push(v);
+
+            // pop-ing elements from 'values' and 'stack' one by one
+            // each time checking MIN_MAX values both in the 'values' and in the 'stack'
+            for (int n = 0; n < size; ++n)
+            {
+                const auto [min, max] = std::minmax_element(values.cbegin(), values.cend());
+
+                if (*min != stack.min())
+                {
+                    std::cerr << "Error. Min values mismatch: " << stack.min() << " != " << *min << std::endl;
+                    return;
+                }
+                if (*max != stack.max())
+                {
+                    std::cerr << "Error. Max values mismatch: " << stack.max() << " != " << *max << std::endl;
+                    return;
+                }
+
+                values.pop_back();
+                stack.pop();
+            }
+
+            std::cout << "Test for size = " << size << " OK " << std::endl;
+        }
+    }
+}
 
 void MinMaxStack::TestAll()
 {
-    Test::TestOne();
+    // Test::TestOne();
+    Test::GenericTest();
 };
