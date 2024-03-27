@@ -1,11 +1,13 @@
 /**============================================================================
 Name        : Alignment.cpp
-Created on  : 29.12.2022
+Created on  : 27.03.2024
 Author      : Andrei Tokmakov
 Version     : 1.0
 Copyright   : Your copyright notice
-Description : C++ memory alignment experiments
+Description : Alignment.cpp
 ============================================================================**/
+
+#include "Alignment.h"
 
 #include "Alignment.h"
 
@@ -22,8 +24,10 @@ Description : C++ memory alignment experiments
 #include <memory_resource>
 #include <cstdlib> // for std::byte
 
+#include "../Helpers/Helpers.h"
 
-namespace Alignment {
+namespace Alignment
+{
 
     class EmptyClass {
     };
@@ -131,6 +135,50 @@ namespace Alignment {
     }
 }
 
+
+
+namespace Alignment::Storage
+{
+    struct MyLong
+    {
+        long value {};
+
+        explicit MyLong(long v): value {v}{
+            std::cout << "MyLong(" << value << ")\n";
+        }
+
+        ~MyLong() {
+            std::cout << "~MyLong(" << value << ")\n";
+        }
+    };
+
+
+    template<typename T>
+    class Uninitialized
+    {
+        std::aligned_storage_t<sizeof(T)> storage;
+
+    public:
+        template<typename... Args>
+        void construct(Args&&... params) {
+            new (&storage) T(std::forward<Args>(params)...);
+            std::cout << "Data: " << reinterpret_cast<T*>(&storage)->value << std::endl;
+        }
+
+        ~Uninitialized() {
+            reinterpret_cast<T*>(&storage)->~T();
+        }
+    };
+
+
+    void Construct_Type()
+    {
+        Uninitialized<MyLong> longVal {};
+        longVal.construct(5);
+    }
+}
+
+
 namespace Alignment::NetworkHeaders
 {
     struct ARPHeader final {
@@ -173,13 +221,41 @@ namespace Alignment::NetworkHeaders
                   << std::endl;
 
     }
-
 }
+
+
+namespace Alignment::AlignAs
+{
+    struct alignas(std::hardware_destructive_interference_size) Item
+    {
+        int32_t value {0};
+        int64_t value2 {0};
+        double ratio {0.0};
+    };
+
+    struct ItemNonAligned
+    {
+        int32_t value {0};
+        int64_t value2 {0};
+        double ratio {0.0};
+    };
+
+    void AlignToCacheLine()
+    {
+        std::cout << sizeof(ItemNonAligned) << std::endl;
+        std::cout << sizeof(Item) << std::endl;
+    }
+}
+
 
 void Alignment::TestAll()
 {
     // Alignment_Of_Tests();
-    // Alignas();
 
-    NetworkHeaders::CheckAlignment();
+    // Alignas();
+    AlignAs::AlignToCacheLine();
+
+    // Storage::Construct_Type();
+
+    // NetworkHeaders::CheckAlignment();
 }

@@ -25,6 +25,7 @@ Description : Templates src
 
 #include "Templates.h"
 #include "FoldExpressions.h"
+#include "NTTP.h"
 
 namespace
 {
@@ -2346,7 +2347,8 @@ namespace Templates::Templated_Templates
 }
 void Templates::TestAll()
 {
-    FoldExpressions::TestAll();
+    // FoldExpressions::TestAll();
+    NTTP::TestAll();
 
     // Is_Base_Of__Test();
     // Is_Same();

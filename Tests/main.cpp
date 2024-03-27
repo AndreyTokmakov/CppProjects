@@ -1050,6 +1050,12 @@ namespace UBBook
     }
 }
 
+
+template<std::array a> auto get_value() {
+    return a[1];
+}
+
+
 int main([[maybe_unused]] int argc,
          [[maybe_unused]] char** argv)
 {
@@ -1071,7 +1077,7 @@ int main([[maybe_unused]] int argc,
 
     // UBBook::Test();
 
-
+    std::cout << get_value<{2,3,4,5,6,7,8,9,10,11,12,13}>() << std::endl;
 
 
     /** * * * * *  Move to lib * * * * * **/
@@ -1106,7 +1112,7 @@ int main([[maybe_unused]] int argc,
     // Multithreading::TestAll();
     // Memory::TestAll();
     // MaxStack::TestAll();
-    MinMaxStack::TestAll();
+    // MinMaxStack::TestAll();
     // MinStack::TestAll();
     // Math::TestAll();
     // UniquePtr_Size::SizeTest();

@@ -10,7 +10,6 @@ Description : Cpp STD lib
 #include "Types.h"
 #include "AggregateInitialization/AggregateInitialization.h"
 #include "Algorithms/Algorithms.h"
-#include "Alignment/Alignment.h"
 #include "Integer/Integer.h"
 #include "Any/Any.h"
 #include "Arrays/Arrays.h"
@@ -89,7 +88,6 @@ int main([[maybe_unused]] int argc,
 
     // AggregateInitialization::TestAll();
     // Algorithms::TestAll();
-    // Alignment::TestAll();
     // Any::TestAll();
     // Arrays::TestAll();
     // Asserts::TestAll();
@@ -121,13 +119,13 @@ int main([[maybe_unused]] int argc,
     // FunctionObjects::TestAll();
     // Hashing::TestAll();
     // Lambdas::TestAll();
-    LifetimeExtension::TestAll();
+    // LifetimeExtension::TestAll();
     // Locale::TestAll();
     // Literals::TestAll();
     // MoveSemantics_RuleOfFive::TestAll();
     // Numbers::TestAll();
     // Math::TestAll();
-    // Memory::TestAll();
+    Memory::TestAll();
     // MemoryUsageMonitor::TestAll();
     // Metaprogramming::TestAll();
     // InlineNamespaces::TestAll();

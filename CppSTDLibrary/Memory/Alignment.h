@@ -1,10 +1,10 @@
 /**============================================================================
 Name        : Alignment.h
-Created on  : 29.12.2022
+Created on  : 27.03.2024
 Author      : Andrei Tokmakov
 Version     : 1.0
 Copyright   : Your copyright notice
-Description : C++ memory alignment experiments
+Description : Alignment.h
 ============================================================================**/
 
 #ifndef CPPPROJECTS_ALIGNMENT_H

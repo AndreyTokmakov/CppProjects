@@ -26,6 +26,7 @@ add_executable(${PROJECT_NAME}
 		EnumTests/EnumTests.cpp EnumTests/EnumTests.h
 		Exceptions/Exceptions.cpp Exceptions/Exceptions.h
 		Errors/Errors.cpp Errors/Errors.h
+		Helpers/UnorderedPair.h Helpers/Helpers.h Helpers/Wrapper.h
 		FilesStreams/FilesStreams.cpp FilesStreams/FilesStreams.h
 		Filesystem/Filesystem.cpp Filesystem/Filesystem.h
 		Format/Format.cpp Format/Format.h
@@ -40,7 +41,9 @@ add_executable(${PROJECT_NAME}
 		Literals/Literals.cpp Literals/Literals.h
 		Locale/Locale.cpp Locale/Locale.h
 		Math/Math.cpp Math/Math.h
-		Memory/Memory.cpp Memory/Memory.h Memory/MemoryUsageMonitor.cpp Memory/MemoryUsageMonitor.h
+		Memory/Memory.cpp Memory/Memory.h
+		Memory/MemoryUsageMonitor.cpp Memory/MemoryUsageMonitor.h
+		Memory/Alignment.cpp Memory/Alignment.h
 		MoveSemantics_RuleOfFive/MoveSemantics_RuleOfFive.cpp MoveSemantics_RuleOfFive/MoveSemantics_RuleOfFive.h
 		Numbers/Numbers.cpp Numbers/Numbers.h
 		NumericLimits/NumericLimits.cpp NumericLimits/NumericLimits.h
@@ -72,15 +75,14 @@ add_executable(${PROJECT_NAME}
         Volatile/VolatileTests.cpp Volatile/VolatileTests.h
 		Hashing/Hashing.cpp Hashing/Hashing.h
 		Metaprogramming/Metaprogramming.cpp Metaprogramming/Metaprogramming.h
-		Alignment/Alignment.cpp Alignment/Alignment.h
 		StarshipOperator/StarshipOperator.cpp StarshipOperator/StarshipOperator.h
 		Expected/Expected.cpp Expected/Expected.h
 		Types/Int.cpp Types/Int.h
 		NameSpaces/InlineNamespaces.cpp NameSpaces/InlineNamespaces.h
 		Comparators/Comparators.cpp Comparators/Comparators.h
 		Templates/ConditionalExplicit.h Templates/ConditionalExplicit.cpp
-		Templates/FoldExpressions.cpp
-		Templates/FoldExpressions.h
+		Templates/FoldExpressions.cpp  Templates/FoldExpressions.h
+		Templates/NTTP.cpp  Templates/NTTP.h
 )
 
 # Link libraries to the project/executable
