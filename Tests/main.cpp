@@ -1051,8 +1051,39 @@ namespace UBBook
 }
 
 
-template<std::array a> auto get_value() {
-    return a[1];
+namespace Move_Copy_Tests
+{
+    using Integer = Helpers::Integer;
+
+    void passByConstRef(const Integer& integer)
+    {
+        std::cout << integer.value << std::endl;
+    }
+
+    void passByRRef(Integer&& integer)
+    {
+        std::cout << integer.value << std::endl;
+    }
+
+
+    void passByValue(Integer integer)
+    {
+        std::cout << integer.value << std::endl;
+    }
+
+
+    void test()
+    {
+        {
+            passByConstRef(Integer{1});
+        }
+        {
+            passByRRef(Integer{2});
+        }
+        {
+            passByValue(Integer{3});
+        }
+    }
 }
 
 
@@ -1077,7 +1108,8 @@ int main([[maybe_unused]] int argc,
 
     // UBBook::Test();
 
-    std::cout << get_value<{2,3,4,5,6,7,8,9,10,11,12,13}>() << std::endl;
+    Move_Copy_Tests::test();
+
 
 
     /** * * * * *  Move to lib * * * * * **/
