@@ -8,6 +8,9 @@ include_directories(/home/andtokm/DiskS/ProjectsUbuntu/third_party/Eigen/Eigen)
 include_directories(/home/andtokm/DiskS/ProjectsUbuntu/third_party/VTK/Common/Color)
 include_directories(/home/andtokm/DiskS/ProjectsUbuntu/third_party/VTK/build/Common/Color)
 
+
+set(VTK_DIR /home/andtokm/DiskS/ProjectsUbuntu/third_party/vtk_new/build)
+
 find_package(VTK
         # vtkCommonColor
         # vtkCommonCore
