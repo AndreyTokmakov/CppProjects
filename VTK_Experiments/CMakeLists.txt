@@ -5,11 +5,9 @@ project(VTK_Experiments)
 SET(CMAKE_C_FLAGS_RELEASE "${CMAKE_C_FLAGS_RELEASE} -pthread")
 
 include_directories(/home/andtokm/DiskS/ProjectsUbuntu/third_party/Eigen/Eigen)
-include_directories(/home/andtokm/DiskS/ProjectsUbuntu/third_party/VTK/Common/Color)
-include_directories(/home/andtokm/DiskS/ProjectsUbuntu/third_party/VTK/build/Common/Color)
+include_directories(../../third_party/eigen/Eigen)
+set(VTK_DIR ../../third_party/vtk_new/build)
 
-
-set(VTK_DIR /home/andtokm/DiskS/ProjectsUbuntu/third_party/vtk_new/build)
 
 find_package(VTK
         # vtkCommonColor
