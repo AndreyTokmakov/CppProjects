@@ -19,11 +19,26 @@
 #include <cassert>
 #include <iomanip>
 #include <syncstream>
+#include <format>
 
 #include "ConditionVariable.h"
 #include "../ThreadHelperUtilities/ThreadHelperUtilities.h"
 
 using namespace std::chrono_literals;
+
+namespace
+{
+    struct CurrentTime
+    {
+        const std::chrono::time_point<std::chrono::high_resolution_clock> now { std::chrono::system_clock::now() };
+    };
+
+    std::ostream& operator<<(std::ostream& stream, const CurrentTime& time)
+    {
+        stream << std::format("{:%d-%m-%Y %H:%M:%OS} | ", time.now);
+        return stream;
+    }
+}
 
 namespace ConditionVariable::Classic_Test {
 
@@ -986,7 +1001,46 @@ namespace ConditionVariable::PingPongGame
     }
 }
 
-void ConditionVariable::TEST_ALL() {
+
+namespace ConditionVariable::PredicateTests
+{
+    void TriggerPredicateWithoutLock()
+    {
+        int value {0};
+        bool updated {false};
+        std::condition_variable cv;
+        std::mutex mtx;
+
+        auto consumer = [&](const int timeout) -> void
+        {
+            while (true) {
+                std::unique_lock<std::mutex> lock(mtx);
+                while (!cv.wait_for(lock, std::chrono::milliseconds(timeout), [&] {
+                    return updated;
+                })) { /** Timeout **/
+                    std::osyncstream {std::cout} << CurrentTime{} << "Timeout\n";
+                }
+                break;
+            }
+
+            std::osyncstream {std::cout} << CurrentTime{} << "Done. value = " << value << std::endl;
+        };
+
+        std::jthread consume(consumer, 3000);
+
+        std::this_thread::sleep_for(std::chrono::milliseconds (3500));
+        std::osyncstream {std::cout} << CurrentTime{} << "Updating value\n";
+
+        updated = true;
+
+        /** if 'cv.notify_one()' is not called will be delay between updated = true and  "Done. "
+         * from the 'consume' thread **/
+        // cv.notify_one();
+    }
+}
+
+void ConditionVariable::TEST_ALL()
+{
     // Classic_Test::Test();
     // Classic_Test::Test_Predicate_0();
     // Classic_Test::Test_Predicate();
@@ -1017,5 +1071,7 @@ void ConditionVariable::TEST_ALL() {
 
     // Experiments::Consumer_BlockingProducer();
 
-    PingPongGame::Test();
+    // PingPongGame::Test();
+
+    PredicateTests::TriggerPredicateWithoutLock();
 };

@@ -520,6 +520,77 @@ namespace Chrono::TimeToString
 }
 
 
+namespace Chrono::TimeOfDay
+{
+    void TimeOfDay_Basics()
+    {
+        using namespace std::chrono_literals;
+        std::cout << std::boolalpha << '\n';
+
+
+        const std::chrono::hh_mm_ss<std::chrono::duration<long double>> timeOfDay {
+            std::chrono::hh_mm_ss(10.5h + 98min + 2020s + 0.5s)
+        };
+
+        std::cout<< "timeOfDay: " << timeOfDay << "\n\n";
+
+        std::cout << "timeOfDay.hours(): " << timeOfDay.hours() << '\n';
+        std::cout << "timeOfDay.minutes(): " << timeOfDay.minutes() << '\n';
+        std::cout << "timeOfDay.seconds(): " << timeOfDay.seconds() << '\n';
+        std::cout << "timeOfDay.subseconds(): " << timeOfDay.subseconds() << '\n';
+        std::cout << "timeOfDay.to_duration(): " << timeOfDay.to_duration() << "\n\n";
+
+        std::cout << "std::chrono::hh_mm_ss(45700.5s): "<< std::chrono::hh_mm_ss(45700.5s) << '\n';
+        std::cout << "std::chrono::is_am(5h): " << std::chrono::is_am(5h) << '\n';
+        std::cout << "std::chrono::is_am(15h): " << std::chrono::is_am(15h) << '\n';
+        std::cout << "std::chrono::make12(5h): " << std::chrono::make12(5h) << '\n';
+        std::cout << "std::chrono::make12(15h): " << std::chrono::make12(15h) << '\n';
+    }
+}
+
+
+namespace Chrono::CalendarDate
+{
+    using std::chrono::Monday;
+    using std::chrono::Saturday;
+    using std::chrono::March;
+    using std::chrono::June;
+    using std::chrono::July;
+    using std::chrono::days;
+    using std::chrono::months;
+    using std::chrono::years;
+    using std::chrono::last;
+    using namespace std::chrono_literals;
+
+    void Basics()
+    {
+        std::cout << std::boolalpha;
+
+        std::cout << "March: " << March << '\n';
+        std::cout << "March + months(3): " << March + months(3) << '\n';
+        std::cout << "March - months(25): " << March - months(25) << '\n';
+        std::cout << "July - June: " <<  July - June << '\n';
+        std::cout << "June < July: " << (June < July) << "\n\n";
+
+        std::cout << "Saturday: " << Saturday << '\n';
+        std::cout << "Saturday + days(3): " << Saturday + days(3) << '\n';
+        std::cout << "Saturday - days(22): " << Saturday - days(22) << '\n';
+        std::cout << "Saturday - Monday: " <<  Saturday - Monday << "\n\n";
+
+        std::cout << "2021y/March: " << 2021y/March << '\n';
+        std::cout << "2021y/March + years(3) - months(35): " << 2021y/March + years(3) - months(35) << '\n';
+        std::cout << "2022y/July - 2021y/June: " << 2022y/July - 2021y/June << '\n';
+        std::cout << "2021y/June > 2021y/July: " << (2021y/June > 2021y/July) << "\n\n";
+
+
+        std::cout << "2021y/March/Saturday[last]: " << 2021y/March/Saturday[last] << '\n';
+        std::cout << "2021y/March/Saturday[last] + months(13) + years(3): "
+                  << 2021y/March/Saturday[last] + months(13) + years(3) << '\n';
+        std::cout << "2021y/July/Saturday[last] - months(1) == 2021y/June/Saturday[last]: "
+                  << (2021y/July/Saturday[last] - months(1) == 2021y/June/Saturday[last])
+                << "\n\n";
+    }
+}
 
 void Chrono::TestAll()
 {
@@ -576,6 +647,12 @@ void Chrono::TestAll()
     // StringFormat::Format2();
     // StringFormat::Format3();
 
+    // TimeOfDay::TimeOfDay_Basics();
+
+    CalendarDate::Basics();
+
+
+    /*
     using namespace std::chrono_literals;
 
     std::chrono::days days1 = std::chrono::day(30) - std::chrono::day(25);
@@ -588,5 +665,6 @@ void Chrono::TestAll()
         std::cout << "Twenty-three years\n";
 
     std::cout << '\n';
+     */
 };
 

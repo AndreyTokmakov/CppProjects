@@ -97,7 +97,7 @@ int main([[maybe_unused]] int argc,
     // BitSet::TestAll();
     // BitwiseOperation::TestAll();
     // Byte::TestAll();
-    // Chrono::TestAll();
+    Chrono::TestAll();
     // Comparators::TestAll();
     // Concepts::TestAll();
     // ConsoleInOut::TestAll();
@@ -125,7 +125,7 @@ int main([[maybe_unused]] int argc,
     // MoveSemantics_RuleOfFive::TestAll();
     // Numbers::TestAll();
     // Math::TestAll();
-    Memory::TestAll();
+    // Memory::TestAll();
     // MemoryUsageMonitor::TestAll();
     // Metaprogramming::TestAll();
     // InlineNamespaces::TestAll();
