@@ -121,7 +121,7 @@ namespace Expected
         {
             std::expected res = getInt(str)
                     .transform( [](int n) { return n + 100; })
-                    .transform( [](int n) { return std::to_string(n); });
+                    .transform( [](int n) { return "[" + std::to_string(n) + "]"; });
 
             std::cout << *res << std::endl;
         }
@@ -177,7 +177,7 @@ void Expected::TestAll()
 
     // Emplace();
 
-    // Expected::Transform();
+    Expected::Transform();
 
     // transform__and_then();
 };

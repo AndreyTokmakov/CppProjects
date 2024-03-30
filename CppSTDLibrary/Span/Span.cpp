@@ -230,7 +230,46 @@ namespace Span {
         std::cout << sp << std::endl;
 
     }
+}
 
+namespace Span::StaticSize
+{
+
+    size_t fn1(std::span<int> data) {
+        size_t result = 0;
+        for (size_t i = 0; i < data.size(); ++i)
+            result += i;
+        return result;
+    }
+
+    size_t fn2(std::span<int, 1024> data) {
+        size_t result = 0;
+        for (size_t i = 0; i < data.size(); ++i)
+            result += i;
+        return result;
+    }
+
+    void Static_Sized_Array()
+    {
+        std::array<int, 1024> data1 {};
+        // std::span arr1 = data1;
+
+        // decltype(arr1) == std::span<int, 1024>
+        // static_assert(std::is_same_v<decltype(arr1), std::span<int, 1024>>);
+        fn2(data1);
+
+        int data2[1024];
+
+        // std::span arr2 = data2;
+        // delctype(arr2) == std::span<int, 1024>
+        // static_assert(std::is_same_v<decltype(arr2), std::span<int, 1024>>);
+        fn2(data2);
+
+        std::vector<int> data3(1024);
+        std::span arr3 = data2;
+        fn1(data3); // OK
+        // fn2(data3); // Wouldn't compile
+    }
 }
 
 void Span::TestAll()
@@ -253,4 +292,6 @@ void Span::TestAll()
     // Pass_Collection_As_Span();
 
     // _Tests_();
+
+   StaticSize::Static_Sized_Array();
 }
