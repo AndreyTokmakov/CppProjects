@@ -64,7 +64,8 @@ int main([[maybe_unused]] int argc,
     // ARPTester::TestAll();
     // BuildAndSendPacketsTests::TestAll();
 
-    // Experiments::Tests();
+    Experiments::Tests();
+
     // UtilitiesTests::TestAll();
 
     // NetLink::TestAll();
@@ -79,7 +80,7 @@ int main([[maybe_unused]] int argc,
     // EPollTCPServerEx::Tests();
     // EPollTCPServerDebug::Tests();
     // EPollTCPServerContext::TestAll();
-    EPollTCPServerContextEx::TestAll();
+    // EPollTCPServerContextEx::TestAll();
     // EPollTCPServerMultithreaded::Tests();
 
     // PcapAnalyzer::TestAll();

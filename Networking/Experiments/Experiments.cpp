@@ -31,6 +31,7 @@ Description : Experiments
 #include <linux/if_ether.h>   // ETH_P_ARP = 0x0806
 #include <linux/if_packet.h>  // struct sockaddr_ll (see man 7 packet)
 #include <net/ethernet.h>
+#include <ifaddrs.h>
 
 #include "Experiments.h"
 #include "../Headers/EthernetHeader.h"
@@ -89,6 +90,63 @@ namespace Experiments
 
 };
 
+std::string getInterfaceIPv4(const std::string &iface)
+{
+    char buf[NI_MAXHOST] = {'\0'};
+
+    if (ifaddrs *ifaddr { nullptr };getifaddrs(&ifaddr) != -1)
+    {
+        for (ifaddrs *ifa = ifaddr; ifa; ifa = ifa->ifa_next)
+        {
+
+            if (ifa->ifa_addr && ifa->ifa_addr->sa_family == AF_INET && iface == ifa->ifa_name)
+            {
+                getnameinfo(ifa->ifa_addr, sizeof(sockaddr_in), buf, sizeof(buf), nullptr, 0, NI_NUMERICHOST);
+                break;
+            }
+        }
+        freeifaddrs(ifaddr);
+    }
+
+    return buf;
+}
+
+void listInterfaces()
+{
+    if (ifaddrs *ifaddr { nullptr }; getifaddrs(&ifaddr) != -1)
+    {
+        char buf[NI_MAXHOST] = {'\0'};
+        for (ifaddrs *ifa = ifaddr; nullptr != ifa; ifa = ifa->ifa_next)
+        {
+            std::cout << ifa->ifa_name << "  ";
+            if (ifa->ifa_addr && ifa->ifa_addr->sa_family == AF_INET)
+            {
+                getnameinfo(ifa->ifa_addr, sizeof(sockaddr_in), buf, sizeof(buf), nullptr, 0, NI_NUMERICHOST);
+                std::cout << "IPv4: " <<  buf;
+            }
+
+            std::cout << std::endl;
+        }
+        freeifaddrs(ifaddr);
+    }
+}
+
+void listInterfaces2()
+{
+    ifaddrs *ifAddr { nullptr };
+    if (-1 == getifaddrs(&ifAddr))
+        return;
+
+    while (nullptr != ifAddr)
+    {
+        std::cout << ifAddr->ifa_name << std::endl;
+        ifAddr = ifAddr->ifa_next;
+
+    }
+
+    freeifaddrs(ifAddr);
+}
+
 
 void BindTwoSocketsOnTheSamePort()
 {
@@ -133,6 +191,9 @@ void BindTwoSocketsOnTheSamePort()
 void Experiments::Tests()
 {
 
+    // listInterfaces();
+    listInterfaces2();
+
     /*
     constexpr std::string_view interfaceName {"enp6s0"};
     unsigned char buffer[1024] {};
@@ -172,5 +233,5 @@ void Experiments::Tests()
     */
 
 
-    BindTwoSocketsOnTheSamePort();
+    // BindTwoSocketsOnTheSamePort();
 };

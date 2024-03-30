@@ -117,5 +117,20 @@ namespace Utilities::IP
 
 }
 
+namespace Utilities::Socket
+{
+
+    bool setNonBlocking(const int fd);
+
+    /// Disable Nagle's algorithm and associated delays.
+    bool disableNagle(const int fd);
+
+    /// Allow software receive timestamps on incoming packets.
+    bool setSOTimestamp(const int fd);
+
+    /// Add / Join membership / subscription to the multicast stream specified and on the interface specified.
+    bool joinMulticast(const int fd, const std::string &ip);
+}
+
 
 #endif //CPPPROJECTS_UTILITIES_H

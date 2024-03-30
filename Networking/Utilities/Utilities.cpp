@@ -22,6 +22,22 @@ Description : Utilities
 #include <arpa/inet.h>
 #include <netdb.h>
 
+#include <iostream>
+#include <string>
+#include <unordered_set>
+#include <sstream>
+#include <sys/epoll.h>
+#include <unistd.h>
+#include <sys/types.h>
+#include <sys/socket.h>
+#include <netdb.h>
+#include <netinet/in.h>
+#include <netinet/tcp.h>
+#include <arpa/inet.h>
+#include <ifaddrs.h>
+#include <sys/socket.h>
+#include <fcntl.h>
+
 void Utilities::PrintMACAddress(const uint8_t* mac)
 {
     for (int i = 0; i < 5; i++)
@@ -167,8 +183,6 @@ void Utilities::SocketScoped::closeSocket(int s)
 namespace Utilities::IP
 {
 
-
-
     [[nodiscard]]
     std::string ipInt2Str(uint32_t ip)
     {
@@ -220,5 +234,37 @@ namespace Utilities::IP
         std::from_chars(ip.data() + prev, ip.data() + ip.length() - prev, octet);
         return result |= octet;
     }
+}
 
+namespace Utilities::Socket
+{
+    /// Sockets will not block on read, but instead return immediately if data is not available.
+    bool setNonBlocking(const int fd)
+    {
+        const auto flags = ::fcntl(fd, F_GETFL, 0);
+        if (flags & O_NONBLOCK)
+            return true;
+        return (::fcntl(fd, F_SETFL, flags | O_NONBLOCK) != -1);
+    }
+
+    /// Disable Nagle's algorithm and associated delays.
+    bool disableNagle(const int fd)
+    {
+        int one = 1;
+        return (::setsockopt(fd, IPPROTO_TCP, TCP_NODELAY, reinterpret_cast<void*>(&one), sizeof(one)) != -1);
+    }
+
+    /// Allow software receive timestamps on incoming packets.
+    bool setSOTimestamp(const int fd)
+    {
+        int one = 1;
+        return (::setsockopt(fd, SOL_SOCKET, SO_TIMESTAMP, reinterpret_cast<void*>(&one), sizeof(one)) != -1);
+    }
+
+    /// Add / Join membership / subscription to the multicast stream specified and on the interface specified.
+    bool joinMulticast(const int fd, const std::string &ip)
+    {
+        const ip_mreq mreq {{inet_addr(ip.c_str())}, {htonl(INADDR_ANY)}};
+        return (::setsockopt(fd, IPPROTO_IP, IP_ADD_MEMBERSHIP, &mreq, sizeof(mreq)) != -1);
+    }
 }
