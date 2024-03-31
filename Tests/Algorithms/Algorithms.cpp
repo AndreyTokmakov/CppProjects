@@ -1934,6 +1934,54 @@ namespace Algorithms::Strings
     }
 }
 
+
+namespace Algorithms::Numbers
+{
+
+
+
+
+    bool can_partition(const std::vector<int>& nums)
+    {
+        // Calculate the sum of elements in the nums array
+        int totalSum = accumulate(nums.begin(), nums.end(), 0);
+
+        // If the total sum is odd, it's not possible to divide it into two equal parts
+        if (totalSum % 2 == 1) {
+            return false;
+        }
+
+        // Target sum for each partition
+        int targetSum = totalSum >> 1;
+
+        // Create a dynamic programming array to keep track of possible sums
+        std::vector<bool> dp(targetSum + 1,false);
+
+        // The sum of 0 is always achievable (by selecting no elements)
+        dp[0] = true;
+
+        // Iterate through the numbers in the array
+        for (int num : nums) {
+            // Check each possible sum in reverse to avoid using a number twice
+            for (int j = targetSum; j >= num; --j) {
+                // Update the dp array: dp[j] will be true if dp[j - num] was true
+                // This means that current number 'num' can add up to 'j' using the previous numbers
+                dp[j] = dp[j] || dp[j - num];
+            }
+        }
+
+        // The result is whether it's possible to achieve the targetSum using the array elements
+        return dp[targetSum];
+    }
+
+    void CanPartition()
+    {
+        std::cout << std::boolalpha << can_partition({2,5,12,5}) << std::endl;
+        std::cout << std::boolalpha << can_partition({1,2,3,5}) << std::endl;
+        std::cout << std::boolalpha << can_partition({2, 2, 2, 3, 3}) << std::endl;
+    }
+}
+
 void Algorithms::TestAll()
 {
     // Algorithms::Devide_SubArray();
@@ -1954,6 +2002,7 @@ void Algorithms::TestAll()
     // Numbers::IntToRoman();
     // Numbers::RomanToInt();
     // Numbers::Divide_Numbers();
+    Numbers::CanPartition();
 
     // Strings::FindCommon_PrefixAndPostfix();
     // Strings::FindLastNotOf__Benchmark();
@@ -1964,7 +2013,7 @@ void Algorithms::TestAll()
     // Strings::Reverse_Words_in_String2();
     // Strings::Compare_Version_Numbers();    // INFO: Unfinished yet | --> TODO
     // Strings::Contains();
-    Strings::Longest_Word();
+    // Strings::Longest_Word();
     // Strings::Intersperse_String();
     // Strings::Count_Anagrams();
     // Strings::Interleaving_String();

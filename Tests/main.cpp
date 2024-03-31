@@ -1116,7 +1116,7 @@ int main([[maybe_unused]] int argc,
 
     // UBBook::Test();
 
-    Move_Copy_Tests::test();
+    // Move_Copy_Tests::test();
 
 
 
@@ -1130,7 +1130,7 @@ int main([[maybe_unused]] int argc,
     // ReturnClass_MemberRef_CopyCTor::tests();
 
 
-    // Algorithms::TestAll();
+    Algorithms::TestAll();
     // AutoTests::TestAll();
     // BinManipulation::TestAll();
     // BinaryAnalyzer::TestAll();
