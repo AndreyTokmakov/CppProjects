@@ -62,7 +62,7 @@ int main([[maybe_unused]] int argc,
     // Function::Test();
     // HashTable::TestAll();
     // LinkedLists::TEST_ALL();
-    // Logging::TEST_ALL();
+    Logging::TEST_ALL();
 	// LRUCache::TEST_ALL();
     // ObjectPools::TEST_ALL();
     // Optional::TEST_ALL();
@@ -71,7 +71,7 @@ int main([[maybe_unused]] int argc,
     // ReferenceWrapper::Test();
     // TwoSidedVector::TestAll();
     // MinStack::TestAll();
-    MinMaxStack::TestAll();
+    // MinMaxStack::TestAll();
     // MinHeap::TestAll();
     // HeapWithComparator::TestAll();
 

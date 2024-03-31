@@ -424,7 +424,8 @@ namespace MatchingOrderBookEx
                 str.append(1, ',').append(std::to_string(trade.passiveOrderId));
             }
 
-            for (const auto& [k, v]: ordersBySymbol) {
+            /*for (const auto& [k, v]: ordersBySymbol)
+            {
                 std::string& str = result.emplace_back("===" + k + "===");
                 const OrdersList& buyOrders = v.buyOrders;
                 for (const Order& order: buyOrders) {
@@ -433,9 +434,8 @@ namespace MatchingOrderBookEx
 
                 const OrdersList& sellOrders = v.sellOrders;
                 for (const Order& order: sellOrders) {
-
                 }
-            }
+            }*/
 
             for (const auto& s: result) std::cout << s << std::endl;
             return result;
@@ -482,6 +482,7 @@ namespace MatchingOrderBookEx
                 listPriceReduce(buyOrders);
                 listPriceReduce(sellOrders);
 
+                [[maybe_unused]]
                 std::string& str = result.emplace_back("===" + k + "===");
 
                 auto buyIter = buyOrders.begin(), sellIter = sellOrders.begin();

@@ -270,6 +270,7 @@ namespace Base::DemoOne
         void addOrder(Order&& order,
                       SymbolOrders& ordersBySymbol)
         {
+            [[maybe_unused]]
             SymbolOrders::OrdersList& ordersToMatch = ordersBySymbol.getOppositeOrders(order.side);
 
             // TODO: Try to find match | Do the trade

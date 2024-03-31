@@ -27,8 +27,8 @@ Description : C++ Logging lib
 #include <utility>
 
 
-namespace Logging {
-
+namespace Logging
+{
 	struct LogRecord final {
 	private:
 		std::time_t timestamp { std::time(nullptr) };
@@ -90,7 +90,7 @@ namespace Logging {
 		void logsDumper() noexcept 
 		{
 			// Open log file.
-			std::ofstream logFile { R"(C:\Temp\test_run.log)" };
+			std::ofstream logFile { R"(/tmp/trace.log)" };
 			if (logFile.fail()) {
 				// TODO: Handle error
 				std::cerr << "Failed to open logfile." << std::endl;
@@ -143,7 +143,8 @@ namespace Logging {
 		Logger(const Logger& src) = delete;
 		Logger& operator=(const Logger& rhs) = delete;
 
-		void log(std::string&& entry) {
+		void log(std::string&& entry)
+        {
 			std::lock_guard<std::mutex> lock { mtx };
 			logs.emplace_back(std::move(entry));
 
@@ -155,7 +156,8 @@ namespace Logging {
 			}
 		}
 
-		void stop() {
+		void stop()
+        {
 			{
 				// Gracefully and synchronized shut down the thread.
 				std::lock_guard<std::mutex> lock{ mtx };

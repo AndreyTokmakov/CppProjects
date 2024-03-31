@@ -50,6 +50,7 @@
 #include "SynchStream/SynchStream.h"
 #include "SpinLock/SpinLock.h"
 #include "PerformanceExperiments/PerformanceExperiments.h"
+#include "Utilities/Utilities.h"
 
 
 int main([[maybe_unused]] int argc,
@@ -65,7 +66,7 @@ int main([[maybe_unused]] int argc,
 
     // Barrier::TEST_ALL();
     // CallOnce::TEST_ALL();
-    ConditionVariable::TEST_ALL();
+    // ConditionVariable::TEST_ALL();
     // Exceptions_Handling::TEST_ALL();
     // Future::TEST_ALL();
 
@@ -98,6 +99,8 @@ int main([[maybe_unused]] int argc,
 
     // FalseSharingExperiments::TEST_ALL();
     // PerformanceExperiments::TestAll();
+
+    Utilities::TestAll();
 
     return EXIT_SUCCESS;
 }

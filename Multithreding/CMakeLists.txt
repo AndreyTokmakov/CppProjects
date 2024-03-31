@@ -46,6 +46,7 @@ add_executable(${PROJECT_NAME}
         PerformanceExperiments/PerformanceExperiments.cpp PerformanceExperiments/PerformanceExperiments.h
         SpinLock/SpinLock.h SpinLock/SpinLock.cpp
         Threads/StoppingThreads.h Threads/StoppingThreads.cpp
+        Utilities/Utilities.h Utilities/Utilities.cpp
 )
 
 # Link libraries to the project/executable

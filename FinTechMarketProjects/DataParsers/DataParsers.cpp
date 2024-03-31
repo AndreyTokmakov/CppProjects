@@ -27,6 +27,7 @@ namespace Paths
 
 namespace
 {
+    [[maybe_unused]]
     [[nodiscard]]
     std::vector<std::string> split(const std::string &str,
                                    const size_t partsExpected = 10,

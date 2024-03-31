@@ -1,0 +1,2 @@
+https://github.com/trezor/trezor-firmware
+https://github.com/trezor/trezor-firmware/tree/main/crypto
