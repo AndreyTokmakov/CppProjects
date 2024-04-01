@@ -564,6 +564,82 @@ namespace Memory::UniquePtr_BAD
 }
 
 
+namespace Memory::CustomAllocatorTest
+{
+    using namespace Helpers;
+
+    template<class T, size_t N>
+    class Allocator
+    {
+        using object_type = T;
+        using pointer = object_type*;
+
+        static_assert(!std::is_same_v<object_type, void>,
+                      "Type of the Objects in the pool can not be void");
+        // FIXME
+        // static_assert(pool % alignof(T) == 0);
+
+        // TODO: to aligned storage?
+        std::byte rawMemory[N * sizeof(Integer)] {};
+        Integer *pool = reinterpret_cast<Integer*>(rawMemory);
+
+        //object_type *pool = static_cast<object_type*>(rawMemory);
+
+        int tail {0};
+        std::array<size_t, N> available {};
+
+    public:
+
+        Allocator()
+        {
+            tail = N - 1;
+            for (size_t idx = 0; idx < N; ++idx)
+                available[idx] = idx;
+
+            // std::cout << sizeof(pool) << std::endl;
+        }
+
+        template<typename ... Args>
+        pointer AllocateAndConstruct(Args ... params)
+        {
+            if (tail < 0) {
+                return nullptr;
+            }
+
+            const size_t offset = available[tail--];
+            try {
+                return new (&pool[offset]) object_type { std::forward<Args>(params)... };
+            } catch (...)
+            {
+                ++tail;
+                throw;
+            }
+        }
+
+        void DestroyAndDeallocate(pointer ptr) // + validate
+        {
+            if (!(nullptr != ptr && 0 == (ptr - pool)  % sizeof(object_type) && ptr >= pool && (pool + N - 1) >= ptr)) {
+                throw std::runtime_error("alien ptr");
+            }
+
+            const size_t offset = ptr - pool;
+            // ptr->~object_type();
+            std::destroy_at(ptr);
+            available[++tail] = offset;
+        }
+    };
+
+    void Tests()
+    {
+        // Integer a{1};
+
+        Allocator<Integer, 5> allocator;
+        auto ptr = allocator.AllocateAndConstruct(33);
+        allocator.DestroyAndDeallocate(ptr);
+
+    }
+}
+
 
 void Memory::TestAll()
 {
@@ -593,5 +669,13 @@ void Memory::TestAll()
     // MakeUnique_ForOverwrite::AllocateArray_AndInitialize();
 
     // UniquePtr_BAD::Test();
+
+    using namespace Helpers;
+
+    //char rawMemory[10 * sizeof(Integer)] {};
+    //void *rawMemory = operator new[](10 * sizeof(Integer));
+    //Integer *data = reinterpret_cast<Integer*>(rawMemory);
+
+    CustomAllocatorTest::Tests();
 
 }

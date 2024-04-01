@@ -1130,7 +1130,7 @@ int main([[maybe_unused]] int argc,
     // ReturnClass_MemberRef_CopyCTor::tests();
 
 
-    Algorithms::TestAll();
+    // Algorithms::TestAll();
     // AutoTests::TestAll();
     // BinManipulation::TestAll();
     // BinaryAnalyzer::TestAll();
@@ -1152,7 +1152,7 @@ int main([[maybe_unused]] int argc,
     // RateLimiter::TestAll();
     // LRUCache::TestAll();
     // Multithreading::TestAll();
-    // Memory::TestAll();
+    Memory::TestAll();
     // MaxStack::TestAll();
     // MinMaxStack::TestAll();
     // MinStack::TestAll();

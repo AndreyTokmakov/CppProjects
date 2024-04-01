@@ -1395,7 +1395,7 @@ namespace Algorithms::Numbers
     }
 }
 
-namespace Algorithms::Majority
+namespace Algorithms::Numbers
 {
     /** Problem:
     Given an array of integers as std::vector<int>, return
@@ -1409,11 +1409,11 @@ namespace Algorithms::Majority
     int majority_element(const std::vector<int>& nums)
     {
         int major = 0;
-        for (size_t count = 0; auto v : nums) {
+        for (uint32_t count = 0; const int value : nums) {
             if (0 == count) {
-                major = v;
+                major = value;
                 count = 1;
-            } else if (v == major) {
+            } else if (value == major) {
                 ++count;
             } else {
                 --count;
@@ -1422,7 +1422,7 @@ namespace Algorithms::Majority
         return major;
     }
 
-    void Test()
+    void MajorityElement()
     {
         for (const std::vector<int>& v: std::vector<std::vector<int>> {
                 // {0},
@@ -1926,19 +1926,15 @@ namespace Algorithms::Strings
 
     void Interleaving_String()
     {
-
         std::cout << std::boolalpha << is_interleaving_string_DEBUG("aabcc", "dbbca", "aadbcbbcac") << std::endl;
         // std::cout << std::boolalpha << is_interleaving_string("aabcc", "dbbca", "aadbbbaccc") << std::endl;
         // std::cout << std::boolalpha << is_interleaving_string("", "", "") << std::endl;
-
     }
 }
 
 
 namespace Algorithms::Numbers
 {
-
-
 
 
     bool can_partition(const std::vector<int>& nums)
@@ -1976,11 +1972,37 @@ namespace Algorithms::Numbers
 
     void CanPartition()
     {
-        std::cout << std::boolalpha << can_partition({2,5,12,5}) << std::endl;
-        std::cout << std::boolalpha << can_partition({1,2,3,5}) << std::endl;
-        std::cout << std::boolalpha << can_partition({2, 2, 2, 3, 3}) << std::endl;
+        for (const auto & [values, expected]: std::vector<std::pair<std::vector<int>, bool>> {
+                {{0}, true},
+                {{2,5,12,5}, true},
+                {{1,2,3,5}, false},
+                {{2, 2, 2, 3, 3}, true},
+        })
+        {
+            const bool actual = can_partition(values);
+            if (expected != actual) {
+                std::cerr << expected << " != " << actual << std::endl;
+                return;
+            }
+        }
+        std::cout << "OK: All tests passed\n";
     }
 }
+
+
+namespace Algorithms::Numbers
+{
+    int majority_element2()
+    {
+
+    }
+
+    void MajorityElement2()
+    {
+
+    }
+}
+
 
 void Algorithms::TestAll()
 {
@@ -2002,7 +2024,8 @@ void Algorithms::TestAll()
     // Numbers::IntToRoman();
     // Numbers::RomanToInt();
     // Numbers::Divide_Numbers();
-    Numbers::CanPartition();
+    Numbers::MajorityElement();                 // INFO --> To Algorithms
+    // Numbers::CanPartition();                 // INFO --> To Algorithms
 
     // Strings::FindCommon_PrefixAndPostfix();
     // Strings::FindLastNotOf__Benchmark();
@@ -2022,7 +2045,7 @@ void Algorithms::TestAll()
 
     // MaxTree::test();
 
-    // Majority::Test();
+
 
     // Algorithms::Sqrt();
 
