@@ -17,6 +17,7 @@ Description : C++ Memory test
 
 #include "../Helpers/Helpers.h"
 #include "CustomStackAllocator.h"
+#include "AlignedStackAllocator.h"
 
 
 namespace Memory
@@ -700,6 +701,7 @@ void Memory::TestAll()
     // UniquePtr_BAD::Test();
 
 
-    CustomStackAllocator::TestAll();
+    AlignedStackAllocator::TestAll();
+    // CustomStackAllocator::TestAll();
 
 }

@@ -13,6 +13,8 @@ Description : CustomStackAllocator.cpp
 #include <array>
 #include "../Helpers/Helpers.h"
 
+
+#if 0
 void* operator new(size_t count) {
     std::cout << "allocating " << count << " bytes\n";
     return malloc(count);
@@ -22,6 +24,7 @@ void operator delete(void* ptr) noexcept {
     std::cout << "Deleting the " << reinterpret_cast<long>(ptr) << "\n";
     free(ptr);
 }
+#endif
 
 namespace CustomStackAllocator
 {
