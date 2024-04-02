@@ -47,6 +47,7 @@ add_executable(${PROJECT_NAME}
         DataStructures/MinMaxStack.cpp DataStructures/MinMaxStack.h
         Performance/Performance.cpp Performance/Performance.h
         Memory/Memory.cpp Memory/Memory.h
+        Memory/CustomStackAllocator.cpp Memory/CustomStackAllocator.h
         BinaryAnalyzer/BinaryAnalyzer.cpp BinaryAnalyzer/BinaryAnalyzer.h
         TestAssignments/TestAssignments.h  TestAssignments/TestAssignments.cpp
         TestAssignments/ThinkCell.cpp TestAssignments/Bullish.cpp

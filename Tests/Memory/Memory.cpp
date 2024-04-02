@@ -16,7 +16,7 @@ Description : C++ Memory test
 #include <cstring>
 
 #include "../Helpers/Helpers.h"
-#include "../Helpers/Wrapper.h"
+#include "CustomStackAllocator.h"
 
 
 namespace Memory
@@ -564,6 +564,7 @@ namespace Memory::UniquePtr_BAD
 }
 
 
+#if 0
 namespace Memory::CustomAllocatorTest
 {
     using namespace Helpers;
@@ -576,14 +577,14 @@ namespace Memory::CustomAllocatorTest
 
         static_assert(!std::is_same_v<object_type, void>,
                       "Type of the Objects in the pool can not be void");
-        // FIXME
-        // static_assert(pool % alignof(T) == 0);
 
         // TODO: to aligned storage?
         std::byte rawMemory[N * sizeof(Integer)] {};
         Integer *pool = reinterpret_cast<Integer*>(rawMemory);
 
-        //object_type *pool = static_cast<object_type*>(rawMemory);
+        // FIXME
+        // static_assert(pool % alignof(T) == 0);
+
 
         int tail {0};
         std::array<size_t, N> available {};
@@ -593,24 +594,29 @@ namespace Memory::CustomAllocatorTest
         Allocator()
         {
             tail = N - 1;
-            for (size_t idx = 0; idx < N; ++idx)
+            std::cout << reinterpret_cast<long>(&pool)  << std::endl;
+            for (size_t idx = 0; idx < N; ++idx) {
                 available[idx] = idx;
-
-            // std::cout << sizeof(pool) << std::endl;
+                std::cout << "\t" << idx << " --> " << reinterpret_cast<long>(&pool[idx])  << std::endl;
+            }
         }
 
         template<typename ... Args>
         pointer AllocateAndConstruct(Args ... params)
         {
             if (tail < 0) {
+                std::cerr << "Out ot space" << std::endl;
                 return nullptr;
             }
 
             const size_t offset = available[tail--];
             try {
-                return new (&pool[offset]) object_type { std::forward<Args>(params)... };
+                pointer ptr =  new (&pool[offset]) object_type { std::forward<Args>(params)... };
+                // std::cout << ptr << std::endl;
+                return ptr;
             } catch (...)
             {
+                std::cerr << "Exc" << std::endl;
                 ++tail;
                 throw;
             }
@@ -618,9 +624,19 @@ namespace Memory::CustomAllocatorTest
 
         void DestroyAndDeallocate(pointer ptr) // + validate
         {
+            if (nullptr == ptr)
+                throw std::runtime_error("nullptr ptr");
+            /*if (0 == (ptr - pool)  % sizeof(object_type) )
+                throw std::runtime_error("wrong alignment ptr");*/
+            if (&pool[0] > ptr)
+                throw std::runtime_error("Not in the allocated block 1");
+            if (ptr > &pool[N - 1])
+                throw std::runtime_error("Not in the allocated block 2");
+
+            /*
             if (!(nullptr != ptr && 0 == (ptr - pool)  % sizeof(object_type) && ptr >= pool && (pool + N - 1) >= ptr)) {
                 throw std::runtime_error("alien ptr");
-            }
+            }*/
 
             const size_t offset = ptr - pool;
             // ptr->~object_type();
@@ -631,15 +647,28 @@ namespace Memory::CustomAllocatorTest
 
     void Tests()
     {
-        // Integer a{1};
-
         Allocator<Integer, 5> allocator;
-        auto ptr = allocator.AllocateAndConstruct(33);
-        allocator.DestroyAndDeallocate(ptr);
 
+        std::array<Integer*, 5> objs {};
+        for (int testId  = 0; testId < 10; ++testId)
+        {
+            for (int i = 0; i < 5; ++i)
+                objs[i] = allocator.AllocateAndConstruct((i + 1) * 10);
+            for (const auto ptr: objs)
+                allocator.DestroyAndDeallocate(ptr);
+        }
+
+
+        /*
+        std::array<int, 3> storage {1,2,3};
+        // std::vector<int> storage {1,2,3};
+        std::cout << reinterpret_cast<long>(&storage)  << std::endl;
+        for (size_t idx = 0; idx < storage.size(); ++idx)
+            std::cout << storage[idx] << " -> " <<reinterpret_cast<long>(&storage[idx])  << std::endl;
+`       */
     }
 }
-
+#endif
 
 void Memory::TestAll()
 {
@@ -670,12 +699,7 @@ void Memory::TestAll()
 
     // UniquePtr_BAD::Test();
 
-    using namespace Helpers;
 
-    //char rawMemory[10 * sizeof(Integer)] {};
-    //void *rawMemory = operator new[](10 * sizeof(Integer));
-    //Integer *data = reinterpret_cast<Integer*>(rawMemory);
-
-    CustomAllocatorTest::Tests();
+    CustomStackAllocator::TestAll();
 
 }
