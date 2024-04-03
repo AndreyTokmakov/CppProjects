@@ -8,7 +8,10 @@
 //============================================================================
 
 #include "../Integer/Integer.h"
+
 #include "Alignment.h"
+#include "AlignedStackAllocator.h"
+#include "CustomStackAllocator.h"
 
 
 #include "Memory.h"
@@ -1646,7 +1649,9 @@ namespace Memory::RestrictObjectHeapCreation
 
 void Memory::TestAll()
 {
-    Alignment::TestAll();
+    // Alignment::TestAll();
+    // AlignedStackAllocator::TestAll();
+    CustomStackAllocator::TestAll();
 
 
 

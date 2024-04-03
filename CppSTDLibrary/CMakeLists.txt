@@ -30,6 +30,7 @@ add_executable(${PROJECT_NAME}
 		FilesStreams/FilesStreams.cpp FilesStreams/FilesStreams.h
 		Filesystem/Filesystem.cpp Filesystem/Filesystem.h
 		Format/Format.cpp Format/Format.h
+		Format/CustomTypesFormatters.cpp Format/CustomTypesFormatters.h
 		FunctionObjects/FunctionObjects.cpp FunctionObjects/FunctionObjects.h
 		Initialization/Initialization.cpp Initialization/Initialization.h
 		InitializerList/InitializerList.cpp InitializerList/InitializerList.h
@@ -44,6 +45,8 @@ add_executable(${PROJECT_NAME}
 		Memory/Memory.cpp Memory/Memory.h
 		Memory/MemoryUsageMonitor.cpp Memory/MemoryUsageMonitor.h
 		Memory/Alignment.cpp Memory/Alignment.h
+		Memory/AlignedStackAllocator.cpp Memory/AlignedStackAllocator.h
+		Memory/CustomStackAllocator.cpp Memory/CustomStackAllocator.h
 		MoveSemantics_RuleOfFive/MoveSemantics_RuleOfFive.cpp MoveSemantics_RuleOfFive/MoveSemantics_RuleOfFive.h
 		Numbers/Numbers.cpp Numbers/Numbers.h
 		NumericLimits/NumericLimits.cpp NumericLimits/NumericLimits.h

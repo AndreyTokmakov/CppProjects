@@ -14,6 +14,7 @@
 #include <iterator>
 
 #include "Format.h"
+#include "CustomTypesFormatters.h"
 
 
 namespace Format 
@@ -292,62 +293,11 @@ namespace CustomFormatters
     */
 }
 
-#define BIT_FIELD(name) bool name: 1
-
-
-namespace BitFieldStructFormatter
-{
-    struct Permissions
-    {
-        BIT_FIELD(read) { false };
-        BIT_FIELD(write) { false };
-        BIT_FIELD(execute) { false };
-        BIT_FIELD(modify) { false };
-        BIT_FIELD(remove) { false };
-        BIT_FIELD(rename) { false };
-        BIT_FIELD(copy) { false };
-        BIT_FIELD(share) { false };
-    };
-}
-
-template<>
-struct std::formatter<BitFieldStructFormatter::Permissions>
-{
-    constexpr auto parse(std::format_parse_context& ctx) {
-        return ctx.begin();
-    }
-
-    auto format(const BitFieldStructFormatter::Permissions& permissions,
-                std::format_context& ctx) const
-    {
-        return std::format_to(ctx.out(), "Permissions (\n\tRead: {}\n\tWrite: {}\n\tExecute: {}\n\tModify {}"
-                                         "\n\tRemove: {}\n\tRename: {}\n\tCopy: {}\n\tShare: {}\n)",
-                              permissions.read,
-                              permissions.write,
-                              permissions.execute,
-                              permissions.modify,
-                              permissions.remove,
-                              permissions.rename,
-                              permissions.copy,
-                              permissions.share);
-    }
-};
-
-namespace BitFieldStructFormatter
-{
-
-    void Test()
-    {
-        Permissions permissions{};
-
-        std::cout << sizeof(Permissions) << std::endl;
-        std::cout << std::format("{}", permissions) << std::endl;
-    }
-}
-
 
 void Format::TestAll()
 {
+    CustomTypesFormatters::TestAll();
+
     // Format_Numbers();
 
     // Format_To();
@@ -361,8 +311,7 @@ void Format::TestAll()
     // Format::VFormatTest1();
     // Format::VFormatPrint();
 
-    Doubles::Format_Doubles_Precision();
-
+    // Doubles::Format_Doubles_Precision();
 
     // SimpleTest();
     // Test_2();
@@ -370,14 +319,11 @@ void Format::TestAll()
     // Make_Path();
 
     // Formatted_Size();
-    Formatted_Size_2();
-    Formatted_Size_3();
+    // Formatted_Size_2();
+    // Formatted_Size_3();
 
     // Experiments();
 
     // Date_and_Time::FormatTime();
     // Date_and_Time::Format_TimePoint();
-
-
-    // BitFieldStructFormatter::Test();
 }

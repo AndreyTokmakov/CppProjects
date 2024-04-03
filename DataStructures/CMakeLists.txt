@@ -22,6 +22,8 @@ add_executable(${PROJECT_NAME}
 		TTLCache/TTLCache.cpp TTLCache/TTLCache.h
 		Utilities/Integer.cpp Utilities/Integer.h
 		Utilities/ThreadHelperUtilities.cpp Utilities/ThreadHelperUtilities.h
+		Memory/AlignedStackAllocator.cpp Memory/AlignedStackAllocator.h
+		Memory/CustomStackAllocator.cpp Memory/CustomStackAllocator.h
 		CustomVector/CustomVector.cpp CustomVector/CustomVector.h
 		ReferenceWrapper/ReferenceWrapper.cpp ReferenceWrapper/ReferenceWrapper.h
 		LinkedList/LinkedList.cpp LinkedList/LinkedList.h
@@ -40,15 +42,13 @@ add_executable(${PROJECT_NAME}
 		ThreadPoolLimited/ThreadPoolLimited.cpp ThreadPoolLimited/ThreadPoolLimited.h
 		Trie/Trie.cpp Trie/Trie.h
 		Utilities/Long.cpp Utilities/Long.h
-        TwoSidedVector/TwoSidedVector.cpp
-        TwoSidedVector/TwoSidedVector.h
+        TwoSidedVector/TwoSidedVector.cpp TwoSidedVector/TwoSidedVector.h
 		MinMaxStack/MinMaxStack.cpp
-		MinStack/MinStack.cpp
-		MinStack/MinStack.h
-		MinHeap/MinHeap.cpp
-		MinHeap/MinHeap.h
-		Heap_WithComparator/HeapWithComparator.cpp
-		Heap_WithComparator/HeapWithComparator.h)
+		MinStack/MinStack.cpp MinStack/MinStack.h
+		MinHeap/MinHeap.cpp MinHeap/MinHeap.h
+		Heap_WithComparator/HeapWithComparator.cpp Heap_WithComparator/HeapWithComparator.h
+		Wrapper/Wrapper.h
+)
 
 # Link libraries to the project/executable
 target_link_libraries(${PROJECT_NAME} PUBLIC

@@ -25,6 +25,8 @@
 #include "MinHeap/MinHeap.h"
 #include "MinStack/MinStack.h"
 #include "MinMaxStack/MinMaxStack.h"
+#include "Memory/AlignedStackAllocator.h"
+#include "Memory/CustomStackAllocator.h"
 #include "Heap_WithComparator/HeapWithComparator.h"
 #include "ReferenceWrapper/ReferenceWrapper.h"
 #include "CustomVector/CustomVector.h"
@@ -62,7 +64,7 @@ int main([[maybe_unused]] int argc,
     // Function::Test();
     // HashTable::TestAll();
     // LinkedLists::TEST_ALL();
-    Logging::TEST_ALL();
+    // Logging::TEST_ALL();
 	// LRUCache::TEST_ALL();
     // ObjectPools::TEST_ALL();
     // Optional::TEST_ALL();
@@ -74,6 +76,9 @@ int main([[maybe_unused]] int argc,
     // MinMaxStack::TestAll();
     // MinHeap::TestAll();
     // HeapWithComparator::TestAll();
+
+    Memory::AlignedStackAllocator::TestAll();
+    // Memory::CustomStackAllocator::TestAll();
 
     // Memory::Shared_Ptr_Tests();
 

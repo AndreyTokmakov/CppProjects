@@ -107,7 +107,7 @@ int main([[maybe_unused]] int argc,
     // EnumTests::TestAll();
     // Errors::TestAll();
     // Exceptions::TestAll();
-    Expected::TestAll();
+    // Expected::TestAll();
     // StrongTypes::TestAll();
     // InitializerList::TestAll();
     // InlineVariables::TestAll();
@@ -115,7 +115,7 @@ int main([[maybe_unused]] int argc,
     // IteratorTests::TestAll();
     // FilesStreams::TestAll();
     // Filesystem::TestAll();
-    // Format::TestAll();
+    Format::TestAll();
     // FunctionObjects::TestAll();
     // Hashing::TestAll();
     // Lambdas::TestAll();
