@@ -70,6 +70,7 @@ namespace Logging
 	{
 	// private:
 	public:
+
 		std::thread dumperThread;
 
 		std::mutex mtx;

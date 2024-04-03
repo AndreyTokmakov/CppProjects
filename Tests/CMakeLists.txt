@@ -68,6 +68,8 @@ add_executable(${PROJECT_NAME}
         FunctionCall_LookUp/FunctionCall_LookUp.cpp FunctionCall_LookUp/FunctionCall_LookUp.h
         Memory/AlignedStackAllocator.cpp
         Memory/AlignedStackAllocator.h
+        Logging/LowLatencyLogger.cpp
+        Logging/LowLatencyLogger.h
 )
 
 TARGET_LINK_LIBRARIES(${PROJECT_NAME}

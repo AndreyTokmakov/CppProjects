@@ -63,6 +63,7 @@ Description : Tests C++ project
 #include "Encoding/Convertaion_UTF8_UTF32.h"
 #include "ExpressionTemplates/ExpressionTemplates.h"
 #include "Templates_Metaprogramming/Templates.h"
+#include "Logging/LowLatencyLogger.h"
 #include "DataStructures/LRUCache.h"
 #include "DataStructures/EventLoop.h"
 #include "DataStructures/MaxStack.h"
@@ -1151,8 +1152,9 @@ int main([[maybe_unused]] int argc,
     // FunctionCall_LookUp::TestAll();
     // RateLimiter::TestAll();
     // LRUCache::TestAll();
+    LowLatencyLogger::TestAll();
     // Multithreading::TestAll();
-    Memory::TestAll();
+    // Memory::TestAll();
     // MaxStack::TestAll();
     // MinMaxStack::TestAll();
     // MinStack::TestAll();

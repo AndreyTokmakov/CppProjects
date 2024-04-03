@@ -58,7 +58,7 @@ int main([[maybe_unused]] int argc,
 {
     // AsyncLaunch::TEST_ALL();
 
-    // Atomic::TestAll();
+    Atomic::TestAll();
     // AtomicFlag::TestAll();
     // Atomic_MemoryOrder::TestAll();
     // Atomic_CompareExchange::TestAll();
@@ -100,7 +100,7 @@ int main([[maybe_unused]] int argc,
     // FalseSharingExperiments::TEST_ALL();
     // PerformanceExperiments::TestAll();
 
-    Utilities::TestAll();
+    // Utilities::TestAll();
 
     return EXIT_SUCCESS;
 }
