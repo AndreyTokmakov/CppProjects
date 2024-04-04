@@ -133,7 +133,7 @@ namespace MultithreadingExperiments
         auto task = [&]() {
             for (size_t i = 0; i < iterCount; ++i)
             {
-                idx.wait(maxCapacity /**, std::memory_order_relaxed **/);
+                idx.wait(maxCapacity , std::memory_order_relaxed);
                 const uint64_t index = idx.fetch_add(1, std::memory_order_relaxed);
                 if (index == maxCapacity - 1) {
                     idx.store(0, std::memory_order_relaxed);
@@ -141,6 +141,8 @@ namespace MultithreadingExperiments
                 }
             }
         };
+
+        auto start = std::chrono::high_resolution_clock::now();
 
         std::vector<std::jthread> workers;
         for (uint32_t i = 0; i < threadsCount; ++i) {
@@ -150,7 +152,9 @@ namespace MultithreadingExperiments
         for (auto& job: workers)
             job.join();
 
-        //std::cout << dumpsCount.load(std::memory_order_relaxed) << std::endl;
+        auto end = std::chrono::high_resolution_clock::now();
+        auto duration = std::chrono::duration_cast<std::chrono::microseconds>(end - start).count();
+        std::cout << "Result: " << duration << " microseconds" << std::endl;
     }
 
     void mutexPerformanceTest()
@@ -160,7 +164,6 @@ namespace MultithreadingExperiments
 
         std::mutex mtx {};
         uint64_t idx {0};
-        uint64_t dumpsCount {0};
 
         auto task = [&]() {
             for (size_t i = 0; i < iterCount; ++i)
@@ -169,10 +172,11 @@ namespace MultithreadingExperiments
                 const uint64_t index = idx++;
                 if (index == maxCapacity - 1) {
                     idx = 0;
-                    ++dumpsCount;
                 }
             }
         };
+
+        auto start = std::chrono::high_resolution_clock::now();
 
         std::vector<std::jthread> workers;
         for (uint32_t i = 0; i < threadsCount; ++i) {
@@ -182,7 +186,9 @@ namespace MultithreadingExperiments
         for (auto& job: workers)
             job.join();
 
-        std::cout << dumpsCount << std::endl;
+        auto end = std::chrono::high_resolution_clock::now();
+        auto duration = std::chrono::duration_cast<std::chrono::microseconds>(end - start).count();
+        std::cout << "Result: " << duration << " microseconds" << std::endl;
     }
 }
 
@@ -192,6 +198,6 @@ void LowLatencyLogger::TestAll()
     // MultithreadingExperiments::fetchAndAdd();
     // MultithreadingExperiments::multipleWriters();
 
-    // MultithreadingExperiments::atomicPerformanceTest();
+    MultithreadingExperiments::atomicPerformanceTest();
     MultithreadingExperiments::mutexPerformanceTest();
 }
