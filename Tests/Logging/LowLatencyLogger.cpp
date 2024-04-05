@@ -66,6 +66,17 @@ namespace MultithreadingExperiments
         std::cout << val << std::endl;
     }
 
+    void compareExchangeWeak()
+    {
+        std::atomic<uint32_t> idx {100};
+        uint32_t expected = 100;
+
+        std:: cout << std::boolalpha << idx.compare_exchange_weak(expected, 2, std::memory_order_relaxed) << std::endl;
+        std:: cout << expected << std::endl;
+        std:: cout << idx.load(std::memory_order_relaxed) << std::endl;
+
+    }
+
     void wait()
     {
         std::atomic<int> counter {1};
@@ -90,30 +101,65 @@ namespace MultithreadingExperiments
 
     void multipleWriters()
     {
-        constexpr uint32_t maxCapacity {100};
+        constexpr uint32_t maxCapacity {1000};
+        constexpr size_t iterCount { 1'000 };
         std::atomic<uint32_t> idx {0};
 
-        // auto getNextIndex = [](std::atomic<uint32_t>& idx){};
-
-        auto task = [&]() {
-            for (int i = 0; i < 40; ++i)
+        auto task = [&]()
+        {
+            for (size_t i = 0; i < iterCount; ++i)
             {
-                std::osyncstream {std::cout} << std::this_thread::get_id() << " before wait()" << std::endl;
-                idx.wait(maxCapacity /**, std::memory_order_relaxed **/);
-
-                const uint32_t index = idx.fetch_add(1, std::memory_order_relaxed);
-                std::osyncstream {std::cout} << std::this_thread::get_id() << " index = " << index << std::endl;
-
-                if (index == maxCapacity - 1)
+                uint32_t index = idx.fetch_add(1, std::memory_order_relaxed);
+                if (maxCapacity - 1 > index)
                 {
-                    std::osyncstream {std::cout} << std::this_thread::get_id() << "**** RESET ****\n";
+                    //index = idx.fetch_add(1, std::memory_order_relaxed);
+                    //std::osyncstream {std::cout} << std::this_thread::get_id() << " index = " << index << std::endl;
+                }
+                else if (index == maxCapacity - 1)
+                {
+                    //std::osyncstream {std::cout} << std::this_thread::get_id() << "**** SWAP **** index = " << index << "\n";
+                    //std::this_thread::sleep_for(std::chrono::seconds(1));
                     idx.store(0, std::memory_order_relaxed);
                 }
+                else {
+                    //std::osyncstream{std::cout} << std::this_thread::get_id() << " WAIT Start. index = " << index << "\n";
+
+                    // idx.wait(index, std::memory_order_relaxed);
+                    while (idx.load(std::memory_order_relaxed) >= maxCapacity) {
+                        std::this_thread::sleep_for(std::chrono::microseconds (1));
+                    }
+
+                    index = idx.fetch_add(1, std::memory_order_relaxed);
+                    //std::osyncstream{std::cout} << std::this_thread::get_id() << " WAIT End. index = " << index << "\n";
+                }
+
+                //idx.compare_exchange_weak(index, 0, )
+
+                /*
+                std::osyncstream {std::cout} << std::this_thread::get_id() << " index = " << index << std::endl;
+
+                if (index == maxCapacity - 1) {
+                    idx.fetch_add(1, std::memory_order_relaxed);
+
+                    std::this_thread::sleep_for(std::chrono::seconds(1));
+                    std::osyncstream {std::cout} << std::this_thread::get_id() << "**** SWAP ****\n";
+
+                    idx.store(0, std::memory_order_relaxed);
+                    std::osyncstream {std::cout} << std::this_thread::get_id() << "**** RESET ****\n";
+                }
+
+                if (index >= maxCapacity) {
+                    std::osyncstream {std::cout} << std::this_thread::get_id() << " HAS to wait" << std::endl;
+                    idx.wait(maxCapacity, std::memory_order_relaxed);
+                    index = idx.fetch_add(1, std::memory_order_relaxed);
+                }
+                */
+
             }
         };
 
         std::vector<std::jthread> workers;
-        for (int i = 0; i < 5; ++i) {
+        for (int i = 0; i < 32; ++i) {
             workers.emplace_back(task);
         }
 
@@ -125,19 +171,21 @@ namespace MultithreadingExperiments
 
     void atomicPerformanceTest()
     {
-        constexpr uint32_t maxCapacity {1000}, threadsCount {12};
+        constexpr uint32_t maxCapacity {1000}, threadsCount {32};
         constexpr size_t iterCount { 1'000'000 };
         std::atomic<uint64_t> idx {0};
-        //std::atomic<uint64_t> dumpsCount {0};
 
         auto task = [&]() {
             for (size_t i = 0; i < iterCount; ++i)
             {
-                idx.wait(maxCapacity , std::memory_order_relaxed);
-                const uint64_t index = idx.fetch_add(1, std::memory_order_relaxed);
+                uint64_t index = idx.fetch_add(1, std::memory_order_relaxed);
+                if (index == maxCapacity) {
+                    idx.wait(maxCapacity, std::memory_order_relaxed);
+                    index = idx.fetch_add(1, std::memory_order_relaxed);
+                }
+
                 if (index == maxCapacity - 1) {
                     idx.store(0, std::memory_order_relaxed);
-                    //dumpsCount.fetch_add(1,std::memory_order_relaxed);
                 }
             }
         };
@@ -159,7 +207,7 @@ namespace MultithreadingExperiments
 
     void mutexPerformanceTest()
     {
-        constexpr uint32_t maxCapacity {1000}, threadsCount {12};
+        constexpr uint32_t maxCapacity {1000}, threadsCount {32};
         constexpr size_t iterCount { 1'000'000 };
 
         std::mutex mtx {};
@@ -195,9 +243,11 @@ namespace MultithreadingExperiments
 void LowLatencyLogger::TestAll()
 {
     // MultithreadingExperiments::wait();
+    // MultithreadingExperiments::compareExchangeWeak();
     // MultithreadingExperiments::fetchAndAdd();
-    // MultithreadingExperiments::multipleWriters();
 
-    MultithreadingExperiments::atomicPerformanceTest();
-    MultithreadingExperiments::mutexPerformanceTest();
+    MultithreadingExperiments::multipleWriters();
+
+    // MultithreadingExperiments::atomicPerformanceTest();
+    // MultithreadingExperiments::mutexPerformanceTest();
 }
