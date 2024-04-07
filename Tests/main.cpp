@@ -1096,13 +1096,6 @@ bool setThreadCore(int core_id) noexcept
 }
 
 
-struct Order {
-    int id;
-    int quantity;
-    double price;
-
-};
-
 
 int main([[maybe_unused]] int argc,
          [[maybe_unused]] char** argv)
@@ -1126,10 +1119,6 @@ int main([[maybe_unused]] int argc,
     // UBBook::Test();
 
     // Move_Copy_Tests::test();
-
-
-    std::cout << std::format("{}", 1) << std::endl;
-
 
 
     /** * * * * *  Move to lib * * * * * **/
@@ -1161,7 +1150,7 @@ int main([[maybe_unused]] int argc,
     // FunctionCall_LookUp::TestAll();
     // RateLimiter::TestAll();
     // LRUCache::TestAll();
-    // LowLatencyLogger::TestAll();
+    LowLatencyLogger::TestAll();
     // Multithreading::TestAll();
     // Memory::TestAll();
     // MaxStack::TestAll();

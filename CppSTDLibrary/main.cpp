@@ -115,8 +115,8 @@ int main([[maybe_unused]] int argc,
     // IteratorTests::TestAll();
     // FilesStreams::TestAll();
     // Filesystem::TestAll();
-    Format::TestAll();
-    // FunctionObjects::TestAll();
+    // Format::TestAll();
+    FunctionObjects::TestAll();
     // Hashing::TestAll();
     // Lambdas::TestAll();
     // LifetimeExtension::TestAll();

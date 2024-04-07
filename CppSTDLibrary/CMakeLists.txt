@@ -32,6 +32,7 @@ add_executable(${PROJECT_NAME}
 		Format/Format.cpp Format/Format.h
 		Format/CustomTypesFormatters.cpp Format/CustomTypesFormatters.h
 		FunctionObjects/FunctionObjects.cpp FunctionObjects/FunctionObjects.h
+		FunctionObjects/MemberFunctionPointer.cpp FunctionObjects/MemberFunctionPointer.h
 		Initialization/Initialization.cpp Initialization/Initialization.h
 		InitializerList/InitializerList.cpp InitializerList/InitializerList.h
 		InlineVariables/InlineVariables.cpp InlineVariables/InlineVariables.h

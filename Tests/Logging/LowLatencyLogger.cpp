@@ -169,23 +169,89 @@ namespace MultithreadingExperiments
         std::cout << idx.load(std::memory_order_relaxed) << std::endl;
     }
 
-    void atomicPerformanceTest()
+    void multipleWriters_MTX()
     {
-        constexpr uint32_t maxCapacity {1000}, threadsCount {32};
-        constexpr size_t iterCount { 1'000'000 };
-        std::atomic<uint64_t> idx {0};
+        constexpr uint32_t maxCapacity {1000};
+        constexpr size_t iterCount { 1'000 };
 
-        auto task = [&]() {
+        std::mutex mtx;
+        std::atomic<uint32_t> idx {0};
+        std::atomic<uint32_t> total1 {0};
+        std::atomic<uint32_t> total2 {0};
+
+        auto task = [&]()
+        {
             for (size_t i = 0; i < iterCount; ++i)
             {
-                uint64_t index = idx.fetch_add(1, std::memory_order_relaxed);
-                if (index == maxCapacity) {
-                    idx.wait(maxCapacity, std::memory_order_relaxed);
-                    index = idx.fetch_add(1, std::memory_order_relaxed);
+                uint32_t index = idx.fetch_add(1, std::memory_order_relaxed);
+                if (maxCapacity - 1 > index)
+                {
+                    // Put logs
+                    // std::osyncstream {std::cout} << std::this_thread::get_id() << " index = " << index << std::endl;
+                    total1.fetch_add(1, std::memory_order_relaxed);
+                    continue;
                 }
 
-                if (index == maxCapacity - 1) {
+                std::lock_guard<std::mutex> lock {mtx};
+
+                if (index == maxCapacity - 1)
+                {
+                    //std::osyncstream {std::cout} << std::this_thread::get_id() << "**** SWAP ****\n";
                     idx.store(0, std::memory_order_relaxed);
+                    total2.fetch_add(1, std::memory_order_relaxed);
+                }
+                else
+                {
+                    index = idx.fetch_add(1, std::memory_order_relaxed);
+                    //std::osyncstream{std::cout} << std::this_thread::get_id() << "Synchronized. index = " << index << "\n";
+                    total2.fetch_add(1, std::memory_order_relaxed);
+                }
+            }
+        };
+
+        std::vector<std::jthread> workers;
+        for (int i = 0; i < 32; ++i) {
+            workers.emplace_back(task);
+        }
+
+        for (auto& job: workers)
+            job.join();
+
+        //std::cout << idx.load(std::memory_order_relaxed) << std::endl;
+        std::cout << total1.load(std::memory_order_relaxed) << std::endl;
+        std::cout << total2.load(std::memory_order_relaxed) << std::endl;
+    }
+
+    void atomicPerformanceTest()
+    {
+        constexpr uint32_t maxCapacity {1'000}, threadsCount {32};
+        constexpr size_t iterCount { 1'000'000 };
+        std::mutex mtx;
+        std::atomic<uint32_t> idx {0};
+
+        auto task = [&]()
+        {
+            for (size_t i = 0; i < iterCount; ++i)
+            {
+                uint32_t index = idx.fetch_add(1, std::memory_order_relaxed);
+                if (maxCapacity - 1 > index)
+                {
+                    // Put logs
+                    continue;
+                }
+
+                std::lock_guard<std::mutex> lock {mtx};
+
+                if (index == maxCapacity - 1)
+                {
+                    // SWAP
+                    idx.store(0, std::memory_order_relaxed);
+                    // Put logs
+                }
+                else
+                {
+                    index = idx.fetch_add(1, std::memory_order_relaxed);
+                    // Put logs
                 }
             }
         };
@@ -246,7 +312,8 @@ void LowLatencyLogger::TestAll()
     // MultithreadingExperiments::compareExchangeWeak();
     // MultithreadingExperiments::fetchAndAdd();
 
-    MultithreadingExperiments::multipleWriters();
+    // MultithreadingExperiments::multipleWriters();
+    MultithreadingExperiments::multipleWriters_MTX();
 
     // MultithreadingExperiments::atomicPerformanceTest();
     // MultithreadingExperiments::mutexPerformanceTest();

@@ -26,6 +26,7 @@
 
 #include "../Integer/Integer.h"
 #include "FunctionObjects.h"
+#include "MemberFunctionPointer.h"
 
 
 namespace FunctionObjects {
@@ -183,41 +184,6 @@ namespace FunctionObjects {
 
 		}
 	}
-}
-
-namespace FunctionObjects::FunctionPointers
-{
-    struct S
-    {
-        int value {1};
-
-        explicit S(int val): value {val} { std::cout << "S::S(" << value << ")" << std::endl; }
-        ~S() { std::cout << "S::~S()" << std::endl; }
-
-        [[nodiscard]] constexpr int getValueOne() { return value; }
-        [[nodiscard]] constexpr int getValueTwo() { return value * 2; }
-    };
-
-    void functionPointer_Type_Test()
-    {
-        /** Defining type **/
-        using fun_ptr_t = int (S::*)();
-        S s {1};
-
-        fun_ptr_t getValOne = &S::getValueOne;
-
-        {
-            auto v = (s.*getValOne)();
-            std::cout << v << std::endl;
-        }
-
-        getValOne = &S::getValueTwo;
-
-        {
-            auto v = (s.*getValOne)();
-            std::cout << v << std::endl;
-        }
-    }
 }
 
 namespace FunctionObjects::BindTests {
@@ -418,102 +384,6 @@ namespace FunctionObjects::BindTests {
 	}
 }
 
-namespace FunctionObjects::ClassMethodPointers {
-
-	class Base {
-	private:
-		std::string value;
-
-	public:
-		Base(const std::string& str) : value(str) {
-		}
-		Base(const Base& obj) : value(obj.value) {
-			std::cout << "Base::Base(" << value << ") copy contructor." << std::endl;
-		}
-		Base(Base&& obj) noexcept : value(std::move(obj.value)) {
-			std::cout << "Base::Base(" << value << ") move contructor." << std::endl;
-		}
-		Base& operator=(const Base& obj)  {
-			std::cout << "Base::Base(" << value << ")." << std::endl;
-			if (this != &obj) {
-				value = obj.value;
-			}
-			return *this;
-		}
-		Base& operator=(Base&& obj) noexcept {
-			std::cout << "Move assignment oprator Base::Base(" << value << ")." << std::endl;
-			if (this != &obj) {
-				value = std::move(obj.value);
-			}
-			return *this;
-		}
-
-	public:
-		virtual void doSomething(const std::string& str) {
-			std::cout << __FUNCTION__ << std::endl;
-			std::cout << str << std::endl;
-		}
-	};
-
-	class Derived : public Base {
-	public:
-		Derived(const std::string& str) : Base(str) {
-		}
-
-	public:
-		virtual void doSomething(const std::string& str) override {
-			std::cout << __FUNCTION__ << std::endl;
-			std::cout << str << std::endl;
-		}
-	};
-
-	/***********************************************************************************************************************************/
-
-	void CallMethod_ByPointer() {
-		using methodPtr = void (Base::*)(const std::string& str);
-		methodPtr func = &Base::doSomething;
-
-		{
-			std::cout << "\n----------------------------- Calling Base class method by pointer: ---------------------\n" << std::endl;
-			Base obj("Test");
-			(obj.*func)("Some input parameter");
-		}
-		{
-			std::cout << "\n----------------------------- Calling Derived class method by pointer: ---------------------\n" << std::endl;
-			Derived obj("Test");
-			(obj.*func)("Some input parameter");
-		}
-	}
-
-	void CallMethod_BIND() {
-		{
-			std::cout << "\n----------------------------- Calling Base class method using BIND: ---------------------\n" << std::endl;
-			Base obj("Test");
-			auto func = std::bind(&Base::doSomething, &obj, std::placeholders::_1);
-			func("Some input parameter");
-		}
-		{
-			std::cout << "\n----------------------------- Calling Derived class method using BIND: ---------------------\n" << std::endl;
-			Derived obj("Test");
-			auto func = std::bind(&Base::doSomething, &obj, std::placeholders::_1);
-			func("Some input parameter");
-		}
-	}
-
-	void CallMethod_Mem_Fn() {
-		auto func = std::mem_fn(&Base::doSomething);
-		{
-			std::cout << "----------------------------- Calling Base class method using std::mem_fn: ---------------------\n" << std::endl;
-			Base obj("Test");
-			func(obj, "Some input parameter1");
-		}
-		{
-			std::cout << "\n----------------------------- Calling Derived class method using std::mem_fn: ---------------------\n" << std::endl;
-			Derived obj("Test");
-			func(obj, "Some input parameter2");
-		}
-	}
-}
 
 namespace FunctionObjects::Auto {
 
@@ -797,7 +667,7 @@ void FunctionObjects::TestAll()
 {
 	// Auto::Return_Type_Hint();
 
-    FunctionPointers::functionPointer_Type_Test();
+    MemberFunctionPointer::TestAll();
 
 	// BindTests::FuncPtr_Tests();
 	// BindTests::Bind_Test_1();
@@ -808,10 +678,6 @@ void FunctionObjects::TestAll()
 	// BindTests::Bind_CallDifferentClassMethods();
 	// BindTests::Bind_Class_Method();
 	// BindTests::Bind_Front_Test();
-
-	// ClassMethodPointers::CallMethod_ByPointer();
-	// ClassMethodPointers::CallMethod_BIND();
-	// ClassMethodPointers::CallMethod_Mem_Fn();
 
 	// Vector_Of_Functions();
 	// FunctorTest();
