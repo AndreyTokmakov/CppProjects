@@ -12,10 +12,14 @@
 #include <any>
 #include <functional>
 #include <memory>
+#include <utility>
 #include <variant>
 
 #include "ObjectOrientedProgramming.h"
 #include "../Integer/Integer.h"
+
+#include "Operators.h"
+
 
 
 namespace ObjectOrientedProgramming::Constructors
@@ -979,151 +983,6 @@ namespace ObjectOrientedProgramming {
             delete b;
         }
     }
-
-    //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-    //                                    Operator Overload Tests                                                                   //
-    //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-    namespace Operator_Overload_Tests {
-
-        /** Base class definition: **/
-        class Base {
-        protected:
-            std::string text;
-
-        public:
-            virtual ~Base() = default;
-
-        public:
-            Base(const std::string& str) : text(str) {
-                std::cout << "Base: Constructor called. { " << text << " }" << std::endl;
-            }
-
-            Base& operator=(Base& obj) noexcept {
-                std::cout << "Base: Assignment operator called. Value = " << text << std::endl;
-                this->text = obj.text;
-                return *this;
-            }
-
-            friend std::ostream& operator<<(std::ostream& stream, const Base& base) {
-                stream << base.text;
-                return stream;
-            }
-        };
-
-        /** Base class definition: **/
-        class Derived: public Base {
-        public:
-            std::string description;
-
-        public:
-            Derived(const std::string& str, const std::string& desc) : Base(str), description(desc) {
-                std::cout << "Derived: Constructor called. { " << text  << ", " << description << " }" << std::endl;
-            }
-
-            /*
-            Derived& operator=(Derived& obj) noexcept {
-                std::cout << "Derived: Assignment operator called. Value = " << text << std::endl;
-                this->description = obj.description;
-                return *this;
-            }*/
-
-            friend std::ostream& operator<<(std::ostream& stream, const Derived& obj) {
-                stream << "{ " << obj.text << ", " << obj .description << " }";
-                return stream;
-            }
-        };
-
-        ////////////////////////////
-
-        void Inherit_Copy_Assignment_Operator() {
-
-            /*  // Constructor src:
-            {
-                Base obj1("Value1");
-                std::cout << obj1 << std::endl;
-
-                Base obj2 = std::string("Value2");
-                std::cout << obj2 << std::endl;
-            }
-            */
-
-            {
-                Base obj1("Value1"), obj2("Value2");
-                std::cout << std::endl;
-
-                std::cout << "obj1 = " << obj1 << ", obj2 = " << obj2 << std::endl;
-                obj1 = obj2;
-                std::cout << "obj1 = " << obj1 << ", obj2 = " << obj2 << std::endl;
-            }
-
-            std::cout << "\n ----------------- Test2 ----------------------" << std::endl << std::endl;
-            {
-                Derived obj1("Value111", "Desc111"), obj2("Value2222", "Desc2222");
-
-                std::cout << std::endl;
-
-                std::cout << "obj1 = " << obj1 << ", obj2 = " << obj2 << std::endl;
-                obj1 = obj2;
-                std::cout << "obj1 = " << obj1 << ", obj2 = " << obj2 << std::endl;
-            }
-        }
-    }
-
-    namespace OperatorOverloading {
-
-        class Long {
-            long value{ 0 };
-
-        public:
-            Long() = default;
-
-            explicit Long(long v) : value{ v } {
-                std::cout << "Long::Long(" << value << ")\n";
-            }
-
-            ~Long() {
-                std::cout << "Long::~Long(" << value << ")\n";
-            }
-
-            Long(const Long& l) = delete;
-            Long& operator=(const Long& l) = delete;
-
-            Long(Long&& l) noexcept = delete;
-            Long& operator=(Long&& l) noexcept = delete;
-
-            friend Long operator+(const Long& l1, const Long& l2);
-
-
-            friend std::ostream& operator<<(std::ostream& stream, const Long& obj);
-        };
-
-        std::ostream& operator<<(std::ostream& stream, const Long& obj) {
-            stream << obj.value;
-            return stream;
-        }
-
-        Long operator+(const Long& l1, const Long& l2) {
-            return Long(l1.value + l2.value);
-        }
-
-        //------------------------------------------------------------------
-
-        void Tests() {
-            Long v1{ 11 };
-            std::cout << v1 << std::endl;
-
-            Long v2{ 22 };
-            auto x = (v1 + v2);
-            std::cout << x << std::endl;
-
-            // Long v3 = std::move(v2);
-        }
-    }
-
-    //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-    //                                                                                                                              //
-    //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 /*
 	namespace Final_Tests {
@@ -3153,6 +3012,8 @@ void ObjectOrientedProgramming::TestAll()
     // UserDefindedConversation();
     // ExceptionInConstructor();
 
+    Operators::TestAll();
+
 
     // ******************************** CONSTRUCTORS: *********************************//
 
@@ -3236,7 +3097,6 @@ void ObjectOrientedProgramming::TestAll()
     // ReturnValueOptimization::Create_NoCopyConstructor2();
 
     // Operator_Overload_Tests::Inherit_Copy_Assignment_Operator();
-    // OperatorOverloading::Tests();
 
     // Static_Members_Inheritance::Test();
     // AggregateInitialization::InitTest();
@@ -3255,13 +3115,13 @@ void ObjectOrientedProgramming::TestAll()
 
     // AccessMembers::Test();
     // MultipleInheritance::TEST();
-    CallBaseClassMembers::Call_BaseClass_Func_Hack();
+    // CallBaseClassMembers::Call_BaseClass_Func_Hack();
 
     // **************************** Covariant Return Type: ****************************//
 
     // Covariant_Return_Type::testPointers();
     // Covariant_Return_Type::testStartPointers();
-    Covariant_Return_Type::Return_UniquePtr_WithDerivedClass();
+    // Covariant_Return_Type::Return_UniquePtr_WithDerivedClass();
 
     // ******************************** Polymorphism: *********************************//
 

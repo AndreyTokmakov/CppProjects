@@ -87,6 +87,8 @@ add_executable(${PROJECT_NAME}
 		Templates/ConditionalExplicit.h Templates/ConditionalExplicit.cpp
 		Templates/FoldExpressions.cpp  Templates/FoldExpressions.h
 		Templates/NTTP.cpp  Templates/NTTP.h
+		ObjectOrientedProgramming/Operators.cpp
+		ObjectOrientedProgramming/Operators.h
 )
 
 # Link libraries to the project/executable
