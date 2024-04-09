@@ -67,7 +67,6 @@ add_executable(${PROJECT_NAME}
 		StringView/StringViewTests.cpp StringView/StringViewTests.h
 		StructuredBinding/StructuredBinding.cpp StructuredBinding/StructuredBinding.h
 		StrongTypes/StrongTypes.cpp StrongTypes/StrongTypes.h
-		Templates/Templates.cpp Templates/Templates.h
 		TestSupport/TestSupport.h
 		Tuple/TupleTests.cpp Tuple/TupleTests.h
 		TypeCast/TypeCast.cpp TypeCast/TypeCast.h
@@ -84,9 +83,11 @@ add_executable(${PROJECT_NAME}
 		Types/Int.cpp Types/Int.h
 		NameSpaces/InlineNamespaces.cpp NameSpaces/InlineNamespaces.h
 		Comparators/Comparators.cpp Comparators/Comparators.h
+		Templates/Templates.cpp Templates/Templates.h
 		Templates/ConditionalExplicit.h Templates/ConditionalExplicit.cpp
 		Templates/FoldExpressions.cpp  Templates/FoldExpressions.h
-		Templates/NTTP.cpp  Templates/NTTP.h
+		Templates/NTTP.cpp Templates/NTTP.h
+		Templates/TemplateSpecialization.cpp Templates/TemplateSpecialization.h
 )
 
 # Link libraries to the project/executable

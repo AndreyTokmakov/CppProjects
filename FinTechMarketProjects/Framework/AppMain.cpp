@@ -10,9 +10,7 @@ Description : AppMain.cpp
 #include "AppMain.h"
 #include "DataProvider.h"
 #include "OrderBook.h"
-
-#include <iostream>
-#include <fstream>
+#include "Tests/Tests.h"
 
 namespace
 {
@@ -29,13 +27,28 @@ namespace AppMain
 
 }
 
+
+
+// TODO:
+//  1. MemPool: Create orders from the Pool
+//     ---> Tests --> Different Namespace
+//  2. Logger
+//  3. Networking
+//  4. LockFree Queue's
+//  5. IPC <--> ZeroMQ ???
+
 void AppMain::TestAll([[maybe_unused]] const std::vector<std::string_view>& args)
 {
     using namespace Framework;
 
+    /*
     OrderBook book;
     DataProvider dataProvider(book);
     dataProvider.setStream(dataFilePathPart);
 
     dataProvider.start();
+    */
+
+    Tests::TestAll();
+
 }
