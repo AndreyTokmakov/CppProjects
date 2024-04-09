@@ -28,27 +28,39 @@ namespace AppMain
 }
 
 
+// INFO: MarkerDataProvider --> NIC (kernel bypass) --> OrderGatewayServer
+
 
 // TODO:
-//  1. MemPool: Create orders from the Pool
+//  • Financial protocol parsing
+//      - FAST parser
+//  • OrderGatewayServer:
+//      - TCP Epoll Server | Netmap, DPDK ??
+//  • MemPool: Create orders from the Pool
 //     ---> Tests --> Different Namespace
-//  2. Logger
-//  3. Networking
-//  4. LockFree Queue's
-//  5. IPC <--> ZeroMQ ???
+//  • Logger
+//      - Different handlers | ToFile && ToNetwork
+//  • Database
+//      - How efficiently store data
+//      - Ro restore data
+//  • OrderHandler
+//      - Store and publish orders --> To the market ??
+//  • Networking
+//      - TCP Server | Epoll ()
+//      - Multicast | Broadcast serer
+//      - NetMap - ZeroCopy poller
+//  • LockFree Queue's
+//  • IPC <--> ZeroMQ ???
 
 void AppMain::TestAll([[maybe_unused]] const std::vector<std::string_view>& args)
 {
     using namespace Framework;
 
-    /*
     OrderBook book;
     DataProvider dataProvider(book);
     dataProvider.setStream(dataFilePathPart);
 
     dataProvider.start();
-    */
 
-    Tests::TestAll();
-
+    // Tests::TestAll();
 }

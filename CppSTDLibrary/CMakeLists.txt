@@ -52,6 +52,7 @@ add_executable(${PROJECT_NAME}
 		Numbers/Numbers.cpp Numbers/Numbers.h
 		NumericLimits/NumericLimits.cpp NumericLimits/NumericLimits.h
 		ObjectOrientedProgramming/ObjectOrientedProgramming.cpp ObjectOrientedProgramming/ObjectOrientedProgramming.h
+		ObjectOrientedProgramming/Operators.cpp ObjectOrientedProgramming/Operators.h
 		OptionalTests/OptionalTests.cpp OptionalTests/OptionalTests.h
 		PolymorphicMemoryResources/PolymorphicMemoryResources.cpp PolymorphicMemoryResources/PolymorphicMemoryResources.h
 		Random/Random.cpp Random/Random.h
