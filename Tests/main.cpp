@@ -414,52 +414,6 @@ namespace ReturnTypeCast
     }
 }
 
-namespace OperatorCall_ExplicitTypeSpecialization
-{
-    struct Data1 {
-    };
-
-    template<typename T>
-    struct StorageOptions
-    {
-        void ignore_missing([[maybe_unused]] bool ignore) {
-            // Some logic
-        }
-    };
-
-    struct StorageLoader
-    {
-        template<typename DataType>
-        DataType operator()(const StorageOptions<DataType>*)
-        {
-            return DataType{};
-        }
-    };
-
-    void Test()
-    {
-        StorageLoader storageLoader;
-
-        {
-            StorageOptions<Data1> dataOptions;
-            dataOptions.ignore_missing(true);
-
-            auto data = storageLoader(&dataOptions);
-            std::cout << typeid(data).name() << std::endl;
-        }
-
-        {
-            auto data = storageLoader.operator()<Data1>(nullptr);
-            std::cout << typeid(data).name() << std::endl;
-        }
-
-        {
-            Data1 obj;
-            auto data = storageLoader.operator()<decltype(obj)>(nullptr);
-            std::cout << typeid(data).name() << std::endl;
-        }
-    }
-}
 
 namespace CallFunctionByName
 {
@@ -1097,6 +1051,7 @@ bool setThreadCore(int core_id) noexcept
 
 
 
+
 int main([[maybe_unused]] int argc,
          [[maybe_unused]] char** argv)
 {
@@ -1117,8 +1072,6 @@ int main([[maybe_unused]] int argc,
     // Exceptions::test();
 
     // UBBook::Test();
-
-    // Move_Copy_Tests::test();
 
 
     /** * * * * *  Move to lib * * * * * **/

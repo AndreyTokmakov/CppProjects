@@ -130,7 +130,7 @@ int main([[maybe_unused]] int argc,
     // Metaprogramming::TestAll();
     // InlineNamespaces::TestAll();
     // NumericLimits::TestAll();
-    // ObjectOrientedProgramming::TestAll();
+    ObjectOrientedProgramming::TestAll();
     // Optional::TestAll();
     // PolymorphicMemoryResources::TestAll();
     // Random::TestAll();
