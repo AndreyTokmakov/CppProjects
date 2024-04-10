@@ -27,11 +27,25 @@ namespace AppMain
 
 }
 
+template <typename T>
+concept NumberConcept = std::is_arithmetic_v<T>;
+
+void sink(const NumberConcept auto& value)
+{
+
+}
+
+
+
 
 // INFO: MarkerDataProvider --> NIC (kernel bypass) --> OrderGatewayServer
 
 
 // TODO:
+//  • Basic Types:
+//      - Side
+//      - Order
+//      - Concepts
 //  • Financial protocol parsing
 //      - FAST parser
 //  • OrderGatewayServer:
@@ -51,16 +65,22 @@ namespace AppMain
 //      - NetMap - ZeroCopy poller
 //  • LockFree Queue's
 //  • IPC <--> ZeroMQ ???
+//  • FPGA ???? (https://www.mavensecurities.com/fpgas-in-trading/)
 
 void AppMain::TestAll([[maybe_unused]] const std::vector<std::string_view>& args)
 {
     using namespace Framework;
 
+    /*
     OrderBook book;
     DataProvider dataProvider(book);
     dataProvider.setStream(dataFilePathPart);
 
     dataProvider.start();
+    */
+
+    sink(1);
+    sink(1.23131222222222);
 
     // Tests::TestAll();
 }

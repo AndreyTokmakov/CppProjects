@@ -11,7 +11,7 @@
 #define MULTITHREADING_COLLECTIONS_TESTS_INCLUDE_GUARD__H
 
 namespace Multithreading_Collections {
-    void TEST_ALL();
+    void TestAll();
 };
 
 #endif // !MULTITHREADING_COLLECTIONS_TESTS_INCLUDE_GUARD__H

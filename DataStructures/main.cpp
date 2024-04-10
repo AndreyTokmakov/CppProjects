@@ -57,7 +57,7 @@ int main([[maybe_unused]] int argc,
     // Array::TEST_ALL();
     // BitSet::TEST_ALL();
     // CategoryTree::TEST_ALL();
-    // CircularBuffers::TEST_ALL();
+    CircularBuffers::TEST_ALL();
     // CustomVector::TestAll();
     // ExecutorAdapter::TestAll();
     // ExecutorAdapter2::TestAll();
@@ -77,7 +77,7 @@ int main([[maybe_unused]] int argc,
     // MinHeap::TestAll();
     // HeapWithComparator::TestAll();
 
-    Memory::AlignedStackAllocator::TestAll();
+    // Memory::AlignedStackAllocator::TestAll();
     // Memory::CustomStackAllocator::TestAll();
 
     // Memory::Shared_Ptr_Tests();

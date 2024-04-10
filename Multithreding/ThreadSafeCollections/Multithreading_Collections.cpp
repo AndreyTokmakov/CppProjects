@@ -96,7 +96,8 @@ namespace Multithreading_Collections::ThreadSafeContainer
 };
 
 
-void Multithreading_Collections::TEST_ALL() {
+void Multithreading_Collections::TestAll()
+{
 
     // ThreadSafeContainer::SynchTest_1();
     // ThreadSafeContainer::SynchTest_2();

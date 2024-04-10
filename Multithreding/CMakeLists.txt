@@ -27,8 +27,10 @@ add_executable(${PROJECT_NAME}
         Integer/Integer.h
         JThreads/JThreads.cpp JThreads/JThreads.h
         Latch/Latch.cpp Latch/Latch.h
-        Multithreading_Collections/Multithreading_Collections.cpp Multithreading_Collections/Multithreading_Collections.h
-        Multithreading_Collections/Queue.cpp Multithreading_Collections/Queue.h
+        ThreadSafeCollections/LockFreeQueue.cpp ThreadSafeCollections/LockFreeQueue.h
+        ThreadSafeCollections/Multithreading_Collections.cpp ThreadSafeCollections/Multithreading_Collections.h
+        ThreadSafeCollections/Queue.cpp ThreadSafeCollections/Queue.h
+        ThreadSafeCollections/SingleConsumerProducerQueue.cpp ThreadSafeCollections/SingleConsumerProducerQueue.h
         Multithreading_Communication/Multithreading_Communication.cpp Multithreading_Communication/Multithreading_Communication.h
         Multithreading_Performance/Multithreading_Performance.cpp Multithreading_Performance/Multithreading_Performance.h
         PackagedTask/PackagedTask.cpp PackagedTask/PackagedTask.h
@@ -37,7 +39,6 @@ add_executable(${PROJECT_NAME}
         Semaphore/Semaphore.cpp Semaphore/Semaphore.h
         Synchronization/Synchronization.cpp Synchronization/Synchronization.h
         ThreadPools/ThreadPools.cpp ThreadPools/ThreadPools.h
-        LockFreeDataStructures/LockFreeQueue.cpp LockFreeDataStructures/LockFreeQueue.h
         Threads/Threads.cpp Threads/Threads.h
         ThreadPoolLimited/ThreadPoolLimited.cpp ThreadPoolLimited/ThreadPoolLimited.h
         FalseSharing/FalseSharingExperiments.cpp FalseSharing/FalseSharingExperiments.h
@@ -46,7 +47,7 @@ add_executable(${PROJECT_NAME}
         PerformanceExperiments/PerformanceExperiments.cpp PerformanceExperiments/PerformanceExperiments.h
         SpinLock/SpinLock.h SpinLock/SpinLock.cpp
         Threads/StoppingThreads.h Threads/StoppingThreads.cpp
-        Utilities/Utilities.h Utilities/Utilities.cpp
+        Utilities/Utilities.h Utilities/Utilities.cpp Utilities/Wrapper.h
 )
 
 # Link libraries to the project/executable

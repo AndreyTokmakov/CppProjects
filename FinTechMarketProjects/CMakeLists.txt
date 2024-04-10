@@ -27,6 +27,7 @@ add_executable(${PROJECT_NAME}
         Framework/DataProvider.h Framework/DataProvider.cpp Framework/Types.h
         Framework/OrderBook.h Framework/OrderBook.cpp
         Framework/AppMain.h Framework/AppMain.cpp
+        Framework/Common/Types.h
         Framework/Memory/MemoryPool.h Framework/Memory/StackAllocator.h
         Framework/Tests/Tests.cpp Framework/Tests/Tests.h Framework/Tests/Wrapper.h
 )

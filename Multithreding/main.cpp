@@ -40,12 +40,13 @@
 #include "Exceptions_Handling/Exceptions_Handling.h"
 #include "ParallelExecutionAlgoritms/ParallelExecutionAlgoritms.h"
 #include "Multithreading_Communication/Multithreading_Communication.h"
-#include "Multithreading_Collections/Multithreading_Collections.h"
-#include "Multithreading_Collections/Queue.h"
+#include "ThreadSafeCollections/Multithreading_Collections.h"
+#include "ThreadSafeCollections/Queue.h"
+#include "ThreadSafeCollections/LockFreeQueue.h"
+#include "ThreadSafeCollections/SingleConsumerProducerQueue.h"
 #include "Multithreading_Performance/Multithreading_Performance.h"
 #include "Barrier/Barrier.h"
 #include "FalseSharing/FalseSharingExperiments.h"
-#include "LockFreeDataStructures/LockFreeQueue.h"
 #include "SynchStream_Custom/SynchStream_Custom.h"
 #include "SynchStream/SynchStream.h"
 #include "SpinLock/SpinLock.h"
@@ -58,7 +59,7 @@ int main([[maybe_unused]] int argc,
 {
     // AsyncLaunch::TEST_ALL();
 
-    Atomic::TestAll();
+    // Atomic::TestAll();
     // AtomicFlag::TestAll();
     // Atomic_MemoryOrder::TestAll();
     // Atomic_CompareExchange::TestAll();
@@ -71,10 +72,7 @@ int main([[maybe_unused]] int argc,
     // Future::TEST_ALL();
 
     // Latch::TEST_ALL();
-    // LockFreeQueue::TEST_ALL()
     // Multithreading_Performance::TEST_ALL();
-    // Multithreading_Collections::TEST_ALL();
-    // Queue::TestAll();
     // Multithreading_Communication::TEST_ALL();
     // Promise::TEST_ALL();
     // PackagedTask::TEST_ALL();
@@ -101,6 +99,13 @@ int main([[maybe_unused]] int argc,
     // PerformanceExperiments::TestAll();
 
     // Utilities::TestAll();
+
+    /** ThreadSafeCollections **/
+
+    // Multithreading_Collections::TestAll();
+    SingleConsumerProducerQueue::TestAll();
+    // Queue::TestAll();
+    // LockFreeQueue::TEST_ALL()
 
     return EXIT_SUCCESS;
 }
