@@ -16,10 +16,13 @@ Description : SingleConsumerProducerQueue.cpp
 #include <memory>
 #include <array>
 #include <atomic>
+#include <thread>
+#include <chrono>
+
 
 namespace
 {
-    using Integer = Helpers::Integer;
+    using Integer = Helpers::Wrapper<int, false>;
 }
 
 namespace SingleConsumerProducerQueue
@@ -80,9 +83,6 @@ namespace SingleConsumerProducerQueue
         static_assert(!std::is_same_v<T, void>, "Type of the RingBuffer can not be void");
         static_assert(0 != Capacity, "Please try a little bigger buffer");
 
-    // private:
-
-        // std::array<Placeholder, Capacity> buffer {};
         std::unique_ptr<Placeholder[]> buffer { std::make_unique<Placeholder[]>(Capacity) };
 
         std::atomic<size_type> head {0};
@@ -91,39 +91,153 @@ namespace SingleConsumerProducerQueue
         template<typename ... Args>
         void emplace(Args&& ... params)
         {
-            size_type idx = head.fetch_add(1, std::memory_order_relaxed);
-            if (idx >= Capacity) {
-                head.store(0); // FIXME. memory order
-                idx = 0;
-            }
-
+            size_type idx = head.load(std::memory_order_relaxed);
             new (&buffer[idx]) value_type { std::forward<Args>(params)... };
+            idx = idx + 1 >= Capacity ? 0 : idx + 1;
+            head.store(idx, std::memory_order_relaxed);
         }
 
         [[nodiscard]]
-        inline value_type& front() const noexcept
+        bool get(value_type& entry) noexcept
         {
-            return reinterpret_cast<value_type&>(buffer[tail.load(std::memory_order_relaxed)]);
+            size_type idxTail = tail.load(std::memory_order_relaxed);
+            if (idxTail >= Capacity)
+                idxTail = 0;
+
+            const size_type idxHead = head.load(std::memory_order_relaxed);
+            if (idxTail == idxHead)
+                return false;
+
+            tail.store(idxTail + 1, std::memory_order_release);
+            entry =  std::move(reinterpret_cast<value_type&>(buffer[idxTail]));
+            return true;
+        }
+    };
+
+
+    template<class T,
+            size_t Capacity = 100>
+    struct RingBuffer2
+    {
+        using value_type = T;
+        using size_type = size_t;
+
+        struct alignas(sizeof(value_type)) Placeholder {};
+
+        static_assert(!std::is_same_v<T, void>, "Type of the RingBuffer can not be void");
+        static_assert(0 != Capacity, "Please try a little bigger buffer");
+
+        std::unique_ptr<Placeholder[]> buffer { std::make_unique<Placeholder[]>(Capacity) };
+
+        std::atomic<size_type> headAtomic {0};
+        size_type head {0};
+
+        std::atomic<size_type> tailAtomic {0};
+        size_type tail {0};
+
+        template<typename ... Args>
+        void emplace(Args&& ... params)
+        {
+            new (&buffer[head]) value_type { std::forward<Args>(params)... };
+            head = head + 1 >= Capacity ? 0 : head + 1;
+            headAtomic.store(head, std::memory_order_relaxed);
         }
 
         [[nodiscard]]
-        bool moveFront() noexcept
+        bool get(value_type& entry) noexcept
         {
-            const size_type idx = tail.load(std::memory_order_relaxed);
-            if (idx >= Capacity) {
-                tail.store(0); // FIXME. memory order
-            }
+            if (tail >= Capacity)
+                tail = 0;
+            if (tail == head)
+                return false;
+
+            tailAtomic.store(tail + 1, std::memory_order_release);
+            entry =  std::move(reinterpret_cast<value_type&>(buffer[tail]));
+            return true;
         }
     };
 };
 
+
+namespace SingleConsumerProducerQueue::Tests
+{
+    void debugTest()
+    {
+        RingBuffer<Integer, 5> buffer;
+
+        auto consume = [&]() {
+            Integer integer;
+
+            while (true)
+            {
+                if (buffer.get(integer))
+                {
+                    std::cout << integer.value << std::endl;
+                } else
+                {
+                    // std::cout << "Sleeping" << std::endl;
+                    std::this_thread::sleep_for(std::chrono::nanoseconds (10));
+                }
+            }
+        };
+
+        auto produce = [&]() {
+            int i = 0;
+            while (true)
+            {
+                buffer.emplace(i++);
+                std::this_thread::sleep_for(std::chrono::seconds(1));
+            }
+        };
+
+        std::jthread consumer {consume};
+        std::jthread producer {produce};
+    }
+
+    void benchmark()
+    {
+        Integer integer;
+        // RingBuffer<Integer, 1000> buffer;
+        RingBuffer2<Integer, 1000> buffer;
+        constexpr int maxCount = 1'000'000'000;
+        size_t total = 0;
+
+        auto consume = [&]() {
+            while (true)
+            {
+                if (buffer.get(integer)) {
+                    if (integer.value == maxCount)
+                        break;
+                    ++total;
+                } else {
+                    std::this_thread::sleep_for(std::chrono::nanoseconds (1));
+                }
+            }
+            std::cout << "Consumer done\n";
+
+        };
+
+        auto produce = [&]() {
+            for (int idx = 0; idx <= maxCount; ++idx)
+            {
+                buffer.emplace(idx++);
+                // std::this_thread::sleep_for(std::chrono::seconds(1));
+            }
+            std::cout << "Producer done\n";
+        };
+
+        std::jthread consumer {consume};
+        std::jthread producer {produce};
+
+        consumer.join();
+        producer.join();
+
+        std::cout << integer << " " << total << std::endl;
+    }
+}
+
 void SingleConsumerProducerQueue::TestAll()
 {
-    RingBuffer<Integer, 5> buffer;
-
-
-    buffer.emplace(2);
-
-    std::cout << buffer.front().value << std::endl;
-
+    // Tests::debugTest();
+    Tests::benchmark();
 };
