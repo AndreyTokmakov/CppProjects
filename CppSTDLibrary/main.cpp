@@ -153,7 +153,7 @@ int main([[maybe_unused]] int argc,
     // Tuple::TestAll();
     // TypeCast::TestAll();
     // Int::TestAll();
-    Templates::TestAll();
+    // Templates::TestAll();
     // Utilities::TestAll();
     // UniquePtr_Tests::TestAll();
     // WeakPtr::TestAll();

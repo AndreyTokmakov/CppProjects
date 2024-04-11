@@ -36,10 +36,10 @@ void sink(const NumberConcept auto& value)
 }
 
 
-
-
 // INFO: MarkerDataProvider --> NIC (kernel bypass) --> OrderGatewayServer
 
+// INFO: Иметь в OrderBook разные HashMap-s для диапазона SYMBOL которые будут обрабатываться
+//       в ОДНОПОТОЧНОМ режиме --> в рамках потока из ThreadPool-а
 
 // TODO:
 //  • Basic Types:

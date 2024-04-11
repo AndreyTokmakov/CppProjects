@@ -2836,21 +2836,30 @@ namespace ObjectOrientedProgramming::Covariant_Return_Type
 {
     namespace Pointers
     {
-        struct Window
+        struct BaseWindow
         {
-            virtual Window *clone() {
+            virtual BaseWindow* clone() = 0;
+
+            [[nodiscard]]
+            virtual std::string getName() const = 0;
+
+            virtual ~BaseWindow() = default;
+        };
+
+        struct Window: BaseWindow
+        {
+            Window *clone() override  {
                 return new Window(*this);
             }
 
             [[nodiscard]]
-            virtual std::string getName() const {
+            std::string getName() const override {
                 return std::string{"Window"};
             }
-
-            virtual ~Window() = default;
         };
 
-        struct DefaultWindow : Window {
+        struct DefaultWindow : Window
+        {
             DefaultWindow *clone() override {
                 return new DefaultWindow(*this);
             }
@@ -2859,11 +2868,10 @@ namespace ObjectOrientedProgramming::Covariant_Return_Type
             std::string getName() const override {
                 return std::string{"DefaultWindow"};
             }
-
-            ~DefaultWindow() override = default;
         };
 
-        struct FancyWindow : public Window {
+        struct FancyWindow : public Window
+        {
             FancyWindow *clone() override {
                 return new FancyWindow(*this);
             }
@@ -2872,36 +2880,42 @@ namespace ObjectOrientedProgramming::Covariant_Return_Type
             std::string getName() const override {
                 return std::string{"FancyWindow"};
             }
-
-            ~FancyWindow() override = default;
         };
 
         [[nodiscard]]
-        Window* cloneWindow(Window& oldWindow)
+        BaseWindow* cloneWindow(BaseWindow& window)
         {
-            return oldWindow.clone();
+            return window.clone();
         }
     }
 
     namespace SmartPointers
     {
-        struct Window
+        struct BaseWindow
         {
-            virtual std::unique_ptr<Window> clone() {
+            virtual std::unique_ptr<BaseWindow> clone() = 0;
+
+            [[nodiscard]]
+            virtual std::string getName() const = 0;
+
+            virtual ~BaseWindow() = default;
+        };
+
+        struct Window: BaseWindow
+        {
+            std::unique_ptr<BaseWindow> clone() override {
                 return std::make_unique<Window>(*this);
             }
 
             [[nodiscard]]
-            virtual std::string getName() const {
+            std::string getName() const override {
                 return std::string{"Window"};
             }
-
-            virtual ~Window() = default;
         };
 
         struct DefaultWindow: public Window
         {
-            std::unique_ptr<Window> clone() override {
+            std::unique_ptr<BaseWindow> clone() override {
                 return std::make_unique<DefaultWindow>(*this);
             }
 
@@ -2913,7 +2927,7 @@ namespace ObjectOrientedProgramming::Covariant_Return_Type
 
         struct FancyWindow: public Window
         {
-            std::unique_ptr<Window> clone() override {
+            std::unique_ptr<BaseWindow> clone() override {
                 return std::make_unique<FancyWindow>(*this);
             }
 
@@ -2923,11 +2937,10 @@ namespace ObjectOrientedProgramming::Covariant_Return_Type
             }
         };
 
-        auto cloneWindow(std::unique_ptr<Window>& oldWindow) {
-            return oldWindow->clone();
+        std::unique_ptr<BaseWindow> cloneWindow(std::unique_ptr<BaseWindow>& window) {
+            return window->clone();
         }
     }
-
 
     void testPointers()
     {
@@ -2937,13 +2950,13 @@ namespace ObjectOrientedProgramming::Covariant_Return_Type
         DefaultWindow defaultWindow;
         FancyWindow fancyWindow;
 
-        const Window* window1 = cloneWindow(window);
+        const BaseWindow* window1 = cloneWindow(window);
         std::cout << "window->getName(): " << window1->getName() << '\n';
 
-        const Window* defaultWindow1 = cloneWindow(defaultWindow);
+        const BaseWindow* defaultWindow1 = cloneWindow(defaultWindow);
         std::cout << "defaultWindow1->getName(): " << defaultWindow1->getName() << '\n';
 
-        const Window* fancyWindow1 = cloneWindow(fancyWindow);
+        const BaseWindow* fancyWindow1 = cloneWindow(fancyWindow);
         std::cout << "fancywindow1->getName(): " << fancyWindow1->getName() << '\n';
 
         delete window1;
@@ -2951,13 +2964,38 @@ namespace ObjectOrientedProgramming::Covariant_Return_Type
         delete fancyWindow1;
     }
 
+    void testPointers1()
+    {
+        using namespace Pointers;
+
+        BaseWindow* window { new Window };
+        BaseWindow* defaultWindow { new DefaultWindow };
+        BaseWindow* fancyWindow { new FancyWindow };
+
+        const BaseWindow* window1 = window->clone();
+        std::cout << "window->getName(): " << window1->getName() << '\n';
+
+        const BaseWindow* defaultWindow1 = defaultWindow->clone();
+        std::cout << "defaultWindow1->getName(): " << defaultWindow1->getName() << '\n';
+
+        const BaseWindow* fancyWindow1 = fancyWindow->clone();
+        std::cout << "fancywindow1->getName(): " << fancyWindow1->getName() << '\n';
+
+        delete window;
+        delete window1;
+        delete defaultWindow;
+        delete defaultWindow1;
+        delete fancyWindow;
+        delete fancyWindow1;
+    }
+
     void testStartPointers()
     {
         using namespace SmartPointers;
 
-        std::unique_ptr<Window> window = std::make_unique<Window>();
-        std::unique_ptr<Window> defaultWindow = std::make_unique<DefaultWindow>();
-        std::unique_ptr<Window> fancyWindow = std::make_unique<FancyWindow>();
+        std::unique_ptr<BaseWindow> window = std::make_unique<Window>();
+        std::unique_ptr<BaseWindow> defaultWindow = std::make_unique<DefaultWindow>();
+        std::unique_ptr<BaseWindow> fancyWindow = std::make_unique<FancyWindow>();
 
         const auto window1 = cloneWindow(window);
         std::cout << "window1->getName(): " << window1->getName() << '\n';
@@ -2969,7 +3007,19 @@ namespace ObjectOrientedProgramming::Covariant_Return_Type
         std::cout << "fancyWindow1->getName(): " << fancyWindow1->getName() << '\n';
     }
 
+    void testStartPointers1()
+    {
+        using namespace SmartPointers;
 
+        const std::unique_ptr<BaseWindow> window = std::make_unique<Window>()->clone();
+        std::cout << "window1->getName(): " << window->getName() << '\n';
+
+        const std::unique_ptr<BaseWindow> defaultWindow = std::make_unique<DefaultWindow>()->clone();
+        std::cout << "defaultWindow1->getName(): " << defaultWindow->getName() << '\n';
+
+        const std::unique_ptr<BaseWindow> fancyWindow = std::make_unique<FancyWindow>()->clone();
+        std::cout << "fancyWindow1->getName(): " << fancyWindow->getName() << '\n';
+    }
 
     struct Base {
         virtual void info() const noexcept {
@@ -3012,7 +3062,7 @@ void ObjectOrientedProgramming::TestAll()
     // UserDefindedConversation();
     // ExceptionInConstructor();
 
-    Operators::TestAll();
+    // Operators::TestAll();
 
 
     // ******************************** CONSTRUCTORS: *********************************//
@@ -3120,7 +3170,9 @@ void ObjectOrientedProgramming::TestAll()
     // **************************** Covariant Return Type: ****************************//
 
     // Covariant_Return_Type::testPointers();
+    // Covariant_Return_Type::testPointers1();
     // Covariant_Return_Type::testStartPointers();
+    Covariant_Return_Type::testStartPointers1();
     // Covariant_Return_Type::Return_UniquePtr_WithDerivedClass();
 
     // ******************************** Polymorphism: *********************************//
