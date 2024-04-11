@@ -163,31 +163,30 @@ namespace SingleConsumerProducerQueue::Tests
 {
     void debugTest()
     {
-        RingBuffer<Integer, 5> buffer;
+        Integer integer;
+        constexpr int maxCount = 10;
+        RingBuffer<Integer, 100> buffer;
 
         auto consume = [&]() {
-            Integer integer;
-
             while (true)
             {
-                if (buffer.get(integer))
-                {
-                    std::cout << integer.value << std::endl;
-                } else
-                {
-                    // std::cout << "Sleeping" << std::endl;
-                    std::this_thread::sleep_for(std::chrono::nanoseconds (10));
+                if (buffer.get(integer)) {
+                    if (integer.value == maxCount)
+                        break;
+                    ++total;
+                } else {
+                    std::this_thread::sleep_for(std::chrono::nanoseconds (1));
                 }
             }
+            std::cout << "Consumer done\n";
+
         };
 
         auto produce = [&]() {
-            int i = 0;
-            while (true)
-            {
-                buffer.emplace(i++);
-                std::this_thread::sleep_for(std::chrono::seconds(1));
+            for (int idx = 0; idx <= maxCount; ++idx) {
+                buffer.emplace(idx++);
             }
+            std::cout << "Producer done\n";
         };
 
         std::jthread consumer {consume};
@@ -238,6 +237,6 @@ namespace SingleConsumerProducerQueue::Tests
 
 void SingleConsumerProducerQueue::TestAll()
 {
-    // Tests::debugTest();
-    Tests::benchmark();
+    Tests::debugTest();
+    // Tests::benchmark();
 };
