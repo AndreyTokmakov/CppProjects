@@ -11,6 +11,7 @@ Description : Utilities.cpp
 #include <mutex>
 #include <thread>
 #include <syncstream>
+#include <iomanip>
 #include "Utilities.h"
 
 namespace Utilities
@@ -48,6 +49,21 @@ namespace Utilities::Tests
         std::jthread thread2(thread_affinity_worker, 2);
     }
 }
+
+
+namespace Utilities
+{
+    ScopedTimer::~ScopedTimer()
+    {
+        const std::chrono::high_resolution_clock::time_point end = std::chrono::high_resolution_clock::now();
+        const std::chrono::duration<double> time_span = duration_cast<std::chrono::duration<double>>(end - start);
+
+        std::cout << std::left << std::setw(14) << benchmarkName << ":  ";
+        std::cout << time_span.count() << " seconds.\n";
+    }
+}
+
+
 
 void Utilities::TestAll()
 {
