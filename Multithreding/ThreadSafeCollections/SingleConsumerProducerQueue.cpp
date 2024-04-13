@@ -181,6 +181,7 @@ namespace SingleConsumerProducerQueue::DemoTwo
         // TODO: Try with NON ATOMIC headIndex to remove 'size_type idx = head.load(std::memory_order_relaxed);'
 
 
+
         template<typename ... Args>
         void emplace(Args&& ... params)
         {
