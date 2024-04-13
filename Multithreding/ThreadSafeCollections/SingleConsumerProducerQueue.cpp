@@ -190,9 +190,9 @@ namespace SingleConsumerProducerQueue::DemoTwo
 
             idx = (idx == Capacity) ? 0 : idx + 1;
             new (&buffer[idx]) value_type { std::forward<Args>(params)... };
+
             head.store(idx, std::memory_order_relaxed);
             head.notify_one();
-            // std::osyncstream {std::cout} << "idx -> " << idx << std::endl;
         }
 
         // TODO: add timeout???
@@ -200,7 +200,6 @@ namespace SingleConsumerProducerQueue::DemoTwo
         bool try_read_next(size_type& index,
                            value_type& entry) const  noexcept
         {
-            // std::osyncstream {std::cout} << "waiting for index != " << index << std::endl;
             head.wait(index, std::memory_order_relaxed);
             // index = head.load(std::memory_order_relaxed);
             // std::cout << "index <- " << index << std::endl;
@@ -212,6 +211,54 @@ namespace SingleConsumerProducerQueue::DemoTwo
         }
     };
 }
+
+namespace SingleConsumerProducerQueue::DemoThree
+{
+    template<class T,
+            size_t Capacity = 100>
+    struct RingBuffer
+    {
+        using value_type = T;
+        using size_type = size_t;
+
+        struct alignas(sizeof(value_type)) Placeholder {};
+
+        static_assert(!std::is_same_v<T, void>, "Type of the RingBuffer can not be void");
+        static_assert(0 != Capacity, "Please try a little bigger buffer");
+
+        std::unique_ptr<Placeholder[]> buffer { std::make_unique<Placeholder[]>(Capacity) };
+        std::atomic<size_type> head {0};
+
+        template<typename ... Args>
+        void emplace(Args&& ... params)
+        {
+            // TODO: Run test with fetch_and_add
+            size_t idx = head.load(std::memory_order_relaxed);
+            idx = (idx == Capacity) ? 0 : idx + 1;
+            new (&buffer[idx]) value_type { std::forward<Args>(params)... };
+
+            head.store(idx, std::memory_order_release);
+        }
+
+        // TODO: add timeout???
+        [[nodiscard]]
+        bool try_read_next(size_type& index,
+                           value_type& entry) const  noexcept
+        {
+            size_t idx = index;
+            while (true) {
+                idx = head.load(std::memory_order_acq_rel);
+                if (idx != index)
+                    break;
+            }
+
+            index = (index == Capacity) ? 0 : index + 1;
+            entry =  std::move(reinterpret_cast<value_type&>(buffer[index]));
+            return true;
+        }
+    };
+}
+
 
 namespace SingleConsumerProducerQueue::Tests
 {
@@ -309,7 +356,7 @@ namespace SingleConsumerProducerQueue::Tests
             for (int i = 100; i <= 110; ++i)
             {
                 buffer.emplace(i);
-                std::this_thread::sleep_for(std::chrono::milliseconds (1));
+                std::this_thread::sleep_for(std::chrono::microseconds (1));
             }
         };
 
@@ -322,45 +369,92 @@ namespace SingleConsumerProducerQueue::Tests
         using namespace DemoTwo;
 
         Integer integer;
-        DemoTwo::RingBuffer<Integer, 1000> buffer;
-        constexpr int maxCount = 1'000'000'000;
-        size_t total = 0;
+        int prev {0};
+
+        DemoTwo::RingBuffer<Integer, 10'000> buffer;
+        // constexpr int maxCount = 1'000'000'000;
+        constexpr int maxCount = 100'000'000;
+        size_t totalProduced = 0, totalConsumed = 0, errors = 0;
 
         auto consume = [&]() {
+            decltype(buffer)::size_type idx {0};
             while (true)
             {
-                /*
-                if (buffer.get(integer)) {
-                    if (integer.value == maxCount)
-                        break;
-                    ++total;
-                } else {
-                    std::this_thread::sleep_for(std::chrono::nanoseconds (1));
-                }
-                 */
+                buffer.try_read_next(idx, integer);
+                ++totalConsumed;
+                if (integer.value != prev + 1)
+                    ++errors;
+                if (maxCount == integer.value)
+                    break;
+                prev = integer.value;
             }
-            std::cout << "Consumer done\n";
-
         };
 
         auto produce = [&]() {
-            for (int idx = 0; idx <= maxCount; ++idx)
+            for (int idx = 1; idx <= maxCount; ++idx)
             {
-                buffer.emplace(idx++);
-                // std::this_thread::sleep_for(std::chrono::seconds(1));
+                buffer.emplace(idx);
+                ++totalProduced;
             }
-            std::cout << "Producer done\n";
         };
 
         Utilities::ScopedTimer timer {"benchmark_DemoTwo"};
 
-        //std::jthread consumer {consume};
+        std::jthread consumer {consume};
         std::jthread producer {produce};
 
-        //consumer.join();
+        consumer.join();
         producer.join();
 
-        std::cout << integer << " " << total << std::endl;
+        std::cout << "integer: " << integer
+                  << ", totalProduced: " << totalProduced
+                  << ", totalConsumed: " << totalConsumed
+                  << ", errors: " << errors << std::endl;
+    }
+
+    void benchmark_DemoThree()
+    {
+        Integer integer;
+        int prev {0};
+
+        DemoThree::RingBuffer<Integer, 100'000> buffer;
+        constexpr int maxCount = 100'000'000;
+        size_t totalProduced = 0, totalConsumed = 0, errors = 0;
+
+        auto consume = [&]() {
+            decltype(buffer)::size_type idx {0};
+            while (true)
+            {
+                buffer.try_read_next(idx, integer);
+                ++totalConsumed;
+                if (integer.value != prev + 1)
+                    ++errors;
+                if (maxCount == integer.value)
+                    break;
+                prev = integer.value;
+            }
+        };
+
+        auto produce = [&]() {
+            for (int idx = 1; idx <= maxCount; ++idx)
+            {
+                buffer.emplace(idx);
+                ++totalProduced;
+            }
+        };
+
+        Utilities::ScopedTimer timer {"benchmark_DemoTwo"};
+
+        std::jthread consumer {consume};
+        std::jthread producer {produce};
+
+        consumer.join();
+        producer.join();
+
+        std::cout << "integer: " << integer
+                  << ", totalProduced: " << totalProduced
+                  << ", totalConsumed: " << totalConsumed
+                  << ", errors: " << errors << std::endl;
     }
 }
 
@@ -369,6 +463,7 @@ void SingleConsumerProducerQueue::TestAll()
     // Tests::debugTest();
     // Tests::benchmark();
 
-    Tests::debugTest_DemoTwo();
+    // Tests::debugTest_DemoTwo();
     // Tests::benchmark_DemoTwo();
+    Tests::benchmark_DemoThree();
 };
