@@ -212,8 +212,10 @@ namespace SingleConsumerProducerQueue::DemoTwo
     };
 }
 
-namespace SingleConsumerProducerQueue::DemoThree
+namespace SingleConsumerProducerQueue::AtomicBusyWaitReadLoop
 {
+    // INFO: try_read_next() reading / waiting for the new element without any timeout -> busy wait ()
+
     template<class T,
             size_t Capacity = 100>
     struct RingBuffer
@@ -240,21 +242,64 @@ namespace SingleConsumerProducerQueue::DemoThree
             head.store(idx, std::memory_order_release);
         }
 
-        // TODO: add timeout???
-        [[nodiscard]]
-        bool try_read_next(size_type& index,
-                           value_type& entry) const  noexcept
+        void try_read_next(size_type& index,
+                           value_type& entry) const noexcept
         {
-            size_t idx = index;
-            while (true) {
-                idx = head.load(std::memory_order_acq_rel);
-                if (idx != index)
-                    break;
-            }
+            while (head.load(std::memory_order_relaxed) == index) { /** **/ }
 
             index = (index == Capacity) ? 0 : index + 1;
-            entry =  std::move(reinterpret_cast<value_type&>(buffer[index]));
-            return true;
+            //entry =  std::move(reinterpret_cast<value_type&>(buffer[index]));
+        }
+    };
+}
+
+namespace SingleConsumerProducerQueue::AtomicBusyWaitReadLoop_NoMove
+{
+    template<class T,
+            size_t Capacity = 100>
+    struct RingBuffer
+    {
+        using value_type = T;
+        using size_type = int32_t;
+
+        struct alignas(sizeof(value_type)) Placeholder {};
+
+        static_assert(!std::is_same_v<T, void>, "Type of the RingBuffer can not be void");
+        static_assert(0 != Capacity, "Please try a little bigger buffer");
+
+        // static inline constexpr size_type npos {Capacity + 1};
+
+        std::unique_ptr<Placeholder[]> buffer { std::make_unique<Placeholder[]>(Capacity) };
+        std::atomic<size_type> head {0};
+        size_type tail {-1};
+
+        template<typename ... Args>
+        void emplace(Args&& ... params)
+        {
+            // TODO: Run test with fetch_and_add
+            size_type idx = head.load(std::memory_order_relaxed);
+
+            // std::osyncstream {std::cout} << "emplace | Head: "
+            //      << idx << " --> " << ((idx >= Capacity) ? 0 : idx + 1) << std::endl;
+
+            idx = (idx >= Capacity) ? 0 : idx + 1;
+            new (&buffer[idx]) value_type { std::forward<Args>(params)... };
+
+
+            head.store(idx, std::memory_order_release);
+        }
+
+        [[nodiscard]]
+        size_type nextReadIndex() noexcept
+        {
+            while (head.load(std::memory_order_relaxed) == tail) { /** **/ }
+
+            std::osyncstream {std::cout} << "nextReadIndex(" << tail << ") | head: "
+                << head.load(std::memory_order_relaxed)
+                << ". Tail: " << tail << " -> " << ((tail < Capacity - 1) ? tail + 1 : 0) << std::endl;
+
+            tail = (tail < Capacity - 1) ? tail + 1 : 0;
+            return tail;
         }
     };
 }
@@ -336,7 +381,6 @@ namespace SingleConsumerProducerQueue::Tests
         std::cout << integer << " " << total << std::endl;
     }
 
-
     void debugTest_DemoTwo()
     {
         DemoTwo::RingBuffer<Integer, 5> buffer;
@@ -362,6 +406,35 @@ namespace SingleConsumerProducerQueue::Tests
 
         std::jthread consumer {consume};
         std::jthread producer {produce};
+    }
+
+    void debugTest_AtomicBusyWaitReadLoop_NoMove()
+    {
+        constexpr size_t elementsCount {7};
+        AtomicBusyWaitReadLoop_NoMove::RingBuffer<Integer, 5> buffer;
+
+        auto consume = [&]() {
+            decltype(buffer)::size_type idx { decltype(buffer)::npos };
+
+            for (size_t i = 0; i < elementsCount; ++i)
+            {
+                idx = buffer.nextReadIndex();
+                Integer& integer = reinterpret_cast<decltype(buffer)::value_type &>(buffer.buffer[idx]);
+                //std::osyncstream {std::cout} << "Load <-- " << idx << ". Value: " << integer.value <<  std::endl;
+            }
+        };
+
+        auto produce = [&]() {
+            for (size_t i = 100; i <= 100 + elementsCount; ++i)
+            {
+                buffer.emplace(static_cast<int>(i));
+                //std::osyncstream {std::cout} << "Store -> " << i << std::endl;
+                std::this_thread::sleep_for(std::chrono::microseconds (1));
+            }
+        };
+
+        std::jthread consumer{consume};
+        std::jthread producer{produce};
     }
 
     void benchmark_DemoTwo()
@@ -412,12 +485,12 @@ namespace SingleConsumerProducerQueue::Tests
                   << ", errors: " << errors << std::endl;
     }
 
-    void benchmark_DemoThree()
+    void benchmark_AtomicBusyWaitReadLoop()
     {
         Integer integer;
         int prev {0};
 
-        DemoThree::RingBuffer<Integer, 100'000> buffer;
+        AtomicBusyWaitReadLoop::RingBuffer<Integer, 100'000> buffer;
         constexpr int maxCount = 100'000'000;
         size_t totalProduced = 0, totalConsumed = 0, errors = 0;
 
@@ -465,5 +538,10 @@ void SingleConsumerProducerQueue::TestAll()
 
     // Tests::debugTest_DemoTwo();
     // Tests::benchmark_DemoTwo();
-    Tests::benchmark_DemoThree();
+
+    // Tests::benchmark_AtomicBusyWaitReadLoop();
+
+    // Tests::debugTest_DemoTwo();
+
+    Tests::debugTest_AtomicBusyWaitReadLoop_NoMove();
 };

@@ -1049,7 +1049,10 @@ bool setThreadCore(int core_id) noexcept
     return 0 == pthread_setaffinity_np(pthread_self(), sizeof(cpu_set_t), &cpuset);
 }
 
-
+struct {
+    int* m_data;
+    size_t m_capacity;
+} m_heap_data;
 
 
 int main([[maybe_unused]] int argc,
@@ -1073,6 +1076,15 @@ int main([[maybe_unused]] int argc,
 
     // UBBook::Test();
 
+    static constexpr int static_capacity = 4;
+
+    union [[maybe_unused]] data_t {
+        struct {
+            int* m_data;
+            size_t m_capacity;
+        } m_heap_data;
+        int m_preallocated[static_capacity];
+    };
 
     /** * * * * *  Move to lib * * * * * **/
 
@@ -1103,7 +1115,7 @@ int main([[maybe_unused]] int argc,
     // FunctionCall_LookUp::TestAll();
     // RateLimiter::TestAll();
     // LRUCache::TestAll();
-    LowLatencyLogger::TestAll();
+    // LowLatencyLogger::TestAll();
     // Multithreading::TestAll();
     // Memory::TestAll();
     // MaxStack::TestAll();
