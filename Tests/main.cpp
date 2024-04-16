@@ -1076,15 +1076,7 @@ int main([[maybe_unused]] int argc,
 
     // UBBook::Test();
 
-    static constexpr int static_capacity = 4;
 
-    union [[maybe_unused]] data_t {
-        struct {
-            int* m_data;
-            size_t m_capacity;
-        } m_heap_data;
-        int m_preallocated[static_capacity];
-    };
 
     /** * * * * *  Move to lib * * * * * **/
 

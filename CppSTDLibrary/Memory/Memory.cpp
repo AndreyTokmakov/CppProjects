@@ -12,7 +12,7 @@
 #include "Alignment.h"
 #include "AlignedStackAllocator.h"
 #include "CustomStackAllocator.h"
-
+#include "MemoryUsageMonitor.h"
 
 #include "Memory.h"
 #include <memory>
@@ -1649,10 +1649,10 @@ namespace Memory::RestrictObjectHeapCreation
 
 void Memory::TestAll()
 {
-    // Alignment::TestAll();
+    Alignment::TestAll();
     // AlignedStackAllocator::TestAll();
-    CustomStackAllocator::TestAll();
-
+    // CustomStackAllocator::TestAll();
+    // MemoryUsageMonitor::TestAll();
 
 
 	// Delete_Array();

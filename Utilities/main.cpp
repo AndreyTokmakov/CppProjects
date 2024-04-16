@@ -214,7 +214,7 @@ int main([[maybe_unused]] int argc,
 
     // StringUtilitiesTests::split_test_1();
     // StringUtilitiesTests::strip_string_test();
-    // StringUtilitiesTests::trim_string_test();
+    StringUtilitiesTests::trim_string_test();
     // StringUtilitiesTests::remove_chars_from_string_test();
     // StringUtilitiesTests::Update_string_test();
     // StringUtilitiesTests::Random_String();
@@ -226,7 +226,7 @@ int main([[maybe_unused]] int argc,
     // FileUtilities_Tests::WriteToFile();
     // FileUtilities_Tests::AppendToFile();
 
-    Base64Tests::Test();
+    // Base64Tests::Test();
 
     // CSV_Reader_Tests::TestAll();
 

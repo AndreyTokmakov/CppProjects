@@ -76,7 +76,6 @@ Description : Cpp STD lib
 #include "TypeCast/TypeCast.h"
 #include "Metaprogramming/Metaprogramming.h"
 #include "Memory/Memory.h"
-#include "Memory/MemoryUsageMonitor.h"
 #include "Templates/Templates.h"
 #include "Volatile/VolatileTests.h"
 
@@ -125,12 +124,11 @@ int main([[maybe_unused]] int argc,
     // MoveSemantics_RuleOfFive::TestAll();
     // Numbers::TestAll();
     // Math::TestAll();
-    // Memory::TestAll();
-    // MemoryUsageMonitor::TestAll();
+    Memory::TestAll();
     // Metaprogramming::TestAll();
     // InlineNamespaces::TestAll();
     // NumericLimits::TestAll();
-    ObjectOrientedProgramming::TestAll();
+    // ObjectOrientedProgramming::TestAll();
     // Optional::TestAll();
     // PolymorphicMemoryResources::TestAll();
     // Random::TestAll();

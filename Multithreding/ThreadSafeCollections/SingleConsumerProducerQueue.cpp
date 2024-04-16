@@ -267,7 +267,8 @@ namespace SingleConsumerProducerQueue::AtomicBusyWaitReadLoop_NoMove
         static_assert(!std::is_same_v<T, void>, "Type of the RingBuffer can not be void");
         static_assert(0 != Capacity, "Please try a little bigger buffer");
 
-        // static inline constexpr size_type npos {Capacity + 1};
+        // FIXME
+        static inline constexpr size_type npos {Capacity + 1};
 
         std::unique_ptr<Placeholder[]> buffer { std::make_unique<Placeholder[]>(Capacity) };
         std::atomic<size_type> head {0};
