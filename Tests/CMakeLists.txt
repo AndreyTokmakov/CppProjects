@@ -66,8 +66,8 @@ add_executable(${PROJECT_NAME}
         DataStructures/RateLimiter.cpp DataStructures/RateLimiter.h
         DataStructures/BitReader.cpp DataStructures/BitReader.h
         FunctionCall_LookUp/FunctionCall_LookUp.cpp FunctionCall_LookUp/FunctionCall_LookUp.h
-        Memory/AlignedStackAllocator.cpp
-        Memory/AlignedStackAllocator.h
+        Memory/AlignedStackAllocator.cpp Memory/AlignedStackAllocator.h
+        Memory/UsingCustomAllocator_List.cpp Memory/UsingCustomAllocator_List.h
         Logging/LowLatencyLogger.cpp
         Logging/LowLatencyLogger.h
 )
