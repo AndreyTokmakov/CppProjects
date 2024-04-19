@@ -43,9 +43,6 @@ namespace
     using VectorPair = std::pair<std::vector<T>, std::vector<T>>;
 
     using IntPair = std::pair<int, int>;
-}
-
-namespace Numeric {
 
     void FillVecor(std::vector<int> &vecor,
                    unsigned int size,
@@ -183,12 +180,18 @@ namespace Numeric
     }
 }
 
-namespace Numeric {
-    int __gcd__(int a, int b) {
-        return 0 == b ? a : __gcd__(b, a % b);
+namespace Numeric
+{
+    int gsd_recur_1(int a, int b) {
+        return 0 == b ? a : gsd_recur_1(b, a % b);
     }
 
-    int __gcd1__(int a, int b) {
+    template<typename Type>
+    std::enable_if_t<std::is_integral_v<Type>, Type> gsd_recur_2(Type a, Type b) {
+        return 0 == b ? a : gsd_recur_2(b, a % b);
+    }
+
+    int gsd_loop_1(int a, int b) {
         while (b != 0) {
             a = a % b;
             std::swap(a, b);
@@ -196,12 +199,7 @@ namespace Numeric {
         return a;
     }
 
-    template<typename Type>
-    std::enable_if_t<std::is_integral_v<Type>, Type> gcd(Type a, Type b) {
-        return 0 == b ? a : gcd(b, a % b);
-    }
-
-    int __gcd2__(int a, int b) {
+    int gsd_loop_2(int a, int b) {
         while (true) {
             if (a == 0)
                 return b;
@@ -212,23 +210,32 @@ namespace Numeric {
         }
     }
 
-    int __gcd_test__(int a, int b) {
-        return 0 == b ? a : __gcd_test__(b, a % b);
+    void GreatestCommonDivisor()
+    {
+        for (const auto& [values, expected]: std::vector<std::pair<IntPair, int>>{
+                {{8, 3}, 1},
+                {{27, 18}, 9},
+                {{128, 40}, 8},
+        }) {
+            std::cout
+                    << gsd_recur_1(values.first, values.second) << " | "
+                    << gsd_recur_2(values.first, values.second) << " | "
+                    << gsd_loop_1(values.first, values.second) << " | "
+                    << gsd_loop_2(values.first, values.second) << " | "
+                    << " Expected: " << expected << std::endl;
+        }
     }
+}
 
-    void GreatestCommonDivisor() {
-        int a = 128, b = 40;
-        std::cout << __gcd__(a, b) << std::endl;
-        std::cout << __gcd1__(a, b) << std::endl;
-        std::cout << __gcd2__(a, b) << std::endl;
-        std::cout << __gcd_test__(a, b) << std::endl;
-
-        std::cout << "----------------------------------------------------\n";
-
-        std::cout << __gcd2__(9, 11) << std::endl;
+namespace Numeric
+{
+    int __gcd__(int a, int b) {
+        while (b != 0) {
+            a = a % b;
+            std::swap(a, b);
+        }
+        return a;
     }
-
-    //---------------------------------------------------------------------------//
 
     int __lcm__(int a, int b) {
         int gcd = __gcd__(a, b);
@@ -1318,10 +1325,12 @@ namespace Numeric
         data.resize(pos);
         std::cout << data << std::endl;
     }
+}
 
-    //======================================================================================//
-
-    size_t _longest_consecutive_sequence(const std::vector<int> &Numeric) {
+namespace Numeric
+{
+    size_t _longest_consecutive_sequence(const std::vector<int> &Numeric)
+    {
         std::unordered_set<int> tmp(Numeric.begin(), Numeric.end());
         size_t count = 0;
         for (int i: Numeric) {
@@ -1334,21 +1343,25 @@ namespace Numeric
         return count;
     }
 
-    void Longest_Consecutive_Sequence() {
+    void Longest_Consecutive_Sequence()
+    {
         const std::vector<int> Numeric = {100, 4, 200, 1, 3, 2};
 
         size_t count = _longest_consecutive_sequence(Numeric);
         std::cout << count << std::endl;
     }
+}
 
-    //--------------------------------------------------------------------------------------//
-
+namespace Numeric
+{
     size_t findLongestSubArray(const std::vector<int> &vect1,
-                               const std::vector<int> &vect2) {
-        const size_t size1{vect1.size()}, size2{vect2.size()};
+                               const std::vector<int> &vect2)
+    {
         size_t maxLen{0};
-        for (size_t i = 0; i < size1 && (size1 - i) > maxLen; ++i) {
-            for (size_t j = 0; j < size2; ++j) {
+        for (size_t size1 = vect1.size(), i = 0; i < size1; ++i)
+        {
+            for (size_t size2 = vect2.size(), j = 0 ; j < size2; ++j)
+            {
                 size_t n{i}, m{j};
                 while (size1 > n && size2 > m && vect1[n++] == vect2[m++]) {
                     maxLen = std::max(maxLen, n - i);
@@ -1358,14 +1371,66 @@ namespace Numeric
         return maxLen;
     }
 
-    void FindLongestSubArray() {
-        const std::vector<int> a = {1, 3, 4, 2}, b{1, 2, 3, 4};
-
+    void FindLongestSubArray()
+    {
+        const std::vector<int> a = {1, 3, 4, 5, 2}, b{1, 2, 3, 4, 5};
         std::cout << findLongestSubArray(a, b) << std::endl;
     }
+}
 
-    //--------------------------------------------------------------------------------------//
+namespace Numeric
+{
+    using VectorSizePair = std::pair<std::vector<int>, size_t>;
 
+    size_t maxSubarrayLength(const std::vector<int>& nums,
+                             const size_t k)
+    {
+        // Dictionary to keep track of the count of each number in the current window
+        std::unordered_map<int, size_t> countMap;
+
+        // Variable to store the maximum length found
+        size_t maxLength = 0;
+
+        // Two pointers defining the current window's boundaries
+        for (size_t left = 0, right = 0, size = nums.size(); right < size; ++right)
+        {
+            // Increment the count of the rightmost element in the current window
+            ++countMap[nums[right]];
+
+            // If the count of the current element exceeds k, shrink the window from the left
+            while (countMap[nums[right]] > k)
+            {
+                --countMap[nums[left]];
+                ++left;  // Move the left pointer to the right
+            }
+            // Update the maximum length if the current window is larger
+            maxLength = std::max(maxLength, right - left + 1);
+        }
+        // Return the maximum length of the sub-array
+        return maxLength;
+    }
+
+    //  Необходимо найти максимальную длину под-массива такого что бы в нем было не более чем 'K' уникальных элементов
+    void FindLongestSubArray_K_UniqueElements()
+    {
+        for (const std::pair<VectorSizePair, size_t> &data: std::vector<std::pair<VectorSizePair, size_t> >{
+                {{{1, 2, 2, 3, 1, 2, 3},       2}, 5},
+                {{{1, 2, 2, 3, 1, 3, 3},       2}, 6},
+                {{{1, 1, 2, 2, 1, 2, 1},       2}, 4},
+                {{{0},       2}, 1},
+                {{{},       0}, 0},
+        }) {
+            const auto &[values, K] = data.first;
+            if (const auto actual = maxSubarrayLength(values, K); actual != data.second)
+            {
+                std::cout << "Expected value is " << data.second << ", Actual: " << actual << std::endl;
+            }
+        }
+        std::cout << "OK: All tests passed\n";
+    }
+}
+namespace Numeric
+{
     size_t findLongestSubArrayFromPos(const std::vector<int> &vect1,
                                       const size_t start,
                                       const std::vector<int> &vect2) {
@@ -1391,14 +1456,16 @@ namespace Numeric
     }
 
     // INFO: Assuming that toCut and desired contains the same set of unique numbers
-    void SplitArrayToPieces_FindNumber_ByExample() {
+    void SplitArrayToPieces_FindNumber_ByExample()
+    {
         const std::vector<int> toCut = {1, 3, 4, 2}, desired{1, 2, 3, 4};
 
         std::cout << splitArray(toCut, desired) << std::endl;
     }
+}
 
-    //--------------------------------------------------------------------------------------//
-
+namespace Numeric
+{
     size_t _longest_increasing_subsequence_1(const std::vector<int> &Numeric) {
         // create an empty ordered set S. ith element in S is defined as the
         // smallest integer that ends an increasing sequence of length i
@@ -1653,7 +1720,9 @@ namespace Numeric
         return 0;
     }
 
-    // TODO: Works only in case is onle ONE duplicate
+    // TODO: Works only in case is only ONE duplicate
+    //       We know that ARRAY contains 'SIZE - 1' sequential elements starting from number 1 --> sum of that elements
+    //       can be found using (N + 1) * N / 2 (where N == SIZE - 1)
     int find_duplicate_2(const std::vector<int> &values)
     {
         const int sum = std::accumulate(values.cbegin(), values.cend(), 0);
@@ -3237,9 +3306,10 @@ namespace Numeric
     }
 };
 
-namespace Numeric::Random {
-
-    unsigned int flipCoin(float p) {
+namespace Numeric::Random
+{
+    unsigned int flipCoin(float p)
+    {
         const static int ones = static_cast<int>(p * 100) % 100;
         static std::vector<int> data;
 
@@ -3280,14 +3350,16 @@ namespace Numeric::Random {
     }
 }
 
-namespace Numeric::Intervals {
+namespace Numeric::Intervals
+{
     /*
     Let X be a set of n intervals on the real line.
     We say that a set of points P "stabs" X if every interval in X contains at least one point in P.
     Compute the smallest set of points that stabs X.
     For example, given the intervals [(1, 4), (4, 5), (7, 9), (9, 12)], you should return [4, 9].
     */
-    void Find_Union_Interval() {
+    void Find_Union_Interval()
+    {
         const std::vector<std::pair<int, int>> intervals{
                 {1,  4},
                 {3,  7},
@@ -3471,7 +3543,8 @@ namespace Numeric::Boundaries
      * Therefore, to get the maximum, we can repeatedly apply this logic, keeping track of the maximum area as we go.
     **/
 
-    void Maximum_Area_Between_Boundaries() {
+    void Maximum_Area_Between_Boundaries()
+    {
         for (const auto &[heights, area_expected]: std::vector<std::pair<std::vector<long>, long>>{
                 {{1, 1},                               1},
                 {{1, 9, 1},                            2},
@@ -3723,7 +3796,7 @@ void Numeric::TestAll()
 
     // Numeric::Rotate_Array();
 
-    // Numeric::GreatestCommonDivisor();
+    Numeric::GreatestCommonDivisor();
     // Numeric::LeastCommonMultiple();
     // Numeric::LongestCommonSubsequence();
     // Numeric::FinabochiNumeric();
@@ -3762,10 +3835,21 @@ void Numeric::TestAll()
 
     // Numeric::NextLargerElement();
     // Numeric::Find_All_Distinct_Combinations_LengthK();
+
     // Numeric::Find_Longest_Increasing_Subsequence();
     // Numeric::Find_Longest_Increasing_Subsequence_1();
     // Numeric::Longest_Consecutive_Sequence();
     // Numeric::FindLongestSubArray();
+    // Numeric::FindLongestSubArray_K_UniqueElements();
+    // Numeric::Find_SubArrays_SumZero();
+    // Numeric::Find_SubArrays_WithGivenSum();
+    // Numeric::SmallestSubarrayWithSumGreaterX();
+    // Numeric::LargestSubarrayWithSumGreaterX();   /**  UNIMPLEMENTED  **/
+    // Numeric::Greatest_Subarray_AllElements_Greater_K();
+    // Numeric::Smallest_Subarray_AllElements_Greater_K();
+    // Numeric::Subarrays_WithCurrentMaxElement();
+
+
     // Numeric::SplitArrayToPieces_FindNumber_ByExample();
     // Numeric::Sum_Of_ConsecutiveNumeric();
     // Numeric::Is_Array_Elements_Consecutive();
@@ -3780,18 +3864,12 @@ void Numeric::TestAll()
 
     // Numeric::RemoveElement();
     // Numeric::RemoveDuplicates();
-    Numeric::RemoveDuplicates_SortedArray();
+    // Numeric::RemoveDuplicates_SortedArray();
     // Numeric::DeleteFromArray();
 
     // Numeric::Find_The_Majority_Element();
 
-    // Numeric::Find_SubArrays_SumZero();
-    // Numeric::Find_SubArrays_WithGivenSum();
-    // Numeric::SmallestSubarrayWithSumGreaterX();
-    // Numeric::LargestSubarrayWithSumGreaterX();   /**  UNIMPLEMENTED  **/
-    // Numeric::Greatest_Subarray_AllElements_Greater_K();
-    // Numeric::Smallest_Subarray_AllElements_Greater_K();
-    // Numeric::Subarrays_WithCurrentMaxElement();
+
 
     // Numeric::FindCommonElements_3_SortedArrays();
 
@@ -3847,8 +3925,8 @@ void Numeric::TestAll()
 
     // AddDigits();
 
-    // Numeric::Min_Length_SubArray_WithSameDegree();  // Degree_Of_Array
-                                                    // degreeOfArray: With same occurrences of duplicated elements
+    /** Degree_Of_Array degreeOfArray: With same occurrences of duplicated elements **/
+    // Numeric::Min_Length_SubArray_WithSameDegree();
 
     // Numeric::CanJump();  // With same occurrences of duplicated elements
 

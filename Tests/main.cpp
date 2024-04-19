@@ -64,6 +64,7 @@ Description : Tests C++ project
 #include "ExpressionTemplates/ExpressionTemplates.h"
 #include "Templates_Metaprogramming/Templates.h"
 #include "Logging/LowLatencyLogger.h"
+#include "Crow/Crow.h"
 #include "DataStructures/LRUCache.h"
 #include "DataStructures/EventLoop.h"
 #include "DataStructures/MaxStack.h"
@@ -1078,7 +1079,6 @@ int main([[maybe_unused]] int argc,
 
 
 
-
     /** * * * * *  Move to lib * * * * * **/
 
     // OperatorCall_ExplicitTypeSpecialization::Test();
@@ -1093,6 +1093,7 @@ int main([[maybe_unused]] int argc,
     // BinaryAnalyzer::TestAll();
     // Cpp23_Features::TestAll();
     // Concepts::TestAll();
+    // Crow::TestAll();
     // Comparators::TestAll();
     // CollectionsTests::TestAll();
     // Coroutines::TestAll();
@@ -1104,13 +1105,13 @@ int main([[maybe_unused]] int argc,
     // Date_Time_Chrono::TestAll();
     // Heap::TestAll();
     // Iterators::TestAll();
-    // Files::TestAll();
+    Files::TestAll();
     // FunctionCall_LookUp::TestAll();
     // RateLimiter::TestAll();
     // LRUCache::TestAll();
     // LowLatencyLogger::TestAll();
     // Multithreading::TestAll();
-    Memory::TestAll();
+    // Memory::TestAll();
     // MaxStack::TestAll();
     // MinMaxStack::TestAll();
     // MinStack::TestAll();

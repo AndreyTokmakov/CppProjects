@@ -2018,13 +2018,13 @@ void Algorithms::TestAll()
     // Numbers::Rank();
     // Numbers::Degree_Of_Array();
     // Numbers::topKFrequent();
-    // Numbers::Median_of_Two_Sorted_Arrays();
+    Numbers::Median_of_Two_Sorted_Arrays();
     // Numbers::AddDigits();
     // Numbers::Rotate_Array();
     // Numbers::IntToRoman();
     // Numbers::RomanToInt();
     // Numbers::Divide_Numbers();
-    Numbers::MajorityElement();                 // INFO --> To Algorithms
+    // Numbers::MajorityElement();              // INFO --> To Algorithms
     // Numbers::CanPartition();                 // INFO --> To Algorithms
 
     // Strings::FindCommon_PrefixAndPostfix();

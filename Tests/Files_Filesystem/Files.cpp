@@ -177,7 +177,17 @@ void Files::TestAll()
     // FileUtilities_Tests::FileSize();
 
     // FileUtilities_Tests::WriteToFile();
-    FileUtilities_Tests::AppendToFile();
+    // FileUtilities_Tests::AppendToFile();
+
+
+    std::string str(128, '0');
+    if (std::ifstream file(R"(/home/andtokm/DiskS/Temp/Folder_For_Testing/test_file.txt)" );
+        file.is_open() && file.good())
+    {
+        file.getline(str.data(), 128, '\n');
+        std::cout << str << std::endl;
+    }
+
 
 };
 

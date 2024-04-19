@@ -1,4 +1,7 @@
 https://www.byteinthesky.com/tutorials/delete-and-earn/
 
 
+// Хорошие решения:
+https://algo.monster/liteproblems/2958
+
 https://www.linkedin.com/posts/alexandre-zajac_softwareengineering-coding-programming-activity-7181538559999238144-lwW8?utm_source=share&utm_medium=member_desktop

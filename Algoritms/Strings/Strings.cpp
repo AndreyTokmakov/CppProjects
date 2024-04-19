@@ -746,9 +746,11 @@ namespace Strings {
 
     // Необходимо найти максимальную длину подстроки такой что бы в ней было не более чем 'K' уникальных элементов
     size_t findLenWithMax_K_UniqueChars(const std::string &text,
-                                        const size_t K) {
+                                        const size_t K)
+    {
         size_t result{0}, indexes[256]{};
-        for (size_t right = 0, left = 0, uniqCount = 0; right < text.length(); ++right) {
+        for (size_t right = 0, left = 0, uniqCount = 0; right < text.length(); ++right)
+        {
             const char c = text[right];
             if (0 == indexes[c]++)
                 ++uniqCount;
@@ -763,7 +765,8 @@ namespace Strings {
         return result;
     }
 
-    void MaxSubstringLength_Of_K_max_Unique_Elements() {
+    void MaxSubstringLength_Of_K_max_Unique_Elements()
+    {
         for (const std::pair<StrSizeTPair, size_t> &data: std::vector<std::pair<StrSizeTPair, size_t> >{
                 {{"aba",       2}, 3},
                 {{"ababaaab",  2}, 8},
@@ -2470,7 +2473,7 @@ void Strings::TestAll()
     // Strings::LongestSubstringWithoutRepeatingCharacters();
     // Strings::LongestSubstringWithoutRepeatingCharacters2();
     // Strings::Find_LongestSubstring_With_K_DistinctCharacters();
-    // Strings::MaxSubstringLength_Of_K_max_Unique_Elements();
+    Strings::MaxSubstringLength_Of_K_max_Unique_Elements();
     // Strings::LongestConsecutiveCharacters();
 
 
