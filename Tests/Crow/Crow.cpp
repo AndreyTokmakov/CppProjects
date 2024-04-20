@@ -8,9 +8,9 @@ Description : Crow.cpp
 ============================================================================**/
 
 #include "Crow.h"
+#include "../Helpers/Wrapper.h"
 
-#include <stdio.h>
-#include <string.h>
+#include <cstring>
 
 #include <iostream>
 #include <memory>
@@ -512,7 +512,8 @@ namespace Crow::StringQuery
         /// Returns a list of values, passed as `?name[]=value1&name[]=value2&...name[]=valuen` with n being the size of the list.
 
         ///
-        /// Note: Square brackets in the above example are controlled by `use_brackets` boolean (true by default). If set to false, the example becomes `?name=value1,name=value2...name=valuen`
+        /// Note: Square brackets in the above example are controlled by `use_brackets` boolean (true by default).
+        /// If set to false, the example becomes `?name=value1,name=value2...name=valuen`
         std::vector<char*> get_list(const std::string& name, bool use_brackets = true) const
         {
             std::vector<char*> ret;
@@ -520,7 +521,7 @@ namespace Crow::StringQuery
             char* element = nullptr;
 
             int count = 0;
-            while (1)
+            while (true)
             {
                 element = qs_k2v(plus.c_str(), key_value_pairs_.data(), key_value_pairs_.size(), count++);
                 if (!element)
@@ -711,6 +712,18 @@ namespace Crow::StringQuery::Tests
 
     }
 
+    void GetList_Test()
+    {
+        std::string urlParam { "params?h=1&tag[]=foo&lol&count[one]=1&tag[]=bar&count[two]=2&tag[]=three&pew=5.2"};
+        query_string query_params(urlParam);
+
+
+        const auto params = query_params.get_list("tag");
+        for (const auto entry: params)
+            std::cout << entry << std::endl;
+
+    }
+
     void qs_dict_name2kv_Test_perf()
     {
         const std::string name {"count"};
@@ -775,6 +788,39 @@ namespace TestData
 }
 
 
+namespace Memory
+{
+    using Helpers::Integer;
+
+    struct IntegerHash {
+        std::size_t operator()(const Integer& s) const noexcept {
+            return std::hash<int>{}(s.getValue());
+        }
+    };
+
+    std::unique_ptr<std::pair<Integer, Integer>>
+    getPairPtr()
+    {
+        // return std::make_unique<std::pair<Integer, Integer>>(1,1);
+
+        Integer i1 {101}, i2 {202};
+        // return std::make_unique<std::pair<Integer, Integer>>(std::move(i1),std::move(i2));
+        return std::unique_ptr<std::pair<Integer, Integer>>(new std::pair<Integer, Integer>(std::move(i1),std::move(i2)));
+    }
+
+    void TestReturn_UniquePtr()
+    {
+        std::unordered_map<Integer, Integer, IntegerHash> store;
+        std::unique_ptr<std::pair<Integer, Integer>> ptr = getPairPtr();
+
+        std::cout << std::endl;
+
+        // store.emplace(*std::move(ptr));
+        store.emplace(std::move(ptr->first), std::move(ptr->second));
+    }
+}
+
+
 void Crow::TestAll()
 {
     // Common::Tests::Method();
@@ -783,10 +829,13 @@ void Crow::TestAll()
     // StringQuery::Tests::KeysTest();
     // StringQuery::Tests::KeysTest_Perf();
 
+    StringQuery::Tests::GetList_Test();
+
     // StringQuery::Tests::GetDict_Test();
     // StringQuery::Tests::qs_dict_name2kv_Test_perf();
 
-    TestData::GenerateParams();
+    // TestData::GenerateParams();
 
+    // Memory::TestReturn_UniquePtr();
 
 };

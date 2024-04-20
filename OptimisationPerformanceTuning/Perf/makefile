@@ -31,7 +31,7 @@ CXXSOURCES = main.cpp
 CXXOBJECTS = $(CXXSOURCES:.cpp=.o)  # expands to list of object files
 CXXFLAGS = -std=c++23 -DESRI_UNIX $(INCLUDEDIRS)
 CXXFLAGS += -DDEBUG -ggdb -gdwarf-3 -g
-CXX = g++-13.1
+CXX = g++-13.2
 
 LDFLAGS = $(LIBDIRS) $(LIBS)
 

@@ -1093,7 +1093,7 @@ int main([[maybe_unused]] int argc,
     // BinaryAnalyzer::TestAll();
     // Cpp23_Features::TestAll();
     // Concepts::TestAll();
-    // Crow::TestAll();
+    Crow::TestAll();
     // Comparators::TestAll();
     // CollectionsTests::TestAll();
     // Coroutines::TestAll();
@@ -1105,7 +1105,7 @@ int main([[maybe_unused]] int argc,
     // Date_Time_Chrono::TestAll();
     // Heap::TestAll();
     // Iterators::TestAll();
-    Files::TestAll();
+    // Files::TestAll();
     // FunctionCall_LookUp::TestAll();
     // RateLimiter::TestAll();
     // LRUCache::TestAll();

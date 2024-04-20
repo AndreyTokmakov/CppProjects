@@ -1,8 +1,16 @@
 
-export GCC_13_PATH=/home/andtokm/DiskS/Utils/bin/gcc-13.1
-export PATH=${GCC_13_PATH}/bin:${PATH}
-export LD_LIBRARY_PATH=/home/andtokm/DiskS/Utils/bin/gcc-13.1/lib64
-export CC=gcc-13.1 CXX=g++-13.1
+https://perf.wiki.kernel.org/index.php/Main_Page
+
+---------------------------------------------------------------------------------------------
+---------------------------------------------------------------------------------------------
+
+
+export GCC_VERSION=13.2
+export GCC_PATH=/home/andtokm/DiskS/Utils/bin/gcc-$GCC_VERSION
+
+export PATH=${GCC_PATH}/bin:${PATH}
+export LD_LIBRARY_PATH=${GCC_PATH}/lib64
+export CC=gcc-$GCC_VERSION CXX=g++-$GCC_VERSION
 
 make
 
@@ -103,6 +111,8 @@ echo 1 > /proc/sys/kernel/nmi_watchdog
     # As the result the 'perf.data' file will be created use 'perf report' to anylize recording
 
 >   perf report
+
+>   perf report --sort=dso
 
 ---------------------------------------------------------------------------------------------
         System-Wide Real-Time Performance Counter Profile
