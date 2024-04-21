@@ -20,7 +20,7 @@ add_executable(${PROJECT_NAME}
         Encoding/StringUtils_ToStudy.cpp
         Encoding/StringUtils.cpp Encoding/StringUtils.h
         Encoding/Unicode.cpp Encoding/Unicode.h
-        Crow/Crow.cpp Crow/Crow.h
+        Crow/Crow.cpp Crow/Crow.h Crow/Logger.cpp Crow/Logger.h Crow/Utils.cpp Crow/Utils.h
         Geometry/PointsAndLines.cpp Geometry/PointsAndLines.h
         Encoding/PunycodeFinal.cpp Encoding/PunycodeFinal.h
         Encoding/Convertaion_UTF8_UTF32.cpp Encoding/Convertaion_UTF8_UTF32.h

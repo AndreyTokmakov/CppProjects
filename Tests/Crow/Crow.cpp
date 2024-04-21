@@ -8,6 +8,9 @@ Description : Crow.cpp
 ============================================================================**/
 
 #include "Crow.h"
+#include "Logger.h"
+#include "Utils.h"
+
 #include "../Helpers/Wrapper.h"
 
 #include <cstring>
@@ -19,35 +22,6 @@ Description : Crow.cpp
 #include <unordered_map>
 #include <memory>
 #include <chrono>
-
-namespace Performance::Utils
-{
-    struct ScopedTimer
-    {
-        const std::string_view benchmarkName;
-        const std::chrono::high_resolution_clock::time_point start {
-                std::chrono::high_resolution_clock::now()
-        };
-
-        explicit ScopedTimer(std::string_view info) :
-                benchmarkName {info} {
-        }
-
-        ScopedTimer(const ScopedTimer&) = delete;
-        ScopedTimer(ScopedTimer&&) = delete;
-        ScopedTimer& operator=(const ScopedTimer&) = delete;
-        ScopedTimer& operator=(ScopedTimer&&) = delete;
-
-        ~ScopedTimer()
-        {
-            const std::chrono::high_resolution_clock::time_point end = std::chrono::high_resolution_clock::now();
-            const std::chrono::duration<double> time_span = duration_cast<std::chrono::duration<double>>(end - start);
-
-            std::cout << std::left << std::setw(14) << benchmarkName << ":  ";
-            std::cout << time_span.count() << " seconds.\n";
-        }
-    };
-}
 
 namespace Crow::Common
 {
@@ -688,13 +662,13 @@ namespace Crow::StringQuery::Tests
 
 
         {
-            Performance::Utils::ScopedTimer timer {"keys()"};
+            Utils::ScopedTimer timer {"keys()"};
             for (int i = 0; i < 1'000'000; ++i)
                 const std::vector<std::string> keys = query_params.keys();
         }
 
         {
-            Performance::Utils::ScopedTimer timer {"keys_old()"};
+            Utils::ScopedTimer timer {"keys_old()"};
             for (int i = 0; i < 1'000'000; ++i)
                 const std::vector<std::string> keys = query_params.keys_old();
         }
@@ -734,7 +708,7 @@ namespace Crow::StringQuery::Tests
 
 
         {
-            Performance::Utils::ScopedTimer timer {"qs_dict_name2kv()"};
+            Utils::ScopedTimer timer {"qs_dict_name2kv()"};
             for (int i = 0; i < 1'000'000; ++i)
             {
                 int count = 0;
@@ -752,7 +726,7 @@ namespace Crow::StringQuery::Tests
 
 
         {
-            Performance::Utils::ScopedTimer timer {"qs_dict_name2kv_old()"};
+            Utils::ScopedTimer timer {"qs_dict_name2kv_old()"};
             for (int i = 0; i < 1'000'000; ++i)
             {
                 int count = 0;
@@ -823,13 +797,16 @@ namespace Memory
 
 void Crow::TestAll()
 {
+    Logger::TestAll();
+
+
     // Common::Tests::Method();
 
     // StringQuery::Tests::CreateTest();
     // StringQuery::Tests::KeysTest();
     // StringQuery::Tests::KeysTest_Perf();
 
-    StringQuery::Tests::GetList_Test();
+    // StringQuery::Tests::GetList_Test();
 
     // StringQuery::Tests::GetDict_Test();
     // StringQuery::Tests::qs_dict_name2kv_Test_perf();

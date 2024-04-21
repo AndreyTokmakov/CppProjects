@@ -12,6 +12,7 @@ add_executable(${PROJECT_NAME}
         main.cpp
         Inspection/CodeInspection.cpp
         Utilities.h Utilities.cpp
+        SpecificOptimizationTopics/OptimizationTricks.cpp SpecificOptimizationTopics/OptimizationTricks.h
         FalseSharing/FalseSharingExperiments.cpp FalseSharing/FalseSharingExperiments.h
         Valgrind/ValgrindExperiments.cpp Valgrind/ValgrindExperiments.h
         CacheLineAccessEffects/CacheLineAccessEffects.cpp CacheLineAccessEffects/CacheLineAccessEffects.h

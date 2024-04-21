@@ -11,6 +11,7 @@ Description : C++ Optimisation and Performance Tuning experiments
 #include "FalseSharing/FalseSharingExperiments.h"
 #include "Valgrind/ValgrindExperiments.h"
 #include "CacheLineAccessEffects/CacheLineAccessEffects.h"
+#include "SpecificOptimizationTopics/OptimizationTricks.h"
 
 #include <iostream>
 #include <string_view>
@@ -57,8 +58,8 @@ int main([[maybe_unused]] int argc,
     // FalseSharingExperiments::TestAll();
     // Variables_MemoryLayout::TestAll();
     // ValgrindExperiments::TestAll();
-    CacheLineAccessEffects::TestAll();
-
+    // CacheLineAccessEffects::TestAll();
+    OptimizationTricks::TestAll();
 
     return EXIT_SUCCESS;
 }
