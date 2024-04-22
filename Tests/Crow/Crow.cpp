@@ -18,10 +18,12 @@ Description : Crow.cpp
 #include <iostream>
 #include <memory>
 #include <string>
+#include <utility>
 #include <vector>
 #include <unordered_map>
 #include <memory>
 #include <chrono>
+#include <functional>
 
 namespace Crow::Common
 {
@@ -795,10 +797,100 @@ namespace Memory
 }
 
 
+namespace LambdaWrapper
+{
+    class call_error : public std::runtime_error
+    {
+    public:
+        call_error() : std::runtime_error{"call error"}
+        {
+        }
+    };
+
+
+    template<typename T>
+    class lambda_wrapper;
+
+    template<typename ReturnType, typename ... Args>
+    class lambda_wrapper<ReturnType (Args...)> final
+    {
+    public:
+        lambda_wrapper() = default;
+
+        explicit lambda_wrapper(std::function<ReturnType(Args...)> func) :
+                valid_(true), func_(std::move(func))
+        {
+        }
+
+        void clear() noexcept { valid_ = false; }
+
+        operator bool() const noexcept { return valid_; }
+
+        lambda_wrapper<ReturnType (Args...)>& operator=(std::function<ReturnType(Args...)> func)
+        {
+            valid_ = true;
+            func_ = func;
+            return *this;
+        }
+
+        ReturnType operator()(Args... args) const
+        {
+            if (valid_)
+            {
+                return func_(args...);
+            }
+            throw call_error();
+        }
+
+    private:
+        mutable bool valid_{};
+
+        std::function<ReturnType(Args...)> func_;
+    };
+
+
+
+    int sum(int a, int b) {
+        return a + b;
+    }
+
+    void Test()
+    {
+        /*
+        lambda_wrapper<int (int, int)> func (sum);
+        lambda_wrapper<int (int, int)> func1 ([](int a, int b) { return  a + b; });
+
+        std::cout << func(1, 2) << std::endl;
+        std::cout << func1(1, 2) << std::endl;
+        */
+
+
+        // std::function<int (int, int)> sum = [](int a, int b) { return a + b; };
+        std::function<int (int, int)> sum = nullptr;
+
+        try {
+            std::cout << sum(1, 2) << std::endl;
+        } catch (const std::bad_function_call& e) {
+            std::cout << e.what() << '\n';
+        }
+
+        lambda_wrapper<int (int, int)> sum_wrapper (sum);
+
+        try {
+            std::cout << sum_wrapper(1, 2) << std::endl;
+             // 'bad_function_call' will be caught instead of 'call_error'
+        } catch (const std::bad_function_call& e) {
+            std::cout << e.what() << '\n';
+        }
+    }
+}
+
+
 void Crow::TestAll()
 {
-    Logger::TestAll();
+    // Logger::TestAll();
 
+    LambdaWrapper::Test();
 
     // Common::Tests::Method();
 
