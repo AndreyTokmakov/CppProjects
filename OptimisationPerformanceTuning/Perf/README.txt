@@ -100,6 +100,44 @@ echo 1 > /proc/sys/kernel/nmi_watchdog
 
 > time perf stat -d ./test_app
 
+          1,427.39 msec task-clock                #    0.201 CPUs utilized
+           110,015      context-switches          #   77.074 K/sec
+                85      cpu-migrations            #   59.549 /sec
+               128      page-faults               #   89.674 /sec
+       998,052,592      cycles                    #    0.699 GHz                      (60.48%)
+        67,952,269      stalled-cycles-frontend   #    6.81% frontend cycles idle     (68.37%)
+         6,171,436      stalled-cycles-backend    #    0.62% backend cycles idle      (80.51%)
+       934,911,956      instructions              #    0.94  insn per cycle
+                                                  #    0.07  stalled cycles per insn  (83.48%)
+       233,501,692      branches                  #  163.586 M/sec                    (74.80%)
+         5,397,731      branch-misses             #    2.31% of all branches          (71.43%)
+       346,764,087      L1-dcache-loads           #  242.936 M/sec                    (84.21%)
+        16,234,732      L1-dcache-load-misses     #    4.68% of all L1-dcache accesses  (76.72%)
+   <not supported>      LLC-loads
+   <not supported>      LLC-load-misses
+
+       7.084458621 seconds time elapsed
+
+       0.092412000 seconds user
+       1.232163000 seconds sys
+
+
+> time perf stat -e L1-dcache-loads,L1-dcache-load-misses,L1-dcache-stores -d ./test_app
+
+
+       237,006,030      L1-dcache-loads
+         5,536,627      L1-dcache-load-misses     #    2.31% of all L1-dcache accesses
+   <not supported>      L1-dcache-stores
+       242,952,356      L1-dcache-loads
+         5,545,357      L1-dcache-load-misses     #    2.31% of all L1-dcache accesses
+   <not supported>      LLC-loads
+   <not supported>      LLC-load-misses
+
+       6.690696409 seconds time elapsed
+
+       0.053749000 seconds user
+       0.920457000 seconds sys
+
 
 ---------------------------------------------------------------------------------------------
         Reporting
