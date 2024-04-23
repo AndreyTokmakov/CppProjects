@@ -1990,16 +1990,63 @@ namespace Algorithms::Numbers
 }
 
 
-namespace Algorithms::Numbers
+namespace Algorithms::Strings
 {
-    int majority_element2()
+    void destinationCity(const std::vector<StringPair>& paths)
     {
+        std::string destCity {paths.front().second};
+        std::vector<bool> taken (paths.size(), false);
+        bool destExists {true};
 
+        while (destExists)
+        {
+            destExists = false;
+            for (size_t idx = 1; idx < paths.size(); ++idx)
+            {
+                if (taken[idx])
+                    continue;
+
+                std::cout << "{" << paths[idx].first << ", " << paths[idx].second << "} | " << destCity;
+                if (paths[idx].first == destCity)
+                {
+                    destCity =  paths[idx].second;
+                    std::cout << " | OK -> " << destCity << std::endl<< std::endl;
+                    destExists = true;
+                    taken[idx] = true;
+                    break;
+                }
+                std::cout << std::endl;
+            }
+        }
+
+        std::cout << std::endl << destCity << std::endl;
     }
 
-    void MajorityElement2()
+    void destinationCity2(const std::vector<StringPair>& paths)
     {
+        std::unordered_set<std::string> destinations;
+        destinations.reserve(paths.size());
 
+        for (const auto& [from, to]: paths)
+            destinations.emplace(from);
+        for (const auto& [from, to]: paths)
+        {
+            if (!destinations.contains(to)) {
+                std::cout << to << std::endl;
+                break;
+            }
+        }
+    }
+
+    /**
+    You are given the array paths, where paths[i] = [cityAi, cityBi] means there exists a direct path going
+    from cityAi to cityBi. Return the destination city, that is, the city without any path outgoing to another city.
+    It is guaranteed that the graph of paths forms a line without any loop -> there will be exactly one destination city.
+    */
+    void DestinationCity()
+    {
+        destinationCity2({ {"London","New York"}, {"New York","Lima"}, {"Lima","Sao Paulo"}});
+        destinationCity2({ {"B","C"}, {"D","B"}, {"C","A"}});
     }
 }
 
@@ -2018,7 +2065,7 @@ void Algorithms::TestAll()
     // Numbers::Rank();
     // Numbers::Degree_Of_Array();
     // Numbers::topKFrequent();
-    Numbers::Median_of_Two_Sorted_Arrays();
+    // Numbers::Median_of_Two_Sorted_Arrays();
     // Numbers::AddDigits();
     // Numbers::Rotate_Array();
     // Numbers::IntToRoman();
@@ -2040,6 +2087,7 @@ void Algorithms::TestAll()
     // Strings::Intersperse_String();
     // Strings::Count_Anagrams();
     // Strings::Interleaving_String();
+    Strings::DestinationCity();
 
     // Bits::ReverseBits();
 

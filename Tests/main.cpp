@@ -1087,13 +1087,13 @@ int main([[maybe_unused]] int argc,
     // ReturnClass_MemberRef_CopyCTor::tests();
 
 
-    // Algorithms::TestAll();
+    Algorithms::TestAll();
     // AutoTests::TestAll();
     // BinManipulation::TestAll();
     // BinaryAnalyzer::TestAll();
     // Cpp23_Features::TestAll();
     // Concepts::TestAll();
-    Crow::TestAll();
+    // Crow::TestAll();
     // Comparators::TestAll();
     // CollectionsTests::TestAll();
     // Coroutines::TestAll();
