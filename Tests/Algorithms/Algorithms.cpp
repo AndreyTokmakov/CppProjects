@@ -2024,7 +2024,7 @@ namespace Algorithms::Strings
 
     void destinationCity2(const std::vector<StringPair>& paths)
     {
-        std::unordered_set<std::string> destinations;
+        std::unordered_set<std::string_view> destinations;
         destinations.reserve(paths.size());
 
         for (const auto& [from, to]: paths)
