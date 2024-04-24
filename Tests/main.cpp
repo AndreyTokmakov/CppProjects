@@ -1079,6 +1079,8 @@ int main([[maybe_unused]] int argc,
 
 
 
+
+
     /** * * * * *  Move to lib * * * * * **/
 
     // OperatorCall_ExplicitTypeSpecialization::Test();
@@ -1087,7 +1089,7 @@ int main([[maybe_unused]] int argc,
     // ReturnClass_MemberRef_CopyCTor::tests();
 
 
-    Algorithms::TestAll();
+    // Algorithms::TestAll();
     // AutoTests::TestAll();
     // BinManipulation::TestAll();
     // BinaryAnalyzer::TestAll();

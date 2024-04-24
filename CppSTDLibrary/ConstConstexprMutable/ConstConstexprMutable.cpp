@@ -194,7 +194,8 @@ namespace ConstConstexprMutable::ConstexprFuncs {
 
 //**************************************************************************//
 
-namespace ConstConstexprMutable::MutableTests {
+namespace ConstConstexprMutable::MutableTests
+{
 
 	class ImmutableObject {
 	private:

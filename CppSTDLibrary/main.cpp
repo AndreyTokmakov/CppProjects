@@ -121,10 +121,10 @@ int main([[maybe_unused]] int argc,
     // LifetimeExtension::TestAll();
     // Locale::TestAll();
     // Literals::TestAll();
-    // MoveSemantics_RuleOfFive::TestAll();
+    MoveSemantics_RuleOfFive::TestAll();
     // Numbers::TestAll();
     // Math::TestAll();
-    Memory::TestAll();
+    // Memory::TestAll();
     // Metaprogramming::TestAll();
     // InlineNamespaces::TestAll();
     // NumericLimits::TestAll();

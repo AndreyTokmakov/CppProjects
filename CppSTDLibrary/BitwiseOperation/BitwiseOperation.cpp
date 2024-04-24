@@ -40,12 +40,16 @@ namespace BitUtils
         }
     }
 
-    constexpr bool is_odd(const int value) {
+    constexpr bool is_odd(const int value) noexcept {
         return value & 1;
     }
 
-    constexpr bool is_even(const int value) {
+    constexpr bool is_even(const int value) noexcept {
         return ! (value & 1);
+    }
+
+    constexpr bool is_pow_of_2(int value) noexcept {
+        return (value && !(value & value - 1));
     }
 }
 

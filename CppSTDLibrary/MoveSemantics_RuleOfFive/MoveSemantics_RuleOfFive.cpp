@@ -1640,6 +1640,86 @@ namespace MoveSemantics_RuleOfFive::Move_Overload_vs_PerfectForwarding
     }
 }
 
+namespace MoveSemantics_RuleOfFive::UseAfterMove_Pitfalls
+{
+    template <class T>
+    struct MyAlloc
+    {
+        using value_type = T;
+        using size_type = size_t;
+        using difference_type = ptrdiff_t;
+        using propagate_on_container_move_assignment = std::false_type;
+
+        T* allocate(size_t n) {
+            return static_cast<T*>(::malloc(n * sizeof(T)));
+        }
+
+        void deallocate(T* ptr, size_t n) {
+            ::free(static_cast<void*>(ptr));
+        }
+
+        using is_always_equal = std::false_type;
+
+        bool operator == (const MyAlloc&) const {
+            return false;
+        }
+    };
+
+    // https://github.com/Nekrolm/ubbook/blob/master/lifetime/use-after-move.md
+    void MoveVector_WithAllocator()
+    {
+        using VectorString = std::vector<std::string, MyAlloc<std::string>>;
+
+        {
+            VectorString v{"hello", "world", "my"};
+            VectorString vv = std::move(v);
+            std::cout << v.size() << "\n"; // выведет 0. Это был move-конструктор
+        }
+
+        {
+            VectorString v{"hello", "world", "my"};
+            VectorString vv;
+            vv = std::move(v);
+
+            std::cout << v.size() << "\n";
+
+            // выведет 3. Было move-присваивание
+            for (auto &x: v) {
+                // но каждый элемент был перемещен -- тут пусто
+                std::cout << x;
+            }
+        }
+    }
+
+
+    void MoveString_Depending_SSO()
+    {
+        {
+            std::string str { "123456789"};
+            std::string dest { std::move(str)};
+
+            std::cout << "capacity: " << str.capacity() << ", size: " << str.size() << " | " << str << std::endl;
+            std::cout << "capacity: " << dest.capacity() << ", size: " << dest.size() << " | " << dest << "\n\n";
+        }
+
+        {
+            std::string str { "123456789"};
+            std::string dest = std::move(str);
+
+            std::cout << "capacity: " << str.capacity() << ", size: " << str.size() << " | " << str << std::endl;
+            std::cout << "capacity: " << dest.capacity() << ", size: " << dest.size() << " | " << dest << "\n\n";
+        }
+
+        {
+            std::string str { "123456789123456789123456789123456789123456789123456789" };
+            std::string dest = std::move(str);
+
+            std::cout << "capacity: " << str.capacity() << ", size: " << str.size() << " | " << str << std::endl;
+            std::cout << "capacity: " << dest.capacity() << ", size: " << dest.size() << " | " << dest << "\n\n";
+        }
+    }
+}
+
 void MoveSemantics_RuleOfFive::TestAll()
 {
 	// FillVector_NoCopy();
@@ -1686,7 +1766,7 @@ void MoveSemantics_RuleOfFive::TestAll()
 	// RVO::GetObject_FromFunction_Bad();
 	// RVO::GetObject_FromVector();
 
-	//------------------------------------------//
+	/***************************************************************************/
 
 
 	// Move::MoveVector();
@@ -1699,7 +1779,11 @@ void MoveSemantics_RuleOfFive::TestAll()
 
 	// Tests::Lifitime_Extenstion_Test();
 
+    // Move_Overload_vs_PerfectForwarding::test_overload();
+    // Move_Overload_vs_PerfectForwarding::test_perfect_forwarding();
 
-    Move_Overload_vs_PerfectForwarding::test_overload();
-    Move_Overload_vs_PerfectForwarding::test_perfect_forwarding();
+    /***************************************************************************/
+
+    // UseAfterMove_Pitfalls::MoveVector_WithAllocator();
+    UseAfterMove_Pitfalls::MoveString_Depending_SSO();
 }

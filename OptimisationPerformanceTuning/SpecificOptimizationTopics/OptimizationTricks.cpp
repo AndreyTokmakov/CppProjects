@@ -10,6 +10,7 @@ Description : OptimizationTricks.cpp
 #include "OptimizationTricks.h"
 #include <iostream>
 #include <vector>
+#include <cstdint>
 
 
 namespace BoundsChecking
@@ -130,8 +131,34 @@ namespace BitwiseOperators_CheckingMultipleValues
     }
 }
 
+namespace ModuloWithoutDivision
+{
+    // Duration in CPU cycles:
+    // Addition       : ~ 1 cycle (could be even less, while all operations are still performed in
+    //                             a whole number of cycles, some of them can be performed in parallel)
+    // Multiplication : ~ 6 cycles
+    // Division       : ~ 30 to 60 cycles.
+
+
+    /**
+     * Works in case if d is power of 2
+     **/
+    inline constexpr uint32_t moduloFast(const uint32_t n, const uint32_t d) noexcept {
+        return n & (d - 1);
+    };
+
+
+    void Tests()
+    {
+        static_assert(0 == moduloFast(4, 4));
+        static_assert(3 == moduloFast(15, 4));
+        static_assert(0 == moduloFast(4, 2));
+    }
+}
+
 void OptimizationTricks::TestAll()
 {
     // BoundsChecking::Tests();
-    BitwiseOperators_CheckingMultipleValues::Tests();
+    // BitwiseOperators_CheckingMultipleValues::Tests();
+    ModuloWithoutDivision::Tests();
 }
