@@ -40,10 +40,11 @@
 #include "Exceptions_Handling/Exceptions_Handling.h"
 #include "ParallelExecutionAlgoritms/ParallelExecutionAlgoritms.h"
 #include "Multithreading_Communication/Multithreading_Communication.h"
-#include "ThreadSafeCollections/Multithreading_Collections.h"
-#include "ThreadSafeCollections/Queue.h"
-#include "ThreadSafeCollections/LockFreeQueue.h"
-#include "ThreadSafeCollections/SingleConsumerProducerQueue.h"
+#include "Collections/Multithreading_Collections.h"
+#include "Collections/Queue.h"
+#include "Collections/BlockingQueue.h"
+#include "Collections/LockFreeQueue.h"
+#include "Collections/SingleConsumerProducerQueue.h"
 #include "Multithreading_Performance/Multithreading_Performance.h"
 #include "Barrier/Barrier.h"
 #include "FalseSharing/FalseSharingExperiments.h"
@@ -103,8 +104,9 @@ int main([[maybe_unused]] int argc,
     /** ThreadSafeCollections **/
 
     // Multithreading_Collections::TestAll();
-    SingleConsumerProducerQueue::TestAll();
+    // SingleConsumerProducerQueue::TestAll();
     // Queue::TestAll();
+    BlockingQueue::TestAll();
     // LockFreeQueue::TEST_ALL()
 
     return EXIT_SUCCESS;

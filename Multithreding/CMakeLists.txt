@@ -27,10 +27,11 @@ add_executable(${PROJECT_NAME}
         Integer/Integer.h
         JThreads/JThreads.cpp JThreads/JThreads.h
         Latch/Latch.cpp Latch/Latch.h
-        ThreadSafeCollections/LockFreeQueue.cpp ThreadSafeCollections/LockFreeQueue.h
-        ThreadSafeCollections/Multithreading_Collections.cpp ThreadSafeCollections/Multithreading_Collections.h
-        ThreadSafeCollections/Queue.cpp ThreadSafeCollections/Queue.h
-        ThreadSafeCollections/SingleConsumerProducerQueue.cpp ThreadSafeCollections/SingleConsumerProducerQueue.h
+        Collections/LockFreeQueue.cpp Collections/LockFreeQueue.h
+        Collections/Multithreading_Collections.cpp Collections/Multithreading_Collections.h
+        Collections/Queue.cpp Collections/Queue.h
+        Collections/BlockingQueue.cpp Collections/BlockingQueue.h
+        Collections/SingleConsumerProducerQueue.cpp Collections/SingleConsumerProducerQueue.h
         Multithreading_Communication/Multithreading_Communication.cpp Multithreading_Communication/Multithreading_Communication.h
         Multithreading_Performance/Multithreading_Performance.cpp Multithreading_Performance/Multithreading_Performance.h
         PackagedTask/PackagedTask.cpp PackagedTask/PackagedTask.h

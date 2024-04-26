@@ -73,6 +73,7 @@ Description : Tests C++ project
 #include "DataStructures/DVector.h"
 #include "DataStructures/RateLimiter.h"
 #include "DataStructures/BitReader.h"
+#include "DataStructures/RingBuffer.h"
 #include "DebugLogger/DebugLogger.h"
 #include "Date_Time_Chrono/Date_Time_Chrono.h"
 #include "Collections/CollectionsTests.h"
@@ -1078,9 +1079,6 @@ int main([[maybe_unused]] int argc,
     // UBBook::Test();
 
 
-
-
-
     /** * * * * *  Move to lib * * * * * **/
 
     // OperatorCall_ExplicitTypeSpecialization::Test();
@@ -1103,6 +1101,7 @@ int main([[maybe_unused]] int argc,
     // ConstexprMap::TestAll();
     // DebugLogger::TestAll();
     // DVector::TestAll();
+    RingBuffer::TestAll();
     // DesignPatterns::TestAll();
     // Date_Time_Chrono::TestAll();
     // Heap::TestAll();

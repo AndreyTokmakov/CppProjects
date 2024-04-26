@@ -46,6 +46,7 @@ add_executable(${PROJECT_NAME}
         DataStructures/MaxStack.cpp DataStructures/MaxStack.h
         DataStructures/MinStack.cpp DataStructures/MinStack.h
         DataStructures/MinMaxStack.cpp DataStructures/MinMaxStack.h
+        DataStructures/RingBuffer.cpp DataStructures/RingBuffer.h
         Performance/Performance.cpp Performance/Performance.h
         Memory/Memory.cpp Memory/Memory.h
         Memory/CustomStackAllocator.cpp Memory/CustomStackAllocator.h
