@@ -1,0 +1,4 @@
+
+# Logging without Compromising Performance
+
+https://medium.com/software-architecture-foundations/logging-without-compromising-performance-3ab4d9ac3caa

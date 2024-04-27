@@ -7,6 +7,7 @@ Copyright   : Your copyright notice
 Description : C++ Optimisation and Performance Tuning experiments
 ============================================================================**/
 
+#include "Numa/Numa.h"
 #include "Utilities.h"
 #include "FalseSharing/FalseSharingExperiments.h"
 #include "Valgrind/ValgrindExperiments.h"
@@ -59,7 +60,8 @@ int main([[maybe_unused]] int argc,
     // Variables_MemoryLayout::TestAll();
     // ValgrindExperiments::TestAll();
     // CacheLineAccessEffects::TestAll();
-    OptimizationTricks::TestAll();
+    // OptimizationTricks::TestAll();
+    Numa::TestAll();
 
     return EXIT_SUCCESS;
 }

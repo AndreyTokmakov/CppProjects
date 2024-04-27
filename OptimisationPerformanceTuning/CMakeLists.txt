@@ -12,6 +12,7 @@ add_executable(${PROJECT_NAME}
         main.cpp
         Inspection/CodeInspection.cpp
         Utilities.h Utilities.cpp
+        Numa/Numa.h Numa/Numa.cpp
         SpecificOptimizationTopics/OptimizationTricks.cpp SpecificOptimizationTopics/OptimizationTricks.h
         FalseSharing/FalseSharingExperiments.cpp FalseSharing/FalseSharingExperiments.h
         Valgrind/ValgrindExperiments.cpp Valgrind/ValgrindExperiments.h
@@ -20,4 +21,5 @@ add_executable(${PROJECT_NAME}
 
 TARGET_LINK_LIBRARIES(${PROJECT_NAME}
         pthread
+        numa
 )

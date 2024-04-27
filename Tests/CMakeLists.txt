@@ -37,7 +37,7 @@ add_executable(${PROJECT_NAME}
         Iterators/Iterators.cpp Iterators/Iterators.h
         Files_Filesystem/Files.cpp Files_Filesystem/Files.h
         Files_Filesystem/FileUtilities.cpp Files_Filesystem/FileUtilities.h
-        Helpers/Wrapper.h Helpers/UnorderedPair.h Helpers/Helpers.h
+        Helpers/Wrapper.h Helpers/UnorderedPair.h Helpers/Helpers.h Helpers/ScopedTimer.h
         Strings/Strings.cpp Strings/Strings.h
         Strings/StringUtilities.cpp Strings/StringUtilities.h
         DataStructures/LRUCache.cpp DataStructures/LRUCache.h
