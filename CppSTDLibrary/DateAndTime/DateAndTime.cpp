@@ -8,6 +8,7 @@
 //============================================================================
 
 #include "DateAndTime.h"
+#include "../Helpers/Helpers.h"
 
 #include <charconv>
 #include <iostream>
@@ -189,7 +190,103 @@ namespace DateAndTime::Performance
             STOP_TIME_MEASURE
         }
     }
+}
 
+
+namespace DateAndTime::MeasureTime
+{
+
+    void func()
+    {
+        std::this_thread::sleep_for(std::chrono::seconds (1));
+    }
+
+
+    /**
+	Unlike open and read system calls that require an entire trip into the kernel (and thus acomplete context switch),
+	functions such as clock_gettime (in the case of CLOCK_MONOTONIC at least) have a very low overhead to call
+    because the call is in vDSO.
+    **/
+
+    void ClockGetTime()
+    {
+        timespec start{}, end{};
+
+        clock_gettime(CLOCK_MONOTONIC, &start);
+
+        // unsync the I/O of C and C++.
+        std::ios_base::sync_with_stdio(false);
+
+        func();
+
+        clock_gettime(CLOCK_MONOTONIC, &end);
+
+        // Calculating total time taken by the program.
+        double time_taken {((end.tv_sec - start.tv_sec) * 1e9 + (end.tv_nsec - start.tv_nsec)) * 1e-9};
+
+        std::cout << "Time taken by program is : " << std::fixed << time_taken << std::setprecision(9) << " sec\n";
+    }
+}
+
+namespace DateAndTime::FunctionPerformance
+{
+    void TestGetCurrentTimeFunctions()
+    {
+        constexpr int32_t iterCount {100'000'000};
+
+        {
+            Helpers::ScopedTimer timer{"system_clock::now()"};
+            for (int i = 0; i < iterCount; ++i)
+            {
+                std::chrono::system_clock::time_point today = std::chrono::system_clock::now();
+                //time_t time = std::chrono::system_clock::to_time_t(today);
+            }
+        }
+
+        {
+            Helpers::ScopedTimer timer{"high_resolution_clock::now()"};
+            for (int i = 0; i < iterCount; ++i)
+            {
+                auto start = std::chrono::high_resolution_clock::now();
+            }
+        }
+
+        {
+            Helpers::ScopedTimer timer{"clock_gettime()"};
+            timespec time{};
+            for (int i = 0; i < iterCount; ++i)
+            {
+                clock_gettime(CLOCK_MONOTONIC, &time);
+            }
+        }
+
+        {
+            Helpers::ScopedTimer timer{"std::time(1)"};
+            for (int i = 0; i < iterCount; ++i)
+            {
+                std::time_t t = std::time(nullptr);
+                // std::cout << "UTC:       " << std::put_time(std::gmtime(&t), "%c %Z") << '\n';
+            }
+        }
+
+        {
+            Helpers::ScopedTimer timer{"std::time(2)"};
+            time_t rawTime;
+            for (int i = 0; i < iterCount; ++i)
+            {
+                std::time ( &rawTime );
+            }
+        }
+
+        {
+            Helpers::ScopedTimer timer{"std::timespec_get"};
+            std::timespec ts {};
+            for (int i = 0; i < iterCount; ++i)
+            {
+                std::timespec_get(&ts, TIME_UTC);
+            }
+        }
+    }
 }
 
 void DateAndTime::TestAll()
@@ -205,6 +302,10 @@ void DateAndTime::TestAll()
 
     // Performance::Test();
 
-    TimeSpec();
+    // TimeSpec();
+
+    // MeasureTime::ClockGetTime();
+
+    FunctionPerformance::TestGetCurrentTimeFunctions();
 };
 

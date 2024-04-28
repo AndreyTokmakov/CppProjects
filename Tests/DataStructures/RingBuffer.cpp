@@ -35,29 +35,29 @@ namespace
     }
 }
 
-namespace RingBuffer
+namespace RingBuffer::WithMutex
 {
     template<typename T, size_t Capacity>
-    struct RingBuffer
+    struct BlockingRingBuffer
     {
         using value_type = T;
         using size_type = size_t;
 
         static_assert(!std::is_same_v<value_type, void>, "ERROR: Type of the RingBuffer can not be void");
         static_assert(0 != Capacity, "Please try a little bigger buffer");
-        static_assert(is_pow_of_2(Capacity), "Capacity shall be power of 2");
-
-        // struct alignas(sizeof(value_type)) Placeholder {};
-        // std::unique_ptr<Placeholder[]> buffer { std::make_unique<Placeholder[]>(Capacity) };
+        // static_assert(is_pow_of_2(Capacity), "Capacity shall be power of 2");
 
         size_type writePos {0};
         size_type readPos {0};
         bool overflow { false };
+        std::mutex mtx;
 
         std::array<value_type, Capacity> buffer {};
 
         bool read(value_type& output) noexcept
         {
+            std::lock_guard<std::mutex> lock {mtx};
+
             if ((overflow && writePos >= readPos) || (!overflow && readPos >= writePos))
                 return false;
 
@@ -71,49 +71,23 @@ namespace RingBuffer
             return true;
         }
 
-        void add(value_type value) noexcept
+        bool add(value_type value) noexcept
         {
+            std::lock_guard<std::mutex> lock {mtx};
+
             buffer[writePos++] = value;
 
             if (writePos >= Capacity) {
                 writePos = 0;
                 overflow = true;
             }
+            return true;
         }
     };
 }
 
 
-namespace RingBuffer::Tests
-{
-    template<typename T, size_t Size>
-    void get(RingBuffer<T, Size> &ring) {
-        int value{0};
-        bool res = ring.read(value);
-
-        std::cout << std::boolalpha << res << " | " << value << std::endl;
-    }
-
-    void Test()
-    {
-        RingBuffer<int, 4> ring;
-
-        get(ring);
-
-        ring.add(1);
-        ring.add(2);
-
-        get(ring);
-
-        for (int i = 3; i < 30; ++i) {
-            ring.add(i);
-            get(ring);
-        }
-    }
-}
-
-
-namespace RingBuffer_WithAtomics
+namespace RingBuffer::WithAtomics
 {
     template<typename T, size_t Capacity>
     struct QueueOne
@@ -451,8 +425,10 @@ namespace RingBuffer_WithAtomics
             return true;
         }
     };
+}
 
-
+namespace RingBuffer::Tests
+{
     template<typename T>
     void get(T& ring) {
         int value{0};
@@ -469,6 +445,9 @@ namespace RingBuffer_WithAtomics
 
     void Test()
     {
+        using namespace WithAtomics;
+        using namespace WithMutex;
+
         QueueTwo<int, 3> ring{};
 
         add(ring, 1);
@@ -483,15 +462,73 @@ namespace RingBuffer_WithAtomics
 
     void Benchmark()
     {
+        using namespace WithAtomics;
+        using namespace WithMutex;
+
+        // QueueOne<int, 100'000> queue {};
+        // QueueOneX<int, 100'000> queue {};
+        // QueueTwo<int, 100'000> queue {};
+        // QueueThree<int, 100'000> queue {}; // <-- OK
+        // QueueFour<int, 100'000> queue {};
+
+        // QueueDebug<int, 100'000> queue {};
+        BlockingRingBuffer<int, 100'000> queue {};
+
+        constexpr int eventsCount {1'000'000};
+        size_t reads {0}, writes {0};
+
+        ScopedTimer timer {"benchmark"};
+
+        auto consume = [&]() {
+            int result;
+            while (eventsCount > reads)
+            {
+                if (queue.read(result)) {
+                    ++reads;
+                }
+            }
+            std::cout << "consumer done\n";
+        };
+
+        auto produce = [&]() {
+            for (int idx = 0; idx <= eventsCount; ++idx)
+            {
+                while (true) {
+                    if (queue.add(idx))
+                    {
+                        ++writes;
+                        break;
+                    }
+                }
+            }
+            std::cout << "producer done\n";
+        };
+
+        std::jthread consumer {consume};
+        std::jthread producer {produce};
+
+        consumer.join();
+        producer.join();
+
+        std::cout << "reads: " << reads << ", writes: " << writes << std::endl;
+    }
+
+    void Benchmark_Debug()
+    {
+        using namespace WithAtomics;
+        using namespace WithMutex;
+
         // QueueOne<int, 100'000> queue {};
         // QueueOneX<int, 100'000> queue {};
         // QueueTwo<int, 100'000> queue {};
         // QueueThree<int, 100'000> queue {}; <-- OK
         // QueueFour<int, 100'000> queue {};
 
-        QueueDebug<int, 100'000> queue {};
+        // QueueDebug<int, 100'000> queue {};
+        BlockingRingBuffer<int, 100'000> queue {};
 
-        constexpr int eventsCount {100'000'000};
+
+        constexpr int eventsCount {10'000'000};
         size_t failedReads {0}, failedWrites {0};
         size_t okReads {0}, okWrites {0};
 
@@ -505,7 +542,7 @@ namespace RingBuffer_WithAtomics
                     ++okReads;
                 } else {
                     ++failedReads;
-                    if (failedReads > eventsCount)
+                    if (failedReads > (eventsCount * 10))
                     {
                         std::cout << "Error: failedReads\n";
                         return;
@@ -555,7 +592,8 @@ void RingBuffer::TestAll()
     // Tests::Test();
 
     // RingBuffer_WithAtomics::Test();
-    RingBuffer_WithAtomics::Benchmark();
+    // Tests::Benchmark();
+    Tests::Benchmark_Debug();
 
 
 }

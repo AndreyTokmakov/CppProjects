@@ -14,6 +14,7 @@ Description : MemoryPool.h
 #include <memory>
 #include <cassert>
 #include <numeric>
+#include <cmath>
 
 namespace MemoryPool
 {
@@ -87,7 +88,7 @@ namespace MemoryPool
         {   // Note: this implementation assumes that all objects handed out by this
             // pool have been returned to the pool before the pool is destroyed.
             // The following statement asserts if that is not the case.
-            assert(available.size() == DEFAULT_CHUNK_SIZE * (std::pow(2, pool.size()) - 1));
+            assert(available.size() == DEFAULT_CHUNK_SIZE * (std::pow(static_cast<decltype(pool.size())>(2), pool.size()) - 1));
 
             // Deallocate all allocated memory.
             size_t chunkSize { DEFAULT_CHUNK_SIZE };

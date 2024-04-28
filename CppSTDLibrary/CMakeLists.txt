@@ -26,7 +26,7 @@ add_executable(${PROJECT_NAME}
 		EnumTests/EnumTests.cpp EnumTests/EnumTests.h
 		Exceptions/Exceptions.cpp Exceptions/Exceptions.h
 		Errors/Errors.cpp Errors/Errors.h
-		Helpers/UnorderedPair.h Helpers/Helpers.h Helpers/Wrapper.h
+		Helpers/UnorderedPair.h Helpers/Helpers.h Helpers/Wrapper.h Helpers/ScopedTimer.h
 		FilesStreams/FilesStreams.cpp FilesStreams/FilesStreams.h
 		Filesystem/Filesystem.cpp Filesystem/Filesystem.h
 		Format/Format.cpp Format/Format.h

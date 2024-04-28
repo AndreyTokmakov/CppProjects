@@ -102,7 +102,7 @@ int main([[maybe_unused]] int argc,
     // ConsoleInOut::TestAll();
     // ConstConstexprMutable::TestAll();
     // CopyElision::TestAll();
-    // DateAndTime::TestAll();
+    DateAndTime::TestAll();
     // EnumTests::TestAll();
     // Errors::TestAll();
     // Exceptions::TestAll();
@@ -121,7 +121,7 @@ int main([[maybe_unused]] int argc,
     // LifetimeExtension::TestAll();
     // Locale::TestAll();
     // Literals::TestAll();
-    MoveSemantics_RuleOfFive::TestAll();
+    // MoveSemantics_RuleOfFive::TestAll();
     // Numbers::TestAll();
     // Math::TestAll();
     // Memory::TestAll();

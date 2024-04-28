@@ -12,5 +12,6 @@ Description : Utilities
 
 #include "UnorderedPair.h"
 #include "Wrapper.h"
+#include "ScopedTimer.h"
 
 #endif //CPPPROJECTS_HELPERS_H

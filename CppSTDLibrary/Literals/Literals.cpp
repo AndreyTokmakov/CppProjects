@@ -35,7 +35,7 @@ namespace Literals::Custom_Literals_Tests
 			template <typename T>
 			class Traits {
 			public:
-				static inline const std::string name(units::Unit unit) {
+				static inline std::string name(units::Unit unit) {
 					return "";
 				}
 			};
@@ -43,7 +43,7 @@ namespace Literals::Custom_Literals_Tests
 			template <>
 			class Traits<units::Unit> {
 			public:
-				static inline const std::string name(units::Unit unit) {
+				static inline std::string name(units::Unit unit) {
 					switch (unit) {
 					case units::Unit::kilogram:
 						return "kilogram";
