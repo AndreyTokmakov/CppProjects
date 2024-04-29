@@ -33,9 +33,11 @@ private:
     static constexpr uint32_t DIGEST_SIZE { 256 / 8 };
 
     std::array<uint32_t, 8> m_h {
-            0x6a09e667, 0xbb67ae85, 0x3c6ef372, 0xa54ff53a,
-            0x510e527f, 0x9b05688c, 0x1f83d9ab, 0x5be0cd19,
+        0x6a09e667, 0xbb67ae85, 0x3c6ef372, 0xa54ff53a,
+        0x510e527f, 0x9b05688c, 0x1f83d9ab, 0x5be0cd19,
     };
+
+    std::array<uint8_t, 2 * SHA224_256_BLOCK_SIZE> m_block {0};
 
     friend std::string toSha256(std::string_view input);
 
@@ -48,7 +50,7 @@ protected:
                    uint32_t block_nb);
     uint32_t m_tot_len { 0 };
     uint32_t m_len { 0 };
-    uint8_t m_block[2 * SHA224_256_BLOCK_SIZE] {};
+
 };
 
 std::string toSha256(std::string_view input);

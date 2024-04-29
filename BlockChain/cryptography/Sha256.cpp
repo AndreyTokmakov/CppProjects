@@ -83,10 +83,10 @@ void Sha256::update(std::string_view input)
     const uint32_t block_nb = new_len / SHA224_256_BLOCK_SIZE;
     const uint8_t* shifted_message = reinterpret_cast<const uint8_t*>(input.data()) + rem_len;
 
-    transform(m_block, 1);
+    transform(m_block.data(), 1);
     transform(shifted_message, block_nb);
     rem_len = new_len % SHA224_256_BLOCK_SIZE;
-    memcpy(m_block, &shifted_message[block_nb << 6], rem_len);
+    memcpy(m_block.data(), &shifted_message[block_nb << 6], rem_len);
     m_len = rem_len;
     m_tot_len += (block_nb + 1) << 6;
 }
@@ -97,10 +97,10 @@ void Sha256::final(uint8_t *digest)
     const uint32_t len_b = (m_tot_len + m_len) << 3;
     const uint32_t pm_len = block_nb << 6;
 
-    memset(m_block + m_len, 0, pm_len - m_len);
+    memset(m_block.data() + m_len, 0, pm_len - m_len);
     m_block[m_len] = 0x80;
-    SHA2_UNPACK32(len_b, m_block + pm_len - 4);
-    transform(m_block, block_nb);
+    SHA2_UNPACK32(len_b, m_block.data() + pm_len - 4);
+    transform(m_block.data(), block_nb);
     for (int i = 0 ; i < 8; i++) {
         SHA2_UNPACK32(m_h[i], &digest[i << 2]);
     }
