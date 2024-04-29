@@ -17,7 +17,8 @@
 class Sha256 final
 {
 private:
-    static constexpr std::array<uint32_t, 64> sha256_k {
+    static constexpr std::array<uint32_t, 64> sha256_k
+    {
         0x428a2f98, 0x71374491, 0xb5c0fbcf, 0xe9b5dba5, 0x3956c25b, 0x59f111f1, 0x923f82a4, 0xab1c5ed5,
         0xd807aa98, 0x12835b01, 0x243185be, 0x550c7dc3, 0x72be5d74, 0x80deb1fe, 0x9bdc06a7, 0xc19bf174,
         0xe49b69c1, 0xefbe4786, 0x0fc19dc6, 0x240ca1cc, 0x2de92c6f, 0x4a7484aa, 0x5cb0a9dc, 0x76f988da,
@@ -31,22 +32,23 @@ private:
     static constexpr uint32_t SHA224_256_BLOCK_SIZE { 512 / 8 };
     static constexpr uint32_t DIGEST_SIZE { 256 / 8 };
 
+    std::array<uint32_t, 8> m_h {
+            0x6a09e667, 0xbb67ae85, 0x3c6ef372, 0xa54ff53a,
+            0x510e527f, 0x9b05688c, 0x1f83d9ab, 0x5be0cd19,
+    };
+
     friend std::string toSha256(std::string_view input);
 
 public:
     void update(std::string_view input);
-    void final(unsigned char *digest);
+    void final(uint8_t *digest);
 
 protected:
-    void transform(const unsigned char *message,
-                   unsigned int block_nb);
-    unsigned int m_tot_len { 0 };
-    unsigned int m_len { 0 };
-    unsigned char m_block[2 * SHA224_256_BLOCK_SIZE] {};
-    uint32_t m_h[8] {
-        0x6a09e667, 0xbb67ae85, 0x3c6ef372, 0xa54ff53a,
-        0x510e527f, 0x9b05688c, 0x1f83d9ab, 0x5be0cd19,
-    };
+    void transform(const uint8_t *message,
+                   uint32_t block_nb);
+    uint32_t m_tot_len { 0 };
+    uint32_t m_len { 0 };
+    uint8_t m_block[2 * SHA224_256_BLOCK_SIZE] {};
 };
 
 std::string toSha256(std::string_view input);

@@ -79,7 +79,8 @@ public:
 };
 
 
-namespace Sha256Tests {
+namespace Sha256Tests
+{
 
     void Tests() {
         std::string input = "1232323";
@@ -87,6 +88,14 @@ namespace Sha256Tests {
 
         std::cout << std::boolalpha << (expected == sha256_Orig(input)) << std::endl;
         std::cout << std::boolalpha << (expected == toSha256(input)) << std::endl;
+
+
+        std::cout << "=======================================================================" << std::endl;
+        std::cout << "'" << sha256_Orig(input) << "'\n";
+        std::cout << "'" << sha256_Orig(input).length() << "'\n";
+        std::cout << "=======================================================================" << std::endl;
+        std::cout << "'" << toSha256(input) << "'\n";
+        std::cout << "'" << toSha256(input).length() << "'\n";
     }
 }
 
