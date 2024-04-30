@@ -13,15 +13,15 @@
 #include <iostream>
 #include <string_view>
 #include <thread>
+#include <array>
+#include <csignal>
 
 #define INVALID_HANDLE  (-1)
 
-namespace {
-    constexpr std::string_view sharedMemoryObjName {"__SHARED_MEMORY_OBJECT_1KD8dkDLK343jhz" };
-}
 
-namespace SharedMemory
+namespace SharedMemory::DemoOne
 {
+    constexpr std::string_view sharedMemoryObjName {"__SHARED_MEMORY_OBJECT_1KD8dkDLK343jhz" };
 
     struct SharedData {
     public:
@@ -67,7 +67,8 @@ namespace SharedMemory
             ReportError("Failed to shm_unlink() shared memory");
     }
 
-    void GetDataFromSharedMemory_Test() {
+    void GetDataFromSharedMemory_Test()
+    {
         int sharedMemory = ::shm_open(sharedMemoryObjName.data(),O_RDWR , S_IRWXU | S_IRWXG);
         if (sharedMemory < 0) {
             ReportError("Failure on shm_open");
@@ -127,10 +128,264 @@ namespace SharedMemory
     }
 }
 
+
+namespace SharedMemory::DemoTwo
+{
+    constexpr std::string_view sharedMemoryObjName {"__SHARED_MEMORY_OBJECT_00000001" };
+
+    struct Data
+    {
+        uint32_t size {0};
+        std::array<char, 1024> buffer {};
+    };
+
+    void error(const std::string& func)
+    {
+        std::cerr << func << " filed. Error = " << errno << std::endl;
+    }
+
+    void CreateAndCloseSharedSegment()
+    {
+        int sharedMemory = ::shm_open(sharedMemoryObjName.data(),
+                                      O_CREAT|O_RDWR|O_EXCL|O_TRUNC, S_IRWXU|S_IRWXG);
+        if (INVALID_HANDLE == sharedMemory) {
+            if (EEXIST == errno) { /** Shared memory already exist. **/
+                sharedMemory = ::shm_open(sharedMemoryObjName.data(), O_EXCL|O_RDWR, S_IRWXU|S_IRWXG);
+                std::cout << "Open existing memory" << std::endl;
+            } else {
+                error("shm_open()");
+            }
+        } else {
+            std::cout << sharedMemoryObjName << " segment is opened" << std::endl;
+        }
+
+        void* area = ::mmap(nullptr,
+                            sizeof(Data),
+                            PROT_READ | PROT_WRITE, MAP_SHARED,
+                            sharedMemory,
+                            0);
+
+
+        std::this_thread::sleep_for(std::chrono::seconds (3));
+
+        if (0 != close(sharedMemory)) {
+            error("close()");
+        } else {
+            std::cout << sharedMemory << " handle is closed" << std::endl;
+        }
+
+        if (0 != shm_unlink(sharedMemoryObjName.data())) {
+            error("shm_unlink()y");
+        } else {
+            std::cout << sharedMemoryObjName << " segment is removed" << std::endl;
+        }
+    }
+
+    int CreateSharedSegment()
+    {
+        int sharedHandle = ::shm_open(sharedMemoryObjName.data(),
+                                      O_CREAT | O_RDWR | O_EXCL | O_TRUNC, S_IRWXU | S_IRWXG);
+        if (INVALID_HANDLE == sharedHandle) {
+            if (EEXIST == errno) { /** Shared memory already exist. **/
+                sharedHandle = ::shm_open(sharedMemoryObjName.data(), O_EXCL | O_RDWR, S_IRWXU | S_IRWXG);
+                std::cout << "Open existing memory. Descriptor = " << sharedHandle << std::endl;
+            } else {
+                error("shm_open()");
+            }
+        } else {
+            std::cout << sharedMemoryObjName << " segment is opened. Descriptor = " << sharedHandle << std::endl;
+        }
+
+        return sharedHandle;
+    }
+
+    void WriteSharedData(int sharedHandle)
+    {
+        const int retCode = ftruncate(sharedHandle, sizeof(Data));
+        if (INVALID_HANDLE == retCode) {
+            error("ftruncate");
+        } else {
+            std::cout << "Segment '" << sharedHandle << "' has been truncated to " << sizeof(Data) << " bytes\n";
+        }
+
+        void *area = ::mmap(nullptr,
+                            sizeof(Data),
+                            PROT_READ | PROT_WRITE, MAP_SHARED,
+                            sharedHandle,
+                            0);
+        if (MAP_FAILED == area) {
+            error("mmap()");
+        }
+
+        Data* dataPtr = reinterpret_cast<Data*>(area);
+        if (!dataPtr) {
+            std::cerr << "Failed to cast " << area << " to the Data pointer" << std::endl;
+        }
+
+        dataPtr->size = 16;
+        memcpy(dataPtr->buffer.data(), "1111111111111111111111111111", dataPtr->size);
+
+    }
+
+    void ReadeSharedData(int sharedHandle)
+    {
+        void *area = ::mmap(nullptr,
+                            sizeof(Data),
+                            PROT_READ, MAP_SHARED,
+                            sharedHandle,
+                            0);
+        if (MAP_FAILED == area) {
+            error("mmap()");
+        }
+
+        Data* dataPtr = reinterpret_cast<Data*>(area);
+        if (!dataPtr) {
+            std::cerr << "Failed to cast " << area << " to the Data pointer" << std::endl;
+        }
+
+       std::cout << "\tsize  : " << dataPtr->size << std::endl;
+       std::cout << "\tbuffer: " << std::string_view(dataPtr->buffer.data(), dataPtr->size)<< std::endl;
+
+    }
+
+    void CloseSharedSegment(int sharedHandle)
+    {
+        if (0 != close(sharedHandle)) {
+            error("close()");
+        } else {
+            std::cout << sharedHandle << " handle is closed" << std::endl;
+        }
+
+        if (0 != shm_unlink(sharedMemoryObjName.data())) {
+            error("shm_unlink()");
+        } else {
+            std::cout << sharedMemoryObjName << " segment is removed" << std::endl;
+        }
+    }
+}
+
+namespace SharedMemory::DemoThree
+{
+    constexpr std::string_view sharedMemoryObjName{"__SHARED_MEMORY_OBJECT_00000001"};
+
+    struct Data
+    {
+        uint32_t size{0};
+        std::array<char, 1024> buffer{};
+    };
+
+    void error(const std::string &func) {
+        std::cerr << func << " failed. Error = " << errno << std::endl;
+    }
+
+    int sharedHandle = -1;
+
+    void signalHandler(int sigId)
+    {
+        if (0 != close(sharedHandle)) {
+            error("close()");
+        } else {
+            std::cout << sharedHandle << " handle is closed" << std::endl;
+        }
+
+        if (0 != shm_unlink(sharedMemoryObjName.data())) {
+            error("shm_unlink()");
+        } else {
+            std::cout << sharedMemoryObjName << " segment is removed" << std::endl;
+        }
+
+        std::exit(0);
+    };
+
+    void CreateSegmentProcess()
+    {
+        sharedHandle = ::shm_open(sharedMemoryObjName.data(),
+                                  O_CREAT | O_RDWR | O_EXCL | O_TRUNC, S_IRWXU | S_IRWXG);
+        if (INVALID_HANDLE == sharedHandle) {
+            error("shm_open()");
+            return;
+        } else {
+            std::cout << sharedMemoryObjName << " segment is opened. Descriptor = " << sharedHandle << std::endl;
+        }
+
+        signal(SIGINT , signalHandler);
+        signal(SIGTERM , signalHandler);
+        signal(SIGQUIT , signalHandler);
+        signal(SIGKILL , signalHandler);
+        signal(SIGPIPE , signalHandler);
+
+        const int retCode = ftruncate(sharedHandle, sizeof(Data));
+        if (INVALID_HANDLE == retCode) {
+            error("ftruncate");
+        } else {
+            std::cout << "Segment '" << sharedHandle << "' has been truncated to " << sizeof(Data) << " bytes\n";
+        }
+
+        void *area = ::mmap(nullptr,
+                            sizeof(Data),
+                            PROT_READ | PROT_WRITE, MAP_SHARED,
+                            sharedHandle,
+                            0);
+        if (MAP_FAILED == area) {
+            error("mmap()");
+        }
+
+        Data* dataPtr = reinterpret_cast<Data*>(area);
+        if (!dataPtr) {
+            std::cerr << "Failed to cast " << area << " to the Data pointer" << std::endl;
+        }
+
+        dataPtr->size = 16;
+        memcpy(dataPtr->buffer.data(), "1111111111111111111111111111", dataPtr->size);
+
+        std::this_thread::sleep_for(std::chrono::seconds(60));
+        signalHandler(0);
+    }
+
+    void ReadeSharedDataProcess()
+    {
+        int handle = ::shm_open(sharedMemoryObjName.data(),
+                                O_RDWR, S_IRWXU | S_IRWXG);
+        if (INVALID_HANDLE == handle) {
+            error("shm_open()");
+            return;
+        } else {
+            std::cout << sharedMemoryObjName << " segment is opened. Descriptor = " << handle << std::endl;
+        }
+
+        void *area = ::mmap(nullptr,
+                            sizeof(Data),
+                            PROT_READ, MAP_SHARED,
+                            handle,
+                            0);
+        if (MAP_FAILED == area) {
+            error("mmap()");
+        }
+
+        Data* dataPtr = reinterpret_cast<Data*>(area);
+        if (!dataPtr) {
+            std::cerr << "Failed to cast " << area << " to the Data pointer" << std::endl;
+        }
+
+        std::cout << "\tsize  : " << dataPtr->size << std::endl;
+        std::cout << "\tbuffer: " << std::string_view(dataPtr->buffer.data(), dataPtr->size)<< std::endl;
+    }
+}
+
 void SharedMemory::TestAll(const std::vector<std::string_view>&)
 {
-    // InitSharedMem_Sleep_AndCloseSegment(10);
+    // DemoOne::InitSharedMem_Sleep_AndCloseSegment(10);
+    // DemoOne:: GetDataFromSharedMemory_Test();
 
-    GetDataFromSharedMemory_Test();
+    // DemoTwo::CreateAndCloseSharedSegment();
+    /*
+    int handle = DemoTwo::CreateSharedSegment();
+    DemoTwo::WriteSharedData(handle);
+    DemoTwo::ReadeSharedData(handle);
+    DemoTwo::CloseSharedSegment(handle);
+    */
+
+    // DemoThree::CreateSegmentProcess();
+    DemoThree::ReadeSharedDataProcess();
 };
 

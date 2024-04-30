@@ -17,7 +17,7 @@
 #include <string_view>
 #include <thread>
 
-namespace Semaphore
+namespace
 {
     void printErrorInfo(int errorCode)
     {
@@ -44,7 +44,11 @@ namespace Semaphore
             std::cout << "Error: " << errorCode << std::endl;
     }
 
+}
 
+
+namespace Semaphore::Tests
+{
     constexpr std::string_view semaphoreName { "my_named_semaphore_test"};
 
     void getSemaphoreValue(sem_t *sem ) {
@@ -155,7 +159,8 @@ namespace Semaphore
         return nullptr;
     }
 
-    void MultithreadTest_LinuxStyle() {
+    void MultithreadTest_LinuxStyle()
+    {
         pthread_t thread1, thread2;
 
         sem_init(&semaphore, 0, 1);
@@ -171,8 +176,75 @@ namespace Semaphore
     }
 };
 
+namespace Semaphore::Multiprocess
+{
+    constexpr std::string_view semaphoreName { "my_named_semaphore_test" };
+
+    void closeSemaphore(sem_t *sem)
+    {
+        if (sem_close(sem) < 0) {
+            std::cout << "sem_close() failed. Error = " << errno << std::endl;
+        } else {
+            std::cout << "Semaphore closed" << std::endl;
+        }
+
+        if (sem_unlink(semaphoreName.data()) < 0) {
+            std::cout << "sem_unlink() failed. Error = " << errno << std::endl;
+        } else {
+            std::cout << "Semaphore unlinked" << std::endl;
+        }
+    }
+
+    void CreateSemaphore()
+    {
+        sem_t *sem = ::sem_open(semaphoreName.data(), O_CREAT, 0777, 0);
+        if (SEM_FAILED == sem) {
+            std::cout << "sem_getvalue() failed" << std::endl;
+            printErrorInfo(errno);
+            return;
+        } else {
+            std::cout << "Semaphore created" << std::endl;
+        }
+
+
+        timespec timeout {10, 0};
+        while (true)
+        {
+            std::cout << "Waiting for semaphore...." << std::endl;
+
+            int result = sem_wait(sem);
+            std::cout << "Semaphore is taken. Waiting for it to be released." << std::endl;
+
+            int value {0};
+            result = sem_getvalue(sem,&value);
+            std::cout << "value = " << value << std::endl;
+        }
+        closeSemaphore(sem);
+    }
+
+    void SetSemaphore()
+    {
+        sem_t *sem = sem_open(semaphoreName.data(), O_CREAT );
+        if (SEM_FAILED == sem) {
+            std::cout << "sem_getvalue() failed" << std::endl;
+            printErrorInfo(errno);
+            return;
+        } else {
+            std::cout << "Semaphore is taken" << std::endl;
+        }
+
+        //int value {0};
+        //int result = sem_getvalue(sem,&value);
+
+        sem_post(sem);
+        std::cout << "Semaphore is released." << std::endl;
+    }
+}
+
 void Semaphore::TestAll(const std::vector<std::string_view>& params)
 {
+
+    /*
     if (!params.empty())
     {
         const int value = atoi(params.front().data());
@@ -183,7 +255,12 @@ void Semaphore::TestAll(const std::vector<std::string_view>& params)
             MultiprocessServer_GetAndReleaseSemaphore();
         }
     }
+    */
 
 
     // MultithreadTest_LinuxStyle();
+
+
+    // Multiprocess::CreateSemaphore();
+    Multiprocess::SetSemaphore();
 };

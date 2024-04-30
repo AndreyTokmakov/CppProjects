@@ -22,8 +22,9 @@ add_executable(${PROJECT_NAME}
         SystemInformation/SystemInformation.cpp SystemInformation/SystemInformation.h
         InterprocessCommunication/Semaphore.cpp
         InterprocessCommunication/Semaphore.h InterprocessCommunication/SharedMemory.cpp
-        InterprocessCommunication/SharedMemory.h InterprocessCommunication/Pipes.cpp
-        InterprocessCommunication/Pipes.h
+        InterprocessCommunication/SharedMemory.h
+        InterprocessCommunication/Pipes.cpp InterprocessCommunication/Pipes.h
+        InterprocessCommunication/SharedMemoryDataExchange.cpp InterprocessCommunication/SharedMemoryDataExchange.h
         Users/Users.cpp Users/Users.h
         TimeAndDate/Time.cpp TimeAndDate/Time.h
         TimeAndDate/Timer.cpp TimeAndDate/Timer.h

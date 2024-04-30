@@ -1328,9 +1328,9 @@ namespace Algorithms::ModifyingSequenceOperations
 
     void Erase()
     {
-        std::vector<int> numbers {1,2,3,4,5,6,7,8,9,10};
+        std::vector<int> numbers {1,2,3,1,2,3,1,2,3};
         std::erase(numbers, 3);
-        std::cout << numbers << std::endl;
+        std::cout << numbers << std::endl; // --> 1 2 1 2 1 2
     }
 
     void Erase_IF()
@@ -1685,10 +1685,10 @@ void Algorithms::TestAll()
     // ModifyingSequenceOperations::Remove_If();
     // ModifyingSequenceOperations::Remove_Copy();
     // ModifyingSequenceOperations::Remove_Copy_If();
-    // ModifyingSequenceOperations::Erase();
+    ModifyingSequenceOperations::Erase();
     // ModifyingSequenceOperations::Erase_IF();
     // ModifyingSequenceOperations::Rotate();
-    ModifyingSequenceOperations::Unique();
+    // ModifyingSequenceOperations::Unique();
     // ModifyingSequenceOperations::UniqueCopy();
     // ModifyingSequenceOperations::Generate();
     // ModifyingSequenceOperations::Swap_Ranges();
