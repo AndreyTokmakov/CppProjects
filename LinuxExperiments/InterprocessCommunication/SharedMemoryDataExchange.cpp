@@ -260,8 +260,9 @@ namespace SharedMemoryDataExchange::DemoTwo
                 semaphoreName.assign(dataPtr->buffer.data(), 32);
             }
 
+            std::cout << "semaphoreName: " << semaphoreName << std::endl;
 
-            /*
+
             // TODO: To separate func
             if constexpr (typeExchange == TypeExchange::Consumer)
             {
@@ -269,6 +270,8 @@ namespace SharedMemoryDataExchange::DemoTwo
                 if (SEM_FAILED == sem) {
                     error("sem_open()");
                     closeSharedMem(); // FIXME
+                } else { // FIXME: remove
+                    std::cout << "Consumer: " << semaphoreName << " semaphore created\n";
                 }
             }
             else
@@ -276,16 +279,17 @@ namespace SharedMemoryDataExchange::DemoTwo
                 sem = sem_open(semaphoreName.data(), O_CREAT );
                 if (SEM_FAILED == sem) {
                     error("sem_open");
+                } else { // FIXME: remove
+                    std::cout << "Producer: " << semaphoreName << " semaphore opened\n";
                 }
             }
-            */
         }
 
         ~Exchange()
         {
             if constexpr (typeExchange == TypeExchange::Consumer)
             {
-                // closeSemaphore();
+                closeSemaphore();
                 closeSharedMem();
             }
         }
@@ -320,14 +324,31 @@ namespace SharedMemoryDataExchange::DemoTwo
                 std::cout << sharedSegmentName << " segment is removed" << std::endl;
             }
         }
+
+        void ReadMessages()
+        {
+            // timespec timeout {10, 0};
+            while (true)
+            {
+                std::cout << "Waiting for semaphore...." << std::endl;
+
+                //  const int result = sem_timedwait(sem, &timeout);
+                int result = sem_wait(sem);
+
+                std::cout << "Released" << std::endl;
+                std::cout << "\tsize  : " << dataPtr->size << std::endl;
+                std::cout << "\tbuffer: " << std::string_view(dataPtr->buffer.data(), dataPtr->size)<< std::endl;
+            }
+        }
     };
 
 
     void test()
     {
-        Exchange<TypeExchange::Consumer> consumer {"__SHARED_MEMORY_OBJECT_00000002"};
-        std::this_thread::sleep_for(std::chrono::seconds(10));
+        // Exchange<TypeExchange::Consumer> consumer {"__SHARED_MEMORY_OBJECT_00000002"};
+        // std::this_thread::sleep_for(std::chrono::seconds(10));
 
+        Exchange<TypeExchange::Producer> consumer {"__SHARED_MEMORY_OBJECT_00000002"};
     }
 
 }
