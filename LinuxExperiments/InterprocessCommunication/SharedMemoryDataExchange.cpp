@@ -581,6 +581,190 @@ namespace SharedMemoryDataExchange::DemoTwo
 }
 
 
+namespace SharedMemoryDataExchange::DemoThree
+{
+
+#define ASSERT_NOT(error_value, actual, func_name) \
+    if (error_value == actual)           \
+        throw std::runtime_error(std::string(func_name) + "() failed. Error = " + std::to_string(errno));
+
+    enum class TypeExchange
+    {
+        Consumer,
+        Producer
+    };
+
+    template<TypeExchange typeExchange>
+    struct Exchange
+    {
+        struct Data
+        {
+            uint32_t size {0};
+            std::array<char, 32> semaphoreName {};
+            std::array<char, 1024> buffer {};
+        };
+
+        std::string sharedSegmentName {};
+
+        // TODO: std::string_view  ???
+        std::string semaphoreName {};
+
+        int32_t shmHandle {-1};
+        Data* dataPtr { nullptr };
+        sem_t *sem {};
+
+        explicit Exchange(std::string segmentName): sharedSegmentName { std::move(segmentName) }
+        {
+            createSharedMemSegment();
+            createDataMapping();
+            initSemaphoreName();
+            openSemaphore();
+        }
+
+        void createSharedMemSegment()
+        {
+            if constexpr (typeExchange == TypeExchange::Consumer)
+            {
+                shmHandle = ::shm_open(sharedSegmentName.data(),
+                                       O_CREAT | O_RDWR | O_TRUNC, S_IRWXU | S_IRWXG);
+                ASSERT_NOT(INVALID_HANDLE, shmHandle, "shm_open");
+
+                const int retCode = ftruncate(shmHandle, sizeof(Data));
+                ASSERT_NOT(INVALID_HANDLE, retCode, "ftruncate");
+            }
+            else
+            {
+                shmHandle= ::shm_open(sharedSegmentName.data(),
+                                      O_CREAT | O_RDWR, S_IRWXU | S_IRWXG);
+                ASSERT_NOT(INVALID_HANDLE, shmHandle, "shm_open");
+            }
+        }
+
+        void createDataMapping()
+        {
+            void *area = ::mmap(nullptr,
+                                sizeof(Data),
+                                PROT_READ | PROT_WRITE, MAP_SHARED,
+                                shmHandle,
+                                0);
+            ASSERT_NOT(MAP_FAILED, area, "mmap");
+
+            dataPtr = reinterpret_cast<Data*>(area);
+            ASSERT_NOT(nullptr, dataPtr, "reinterpret_cast<Data*>(area)");
+        }
+
+        void initSemaphoreName()
+        {   // TODO: To separate func
+            if constexpr (typeExchange == TypeExchange::Consumer)
+            {   // TODO: semaphoreName <--- generate 32 bytes
+                semaphoreName.assign("1234512345_12345_123451234512345");
+                memcpy(dataPtr->semaphoreName.data(), semaphoreName.data(), 32);
+            }
+            else {
+                semaphoreName.assign(dataPtr->semaphoreName.data(), 32);
+            }
+        }
+
+        void openSemaphore()
+        {   // TODO: To separate func
+            if constexpr (typeExchange == TypeExchange::Consumer)
+            {
+                sem = ::sem_open(semaphoreName.data(), O_CREAT, 0777, 0);
+                ASSERT_NOT(SEM_FAILED, sem, "sem_open");
+            }
+            else
+            {
+                sem = sem_open(semaphoreName.data(), O_CREAT );
+                ASSERT_NOT(SEM_FAILED, sem, "sem_open");
+            }
+        }
+
+        ~Exchange()
+        {
+            if constexpr (typeExchange == TypeExchange::Consumer)
+            {
+                closeSemaphore();
+                closeSharedMem();
+            }
+        }
+
+        bool error(const std::string &func) const noexcept
+        {
+            std::cerr << func << " failed. Error = " << errno << std::endl;
+            return false;
+        }
+
+        bool closeSemaphore() const noexcept
+        {
+            if (0 != sem_close(sem)) {
+                return error("sem_close()");
+            }
+            if (0 != sem_unlink(semaphoreName.data())) {
+                return error("sem_unlink()");
+            }
+            return true;
+        }
+
+        bool closeSharedMem() const noexcept
+        {
+            if (0 != close(shmHandle)) {
+                return error("close()");
+            } else { // TODO: Remove
+                std::cout << shmHandle << " handle is closed" << std::endl;
+            }
+
+            if (0 != shm_unlink(sharedSegmentName.data())) {
+                return error("shm_unlink()");
+            } else { // TODO: Remove
+                std::cout << sharedSegmentName << " segment is removed" << std::endl;
+            }
+            return true;
+        }
+
+        void ReadMessages()
+        {
+            // timespec timeout {10, 0};
+            while (true)
+            {
+                //  const int result = sem_timedwait(sem, &timeout);
+                int result = sem_wait(sem);
+
+                std::cout << "Data" << std::endl;
+                std::cout << "\tsize  : " << dataPtr->size << std::endl;
+                std::cout << "\tbuffer: " << std::string_view(dataPtr->buffer.data(), dataPtr->size)<< std::endl;
+            }
+        }
+
+        void PutMessage(const std::string& message)
+        {
+            dataPtr->size = message.length();
+            memcpy(dataPtr->buffer.data(), message.data(), dataPtr->size);
+            sem_post(sem);
+        }
+    };
+
+
+    void test()
+    {
+#if 0
+        Exchange<TypeExchange::Consumer> consumer {"__SHARED_MEMORY_OBJECT_00000002"};
+        consumer.ReadMessages();
+#endif
+
+#if 1
+        Exchange<TypeExchange::Producer> producer {"__SHARED_MEMORY_OBJECT_00000002"};
+        for (int i = 0; i < 100; ++i) {
+            producer.PutMessage("TestMessage__" + std::to_string(i));
+            std::this_thread::sleep_for(std::chrono::milliseconds (1));
+        }
+#endif
+
+    }
+}
+
+
+
+
 
 void SharedMemoryDataExchange::TestAll(const std::vector<std::string_view> &params)
 {
@@ -589,6 +773,7 @@ void SharedMemoryDataExchange::TestAll(const std::vector<std::string_view> &para
 
     // DemoTwo_Debug::test();
 
-    DemoTwo::test();
+    // DemoTwo::test();
 
+    DemoThree::test();
 }
