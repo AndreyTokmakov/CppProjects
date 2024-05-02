@@ -175,7 +175,7 @@ namespace SharedMemoryDataExchange::DemoOne
 }
 
 
-namespace SharedMemoryDataExchange::DemoTwo
+namespace SharedMemoryDataExchange::DemoTwo_Debug
 {
     enum class TypeExchange
     {
@@ -254,10 +254,10 @@ namespace SharedMemoryDataExchange::DemoTwo
             {
                 // TODO: semaphoreName <--- generate 32 bytes
                 semaphoreName.assign("1234512345_12345_123451234512345");
-                memcpy(dataPtr->buffer.data(), semaphoreName.data(), 32);
+                memcpy(dataPtr->semaphoreName.data(), semaphoreName.data(), 32);
             }
             else {
-                semaphoreName.assign(dataPtr->buffer.data(), 32);
+                semaphoreName.assign(dataPtr->semaphoreName.data(), 32);
             }
 
             std::cout << "semaphoreName: " << semaphoreName << std::endl;
@@ -340,24 +340,254 @@ namespace SharedMemoryDataExchange::DemoTwo
                 std::cout << "\tbuffer: " << std::string_view(dataPtr->buffer.data(), dataPtr->size)<< std::endl;
             }
         }
+
+        void PutMessage(const std::string& message)
+        {
+            dataPtr->size = message.length();
+            memcpy(dataPtr->buffer.data(), message.data(), dataPtr->size);
+
+            sem_post(sem);
+            std::cout << "Semaphore is released." << std::endl;
+        }
     };
 
 
     void test()
     {
         // Exchange<TypeExchange::Consumer> consumer {"__SHARED_MEMORY_OBJECT_00000002"};
-        // std::this_thread::sleep_for(std::chrono::seconds(10));
+        // consumer.ReadMessages();
 
-        Exchange<TypeExchange::Producer> consumer {"__SHARED_MEMORY_OBJECT_00000002"};
+
+        Exchange<TypeExchange::Producer> producer {"__SHARED_MEMORY_OBJECT_00000002"};
+        for (int i = 0; i < 100; ++i) {
+            producer.PutMessage("TestMessage__" + std::to_string(i));
+            std::this_thread::sleep_for(std::chrono::milliseconds (1));
+        }
     }
-
 }
+
+
+
+namespace SharedMemoryDataExchange::DemoTwo
+{
+    enum class TypeExchange
+    {
+        Consumer,
+        Producer
+    };
+
+    template<TypeExchange typeExchange>
+    struct Exchange
+    {
+        struct Data
+        {
+            uint32_t size {0};
+            std::array<char, 32> semaphoreName {};
+            std::array<char, 1024> buffer {};
+        };
+
+        std::string sharedSegmentName {};
+
+        // TODO: std::string_view  ???
+        std::string semaphoreName {};
+
+        int32_t shmHandle {-1};
+        Data* dataPtr { nullptr };
+        sem_t *sem {};
+
+        explicit Exchange(std::string segmentName): sharedSegmentName { std::move(segmentName) }
+        {
+            createSharedMemSegment();
+            createDataMapping();
+            initSemaphoreName();
+            openSemaphore();
+        }
+
+        bool createSharedMemSegment()
+        {
+            if constexpr (typeExchange == TypeExchange::Consumer)
+            {
+                shmHandle = ::shm_open(sharedSegmentName.data(),
+                                       O_CREAT | O_RDWR | O_TRUNC, S_IRWXU | S_IRWXG);
+                if (INVALID_HANDLE == shmHandle) {
+                    return error("shm_open()");
+                } else { // TODO: Remove
+                    std::cout << sharedSegmentName << " segment is opened. Descriptor = " << shmHandle << std::endl;
+                }
+
+                const int retCode = ftruncate(shmHandle, sizeof(Data));
+                if (INVALID_HANDLE == retCode) {
+                    return error("ftruncate");
+                } else { // TODO: Remove
+                    std::cout << "Segment '" << shmHandle << "' has been truncated to " << sizeof(Data) << " bytes\n";
+                }
+            }
+            else
+            {
+                shmHandle= ::shm_open(sharedSegmentName.data(),
+                                      O_CREAT | O_RDWR, S_IRWXU | S_IRWXG);
+                if (INVALID_HANDLE == shmHandle) {
+                    return error("shm_open()");
+                } else { // TODO: Remove
+                    std::cout << sharedSegmentName << " segment is opened. Descriptor = " << shmHandle << std::endl;
+                }
+            }
+
+            return true;
+        }
+
+        bool createDataMapping()
+        {
+            void *area = ::mmap(nullptr,
+                                sizeof(Data),
+                                PROT_READ | PROT_WRITE, MAP_SHARED,
+                                shmHandle,
+                                0);
+            if (MAP_FAILED == area) {
+                return error("mmap()");
+            }
+
+            dataPtr = reinterpret_cast<Data*>(area);
+            if (!dataPtr) {
+                std::cerr << "Failed to cast " << area << " to the Data pointer" << std::endl;
+                return false;
+            }
+
+            return true;
+        }
+
+        void initSemaphoreName()
+        {
+            // TODO: To separate func
+            if constexpr (typeExchange == TypeExchange::Consumer)
+            {
+                // TODO: semaphoreName <--- generate 32 bytes
+                semaphoreName.assign("1234512345_12345_123451234512345");
+                memcpy(dataPtr->semaphoreName.data(), semaphoreName.data(), 32);
+            }
+            else {
+                semaphoreName.assign(dataPtr->semaphoreName.data(), 32);
+            }
+
+            std::cout << "semaphoreName: " << semaphoreName << std::endl;
+        }
+
+        bool openSemaphore()
+        {
+            // TODO: To separate func
+            if constexpr (typeExchange == TypeExchange::Consumer)
+            {
+                sem = ::sem_open(semaphoreName.data(), O_CREAT, 0777, 0);
+                if (SEM_FAILED == sem) {
+                    closeSharedMem(); // FIXME
+                    return error("sem_open()");
+                } else { // FIXME: remove
+                    std::cout << "Consumer: " << semaphoreName << " semaphore created\n";
+                }
+            }
+            else
+            {
+                sem = sem_open(semaphoreName.data(), O_CREAT );
+                if (SEM_FAILED == sem) {
+                    return error("sem_open");
+                } else { // FIXME: remove
+                    std::cout << "Producer: " << semaphoreName << " semaphore opened\n";
+                }
+            }
+            return true;
+        }
+
+        ~Exchange()
+        {
+            if constexpr (typeExchange == TypeExchange::Consumer)
+            {
+                closeSemaphore();
+                closeSharedMem();
+            }
+        }
+
+        bool error(const std::string &func) const noexcept
+        {
+            std::cerr << func << " failed. Error = " << errno << std::endl;
+            return false;
+        }
+
+        bool closeSemaphore() const noexcept
+        {
+            if (0 != sem_close(sem)) {
+                return error("sem_close()");
+            }
+            if (0 != sem_unlink(semaphoreName.data())) {
+                return error("sem_unlink()");
+            }
+            return true;
+        }
+
+        bool closeSharedMem() const noexcept
+        {
+            if (0 != close(shmHandle)) {
+                return error("close()");
+            } else { // TODO: Remove
+                std::cout << shmHandle << " handle is closed" << std::endl;
+            }
+
+            if (0 != shm_unlink(sharedSegmentName.data())) {
+                return error("shm_unlink()");
+            } else { // TODO: Remove
+                std::cout << sharedSegmentName << " segment is removed" << std::endl;
+            }
+            return true;
+        }
+
+        void ReadMessages()
+        {
+            // timespec timeout {10, 0};
+            while (true)
+            {
+                //  const int result = sem_timedwait(sem, &timeout);
+                int result = sem_wait(sem);
+
+                std::cout << "Data" << std::endl;
+                std::cout << "\tsize  : " << dataPtr->size << std::endl;
+                std::cout << "\tbuffer: " << std::string_view(dataPtr->buffer.data(), dataPtr->size)<< std::endl;
+            }
+        }
+
+        void PutMessage(const std::string& message)
+        {
+            dataPtr->size = message.length();
+            memcpy(dataPtr->buffer.data(), message.data(), dataPtr->size);
+            sem_post(sem);
+        }
+    };
+
+
+    void test()
+    {
+#if 0
+        Exchange<TypeExchange::Consumer> consumer {"__SHARED_MEMORY_OBJECT_00000002"};
+        consumer.ReadMessages();
+#endif
+
+#if 1
+        Exchange<TypeExchange::Producer> producer {"__SHARED_MEMORY_OBJECT_00000002"};
+        for (int i = 0; i < 100; ++i) {
+            producer.PutMessage("TestMessage__" + std::to_string(i));
+            std::this_thread::sleep_for(std::chrono::milliseconds (1));
+        }
+#endif
+
+    }
+}
+
 
 
 void SharedMemoryDataExchange::TestAll(const std::vector<std::string_view> &params)
 {
     // DemoOne::Consumer();
     // DemoOne::Producer();
+
+    // DemoTwo_Debug::test();
 
     DemoTwo::test();
 

@@ -1079,17 +1079,6 @@ int main([[maybe_unused]] int argc,
     // UBBook::Test();
 
 
-
-    std::vector<long> vect(5);
-    std::generate(vect.begin(), vect.end(),[i = static_cast<decltype(vect)::value_type>(0)] ()
-        mutable { return i++;});
-
-    // static_cast<std::remove_reference<decltype(vect.front())>::type
-
-    std::cout << vect << std::endl;
-
-
-
     /** * * * * *  Move to lib * * * * * **/
 
     // OperatorCall_ExplicitTypeSpecialization::Test();
