@@ -604,6 +604,8 @@ namespace SharedMemoryDataExchange::DemoThree
             std::array<char, 1024> buffer {};
         };
 
+        static inline constexpr uint16_t semaphoreNameSize { 32 };
+
         std::string sharedSegmentName {};
 
         // TODO: std::string_view  ???
@@ -654,19 +656,19 @@ namespace SharedMemoryDataExchange::DemoThree
         }
 
         void initSemaphoreName()
-        {   // TODO: To separate func
+        {
             if constexpr (typeExchange == TypeExchange::Consumer)
             {   // TODO: semaphoreName <--- generate 32 bytes
                 semaphoreName.assign("1234512345_12345_123451234512345");
-                memcpy(dataPtr->semaphoreName.data(), semaphoreName.data(), 32);
+                memcpy(dataPtr->semaphoreName.data(), semaphoreName.data(), semaphoreNameSize);
             }
             else {
-                semaphoreName.assign(dataPtr->semaphoreName.data(), 32);
+                semaphoreName.assign(dataPtr->semaphoreName.data(), semaphoreNameSize);
             }
         }
 
         void openSemaphore()
-        {   // TODO: To separate func
+        {
             if constexpr (typeExchange == TypeExchange::Consumer)
             {
                 sem = ::sem_open(semaphoreName.data(), O_CREAT, 0777, 0);
@@ -674,7 +676,7 @@ namespace SharedMemoryDataExchange::DemoThree
             }
             else
             {
-                sem = sem_open(semaphoreName.data(), O_CREAT );
+                sem = ::sem_open(semaphoreName.data(), O_CREAT );
                 ASSERT_NOT(SEM_FAILED, sem, "sem_open");
             }
         }
@@ -694,45 +696,43 @@ namespace SharedMemoryDataExchange::DemoThree
             return false;
         }
 
-        bool closeSemaphore() const noexcept
+        void closeSemaphore() const noexcept
         {
-            if (0 != sem_close(sem)) {
-                return error("sem_close()");
+            if (0 != ::sem_close(sem)) {
+                error("sem_close()");
             }
-            if (0 != sem_unlink(semaphoreName.data())) {
-                return error("sem_unlink()");
+            if (0 != ::sem_unlink(semaphoreName.data())) {
+                error("sem_unlink()");
             }
-            return true;
         }
 
-        bool closeSharedMem() const noexcept
+        void closeSharedMem() const noexcept
         {
-            if (0 != close(shmHandle)) {
-                return error("close()");
-            } else { // TODO: Remove
-                std::cout << shmHandle << " handle is closed" << std::endl;
+            if (0 != ::close(shmHandle)) {
+                error("close()");
             }
 
-            if (0 != shm_unlink(sharedSegmentName.data())) {
-                return error("shm_unlink()");
-            } else { // TODO: Remove
-                std::cout << sharedSegmentName << " segment is removed" << std::endl;
+            if (0 != ::shm_unlink(sharedSegmentName.data())) {
+                error("shm_unlink()");
             }
-            return true;
         }
 
-        void ReadMessages()
+        void ReadMessages(uint32_t msgCount)
         {
-            // timespec timeout {10, 0};
-            while (true)
+            uint32_t counter = 0;
+            uint64_t bytesRead = 0;
+
+            while (msgCount > counter)
             {
-                //  const int result = sem_timedwait(sem, &timeout);
-                int result = sem_wait(sem);
+                sem_wait(sem);
+                std::string_view data(dataPtr->buffer.data(), dataPtr->size);
 
-                std::cout << "Data" << std::endl;
-                std::cout << "\tsize  : " << dataPtr->size << std::endl;
-                std::cout << "\tbuffer: " << std::string_view(dataPtr->buffer.data(), dataPtr->size)<< std::endl;
+                bytesRead += dataPtr->size;
+                ++counter;
             }
+
+            std::cout << "messages: " << counter << std::endl;
+            std::cout << "bytes   : " << bytesRead << std::endl;
         }
 
         void PutMessage(const std::string& message)
@@ -746,16 +746,24 @@ namespace SharedMemoryDataExchange::DemoThree
 
     void test()
     {
+        constexpr uint32_t num = 10'000'000;
+
 #if 0
         Exchange<TypeExchange::Consumer> consumer {"__SHARED_MEMORY_OBJECT_00000002"};
-        consumer.ReadMessages();
+        consumer.ReadMessages(num);
 #endif
 
 #if 1
+        std::string message {"111111111111111111111111111111111111111111111111111111111111111111111111111111111111"
+                             "33333333333333333333333333333333333333333333333333333333333333333333333333333333334"
+                             "555555555555555555555555555555555555555555555555555555555555555555555555555555555555556"
+                             "666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666"
+                             "777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777"
+                             "8888888888888888888888888888888888888888888888888888888888888888888888888888888"};
         Exchange<TypeExchange::Producer> producer {"__SHARED_MEMORY_OBJECT_00000002"};
-        for (int i = 0; i < 100; ++i) {
-            producer.PutMessage("TestMessage__" + std::to_string(i));
-            std::this_thread::sleep_for(std::chrono::milliseconds (1));
+        for (uint32_t i = 0; i < num; ++i) {
+            // producer.PutMessage("TestMessage__" + std::to_string(i));
+            producer.PutMessage(message);
         }
 #endif
 
