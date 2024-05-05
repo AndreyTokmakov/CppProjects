@@ -16,24 +16,109 @@ Description : StoppingThreads.cpp
 #include <vector>
 
 
+using namespace std::literals; // for duration literals
+
+
 namespace StoppingThreads
 {
-    void worker(std::stop_token stop_token) {
+    void worker(std::stop_token stop_token)
+    {
         int counter {0};
         while (!stop_token.stop_requested()) {
-            std::cout << ++counter << ' ' << std::endl;
+            std::osyncstream(std::cout) << ++counter << ' ' << std::endl;
             std::this_thread::sleep_for(std::chrono::milliseconds (250));
         }
-        std::cout << "Done\n";
+        std::osyncstream(std::cout) << "Done\n";
     }
 
-    void func() {
-        std::osyncstream(std::cout) << " Entered. Sleeping 2 seconds." << std::endl;
-        std::this_thread::sleep_for(std::chrono::seconds(2));
-        std::osyncstream(std::cout) << " Done" << std::endl;
-    };
 
-    void Test() {
+    void SimpleExample()
+    {
+        std::jthread job = std::jthread([](const std::stop_token& token){
+            while (!token.stop_requested()) {
+                std::osyncstream(std::cout) << "Thread: Doing some work . . . . . \n";
+                std::this_thread::sleep_for(250ms);
+            }
+            std::osyncstream(std::cout) << "Thread: Stopped!!!\n";
+        });
+
+        std::this_thread::sleep_for(std::chrono::seconds (1));
+        std::osyncstream(std::cout) << "Main  : Stopping thread.\n";
+        job.request_stop(); // request stop
+
+        job.join();
+        std::osyncstream(std::cout) << "Main  : Done.\n";
+    }
+
+    void SimpleExample_StopCallback()
+    {
+        std::jthread job = std::jthread([](const std::stop_token& token){
+            std::atomic_flag isStopRequested {false};
+            std::stop_callback callback(token, [&isStopRequested]{
+                std::osyncstream(std::cout) << "Thread: Observed stop request\n";
+                isStopRequested.test_and_set();
+            });
+
+            while (!isStopRequested.test(std::memory_order_relaxed)) {
+                std::osyncstream(std::cout) << "Thread: Doing some work . . . . . \n";
+                std::this_thread::sleep_for(250ms);
+            }
+            std::osyncstream(std::cout) << "Thread: Stopped!!!\n";
+        });
+
+        std::this_thread::sleep_for(std::chrono::seconds (1));
+        std::osyncstream(std::cout) << "Main  : Stopping thread.\n";
+        job.request_stop(); // request stop
+
+        job.join();
+        std::osyncstream(std::cout) << "Main  : Done.\n";
+    }
+
+    void SimpleExample_ConditionalVariable()
+    {
+        struct Resource {
+            std::mutex mux;
+            std::condition_variable_any cv;
+            bool ready = false;
+        };
+
+        Resource resource;
+
+        std::jthread job = std::jthread([&resource](const std::stop_token& token){
+            std::osyncstream(std::cout) << "Thread: Wait until resource is ready, or stop was requested\n";
+
+            std::unique_lock lock(resource.mux);
+            resource.cv.wait(lock, token, [&resource] { return resource.ready; });
+
+            if (resource.ready) { // resource is ready
+                std::osyncstream(std::cout) << "Thread: Resource ready (with std::condition_variable_any)\n";
+            } else { // stop was requested
+                std::osyncstream(std::cout) << "Thread: Stop requested (with std::stop_token)\n";
+            }
+
+            std::osyncstream(std::cout) << "Thread: Stopped!!!\n";
+        });
+
+        std::this_thread::sleep_for(std::chrono::seconds (1));
+
+
+        bool stopWithRequest = false;
+        if (stopWithRequest) { // change to see the other option
+            std::osyncstream(std::cout) << "Main  : Stopping thread.\n";
+            job.request_stop(); // request stop
+        } else {
+            std::osyncstream(std::cout) << "Main  : Stopping thread.\n";
+            std::unique_lock lock(resource.mux);
+            resource.ready = true;
+            resource.cv.notify_one();
+        }
+
+        job.join();
+        std::osyncstream(std::cout) << "Main  : Done.\n";
+    }
+
+    void Test()
+    {
         std::stop_source source {};
         std::stop_token token = source.get_token();
 
@@ -50,8 +135,6 @@ namespace StoppingThreads
         job.join();
 
     }
-
-    using namespace std::literals; // for duration literals
 
     void func1(const std::stop_token& st, int num)
     {
@@ -129,8 +212,13 @@ namespace StoppingThreads
 
 void StoppingThreads::TestAll()
 {
+    // SimpleExample();
+    // SimpleExample_StopCallback();
+    SimpleExample_ConditionalVariable();
+
+    // SimpleExample();
     // StopThread2();
     // Test();
 
-    StopThread3();
+    //StopThread3();
 };

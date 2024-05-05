@@ -86,7 +86,7 @@ int main([[maybe_unused]] int argc,
 
     // SpinLock::TestAll();
 
-    // StoppingThreads::TestAll();
+    StoppingThreads::TestAll();
 
     // ThreadPools::TEST_ALL();
     // ThreadPoolBlocking::TEST_ALL();
@@ -106,7 +106,7 @@ int main([[maybe_unused]] int argc,
     // Multithreading_Collections::TestAll();
     // SingleConsumerProducerQueue::TestAll();
     // Queue::TestAll();
-    BlockingQueue::TestAll();
+    // BlockingQueue::TestAll();
     // LockFreeQueue::TEST_ALL()
 
     return EXIT_SUCCESS;
