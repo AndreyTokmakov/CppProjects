@@ -414,5 +414,6 @@ void Expected::TestAll()
     // MonadicOperations::Transform_OrElse::Test();
     // MonadicOperations::Transform_AndThen()::Test();
     MonadicOperations::TransformError::Test();
+
 };
 
