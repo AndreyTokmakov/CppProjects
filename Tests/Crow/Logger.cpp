@@ -254,16 +254,16 @@ namespace Logger::LoggerUtils
         }
 
         {
-            Utils::ScopedTimer timer {"timestampNew()"};
+            Utils::ScopedTimer timer {"gmtime()"};
             for (int i = 0; i < 10'000'000; ++i)
             {
                 const std::time_t t = std::time(nullptr);
-                std::put_time(std::gmtime(&t), "%Y-%m-%d %H:%M:%S");
+                auto x=  std::put_time(std::gmtime(&t), "%Y-%m-%d %H:%M:%S");
             }
         }
 
         {
-            Utils::ScopedTimer timer {"timestampNew()"};
+            Utils::ScopedTimer timer {"timestampFormat()"};
             for (int i = 0; i < 10'000'000; ++i)
             {
                 auto x= timestampFormat();
@@ -372,10 +372,10 @@ namespace Logger::LoggerUtils
 void Logger::TestAll()
 {
     // LoggerUtils::TimestampTests();
-    // LoggerUtils::PerfTest();
+    LoggerUtils::PerfTest();
 
     // LoggerUtils::logTest();
-    LoggerUtils::LogPerfTest();
+    // LoggerUtils::LogPerfTest();
 
 
 

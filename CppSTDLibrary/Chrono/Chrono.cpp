@@ -10,6 +10,7 @@
 #define _CRT_SECURE_NO_WARNINGS
 
 #include "Chrono.h"
+#include "../Helpers/ScopedTimer.h"
 
 #include <iostream>
 #include <syncstream>
@@ -592,6 +593,68 @@ namespace Chrono::CalendarDate
     }
 }
 
+namespace Chrono::FunctionPerformance
+{
+    void TestGetCurrentTimeFunctions()
+    {
+        constexpr int32_t iterCount {100'000'000};
+
+        {
+            Helpers::ScopedTimer timer{"system_clock::now()"};
+            for (int i = 0; i < iterCount; ++i)
+            {
+                std::chrono::system_clock::time_point today = std::chrono::system_clock::now();
+                //time_t time = std::chrono::system_clock::to_time_t(today);
+            }
+        }
+
+        {
+            Helpers::ScopedTimer timer{"high_resolution_clock::now()"};
+            for (int i = 0; i < iterCount; ++i)
+            {
+                auto start = std::chrono::high_resolution_clock::now();
+            }
+        }
+
+        {
+            Helpers::ScopedTimer timer{"clock_gettime()"};
+            timespec time{};
+            for (int i = 0; i < iterCount; ++i)
+            {
+                clock_gettime(CLOCK_MONOTONIC, &time);
+            }
+        }
+
+        {
+            Helpers::ScopedTimer timer{"std::time(1)"};
+            for (int i = 0; i < iterCount; ++i)
+            {
+                std::time_t t = std::time(nullptr);
+                // std::cout << "UTC:       " << std::put_time(std::gmtime(&t), "%c %Z") << '\n';
+            }
+        }
+
+        {
+            Helpers::ScopedTimer timer{"std::time(2)"};
+            time_t rawTime;
+            for (int i = 0; i < iterCount; ++i)
+            {
+                std::time ( &rawTime );
+            }
+        }
+
+        {
+            Helpers::ScopedTimer timer{"std::timespec_get"};
+            std::timespec ts {};
+            for (int i = 0; i < iterCount; ++i)
+            {
+                std::timespec_get(&ts, TIME_UTC);
+            }
+        }
+    }
+}
+
+
 void Chrono::TestAll()
 {
     // Steady_clock();
@@ -649,22 +712,9 @@ void Chrono::TestAll()
 
     // TimeOfDay::TimeOfDay_Basics();
 
-    CalendarDate::Basics();
+    // CalendarDate::Basics();
 
 
-    /*
-    using namespace std::chrono_literals;
-
-    std::chrono::days days1 = std::chrono::day(30) - std::chrono::day(25);
-    std::chrono::days days2 = 30d - 25d;
-    if ( days1 == days2 && days1 == std::chrono::days(5)) std::cout << "Five days\n";
-
-    std::chrono::years years1 = std::chrono::year(2021) - std::chrono::year(1998);
-    std::chrono::years years2 = 2021y - 1998y;
-    if ( years1 == years2 && years1 == std::chrono::years(23))
-        std::cout << "Twenty-three years\n";
-
-    std::cout << '\n';
-     */
+    FunctionPerformance::TestGetCurrentTimeFunctions();
 };
 

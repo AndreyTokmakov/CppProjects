@@ -888,9 +888,9 @@ namespace LambdaWrapper
 
 void Crow::TestAll()
 {
-    // Logger::TestAll();
+    Logger::TestAll();
 
-    LambdaWrapper::Test();
+    // LambdaWrapper::Test();
 
     // Common::Tests::Method();
 

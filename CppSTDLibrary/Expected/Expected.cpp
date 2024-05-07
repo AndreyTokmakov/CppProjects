@@ -11,6 +11,7 @@ Description : Expected C++23 Library tests
 #include <string_view>
 #include <expected>
 #include <vector>
+#include <chrono>
 
 #include "Expected.h"
 
@@ -128,7 +129,19 @@ namespace Expected
     }
 }
 
-namespace Expected
+namespace Expected::MonadicOperations
+{
+    template<typename SuccessType, typename ErrorType>
+    void printExpectedResult(const std::expected<SuccessType, ErrorType>& result)
+    {
+        if (result)
+            std::cout << *result << '\n';
+        else
+            std::cout << "Error: " << result.error() << '\n';
+    }
+}
+
+namespace Expected::MonadicOperations::Transform_AndThen
 {
     std::expected<std::string, std::error_condition> read_input() {
         std::string s;
@@ -152,7 +165,7 @@ namespace Expected
         return std::unexpected{err};
     }
 
-    void transform__and_then()
+    void Test()
     {
         std::expected result = read_input()
                 .and_then(to_int)    // invoked if the expected contains a value  the callable has to return a std::expected,
@@ -166,6 +179,220 @@ namespace Expected
     }
 }
 
+
+namespace Expected::MonadicOperations::AndThen
+{
+    std::expected<int, std::string> incrementIfPositive(int value)
+    {
+        if (value > 0)
+            return value + 1;
+        return std::unexpected("Value must be positive");
+    }
+
+    std::expected<int, std::string> getInput(int x)
+    {
+        if (x % 2 == 0)
+            return x;
+        return std::unexpected("Value not even!");
+    }
+
+    void Test()
+    {
+        for (int value: {-10, 0 , 10})
+        {
+            // std::cout << getInput(value).and_then(incrementIfPositive).value_or(0) << std::endl;
+            std::expected<int, std::string> input = getInput(value);
+            std::expected<int, std::string> result = input.and_then(incrementIfPositive);
+
+            printExpectedResult(result);
+        }
+    }
+}
+
+namespace Expected::MonadicOperations::AndThen_Chaining
+{
+    std::expected<int, std::string> convertToInt(const std::string& input)
+    {
+        int value;
+        auto [ptr, ec] = std::from_chars(input.data(), input.data() + input.size(), value);
+        if (ec == std::errc())
+            return value;
+
+        return std::unexpected("Conversion failed: invalid input (" + input + ")");
+    }
+
+    std::expected<int, std::string> multiplyByTwo(int number)
+    {
+        if (number > 0)
+            return number * 2;
+        return std::unexpected("Calculation failed: number must be positive (" + std::to_string(number) + ")");
+    }
+
+    std::expected<int, std::string> printAndReturn(int number)
+    {
+        std::cout << "Result: " << number << '\n';
+        return std::expected<int, std::string>(number);
+    }
+
+    void Test()
+    {
+        for (std::string&& input: {"10", "abc", "null", "-1", "1"})
+        {
+            const std::expected<int, std::string> result = convertToInt(input)
+                    .and_then(multiplyByTwo)
+                    .and_then(printAndReturn);
+            if (!result)
+                std::cout << result.error() << '\n';
+        }
+    }
+}
+
+namespace Expected::MonadicOperations::AndThen_OrElso
+{
+    std::expected<int, std::string> convertToInt(const std::string& input)
+    {
+        int value;
+        auto [ptr, ec] = std::from_chars(input.data(), input.data() + input.size(), value);
+        if (ec == std::errc())
+            return value;
+
+        return std::unexpected("Conversion failed: invalid input (" + input + ")");
+    }
+
+    std::expected<int, std::string> multiplyByTwo(int number)
+    {
+        if (number > 0)
+            return number * 2;
+        return std::unexpected("Calculation failed: number must be positive (" + std::to_string(number) + ")");
+    }
+
+    std::expected<int, std::string> printAndReturn(int number)
+    {
+        std::cout << "Result: " << number << '\n';
+        return std::expected<int, std::string>(number);
+    }
+
+    std::expected<int, std::string> handleError(const std::string& error) {
+        std::cerr << "Error encountered: " << error << '\n';
+        return std::unexpected(error);
+    }
+
+
+    void Test()
+    {
+        for (auto input: {"10", "abc", "null", "-1", "1"})
+        {
+            const std::expected<int, std::string> result = convertToInt(input)
+                    .and_then(multiplyByTwo)
+                    .and_then(printAndReturn)
+                    .or_else(handleError);
+        }
+    }
+}
+
+namespace Expected::MonadicOperations::TransformError
+{
+    std::string backToString(int value)
+    {
+        return std::string {"("}.append(std::to_string(value) ).append(")");
+    }
+
+    std::string errorAsString(std::string&& error)
+    {
+        return std::string {"ERROR: "}.append(error);
+    }
+
+    std::expected<int, std::string> convertToInt(const std::string& input)
+    {
+        int value;
+        auto [ptr, ec] = std::from_chars(input.data(), input.data() + input.size(), value);
+        if (ec == std::errc())
+            return value;
+
+        return std::unexpected("Conversion failed: invalid input (" + input + ")");
+    }
+
+    void Test()
+    {
+        for (std::string && input: {"10", "abc", "null", "-1", "1"})
+        {
+            const std::expected<std::string, std::string> result = convertToInt(input)
+                    .transform(backToString)
+                    .transform_error(errorAsString);
+            std::cout << (result.has_value() ? result.value() : result.error()) << std::endl;
+        }
+    }
+}
+
+namespace Expected::MonadicOperations::Transform_OrElse
+{
+    std::string backToString(int value)
+    {
+        return "[" + std::to_string(value) + "]";
+    }
+
+    std::expected<std::string, std::string> handleError(std::string&& error)
+    {
+        std::cerr << "Error: " << error << '\n';
+        return std::unexpected(error);
+    }
+
+    std::expected<std::string, std::string> printIfOK(std::string&& result)
+    {
+        std::cout << "OK   : " << result << '\n';
+        return result;
+    }
+
+    std::expected<int, std::string> convertToInt(const std::string& input)
+    {
+        int value;
+        auto [ptr, ec] = std::from_chars(input.data(), input.data() + input.size(), value);
+        if (ec == std::errc())
+            return value;
+
+        return std::unexpected("Conversion failed: invalid input (" + input + ")");
+    }
+
+    void Test()
+    {
+        for (auto input: {"10", "abc", "null", "-1", "1"})
+        {
+            const std::expected<std::string, std::string> result = convertToInt(input)
+                    .transform(backToString)
+                    .and_then(printIfOK)
+                    .or_else(handleError);
+        }
+    }
+}namespace Expected::MonadicOperations::Transform
+{
+    std::string backToString(int value)
+    {
+        return "[" + std::to_string(value) + "]";
+    }
+
+    std::expected<int, std::string> convertToInt(const std::string& input)
+    {
+        int value;
+        auto [ptr, ec] = std::from_chars(input.data(), input.data() + input.size(), value);
+        if (ec == std::errc())
+            return value;
+
+        return std::unexpected("Conversion failed: invalid input (" + input + ")");
+    }
+
+    void Test()
+    {
+        for (auto input: {"10", "abc", "null", "-1", "1"})
+        {
+            const std::expected<std::string, std::string> result = convertToInt(input).transform(backToString);
+            printExpectedResult(result);
+        }
+    }
+}
+
+
+
+
 void Expected::TestAll()
 {
     // BasicFunctions();
@@ -177,8 +404,15 @@ void Expected::TestAll()
 
     // Emplace();
 
-    Expected::Transform();
+    // Expected::Transform();
 
-    // transform__and_then();
+
+    // MonadicOperations::AndThen::Test();
+    // MonadicOperations::AndThen_Chaining::Test();
+    // MonadicOperations::AndThen_OrElso::Test();
+    // MonadicOperations::Transform::Test();
+    // MonadicOperations::Transform_OrElse::Test();
+    // MonadicOperations::Transform_AndThen()::Test();
+    MonadicOperations::TransformError::Test();
 };
 

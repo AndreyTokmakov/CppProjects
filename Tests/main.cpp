@@ -1057,6 +1057,8 @@ struct {
 } m_heap_data;
 
 
+
+
 int main([[maybe_unused]] int argc,
          [[maybe_unused]] char** argv)
 {
@@ -1093,7 +1095,7 @@ int main([[maybe_unused]] int argc,
     // BinaryAnalyzer::TestAll();
     // Cpp23_Features::TestAll();
     // Concepts::TestAll();
-    // Crow::TestAll();
+    Crow::TestAll();
     // Comparators::TestAll();
     // CollectionsTests::TestAll();
     // Coroutines::TestAll();
