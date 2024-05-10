@@ -43,8 +43,10 @@ namespace Processes
         std::cout << "ID: " << id << ", Parent: " << parentId << std::endl;
     }
 
-    void CreateProcess_Fork() {
-        switch (int pid = fork()) {
+    void CreateProcess_Fork()
+    {
+        switch (int pid = fork())
+        {
             case -1:
                 std::cout << "Fork() failed. Error = " << errno << '\n';
                 return;
@@ -57,15 +59,18 @@ namespace Processes
         }
     }
 
-    void CreateProcess_Fork_2() {
+    void CreateProcess_Fork_2()
+    {
         pid_t pid = fork();
 
-        if(pid == 0) {
-            std::cout << "Child => PPID: " << getppid() << ", PID: " << getpid() << std::endl;
+        if (pid == 0)
+        {
+            std::cout << "From Child.  Child ID: " << getpid() << ", Parend ID: " << getppid() << std::endl;
             return;
         }
-        else if(pid > 0) {
-            std::cout << "Parent => PID: " << getpid() << std::endl;
+        else if (pid > 0)
+        {
+            std::cout << "From Parent. Parent ID: " << getpid() << ", Child ID: " << pid << std::endl;
             std::cout << "Waiting for child process to finish."<< std::endl;
             wait(nullptr);
             std::cout << "Child process finished.\n"<< std::endl;
@@ -117,7 +122,8 @@ namespace Processes
 void Processes::TestAll()
 {
     // Test();
+    // test();
+
     // CreateProcess_Fork();
-    // CreateProcess_Fork_2();
-    test();
+    CreateProcess_Fork_2();
 };

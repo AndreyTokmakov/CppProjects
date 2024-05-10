@@ -19,7 +19,7 @@
 #include "../Integer/Integer.h"
 
 #include "Operators.h"
-
+#include "../Helpers/Wrapper.h"
 
 
 namespace ObjectOrientedProgramming::Constructors
@@ -632,125 +632,6 @@ namespace ObjectOrientedProgramming {
         NoHeapObject* obj = new NoHeapObject(1, "Test");
         delete obj;
     }
-
-    //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-    namespace ConstructorInitializationLists {
-
-        class SomeClassBad {
-        private:
-            Integer value;
-
-        public:
-            SomeClassBad(int v) {
-                value = v;
-            }
-        };
-
-        class SomeClassGood {
-        private:
-            Integer value;
-
-        public:
-            SomeClassGood(int v): value{v} {
-            }
-        };
-
-
-        class SomeClassGood1 {
-        private:
-            Integer value;
-
-        public:
-            SomeClassGood1(int v) : value(v) {
-            }
-        };
-
-        void InitList_Construction() {
-            std::cout << "------------------------------------- BAD -------------------------------\n";
-            {
-                SomeClassBad i(22);
-            }
-            std::cout << "------------------------------------- GOOD1 -------------------------------\n";
-            {
-                SomeClassGood i(22);
-            }
-            std::cout << "------------------------------------- GOOD2 -------------------------------\n";
-            {
-                SomeClassGood1 i(22);
-            }
-        }
-
-        //----------------------------------------------------------------------------------//
-
-        class Base {
-        private:
-            int value;
-            std::string name;
-
-        public:
-            Base(): Base("", -1) {
-            }
-            Base(const std::string& n, int v) : name(n), value(v) {
-            }
-            virtual ~Base() = default;
-        };
-
-
-        class Derived : public Base {
-        private:
-            const int const_value = 1;
-            unsigned long& ref_value;
-
-        public:
-            Derived(const std::string& n, int v, unsigned long r) : Base(n, v),        /* We have to use 'initialization list' to init Base class values */
-                                                                    const_value(123),  /* We have to use 'initialization list' to update CONST value     */
-                                                                    ref_value(r)       /* We have to use 'initialization list' to init Refference value  */
-            {
-                std::cout << "const_value = " << this->const_value << std::endl;
-            }
-        };
-
-        void Test() {
-            Derived obj("Name", 333, 123456789);
-
-        }
-
-        //----------------------------------------------------------------------------------//
-
-        class Vars {
-        private:
-            std::shared_ptr<Integer> a;
-            std::shared_ptr<Integer> b;
-            std::shared_ptr<Integer> c;
-
-            inline static int i = 0;
-
-        public:
-            Vars() : c(std::make_shared<Integer>(++i)), b(std::make_shared<Integer>(++i)), a(std::make_shared<Integer>(++i))
-            {
-            }
-
-            Vars(int x) : c(std::make_shared<Integer>(i++)), b(std::make_shared<Integer>(i++)), a(std::make_shared<Integer>(i++))
-            {
-            }
-
-            void info() {
-                std::cout << "a = " << a->getValue() << std::endl;
-                std::cout << "b = " << b->getValue() << std::endl;
-                std::cout << "c = " << c->getValue() << std::endl;
-            }
-        };
-
-        void Call_Members_InitializationOrder() {
-            Vars v;
-            //Vars v(1);
-
-            v.info();
-        }
-    }
-
-    //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
     namespace Explicit {
 
@@ -3057,6 +2938,149 @@ namespace ObjectOrientedProgramming::Covariant_Return_Type
 }
 
 
+
+namespace ObjectOrientedProgramming::ConstructorInitializationLists
+{
+
+    class SomeClassBad {
+    private:
+        Integer value;
+
+    public:
+        SomeClassBad(int v) {
+            value = v;
+        }
+    };
+
+    class SomeClassGood {
+    private:
+        Integer value;
+
+    public:
+        SomeClassGood(int v): value{v} {
+        }
+    };
+
+
+    class SomeClassGood1 {
+    private:
+        Integer value;
+
+    public:
+        SomeClassGood1(int v) : value(v) {
+        }
+    };
+
+    void InitList_Construction() {
+        std::cout << "------------------------------------- BAD -------------------------------\n";
+        {
+            SomeClassBad i(22);
+        }
+        std::cout << "------------------------------------- GOOD1 -------------------------------\n";
+        {
+            SomeClassGood i(22);
+        }
+        std::cout << "------------------------------------- GOOD2 -------------------------------\n";
+        {
+            SomeClassGood1 i(22);
+        }
+    }
+
+    //----------------------------------------------------------------------------------//
+
+    class Base {
+    private:
+        int value;
+        std::string name;
+
+    public:
+        Base(): Base("", -1) {
+        }
+        Base(const std::string& n, int v) : name(n), value(v) {
+        }
+        virtual ~Base() = default;
+    };
+
+
+    class Derived : public Base {
+    private:
+        const int const_value = 1;
+        unsigned long& ref_value;
+
+    public:
+        Derived(const std::string& n, int v, unsigned long r) : Base(n, v),        /* We have to use 'initialization list' to init Base class values */
+                                                                const_value(123),  /* We have to use 'initialization list' to update CONST value     */
+                                                                ref_value(r)       /* We have to use 'initialization list' to init Refference value  */
+        {
+            std::cout << "const_value = " << this->const_value << std::endl;
+        }
+    };
+
+    void Test() {
+        Derived obj("Name", 333, 123456789);
+
+    }
+
+    //----------------------------------------------------------------------------------//
+
+    class Vars {
+    private:
+        std::shared_ptr<Integer> a;
+        std::shared_ptr<Integer> b;
+        std::shared_ptr<Integer> c;
+
+        inline static int i = 0;
+
+    public:
+        Vars() : c(std::make_shared<Integer>(++i)), b(std::make_shared<Integer>(++i)), a(std::make_shared<Integer>(++i))
+        {
+        }
+
+        Vars(int x) : c(std::make_shared<Integer>(i++)), b(std::make_shared<Integer>(i++)), a(std::make_shared<Integer>(i++))
+        {
+        }
+
+        void info() {
+            std::cout << "a = " << a->getValue() << std::endl;
+            std::cout << "b = " << b->getValue() << std::endl;
+            std::cout << "c = " << c->getValue() << std::endl;
+        }
+    };
+
+    void Call_Members_InitializationOrder() {
+        Vars v;
+        //Vars v(1);
+
+        v.info();
+    }
+}
+
+namespace ObjectOrientedProgramming::StaticMembersInitialisationOrder
+{
+    struct X
+    {
+        Helpers::Integer a;
+        static Helpers::Integer b;
+        Helpers::Integer c;
+        static Helpers::Integer d;
+        Helpers::Integer e;
+
+
+        X(int e, int c, int a): e{e}, c {c}, a {a} {}
+    };
+
+    Helpers::Integer X::d = 22;
+    Helpers::Integer X::b = 11;
+
+    void Test()
+    {
+        X x(3,2,1);
+
+    }
+}
+
+
+
 void ObjectOrientedProgramming::TestAll()
 {
     // UserDefindedConversation();
@@ -3088,6 +3112,7 @@ void ObjectOrientedProgramming::TestAll()
     // ConstructorInitializationLists::Test();
     // ConstructorInitializationLists::Call_Members_InitializationOrder();
     // ConstructorInitializationLists::InitList_Construction();
+    StaticMembersInitialisationOrder::Test();
 
     // Virtual_Constructor_DestructorTests::PureVirtualException_InDestructor();
     // Virtual_Constructor_DestructorTests::Virutual_Destructors_Invoke();

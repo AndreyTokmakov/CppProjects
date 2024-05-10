@@ -16,6 +16,9 @@
 #include <iostream>
 #include <string_view>
 #include <thread>
+#include <optional>
+#include <format>
+#include <chrono>
 
 namespace
 {
@@ -44,6 +47,29 @@ namespace
             std::cout << "Error: " << errorCode << std::endl;
     }
 
+    struct CurrentTime
+    {
+        const std::chrono::time_point<std::chrono::high_resolution_clock> now { std::chrono::system_clock::now() };
+    };
+
+    [[maybe_unused]]
+    std::ostream& operator<<(std::ostream& stream, const CurrentTime& time)
+    {
+        stream << std::format("{:%d-%m-%Y %H:%M:%OS}", time.now);
+        return stream;
+    }
+
+    struct LOG final : public std::stringstream
+    {
+        constexpr static inline std::string_view FORMAT { "[{:%d-%m-%Y %H:%M:%OS}] "};
+
+        ~LOG() override
+        {
+            std::cout << std::format(FORMAT, std::chrono::system_clock::now());
+            std::cout << rdbuf();
+            std::cout.flush();
+        }
+    };
 }
 
 
@@ -206,12 +232,13 @@ namespace Semaphore::Multiprocess
             std::cout << "Semaphore created" << std::endl;
         }
 
-
+        [[maybe_unused]]
         timespec timeout {10, 0};
         while (true)
         {
             std::cout << "Waiting for semaphore...." << std::endl;
 
+            [[maybe_unused]]
             int result = sem_wait(sem);
             std::cout << "Semaphore is taken. Waiting for it to be released." << std::endl;
 
@@ -241,7 +268,132 @@ namespace Semaphore::Multiprocess
     }
 }
 
-void Semaphore::TestAll(const std::vector<std::string_view>& params)
+namespace Semaphore::MultiprocessTest
+{
+    constexpr std::string_view semaphoreOneName { "Read_Semaphore_Name_One" };
+    constexpr std::string_view semaphoreTwoName { "Read_Semaphore_Name_Two" };
+
+    int error(const std::string &func)
+    {
+        std::cerr << func << " failed. Error = " << errno << std::endl;
+        return errno;
+    }
+
+    std::optional<sem_t*> CreateSemaphore(std::string_view semaphoreName,
+                                          uint32_t value)
+    {
+        sem_t *sem = ::sem_open(semaphoreName.data(), O_CREAT, 0777, value);
+        if (SEM_FAILED == sem) {
+            error("sem_open()");
+            return std::nullopt;
+        } else { // FIXME: remove
+            // std::cout << semaphoreName << " semaphore created\n";
+            return sem;
+        }
+    }
+
+    std::optional<sem_t*> OpenSemaphore(std::string_view semaphoreName)
+    {
+        sem_t *sem = sem_open(semaphoreName.data(), O_CREAT );
+        if (SEM_FAILED == sem) {
+            error("sem_open");
+            return std::nullopt;
+        } else { // FIXME: remove
+            // std::cout << semaphoreName << " semaphore opened\n";
+            return sem;
+        }
+    }
+
+    void closeSharedMem(sem_t *sem,
+                        std::string_view semaphoreName)
+    {
+        if (0 != sem_close(sem)) {
+            error("sem_close()");
+        }
+        if (0 != sem_unlink(semaphoreName.data())) {
+            error("sem_unlink()");
+        }
+        else {
+            // std::cout << semaphoreName << " semaphore closed" << std::endl;
+        }
+    }
+
+    void ProcessOne()
+    {
+        LOG{} << "ProcessOne. Creating .....\n";
+        std::optional<sem_t*> semOne = CreateSemaphore(semaphoreOneName, 0);
+        if (!semOne)
+            return;
+        std::optional<sem_t*> semTwo = CreateSemaphore(semaphoreTwoName, 1);
+        if (!semTwo)
+            return;
+
+        LOG{} << "ProcessOne. Created. ID: " << getpid() << std::endl;
+        for (int i = 0; i < 3; ++i)
+        {
+            std::this_thread::sleep_for(std::chrono::seconds(1));
+            LOG{} << "ProcessOne. Releasing semOne\n";
+            ::sem_post(semOne.value());
+
+            LOG{} << "ProcessOne. Waiting for TWO\n";
+            const int value  = ::sem_wait(semTwo.value());
+            LOG{} << "ProcessOne. TWO ok. value = " << value << "\n";
+        }
+
+        closeSharedMem(semTwo.value(), semaphoreTwoName);
+        closeSharedMem(semOne.value(), semaphoreOneName);
+    }
+
+    void ProcessTwo()
+    {
+        LOG{} << "ProcessTwo. Creating .....\n";
+        std::this_thread::sleep_for(std::chrono::milliseconds (100));
+
+        std::optional<sem_t*> semOne = OpenSemaphore(semaphoreOneName);
+        if (!semOne)
+            return;
+        std::optional<sem_t*> semTwo = OpenSemaphore(semaphoreTwoName);
+        if (!semTwo)
+            return;
+
+        LOG{} << "ProcessTwo. Created. ID: " << getpid() << std::endl;
+        for (int i = 0; i < 3; ++i)
+        {
+            LOG{} << "ProcessTwo. Waiting for ONE\n";
+            const int value = ::sem_wait(semOne.value());
+            LOG{} << "ProcessTwo. ONE ok. value = " << value << "\n";
+
+            std::this_thread::sleep_for(std::chrono::seconds(1));
+            LOG{} << "ProcessTwo. Releasing semTwo\n";
+            ::sem_post(semTwo.value());
+        }
+    }
+
+    void CreateTwoProcesses()
+    {
+        pid_t pid = fork();
+
+        if (pid == 0)
+        {
+            // std::cout << "From Child.  Child ID: " << getpid() << ", Parend ID: " << getppid() << std::endl;
+            ProcessTwo();
+            return;
+        }
+        else if (pid > 0)
+        {
+            // std::cout << "From Parent.4 Parent ID: " << getpid() << ", Child ID: " << pid << std::endl;
+            // std::cout << "Waiting for child process to finish."<< std::endl;
+            // wait(nullptr);
+            // std::cout << "Child process finished.\n"<< std::endl;
+            ProcessOne();
+        }
+        else {
+            std::cout << "Unable to create child process" << std::endl;
+        }
+    }
+}
+
+void Semaphore::TestAll([[maybe_unused]] const std::vector<std::string_view>& params)
 {
 
     /*
@@ -262,5 +414,7 @@ void Semaphore::TestAll(const std::vector<std::string_view>& params)
 
 
     // Multiprocess::CreateSemaphore();
-    Multiprocess::SetSemaphore();
+    // Multiprocess::SetSemaphore();
+
+    MultiprocessTest::CreateTwoProcesses();
 };

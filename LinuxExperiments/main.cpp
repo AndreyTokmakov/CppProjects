@@ -78,8 +78,10 @@
 
 
 
-void PollTest() {
-    constexpr size_t eventsCount {0};
+void PollTest()
+{
+    // FIXME: Size 10 ???
+    constexpr size_t eventsCount {10};
     pollfd pfds[eventsCount] {};
 
     constexpr std::string_view path {R"(/home/andtokm/tmp/TEST_FILES/TestFile.txt)"};
@@ -129,7 +131,8 @@ namespace {
     constexpr size_t bufferSize {maxEvents * (nameLength + eventSize)};
 }
 
-void NotifyTest() {
+void NotifyTest()
+{
     int monitor = inotify_init1(0);
     if (-1 == monitor) {
         std::cout << "Failed to init Monitor. Error = " << errno << std::endl;
@@ -145,7 +148,7 @@ void NotifyTest() {
     }
 
     std::array<char, bufferSize> buffer {};
-    size_t i = 0, length = 0;
+    long i = 0, length = 0;
     while (true) {
         i = 0;
         length = read(monitor, buffer.data(), bufferSize);
@@ -213,6 +216,7 @@ int main([[maybe_unused]] int argc,
     // NotifyTest();
 
     Semaphore::TestAll(params);
+
     // SharedMemory::TestAll(params);
     // SharedMemoryDataExchange::TestAll(params);
     // Pipes::TestAll(params);

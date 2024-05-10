@@ -316,6 +316,7 @@ namespace Logger::LoggerUtils
 
         std::string text(128, ' ');
         const size_t sz = strftime(&text[0], text.size(), "(%Y-%m-%d %H:%M:%S) ", &my_tm);
+        // const size_t sz = 32;
         text.resize(sz);
 
         switch (level)
@@ -333,10 +334,10 @@ namespace Logger::LoggerUtils
                 text.append("[ERROR   ] ");
                 break;
             case crow::LogLevel::Critical:
-                text.append(" [CRITICAL] ");
+                text.append("[CRITICAL] ");
                 break;
         }
-        text += message;
+        text.append(message);
 
         //std::cout << text << std::endl;
     }
@@ -372,10 +373,10 @@ namespace Logger::LoggerUtils
 void Logger::TestAll()
 {
     // LoggerUtils::TimestampTests();
-    LoggerUtils::PerfTest();
+    // LoggerUtils::PerfTest();
 
     // LoggerUtils::logTest();
-    // LoggerUtils::LogPerfTest();
+    LoggerUtils::LogPerfTest();
 
 
 

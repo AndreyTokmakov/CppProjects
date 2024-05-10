@@ -70,7 +70,7 @@ namespace SharedMemoryDataExchange::DemoOne
         }
     }
 
-    void signalHandler(int sigId)
+    void signalHandler(int /* sigId */)
     {
         closeSharedMem();
         std::exit(0);
@@ -127,6 +127,8 @@ namespace SharedMemoryDataExchange::DemoOne
             std::cout << "Waiting for semaphore...." << std::endl;
 
             //  const int result = sem_timedwait(sem, &timeout);
+
+            [[maybe_unused]]
             int result = sem_wait(sem);
 
             std::cout << "Released" << std::endl;
@@ -774,7 +776,7 @@ namespace SharedMemoryDataExchange::DemoThree
 
 
 
-void SharedMemoryDataExchange::TestAll(const std::vector<std::string_view> &params)
+void SharedMemoryDataExchange::TestAll([[maybe_unused]] const std::vector<std::string_view> &params)
 {
     // DemoOne::Consumer();
     // DemoOne::Producer();

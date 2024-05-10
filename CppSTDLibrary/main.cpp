@@ -103,10 +103,10 @@ int main([[maybe_unused]] int argc,
     // ConstConstexprMutable::TestAll();
     // CopyElision::TestAll();
     // DateAndTime::TestAll();
-    // EnumTests::TestAll();
+    EnumTests::TestAll();
     // Errors::TestAll();
     // Exceptions::TestAll();
-    Expected::TestAll();
+    // Expected::TestAll();
     // StrongTypes::TestAll();
     // InitializerList::TestAll();
     // InlineVariables::TestAll();

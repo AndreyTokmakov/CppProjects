@@ -13,6 +13,8 @@
 #include <array>
 #include <string>
 #include <cstdint>
+#include <utility>
+#include <format>
 
 namespace EnumTests::EnumNewStyle {
 
@@ -528,6 +530,24 @@ namespace EnumTests::EnumConversationTest
     }
 }
 
+namespace EnumTests::ToUnderlying
+{
+	enum class MyColor {
+		RED,
+		GREEN,
+		BLUE
+	};
+
+	void To_Underlying()
+	{
+		auto color = std::to_underlying(MyColor::GREEN);
+		// color == 1, decltype(color) == int
+
+		std::cout << std::format("color underlying type is '{}'", color) << std::endl;
+		static_assert(std::is_same_v<decltype(color), int>);
+	}
+}
+
 
 void EnumTests::TestAll()
 {
@@ -554,7 +574,9 @@ void EnumTests::TestAll()
 
 	// Bit_Flags_Enums::Test();
 
-    EnumConversationTest::Test(); /** static constexpr functions **/
+    // EnumConversationTest::Test(); /** static constexpr functions **/
 
     // UsingEmum_ClassScope::accessEnum_FromClassInstance();
+
+	ToUnderlying::To_Underlying();
 };

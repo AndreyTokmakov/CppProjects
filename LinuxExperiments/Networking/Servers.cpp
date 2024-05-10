@@ -74,7 +74,7 @@ namespace Servers
         }
 
         /* Set server's socket as the first element */
-        pollfd fds[OBSERVED_FDS_POLL] {{.fd = hSocket, .events = POLLIN}};
+        pollfd fds[OBSERVED_FDS_POLL] {{.fd = hSocket, .events = POLLIN, .revents = {}}};
         for (size_t i = 1; i < OBSERVED_FDS_POLL; ++i) {
             fds[i].events = POLLIN;
             fds[i].fd = UNUSED_FD;

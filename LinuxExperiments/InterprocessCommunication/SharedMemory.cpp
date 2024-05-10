@@ -159,6 +159,7 @@ namespace SharedMemory::DemoTwo
             std::cout << sharedMemoryObjName << " segment is opened" << std::endl;
         }
 
+        [[maybe_unused]]
         void* area = ::mmap(nullptr,
                             sizeof(Data),
                             PROT_READ | PROT_WRITE, MAP_SHARED,
@@ -280,7 +281,7 @@ namespace SharedMemory::DemoThree
 
     int sharedHandle = -1;
 
-    void signalHandler(int sigId)
+    void signalHandler(int /* sigId */)
     {
         if (0 != close(sharedHandle)) {
             error("close()");
@@ -390,7 +391,7 @@ namespace SharedMemory::DemoFour
 
     int sharedHandle = -1;
 
-    void signalHandler(int sigId)
+    void signalHandler([[maybe_unused]] int sigId)
     {
         if (0 != close(sharedHandle)) {
             error("close()");

@@ -48,15 +48,13 @@
 #include <memory>
 
 
-namespace {
+namespace
+{
     using ptrBigNumber = std::unique_ptr<BIGNUM, decltype(&::BN_free)>;
     using ptrRSA = std::unique_ptr<RSA, decltype(&::RSA_free)>;
     using ptrBIO = std::unique_ptr<BIO, decltype(&::BIO_free)>;
-
     using ptrPKEY = std::unique_ptr<EVP_PKEY, decltype(&::EVP_PKEY_free)>;
-
     using ptrCert509 = std::unique_ptr<X509, decltype(&::X509_free)>;
-
     using ptrAsnInteger = std::unique_ptr<ASN1_INTEGER, decltype(&::ASN1_INTEGER_free)>;
 }
 
@@ -275,8 +273,8 @@ namespace OpenSSL {
     // https://www.dynamsoft.com/codepool/how-to-use-openssl-generate-rsa-keys-cc.html
     void Generate_RSA_Keys ()
     {
-        constexpr std::string_view publicKey { R"(/home/andtokm/tmp/SSL/public.pem)"};
-        constexpr std::string_view privateKey { R"(/home/andtokm/tmp/SSL/private.pem)"};
+        constexpr std::string_view publicKey { R"(/home/andtokm/DiskS/Temp/SSL/public.pem)"};
+        constexpr std::string_view privateKey { R"(/home/andtokm/DiskS/Temp/SSL/private.pem)"};
 
         /** generate rsa key **/
         ptrBigNumber bigNum {BN_new(), BN_free };
@@ -291,15 +289,14 @@ namespace OpenSSL {
         /** save public key **/
         ptrBIO publicKeyBio {BIO_new_file(publicKey.data(), "w+"), BIO_free};
         int ret = PEM_write_bio_RSAPublicKey(publicKeyBio.get(), rsa.get());
-        if (ret != 1)
+        if (ret != 1) {
+            std::cerr << "BIO_new_file() failed. Error = " << errno << std::endl;
             return;
+        }
 
-        /*
-        EVP_PKEY *pkey = EVP_PKEY_new();
-        EVP_PKEY_assign_RSA(pkey, rsa);
-
-        EVP_PKEY_free(pkey);
-        */
+        // EVP_PKEY *pkey = EVP_PKEY_new();
+        // EVP_PKEY_assign_RSA(pkey, rsa);
+        // EVP_PKEY_free(pkey);
 
         /** save private key **/
         ptrBIO privateKeyBio { BIO_new_file(privateKey.data(), "w+"), BIO_free};
@@ -325,7 +322,8 @@ namespace OpenSSL {
     }
 };
 
-void OpenSSL::TestAll([[maybe_unused]] const std::vector<std::string_view>& params) {
+void OpenSSL::TestAll(const std::vector<std::string_view>&)
+{
     // TestCertificate();
 
     // GetCertificateVersion();

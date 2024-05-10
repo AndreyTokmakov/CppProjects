@@ -1051,10 +1051,9 @@ bool setThreadCore(int core_id) noexcept
     return 0 == pthread_setaffinity_np(pthread_self(), sizeof(cpu_set_t), &cpuset);
 }
 
-struct {
-    int* m_data;
-    size_t m_capacity;
-} m_heap_data;
+
+
+
 
 
 
@@ -1081,6 +1080,8 @@ int main([[maybe_unused]] int argc,
     // UBBook::Test();
 
 
+
+
     /** * * * * *  Move to lib * * * * * **/
 
     // OperatorCall_ExplicitTypeSpecialization::Test();
@@ -1095,7 +1096,7 @@ int main([[maybe_unused]] int argc,
     // BinaryAnalyzer::TestAll();
     // Cpp23_Features::TestAll();
     // Concepts::TestAll();
-    Crow::TestAll();
+    // Crow::TestAll();
     // Comparators::TestAll();
     // CollectionsTests::TestAll();
     // Coroutines::TestAll();
