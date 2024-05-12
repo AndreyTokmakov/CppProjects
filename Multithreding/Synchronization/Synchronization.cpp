@@ -807,7 +807,8 @@ namespace Synchronization::RecursiveMutex
             data_[size_++] = value;
         }
 
-        void reserve(size_t cnt) {
+        void reserve(size_t cnt)
+        {
             std::unique_lock lock(mux_);
             reserve_impl(cnt);
         }
@@ -893,7 +894,7 @@ void Synchronization::TEST_ALL()
 
     // SharedMutext::Test_NoShare();
     // SharedMutext::Synchronized_Read_Write_Test();
-    SharedMutext::Read_Write_Test_Blocking();
+    // SharedMutext::Read_Write_Test_Blocking();
 
 
     // TimedMutex::TryLockFor();
@@ -917,5 +918,5 @@ void Synchronization::TEST_ALL()
     // ScopedLock::Good_Example();
 
 
-    // RecursiveMutex::main();
+    RecursiveMutex::main();
 };
