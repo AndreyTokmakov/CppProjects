@@ -80,13 +80,13 @@ int main([[maybe_unused]] int argc,
     // ParallelExecutionAlgoritms::TEST_ALL();
 
     // Semaphore::TEST_ALL();
-    // Synchronization::TEST_ALL();
+    Synchronization::TEST_ALL();
     // SynchStream::TEST_ALL();
     // SynchStream_Custom::TEST_ALL();
 
     // SpinLock::TestAll();
 
-    StoppingThreads::TestAll();
+    // StoppingThreads::TestAll();
 
     // ThreadPools::TEST_ALL();
     // ThreadPoolBlocking::TEST_ALL();

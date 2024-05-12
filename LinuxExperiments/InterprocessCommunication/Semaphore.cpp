@@ -320,18 +320,19 @@ namespace Semaphore::MultiprocessTest
 
     void ProcessOne()
     {
-        LOG{} << "ProcessOne. Creating .....\n";
-        std::optional<sem_t*> semOne = CreateSemaphore(semaphoreOneName, 0);
+        //LOG{} << "ProcessOne. Creating .....\n";
+        std::optional<sem_t*> semOne = CreateSemaphore(semaphoreOneName, 1);
         if (!semOne)
             return;
-        std::optional<sem_t*> semTwo = CreateSemaphore(semaphoreTwoName, 1);
+        std::optional<sem_t*> semTwo = CreateSemaphore(semaphoreTwoName, 0);
         if (!semTwo)
             return;
 
-        LOG{} << "ProcessOne. Created. ID: " << getpid() << std::endl;
-        for (int i = 0; i < 3; ++i)
+        //LOG{} << "ProcessOne. Created. ID: " << getpid() << std::endl;
+        for (int i = 0; i < 5; ++i)
         {
-            std::this_thread::sleep_for(std::chrono::seconds(1));
+            std::cout << std::endl;
+            std::this_thread::sleep_for(std::chrono::seconds(5));
             LOG{} << "ProcessOne. Releasing semOne\n";
             ::sem_post(semOne.value());
 
@@ -346,7 +347,7 @@ namespace Semaphore::MultiprocessTest
 
     void ProcessTwo()
     {
-        LOG{} << "ProcessTwo. Creating .....\n";
+        //LOG{} << "ProcessTwo. Creating .....\n";
         std::this_thread::sleep_for(std::chrono::milliseconds (100));
 
         std::optional<sem_t*> semOne = OpenSemaphore(semaphoreOneName);
@@ -356,9 +357,10 @@ namespace Semaphore::MultiprocessTest
         if (!semTwo)
             return;
 
-        LOG{} << "ProcessTwo. Created. ID: " << getpid() << std::endl;
-        for (int i = 0; i < 3; ++i)
+        //LOG{} << "ProcessTwo. Created. ID: " << getpid() << std::endl;
+        for (int i = 0; i < 5; ++i)
         {
+            std::cout << std::endl;
             LOG{} << "ProcessTwo. Waiting for ONE\n";
             const int value = ::sem_wait(semOne.value());
             LOG{} << "ProcessTwo. ONE ok. value = " << value << "\n";
@@ -371,20 +373,11 @@ namespace Semaphore::MultiprocessTest
 
     void CreateTwoProcesses()
     {
-        pid_t pid = fork();
-
-        if (pid == 0)
-        {
-            // std::cout << "From Child.  Child ID: " << getpid() << ", Parend ID: " << getppid() << std::endl;
+        if (const pid_t pid = fork(); pid == 0) { /** Child **/
             ProcessTwo();
             return;
         }
-        else if (pid > 0)
-        {
-            // std::cout << "From Parent.4 Parent ID: " << getpid() << ", Child ID: " << pid << std::endl;
-            // std::cout << "Waiting for child process to finish."<< std::endl;
-            // wait(nullptr);
-            // std::cout << "Child process finished.\n"<< std::endl;
+        else if (pid > 0) { /** Parent **/
             ProcessOne();
         }
         else {
