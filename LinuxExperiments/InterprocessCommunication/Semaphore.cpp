@@ -321,7 +321,7 @@ namespace Semaphore::MultiprocessTest
     void ProcessOne()
     {
         //LOG{} << "ProcessOne. Creating .....\n";
-        std::optional<sem_t*> semOne = CreateSemaphore(semaphoreOneName, 1);
+        std::optional<sem_t*> semOne = CreateSemaphore(semaphoreOneName, 0);
         if (!semOne)
             return;
         std::optional<sem_t*> semTwo = CreateSemaphore(semaphoreTwoName, 0);
@@ -329,16 +329,16 @@ namespace Semaphore::MultiprocessTest
             return;
 
         //LOG{} << "ProcessOne. Created. ID: " << getpid() << std::endl;
-        for (int i = 0; i < 5; ++i)
+        for (int i = 0; i < 10; ++i)
         {
-            std::cout << std::endl;
-            std::this_thread::sleep_for(std::chrono::seconds(5));
-            LOG{} << "ProcessOne. Releasing semOne\n";
+            // std::cout << std::endl;
+            std::this_thread::sleep_for(std::chrono::milliseconds (250));
+            // LOG{} << "ProcessOne. Releasing semOne\n";
             ::sem_post(semOne.value());
 
             LOG{} << "ProcessOne. Waiting for TWO\n";
             const int value  = ::sem_wait(semTwo.value());
-            LOG{} << "ProcessOne. TWO ok. value = " << value << "\n";
+            // LOG{} << "ProcessOne. TWO ok. value = " << value << "\n";
         }
 
         closeSharedMem(semTwo.value(), semaphoreTwoName);
@@ -358,15 +358,15 @@ namespace Semaphore::MultiprocessTest
             return;
 
         //LOG{} << "ProcessTwo. Created. ID: " << getpid() << std::endl;
-        for (int i = 0; i < 5; ++i)
+        for (int i = 0; i < 10; ++i)
         {
-            std::cout << std::endl;
-            LOG{} << "ProcessTwo. Waiting for ONE\n";
+            // std::cout << std::endl;
+            // LOG{} << "ProcessTwo. Waiting for ONE\n";
             const int value = ::sem_wait(semOne.value());
-            LOG{} << "ProcessTwo. ONE ok. value = " << value << "\n";
+            // LOG{} << "ProcessTwo. ONE ok. value = " << value << "\n";
 
-            std::this_thread::sleep_for(std::chrono::seconds(1));
-            LOG{} << "ProcessTwo. Releasing semTwo\n";
+            std::this_thread::sleep_for(std::chrono::milliseconds (250));
+            // LOG{} << "ProcessTwo. Releasing semTwo\n";
             ::sem_post(semTwo.value());
         }
     }

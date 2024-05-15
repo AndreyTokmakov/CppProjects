@@ -22,6 +22,7 @@
 #include <list>
 #include <cassert>
 #include "../Integer/Integer.h"
+#include "../Helpers/Wrapper.h"
 
 #include "IteratorTests.h"
 
@@ -890,7 +891,48 @@ namespace CountingIterator
     }
 }
 
-void IteratorTests::TestAll() {
+
+namespace IteratorTests::MoveIterator
+{
+    using Helpers::Integer;
+
+    std::vector<std::unique_ptr<Integer>> get_elements()
+    {
+        std::vector<std::unique_ptr<Integer>> ints;
+        ints.emplace_back(std::make_unique<Integer>(111));
+        ints.emplace_back(std::make_unique<Integer>(222));
+        ints.emplace_back(std::make_unique<Integer>(333));
+        return ints;
+    }
+
+
+    void Test()
+    {
+        std::cout << "---------------------------------------------------\n";
+        {
+            std::vector<std::unique_ptr<Integer>> src = get_elements();
+
+            /** Wouldn't compile: incompatible type **/
+            // std::list<std::unique_ptr<Integer>> err1(std::move(src));
+
+            /** Wouldn't compile: std::unique_ptr is not copyable **/
+            // std::list<std::unique_ptr<Integer>> err2(src.begin(), src.end());
+
+            // OK
+            const std::list<std::unique_ptr<Integer>> dst(
+                    std::move_iterator(src.begin()),
+                    std::move_iterator(src.end())
+            );
+
+            std::cout << src.size() << std::endl;
+            std::cout << dst.size() << std::endl;
+        }
+        std::cout << "---------------------------------------------------\n";
+    }
+}
+
+void IteratorTests::TestAll()
+{
 
 	// ReverseIterators::ReverseString();
 	// ReverseIterators::ReverseIterator_Vector();
@@ -898,8 +940,8 @@ void IteratorTests::TestAll() {
 	// ReverseIterators::ReverseIterator_Map();
 
 
-    CountingIterator::test_simple();
-    CountingIterator::test_print();
+    // CountingIterator::test_simple();
+    // CountingIterator::test_print();
 
 	// FrotInserver();
 	// Front_Insert_Iterator();
@@ -932,6 +974,9 @@ void IteratorTests::TestAll() {
 	// Files::ReadFile3();
 	// Files::CopyFile();
 	// Files::CopyFile2();
+
+    MoveIterator::Test();
+
 }
 
 // reverse_iterator

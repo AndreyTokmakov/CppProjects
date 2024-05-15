@@ -103,7 +103,7 @@ int main([[maybe_unused]] int argc,
     // ConstConstexprMutable::TestAll();
     // CopyElision::TestAll();
     // DateAndTime::TestAll();
-    EnumTests::TestAll();
+    // EnumTests::TestAll();
     // Errors::TestAll();
     // Exceptions::TestAll();
     // Expected::TestAll();
@@ -111,7 +111,7 @@ int main([[maybe_unused]] int argc,
     // InitializerList::TestAll();
     // InlineVariables::TestAll();
     // Initialization::TestAll();
-    // IteratorTests::TestAll();
+    IteratorTests::TestAll();
     // FilesStreams::TestAll();
     // Filesystem::TestAll();
     // Format::TestAll();
