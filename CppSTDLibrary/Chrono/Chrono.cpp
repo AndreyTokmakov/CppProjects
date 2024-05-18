@@ -369,6 +369,61 @@ namespace Chrono::Duration {
         std::cout << "milliseconds: " << ms.count() << std::endl;
         std::cout << "seconds     : " << one_second.count() << std::endl;
     }
+
+
+    void Measure_Duration_Test()
+    {
+        using namespace std::literals;
+
+        const std::chrono::time_point<std::chrono::steady_clock> tp1 = std::chrono::steady_clock::now();
+        std::this_thread::sleep_for(1ms);
+        const std::chrono::time_point<std::chrono::steady_clock> tp2 = std::chrono::steady_clock::now();
+
+        {
+            // Whether a clock is steady and its resolution can be queried using:
+            bool system_is_steady = std::chrono::system_clock::is_steady;
+            std::cout << std::format("system_is_steady == {}", system_is_steady) << std::endl;
+
+            using resolution = std::chrono::system_clock::duration;
+            /** resolution::period::num / resolution::period::den **/
+            std::cout << std::format("resolution == {}/{}", resolution::period::num, resolution::period::den) << std::endl;
+        }
+
+        std::cout << std::endl;
+
+        {
+            /** difference of time points is a duration **/
+            const std::chrono::duration duration = tp2 - tp1;
+            std::cout << std::format("duration (nanoseconds)  : {}\n", duration);
+
+            /** explicit type of duration, base type double, with micro resolution **/
+            const std::chrono::duration<double, std::micro> fpdur = tp2 - tp1;
+            // std::cout << std::format("fpdur == {}\n", fpdur) << std::endl;
+
+            const std::chrono::duration duration_millis = duration_cast<std::chrono::milliseconds>(tp2 - tp1);
+            std::cout << std::format("duration (milliseconds) : {}\n", duration_millis);
+        }
+
+        std::cout << std::endl;
+
+        {
+            using day_t = std::chrono::duration<double, std::ratio<86400>>;
+            // days, weeks, months, years were added in C++20
+
+            // A year duration is the length of an average year
+            day_t days_in_year = std::chrono::years{1};
+            // days_in_year == 365.2425
+
+            std::cout << std::format("Days in Year  : {:%Q%q}", days_in_year) << std::endl;
+
+            // A month is 1/12 of a year
+            day_t days_in_month = std::chrono::months{1};
+            // days_in_month == days_in_year / 12 == 30.436875
+
+            std::cout << std::format("Days in Month : {:%Q%q}", days_in_month) << std::endl;
+        }
+
+    }
 };
 
 namespace Chrono::TimeZones {
@@ -654,6 +709,67 @@ namespace Chrono::FunctionPerformance
     }
 }
 
+namespace Chrono::Years
+{
+    using namespace std::chrono;
+
+    void Last_Day_of_Month()
+    {
+        // Last day in a month
+        std::chrono::month_day_last last_day_in_feb = February/last;
+
+        std::cout << std::format("last_day_in_feb == {}\n", last_day_in_feb) << std::endl;
+        static_assert(std::is_same_v<decltype(last_day_in_feb), std::chrono::month_day_last>);
+    }
+
+    void Find_Leaping_Years()
+    {   // Last day in a month
+        std::chrono::month_day_last last_day_in_feb = February/last;
+
+        // Find leaping years in 2024..2104
+        for (std::chrono::year year = 2024y; year <= 2104y; ++year)
+        {
+            const std::chrono::year_month_day_last maybe_leap = year/last_day_in_feb;
+            // same as: year/Februrary/last
+
+            static_assert(std::is_same_v<decltype(maybe_leap), const std::chrono::year_month_day_last>);
+
+            // assert(maybe_leap.ok());
+            if (maybe_leap.day() == 29d) { // requires maybe_leap.ok()
+                std::cout << std::format("{} is a leap year\n", year);
+            }
+        }
+    }
+
+    void Last_Sunday_of_Year()
+    {   // Last weekday in a month
+        const std::chrono::month_weekday_last last_sunday = December/Sunday[last];
+
+        // Iterate over the last Sundays in 2024..2030
+        for (std::chrono::year year = 2024y; year <= 2030y; ++year) {
+            const std::chrono::year_month_weekday_last pseudo = year/last_sunday;
+            /** same as: year/December/Sunday[last] **/
+
+            static_assert(std::is_same_v<decltype(pseudo), const std::chrono::year_month_weekday_last>);
+
+            // Convert to the actual year_month_day
+            std::chrono::year_month_day actual { pseudo };
+            std::cout << std::format("Last Sunday in {} is {}\n", year, actual);
+        }
+    }
+
+    void Thanksgiving_Days()
+    {   // nth weekday in a month US Thanksgiving date, 4th Thursday in November
+        const std::chrono::month_weekday thanksgiving = November/Thursday[4]; // ordinal, not index
+
+        for (std::chrono::year year = 2024y; year <= 2030y; year++) {
+            // As long as the expression is not ambiguous, the order doesn't matter
+            const year_month_day date {thanksgiving/year};
+            std::cout << std::format("US thanksgiving in {} is {}", year, date);
+        }
+    }
+}
+
 
 void Chrono::TestAll()
 {
@@ -685,9 +801,14 @@ void Chrono::TestAll()
     // Duration::Zero_Duration();
     // Duration::Min_Max();
     // Duration::DurationCast();
+    // Duration::Measure_Duration_Test();
 
     // TimeZones::Test();
 
+    // Years::Last_Day_of_Month();
+    // Years::Find_Leaping_Years();
+    // Years::Last_Sunday_of_Year();
+    Years::Thanksgiving_Days();
 
     // Year_Month_Day();
     // Create_Day_Manually();
@@ -715,6 +836,6 @@ void Chrono::TestAll()
     // CalendarDate::Basics();
 
 
-    FunctionPerformance::TestGetCurrentTimeFunctions();
+    // FunctionPerformance::TestGetCurrentTimeFunctions();
 };
 

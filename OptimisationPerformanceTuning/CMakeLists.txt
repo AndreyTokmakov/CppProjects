@@ -17,6 +17,7 @@ add_executable(${PROJECT_NAME}
         FalseSharing/FalseSharingExperiments.cpp FalseSharing/FalseSharingExperiments.h
         Valgrind/ValgrindExperiments.cpp Valgrind/ValgrindExperiments.h
         CacheLineAccessEffects/CacheLineAccessEffects.cpp CacheLineAccessEffects/CacheLineAccessEffects.h
+        DoubleBuffering/DoubleBuffering.cpp DoubleBuffering/DoubleBuffering.h
 )
 
 TARGET_LINK_LIBRARIES(${PROJECT_NAME}

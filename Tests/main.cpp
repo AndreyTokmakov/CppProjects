@@ -1054,9 +1054,54 @@ bool setThreadCore(int core_id) noexcept
 
 
 
+namespace StringTest_SSO
+{
+    template<typename T>
+    struct BasicString
+    {
+        using data_type = T;
+        using pointer = data_type*;
+        using size_type = size_t*;
+
+        struct sized_data {
+            pointer ptr ;
+            size_type length;
+            size_type capacity;
+        };
+
+        union {
+            sized_data onHeap;
+            data_type onStack[sizeof(sized_data)];
+        } storage;
+    };
+
+    class String
+    {
+        size_t capacity;
+
+        struct heapbuf
+        {
+            char *ptr;
+            size_t size;
+        };
+
+        union
+        {
+            heapbuf heap;
+            char stack[sizeof(heapbuf)];
+        };
+    };
 
 
+    void Tests()
+    {
+        BasicString<char> str {};
+        String str2 {};
 
+        std::cout << sizeof(str) << std::endl;
+        std::cout << sizeof(str2) << std::endl;
+    }
+}
 
 int main([[maybe_unused]] int argc,
          [[maybe_unused]] char** argv)
@@ -1080,7 +1125,7 @@ int main([[maybe_unused]] int argc,
     // UBBook::Test();
 
 
-
+    // StringTest_SSO::Tests();
 
     /** * * * * *  Move to lib * * * * * **/
 
@@ -1113,7 +1158,7 @@ int main([[maybe_unused]] int argc,
     // FunctionCall_LookUp::TestAll();
     // RateLimiter::TestAll();
     // LRUCache::TestAll();
-    // LowLatencyLogger::TestAll();
+    LowLatencyLogger::TestAll();
     // Multithreading::TestAll();
     // Memory::TestAll();
     // MaxStack::TestAll();

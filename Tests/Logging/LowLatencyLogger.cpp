@@ -15,6 +15,8 @@ Description : LowLatencyLogger
 #include <atomic>
 #include <thread>
 #include <syncstream>
+#include <vector>
+#include <list>
 
 namespace LowLatencyLogger
 {
@@ -51,7 +53,6 @@ namespace LowLatencyLogger
         }
     };
 }
-
 
 namespace MultithreadingExperiments
 {
@@ -102,7 +103,7 @@ namespace MultithreadingExperiments
     void multipleWriters()
     {
         constexpr uint32_t maxCapacity {1000};
-        constexpr size_t iterCount { 1'000 };
+        constexpr size_t iterCount { 10'000 };
         std::atomic<uint32_t> idx {0};
 
         auto task = [&]()
@@ -158,13 +159,11 @@ namespace MultithreadingExperiments
             }
         };
 
-        std::vector<std::jthread> workers;
-        for (int i = 0; i < 32; ++i) {
-            workers.emplace_back(task);
+        {
+            std::vector<std::jthread> workers;
+            for (int i = 0; i < 2; ++i)
+                workers.emplace_back(task);
         }
-
-        for (auto& job: workers)
-            job.join();
 
         std::cout << idx.load(std::memory_order_relaxed) << std::endl;
     }
@@ -306,6 +305,103 @@ namespace MultithreadingExperiments
     }
 }
 
+
+namespace LowLatencyLogger_AtomicDemo
+{
+    struct Logger
+    {
+        using Block = std::vector<std::string>;
+        using BlockList = std::list<Block>;
+        using BlockIter = BlockList::iterator;
+
+        // constexpr static inline uint32_t blockSize { 1'000 };
+        constexpr static inline uint32_t blockSize { 10 };
+
+        BlockList available;
+        BlockList toBeHandled;
+        BlockIter logsBlock { available.end() };
+
+        // FIXME: False sharing ?
+        std::atomic<uint32_t> idx {0};
+
+        Logger()
+        {   /*
+            available.emplace_back(Block{"11", "22", "33"});
+            available.emplace_back(Block{"44", "55", "66"});
+            available.emplace_back(Block{"77", "88", "99"});
+
+            logsBlock = available.begin();
+            */
+
+            /*
+            available.emplace_back(Block{"11", "22"});
+            available.emplace_back(Block{"33", "44"});
+            available.emplace_back(Block{"55", "66"});
+            available.emplace_back(Block{"77", "88"});
+
+            logsBlock = available.begin();
+            */
+
+            addEmptyBlock();
+        }
+
+        void addEmptyBlock()
+        {
+            available.emplace_back(blockSize, "--");
+        }
+    };
+
+    void printBlock(const Logger::Block& block)
+    {
+        std::cout << " [ ";
+        for (const auto& entry: block)
+            std::cout << "'" << entry << "' ";
+        std::cout << "] ";
+    }
+
+    void printBlockList(const Logger::BlockList& blockList, std::string&& name)
+    {
+        std::cout << name << ". size: " << blockList.size() << std::endl;
+        for (const auto& block: blockList)
+            printBlock(block);
+        std::cout << std::endl;
+    }
+
+    void Test()
+    {
+        Logger logger;
+
+        /*
+        printBlockList(logger.available, "available");
+        printBlockList(logger.toBeHandled, "toBeHandled");
+
+        logger.toBeHandled.splice(logger.toBeHandled.begin(), logger.available, logger.available.begin());
+
+        printBlockList(logger.available, "available");
+        printBlockList(logger.toBeHandled, "toBeHandled");
+        */
+
+
+        /*
+        logger.available.emplace_back(Logger::Block{"99", "1010"});
+
+
+        printBlockList(logger.available, "available");
+        printBlockList(logger.toBeHandled, "toBeHandled");
+        // printBlockList(Logger::BlockList{*logger.logsBlock}, "logsBlock");
+
+
+        logger.toBeHandled.splice(logger.toBeHandled.begin(), logger.available, logger.logsBlock);
+
+        printBlockList(logger.available, "available");
+        printBlockList(logger.toBeHandled, "toBeHandled");
+         */
+
+
+        printBlockList(logger.available, "available");
+    }
+}
+
 void LowLatencyLogger::TestAll()
 {
     // MultithreadingExperiments::wait();
@@ -313,8 +409,11 @@ void LowLatencyLogger::TestAll()
     // MultithreadingExperiments::fetchAndAdd();
 
     // MultithreadingExperiments::multipleWriters();
-    MultithreadingExperiments::multipleWriters_MTX();
+    // MultithreadingExperiments::multipleWriters_MTX();
 
     // MultithreadingExperiments::atomicPerformanceTest();
     // MultithreadingExperiments::mutexPerformanceTest();
+
+
+    LowLatencyLogger_AtomicDemo::Test();
 }

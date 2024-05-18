@@ -279,6 +279,15 @@ namespace DateAndTime::FunctionPerformance
         }
 
         {
+            Helpers::ScopedTimer timer{"std::time(3)"};
+            time_t rawTime;
+            for (int i = 0; i < iterCount; ++i)
+            {
+                rawTime = std::time(nullptr);
+            }
+        }
+
+        {
             Helpers::ScopedTimer timer{"std::timespec_get"};
             std::timespec ts {};
             for (int i = 0; i < iterCount; ++i)

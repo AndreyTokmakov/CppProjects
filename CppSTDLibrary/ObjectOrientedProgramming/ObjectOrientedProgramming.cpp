@@ -3069,13 +3069,13 @@ namespace ObjectOrientedProgramming::StaticMembersInitialisationOrder
         X(int e, int c, int a): e{e}, c {c}, a {a} {}
     };
 
-    Helpers::Integer X::d = 22;
-    Helpers::Integer X::b = 11;
+
+    // Helpers::Integer X::d = 22;
+    // Helpers::Integer X::b = 11;
 
     void Test()
     {
         X x(3,2,1);
-
     }
 }
 
@@ -3112,7 +3112,7 @@ void ObjectOrientedProgramming::TestAll()
     // ConstructorInitializationLists::Test();
     // ConstructorInitializationLists::Call_Members_InitializationOrder();
     // ConstructorInitializationLists::InitList_Construction();
-    StaticMembersInitialisationOrder::Test();
+    // StaticMembersInitialisationOrder::Test();
 
     // Virtual_Constructor_DestructorTests::PureVirtualException_InDestructor();
     // Virtual_Constructor_DestructorTests::Virutual_Destructors_Invoke();

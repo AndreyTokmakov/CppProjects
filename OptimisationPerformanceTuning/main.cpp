@@ -13,6 +13,7 @@ Description : C++ Optimisation and Performance Tuning experiments
 #include "Valgrind/ValgrindExperiments.h"
 #include "CacheLineAccessEffects/CacheLineAccessEffects.h"
 #include "SpecificOptimizationTopics/OptimizationTricks.h"
+#include "DoubleBuffering/DoubleBuffering.h"
 
 #include <iostream>
 #include <string_view>
@@ -61,7 +62,8 @@ int main([[maybe_unused]] int argc,
     // ValgrindExperiments::TestAll();
     // CacheLineAccessEffects::TestAll();
     // OptimizationTricks::TestAll();
-    Numa::TestAll();
+    // Numa::TestAll();
+    DoubleBuffering::TestAll();
 
     return EXIT_SUCCESS;
 }

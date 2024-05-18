@@ -905,40 +905,41 @@ namespace IteratorTests::MoveIterator
         return ints;
     }
 
-
     void Test()
     {
-        std::cout << "---------------------------------------------------\n";
-        {
-            std::vector<std::unique_ptr<Integer>> src = get_elements();
+        std::vector<std::unique_ptr<Integer>> src = get_elements();
 
-            /** Wouldn't compile: incompatible type **/
-            // std::list<std::unique_ptr<Integer>> err1(std::move(src));
+        std::cout << "src: ";
+        for (const auto& var: src)
+            std::cout << var->value << ' ';
+        std::cout << std::endl;
 
-            /** Wouldn't compile: std::unique_ptr is not copyable **/
-            // std::list<std::unique_ptr<Integer>> err2(src.begin(), src.end());
 
-            // OK
-            const std::list<std::unique_ptr<Integer>> dst(
-                    std::move_iterator(src.begin()),
-                    std::move_iterator(src.end())
-            );
+        /** Wouldn't compile: incompatible type **/
+        // std::list<std::unique_ptr<Integer>> err1(std::move(src));
 
-            std::cout << src.size() << std::endl;
-            std::cout << dst.size() << std::endl;
-        }
-        std::cout << "---------------------------------------------------\n";
+        /** Wouldn't compile: std::unique_ptr is not copyable **/
+        // std::list<std::unique_ptr<Integer>> err2(src.begin(), src.end());
+
+        // OK
+        const std::list<std::unique_ptr<Integer>> dst(
+                std::move_iterator(src.begin()),
+                std::move_iterator(src.end())
+        );
+
+        std::cout << "dst: ";
+        for (const auto& var: dst)
+            std::cout << var->value << ' ';
+        std::cout << std::endl;
     }
 }
 
 void IteratorTests::TestAll()
 {
-
 	// ReverseIterators::ReverseString();
 	// ReverseIterators::ReverseIterator_Vector();
 	// ReverseIterators::ReverseIterator_Vector2();
 	// ReverseIterators::ReverseIterator_Map();
-
 
     // CountingIterator::test_simple();
     // CountingIterator::test_print();

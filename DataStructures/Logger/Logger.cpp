@@ -47,7 +47,8 @@ namespace Logging
 		LogRecord& operator=(const LogRecord& right) = delete;
 		LogRecord(const LogRecord& obj) = delete;
 
-		LogRecord& operator=(LogRecord&& right) noexcept {
+		LogRecord& operator=(LogRecord&& right) noexcept
+        {
 			// std::cout << "[Move assignment operator] LogRecord" << std::endl;
 			if (this != &right) {
 				this->timestamp = std::exchange(right.timestamp, 0);
@@ -82,12 +83,13 @@ namespace Logging
 		// Boolean telling the background thread to terminate.
 		bool stopThread { false };
 
-		inline static constexpr size_t STORAGE_SIZE {100};
+		inline static constexpr size_t STORAGE_SIZE { 100 };
 
 		inline static constexpr std::chrono::milliseconds WAIT_TIMEOUT { 
 			std::chrono::milliseconds(100) };
 
 	protected:
+
 		void logsDumper() noexcept 
 		{
 			// Open log file.
@@ -127,14 +129,16 @@ namespace Logging
 
 	public:
 		// Starts a background thread writing log entries to a file.
-		Logger() {
+		Logger()
+        {
 			logs.reserve(STORAGE_SIZE);
 			// Start background thread.
 			dumperThread = std::thread{&Logger::logsDumper, this };
 		}
 
 		// Gracefully shut down background thread.
-		~Logger() {
+		~Logger()
+        {
 			if (!stopThread) {
 				stop();
 			}
@@ -175,7 +179,8 @@ namespace Logging
 }
 
 
-void Logging::TEST_ALL() {
+void Logging::TEST_ALL()
+{
 	Logger logger;
 
 	for (int i = 1; i <= 100'000; ++i) {
@@ -184,5 +189,4 @@ void Logging::TEST_ALL() {
 			std::this_thread::sleep_for(std::chrono::nanoseconds(1));
 	}
 	logger.stop();
-
 }
