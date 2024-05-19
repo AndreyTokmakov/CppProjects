@@ -23,47 +23,6 @@
 
 namespace Chrono
 {
-
-    void Duration_TimePoint_Print()
-    {
-        std::chrono::duration<int, std::ratio<60 * 60 * 24> > one_day(1);
-
-        std::chrono::system_clock::time_point today = std::chrono::system_clock::now();
-        std::chrono::system_clock::time_point tomorrow = today + one_day;
-
-        time_t time;
-
-        time = std::chrono::system_clock::to_time_t(today);
-
-        /*
-        char str[26];
-        std::ctime_s(str, sizeof str, &time);
-        std::cout << "today is: " << str << std::endl;
-
-        time = std::chrono::system_clock::to_time_t(tomorrow);
-        ctime_s(str, sizeof str, &time);
-        std::cout << "tomorrow will be: " << str << std::endl;
-        */
-    }
-
-
-    void Measure_Duration() {
-        const std::chrono::steady_clock::time_point start = std::chrono::steady_clock::now();
-        const int TIMEOUT = 10;
-
-        for (int i = 0; i < 20; ++i) {
-            std::this_thread::sleep_for(std::chrono::seconds(1));
-            std::chrono::steady_clock::time_point end = std::chrono::steady_clock::now();
-            std::chrono::duration<int> timeElapsed = std::chrono::duration_cast<std::chrono::duration<int>>(end - start);
-            std::cout << "Time passed: " << timeElapsed.count() << std::endl;
-            if (timeElapsed.count() >= TIMEOUT)
-            {
-                std::cout << "TIMEOUT";
-                break;
-            }
-        }
-    }
-
     void Steady_clock()
     {
         using namespace std::chrono;
@@ -89,12 +48,6 @@ namespace Chrono
         ctime_s(str, sizeof str, &time);
         std::cout << "today is: " << str << std::endl;
         */
-    }
-
-    void Asctime()
-    {
-        std::time_t result = std::time(nullptr);
-        std::cout << std::asctime(std::localtime(&result)) << result << " seconds since the Epoch" << std::endl;
     }
 
     void GM_time_VS_localtime()
@@ -125,59 +78,6 @@ namespace Chrono
         std::chrono::duration<double> time_span = duration_cast<std::chrono::duration<double>>(start - end);
 
         std::cout << "It took me " << time_span.count() << " seconds.\n";
-    }
-
-    void PrintLocaltime()
-    {
-        auto now = std::chrono::system_clock::now();
-        auto stime = std::chrono::system_clock::to_time_t(now);
-        auto ltime = std::localtime(&stime);
-        std::cout << std::put_time(ltime, "%c") << std::endl;
-    }
-
-    void PrintCurrenTime1()
-    {
-        std::time_t t = std::time(nullptr);
-        std::cout << std::put_time(std::gmtime(&t), "%c %Z") << '\n';
-        std::cout << std::put_time(std::gmtime(&t), "%c") << '\n';
-
-        std::cout << std::endl;
-
-        std::cout << std::put_time(std::localtime(&t), "%c %Z") << '\n';
-    }
-
-    void PrintCurrenTime2() {
-        auto now = std::chrono::system_clock::now();
-        auto in_time_t = std::chrono::system_clock::to_time_t(now);
-        std::cout << std::put_time(std::localtime(&in_time_t), "%Y-%m-%d %X") << std::endl;
-    }
-
-    void GetCurrentTime_Performance() {
-        constexpr int COUNT {100'000'000};
-
-        {
-            auto start = std::chrono::high_resolution_clock::now();
-
-            for (int i = 0; i < COUNT;  ++i) {
-                std::time_t t = std::time(nullptr);
-            }
-
-            auto end = std::chrono::high_resolution_clock::now();
-            auto duration = std::chrono::duration_cast<std::chrono::microseconds>(end - start).count();
-            std::cout << "Result: " << duration << " microseconds" << std::endl;
-        }
-
-        {
-            auto start = std::chrono::high_resolution_clock::now();
-
-            for (int i = 0; i < COUNT; ++i) {
-                auto now = std::chrono::system_clock::now();
-            }
-
-            auto end = std::chrono::high_resolution_clock::now();
-            auto duration = std::chrono::duration_cast<std::chrono::microseconds>(end - start).count();
-            std::cout << "Result: " << duration << " microseconds" << std::endl;
-        }
     }
 
     void Time_T()
@@ -231,7 +131,8 @@ namespace Chrono
         //std::cout << std::date::format("%X", std::chrono::floor<std::chrono::milliseconds>(now)) << "," << ms.count();
     }
 
-    void Year_Month_Day() {
+    void Year_Month_Day()
+    {
         const std::chrono::time_point now { std::chrono::system_clock::now() };
         const std::chrono::year_month_day ymd {std::chrono::floor<std::chrono::days>(now) };
 
@@ -250,19 +151,6 @@ namespace Chrono
                   << ", Day: " << static_cast<unsigned>(d.day()) << '\n';
 
     }
-
-    void Enumerate_Each_Month_of_Year()
-    {
-        using namespace std::chrono_literals;
-
-        std::chrono::year_month_day first = 2021y / 1 / 5;
-        for (auto d = first; d.year() == first.year(); d += std::chrono::months{1}) {
-            std::cout << static_cast<int>(d.year()) << " / "
-                      << static_cast<unsigned>(d.month()) << " / "
-                      << static_cast<unsigned>(d.day()) << '\n';
-        }
-    }
-
 
     void is_PM_AM() {
         using namespace std::chrono_literals;
@@ -312,20 +200,43 @@ namespace Chrono
     }
 };
 
-namespace Chrono::Duration {
+namespace Chrono::Duration
+{
+    void Measure_Duration()
+    {
+        const std::chrono::steady_clock::time_point start = std::chrono::steady_clock::now();
+        constexpr int32_t timeout { 10 };
 
-    void HighResolution__PeriodDuration() {
-        std::chrono::high_resolution_clock::time_point start = std::chrono::high_resolution_clock::now();
+        for (int i = 0; i < 20; ++i)
+        {
+            std::this_thread::sleep_for(std::chrono::seconds(1));
+
+            std::chrono::steady_clock::time_point end = std::chrono::steady_clock::now();
+            std::chrono::duration<int> timeElapsed = std::chrono::duration_cast<std::chrono::duration<int>>(end - start);
+            std::cout << "Time passed: " << timeElapsed.count() << std::endl;
+
+            if (timeElapsed.count() >= timeout)
+            {
+                std::cout << "TIMEOUT";
+                break;
+            }
+        }
+    }
+
+    void HighResolution__PeriodDuration()
+    {
+        const std::chrono::high_resolution_clock::time_point start = std::chrono::high_resolution_clock::now();
 
         std::this_thread::sleep_for(std::chrono::milliseconds(125));
 
-        std::chrono::high_resolution_clock::time_point end = std::chrono::high_resolution_clock::now();
-        std::chrono::duration<double> time_span = duration_cast<std::chrono::duration<double>>(end - start);
+        const std::chrono::high_resolution_clock::time_point end = std::chrono::high_resolution_clock::now();
+        const std::chrono::duration<double> time_span = duration_cast<std::chrono::duration<double>>(end - start);
 
         std::cout << "It took me " << time_span.count() << " seconds.\n";
     }
 
-    void SteadyClock__PeriodDuration() {
+    void SteadyClock__PeriodDuration()
+    {
         std::chrono::steady_clock::time_point start = std::chrono::steady_clock::now();
 
         std::this_thread::sleep_for(std::chrono::milliseconds(125));
@@ -333,6 +244,24 @@ namespace Chrono::Duration {
         std::chrono::steady_clock::time_point end = std::chrono::steady_clock::now();
         std::chrono::duration<double> time_span = std::chrono::duration_cast<std::chrono::duration<double>>(end - start);
         std::cout << "It took me " << time_span.count() << " seconds." << std::endl;
+    }
+
+    void Time_From_Duration()
+    {
+        const std::chrono::duration<int, std::ratio<60 * 60 * 24> > one_day(1);
+        const std::chrono::system_clock::time_point today = std::chrono::system_clock::now();
+        const std::chrono::system_clock::time_point tomorrow = today + one_day;
+
+        {
+            time_t time = std::chrono::system_clock::to_time_t(today);
+            tm* localTime = std::localtime(&time);
+            std::cout << "Today: " << std::put_time(localTime, "%c") << std::endl;
+        }
+        {
+            time_t time = std::chrono::system_clock::to_time_t(tomorrow);
+            tm* localTime = std::localtime(&time);
+            std::cout << "Today: " << std::put_time(localTime, "%c") << std::endl;
+        }
     }
 
     void Zero_Duration()
@@ -350,6 +279,7 @@ namespace Chrono::Duration {
         else
             std::cout << "The internal clock advanced " << elapsedTime.count() << " periods.\n";
     }
+
 
     void Min_Max()
     {
@@ -425,18 +355,6 @@ namespace Chrono::Duration {
 
     }
 };
-
-namespace Chrono::TimeZones {
-
-    using namespace std::chrono;
-
-    void Test() {
-        // auto x = std::chrono::time_zone::name();
-
-        // constexpr auto ym { year(2021) / 8 };
-        // std::cout << (ym == year_month(year(2021), August)) << ' ';
-    }
-}
 
 namespace Chrono::StringFormat
 {
@@ -650,6 +568,36 @@ namespace Chrono::CalendarDate
 
 namespace Chrono::FunctionPerformance
 {
+    void GetCurrentTime_Performance()
+    {
+        constexpr int COUNT {100'000'000};
+
+        {
+            auto start = std::chrono::high_resolution_clock::now();
+
+            for (int i = 0; i < COUNT;  ++i) {
+                std::time_t t = std::time(nullptr);
+            }
+
+            auto end = std::chrono::high_resolution_clock::now();
+            auto duration = std::chrono::duration_cast<std::chrono::microseconds>(end - start).count();
+            std::cout << "Result: " << duration << " microseconds" << std::endl;
+        }
+
+        {
+            auto start = std::chrono::high_resolution_clock::now();
+
+            for (int i = 0; i < COUNT; ++i) {
+                auto now = std::chrono::system_clock::now();
+            }
+
+            auto end = std::chrono::high_resolution_clock::now();
+            auto duration = std::chrono::duration_cast<std::chrono::microseconds>(end - start).count();
+            std::cout << "Result: " << duration << " microseconds" << std::endl;
+        }
+    }
+
+
     void TestGetCurrentTimeFunctions()
     {
         constexpr int32_t iterCount {100'000'000};
@@ -709,6 +657,33 @@ namespace Chrono::FunctionPerformance
     }
 }
 
+namespace Chrono::Months
+{
+    using namespace std::chrono;
+    using namespace std::chrono_literals;
+
+    void Enumerate_Each_Month_of_Year()
+    {
+        const std::chrono::year_month_day first = 2021y / 1 / 5;
+        for (std::chrono::year_month_day d = first; d.year() == first.year(); d += std::chrono::months{1}) {
+            std::cout << static_cast<int>(d.year()) << " / "
+                      << static_cast<unsigned>(d.month()) << " / "
+                      << static_cast<unsigned>(d.day()) << '\n';
+        }
+    }
+
+    void Month_of_Year()
+    {
+        for (std::chrono::year_month month = year(2024) / January;
+             month != year(2025) / January;
+             month += std::chrono::months{1})
+        {
+            std::cout << std::format("Month : {}", month) << std::endl;
+        }
+    }
+}
+
+
 namespace Chrono::Years
 {
     using namespace std::chrono;
@@ -765,77 +740,106 @@ namespace Chrono::Years
         for (std::chrono::year year = 2024y; year <= 2030y; year++) {
             // As long as the expression is not ambiguous, the order doesn't matter
             const year_month_day date {thanksgiving/year};
-            std::cout << std::format("US thanksgiving in {} is {}", year, date);
+            std::cout << std::format("US thanksgiving in {} is {}\n", year, date);
         }
     }
 }
 
+namespace Chrono::CurrentTime
+{
+
+    void Asctime()
+    {
+        std::time_t result = std::time(nullptr);
+        std::cout << std::asctime(std::localtime(&result)) << result << " seconds since the Epoch" << std::endl;
+    }
+
+    void Localtime()
+    {
+        const std::chrono::system_clock::time_point now = std::chrono::system_clock::now();
+        const time_t time = std::chrono::system_clock::to_time_t(now);
+        const tm* ltime = std::localtime(&time);
+
+        std::cout << std::put_time(ltime, "%c") << std::endl;
+    }
+
+    void PrintTime_One()
+    {
+        std::time_t t = std::time(nullptr);
+
+        std::cout << std::put_time(std::gmtime(&t), "%c %Z") << '\n';
+        std::cout << std::put_time(std::gmtime(&t), "%c") << '\n';
+        std::cout << std::put_time(std::localtime(&t), "%c %Z") << '\n';
+    }
+
+    void PrintTime_Two()
+    {
+        const std::chrono::system_clock::time_point now = std::chrono::system_clock::now();
+        const time_t time = std::chrono::system_clock::to_time_t(now);
+
+        std::cout << std::put_time(std::localtime(&time), "%Y-%m-%d %X") << std::endl;
+    }
+}
 
 void Chrono::TestAll()
 {
-    // Steady_clock();
-    // Duration_TimePoint_Print();
-    // Clock_Test();
+    // CurrentTime::Asctime();
+    // CurrentTime::Localtime();
+    // CurrentTime::PrintTime_One();
+    // CurrentTime::PrintTime_Two();
 
-    // Measure_Duration();
-
-    // High_Resolution_Clock();
-
-    // Asctime();
-    // GM_time_VS_localtime();
-    // Time_T();
-
-    // Zones_Tests();
-
-
-    // Localtime_TM();
-
-    // PrintLocaltime();
-
-    // PrintCurrenTime1();
-    // PrintCurrenTime2();
-    // GetCurrentTime_Performance();
-
+    // Duration::Measure_Duration();
     // Duration::HighResolution__PeriodDuration();
     // Duration::SteadyClock__PeriodDuration();
+    // Duration::Time_From_Duration();
     // Duration::Zero_Duration();
     // Duration::Min_Max();
     // Duration::DurationCast();
     // Duration::Measure_Duration_Test();
 
-    // TimeZones::Test();
+    // Months::Enumerate_Each_Month_of_Year();
+    // Months::Month_of_Year();
 
     // Years::Last_Day_of_Month();
     // Years::Find_Leaping_Years();
     // Years::Last_Sunday_of_Year();
-    Years::Thanksgiving_Days();
-
-    // Year_Month_Day();
-    // Create_Day_Manually();
-    // Enumerate_Each_Month_of_Year();
-
-    // is_PM_AM();
-    // H24_to_AM_PM();
-
-    // Experiments();
-
+    // Years::Thanksgiving_Days();
 
     // TimeToString::Test();
-
     // StringFormat::StrfTime();
     // StringFormat::Asctime();
     // StringFormat::PutTime_To_String();
     // StringFormat::CTime_String();
-
     // StringFormat::Format();
     // StringFormat::Format2();
     // StringFormat::Format3();
 
-    // TimeOfDay::TimeOfDay_Basics();
-
-    // CalendarDate::Basics();
-
-
+    // FunctionPerformance::GetCurrentTime_Performance();
     // FunctionPerformance::TestGetCurrentTimeFunctions();
+
+
+
+
+    // Steady_clock();
+    // Clock_Test();
+    // High_Resolution_Clock();
+    // GM_time_VS_localtime();
+    // Time_T();
+
+    // Year_Month_Day();
+    // Create_Day_Manually();
+
+    // Zones_Tests();
+    // is_PM_AM();
+    // H24_to_AM_PM();
+
+    // TimeOfDay::TimeOfDay_Basics();
+    // CalendarDate::Basics();
+    // Localtime_TM();
+
+
+
+
+    // Experiments();
 };
 
