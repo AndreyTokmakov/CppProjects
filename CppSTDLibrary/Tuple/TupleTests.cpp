@@ -72,24 +72,39 @@ namespace Tuple {
 		};
 	}
 
-	std::tuple<double, char, std::string> get_student(int id) {
+	std::tuple<double, char, std::string> get_student(int id)
+    {
 		if (id == 0) return std::make_tuple(3.8, 'A', "Lisa Simpson");
 		if (id == 1) return std::make_tuple(2.9, 'C', "Milhouse Van Houten");
 		if (id == 2) return std::make_tuple(1.7, 'D', "Ralph Wiggum");
 		throw std::invalid_argument("id");
 	}
 
-
-
-	std::tuple<int, int> foo_tuple() {
+	std::tuple<int, int> foo_tuple()
+    {
 		return { 1, -1 };
 	}
 
-	void CreateTupleTest() {
+	void CreateTupleTest()
+    {
 		auto T = foo_tuple();
 		std::cout << "T[0] = " << std::get<0>(T) << std::endl;
 		std::cout << "T[1] = " << std::get<1>(T) << std::endl;
 	}
+
+    void GetSize()
+    {
+        {
+            const std::tuple tup = std::tuple{5, 42};
+            const size_t size = std::tuple_size_v<decltype(tup)>;
+            std::cout << "size: " << size << std::endl;
+        }
+        {
+            const std::tuple tup = std::make_tuple(3.8, 'A', "Lisa Simpson");
+            const size_t size = std::tuple_size_v<decltype(tup)>;
+            std::cout << "size: " << size << std::endl;
+        }
+    }
 
 	void TupleTest2() {
 		auto[a, b, c] = std::tuple(32, "hello", 13.9);
@@ -257,8 +272,8 @@ namespace Tuple::Make_Tuples
 
 	void Test()
 	{
-		auto tuple = std::make_tuple(42, 3.14f, 0);
-		auto obj = std::make_from_tuple<Foo>(std::move(tuple));
+		std::tuple<int, float, int> tuple = std::make_tuple(42, 3.14f, false);
+		Foo obj = std::make_from_tuple<Foo>(std::move(tuple));
 		obj.info();
 	
 	}
@@ -274,7 +289,6 @@ namespace Tuple::Make_Tuples
 
 namespace Tuple::PrintValues
 {
-
 	template<auto ...P>
 	struct Printer {
 		inline static std::tuple data = std::tuple(P...);
@@ -347,13 +361,42 @@ namespace Tuple::IterateValues2
 }
 
 
-namespace Tuple
+namespace Tuple::Apply
 {
-    void Apply_Sum_Tuple()
+    void Sum_Tuple()
     {
         std::tuple<int, int, int>  tup(1, 2, 3);
         auto sum = [](auto a, auto b, auto c) { return a + b + c; };
         std::cout << std::apply(sum, tup) << std::endl;
+    }
+}
+
+
+namespace Tuple::Reference_Wrapper
+{
+    void Create_Tuple_with_Ref()
+    {
+        int value = 10;
+        std::string name = "SomeName";
+
+        std::tuple<int&, std::string> tup = std::make_tuple(std::ref(value), name);
+
+        std::cout << "value: " << value << ", name: " << name << std::endl;
+        std::get<0>(tup) = 123;
+        std::cout << "value: " << value << ", name: " << name << std::endl;
+    }
+
+    void Create_Tuple_with_ConstRef()
+    {
+        int value = 10;
+        std::string name = "SomeName";
+
+        std::tuple<int&, const std::string&> tup = std::make_tuple(std::ref(value), std::cref(name));
+
+        std::cout << "value: " << value << ", name: " << name << std::endl;
+        std::get<0>(tup) = 123;
+        // std::get<1>(tup) = "12323";   // INFO: Will not compile
+        std::cout << "value: " << value << ", name: " << name << std::endl;
     }
 }
 
@@ -381,6 +424,7 @@ namespace PrintTupleTests
 void Tuple::TestAll()
 {
 	// CreateTupleTest();
+	// GetSize();
 
 	// TupleTest2();
 
@@ -402,7 +446,10 @@ void Tuple::TestAll()
 	// IterateValues::IterateTest();
 	// IterateValues2::IterateTest();
 
-    // Apply_Sum_Tuple();
+    // Apply::Sum_Tuple();
 
-    PrintTupleTests::PrintTestTuple();
+    // Reference_Wrapper::Create_Tuple_with_Ref();
+    Reference_Wrapper::Create_Tuple_with_ConstRef();
+
+    // PrintTupleTests::PrintTestTuple();
 };

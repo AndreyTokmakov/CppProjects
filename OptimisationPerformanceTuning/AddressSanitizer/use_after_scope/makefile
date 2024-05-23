@@ -33,7 +33,7 @@ CXXFLAGS = -std=c++23 -DESRI_UNIX $(INCLUDEDIRS)
 
 CXXFLAGS +=  -fsanitize=address
 
-CXX = g++-13.1
+CXX = g++-13.2
 
 LDFLAGS = $(LIBDIRS) $(LIBS)
 

@@ -10,7 +10,7 @@ Description : Date_Time_Chrono
 #ifndef CPPPROJECTS_DATE_TIME_CHRONO_H
 #define CPPPROJECTS_DATE_TIME_CHRONO_H
 
-namespace Date_Time_Chrono{
+namespace Date_Time_Chrono {
     void TestAll();
 };
 

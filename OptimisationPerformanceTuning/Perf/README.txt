@@ -53,7 +53,7 @@ echo "-1" | sudo tee /proc/sys/kernel/perf_event_paranoid
     perf stat ls
     perf stat sleep 1
 
-    time perf stat ls
+     perf stat ls
     time perf stat sleep 1
 
 echo "2" | sudo tee /proc/sys/kernel/perf_event_paranoid

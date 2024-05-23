@@ -1158,7 +1158,7 @@ int main([[maybe_unused]] int argc,
     // FunctionCall_LookUp::TestAll();
     // RateLimiter::TestAll();
     // LRUCache::TestAll();
-    LowLatencyLogger::TestAll();
+    // LowLatencyLogger::TestAll();
     // Multithreading::TestAll();
     // Memory::TestAll();
     // MaxStack::TestAll();

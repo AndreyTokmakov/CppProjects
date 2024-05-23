@@ -11,6 +11,7 @@ Description : Date_Time_Chrono
 
 #include <iostream>
 #include <chrono>
+#include <format>
 
 namespace Date_Time_Chrono
 {
@@ -123,11 +124,16 @@ void Date_Time_Chrono::TestAll()
     // ChronoTests();
     // Year_Month_Day_Test();
     // Year_Month_Day_Test_2();
-
     // TimeToString::Test();
-
-    //  Experiments::test();
-
+    // Experiments::test();
 
 
+    using namespace std::chrono;
+    using namespace std::chrono_literals;
+
+    const auto today = sys_days{std::chrono::floor<days>(system_clock::now())};
+    std::cout << std::format("today: {}", today) << std::endl;
+
+    const auto test_date = sys_days(2020y / February / last);
+    std::cout << std::format("test_date: {}", test_date) << std::endl;
 }

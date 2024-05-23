@@ -305,7 +305,7 @@ namespace PerformanceExperiments::SpinLock_vs_Mutex
             static const timespec ns {0, 1};
             for (int i = 0; flag.load(std::memory_order_relaxed) || flag.exchange(1, std::memory_order_acquire); ++i)
             {
-                if (4 == i) /// to tune thread scheduler
+                if (4 == i) /// to tune task scheduler
                 {
                     i = 0;
                     nanosleep(&ns, nullptr);
@@ -314,6 +314,42 @@ namespace PerformanceExperiments::SpinLock_vs_Mutex
         }
 
         void unlock() { flag.store(0, std::memory_order_release); }
+    };
+
+    class spin_mutex_M2
+    {
+    private:
+        using flag = std::atomic<unsigned long long>;
+    private:
+        flag _f;
+    public:
+        spin_mutex_M2(): _f(0) {}
+        ~spin_mutex_M2() = default;
+        spin_mutex_M2(const spin_mutex_M2&) = delete;
+        spin_mutex_M2(spin_mutex_M2&&) = delete;
+        spin_mutex_M2& operator= (const spin_mutex_M2&) = delete;
+        spin_mutex_M2& operator= (spin_mutex_M2&&) = delete;
+
+        void lock()
+        {
+            unsigned long long expected = 0;
+            do
+            {
+                expected = 0;
+            }
+            while (!_f.compare_exchange_weak(expected, 1, std::memory_order_relaxed, std::memory_order_relaxed));
+        }
+
+        bool try_lock()
+        {
+            unsigned long long expected = 0;
+            return _f.compare_exchange_weak(expected, 1, std::memory_order_relaxed, std::memory_order_relaxed);
+        }
+
+        void unlock()
+        {
+            _f.store(0, std::memory_order_relaxed);
+        }
     };
 
     void RunBenchmark()
@@ -480,6 +516,26 @@ namespace PerformanceExperiments::SpinLock_vs_Mutex
             }
         }
 
+        {
+            spin_mutex_M2 spinLock;
+            uint64_t counter = 0;
+
+            auto task = [&] {
+                for (size_t idx  = 0; idx < iterCount / 10; ++idx) {
+                    spinLock.lock();
+                    ++counter;
+                    spinLock.unlock();
+                }
+            };
+
+            {
+                Utils::ScopedTimer timer {"spin_mutex_M2"};
+                std::vector<std::jthread> jobs;
+                for (int t = 0; t < threadsMax; ++t)
+                    jobs.emplace_back(task);
+            }
+        }
+
         /// Mutex              :  0.636317 seconds.
         /// SpinLock           :  3.79414 seconds.
         /// SpinLock2          :  3.91013 seconds.
@@ -616,7 +672,7 @@ namespace PerformanceExperiments::AtomicCounter_vs_Mutex
 
 void PerformanceExperiments::TestAll()
 {
-    CV_vs_Atomic::RunBenchmark();
-    // SpinLock_vs_Mutex::RunBenchmark();
+    // CV_vs_Atomic::RunBenchmark();
+    SpinLock_vs_Mutex::RunBenchmark();
     // AtomicCounter_vs_Mutex::RunBenchmark();
 };

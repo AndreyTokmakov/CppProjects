@@ -376,14 +376,14 @@ namespace Synchronization::SharedMutext {
             while (true) {
                 std::lock_guard lock(mtx);
                 std::osyncstream {std::cout}  << "Writer: entered" << std::endl;
-                std::this_thread::sleep_for(std::chrono::seconds(10));
+                std::this_thread::sleep_for(std::chrono::seconds(2));
                 std::osyncstream {std::cout}  << "Writer: exited" << std::endl;
             }
         };
 
 
         std::jthread writerThread1(writer);
-        std::jthread readerThread1(reader), readerThread2(reader), readerThread3(reader);
+        std::jthread readerThread1(reader); //readerThread2(reader), readerThread3(reader);
     }
 }
 
@@ -892,11 +892,6 @@ void Synchronization::TEST_ALL()
     // UniqueLock::UniqueLock_Release();
 
 
-    // SharedMutext::Test_NoShare();
-    // SharedMutext::Synchronized_Read_Write_Test();
-    // SharedMutext::Read_Write_Test_Blocking();
-
-
     // TimedMutex::TryLockFor();
     // TimedMutex::TryLockFor_1();
     // TimedMutex::TryLockUntil();
@@ -905,6 +900,11 @@ void Synchronization::TEST_ALL()
     // TimedMutex::LimitTime_Using_UniqueLock();
 
 
+
+
+    // SharedMutext::Test_NoShare();
+    // SharedMutext::Synchronized_Read_Write_Test();
+    SharedMutext::Read_Write_Test_Blocking();
 
 
     // SharedTimedMutext::Test();
@@ -918,5 +918,5 @@ void Synchronization::TEST_ALL()
     // ScopedLock::Good_Example();
 
 
-    RecursiveMutex::main();
+    // RecursiveMutex::main();
 };
