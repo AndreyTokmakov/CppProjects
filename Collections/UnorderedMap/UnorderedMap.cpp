@@ -421,7 +421,7 @@ namespace UnorderedMap
             std::cout << "Data::Data(" << a << "," << b  << ")" << std::endl;
         }
 
-        Data(int i, int j = 0): a(i) {
+        Data(int i, [[maybe_unused]] int j = 0): a(i) {
             std::cout << "Data::Data(" << a << "," << b  << ")" << std::endl;
         }
 
@@ -841,11 +841,6 @@ namespace UnorderedMap::HeterogeneousLookup2
     using Helpers::Integer;
 
 
-    Integer createInt(Integer::value_type value)
-    {
-        return Integer {value};
-    }
-
     struct Hasher
     {
         using is_transparent = void;
@@ -886,7 +881,7 @@ namespace UnorderedMap::HeterogeneousLookup2
         data.emplace(5, std::string {"Goodbye!"});
 
         std::cout << " ---------------------- before find(5) -----------------------" <<  std::endl;
-        auto j = data.find(5);
+        decltype(data)::iterator  j = data.find(5);
         std::cout << " ---------------------- after -----------------------" <<  std::endl;
 
 
@@ -902,7 +897,7 @@ namespace UnorderedMap::HeterogeneousLookup2
         data.emplace(5, std::string {"Goodbye!"});
 
         std::cout << " ---------------------- before find(5) -----------------------" <<  std::endl;
-        auto j = data.find(5z);
+        decltype(data)::iterator j = data.find(5z);
         std::cout << " ---------------------- after -----------------------" <<  std::endl;
 
         std::cout << "j->first.value == " << j->first.value << ", j->second == " << j->second << "\n";

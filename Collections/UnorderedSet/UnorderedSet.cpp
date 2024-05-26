@@ -16,6 +16,8 @@
 #include <vector>
 
 #include "../Integer/Integer.h"
+#include "../Helpers/Helpers.h"
+
 #include "UnorderedSet.h"
 
 namespace UnorderedSet {
@@ -348,7 +350,194 @@ namespace UnorderedSet::PairsSet
     }
 }
 
-void UnorderedSet::TEST_ALL() {
+namespace UnorderedSet::HeterogeneousLookup
+{
+    using Helpers::Integer;
+
+    struct Hash
+    {
+        using is_transparent = void;
+
+        size_t operator()(int32_t value) const {
+            return std::hash<int32_t>{}(value);
+        }
+
+        size_t operator()(const Integer& integer) const {
+            return std::hash<int32_t>{}(integer.value);
+        }
+    };
+
+    struct Comparator
+    {
+        using is_transparent = void;
+
+        bool operator()(int64_t left, const Integer& right) const {
+            return left == right.value;
+        }
+
+        bool operator()(const Integer& left, const Integer& right) const {
+            return left.value == right.value;
+        }
+    };
+
+
+    struct IntegerNoTransparentHash {
+        std::size_t operator()(const Integer& s) const noexcept {
+            return std::hash<int>{}(s.getValue());
+        }
+    };
+
+
+    void Test_Bad()
+    {
+        std::unordered_set<Integer, IntegerNoTransparentHash> data;
+
+        data.emplace(10);
+        data.emplace(5);
+
+        std::cout << " ---------------------- before find(5) -----------------------" <<  std::endl;
+        decltype(data)::iterator  j = data.find(5);
+        std::cout << " ---------------------- after -----------------------" <<  std::endl;
+
+        std::cout << "Result: " << j->value << "\n";
+    }
+
+    void Test_OK()
+    {
+        std::unordered_set<Integer, Hash, Comparator> data;
+
+        data.emplace(10);
+        data.emplace(5);
+
+        std::cout << " ---------------------- before find(5) -----------------------" <<  std::endl;
+        decltype(data)::iterator j = data.find(5z);
+        std::cout << " ---------------------- after -----------------------" <<  std::endl;
+
+        std::cout << "Result: " << j->value << "\n";
+    }
+}
+
+
+namespace UnorderedSet::HeterogeneousLookup_Hashing
+{
+
+    template <typename Hash>
+    struct KeyHashPair
+    {
+        std::string_view key;
+        std::size_t hash {};
+
+        explicit KeyHashPair(std::string_view sv) :
+                key { sv }, hash { Hash{}(key) } {
+        }
+    };
+
+    struct Hash
+    {
+        using is_transparent = void;
+
+        std::size_t operator()(std::string_view sv) const noexcept {
+            return std::hash<std::string_view>{}(sv);
+        }
+
+        std::size_t operator()(KeyHashPair<Hash> pair) const noexcept {
+            return pair.hash;
+        }
+    };
+
+    struct Comparator
+    {
+        using is_transparent = void;
+
+        constexpr bool operator()(std::string_view lhs, std::string_view rhs) const noexcept {
+            return lhs == rhs;
+        }
+
+        template <typename Hash>
+        constexpr bool operator()(KeyHashPair<Hash> lhs, std::string_view rhs) const noexcept {
+            return lhs.key == rhs;
+        }
+    };
+
+    void Search()
+    {
+        using Set = std::unordered_set<std::string, Hash, Comparator>;
+
+        Set set1 {"foo"};
+
+        const std::string string {"foo"};
+        const KeyHashPair<Set::hasher> pair {string};
+
+        const bool exists = set1.contains(pair);
+        std::cout << "Exist: " << std::boolalpha << exists << std::endl;
+    }
+}
+
+
+namespace UnorderedSet::HeterogeneousLookup_Hashing_Integer
+{
+    using Helpers::Integer;
+
+
+    template <typename Hash>
+    struct KeyHashPair
+    {
+        Integer key;
+        std::size_t hash {};
+
+        explicit KeyHashPair(int k) :
+                key { k }, hash { Hash{}(key) } {
+        }
+    };
+
+    struct Hash
+    {
+        using is_transparent = void;
+
+        std::size_t operator()(const Integer& v) const noexcept {
+            return std::hash<int32_t>{}(v.value);
+        }
+
+        std::size_t operator()(const KeyHashPair<Hash>& pair) const noexcept {
+            return pair.hash;
+        }
+    };
+
+    struct Comparator
+    {
+        using is_transparent = void;
+
+        constexpr bool operator()(const Integer& lhs, const Integer& rhs) const noexcept {
+            return lhs == rhs;
+        }
+
+        template <typename Hash>
+        constexpr bool operator()(const KeyHashPair<Hash>& lhs, const Integer& rhs) const noexcept {
+            return lhs.key == rhs;
+        }
+    };
+
+    void Search()
+    {
+        using Set = std::unordered_set<Integer, Hash, Comparator>;
+
+        Set set1;
+        set1.emplace(1);
+
+        const KeyHashPair<Set::hasher> pair {1};
+
+        std::cout << "=========================================================================\n";
+
+        const bool exists = set1.contains(pair);
+        std::cout << "Exist: " << std::boolalpha << exists << std::endl;
+
+        std::cout << "=========================================================================\n";
+
+    }
+}
+
+void UnorderedSet::TEST_ALL()
+{
 	// Constructors();
 
 	// Insert();
@@ -372,7 +561,13 @@ void UnorderedSet::TEST_ALL() {
 
 	// Delete_InLoop();
 
-
     // PairsSet::InsertPair_To_Set();
-    PairsSet::InsertUnorderedPair_To_Set();
+    // PairsSet::InsertUnorderedPair_To_Set();
+
+
+    // HeterogeneousLookup::Test_Bad();
+    // HeterogeneousLookup::Test_OK();
+
+    // HeterogeneousLookup_Hashing::Search();
+    HeterogeneousLookup_Hashing_Integer::Search();
 }

@@ -41,9 +41,9 @@ int main([[maybe_unused]] int argc,
 	// TEST(Valarray);
 	// TEST(Map);
 	// MultiMap::TestAll();
-    TEST(UnorderedMap);
+    // TEST(UnorderedMap);
     // TEST(Set);
-    // TEST(UnorderedSet);
+    TEST(UnorderedSet);
 	// TEST(Queue);
 	// PriorityQueue::TestAll();
 	// TEST(Custom_Vector);

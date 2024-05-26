@@ -209,10 +209,37 @@ namespace Barrier
     }
 };
 
+namespace Barrier::Reuse_Callback
+{
+    void Test()
+    {
+        constexpr uint16_t threadCount {4};
+
+        std::barrier phase(threadCount,[id = 1] mutable {
+            std::osyncstream{std::cout} << "Phase " << id << " complete\n";
+            id++;
+        });
+
+        std::vector<std::jthread> runners;
+        std::generate_n(std::back_inserter(runners), threadCount, [&phase]{
+            return std::jthread([&phase]{
+                std::osyncstream{std::cout} << "Running phase 1 for thread " << std::this_thread::get_id() << std::endl;
+
+                std::this_thread::yield(); /** block until all threads arrive **/
+                phase.arrive_and_wait();
+
+                std::osyncstream{std::cout} << "Running phase 2 for thread " << std::this_thread::get_id() << std::endl;
+
+                std::this_thread::yield(); /** block until all threads arrive **/
+                phase.arrive_and_wait();
+            });
+        });
+    }
+}
 
 void Barrier::TEST_ALL()
 {
-    SimpleTest();
+    // SimpleTest();
     // Test();
 
     // Wait_To_All_Thread_Completed();
@@ -221,4 +248,6 @@ void Barrier::TEST_ALL()
 
     // Barrier_With_Completion();
     // Check_Block_By_Barrier();
+
+    Reuse_Callback::Test();
 };

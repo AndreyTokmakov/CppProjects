@@ -100,26 +100,6 @@ namespace Chrono
         std::cout << "Sec: " << timeinfo->tm_sec << std::endl;
     }
 
-    void Zones_Tests()
-    {
-        time_t rawtime;
-        tm* ptm;
-
-        static constexpr int MST = -7;
-        static constexpr int UTC = 0;
-        static constexpr int CCT = 8;
-        static constexpr int UAE = 4;
-
-        time(&rawtime);
-
-        ptm = gmtime(&rawtime);
-
-        puts("Current time around the World:");
-        printf("Phoenix, AZ (U.S.)  : %2d:%02d\n", (ptm->tm_hour + MST) % 24, ptm->tm_min);
-        printf("Reykjavik (Iceland) : %2d:%02d\n", (ptm->tm_hour + UTC) % 24, ptm->tm_min);
-        printf("Beijing (China)     : %2d:%02d\n", (ptm->tm_hour + CCT) % 24, ptm->tm_min);
-        printf("Abu Dhabi (UAE)     : %2d:%02d\n", (ptm->tm_hour + UAE) % 24, ptm->tm_min);
-    }
 
     void TIme_Format() {
 
@@ -781,6 +761,79 @@ namespace Chrono::CurrentTime
     }
 }
 
+
+namespace Chrono::TimeZones
+{
+    using namespace std::chrono;
+
+    void Test()
+    {
+        // Time zone database version
+        std::string tzdb_version = std::chrono::remote_version();
+        std::cout << "Zone database version: " << tzdb_version << std::endl;
+
+        // Iterate over valid timezones
+        std::cout << "Zones:\n";
+        for (const std::chrono::time_zone& zone : get_tzdb().zones) {
+            std::cout << "\t" << zone.name() << std::endl;
+        };
+        std::cout << std::endl;
+    }
+
+    void Get_Time_Zone_By_Name()
+    {
+        // Locate two time zones in the time zone db that we will be working with
+        const std::chrono::time_zone* prague = std::chrono::locate_zone("Europe/Prague");
+        const std::chrono::time_zone* newyork = std::chrono::locate_zone("America/New_York");
+
+        std::cout << prague->name() << std::endl;
+        std::cout << newyork->name() << std::endl;
+
+
+
+        // Local time is unzoned
+        std::chrono::local_time meeting { local_days{2025y/March/Wednesday[1]} };
+        std::cout << std::format("\nMeeting (local time): {}", meeting) << std::endl;
+
+        // Iterate over all meetings until summer time change
+        while (meeting < local_days { 2025y/April/Sunday[1] })
+        {
+            // create zoned time for Prague
+            const zoned_time<seconds> local {prague, local_days{meeting} + 15h};
+
+            // create zoned time for NewYork from the Prague zoned time
+            const zoned_time<seconds> remote {newyork, local};
+
+            std::cout << std::format("\t{}: {}\n", prague->name(), local);
+            std::cout << std::format("\t{}: {}\n\n", newyork->name(), remote);
+
+            meeting += weeks{1};
+        }
+    }
+
+    void Zones_Tests()
+    {
+        time_t rawtime;
+        tm* ptm;
+
+        static constexpr int MST = -7;
+        static constexpr int UTC = 0;
+        static constexpr int CCT = 8;
+        static constexpr int UAE = 4;
+
+        time(&rawtime);
+
+        ptm = gmtime(&rawtime);
+
+        puts("Current time around the World:");
+        printf("Phoenix, AZ (U.S.)  : %2d:%02d\n", (ptm->tm_hour + MST) % 24, ptm->tm_min);
+        printf("Reykjavik (Iceland) : %2d:%02d\n", (ptm->tm_hour + UTC) % 24, ptm->tm_min);
+        printf("Beijing (China)     : %2d:%02d\n", (ptm->tm_hour + CCT) % 24, ptm->tm_min);
+        printf("Abu Dhabi (UAE)     : %2d:%02d\n", (ptm->tm_hour + UAE) % 24, ptm->tm_min);
+    }
+}
+
+
 void Chrono::TestAll()
 {
     // CurrentTime::Asctime();
@@ -818,6 +871,9 @@ void Chrono::TestAll()
     // FunctionPerformance::TestGetCurrentTimeFunctions();
 
 
+    // TimeZones::Test();
+    TimeZones::Get_Time_Zone_By_Name();
+    // TimeZones::Zones_Tests();
 
 
     // Steady_clock();
@@ -829,16 +885,12 @@ void Chrono::TestAll()
     // Year_Month_Day();
     // Create_Day_Manually();
 
-    // Zones_Tests();
     // is_PM_AM();
     // H24_to_AM_PM();
 
     // TimeOfDay::TimeOfDay_Basics();
     // CalendarDate::Basics();
     // Localtime_TM();
-
-
-
 
     // Experiments();
 };

@@ -1151,7 +1151,7 @@ int main([[maybe_unused]] int argc,
     // DVector::TestAll();
     // RingBuffer::TestAll();
     // DesignPatterns::TestAll();
-    // Date_Time_Chrono::TestAll();
+    Date_Time_Chrono::TestAll();
     // Heap::TestAll();
     // Iterators::TestAll();
     // Files::TestAll();

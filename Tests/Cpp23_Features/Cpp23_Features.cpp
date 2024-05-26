@@ -347,14 +347,11 @@ namespace ExplicitObjectParameters
 void Cpp23_Features::TestAll()
 {
 
-
-
-
     // Format::Format_to_N();
     // Format::VFormatTest1();
     // Format::VFormatPrint();
 
-    // static_operator();
+    static_operator();
     // static_operator_lambda();
 
     // static_operator__square_brackets();

@@ -10,15 +10,8 @@
 #ifndef SET_CONTAINER_TESTS__H_
 #define SET_CONTAINER_TESTS__H_
 
-namespace Set {
-	void InitTest();
-	void ExtractTests();
-	void ExtractTests1();
-	void InsertTests();
-	void EmplaceTest();
-	void FindTest();
-	void FindTest_Class();
-
+namespace Set
+{
 	void TEST_ALL();
 };
 
