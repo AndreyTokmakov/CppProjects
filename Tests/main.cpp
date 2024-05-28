@@ -1182,9 +1182,9 @@ int main([[maybe_unused]] int argc,
 
     // UBBook::Test();
 
-    PipelineOperator::SimplePipeTest();
+    // PipelineOperator::SimplePipeTest();
 
-    // StringTest_SSO::Tests();
+    StringTest_SSO::Tests();
 
     /** * * * * *  Move to lib * * * * * **/
 

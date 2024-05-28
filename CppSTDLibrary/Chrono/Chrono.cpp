@@ -861,7 +861,7 @@ void Chrono::TestAll()
     // TimeToString::Test();
     // StringFormat::StrfTime();
     // StringFormat::Asctime();
-    // StringFormat::PutTime_To_String();
+    StringFormat::PutTime_To_String();
     // StringFormat::CTime_String();
     // StringFormat::Format();
     // StringFormat::Format2();
@@ -872,7 +872,7 @@ void Chrono::TestAll()
 
 
     // TimeZones::Test();
-    TimeZones::Get_Time_Zone_By_Name();
+    // TimeZones::Get_Time_Zone_By_Name();
     // TimeZones::Zones_Tests();
 
 
