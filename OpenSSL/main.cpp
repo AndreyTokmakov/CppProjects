@@ -353,7 +353,7 @@ int main([[maybe_unused]] int argc,
     printVersionInfo();
 
     // Experiments::TestCertificate();
-    Experiments::TestCertificate_PEM();
+    // Experiments::TestCertificate_PEM();
     // Experiments::TestReadCertificate();
     // Experiments::GetSerialNumber();
 
@@ -362,6 +362,8 @@ int main([[maybe_unused]] int argc,
     // Keys::Generate_RSA_Keys();
 
     // Errors::InspectErrors();
+
+
 
     return EXIT_SUCCESS;
 }

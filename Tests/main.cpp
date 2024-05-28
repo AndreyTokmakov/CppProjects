@@ -49,6 +49,7 @@ Description : Tests C++ project
 #include <random>
 #include <format>
 #include <iomanip>
+#include <expected>
 
 #include <experimental/socket>
 #include <experimental/scope>
@@ -1103,6 +1104,63 @@ namespace StringTest_SSO
     }
 }
 
+namespace PipelineOperator
+{
+    std::string FuncOne(std::string &&s) {
+        s += " [ONE] ";
+        std::cout << "FuncOne  : " << s << std::endl;
+        return s;
+    }
+
+    std::string FuncTwo(std::string &&s) {
+        s += " [TWO] ";
+        std::cout << "FuncTwo  : " << s << std::endl;
+        return s;
+    }
+
+    std::string FuncThree(std::string &&s) {
+        s += " [THREE] ";
+        std::cout << "FuncThree: " << s << std::endl;
+        return s;
+    }
+
+    template <typename T, typename Function>
+        requires (std::invocable<Function, T>)
+    constexpr std::invoke_result_t<Function, T> operator | (T &&t, Function &&f) {
+        return std::invoke(std::forward<Function>(f), std::forward<T>(t));
+    }
+
+    /*
+    template <typename T>
+    concept is_expected = requires(T t) {
+        typename T::value_type;
+        typename T::error_type;
+        requires std::is_constructible_v<bool, T>;
+        requires std::same_as<std::remove_cvref<decltype(*t)>, typename T::value_type>;
+        requires std::constructible_from<T, std::unexpected<typename T::error_type>>;
+    };
+
+    using namespace std;
+    template <typename T, typename E, typename Function>
+    requires invocable<Function, T> &&
+             is_expected<typename std::invoke_result_t<Function, T>>
+    constexpr std::invoke_result_t<Function, T> operator | (std::expected<T, E> &&ex, Function &&f)
+    {
+        return ex ?
+               invoke(forward<Function>(f), *forward<expected<T, E>>(ex)) :
+        ex;
+    }
+    */
+
+    void SimplePipeTest()
+    {
+        std::string start_str("Start string ");
+        std::string&& result = std::move(start_str) | FuncOne | FuncTwo | FuncThree;
+
+        std::cout << "\nResult: " << result << std::endl;
+    }
+}
+
 int main([[maybe_unused]] int argc,
          [[maybe_unused]] char** argv)
 {
@@ -1124,6 +1182,7 @@ int main([[maybe_unused]] int argc,
 
     // UBBook::Test();
 
+    PipelineOperator::SimplePipeTest();
 
     // StringTest_SSO::Tests();
 
@@ -1151,7 +1210,7 @@ int main([[maybe_unused]] int argc,
     // DVector::TestAll();
     // RingBuffer::TestAll();
     // DesignPatterns::TestAll();
-    Date_Time_Chrono::TestAll();
+    // Date_Time_Chrono::TestAll();
     // Heap::TestAll();
     // Iterators::TestAll();
     // Files::TestAll();

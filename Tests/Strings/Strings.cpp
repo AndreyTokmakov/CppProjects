@@ -223,4 +223,14 @@ void Strings::TestAll()
     // UtilitiesTests::Update_string_test();
     // UtilitiesTests::Random_String();
 
+
+
+    /*
+    auto getStr = [](const std::string& str) {
+        //
+    };
+
+    std::string_view sv { "1232323"};
+    getStr(sv);
+    */
 };

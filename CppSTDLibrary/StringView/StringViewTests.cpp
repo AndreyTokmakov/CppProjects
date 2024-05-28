@@ -17,6 +17,8 @@
 #include "../Integer/Integer.h"
 #include "StringViewTests.h"
 
+
+
 namespace StringView {
 	std::string_view askForName()
 	{
@@ -267,7 +269,8 @@ namespace StringView::Tests {
 }
 
 
-void StringView::TestAll() {
+void StringView::TestAll()
+{
 	// Create();
 	// Create_2();
 	// Test();
@@ -276,7 +279,7 @@ void StringView::TestAll() {
 	// ToString();
 	// ReturnSrting();
 
-    Tests::Contains();
+    // Tests::Contains();
 
 	// Various_Tests();
 
@@ -289,5 +292,14 @@ void StringView::TestAll() {
 
 	// const std::string rootFolder { R"(/home/andtokm/mlpack/tests/mlpack/src/data/)" };
 	// const std::string filePath{ rootFolder  + "  "};
+
+    std::string buffer {"123451234512345123451234512345123451234512345123451234512345__"};
+    char* dataPtr = buffer.data();
+
+    std::string sv {dataPtr, 5};
+
+
+    std::cout << atoi(sv.data()) << std::endl;
+    std::cout << sv.data() << std::endl;
 
 }

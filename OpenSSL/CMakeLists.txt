@@ -11,7 +11,8 @@ link_directories(${OPENSSL_ROOT_DIR})
 include_directories("${OPENSSL_ROOT_DIR}/include")
 
 
-#[===[
+# #[===[
+
 find_package(OpenSSL REQUIRED)
 message (STATUS "OPENSSL_FOUND: ${OPENSSL_FOUND}")
 message (STATUS "   OPENSSL_INCLUDE_DIR: ${OPENSSL_INCLUDE_DIR}")
@@ -21,7 +22,7 @@ message (STATUS "   OPENSSL_SSL_LIBRARIES: ${OPENSSL_SSL_LIBRARIES}")
 message (STATUS "   OPENSSL_LIBRARIES: ${OPENSSL_LIBRARIES}")
 message (STATUS "   OPENSSL_VERSION: ${OPENSSL_VERSION}")
 message (STATUS "   OPENSSL_APPLINK_SOURCE: ${OPENSSL_APPLINK_SOURCE}")
-]===]
+# ]===]
 
 add_compile_options(-c -Wall -Wextra -O3 -std=c++2a)
 
@@ -35,7 +36,6 @@ add_executable(${PROJECT_NAME}
 TARGET_LINK_LIBRARIES(${PROJECT_NAME}
         pthread
         rt
-        crypt
         crypto
-        ssl
+        # ssl
 )
