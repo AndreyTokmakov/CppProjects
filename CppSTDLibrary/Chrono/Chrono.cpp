@@ -860,8 +860,8 @@ void Chrono::TestAll()
 
     // TimeToString::Test();
     // StringFormat::StrfTime();
-    // StringFormat::Asctime();
-    StringFormat::PutTime_To_String();
+    StringFormat::Asctime();
+    // StringFormat::PutTime_To_String();
     // StringFormat::CTime_String();
     // StringFormat::Format();
     // StringFormat::Format2();

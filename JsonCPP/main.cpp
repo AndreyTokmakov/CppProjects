@@ -165,7 +165,7 @@ namespace JsonCpp
     }
 }
 
-namespace Nlohmann
+namespace Nlohmann // INFO: https://www.studyplan.dev/pro-cpp/json
 {
 
     using json = nlohmann::json;
@@ -191,6 +191,7 @@ namespace Nlohmann
                   << json::accept(invalid_text) << '\n';
     }
 
+    // INFO: https://www.studyplan.dev/pro-cpp/json
     void ParseJson_StringStream()
     {
         // JSON Lines (see https://jsonlines.org)
@@ -269,12 +270,12 @@ int main([[maybe_unused]] int argc,
     // JsonCpp::Test();
 
     // Nlohmann::checkIsValid();
-    // Nlohmann::ParseJson_StringStream();
+    Nlohmann::ParseJson_StringStream();
 
     // Nlohmann::ParseJson_File();
     // Nlohmann::ParseJson_File2();
 
-    RapidJson::ReadAndParse();
+    // RapidJson::ReadAndParse();
 
     return EXIT_SUCCESS;
 }

@@ -11,7 +11,7 @@
 #define EXEPTION_HANDLING_TESTS__H_
 
 namespace Exceptions {
-	void TEST_ALL();
+	void TestAll();
 };
 
 #endif /* EXEPTION_HANDLING_TESTS__H_ */

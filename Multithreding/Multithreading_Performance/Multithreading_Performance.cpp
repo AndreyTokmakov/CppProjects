@@ -629,7 +629,7 @@ void Multithreading_Performance::TEST_ALL()
     // SycnronizationTests::Mutex();
 
 
-    Atomics::AtomicFlag_Test_MemoryMode();
+    // Atomics::AtomicFlag_Test_MemoryMode();
     // Atomics::AtomicBool_Test_MemoryMode();
 
 

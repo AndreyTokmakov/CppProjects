@@ -66,7 +66,7 @@ int main([[maybe_unused]] int argc,
     // Atomic_CompareExchange::TestAll();
     // Atomic_IsLockFree::TestAll();
 
-    Barrier::TEST_ALL();
+    // Barrier::TEST_ALL();
     // CallOnce::TEST_ALL();
     // ConditionVariable::TEST_ALL();
     // Exceptions_Handling::TEST_ALL();
@@ -97,7 +97,7 @@ int main([[maybe_unused]] int argc,
     // JThreads::TEST_ALL();
 
     // FalseSharingExperiments::TEST_ALL();
-    // PerformanceExperiments::TestAll();
+    PerformanceExperiments::TestAll();
 
     // Utilities::TestAll();
 

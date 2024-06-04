@@ -356,7 +356,7 @@ namespace PerformanceExperiments::SpinLock_vs_Mutex
     {
         constexpr int threadsMax {16};
         constexpr size_t iterCount { 10'000'000 };
-#if 0
+#if 1
         {
             std::mutex mtx;
             uint64_t counter = 0;
@@ -672,7 +672,7 @@ namespace PerformanceExperiments::AtomicCounter_vs_Mutex
 
 void PerformanceExperiments::TestAll()
 {
-    // CV_vs_Atomic::RunBenchmark();
-    SpinLock_vs_Mutex::RunBenchmark();
+    CV_vs_Atomic::RunBenchmark();
+    // SpinLock_vs_Mutex::RunBenchmark();
     // AtomicCounter_vs_Mutex::RunBenchmark();
 };

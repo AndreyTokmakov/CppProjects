@@ -8,13 +8,12 @@
 //============================================================================
 
 #include "Exceptions.h"
+#include "../Helpers/Wrapper.h"
 
 #include <iostream>
 #include <string>
 #include <exception>
 
-using String = std::string;
-using CString = const String&;
 
 namespace Exceptions::Exceptions_In_Constructors {
 
@@ -216,10 +215,10 @@ namespace Exceptions::Exceptions_In_Constructors {
 };
 
 
-namespace Exceptions::Exceptions_In_Destructor {
-
-	class Base_WithDtorException {
-	public:
+namespace Exceptions::Exceptions_In_Destructor
+{
+	struct Base_WithDtorException
+    {
 		Base_WithDtorException() {
 			std::cout << "Base_WithException::Base_WithException()" << std::endl;
 			
@@ -230,9 +229,22 @@ namespace Exceptions::Exceptions_In_Destructor {
 		}
 	};
 
-	///////////////////////////////////////////////////////////////////////////////
+    struct BadClass
+    {
+        bool throwException {false};
 
-	void Test1() {
+        explicit BadClass(bool bad): throwException {bad} {
+            std::cout << "BadClass created\n";
+        }
+
+        ~BadClass() {
+            throw std::runtime_error("it's actually impossible to catch");
+            std::cout << "BadClass created\n";
+        }
+    };
+
+	void Test1()
+    {
 		try {
 			Base_WithDtorException b;
 		}
@@ -240,6 +252,24 @@ namespace Exceptions::Exceptions_In_Destructor {
 			std::cout << "EXCEPTION:  " << exc.what() << std::endl;
 		}
 	}
+
+
+    void Test_MemLeak()
+    {
+        Helpers::Integer integer {12345};
+
+        try {
+            BadClass obj {true};
+            /** **/
+        } catch (const std::exception& exc) {
+            std::cout << "Error: " << exc.what() << std::endl;
+        } catch (...) {
+            std::cout << "Unknown error" << std::endl;
+        }
+
+        // якобы теперь ОК
+        // Helpers::~Integer() will never be called
+    }
 }
 
 namespace Exceptions::ExceptionsTypes {
@@ -472,7 +502,8 @@ namespace Exceptions::CurrentException {
 	}
 }
 
-void Exceptions::TEST_ALL() {
+void Exceptions::TestAll()
+{
 	// Exceptions_In_Constructors::Test_Base();
 	// Exceptions_In_Constructors::Test_Base_TwoConstructors();
 
@@ -481,7 +512,10 @@ void Exceptions::TEST_ALL() {
 	// Exceptions_In_Constructors::Test_Exception_Composition_Handling();
 	// Exceptions_In_Constructors::Test_Exception_InitList();
 
-	// Exceptions_In_Destructor::Test1();
+
+	Exceptions_In_Destructor::Test1();
+	Exceptions_In_Destructor::Test_MemLeak();
+
 
 	// ExceptionsTypes::TimeoutException();
 
@@ -493,5 +527,5 @@ void Exceptions::TEST_ALL() {
 
 	// Tests::_TESTS_();
 
-	CurrentException::GetCurrentException();
+	// CurrentException::GetCurrentException();
 };

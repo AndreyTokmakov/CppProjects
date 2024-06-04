@@ -34,32 +34,35 @@
 #include "Synchronization.h"
 #include "../ThreadHelperUtilities/ThreadHelperUtilities.h"
 
-namespace Synchronization {
-
-    void Test_Unsynch() {
+namespace Synchronization
+{
+    void Test_Unsynch()
+    {
         int counter = 0;
         THREAD_INFO << "started." << std::endl;
 
-        auto incremetor = [&]()-> void {
+        auto incrementor = [&]()-> void {
             for (int i = 0; i < 1000000; ++i) {
                 counter = counter + 1;
             }
         };
 
-        std::vector<std::thread> jobs;
-        for (int i = 0; i++ < 5;)
-            jobs.emplace_back(incremetor);
-        std::for_each(jobs.begin(), jobs.end(), [](auto& T) {T.join(); });
+        {
+            std::vector<std::jthread> jobs;
+            for (int i = 0; i++ < 5;)
+                jobs.emplace_back(incrementor);
+        }
         std::cout << "Result = " << counter << std::endl;
     }
 
-    void Mutex_Lock_Test_1() {
-        int counter = 0;
+    void Mutex_Lock_Test_1()
+    {
         std::mutex mtx;
 
         THREAD_INFO << "started." << std::endl;
 
-        auto incremetor = [&]()-> void {
+        int counter = 0;
+        auto incrementor = [&]()-> void {
             for (int i = 0; i < 100; ++i) {
                 //mtx.lock();
                 ++counter;
@@ -69,13 +72,15 @@ namespace Synchronization {
             }
         };
 
-        std::vector<std::thread> jobs;
-        for (int i = 0; i++ < 5;)
-            jobs.emplace_back(incremetor);
-        std::for_each(jobs.begin(), jobs.end(), [](auto& T) {T.join(); });
+        {
+            std::vector<std::jthread> jobs;
+            for (int i = 0; i++ < 5;)
+                jobs.emplace_back(incrementor);
+        }
     }
 
-    void LockGuard_Test_1() {
+    void LockGuard_Test_1()
+    {
         unsigned int sharedVariable = 0;
         std::mutex mtx;
 
@@ -132,7 +137,8 @@ namespace Synchronization {
 
 namespace Synchronization::UniqueLock
 {
-    void UniqueLock_Lock() {
+    void UniqueLock_Lock()
+    {
         std::mutex mtx;
         THREAD_INFO << "started." << std::endl;
 
@@ -251,7 +257,8 @@ namespace Synchronization::UniqueLock
             x.join();
     }
 
-    void UniqueLock_OwnsLock() {
+    void UniqueLock_OwnsLock()
+    {
         std::mutex mtx;
         auto print_star = [&]()-> void {
             std::unique_lock<std::mutex> lck(mtx, std::try_to_lock);
@@ -510,22 +517,42 @@ namespace Synchronization::SharedTimedMutext {
 }
 
 
-namespace Synchronization::TimedMutex {
+namespace Synchronization::TimedMutex
+{
 
     void TryLockUntil()
     {
         std::timed_mutex mtx;
-        std::lock_guard<std::timed_mutex> lock(mtx);
 
-        auto task = std::async([&](unsigned short timeout)-> void {
+        auto holdTheLock = [&](uint16_t timeout) {
+            std::lock_guard<std::timed_mutex> lock {mtx};
+            std::this_thread::sleep_for(std::chrono::seconds (timeout));
+        };
+
+        auto task = [&](uint16_t timeout)-> void {
             THREAD_INFO << "Task started.\n";
-            auto now = std::chrono::steady_clock::now();
+            const std::chrono::time_point now = std::chrono::steady_clock::now();
 
             [[maybe_unused]]
-            auto result = mtx.try_lock_until(now + std::chrono::seconds(timeout));
-            THREAD_INFO << "Task completed.\n";
-        }, 5);
-        task.wait();
+            const bool isAcquired = mtx.try_lock_until(now + std::chrono::seconds(timeout));
+            THREAD_INFO << "Task completed. Result = " << std::boolalpha << isAcquired << "\n";
+        };
+
+        {
+            auto holder = std::async(holdTheLock, 4);
+            auto waiter = std::async(task, 3);
+            waiter.wait();
+            holder.wait();
+        }
+
+        std::cout << std::endl;
+
+        {
+            auto holder = std::async(holdTheLock, 2);
+            auto waiter = std::async(task, 3);
+            waiter.wait();
+            holder.wait();
+        }
     }
 
     void TryLockUntil_1()
@@ -643,7 +670,8 @@ namespace Synchronization::TimedMutex {
     }
 }
 
-namespace Synchronization::ScopedLock {
+namespace Synchronization::ScopedLock
+{
 
     class Employee {
     public:
@@ -894,17 +922,15 @@ void Synchronization::TEST_ALL()
 
     // TimedMutex::TryLockFor();
     // TimedMutex::TryLockFor_1();
-    // TimedMutex::TryLockUntil();
+    TimedMutex::TryLockUntil();
     // TimedMutex::TryLockUntil_1();
     // TimedMutex::TryLockUntil_1();
     // TimedMutex::LimitTime_Using_UniqueLock();
 
 
-
-
     // SharedMutext::Test_NoShare();
     // SharedMutext::Synchronized_Read_Write_Test();
-    SharedMutext::Read_Write_Test_Blocking();
+    // SharedMutext::Read_Write_Test_Blocking();
 
 
     // SharedTimedMutext::Test();

@@ -17,12 +17,13 @@
 #include <shared_mutex>
 #include "ThreadHelperUtilities.h"
 
-namespace ThreadHelperUtilities {
-
+namespace ThreadHelperUtilities
+{
     const std::thread::id mainThreadId = std::this_thread::get_id();
     std::mutex print_mutex;
 
-    std::string ThreadInfo::getCurrentTime() const noexcept {
+    std::string ThreadInfo::getCurrentTime() const noexcept
+    {
         auto now = std::chrono::system_clock::now();
         auto in_time_t = std::chrono::system_clock::to_time_t(now);
         const auto nowMs = std::chrono::duration_cast<std::chrono::microseconds>(
@@ -37,7 +38,8 @@ namespace ThreadHelperUtilities {
         this_thread_id = std::this_thread::get_id();
     }
 
-    std::ostream& operator<< (std::ostream& stream, const ThreadInfo& threadInfo) {
+    std::ostream& operator<< (std::ostream& stream, const ThreadInfo& threadInfo)
+    {
         std::lock_guard<std::mutex> lock(print_mutex);
         stream << "[" << threadInfo.getCurrentTime() << "] Thread [";
         if (mainThreadId == threadInfo.this_thread_id) {

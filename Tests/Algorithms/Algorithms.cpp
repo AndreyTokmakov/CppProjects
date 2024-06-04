@@ -659,6 +659,37 @@ namespace Algorithms::Numbers
     }
 }
 
+
+namespace Algorithms::Numbers
+{
+    void remove_sequenced_unique_elements(std::vector<int>& values)
+    {
+        if (values.empty())
+            return;
+
+        uint32_t pos = 1;
+        for (uint32_t idx = 1, size = values.size(); idx < size; ++idx) {
+            std::cout << '[' << idx - 1 << "] = " << values[idx - 1]
+                      << " [" << idx << "] = " << values[idx] << std::endl;
+            if (values[idx - 1] != values[idx]) {
+                std::swap(values[pos++], values[idx]);
+            }
+        }
+
+        //values.resize(pos);
+        //values.shrink_to_fit();
+    }
+
+    void Unique()
+    {
+        std::vector<int> values {1, 2, 1, 1, 3, 3, 3};
+        remove_sequenced_unique_elements(values);
+
+        std::cout << values << std::endl;
+
+    }
+}
+
 namespace Algorithms::Numbers
 {
     int missing_number(const std::vector<int>& values)
@@ -2073,6 +2104,7 @@ void Algorithms::TestAll()
     // Numbers::Divide_Numbers();
     // Numbers::MajorityElement();              // INFO --> To Algorithms
     // Numbers::CanPartition();                 // INFO --> To Algorithms
+    Numbers::Unique();
 
     // Strings::FindCommon_PrefixAndPostfix();
     // Strings::FindLastNotOf__Benchmark();
@@ -2087,7 +2119,7 @@ void Algorithms::TestAll()
     // Strings::Intersperse_String();
     // Strings::Count_Anagrams();
     // Strings::Interleaving_String();
-    Strings::DestinationCity();
+    // Strings::DestinationCity();
 
     // Bits::ReverseBits();
 

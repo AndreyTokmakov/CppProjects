@@ -906,13 +906,13 @@ namespace ScopeExit
         modify(value);
 
         // failure.release();
-        // ok.release();
+        ok.release();
     }
 
     void ScopeExit()
     {
-        // updateDatabaseSafe(10);
-        updateDatabaseSafe(-10);
+        updateDatabaseSafe(10);
+        // updateDatabaseSafe(-10);
     }
 }
 
@@ -945,39 +945,6 @@ namespace PermissionsTest
     {
         Permission mask = Permission::Read | Permission::Write;
         enable_bitmask_operator_or(mask);
-    }
-}
-
-namespace Exceptions
-{
-    struct BadClass
-    {
-        bool throwException {false};
-
-        explicit BadClass(bool bad): throwException {bad} {
-            std::cout << "BadClass created\n";
-        }
-        ~BadClass() {
-            throw std::runtime_error("it's actually impossible to catch");
-            std::cout << "BadClass created\n";
-        }
-    };
-
-    void test()
-    {
-        Helpers::Integer integer {12345};
-
-        try {
-            BadClass obj {true};
-            /** **/
-        } catch (const std::exception& exc) {
-            std::cout << "Error: " << exc.what() << std::endl;
-        } catch (...) {
-            std::cout << "Unknown error" << std::endl;
-        }
-
-        // якобы теперь ОК
-        // Helpers::~Integer() will never be called
     }
 }
 
@@ -1178,13 +1145,15 @@ int main([[maybe_unused]] int argc,
 
     // ScopeExit::ScopeExit();
 
-    // Exceptions::test();
-
     // UBBook::Test();
 
     // PipelineOperator::SimplePipeTest();
 
-    StringTest_SSO::Tests();
+    // StringTest_SSO::Tests();
+
+
+
+
 
     /** * * * * *  Move to lib * * * * * **/
 

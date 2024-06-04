@@ -870,7 +870,7 @@ void Filesystem::TestAll()
 
     // CreateDirectory();
     // CreateDirectoryTest();
-    // DeleteDirectoryTest();
+    DeleteDirectoryTest();
     // CopyDirTest();
 
     // Is_Dir_Exists();

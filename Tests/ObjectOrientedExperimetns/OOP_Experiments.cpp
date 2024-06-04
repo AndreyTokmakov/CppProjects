@@ -444,6 +444,8 @@ namespace ObjectOrientedExperiments::ShadowingMemberVariable
     }
 }
 
+
+
 void ObjectOrientedExperiments::OOP_Experiments::TestAll()
 {
     // OOP_Experiments::FriendTests
@@ -464,5 +466,7 @@ void ObjectOrientedExperiments::OOP_Experiments::TestAll()
 
     // Change_Overrided_Method_Visibility::Test();
 
-    ShadowingMemberVariable::Test();
+    // ShadowingMemberVariable::Test();
+
+
 };
