@@ -17,7 +17,9 @@ add_compile_options(-c -Wall -Wextra -O3 -std=c++2a)
 
 # include all components
 add_executable(${PROJECT_NAME}
-    main.cpp
+        main.cpp
+        FileUtilities.cpp  FileUtilities.h
+        PerformanceTests.cpp  PerformanceTests.h
 )
 
 # Link libraries to the project/executable

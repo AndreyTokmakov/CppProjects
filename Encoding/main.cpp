@@ -12,7 +12,8 @@ Description : Encoding C++ project
 #include <string_view>
 
 #include "Base64/Base64.h"
-#include "URL//URLEncoding.h"
+#include "URL/URLEncoding.h"
+#include "Hex_to_Bytes/Hex_to_Bytes.h"
 
 // TODO:
 // 1. int <--> IP
@@ -25,7 +26,8 @@ int main([[maybe_unused]] int argc,
     const std::vector<std::string_view> args(argv + 1, argv + argc);
 
     // Base64::TestAll(args);
-    URLEncoding::TestAll(args);
+    // URLEncoding::TestAll(args);
+    Hex_to_Bytes::TestAll();
 
 
     return EXIT_SUCCESS;

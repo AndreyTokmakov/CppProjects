@@ -13,6 +13,7 @@ add_executable(${PROJECT_NAME}
         main.cpp
         Base64/Base64.cpp Base64/Base64.h
         URL/URLEncoding.cpp URL/URLEncoding.h
+        Hex_to_Bytes/Hex_to_Bytes.cpp Hex_to_Bytes/Hex_to_Bytes.h
 )
 
 # Link libraries to the project/executable

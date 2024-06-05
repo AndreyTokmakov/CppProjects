@@ -7,42 +7,19 @@
 // Description : JsonCPP C++ project
 //============================================================================
 
-#include <iostream>
-#include <memory>
-#include <string>
-#include <string_view>
-#include <cstdint>
-#include <cstring>
-#include <fstream>
-#include <filesystem>
-#include <tuple>
-
-#include <thread>
-#include <future>
-
-#include <mutex>
-#include <atomic>
-
-#include <cmath>
-#include <numeric>
-#include <numbers>
-#include <ostream>
-
-#include <vector>
-#include <any>
-#include <list>
-#include <map>
-#include <algorithm>
-#include <array>
-#include <set>
-#include <unordered_set>
-#include <unordered_map>
-#include <span>
-
 // cd Project/third_party
 // git clone git@github.com:open-source-parsers/jsoncpp.git
 // git clone git@github.com:nlohmann/json.git
 // git clone git@github.com:Tencent/rapidjson.git
+
+#include <iostream>
+#include <string>
+#include <string_view>
+#include <fstream>
+#include <filesystem>
+
+#include "FileUtilities.h"
+#include "PerformanceTests.h"
 
 #include "json/json.h"
 #include <nlohmann/json.hpp>
@@ -52,99 +29,6 @@
 #include "rapidjson/stringbuffer.h"
 #include "rapidjson/istreamwrapper.h"
 #include "rapidjson/ostreamwrapper.h"
-
-
-#include <fstream>
-#include <iostream>
-
-namespace FileUtilities
-{
-    constexpr size_t readBlockSize { 1024 };
-
-    void PrintFileContent(const std::filesystem::path &filePath)
-    {
-        if (std::ifstream file(filePath); file.is_open() && file.good())
-        {
-            std::string line;
-            while (std::getline(file, line)) {
-                std::cout << line << std::endl;
-            }
-        }
-    }
-
-    std::string ReadFile(const std::filesystem::path &filePath)
-    {
-        if (std::ifstream file(filePath); file.is_open() && file.good())
-        {
-            file.seekg(0, std::ios_base::end);
-            size_t fileSize = file.tellg(), bytesRead = 0;
-            file.seekg(0, std::ios_base::beg);
-
-            std::string text(fileSize, '\0');
-            while ((bytesRead += file.readsome(text.data() + bytesRead, readBlockSize)) < fileSize) { }
-            return text;
-        }
-        return {};
-    }
-
-    bool ReadFile2String(const std::filesystem::path &filePath,
-                         std::string& dst)
-    {
-        if (std::ifstream file(filePath); file.is_open() && file.good())
-        {
-            file.seekg(0, std::ios_base::end);
-            size_t fileSize = file.tellg(), bytesRead = 0;
-            file.seekg(0, std::ios_base::beg);
-
-            dst.resize(fileSize);
-            while ((bytesRead += file.readsome(dst.data() + bytesRead, readBlockSize)) < fileSize) { }
-            return true;
-        }
-        return false;
-    }
-
-    std::size_t getFileSize(const std::filesystem::path &filePath)
-    {
-        if (std::ifstream file(filePath); file.is_open() && file.good())
-        {
-            file.seekg(0, std::ios_base::end);
-            const size_t fileSize = file.tellg();
-            file.seekg(0, std::ios_base::beg);
-            return fileSize;
-        }
-        return std::string::npos;
-    }
-
-    std::size_t getFileSizeFS(const std::filesystem::path &filePath)
-    {
-        return std::filesystem::file_size(filePath);
-    }
-
-    int32_t WriteToFile(const std::filesystem::path& filePath,
-                        const std::string& text,
-                        std::ios_base::openmode mode)
-    {
-        if (std::ofstream file(filePath, mode); file.is_open() && file.good())
-        {
-            const int32_t pos = static_cast<int32_t>(file.tellp());
-            file.write(text.data(), std::ssize(text));
-            return static_cast<int32_t>(file.tellp()) - pos;
-        }
-        return -1;
-    }
-
-    int32_t WriteToFile(const std::filesystem::path& filePath,
-                        const std::string& text)
-    {
-        return WriteToFile(filePath, text, std::ios_base::trunc);
-    }
-
-    int32_t AppendToFile(const std::filesystem::path& filePath,
-                         const std::string& text)
-    {
-        return WriteToFile(filePath, text, std::ios_base::app);
-    }
-}
 
 
 namespace JsonCpp
@@ -270,12 +154,14 @@ int main([[maybe_unused]] int argc,
     // JsonCpp::Test();
 
     // Nlohmann::checkIsValid();
-    Nlohmann::ParseJson_StringStream();
+    // Nlohmann::ParseJson_StringStream();
 
     // Nlohmann::ParseJson_File();
     // Nlohmann::ParseJson_File2();
 
-    // RapidJson::ReadAndParse();
+    RapidJson::ReadAndParse();
+
+    // PerformanceTests::TestAll();
 
     return EXIT_SUCCESS;
 }

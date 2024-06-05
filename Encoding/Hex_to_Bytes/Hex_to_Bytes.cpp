@@ -1,0 +1,83 @@
+/**============================================================================
+Name        : Hex_to_Bytes.cpp
+Created on  : 05.06.2024
+Author      : Andrei Tokmakov
+Version     : 1.0
+Copyright   : Your copyright notice
+Description : Hex_to_Bytes.cpp
+============================================================================**/
+
+#include "Hex_to_Bytes.h"
+
+#include <string_view>
+#include <vector>
+#include <array>
+#include <cstdint>
+#include <iostream>
+#include <cstring>
+
+namespace Hex_to_Bytes
+{
+
+
+    // TODO: Refactoring
+    void bytesToHexStr(const char *src,
+                       size_t len,
+                       char *dest)
+    {
+        constexpr static std::array<char, 16> table { '0','1','2','3','4','5','6','7','8','9','A','B','C','D','E','F'};
+        for (uint8_t ch = 0; len > 0; --len) {
+            ch = *src++;
+            *dest++ = table[ch >> 4];
+            *dest++ = table[ch & 0x0f];
+        }
+    }
+
+    static constexpr uint8_t hexCode(unsigned char symbol) noexcept
+    {
+        if (symbol >= '0' && symbol <= '9')
+            return symbol - '0';
+        if (symbol >= 'A' && symbol <= 'F')
+            return symbol - 'A' + 10;
+        if (symbol >= 'a' && symbol <= 'f')
+            return symbol - 'a' + 10;
+        return 0;
+    }
+
+    static constexpr uint8_t hex2UChar(std::string_view hexValue) noexcept
+    {
+        return 16 * hexCode(hexValue[0]) + hexCode(hexValue[1]);
+    }
+
+    std::vector<uint8_t> hex2Bytes(std::string_view hexString) noexcept
+    {
+        std::vector<uint8_t> bytes;
+        bytes.reserve(hexString.length()/2);
+        for (size_t length = hexString.length(), i = 0; i < length; i += 2)
+            bytes.push_back(hex2UChar(hexString.substr(i, 2)));
+        return bytes;
+    }
+};
+
+
+void Hex_to_Bytes::TestAll()
+{
+    const int val { 123456 };
+    char bytes[sizeof(val)];
+
+    /** To bytes **/
+    memcpy(bytes, &val, sizeof(val));
+
+    /** From bytes --> HEX string **/
+    std::string hexStr(sizeof(val) * 2, '0');
+    bytesToHexStr(bytes, sizeof(val), hexStr.data());
+
+    /** HEX string --> To bytes **/
+    const std::vector<uint8_t> bytes2 = hex2Bytes(hexStr);
+
+    /** From bytes --> to original data **/
+    int result = 0;
+    memcpy(&result, bytes2.data(), sizeof(val));
+
+    std::cout << val << " --> " << hexStr << " --> " << result << std::endl;
+};
