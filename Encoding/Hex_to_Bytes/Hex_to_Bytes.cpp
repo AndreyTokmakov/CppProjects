@@ -18,19 +18,30 @@ Description : Hex_to_Bytes.cpp
 
 namespace Hex_to_Bytes
 {
+    constexpr static std::array<char, 16> table { '0','1','2','3','4','5','6','7','8','9','A','B','C','D','E','F'};
 
-
-    // TODO: Refactoring
     void bytesToHexStr(const char *src,
                        size_t len,
                        char *dest)
     {
-        constexpr static std::array<char, 16> table { '0','1','2','3','4','5','6','7','8','9','A','B','C','D','E','F'};
         for (uint8_t ch = 0; len > 0; --len) {
             ch = *src++;
             *dest++ = table[ch >> 4];
             *dest++ = table[ch & 0x0f];
         }
+    }
+
+    std::string bytesToHexStr(const char *src,
+                              size_t len)
+    {
+        uint8_t ch = *src;
+        std::string result(len * 2, '0');
+        for (size_t pos = 0; len > 0; --len) {
+            ch = *src++;
+            result[pos++] = table[ch >> 4];
+            result[pos++] = table[ch & 0x0f];
+        }
+        return result;
     }
 
     static constexpr uint8_t hexCode(unsigned char symbol) noexcept
@@ -60,24 +71,55 @@ namespace Hex_to_Bytes
 };
 
 
+namespace Hex_to_Bytes::Tests
+{
+    void Test1()
+    {
+        const int val { 123456 };
+        char bytes[sizeof(val)];
+
+        /** To bytes **/
+        memcpy(bytes, &val, sizeof(val));
+
+        /** From bytes --> HEX string **/
+        std::string hexStr(sizeof(val) * 2, '0');
+        bytesToHexStr(bytes, sizeof(val), hexStr.data());
+
+        /** HEX string --> To bytes **/
+        const std::vector<uint8_t> bytes2 = hex2Bytes(hexStr);
+
+        /** From bytes --> to original data **/
+        int result = 0;
+        memcpy(&result, bytes2.data(), sizeof(val));
+
+        std::cout << val << " --> " << hexStr << " --> " << result << std::endl;
+    }
+
+    void Test2()
+    {
+        const int val { 123456 };
+        char bytes[sizeof(val)];
+
+        /** To bytes **/
+        memcpy(bytes, &val, sizeof(val));
+
+        /** From bytes --> HEX string **/
+        const std::string hexStr = bytesToHexStr(bytes, sizeof(val));
+
+        /** HEX string --> To bytes **/
+        const std::vector<uint8_t> bytes2 = hex2Bytes(hexStr);
+
+        /** From bytes --> to original data **/
+        int result = 0;
+        memcpy(&result, bytes2.data(), sizeof(val));
+
+        std::cout << val << " --> " << hexStr << " --> " << result << std::endl;
+    }
+}
+
+
 void Hex_to_Bytes::TestAll()
 {
-    const int val { 123456 };
-    char bytes[sizeof(val)];
-
-    /** To bytes **/
-    memcpy(bytes, &val, sizeof(val));
-
-    /** From bytes --> HEX string **/
-    std::string hexStr(sizeof(val) * 2, '0');
-    bytesToHexStr(bytes, sizeof(val), hexStr.data());
-
-    /** HEX string --> To bytes **/
-    const std::vector<uint8_t> bytes2 = hex2Bytes(hexStr);
-
-    /** From bytes --> to original data **/
-    int result = 0;
-    memcpy(&result, bytes2.data(), sizeof(val));
-
-    std::cout << val << " --> " << hexStr << " --> " << result << std::endl;
+    // Tests::Test1();
+    Tests::Test2();
 };

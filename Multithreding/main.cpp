@@ -75,7 +75,7 @@ int main([[maybe_unused]] int argc,
     // Latch::TEST_ALL();
     // Multithreading_Performance::TEST_ALL();
     // Multithreading_Communication::TEST_ALL();
-    // Promise::TEST_ALL();
+    Promise::TEST_ALL();
     // PackagedTask::TEST_ALL();
     // ParallelExecutionAlgoritms::TEST_ALL();
 
@@ -97,7 +97,7 @@ int main([[maybe_unused]] int argc,
     // JThreads::TEST_ALL();
 
     // FalseSharingExperiments::TEST_ALL();
-    PerformanceExperiments::TestAll();
+    // PerformanceExperiments::TestAll();
 
     // Utilities::TestAll();
 

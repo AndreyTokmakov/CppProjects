@@ -142,6 +142,27 @@ namespace RapidJson
             std::cout << "Not found\n";
         }
     }
+
+    void Print_As_String()
+    {
+        constexpr std::string_view jsonFile { R"(../../JsonCPP/data/snapshot.json)" };
+
+        rapidjson::Document document;
+        if (std::ifstream ifs(jsonFile.data()); ifs.is_open() && ifs.good()) {
+            rapidjson::IStreamWrapper isw(ifs);
+            document.ParseStream(isw);
+        } else {
+            return;
+        }
+
+        rapidjson::StringBuffer strBuf;
+        rapidjson::Writer<rapidjson::StringBuffer> writer(strBuf);
+
+        strBuf.Clear();
+        document.Accept(writer);
+
+        std::cout << strBuf.GetString() << std::endl;
+    }
 }
 
 
@@ -159,7 +180,8 @@ int main([[maybe_unused]] int argc,
     // Nlohmann::ParseJson_File();
     // Nlohmann::ParseJson_File2();
 
-    RapidJson::ReadAndParse();
+    // RapidJson::ReadAndParse();
+    RapidJson::Print_As_String();
 
     // PerformanceTests::TestAll();
 
