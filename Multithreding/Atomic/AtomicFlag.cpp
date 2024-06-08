@@ -58,7 +58,8 @@ namespace AtomicFlag::BasicTests
 }
 
 
-namespace AtomicFlag::SpinLock {
+namespace AtomicFlag::SpinLock
+{
 
     class SpinLock {
     private:

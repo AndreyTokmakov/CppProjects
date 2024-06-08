@@ -26,6 +26,7 @@
 #include "Atomic/AtomicFlag.h"
 #include "Atomic/Atomic_CompareExchange.h"
 #include "Atomic/Atomic_IsLockFree.h"
+#include "Atomic/AtomicPerformanceTests.h"
 #include "Promise/Promise.h"
 #include "Future/Future.h"
 #include "PackagedTask/PackagedTask.h"
@@ -65,6 +66,7 @@ int main([[maybe_unused]] int argc,
     // Atomic_MemoryOrder::TestAll();
     // Atomic_CompareExchange::TestAll();
     // Atomic_IsLockFree::TestAll();
+    AtomicPerformanceTests::TestAll();
 
     // Barrier::TEST_ALL();
     // CallOnce::TEST_ALL();
@@ -75,7 +77,7 @@ int main([[maybe_unused]] int argc,
     // Latch::TEST_ALL();
     // Multithreading_Performance::TEST_ALL();
     // Multithreading_Communication::TEST_ALL();
-    Promise::TEST_ALL();
+    // Promise::TEST_ALL();
     // PackagedTask::TEST_ALL();
     // ParallelExecutionAlgoritms::TEST_ALL();
 

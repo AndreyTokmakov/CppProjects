@@ -328,7 +328,7 @@ void ObserverMediator_Test();    /// LambdaObserverTest.cpp
 
 void Observer::TestAll()
 {
-    // Test1::Test();
+    Test1::Test();
     // Test2::Test();
     // Parsons::Test();
 
@@ -338,5 +338,5 @@ void Observer::TestAll()
 
     // LambdaObserverTest();
 
-    ObserverMediator_Test();
+    // ObserverMediator_Test();
 }

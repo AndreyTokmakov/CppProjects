@@ -15,9 +15,18 @@
 #include <future>
 #include <algorithm>
 #include <execution>
+#include <format>
 
 #include "../ThreadHelperUtilities/ThreadHelperUtilities.h"
 #include "Promise.h"
+
+namespace
+{
+    std::string currentTime()
+    {
+        return std::format("{:%d-%m-%Y %H:%M:%OS}",  std::chrono::system_clock::now());
+    }
+}
 
 namespace Promise {
 
@@ -39,7 +48,7 @@ namespace Promise {
 
     //----------------------------------------------------------------------------------------------
 
-    void SimpleTest_0()
+    void Simple_Test_0()
     {
         std::promise<int> promise;
 
@@ -58,7 +67,25 @@ namespace Promise {
         });
     }
 
-    void SimpleTest()
+    void Simple_Test_1()
+    {
+        std::promise<std::string> promise;
+        std::future<std::string> future = promise.get_future();
+
+        std::jthread t1 = std::jthread([promise = std::move(promise)] mutable {
+            std::this_thread::sleep_for(std::chrono::milliseconds(1000));
+            promise.set_value("Message from " + currentTime());
+        });
+
+        THREAD_INFO << "Before" << std::endl;
+
+        // Will block until value awailable, then returns the stored value:
+        std::string result = future.get();
+
+        std::cout << "future.get() = " << result << std::endl;
+    }
+
+    void Simple_Test_2()
     {
         const auto print_int = [](std::future<int>& fut) {
             THREAD_INFO << "func started" << std::endl;
@@ -76,7 +103,7 @@ namespace Promise {
         promise.set_value(123);
     }
 
-    void SimpleTest1()
+    void Simple_Test_3()
     {
         std::promise<void> promise;
         std::future<void> ready = promise.get_future();
@@ -97,7 +124,7 @@ namespace Promise {
         THREAD_INFO << "After wait()" << std::endl;
     }
 
-    void SimpleTest1_1()
+    void Simple_Test_4()
     {
         std::promise<void> promise;
         std::future<void> future = promise.get_future();
@@ -117,8 +144,7 @@ namespace Promise {
         THREAD_INFO << "After wait()" << std::endl;
     }
 
-
-    void SimpleTest2()
+    void Simple_Test_5()
     {
         const auto initiazer = [](std::promise<int>* promObj) {
             THREAD_INFO << " Started." << std::endl;
@@ -179,7 +205,8 @@ namespace Promise {
         THREAD_INFO << "Done!!!. Result = " << future.get() << std::endl;
     }
 
-    void ComplexTest() {
+    void ComplexTest()
+    {
         auto spPromise = std::make_shared<std::promise<void>>();
         std::future<void> waiter = spPromise->get_future();
 
@@ -209,7 +236,8 @@ namespace Promise {
         THREAD_INFO << "Done" << std::endl;
     }
 
-    void SetException() {
+    void SetException()
+    {
         std::promise<int> promise;
         std::future<int> future = promise.get_future();
 
@@ -241,6 +269,29 @@ namespace Promise {
         thread.join();
     }
 
+    void Propagate_Exception()
+    {
+        std::promise<int> other;
+        std::future<int> will_fail = other.get_future();
+        auto t2 = std::jthread([promise = std::move(other)] mutable {
+            try {
+                throw std::runtime_error("Some error happened.");
+                promise.set_value(10); /**  unreachable **/
+            } catch (...) {
+                promise.set_exception(std::current_exception());
+                // same as before we can also: promise.set_exception_at_thread_exit(std::current_exception());
+            }
+        });
+
+        // Block until value awailable, in this case, the exception will be propagated instead.
+        try {
+            const int v = will_fail.get();
+            std::cout  << std::format("Unreachable, will not print. v == {}", v) << std::endl;
+        } catch (const std::exception& e) {
+            std::cout  << std::format("Caught a propagated exception: e.what() == {}", e.what()) << std::endl;
+        }
+    }
+
     void Consumer_Producer() {
         THREAD_INFO << " Starting test." << std::endl;
         auto promise = std::promise<std::string>();
@@ -265,16 +316,40 @@ namespace Promise {
     }
 }
 
+namespace Promise
+{
+    void Wait_Timeout()
+    {
+        std::promise<void> slow;
+        std::future<void> will_timeout = slow.get_future();
+        std::jthread job = std::jthread([promise = std::move(slow)] mutable {
+            // Sleep, causing a timeout for the consumer
+            std::this_thread::sleep_for(std::chrono::seconds(2));
+            promise.set_value();
+        });
+
+        /** Wait for 500 ms (which will timeout) **/
+        if (will_timeout.wait_for(std::chrono::milliseconds(500)) == std::future_status::timeout) {
+            std::cout << std::format("Future did not receive state within 500 ms, bailing out.") << std::endl;
+        } else {
+            // If we didn't timeout, calling get() will not block (in general could also be a deferred function)
+            will_timeout.get();
+            std::cout <<   std::format("Future fulfilled.")<< std::endl;
+        }
+    }
+}
+
 void Promise::TEST_ALL()
 {
-    SimpleTest_0();
-    // SimpleTest();
-    // SimpleTest1();
-    // SimpleTest1_1();
-    // SimpleTest2();
+    // Simple_Test_0();
+    // Simple_Test_1();
+    // Simple_Test_2();
+    // Simple_Test_3();
+    // Simple_Test_4();
+    // Simple_Test_5();
 
 
-
+    Wait_Timeout();
 
     // ComplexTest();
 
@@ -284,7 +359,9 @@ void Promise::TEST_ALL()
 
     // SetValueAtThreadExit();
 
-    // SetException();
-
     // Consumer_Producer();
+
+
+    // SetException();
+    // Propagate_Exception();
 };

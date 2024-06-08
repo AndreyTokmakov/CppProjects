@@ -43,7 +43,7 @@ namespace Observer::Basic
             return observer;
         }
 
-        void notify()  noexcept override
+        void notify() noexcept override
         {
             for (const IObserver* observer : observers) {
                 observer->update(this);
