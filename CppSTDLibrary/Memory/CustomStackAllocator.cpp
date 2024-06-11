@@ -52,6 +52,7 @@ namespace CustomStackAllocator
 
     public:
 
+
         Allocator()
         {
             tail = N - 1;

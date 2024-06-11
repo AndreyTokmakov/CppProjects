@@ -96,7 +96,7 @@ int main([[maybe_unused]] int argc,
     // BitSet::TestAll();
     // BitwiseOperation::TestAll();
     // Byte::TestAll();
-    Chrono::TestAll();
+    // Chrono::TestAll();
     // Comparators::TestAll();
     // Concepts::TestAll();
     // ConsoleInOut::TestAll();
@@ -134,7 +134,7 @@ int main([[maybe_unused]] int argc,
     // Random::TestAll();
     // Ranges::TestAll();
     // ReferenceWrapper::TestAll();
-    // StarshipOperator::TestAll();
+    StarshipOperator::TestAll();
     // Streams::TestAll();
     // String::TestAll();
     // StringStream::TestAll();

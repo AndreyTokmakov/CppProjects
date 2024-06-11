@@ -8,6 +8,8 @@ Description : Multithreading
 //============================================================================**/
 
 #include "Multithreading.h"
+#include "Queue.h"
+
 
 #include <iostream>
 #include <stop_token>
@@ -774,7 +776,10 @@ namespace WaitFree
 
 void Multithreading::TestAll()
 {
-    WaitFree::Test();
+    Queue::TestAll();
+
+
+    // WaitFree::Test();
 
     // SwitchingThreads::Test();
 
@@ -789,8 +794,7 @@ void Multithreading::TestAll()
 
     // SwitchingThreads_SpinLock::TestAll();
 
-
     // FalseSharingExperiments::Benchmark();
 
-    Future::WaitForFuture_RangeBasedLoop_Copy();
+    // Future::WaitForFuture_RangeBasedLoop_Copy();
 }

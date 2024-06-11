@@ -73,7 +73,8 @@ namespace Date_Time_Chrono
 
 namespace Date_Time_Chrono::TimeToString
 {
-    std::string getCurrentTime() noexcept {
+    std::string getCurrentTime() noexcept
+    {
         const std::chrono::time_point now { std::chrono::system_clock::now() };
         const time_t in_time_t { std::chrono::system_clock::to_time_t(std::chrono::system_clock::now()) };
         const std::chrono::duration nowMs = std::chrono::duration_cast<std::chrono::microseconds>(
@@ -128,12 +129,12 @@ void Date_Time_Chrono::TestAll()
     // Experiments::test();
 
 
-    using namespace std::chrono;
-    using namespace std::chrono_literals;
+    const std::time_t t = std::time(nullptr);
+    const tm* timeInfo = std::localtime(&t);
 
-    const auto today = sys_days{std::chrono::floor<days>(system_clock::now())};
-    std::cout << std::format("today: {}", today) << std::endl;
+    std::cout << sizeof (t) << std::endl;
 
-    const auto test_date = sys_days(2020y / February / last);
-    std::cout << std::format("test_date: {}", test_date) << std::endl;
+    // std::string_view strTime(asctime(timeInfo));
+    // strTime.remove_suffix(1);
+    // std::cout << strTime << std::endl;
 }

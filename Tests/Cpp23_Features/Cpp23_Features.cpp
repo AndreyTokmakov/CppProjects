@@ -18,10 +18,13 @@ Description : Cpp23_Features
 #include <ranges>
 #include <utility>
 #include <format>
+#include <chrono>
 
 
 // C++ 23:
-// #include <expected>
+#include <expected>
+
+// #include <experimental/reflect>
 
 #include <stacktrace>
 // #include <flat_map>
@@ -351,7 +354,15 @@ void Cpp23_Features::TestAll()
     // Format::VFormatTest1();
     // Format::VFormatPrint();
 
-    static_operator();
+
+
+    auto now = std::chrono::system_clock::now();
+    auto today = std::chrono::floor<std::chrono::days>(now);
+    std::cout << "Today is: " << today.time_since_epoch().count() << " days since epoch\n";
+
+
+
+    // static_operator();
     // static_operator_lambda();
 
     // static_operator__square_brackets();

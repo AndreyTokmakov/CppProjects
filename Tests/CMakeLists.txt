@@ -33,6 +33,7 @@ add_executable(${PROJECT_NAME}
         ConstexprMap/ConstexprMap.cpp ConstexprMap/ConstexprMap.h
         Concepts/Concepts.cpp Concepts/Concepts.h
         Multithreading/Multithreading.cpp Multithreading/Multithreading.h
+        Multithreading/Queue.cpp Multithreading/Queue.h
         DesignPatterns/DesignPatterns.cpp DesignPatterns/DesignPatterns.h
         Iterators/Iterators.cpp Iterators/Iterators.h
         Files_Filesystem/Files.cpp Files_Filesystem/Files.h

@@ -520,7 +520,7 @@ namespace ObjectPools::GoodPools_Tests {
 
 			// Initialize, i.e. construct, an instance of T in an uninitialized block of memory
 			// using placement new, and perfectly forward any provided arguments to the constructor.
-			new (objectPtr) object_type { std::forward<Args>(args)... };
+            pointer obj = new (objectPtr) object_type { std::forward<Args>(args)... };
 
 			// Remove the object from the list of free objects.
 			available.pop_back();

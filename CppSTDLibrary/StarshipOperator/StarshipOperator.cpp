@@ -11,6 +11,7 @@ Description : C++ StarshipOperator
 
 #include <iostream>
 #include <cmath>
+#include <compare>
 
 
 namespace StarshipOperator
@@ -91,7 +92,8 @@ namespace StarshipOperator::Inheritance
         std::strong_ordering operator<=>(const Base&) const = default;
     };
 
-    struct Derived : Base {
+    struct Derived : Base
+    {
         std::string data;
 
         // Default spaceship operator:
@@ -118,13 +120,100 @@ namespace StarshipOperator::Inheritance
     }
 }
 
+namespace StarshipOperator::OrderingTypes
+{
+    struct Coord
+    {
+        int x {0};
+        int y {0};
+        friend auto operator<=>(const Coord&, const Coord&) = default;
+    };
+
+    struct MyType
+    {
+        int value {0};
+
+        std::strong_ordering operator<=>(const MyType& other) const noexcept {
+            return value <=> other.value;
+        }
+    };
+
+    struct Point : Coord
+    {
+        [[nodiscard]]
+        int magnitude() const {
+            return x*x + y*y;
+        }
+
+        // int{}<=>int{} would produce std::strong_ordering, we have to manually specify the ordering
+        friend auto operator<=>(const Point& left, const Point& right) -> std::weak_ordering {
+            return left.magnitude() <=> right.magnitude();
+        }
+        friend bool operator==(const Point&, const Point&) = default;
+    };
+
+
+    struct FloatingPointType
+    {
+        double value { 0.0f };
+
+        // Spaceship operator (<=>)
+        std::weak_ordering operator<=>(const FloatingPointType& other) const
+        {
+            if (value < other.value) {
+                return std::weak_ordering::less;  // less than
+            } else if (value > other.value) {
+                return std::weak_ordering::greater;  // greater than
+            } else {
+                return std::weak_ordering::equivalent;  // equivalent (may include unordered)
+            }
+        }
+    };
+
+    void CheckTypes()
+    {
+        // Integral types are strongly ordered ---> std::strong_ordering
+        {
+            using compare_result = decltype(0 <=> 1);
+            static_assert(std::is_same_v<compare_result, std::strong_ordering>);
+        }
+
+        // Aggregates formed from strongly ordered components end up also strongly ordered  ---> std::strong_ordering
+        {
+            using compare_result = decltype(Coord{0, 0} <=> Coord{1, 1});
+            static_assert(std::is_same_v<compare_result, std::strong_ordering>);
+        }
+        {
+            using compare_result = decltype(MyType{0} <=> MyType{1});
+            static_assert(std::is_same_v<compare_result, std::strong_ordering>);
+        }
+
+        // Comparing the magnitude of a coordinate (distance from [0,0])^2
+        // provides only weak ordering, different coordinates have the same magnitude ---> std::weak_ordering
+        {
+            using compare_result = decltype(Point{0, 1} <=> Point{1, 0});
+            static_assert(std::is_same_v<compare_result, std::weak_ordering>);
+        }
+    }
+
+    void CheckTypes2()
+    {
+        const FloatingPointType num1{3.14},  num2{2.71};
+
+        // Using the spaceship operator and std::weak_ordering / std::partial_ordering
+        std::weak_ordering weakResult = num1 <=> num2;
+        std::partial_ordering partialResult = num1 <=> num2;
+    }
+
+}
+
 void StarshipOperator::TestAll()
 {
     // OrderingTests();
-
-    CompareCustomTypes();
-
+    // CompareCustomTypes();
     // Inheritance::test();
 
+    OrderingTypes::CheckTypes();
+    OrderingTypes::CheckTypes2();
 };
 
