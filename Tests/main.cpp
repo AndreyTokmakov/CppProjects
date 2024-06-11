@@ -1153,7 +1153,6 @@ int main([[maybe_unused]] int argc,
     // StringTest_SSO::Tests();
 
 
-
     /** * * * * *  Move to lib * * * * * **/
 
     // OperatorCall_ExplicitTypeSpecialization::Test();
