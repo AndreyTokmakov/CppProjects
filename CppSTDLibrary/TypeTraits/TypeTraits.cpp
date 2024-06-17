@@ -736,6 +736,32 @@ namespace TypeTraits::CustomTraits
     }
 }
 
+
+
+namespace TypeTraits::TypeIdentity
+{
+    template<typename T>
+    T add_old(T a, T b)
+    {
+        return a + b;
+    }
+
+    template<typename T>
+    T add(T a, std::type_identity_t<T> b)
+    {
+        return a + b;
+    }
+
+    void Test()
+    {
+        /** Will not compile **/
+        // add_old(1, 0.5);
+
+        add(1, 0.5);
+        add(0.5, 1);
+    }
+}
+
 void TypeTraits::TestAll()
 {
 	// IsClass::Test();
@@ -784,4 +810,6 @@ void TypeTraits::TestAll()
 	// Invoke_Result::Test();
 
 	// std::false_type ??????
+
+    TypeIdentity::Test();
 };

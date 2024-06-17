@@ -441,12 +441,55 @@ namespace Literals::Degrees2Radians
     }
 }
 
+
+namespace Literals::Kilometers
+{
+    namespace units
+    {
+        struct m
+        {
+            unsigned long long int value;
+            friend auto operator<=>(const m&, const m&) = default;
+        };
+
+        struct km
+        {
+            unsigned long long int value;
+            operator m() const { return {value*1000}; }
+            friend auto operator<=>(const km&, const km&) = default;
+        };
+    }
+
+    constexpr units::km operator"" _km(unsigned long long int v) {
+        return {v};
+    }
+
+    constexpr units::m operator"" _m(unsigned long long int v) {
+        return {v};
+    }
+
+    void CompareTest()
+    {
+        auto oneKm = 1_km;
+
+        // std::cout << "One KM: " << static_cast<int>(oneKm) << std::endl;
+
+
+        if (100_m < 1_km) {
+            std::cout << "100m is less than 1km" << std::endl;
+        }
+        if (1001_m > 1_km) {
+            std::cout << "1001m is more than 1km" << std::endl;
+        }
+    }
+}
+
 void Literals::TestAll()
 {
     // SimpleExample::Test();
     // SimpleExample_2::Test();
 
-    Degrees2Radians::Test();
+    // Degrees2Radians::Test();
 
 	// Custom_Literals_Tests::Test();
 	// Custom_Literals_Tests::Test2();
@@ -464,4 +507,6 @@ void Literals::TestAll()
 	// Chrono_Literals::Test();
 
 	// Complex_Literals::Test();
+
+    Kilometers::CompareTest();
 };

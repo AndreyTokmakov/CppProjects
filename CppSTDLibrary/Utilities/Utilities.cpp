@@ -365,6 +365,30 @@ namespace Utilities::Unreachable
     }
 }
 
+namespace TypeIdentity
+{
+    template<typename T>
+    T add_old(T a, T b)
+    {
+        return a + b;
+    }
+
+    template<typename T>
+    T add(T a, std::type_identity_t<T> b)
+    {
+        return a + b;
+    }
+
+    void Test()
+    {
+        /** Will not compile **/
+        // add_old(1, 0.5);
+
+        add(1, 0.5);
+        add(0.5, 1);
+    }
+}
+
 void Bind_Utilities();
 
 void Utilities::TestAll()
@@ -400,6 +424,8 @@ void Utilities::TestAll()
     */
 
     // ToAddress::to_address_tests();
+
+    TypeIdentity::Test();
 
     Unreachable::Test();
 };

@@ -1129,6 +1129,31 @@ namespace PipelineOperator
 }
 
 
+namespace Enums
+{
+    enum class Type : uint8_t
+    {
+        None,
+        Full,
+        Incremental
+    };
+
+    void Tests()
+    {
+        std::cout << static_cast<int>(Enums::Type::Full) << std::endl;
+
+        const int v = 2;
+        const Enums::Type type = static_cast<Type>(v);
+
+        if (Enums::Type::Incremental == type)
+        {
+            std::cout << "Enums::Type::Incremental\n";
+        }
+
+    }
+}
+
+
 int main([[maybe_unused]] int argc,
          [[maybe_unused]] char** argv)
 {
@@ -1151,6 +1176,8 @@ int main([[maybe_unused]] int argc,
     // PipelineOperator::SimplePipeTest();
 
     // StringTest_SSO::Tests();
+
+    // Enums::Tests();
 
 
     /** * * * * *  Move to lib * * * * * **/
@@ -1205,7 +1232,6 @@ int main([[maybe_unused]] int argc,
     // Templates::TestAll();
     // TestAssignments::TestAll();
     // TableFormatter::TestAll();
-
 
 
     // Convertaion_UTF8_UTF32::TestAll();    // Encoding
