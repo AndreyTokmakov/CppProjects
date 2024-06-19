@@ -15,9 +15,11 @@ add_executable(${PROJECT_NAME}
         CSVReader/CSVReader.cpp CSVReader/CSVReader.h  CSVReader/Tests.cpp CSVReader/Tests.h
         Base64.cpp
         Base64.h
+        HexConverter.cpp
+        HexConverter.h
 )
 
 TARGET_LINK_LIBRARIES(${PROJECT_NAME}
         pthread
-        tbb
+        # tbb
 )
