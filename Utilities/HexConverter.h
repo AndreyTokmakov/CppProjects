@@ -14,7 +14,6 @@ Description : HexConverter
 #include <cstdint>
 #include <vector>
 
-
 namespace HexConverter
 {
     std::string bytesToHexStr(const char *src,
