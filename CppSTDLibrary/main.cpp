@@ -134,7 +134,7 @@ int main([[maybe_unused]] int argc,
     // Random::TestAll();
     // Ranges::TestAll();
     // ReferenceWrapper::TestAll();
-    StarshipOperator::TestAll();
+    // StarshipOperator::TestAll();
     // Streams::TestAll();
     // String::TestAll();
     // StringStream::TestAll();
@@ -152,7 +152,7 @@ int main([[maybe_unused]] int argc,
     // TypeCast::TestAll();
     // Int::TestAll();
     // Templates::TestAll();
-    // Utilities::TestAll();
+    Utilities::TestAll();
     // UniquePtr_Tests::TestAll();
     // WeakPtr::TestAll();
 
