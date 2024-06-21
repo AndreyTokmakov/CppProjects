@@ -93,6 +93,8 @@ namespace Finalizers::CallDestructor
         Type& object;
     };
 
+
+
     void Test()
     {
         try
