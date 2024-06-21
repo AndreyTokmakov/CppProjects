@@ -1129,95 +1129,6 @@ namespace PipelineOperator
 }
 
 
-namespace FinalAction
-{
-    template <class Type>
-    struct Finalizer
-    {
-        Finalizer(Type& obj, void(Type::*m)()): object {obj}, method {m} {
-        }
-
-        ~Finalizer() {
-            std::invoke(method, object);
-        }
-
-    private:
-        Type& object { nullptr };
-        void (Type::*method)();
-    };
-
-    template <class Type>
-    struct Finalizer2
-    {
-        explicit Finalizer2(Type& obj): object { obj } {
-        }
-
-        ~Finalizer2() {
-            if (!success)
-                object.~Type();
-        }
-
-        void setOk()
-        {
-            success = true;
-        }
-
-    private:
-        bool success {false};
-        Type& object;
-    };
-
-    struct Resource
-    {
-        Resource()
-        {
-            std::cout << "Resource::Resource()"  << std::endl;
-        }
-
-        ~Resource()
-        {
-            std::cout << "Resource::~Resource()"  << std::endl;
-        }
-
-        void close()
-        {
-            std::cout << "Resource::close()"  << std::endl;
-        }
-    };
-
-    void Test1()
-    {
-        try
-        {
-            Resource res;
-            Finalizer<Resource> finalizer {res, &Resource::close};
-
-            throw 1;
-        }
-        catch (...)
-        {
-            std::cout << "Exc/n";
-        }
-    }
-
-    void Test2()
-    {
-        try
-        {
-            Resource res;
-            Finalizer2<Resource> finalizer {res};
-
-            throw 1;
-            finalizer.setOk();
-        }
-        catch (...)
-        {
-            std::cout << "Exc/n";
-        }
-    }
-
-}
-
 
 int main([[maybe_unused]] int argc,
          [[maybe_unused]] char** argv)
@@ -1243,10 +1154,6 @@ int main([[maybe_unused]] int argc,
     // StringTest_SSO::Tests();
 
     // Enums::Tests();
-
-    // TODO: Move to DataStructures
-    // FinalAction::Test1();
-    // FinalAction::Test2();
 
 
     /** * * * * *  Move to lib * * * * * **/
