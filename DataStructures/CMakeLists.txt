@@ -16,6 +16,7 @@ add_executable(${PROJECT_NAME}
 		LRUCache/LRUCache.cpp LRUCache/LRUCache.h
 		ObjectPools/ObjectPools.cpp ObjectPools/ObjectPools.h
 		LockFreeDataStructures/LockFreeQueue.cpp LockFreeDataStructures/LockFreeQueue.h
+		Finalizers/Finalizers.cpp Finalizers/Finalizers.h
 		Optional/Optional.cpp Optional/Optional.h
 		SharedPtr/SharedPtr.cpp SharedPtr/SharedPtr.h
 		ThreadsafeQueue/ThreadsafeQueue.cpp ThreadsafeQueue/ThreadsafeQueue.h

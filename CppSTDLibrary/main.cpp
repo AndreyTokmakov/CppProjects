@@ -27,6 +27,7 @@ Description : Cpp STD lib
 #include "ConstConstexprMutable/ConstConstexprMutable.h"
 #include "CopyElision/CopyElision.h"
 #include "Comparators/Comparators.h"
+#include "CTAD/ClassTemplateArgumentDeduction.h"
 #include "Format/Format.h"
 #include "EnumTests/EnumTests.h"
 #include "Expected/Expected.h"
@@ -102,6 +103,7 @@ int main([[maybe_unused]] int argc,
     // ConsoleInOut::TestAll();
     // ConstConstexprMutable::TestAll();
     // CopyElision::TestAll();
+    ClassTemplateArgumentDeduction::TestAll();
     // DateAndTime::TestAll();
     // EnumTests::TestAll();
     // Errors::TestAll();
@@ -152,7 +154,7 @@ int main([[maybe_unused]] int argc,
     // TypeCast::TestAll();
     // Int::TestAll();
     // Templates::TestAll();
-    Utilities::TestAll();
+    // Utilities::TestAll();
     // UniquePtr_Tests::TestAll();
     // WeakPtr::TestAll();
 

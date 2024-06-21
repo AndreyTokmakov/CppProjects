@@ -19,6 +19,7 @@ add_executable(${PROJECT_NAME}
 		Byte/Byte.cpp Byte/Byte.h
 		Chrono/Chrono.cpp Chrono/Chrono.h
 		Concepts/Concepts.cpp Concepts/Concepts.h
+		CTAD/ClassTemplateArgumentDeduction.cpp CTAD/ClassTemplateArgumentDeduction.h
 		ConsoleInOut/ConsoleInOut.cpp ConsoleInOut/ConsoleInOut.h
 		DateAndTime/DateAndTime.cpp DateAndTime/DateAndTime.h
 		ConstConstexprMutable/ConstConstexprMutable.cpp ConstConstexprMutable/ConstConstexprMutable.h

@@ -1187,9 +1187,17 @@ namespace FinalAction
 
     void Test1()
     {
-        Resource res;
+        try
+        {
+            Resource res;
+            Finalizer<Resource> finalizer {res, &Resource::close};
 
-        Finalizer<Resource> finalizer {res, &Resource::close};
+            throw 1;
+        }
+        catch (...)
+        {
+            std::cout << "Exc/n";
+        }
     }
 
     void Test2()
@@ -1237,8 +1245,9 @@ int main([[maybe_unused]] int argc,
     // Enums::Tests();
 
     // TODO: Move to DataStructures
-    FinalAction::Test1();
+    // FinalAction::Test1();
     // FinalAction::Test2();
+
 
     /** * * * * *  Move to lib * * * * * **/
 

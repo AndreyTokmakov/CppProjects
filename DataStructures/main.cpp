@@ -14,6 +14,7 @@
 #include "ExecutorAdapter/ExecutorAdapter.h"
 #include "ExecutorAdapter2/ExecutorAdapter2.h"
 #include "HashTable/HashTable.h"
+#include "Finalizers/Finalizers.h"
 #include "BinaryTree/BinaryTree.h"
 #include "BitSet/BitSet.h"
 #include "CircularBuffers/CircularBuffers.h"
@@ -61,7 +62,8 @@ int main([[maybe_unused]] int argc,
     // CustomVector::TestAll();
     // ExecutorAdapter::TestAll();
     // ExecutorAdapter2::TestAll();
-    Function::Test();
+    Finalizers::TestAll();
+    // Function::Test();
     // HashTable::TestAll();
     // LinkedLists::TEST_ALL();
     // Logging::TEST_ALL();
