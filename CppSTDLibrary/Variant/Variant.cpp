@@ -711,6 +711,7 @@ namespace Variant::VisitTests
 		}, v);
 	}
 
+
 	void Simple_Visit()
 	{
 		struct Visitor
