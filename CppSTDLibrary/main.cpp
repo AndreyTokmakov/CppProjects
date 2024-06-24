@@ -103,7 +103,7 @@ int main([[maybe_unused]] int argc,
     // ConsoleInOut::TestAll();
     // ConstConstexprMutable::TestAll();
     // CopyElision::TestAll();
-    ClassTemplateArgumentDeduction::TestAll();
+    // ClassTemplateArgumentDeduction::TestAll();
     // DateAndTime::TestAll();
     // EnumTests::TestAll();
     // Errors::TestAll();
@@ -146,7 +146,7 @@ int main([[maybe_unused]] int argc,
     // Span::TestAll();
     // SourceLocation::TestAll();
     // SharedPtr_Tests::TestAll();
-    // Variant::TestAll();
+    Variant::TestAll();
     // VolatileTests::TestAll();
     // TypeTraits::TestAll();
     // Types::Tests();

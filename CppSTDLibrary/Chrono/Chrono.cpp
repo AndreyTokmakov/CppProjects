@@ -426,6 +426,18 @@ namespace Chrono::StringFormat
     {
         SyncTimeStream{} << 2 << "  sds " << 1;
     }
+
+
+    void StringToTime()
+    {
+        constexpr std::string_view timeStr {"Tue 30/10/2001 10:59:10 AM"};
+        tm dateTime {};
+        strptime(timeStr.data(), "%a %d/%m/%Y %r", &dateTime);
+
+        std::cout << dateTime.tm_mday << "/" << dateTime.tm_mon + 1 << "/"<< dateTime.tm_year + 1900 << ' '
+                  << dateTime.tm_hour << ':' << dateTime.tm_min << ':' << dateTime.tm_sec
+                  << std::endl;
+    }
 }
 
 uint64_t format_date(std::string_view str)
@@ -858,14 +870,15 @@ void Chrono::TestAll()
     // Years::Last_Sunday_of_Year();
     // Years::Thanksgiving_Days();
 
-    // TimeToString::Test();
+    //TimeToString::Test();
     // StringFormat::StrfTime();
-    StringFormat::Asctime();
+    // StringFormat::Asctime();
     // StringFormat::PutTime_To_String();
     // StringFormat::CTime_String();
     // StringFormat::Format();
     // StringFormat::Format2();
     // StringFormat::Format3();
+    StringFormat::StringToTime();
 
     // FunctionPerformance::GetCurrentTime_Performance();
     // FunctionPerformance::TestGetCurrentTimeFunctions();

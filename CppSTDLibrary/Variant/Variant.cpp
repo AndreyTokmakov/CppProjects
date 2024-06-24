@@ -699,11 +699,22 @@ namespace Variant {
 }
 
 
-namespace Variant::VisitTests {
+namespace Variant::VisitTests
+{
+	void Simple_Visit_0()
+	{
+		std::variant<int,double,std::string> v = "hello world!";
 
-	void Simple_Visit() {
+		// Generic visit, will instantiate the generic lambda for each type:
+		std::visit([](auto&& x) {
+			std::cout << x << std::endl;
+		}, v);
+	}
 
-		struct Visitor {
+	void Simple_Visit()
+	{
+		struct Visitor
+		{
 			void operator()(int) { std::cout << "int!\n"; }
 			void operator()(std::string const&) { std::cout << "string!\n"; }
 		};
@@ -1171,6 +1182,7 @@ void Variant::TestAll()
 
 
 
+	VisitTests::Simple_Visit_0();
 	// VisitTests::Simple_Visit();
 	// VisitTests::Polymorphism_Test();
 	// VisitTests::VizitTest();
@@ -1187,7 +1199,7 @@ void Variant::TestAll()
 	// DynamicPolymorphism::Visit();
 	// DynamicPolymorphism::Polimorph_Visit();
 	// DynamicPolymorphism::ProcessElementsList();
-	DynamicPolymorphism_Demo2::Visit_Vs_Pointer();
+	// DynamicPolymorphism_Demo2::Visit_Vs_Pointer();
 
 
     // Experiments_DNS_Response::Tests();
