@@ -20,6 +20,7 @@
 #include <set>
 #include <iterator>
 
+#include <sys/stat.h>
 
 namespace Filesystem
 {
@@ -429,6 +430,25 @@ namespace Filesystem::Files
         std::filesystem::rename(src, dst);
     }
 
+    void Last_Write_Time_UNIX_API()
+    {
+        const std::filesystem::path tempFile = std::filesystem::temp_directory_path() / "example.bin";
+        std::ofstream {tempFile.c_str()}.put('a'); // create file
+
+        std::cout << "Temporary file: " << tempFile << std::endl;
+
+        struct stat file_stat{};
+
+        if (stat(tempFile.c_str(), &file_stat) == 0) {
+            std::time_t mod_time = file_stat.st_mtime;
+            char* str = std::asctime(std::localtime(&mod_time));
+            std::cout << "Last modification time: " << str;
+        }
+        else
+            std::cerr << "Error getting file status\n";
+
+        std::filesystem::remove(tempFile);
+    }
 
     void Last_Write_Time()
     {
@@ -870,7 +890,7 @@ void Filesystem::TestAll()
 
     // CreateDirectory();
     // CreateDirectoryTest();
-    DeleteDirectoryTest();
+    // DeleteDirectoryTest();
     // CopyDirTest();
 
     // Is_Dir_Exists();
@@ -887,7 +907,8 @@ void Filesystem::TestAll()
     // Files::CrateFile();
     // Files::CopyFile();
     // Files::MoveFile();
-    Files::Last_Write_Time();
+    Files::Last_Write_Time_UNIX_API();
+    // Files::Last_Write_Time();
     // Files::Check_IsFile_Exists();
 
 

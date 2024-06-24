@@ -146,7 +146,7 @@ echo 1 > /proc/sys/kernel/nmi_watchdog
 >   perf record -g ./test_app
 >   perf report -g
 
-    # As the result the 'perf.data' file will be created use 'perf report' to anylize recording
+    # As the result the 'perf.data' file will be created use 'perf report' to analyze recording
 
 >   perf report
 
