@@ -1141,6 +1141,38 @@ namespace Map::Test {
     }
 }
 
+namespace Map::MoveFromMap
+{
+
+    void sink(Integer&& v)
+    {
+
+    }
+
+    void sink(Integer& v)
+    {
+
+    }
+
+    void Test()
+    {
+        std::map<int, Integer> values;
+        {
+            values.emplace(1, 1);
+            values.emplace(2, 2);
+            values.emplace(3, 3);
+        }
+
+        // sink(std::move(values.at(2)));
+        sink(values.at(2));
+
+        // auto x = std::move(values.at(2));
+        // auto&& x = values.at(2);
+
+        std::cout << values << std::endl;
+    }
+}
+
 void Map::TEST_ALL()
 {
 	// test_loops();
@@ -1208,5 +1240,6 @@ void Map::TEST_ALL()
 	// Test::Iterators_Invalidation();
 
 
+    MoveFromMap::Test();
 
 }
