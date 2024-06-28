@@ -1155,9 +1155,6 @@ int main([[maybe_unused]] int argc,
 
     // Enums::Tests();
 
-    std::mutex  mtx;
-    std::cout << sizeof (mtx) << std::endl;
-
 
     /** * * * * *  Move to lib * * * * * **/
 
@@ -1175,7 +1172,7 @@ int main([[maybe_unused]] int argc,
     // Concepts::TestAll();
     // Crow::TestAll();
     // Comparators::TestAll();
-    // CollectionsTests::TestAll();
+    CollectionsTests::TestAll();
     // Coroutines::TestAll();
     // CopyElision_RVO::TestAll();
     // ConstexprMap::TestAll();

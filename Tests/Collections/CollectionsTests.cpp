@@ -670,6 +670,13 @@ namespace CollectionsTests::HeterogeneousLookup2
     }
 }
 
+#include <experimental/io_context>
+
+namespace CollectionsTests::FlatMap
+{
+
+};
+
 
 void CollectionsTests::TestAll()
 {

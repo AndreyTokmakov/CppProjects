@@ -1316,13 +1316,14 @@ namespace Algorithms::ModifyingSequenceOperations
 
     void Remove_Copy_If()
     {
-        const std::vector<int> data {1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
+        std::vector<int> src {1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
 
         {
             std::vector<int> dst;
             const auto is_even = [](int v) { return 0 == v % 2; };
-            std::remove_copy_if(data.begin(), data.end(), std::back_inserter(dst), is_even);
-            std::cout << dst << std::endl; // 1 3 5 7 9
+            std::remove_copy_if(src.begin(), src.end(), std::back_inserter(dst), is_even);
+            std::cout << "src : " << src << std::endl; // 1 2 3 4 5 6 7 8 9 10
+            std::cout << "dst : " << dst << std::endl; // 1 3 5 7 9
         }
     }
 
@@ -1684,8 +1685,8 @@ void Algorithms::TestAll()
     // ModifyingSequenceOperations::Remove_SharedPtr();
     // ModifyingSequenceOperations::Remove_If();
     // ModifyingSequenceOperations::Remove_Copy();
-    // ModifyingSequenceOperations::Remove_Copy_If();
-    ModifyingSequenceOperations::Erase();
+    ModifyingSequenceOperations::Remove_Copy_If();
+    // ModifyingSequenceOperations::Erase();
     // ModifyingSequenceOperations::Erase_IF();
     // ModifyingSequenceOperations::Rotate();
     // ModifyingSequenceOperations::Unique();

@@ -870,7 +870,7 @@ void Chrono::TestAll()
     // Years::Last_Sunday_of_Year();
     // Years::Thanksgiving_Days();
 
-    //TimeToString::Test();
+    TimeToString::Test();
     // StringFormat::StrfTime();
     // StringFormat::Asctime();
     // StringFormat::PutTime_To_String();
@@ -878,7 +878,7 @@ void Chrono::TestAll()
     // StringFormat::Format();
     // StringFormat::Format2();
     // StringFormat::Format3();
-    StringFormat::StringToTime();
+    // StringFormat::StringToTime();
 
     // FunctionPerformance::GetCurrentTime_Performance();
     // FunctionPerformance::TestGetCurrentTimeFunctions();
