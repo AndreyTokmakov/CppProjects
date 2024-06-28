@@ -1155,6 +1155,9 @@ int main([[maybe_unused]] int argc,
 
     // Enums::Tests();
 
+    std::mutex  mtx;
+    std::cout << sizeof (mtx) << std::endl;
+
 
     /** * * * * *  Move to lib * * * * * **/
 
