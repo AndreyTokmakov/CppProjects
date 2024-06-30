@@ -13,7 +13,7 @@
 #include <utility>
 #include <memory>
 #include <cassert>
-
+#include <iomanip>
 #include "Utilities.h"
 
 
@@ -391,6 +391,42 @@ namespace TypeIdentity
 
 void Bind_Utilities();
 
+
+namespace Utilities::Quoted
+{
+    void Quoted_Tests()
+    {
+        std::cout << std::quoted(R"(I say: "Hello Wordl!")") << std::endl;
+        /** "I say: \"Hello World!\"" **/
+
+
+        std::stringstream s(R"("I say: \"Hello World!\"")");
+        std::string unescaped;
+        s >> std::quoted(unescaped);
+
+
+        // unescaped == I say: "Hello World!"
+        std::cout << unescaped << std::endl;
+
+    }
+
+
+    void Quoted_SetQuote_Character()
+    {
+        {
+            const std::string& src {"10 20 30"};
+            std::cout << src << " -> " << std::quoted(src, '|') << std::endl;  // '|' --> is quote character
+            // 10 20 30 -> |10 20 30|
+        }
+
+        {
+            const std::string& src {"Some Text"};
+            std::cout << src << " -> " << std::quoted(src, '*') << std::endl;  // '*' --> is quote character
+            // Some Text -> *Some Text*
+        }
+    }
+}
+
 void Utilities::TestAll()
 {
     // Bind_Utilities();
@@ -425,7 +461,11 @@ void Utilities::TestAll()
 
     // ToAddress::to_address_tests();
 
-    TypeIdentity::Test();
+    // TypeIdentity::Test();
 
-    Unreachable::Test();
+    // Unreachable::Test();
+
+
+    // Quoted::Quoted_Tests();
+    Quoted::Quoted_SetQuote_Character();
 };

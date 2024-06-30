@@ -5,13 +5,12 @@ set(CMAKE_C_FLAGS_RELEASE "${CMAKE_C_FLAGS_RELEASE}")
 set(PROJECT_VERSION 1.0.0.0)
 project(${PROJECT_NAME} VERSION ${PROJECT_VERSION} LANGUAGES CXX)
 
-include_directories(../../third_party/jsoncpp/include)
-include_directories(../../third_party/json/include)
-include_directories(../../third_party/rapidjson/include)
+include_directories(${THIRD_PARTY_DIR}/jsoncpp/include)
+include_directories(${THIRD_PARTY_DIR}/json/include)
+include_directories(${THIRD_PARTY_DIR}/rapidjson/include)
 
-
-link_directories(../../third_party/jsoncpp/build/lib)
-link_directories(../../third_party/jsoncpp/build/lib)
+link_directories(${THIRD_PARTY_DIR}/jsoncpp/build/lib)
+link_directories(${THIRD_PARTY_DIR}/jsoncpp/build/lib)
 
 add_compile_options(-c -Wall -Wextra -O3 -std=c++2a)
 

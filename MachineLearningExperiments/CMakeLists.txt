@@ -5,8 +5,8 @@ set(PROJECT_VERSION 1.0.0.0)
 project(${PROJECT_NAME} VERSION ${PROJECT_VERSION} LANGUAGES CXX)
 
 add_compile_options(-c -Wall -Wextra -O3 -std=c++2a)
-include_directories(../../third_party/eigen/Eigen)
-include_directories(../../third_party/matplotlib-cpp)
+include_directories(${THIRD_PARTY_DIR}/eigen/Eigen)
+include_directories(${THIRD_PARTY_DIR}/matplotlib-cpp)
 
 # include_directories(/usr/include/python3.8)
 # include_directories(/usr/local/lib/python3.8/dist-packages/numpy/core/include)

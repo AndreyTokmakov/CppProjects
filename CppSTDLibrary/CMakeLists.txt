@@ -95,5 +95,5 @@ add_executable(${PROJECT_NAME}
 # Link libraries to the project/executable
 target_link_libraries(${PROJECT_NAME} PUBLIC
 		pthread
-		tbb
+		${EXTRA_LIBS}
 )

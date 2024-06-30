@@ -5,14 +5,12 @@ set(CMAKE_C_FLAGS_RELEASE "${CMAKE_C_FLAGS_RELEASE}")
 set(PROJECT_VERSION 1.0.0.0)
 project(${PROJECT_NAME} VERSION ${PROJECT_VERSION} LANGUAGES CXX)
 
-SET(OPENSSL_ROOT_DIR "/home/andtokm/DiskS/ProjectsUbuntu/third_party/openssl")
+SET(OPENSSL_ROOT_DIR ${THIRD_PARTY_DIR}/openssl)
 
 link_directories(${OPENSSL_ROOT_DIR})
 include_directories("${OPENSSL_ROOT_DIR}/include")
 
-
 # #[===[
-
 find_package(OpenSSL REQUIRED)
 message (STATUS "OPENSSL_FOUND: ${OPENSSL_FOUND}")
 message (STATUS "   OPENSSL_INCLUDE_DIR: ${OPENSSL_INCLUDE_DIR}")

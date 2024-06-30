@@ -7,8 +7,8 @@ project(${PROJECT_NAME} VERSION ${PROJECT_VERSION} LANGUAGES CXX)
 
 add_compile_options(-c -Wall -Wextra -O3 -std=c++23)
 
-include_directories(../../third_party/quill/quill/include)
-link_directories(../../third_party/quill/build/quill)
+include_directories(${THIRD_PARTY_DIR}/quill/quill/include)
+link_directories(${THIRD_PARTY_DIR}/quill/build/quill)
 
 # find_package(quill REQUIRED)
 
@@ -19,7 +19,7 @@ add_executable(${PROJECT_NAME}
 
 TARGET_LINK_LIBRARIES(${PROJECT_NAME} PRIVATE
         pthread
-        # tbb
+        ${EXTRA_LIBS}
         libquill.a
         # quill::quill
 )

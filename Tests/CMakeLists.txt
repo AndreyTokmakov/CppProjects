@@ -75,7 +75,10 @@ add_executable(${PROJECT_NAME}
         Logging/LowLatencyLogger.h
 )
 
+message(STATUS "EXTRA_LIBS: ${EXTRA_LIBS}")
+
+
 TARGET_LINK_LIBRARIES(${PROJECT_NAME}
         pthread
-        # tbb
+        ${EXTRA_LIBS}
 )

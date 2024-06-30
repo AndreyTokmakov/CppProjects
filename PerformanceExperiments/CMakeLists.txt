@@ -17,5 +17,5 @@ add_executable(${PROJECT_NAME}
 )
 
 TARGET_LINK_LIBRARIES(${PROJECT_NAME}
-        tbb
+        ${EXTRA_LIBS}
 )

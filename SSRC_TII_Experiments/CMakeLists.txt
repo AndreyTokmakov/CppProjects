@@ -9,13 +9,13 @@ project(${PROJECT_NAME} VERSION ${PROJECT_VERSION} LANGUAGES CXX)
 add_compile_options(-c -Wall -Wextra -O3 -std=c++2a)
 
 # LibSerial headers:
-include_directories(../../third_party/libserial/src)
-include_directories(../../third_party/libserial/src/libserial)
-link_directories(../../third_party/libserial/build/lib)
+include_directories(${THIRD_PARTY_DIR}/libserial/src)
+include_directories(${THIRD_PARTY_DIR}/libserial/src/libserial)
+link_directories(${THIRD_PARTY_DIR}/libserial/build/lib)
 
 # LibPCAP
-# include_directories(/home/andtokm/DiskS/ProjectsUbuntu/third_party/libpcap)
-# link_directories(/home/andtokm/DiskS/ProjectsUbuntu/third_party/libpcap/build)
+# include_directories(${THIRD_PARTY_DIR}/libpcap)
+# link_directories(${THIRD_PARTY_DIR}/libpcap/build)
 
 # include all components
 add_executable(${PROJECT_NAME} MACOSX_BUNDLE
