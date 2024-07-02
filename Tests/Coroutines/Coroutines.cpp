@@ -14,6 +14,7 @@ Description : Coroutines
 #include <string_view>
 #include <format>
 #include <coroutine>
+#include <thread>
 
 namespace
 {
@@ -34,6 +35,107 @@ namespace Coroutines::Generators
     }
 }
  */
+
+
+namespace SimpleExample
+{
+    struct ReturnType
+    {
+        struct promise_type
+        {
+            // the compiler looks for a type with the exact name promise_type inside the return type
+            std::suspend_never initial_suspend()
+            {
+                std::cout << "initial_suspend" << std::endl;
+                return std::suspend_never {};
+            }
+
+            // gets executed before a coroutine starts execution
+            std::suspend_never final_suspend() noexcept
+            {
+                std::cout << "final_suspend" << std::endl;
+                return std::suspend_never{};
+            }
+
+            // gets executed when a coroutine finishes execution
+            ReturnType get_return_object()
+            {
+                std::cout << "get_return_object" << std::endl;
+                return ReturnType{};
+            }
+
+            // this is the first method gets called when the coroutine is called for the first time
+            void unhandled_exception()
+            {
+
+            }
+        };
+    };
+
+    ReturnType foo()
+    {
+        std::cout << "1 foo\n";
+        co_await std::suspend_always(); // suspend
+        std::cout << "2 foo\n"; // will never execute since coroutine suspends in the above line
+    }
+
+    void Test()
+    {
+        ReturnType r = foo();
+    }
+}
+
+namespace SimpleExample2
+{
+    struct ReturnType
+    {
+        struct promise_type
+        {
+            // the compiler looks for a type with the exact name promise_type inside the return type
+            std::suspend_never initial_suspend()
+            {
+                std::cout << "initial_suspend" << std::endl;
+                return std::suspend_never {};
+            }
+
+            // gets executed before a coroutine starts execution
+            std::suspend_never final_suspend() noexcept
+            {
+                std::cout << "final_suspend" << std::endl;
+                return std::suspend_never {};
+            }
+
+            // gets executed when a coroutine finishes execution
+            ReturnType get_return_object() {
+                return ReturnType(std::coroutine_handle<promise_type>::from_promise(*this));
+            }
+
+            // this is the first method gets called when the coroutine is called for the first time
+            void unhandled_exception()
+            {
+
+            }
+        };
+
+        explicit ReturnType(std::coroutine_handle<void> handle) : mHandle{handle} {
+        }
+        std::coroutine_handle<void> mHandle;
+    };
+
+    ReturnType foo()
+    {
+        std::cout << "1 foo\n";
+        co_await std::suspend_always(); // suspend
+        std::cout << "2 foo\n"; // will never execute since coroutine suspends in the above line
+    }
+
+    void Test()
+    {
+        ReturnType r = foo();
+        r.mHandle.resume(); // equivalent to r.mHandle();
+    }
+}
+
 
 namespace Coroutines::DemoOne
 {
@@ -289,8 +391,66 @@ namespace Coroutines::TTT
     };
 }
 
+
+namespace DemoFour
+{
+    auto switch_to_new_thread(std::jthread& out)
+    {
+        struct awaitable
+        {
+            std::jthread* p_out;
+
+            bool await_ready() { return false; }
+
+            void await_suspend(std::coroutine_handle<> h)
+            {
+                std::jthread& out = *p_out;
+                if (out.joinable())
+                    throw std::runtime_error("Output jthread parameter not empty");
+                out = std::jthread([h] { h.resume(); });
+                // Potential undefined behavior: accessing potentially destroyed *this
+                // std::cout << "New thread ID: " << p_out->get_id() << '\n';
+                std::cout << "New thread ID: " << out.get_id() << '\n'; // this is OK
+            }
+
+            void await_resume() {}
+        };
+        return awaitable{&out};
+    }
+
+    struct task
+    {
+        struct promise_type
+        {
+            task get_return_object() { return {}; }
+            std::suspend_never initial_suspend() { return {}; }
+            std::suspend_never final_suspend() noexcept { return {}; }
+            void return_void() {}
+            void unhandled_exception() {}
+        };
+    };
+
+    task resuming_on_new_thread(std::jthread& out)
+    {
+        std::cout << "Coroutine started on thread: " << std::this_thread::get_id() << '\n';
+        co_await switch_to_new_thread(out);
+        // awaiter destroyed here
+        std::cout << "Coroutine resumed on thread: " << std::this_thread::get_id() << '\n';
+    }
+
+    void Test()
+    {
+        std::jthread out;
+        resuming_on_new_thread(out);
+    }
+}
+
+
 void Coroutines::TestAll()
 {
+    // SimpleExample::Test();
+    SimpleExample2::Test();
+
     // DemoOne::test();
 
     // DemoTwo::test();
@@ -298,5 +458,7 @@ void Coroutines::TestAll()
     // DemoTwo::testFixed();
 
     // DemoThree::test();
+
+    // DemoFour::Test();
 };
 
