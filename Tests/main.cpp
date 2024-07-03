@@ -1129,7 +1129,6 @@ namespace PipelineOperator
 }
 
 
-
 int main([[maybe_unused]] int argc,
          [[maybe_unused]] char** argv)
 {
@@ -1156,6 +1155,9 @@ int main([[maybe_unused]] int argc,
     // Enums::Tests();
 
 
+    std::chrono::duration<long, std::ratio<1, 1000>> snapshotSleepTimeoutMs = std::chrono::milliseconds(250);
+
+
     /** * * * * *  Move to lib * * * * * **/
 
     // OperatorCall_ExplicitTypeSpecialization::Test();
@@ -1172,7 +1174,7 @@ int main([[maybe_unused]] int argc,
     // Concepts::TestAll();
     // Crow::TestAll();
     // Comparators::TestAll();
-    CollectionsTests::TestAll();
+    // CollectionsTests::TestAll();
     // Coroutines::TestAll();
     // CopyElision_RVO::TestAll();
     // ConstexprMap::TestAll();
