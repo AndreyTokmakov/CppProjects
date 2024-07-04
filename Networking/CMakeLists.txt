@@ -16,6 +16,12 @@ include_directories(${THIRD_PARTY_DIR}/libssh2/include)
 include_directories(${THIRD_PARTY_DIR}/libssh2/build/src)
 link_directories(${THIRD_PARTY_DIR}/libssh2/build/src)
 
+include_directories(${THIRD_PARTY_DIR}/grpc/include)
+# link_directories(${THIRD_PARTY_DIR}/jsoncpp/build/lib)
+
+# find_package(gRPC CONFIG REQUIRED)
+# message(STATUS "Using gRPC ${gRPC_VERSION}")
+
 # include all components
 add_executable(${PROJECT_NAME}
         main.cpp
@@ -65,8 +71,8 @@ add_executable(${PROJECT_NAME}
         SSL/HTTPS_AsyncServer.cpp SSL/HTTPS_AsyncServer.h
         SSL/HTTPS_ServerMultithreaded.cpp SSL/HTTPS_ServerMultithreaded.h
         SSL/HTTPS_Server_ThreadPool.cpp SSL/HTTPS_Server_ThreadPool.h
-        Servers/EPollTCPServerContext.cpp
-        Servers/EPollTCPServerContext.h
+        Servers/EPollTCPServerContext.cpp  Servers/EPollTCPServerContext.h
+        JRPC/JRPC.h JRPC/JRPC.cpp
 )
 
 TARGET_LINK_LIBRARIES(${PROJECT_NAME}

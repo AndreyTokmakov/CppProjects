@@ -1154,6 +1154,8 @@ int main([[maybe_unused]] int argc,
 
     // Enums::Tests();
 
+    auto x = 10;
+
 
     std::chrono::duration<long, std::ratio<1, 1000>> snapshotSleepTimeoutMs = std::chrono::milliseconds(250);
 

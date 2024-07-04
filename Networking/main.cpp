@@ -49,6 +49,8 @@ Description : Tests C++ project
 
 #include "APIServer/APIServer.h"
 
+#include "JRPC/JRPC.h"
+
 int main([[maybe_unused]] int argc,
          [[maybe_unused]] char** argv)
 {
@@ -64,7 +66,7 @@ int main([[maybe_unused]] int argc,
     // ARPTester::TestAll();
     // BuildAndSendPacketsTests::TestAll();
 
-    Experiments::Tests();
+    // Experiments::Tests();
 
     // UtilitiesTests::TestAll();
 
@@ -95,6 +97,8 @@ int main([[maybe_unused]] int argc,
     // HTTPS_Server_ThreadPool::TestAll();
 
     // APIServer::TestAll();
+
+    JRPC::TestAll();
 
     return EXIT_SUCCESS;
 }
