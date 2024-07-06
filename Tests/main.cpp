@@ -1154,11 +1154,6 @@ int main([[maybe_unused]] int argc,
 
     // Enums::Tests();
 
-    auto x = 10;
-
-
-    std::chrono::duration<long, std::ratio<1, 1000>> snapshotSleepTimeoutMs = std::chrono::milliseconds(250);
-
 
     /** * * * * *  Move to lib * * * * * **/
 
@@ -1192,7 +1187,7 @@ int main([[maybe_unused]] int argc,
     // RateLimiter::TestAll();
     // LRUCache::TestAll();
     // LowLatencyLogger::TestAll();
-    // Multithreading::TestAll();
+    Multithreading::TestAll();
     // Memory::TestAll();
     // MaxStack::TestAll();
     // MinMaxStack::TestAll();
