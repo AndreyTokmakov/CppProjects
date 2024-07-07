@@ -56,66 +56,54 @@ namespace AtomicPerformanceTests
     {
         {
             std::atomic_bool flag = true;
+            bool value = true;
 
             auto task = [&] {
                 for (size_t idx = 0; idx < iterCount; ++idx)
                 {
-                    if (flag.load(std::memory_order_relaxed)) {
-                        flag.store(false, std::memory_order_relaxed);
-                    } else {
-                        flag.store(true, std::memory_order_relaxed);
-                    }
+                    value = !flag.load(std::memory_order_relaxed);
+                    flag.store(value, std::memory_order_relaxed);
                 }
             };
 
-            {
-                Utils::ScopedTimer timer{"Bool 1"};
-                std::vector<std::jthread> jobs;
-                for (int t = 0; t < threadsMax; ++t)
-                    jobs.emplace_back(task);
-            }
+            Utils::ScopedTimer timer{"Bool 1"};
+            std::vector<std::jthread> jobs;
+            for (int t = 0; t < threadsMax; ++t)
+                jobs.emplace_back(task);
         }
         {
             std::atomic<bool> flag = true;
+            bool value = true;
 
             auto task = [&] {
                 for (size_t idx = 0; idx < iterCount; ++idx)
                 {
-                    if (flag.load(std::memory_order_relaxed)) {
-                        flag.store(false, std::memory_order_relaxed);
-                    } else {
-                        flag.store(true, std::memory_order_relaxed);
-                    }
+                    value = !flag.load(std::memory_order_relaxed);
+                    flag.store(value, std::memory_order_relaxed);
                 }
             };
 
-            {
-                Utils::ScopedTimer timer{"Bool 2"};
-                std::vector<std::jthread> jobs;
-                for (int t = 0; t < threadsMax; ++t)
-                    jobs.emplace_back(task);
-            }
+            Utils::ScopedTimer timer{"Bool 2"};
+            std::vector<std::jthread> jobs;
+            for (int t = 0; t < threadsMax; ++t)
+                jobs.emplace_back(task);
         }
         {
             std::atomic<int32_t> flag = true;
+            bool value = true;
 
             auto task = [&] {
                 for (size_t idx = 0; idx < iterCount; ++idx)
                 {
-                    if (flag.load(std::memory_order_relaxed)) {
-                        flag.store(0, std::memory_order_relaxed);
-                    } else {
-                        flag.store(1, std::memory_order_relaxed);
-                    }
+                    value = !flag.load(std::memory_order_relaxed);
+                    flag.store(value, std::memory_order_relaxed);
                 }
             };
 
-            {
-                Utils::ScopedTimer timer{"Bool (Uint32)"};
-                std::vector<std::jthread> jobs;
-                for (int t = 0; t < threadsMax; ++t)
-                    jobs.emplace_back(task);
-            }
+            Utils::ScopedTimer timer{"Bool (Uint32)"};
+            std::vector<std::jthread> jobs;
+            for (int t = 0; t < threadsMax; ++t)
+                jobs.emplace_back(task);
         }
         {
             std::atomic_flag flag = true;
@@ -136,13 +124,16 @@ namespace AtomicPerformanceTests
                 }
             };
 
-            {
-                Utils::ScopedTimer timer{"Flag"};
-                std::vector<std::jthread> jobs;
-                for (int t = 0; t < threadsMax; ++t)
-                    jobs.emplace_back(task);
-            }
+            Utils::ScopedTimer timer{"Flag"};
+            std::vector<std::jthread> jobs;
+            for (int t = 0; t < threadsMax; ++t)
+                jobs.emplace_back(task);
         }
+
+        // Bool 1             :  0.0884118 seconds.
+        // Bool 2             :  0.095649 seconds.
+        // Bool (Uint32)      :  0.0693623 seconds.
+        // Flag               :  2.65361 seconds.
     }
 }
 

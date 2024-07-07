@@ -66,7 +66,7 @@ int main([[maybe_unused]] int argc,
     // Atomic_MemoryOrder::TestAll();
     // Atomic_CompareExchange::TestAll();
     // Atomic_IsLockFree::TestAll();
-    AtomicPerformanceTests::TestAll();
+    // AtomicPerformanceTests::TestAll();
 
     // Barrier::TEST_ALL();
     // CallOnce::TEST_ALL();
