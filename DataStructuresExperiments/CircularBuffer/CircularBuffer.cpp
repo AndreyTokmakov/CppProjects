@@ -35,7 +35,7 @@ namespace CircularBuffer
 
         bool read(value_type& output) noexcept
         {
-            if (writePos > readPos && overflow)
+            if (writePos == readPos)
                 return false;
 
             output = buffer[readPos++];
@@ -49,6 +49,11 @@ namespace CircularBuffer
 
         bool add(value_type value) noexcept
         {
+            if (overflow && writePos == readPos)
+            {
+                // TODO
+            }
+
             buffer[writePos++] = value;
 
             if (writePos >= Capacity) {
