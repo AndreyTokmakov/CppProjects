@@ -8,6 +8,7 @@ project(${PROJECT_NAME} VERSION ${PROJECT_VERSION} LANGUAGES CXX)
 add_compile_options(-c -Wall -Wextra -O3 -std=c++2a)
 
 include_directories(BitReader)
+include_directories(CircularBuffer)
 include_directories(DVector)
 include_directories(EventLoop)
 include_directories(LRUCache)
@@ -21,6 +22,7 @@ include_directories(Utils)
 # include all components
 add_executable(${PROJECT_NAME}
 		main.cpp
+		CircularBuffer/CircularBuffer.h CircularBuffer/CircularBuffer.cpp
 		BitReader/BitReader.h BitReader/BitReader.cpp
 		DVector/DVector.h DVector/DVector.cpp
 		EventLoop/EventLoop.h EventLoop/EventLoop.cpp

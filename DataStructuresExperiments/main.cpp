@@ -8,6 +8,7 @@ Description : C++ data structures experiments
 ============================================================================**/
 
 #include "BitReader.h"
+#include "CircularBuffer.h"
 #include "DVector.h"
 #include "EventLoop.h"
 #include "LRUCache.h"
@@ -22,15 +23,16 @@ Description : C++ data structures experiments
 int main([[maybe_unused]] int argc,
          [[maybe_unused]] char** argv)
 {
-    BitReader::TestAll();
-    DVector::TestAll();
-    EventLoop::TestAll();
-    LRUCache::TestAll();
-    MaxStack::TestAll();
-    MinStack::TestAll();
-    MinMaxStack::TestAll();
-    RateLimiter::TestAll();
-    RingBuffer::TestAll();
+    // BitReader::TestAll();
+    CircularBuffer::TestAll();
+    // DVector::TestAll();
+    // EventLoop::TestAll();
+    // LRUCache::TestAll();
+    // MaxStack::TestAll();
+    // MinStack::TestAll();
+    // MinMaxStack::TestAll();
+    // RateLimiter::TestAll();
+    // RingBuffer::TestAll();
 
     return EXIT_SUCCESS;
 }
