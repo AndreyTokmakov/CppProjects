@@ -8,7 +8,7 @@ Description : RingBuffer.cpp
 ============================================================================**/
 
 #include "RingBuffer.h"
-#include "../Helpers/Helpers.h"
+#include "PertTools.h"
 
 #include <iostream>
 #include <vector>
@@ -357,6 +357,7 @@ namespace RingBuffer::WithAtomics
             if (nextWriteIdx == Capacity) {
                 nextWriteIdx = 0;
             }
+
             if (nextWriteIdx == readIdxCache_) {
                 readIdxCache_ = readIdx_.load(std::memory_order_acquire);
                 if (nextWriteIdx == readIdxCache_) {
@@ -477,7 +478,7 @@ namespace RingBuffer::Tests
         constexpr int eventsCount {1'000'000};
         size_t reads {0}, writes {0};
 
-        ScopedTimer timer {"benchmark"};
+        PertTools::ScopedTimer timer {"benchmark"};
 
         auto consume = [&]() {
             int result;
@@ -532,7 +533,7 @@ namespace RingBuffer::Tests
         size_t failedReads {0}, failedWrites {0};
         size_t okReads {0}, okWrites {0};
 
-        ScopedTimer timer {"benchmark"};
+        PertTools::ScopedTimer timer {"benchmark"};
 
         auto consume = [&]() {
             int result;

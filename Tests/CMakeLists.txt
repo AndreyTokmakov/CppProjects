@@ -41,13 +41,6 @@ add_executable(${PROJECT_NAME}
         Helpers/Wrapper.h Helpers/UnorderedPair.h Helpers/Helpers.h Helpers/ScopedTimer.h
         Strings/Strings.cpp Strings/Strings.h
         Strings/StringUtilities.cpp Strings/StringUtilities.h
-        DataStructures/LRUCache.cpp DataStructures/LRUCache.h
-        DataStructures/DVector.cpp DataStructures/DVector.h
-        DataStructures/EventLoop.cpp DataStructures/EventLoop.h
-        DataStructures/MaxStack.cpp DataStructures/MaxStack.h
-        DataStructures/MinStack.cpp DataStructures/MinStack.h
-        DataStructures/MinMaxStack.cpp DataStructures/MinMaxStack.h
-        DataStructures/RingBuffer.cpp DataStructures/RingBuffer.h
         Performance/Performance.cpp Performance/Performance.h
         Memory/Memory.cpp Memory/Memory.h
         Memory/CustomStackAllocator.cpp Memory/CustomStackAllocator.h
@@ -66,8 +59,6 @@ add_executable(${PROJECT_NAME}
         Heap/Heap.cpp Heap/Heap.h
         Comparators/Comparators.cpp Comparators/Comparators.h
         FindMinMaxValues/FindMinMaxValues.cpp FindMinMaxValues/FindMinMaxValues.h
-        DataStructures/RateLimiter.cpp DataStructures/RateLimiter.h
-        DataStructures/BitReader.cpp DataStructures/BitReader.h
         FunctionCall_LookUp/FunctionCall_LookUp.cpp FunctionCall_LookUp/FunctionCall_LookUp.h
         Memory/AlignedStackAllocator.cpp Memory/AlignedStackAllocator.h
         Memory/UsingCustomAllocator_List.cpp Memory/UsingCustomAllocator_List.h

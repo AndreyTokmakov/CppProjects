@@ -66,15 +66,6 @@ Description : Tests C++ project
 #include "Templates_Metaprogramming/Templates.h"
 #include "Logging/LowLatencyLogger.h"
 #include "Crow/Crow.h"
-#include "DataStructures/LRUCache.h"
-#include "DataStructures/EventLoop.h"
-#include "DataStructures/MaxStack.h"
-#include "DataStructures/MinStack.h"
-#include "DataStructures/MinMaxStack.h"
-#include "DataStructures/DVector.h"
-#include "DataStructures/RateLimiter.h"
-#include "DataStructures/BitReader.h"
-#include "DataStructures/RingBuffer.h"
 #include "DebugLogger/DebugLogger.h"
 #include "Date_Time_Chrono/Date_Time_Chrono.h"
 #include "Collections/CollectionsTests.h"
@@ -1154,10 +1145,6 @@ int main([[maybe_unused]] int argc,
 
     // Enums::Tests();
 
-    auto x = 10;
-
-
-    std::chrono::duration<long, std::ratio<1, 1000>> snapshotSleepTimeoutMs = std::chrono::milliseconds(250);
 
 
     /** * * * * *  Move to lib * * * * * **/
@@ -1181,22 +1168,16 @@ int main([[maybe_unused]] int argc,
     // CopyElision_RVO::TestAll();
     // ConstexprMap::TestAll();
     // DebugLogger::TestAll();
-    // DVector::TestAll();
-    // RingBuffer::TestAll();
     // DesignPatterns::TestAll();
     // Date_Time_Chrono::TestAll();
     // Heap::TestAll();
     // Iterators::TestAll();
     // Files::TestAll();
     // FunctionCall_LookUp::TestAll();
-    // RateLimiter::TestAll();
-    // LRUCache::TestAll();
     // LowLatencyLogger::TestAll();
     // Multithreading::TestAll();
     // Memory::TestAll();
     // MaxStack::TestAll();
-    // MinMaxStack::TestAll();
-    // MinStack::TestAll();
     // Math::TestAll();
     // UniquePtr_Size::SizeTest();
     // ExpressionTemplates::TestAll();
@@ -1205,7 +1186,7 @@ int main([[maybe_unused]] int argc,
     // ObjectOrientedExperiments::VirtualTables::TestAll();
     // Optional::TestAll();
     // PointsAndLines::TestAll();           // Geometry
-    // EventLoop::TestAll();
+
     // Iterators::TestAll();
     // Strings::TestAll();
     // Performance::TestAll();

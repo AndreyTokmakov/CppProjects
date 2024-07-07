@@ -73,7 +73,7 @@ namespace MinMaxStack
         }
 
         [[nodiscard]]
-        value_type top() const noexcept
+        value_type top() const
         {
             if (!store.empty())
                 return store.back();
@@ -81,7 +81,7 @@ namespace MinMaxStack
         }
 
         [[nodiscard]]
-        value_type min() const noexcept
+        value_type min() const
         {
             if (!minStore.empty())
                 return minStore.back();
@@ -89,7 +89,7 @@ namespace MinMaxStack
         }
 
         [[nodiscard]]
-        value_type max() const noexcept
+        value_type max() const
         {
             if (!minStore.empty())
                 return minStore.front();

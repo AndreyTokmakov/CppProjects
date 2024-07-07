@@ -16,6 +16,7 @@ using grpc::ServerBuilder;
 using grpc::ServerContext;
 using grpc::Status;
 
+/*
 namespace JRPC
 {
     class ReverseServiceImplementation final : public StringReverse::Service
@@ -36,7 +37,7 @@ namespace JRPC
         }
     };
 }
-
+*/
 void JRPC::TestAll()
 {
 

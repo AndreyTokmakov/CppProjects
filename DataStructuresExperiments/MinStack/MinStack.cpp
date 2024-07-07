@@ -137,7 +137,7 @@ namespace MinStack::Two_Vectors_GOOD
         }
 
         [[nodiscard]]
-        value_type top() const noexcept
+        value_type top() const
         {
             if (!store.empty())
                 return store.back();
@@ -145,7 +145,7 @@ namespace MinStack::Two_Vectors_GOOD
         }
 
         [[nodiscard]]
-        value_type getMin() const noexcept
+        value_type getMin() const
         {
             if (!minStore.empty())
                 return minStore.back();
