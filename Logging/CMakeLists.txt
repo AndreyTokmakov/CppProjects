@@ -10,11 +10,17 @@ add_compile_options(-c -Wall -Wextra -O3 -std=c++23)
 include_directories(${THIRD_PARTY_DIR}/quill/quill/include)
 link_directories(${THIRD_PARTY_DIR}/quill/build/quill)
 
+link_directories(${THIRD_PARTY_DIR}/spdlog/include)
+
+include_directories(Quill)
+
 # find_package(quill REQUIRED)
 
 # include all components
 add_executable(${PROJECT_NAME}
         main.cpp
+        Quill/Quill.h Quill/Quill.cpp
+        SPDLog/SPDLog.h SPDLog/SPDLog.cpp
 )
 
 TARGET_LINK_LIBRARIES(${PROJECT_NAME} PRIVATE
