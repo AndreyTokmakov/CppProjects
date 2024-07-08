@@ -14,6 +14,7 @@ Description : SPDLog.cpp
 #include "spdlog/spdlog.h"
 #include "spdlog/sinks/stdout_color_sinks.h"
 #include "spdlog/sinks/basic_file_sink.h"
+#include "spdlog/sinks/callback_sink.h"
 
 namespace SPDLog
 {
@@ -63,6 +64,36 @@ namespace SPDLog
             std::cout << "Log init failed: " << ex.what() << std::endl;
         }
     }
+
+    void Multi_Sink_Example()
+    {
+        auto console_sink = std::make_shared<spdlog::sinks::stdout_color_sink_mt>();
+        console_sink->set_level(spdlog::level::warn);
+        console_sink->set_pattern("[multi_sink_example] [%^%l%$] %v");
+
+        auto file_sink = std::make_shared<spdlog::sinks::basic_file_sink_mt>("/tmp/trace1.txt", true);
+        file_sink->set_level(spdlog::level::trace);
+
+        spdlog::logger logger("multi_sink", {console_sink, file_sink});
+        logger.set_level(spdlog::level::debug);
+        logger.warn("this should appear in both console and file");
+        logger.info("this message should not appear in the console, only in the file");
+    }
+
+    void Callback_Example()
+    {
+        auto callback_sink = std::make_shared<spdlog::sinks::callback_sink_mt>([](const spdlog::details::log_msg &msg) {
+             // for example you can be notified by sending an email to yourself
+                 std::cout << "SINK  " << msg.payload.data() << "\n";
+        });
+        callback_sink->set_level(spdlog::level::err);
+
+        auto console_sink = std::make_shared<spdlog::sinks::stdout_color_sink_mt>();
+        spdlog::logger logger("custom_callback_logger", {console_sink, callback_sink});
+
+        logger.info("some info log");
+        logger.error("critical issue"); // will notify you
+    }
 }
 
 
@@ -73,6 +104,8 @@ void SPDLog::TestAll()
 
     // SPDLog::BasicTest();
     // SPDLog::Stdout_Stderr_Logger();
-    SPDLog::File_Logger();
+    // SPDLog::File_Logger();
+    // SPDLog::Multi_Sink_Example();
+    SPDLog::Callback_Example();
 
 }
