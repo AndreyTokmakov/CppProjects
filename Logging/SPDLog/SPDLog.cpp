@@ -12,11 +12,15 @@ Description : SPDLog.cpp
 
 #include "SPDLog.h"
 #include "spdlog/spdlog.h"
+#include "spdlog/async.h"
+
 #include "spdlog/sinks/stdout_color_sinks.h"
 #include "spdlog/sinks/basic_file_sink.h"
+#include "spdlog/sinks/daily_file_sink.h"
 #include "spdlog/sinks/callback_sink.h"
 
-namespace SPDLog
+
+namespace SPDLog::Basics
 {
     void BasicTest()
     {
@@ -65,13 +69,36 @@ namespace SPDLog
         }
     }
 
+    void File_Logger_Async()
+    {
+        try
+        {
+            std::shared_ptr<spdlog::logger> async_file_logger =
+                    spdlog::basic_logger_mt<spdlog::async_factory>("async_file_logger", "/tmp/trace.txt");
+
+            for (int i = 1; i < 101; ++i) {
+                async_file_logger->info("Async message #{}", i);
+            }
+
+            // Under VisualStudio, this must be called before main finishes to workaround a known VS issue
+            spdlog::drop_all();
+        }
+        catch (const spdlog::spdlog_ex &ex)
+        {
+            std::cout << "Log init failed: " << ex.what() << std::endl;
+        }
+    }
+
     void Multi_Sink_Example()
     {
-        auto console_sink = std::make_shared<spdlog::sinks::stdout_color_sink_mt>();
+        const std::shared_ptr<spdlog::sinks::ansicolor_stdout_sink<spdlog::details::console_mutex>> console_sink =
+                std::make_shared<spdlog::sinks::stdout_color_sink_mt>();
+
         console_sink->set_level(spdlog::level::warn);
         console_sink->set_pattern("[multi_sink_example] [%^%l%$] %v");
 
-        auto file_sink = std::make_shared<spdlog::sinks::basic_file_sink_mt>("/tmp/trace1.txt", true);
+        const std::shared_ptr<spdlog::sinks::basic_file_sink<std::mutex>> file_sink =
+                std::make_shared<spdlog::sinks::basic_file_sink_mt>("/tmp/trace.txt", true);
         file_sink->set_level(spdlog::level::trace);
 
         spdlog::logger logger("multi_sink", {console_sink, file_sink});
@@ -82,17 +109,46 @@ namespace SPDLog
 
     void Callback_Example()
     {
-        auto callback_sink = std::make_shared<spdlog::sinks::callback_sink_mt>([](const spdlog::details::log_msg &msg) {
-             // for example you can be notified by sending an email to yourself
+        const std::shared_ptr<spdlog::sinks::callback_sink<std::mutex>> callbackSink {
+            std::make_shared<spdlog::sinks::callback_sink_mt>([](const spdlog::details::log_msg &msg) {
                  std::cout << "SINK  " << msg.payload.data() << "\n";
-        });
-        callback_sink->set_level(spdlog::level::err);
+        })};
+        const std::shared_ptr<spdlog::sinks::ansicolor_stdout_sink<spdlog::details::console_mutex>> consoleSink {
+                std::make_shared<spdlog::sinks::stdout_color_sink_mt>()
+        };
 
-        auto console_sink = std::make_shared<spdlog::sinks::stdout_color_sink_mt>();
-        spdlog::logger logger("custom_callback_logger", {console_sink, callback_sink});
+        spdlog::logger logger("custom_callback_logger", { consoleSink, callbackSink });
 
         logger.info("some info log");
         logger.error("critical issue"); // will notify you
+    }
+}
+
+namespace SPDLog::Async
+{
+    void AsyncLogger_PoolSettings()
+    {
+        try
+        {
+            const std::shared_ptr<spdlog::sinks::daily_file_sink<std::mutex>> daily_sink =
+                    std::make_shared<spdlog::sinks::daily_file_sink_mt>("logfile", 23, 59);
+
+            // default thread pool settings can be modified *before* creating the async logger:
+            spdlog::init_thread_pool(10000, 1); // queue with 10K items and 1 backing thread.
+
+            const std::shared_ptr<spdlog::logger> asyncFileLogger = spdlog::basic_logger_mt<spdlog::async_factory>(
+                    "async_file_logger", "/tmp/trace.txt");
+
+            for (int i = 1; i < 101; ++i) {
+                asyncFileLogger->info("Async message #{}", i);
+            }
+
+            spdlog::drop_all();
+        }
+        catch (const spdlog::spdlog_ex& ex)
+        {
+            std::cout << "Log initialization failed: " << ex.what() << std::endl;
+        }
     }
 }
 
@@ -101,11 +157,16 @@ namespace SPDLog
 
 void SPDLog::TestAll()
 {
+    // Basics::BasicTest();
+    // Basics::Stdout_Stderr_Logger();
 
-    // SPDLog::BasicTest();
-    // SPDLog::Stdout_Stderr_Logger();
-    // SPDLog::File_Logger();
-    // SPDLog::Multi_Sink_Example();
-    SPDLog::Callback_Example();
+    // Basics::File_Logger();
+    // Basics::File_Logger_Async();
 
+    // Basics::Multi_Sink_Example();
+
+    Basics::Callback_Example();
+
+
+    // Async::AsyncLogger_PoolSettings();
 }
