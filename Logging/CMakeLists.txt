@@ -19,13 +19,13 @@ include_directories(Quill)
 # include all components
 add_executable(${PROJECT_NAME}
         main.cpp
-        Quill/Quill.h Quill/Quill.cpp
+        # Quill/Quill.h Quill/Quill.cpp
         SPDLog/SPDLog.h SPDLog/SPDLog.cpp
 )
 
 TARGET_LINK_LIBRARIES(${PROJECT_NAME} PRIVATE
         pthread
         ${EXTRA_LIBS}
-        libquill.a
+        # libquill.a
         # quill::quill
 )

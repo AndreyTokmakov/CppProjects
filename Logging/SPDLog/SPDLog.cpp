@@ -18,7 +18,7 @@ Description : SPDLog.cpp
 #include "spdlog/sinks/basic_file_sink.h"
 #include "spdlog/sinks/daily_file_sink.h"
 #include "spdlog/sinks/callback_sink.h"
-
+#include "spdlog/sinks/rotating_file_sink.h"
 
 namespace SPDLog::Basics
 {
@@ -150,10 +150,32 @@ namespace SPDLog::Async
             std::cout << "Log initialization failed: " << ex.what() << std::endl;
         }
     }
+
+    void AsynchronousLogger_MultiSinks()
+    {
+        spdlog::init_thread_pool(8192, 1);
+
+        const std::shared_ptr<spdlog::sinks::ansicolor_stdout_sink<spdlog::details::console_mutex>> stdout_sink {
+            std::make_shared<spdlog::sinks::stdout_color_sink_mt>()
+        };
+
+        const auto rotating_sink = std::make_shared<spdlog::sinks::rotating_file_sink_mt>(
+            "/tmp/trace.txt", 1024*1024*10, 3);
+
+        std::vector<spdlog::sink_ptr> sinks {stdout_sink, rotating_sink};
+        auto logger = std::make_shared<spdlog::async_logger>(
+            "loggername", sinks.begin(), sinks.end(), spdlog::thread_pool(), spdlog::async_overflow_policy::block);
+        spdlog::register_logger(logger);
+
+        for (int i = 1; i < 10000; ++i) {
+            logger->info("Async message #{}", i);
+        }
+
+    }
 }
 
 
-/** https://github.com/gabime/spdlog **/
+// https://github.com/gabime/spdlog
 
 void SPDLog::TestAll()
 {
@@ -165,8 +187,9 @@ void SPDLog::TestAll()
 
     // Basics::Multi_Sink_Example();
 
-    Basics::Callback_Example();
+    // Basics::Callback_Example();
 
 
     // Async::AsyncLogger_PoolSettings();
+    Async::AsynchronousLogger_MultiSinks();
 }
