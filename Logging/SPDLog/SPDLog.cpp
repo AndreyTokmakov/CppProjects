@@ -20,6 +20,11 @@ Description : SPDLog.cpp
 #include "spdlog/sinks/callback_sink.h"
 #include "spdlog/sinks/rotating_file_sink.h"
 
+namespace
+{
+    const std::string logsDir { R"(/home/andtokm/DiskS/Temp/Logs)"};
+}
+
 namespace SPDLog::Basics
 {
     void BasicTest()
@@ -155,22 +160,25 @@ namespace SPDLog::Async
     {
         spdlog::init_thread_pool(8192, 1);
 
-        const std::shared_ptr<spdlog::sinks::ansicolor_stdout_sink<spdlog::details::console_mutex>> stdout_sink {
+        const std::shared_ptr<spdlog::sinks::ansicolor_stdout_sink<spdlog::details::console_mutex>> stdoutSink {
             std::make_shared<spdlog::sinks::stdout_color_sink_mt>()
         };
+        const std::shared_ptr<spdlog::sinks::rotating_file_sink<std::mutex>> rotatingSink {
+                std::make_shared<spdlog::sinks::rotating_file_sink_mt>(logsDir + "/trace.txt",
+                                                                       1024 * 1024, 10)
+        };
 
-        const auto rotating_sink = std::make_shared<spdlog::sinks::rotating_file_sink_mt>(
-            "/tmp/trace.txt", 1024*1024*10, 3);
+        std::vector<spdlog::sink_ptr> sinks { stdoutSink, rotatingSink };
+        const std::shared_ptr<spdlog::async_logger>  logger = std::make_shared<spdlog::async_logger>(
+            "logger_name", sinks.begin(), sinks.end(), spdlog::thread_pool(), spdlog::async_overflow_policy::block);
 
-        std::vector<spdlog::sink_ptr> sinks {stdout_sink, rotating_sink};
-        auto logger = std::make_shared<spdlog::async_logger>(
-            "loggername", sinks.begin(), sinks.end(), spdlog::thread_pool(), spdlog::async_overflow_policy::block);
         spdlog::register_logger(logger);
 
-        for (int i = 1; i < 10000; ++i) {
+        for (int i = 1; i < 100'000; ++i) {
             logger->info("Async message #{}", i);
         }
 
+        // Will create a 8 log file [trace.txt, trace.1.txt .... trace.7.txt]
     }
 }
 
