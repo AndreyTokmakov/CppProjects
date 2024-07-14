@@ -670,9 +670,89 @@ namespace PerformanceExperiments::AtomicCounter_vs_Mutex
     }
 }
 
+
+namespace PerformanceExperiments::Atomic_vs_Volatile
+{
+    void SingleThread()
+    {
+        std::atomic<int32_t> atomicCounter = 0;
+        volatile int32_t volatileCounter = 0;
+
+        constexpr size_t iterCount { 100'000'000 };
+
+        {
+            Utils::ScopedTimer timer {"atomicCounter"};
+            for (size_t t = 0; t < iterCount; ++t)
+                atomicCounter.fetch_add(1, std::memory_order::relaxed);
+        }
+
+        {
+            Utils::ScopedTimer timer {"volatileCounter"};
+            for (size_t t = 0; t < iterCount; ++t)
+                volatileCounter += 1;
+        }
+    }
+
+
+    void MultipleThreads()
+    {
+        constexpr int32_t iterCount { 10'000'000 };
+        constexpr int32_t threadsMax { 32 };
+
+        {
+            std::atomic<int32_t> atomicCounter = 0;
+
+            auto writer = [&] {
+                for (size_t idx  = 0; idx < iterCount; ++idx) { atomicCounter.fetch_add(1, std::memory_order_relaxed); }
+            };
+
+            auto reader = [&] {
+                for (int32_t idx = 0, val = 0; idx < iterCount; ++idx) { val = atomicCounter.load(std::memory_order_relaxed); }
+            };
+
+            {
+                Utils::ScopedTimer timer {"atomicCounter"};
+                std::vector<std::jthread> jobs;
+                for (int32_t t = 0; t < threadsMax / 2; ++t) {
+                    jobs.emplace_back(writer);
+                    jobs.emplace_back(reader);
+                }
+            }
+        }
+
+        {
+            volatile int32_t volatileCounter = 0;
+
+            auto writer = [&] {
+                for (size_t idx  = 0; idx < iterCount; ++idx) { volatileCounter += 1; }
+            };
+
+            auto reader = [&] {
+                for (int32_t idx = 0, val = 0; idx < iterCount; ++idx) { val = volatileCounter;  }
+            };
+
+            {
+                Utils::ScopedTimer timer {"volatileCounter"};
+                std::vector<std::jthread> jobs;
+                for (uint32_t t = 0; t < threadsMax / 2; ++t) {
+                    jobs.emplace_back(writer);
+                    jobs.emplace_back(reader);
+                }
+            }
+        }
+    }
+
+    void RunBenchmark()
+    {
+        // SingleThread();
+        MultipleThreads();
+    }
+}
+
 void PerformanceExperiments::TestAll()
 {
-    CV_vs_Atomic::RunBenchmark();
+    // CV_vs_Atomic::RunBenchmark();
     // SpinLock_vs_Mutex::RunBenchmark();
     // AtomicCounter_vs_Mutex::RunBenchmark();
+    Atomic_vs_Volatile::RunBenchmark();
 };

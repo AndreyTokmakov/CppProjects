@@ -63,7 +63,7 @@ int main([[maybe_unused]] int argc,
 
     // Atomic::TestAll();
     // AtomicFlag::TestAll();
-    // Atomic_MemoryOrder::TestAll();
+    Atomic_MemoryOrder::TestAll();
     // Atomic_CompareExchange::TestAll();
     // Atomic_IsLockFree::TestAll();
     // AtomicPerformanceTests::TestAll();

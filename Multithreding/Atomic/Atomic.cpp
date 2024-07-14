@@ -506,14 +506,16 @@ namespace Atomic::Compare
         std::atomic<int> value { 20 };
         int expected = 30, desired = 40;
 
-        auto exchanged = value.compare_exchange_weak(expected, desired);
-        std::cout << "value = " << value << ". exchange succeeded = " << std::boolalpha << exchanged << std::endl;
+        bool exchanged = value.compare_exchange_weak(expected, desired);
+        std::cout << "value = " << value.load(std::memory_order::relaxed)
+                  << ". exchange succeeded = " << std::boolalpha << exchanged << std::endl;
 
         // value.store(expected);
         expected = value.load();
 
         exchanged = value.compare_exchange_weak(expected, desired);
-        std::cout << "value = " << value << ". exchange succeeded = " << std::boolalpha << exchanged << std::endl;
+        std::cout << "value = " << value.load(std::memory_order::relaxed)
+                  << ". exchange succeeded = " << std::boolalpha << exchanged << std::endl;
     }
 
     void CompareExchangeStrong()
@@ -755,7 +757,7 @@ void Atomic::TestAll()
     // AtomicFlag::Spinlock_Test();
     // AtomicFlag::Spinlock_Test_Guard();
     // AtomicFlag::Test_and_Set();
-    AtomicFlag::Wait_Notify();
+    // AtomicFlag::Wait_Notify();
 
     // Atomic_Boolean::Bool_Load_Test();
     // Atomic_Boolean::SetValue();
@@ -778,7 +780,7 @@ void Atomic::TestAll()
     // AtomicRef::NoAtomicIncrement();
     // AtomicRef::AtomicIncrement();
 
-    // Compare::CompareExchangeWeak();
+    Compare::CompareExchangeWeak();
     // Compare::CompareExchangeStrong();
 
     // Cpp_20_Features::Wait();

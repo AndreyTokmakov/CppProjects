@@ -268,6 +268,51 @@ namespace Atomic_MemoryOrder::SynchThreads
 }
 
 
+namespace Atomic_MemoryOrder::FailureCases
+{
+    void SetMultipleVariables()
+    {
+        constexpr int32_t iterCount { 10'000 };
+        constexpr int32_t threadsMax { 32 };
+
+        int32_t varOne {0};
+        int32_t varTwo {0};
+        int32_t varThree {0};
+        std::atomic<int32_t> atomicVar {0};
+
+        auto updater = [&] {
+            for (size_t idx  = 0; idx < iterCount; ++idx)
+            {
+                ++varOne; ++varTwo; ++varThree;
+                atomicVar.fetch_add(1, std::memory_order_release);
+            }
+        };
+
+        auto validator = [&] {
+            for (size_t idx  = 0; idx < iterCount; ++idx)
+            {
+                const int32_t val = atomicVar.fetch_add(1, std::memory_order_acquire);
+                if (varOne != varTwo || varTwo != varThree || varThree != val)
+                {
+                    std::cerr << "ERROR: " << varOne << " - " << varTwo << " - " << varThree << " - " << val << std::endl;
+                    return;
+                }
+            }
+        };
+
+        {
+            std::vector<std::jthread> jobs;
+            for (uint32_t t = 0; t < threadsMax / 2; ++t) {
+                jobs.emplace_back(updater);
+                jobs.emplace_back(validator);
+            }
+        }
+
+        std::cout << "OK\n";
+    }
+}
+
+
 void Atomic_MemoryOrder::TestAll()
 {
     // AtomicThreadFence::test();
@@ -278,6 +323,8 @@ void Atomic_MemoryOrder::TestAll()
     // SynchThreads::test();
 
     // CompareExchange::Weak_Test_1();
-    CompareExchange::Strong_Test_1();
+    // CompareExchange::Strong_Test_1();
+
+    FailureCases::SetMultipleVariables();
 
 }

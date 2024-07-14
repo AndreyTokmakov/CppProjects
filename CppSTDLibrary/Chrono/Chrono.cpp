@@ -182,6 +182,20 @@ namespace Chrono
 
 namespace Chrono::Duration
 {
+    void Create_Simple()
+    {
+        const std::chrono::seconds seconds10 {10};
+        const std::chrono::minutes minutes5 {5};
+
+        std::cout << (minutes5 > seconds10 ? "minutes5  > seconds1" : "seconds10 > minutes5") << std::endl;
+
+        const std::chrono::seconds seconds20 { seconds10 + seconds10 };
+        std::cout << (seconds20 > seconds10 ? "seconds20 > seconds10" : "seconds10 > seconds20") << std::endl;
+
+        const std::chrono::minutes minutes10 { minutes5 * 2 };
+        std::cout << (minutes10 > minutes5 ? "minutes10 > minutes5" : "minutes5 > minutes10") << std::endl;
+    }
+
     void Measure_Duration()
     {
         const std::chrono::steady_clock::time_point start = std::chrono::steady_clock::now();
@@ -853,6 +867,7 @@ void Chrono::TestAll()
     // CurrentTime::PrintTime_One();
     // CurrentTime::PrintTime_Two();
 
+    Duration::Create_Simple();
     // Duration::Measure_Duration();
     // Duration::HighResolution__PeriodDuration();
     // Duration::SteadyClock__PeriodDuration();
@@ -870,7 +885,7 @@ void Chrono::TestAll()
     // Years::Last_Sunday_of_Year();
     // Years::Thanksgiving_Days();
 
-    TimeToString::Test();
+    // TimeToString::Test();
     // StringFormat::StrfTime();
     // StringFormat::Asctime();
     // StringFormat::PutTime_To_String();
