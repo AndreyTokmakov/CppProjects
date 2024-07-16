@@ -33,6 +33,7 @@
 #include <span>
 #include <list>
 #include <iomanip>
+#include <format>
 
 namespace
 {
@@ -214,35 +215,7 @@ namespace Ranges
         */
     }
 
-    void Repeat()
-    {
-        // bounded overload
-        for (auto s: std::views::repeat("C++"sv, 3))
-            std::cout << s << ' ';
-        std::cout << '\n';
 
-        // unbounded overload
-        for (auto s : std::views::repeat("Hello"sv) | std::views::take(3))
-            std::cout << s << ' ';
-        std::cout << "...\n";
-    }
-
-    void Zip()
-    {
-        std::vector<int> nums { 1,2,3,4,5 };
-        std::vector<std::string> nums1 { "onw", "two", "three", "four", "five" };
-        std::vector<char> nums2 {'A', 'B', 'C', 'D', 'E', 'F'};
-
-
-        for (std::tuple<int&, std::string&, char&> elem : std::views::zip(nums, nums1, nums2))
-        {
-            std::cout << std::get<0>(elem) << ' '
-                      << std::get<1>(elem) << ' '
-                      << std::get<2>(elem) << '\n';
-
-            std::get<char&>(elem) += ('a' - 'A'); // modifies the element of z
-        }
-    }
 
     void Split()
     {
@@ -718,6 +691,44 @@ namespace Ranges
 
 namespace Ranges::Views
 {
+    void Repeat()
+    {
+        // bounded overload
+        for (auto s: std::views::repeat("C++"sv, 3))
+            std::cout << s << ' ';
+        std::cout << '\n';
+
+        // unbounded overload
+        for (auto s : std::views::repeat("Hello"sv) | std::views::take(3))
+            std::cout << s << ' ';
+        std::cout << "...\n";
+    }
+
+    void Zip()
+    {
+        std::vector<int> nums { 1,2,3,4,5 };
+        std::vector<std::string> nums1 { "one", "two", "three", "four", "five" };
+        std::vector<char> nums2 {'A', 'B', 'C', 'D', 'E', 'F'};
+
+
+        // Iterate over the elements of the zip view
+        for (auto [a, b, c] : std::views::zip(nums, nums1, nums2)) {
+            std::cout << std::format("[{}, {}, {}]\n", a, b, c);
+        }
+
+
+        for (std::tuple<int&, std::string&, char&> elem : std::views::zip(nums, nums1, nums2))
+        {
+            std::cout << std::get<0>(elem) << ' '
+                      << std::get<1>(elem) << ' '
+                      << std::get<2>(elem) << '\n';
+
+            std::get<char&>(elem) += ('a' - 'A'); // modifies the element of z
+        }
+    }
+
+
+
     /**
     * The C++20 std::views::elements takes a range of tuple-like objects and produces
     * a view over the n-th element from each tuple.
@@ -755,10 +766,6 @@ void Ranges::TestAll()
     // End();
     // Data();
 
-    // Repeat();
-
-    // Zip();
-
     // Split();
 
     // Filter_View();
@@ -767,7 +774,9 @@ void Ranges::TestAll()
     // View_DropWhile();
     // Join_View();
 
-    Views::Elements();
+    Views::Zip();
+    // Views::Repeat();
+    // Views::Elements();
 
     // Algorithms::For_Each();
     // Algorithms::Find_IF();
