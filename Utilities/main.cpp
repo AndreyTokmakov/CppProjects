@@ -22,6 +22,7 @@ Description : C++ Utilities
 #include "FileUtilities.h"
 #include "CSVReader/Tests.h"
 #include "Base64.h"
+#include "HexConverter.h"
 
 namespace
 {
@@ -214,7 +215,7 @@ int main([[maybe_unused]] int argc,
 
     // StringUtilitiesTests::split_test_1();
     // StringUtilitiesTests::strip_string_test();
-    StringUtilitiesTests::trim_string_test();
+    // StringUtilitiesTests::trim_string_test();
     // StringUtilitiesTests::remove_chars_from_string_test();
     // StringUtilitiesTests::Update_string_test();
     // StringUtilitiesTests::Random_String();
@@ -229,6 +230,8 @@ int main([[maybe_unused]] int argc,
     // Base64Tests::Test();
 
     // CSV_Reader_Tests::TestAll();
+
+    HexConverter::TestAll();
 
     return EXIT_SUCCESS;
 }

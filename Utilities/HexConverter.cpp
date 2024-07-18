@@ -71,10 +71,20 @@ namespace HexConverter
             bytes.push_back(hex2UChar(hexString.substr(i, 2)));
         return bytes;
     }
+
+    std::string hex2BytesString(const std::string& hexString) noexcept
+    {
+        std::string bytesStr;
+        bytesStr.reserve(hexString.length()/2);
+        for (size_t length = hexString.length(), i = 0; i < length; i += 2)
+            bytesStr.push_back(static_cast<char>(hex2UChar(hexString.substr(i, 2))));
+        return bytesStr;
+    }
 };
 
 void HexConverter::TestAll()
 {
+#if 0
     const int val { 123456 };
     char bytes[sizeof(val)];
 
@@ -92,4 +102,19 @@ void HexConverter::TestAll()
     memcpy(&result, bytes2.data(), sizeof(val));
 
     std::cout << val << " --> " << hexStr << " --> " << result << std::endl;
+#endif
+
+
+    {
+        const std::string data {"some_test_data"};
+        const std::string hexStr = bytesToHexStr(data.data(), data.size());
+        std::cout << hexStr << std::endl;
+    }
+
+    {
+        const std::string data {"736F6D655F746573745F64617461"};
+        const auto hexStr = hex2BytesString(data);
+        std::cout << hexStr << std::endl;
+    }
+
 }

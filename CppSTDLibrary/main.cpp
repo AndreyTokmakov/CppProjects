@@ -134,7 +134,7 @@ int main([[maybe_unused]] int argc,
     // Optional::TestAll();
     // PolymorphicMemoryResources::TestAll();
     // Random::TestAll();
-    Ranges::TestAll();
+    // Ranges::TestAll();
     // ReferenceWrapper::TestAll();
     // StarshipOperator::TestAll();
     // Streams::TestAll();
@@ -152,7 +152,7 @@ int main([[maybe_unused]] int argc,
     // Types::Tests();
     // Tuple::TestAll();
     // TypeCast::TestAll();
-    // Int::TestAll();
+    Int::TestAll();
     // Templates::TestAll();
     // Utilities::TestAll();
     // UniquePtr_Tests::TestAll();
