@@ -22,6 +22,7 @@
 #include <chrono>
 #include <memory>
 #include <thread>
+#include <format>
 
 #include "../Attributes/Attributes.h"
 #include "../Integer/Integer.h"
@@ -299,7 +300,8 @@ namespace Attributes::NoUniqueAddress
     //--------------------------------------------------------------
 
     template<typename T, typename Deleter>
-    class UniquePtrBad {
+    class UniquePtrBad
+     {
         T *pointer = nullptr;
         Deleter deleter {};
 
@@ -312,7 +314,8 @@ namespace Attributes::NoUniqueAddress
     };
 
     template<typename T, typename Deleter>
-    class UniquePtrGood {
+    class UniquePtrGood
+    {
         T *pointer = nullptr;
 
         [[no_unique_address]]
@@ -327,14 +330,16 @@ namespace Attributes::NoUniqueAddress
     };
 
     template<typename T>
-    struct Deleter {
+    struct Deleter
+    {
         void operator()(T *ptr) {
             delete ptr;
         }
     };
 
     template<typename T>
-    struct DeleterNotEmpty {
+    struct DeleterNotEmpty
+    {
         int value {0};
 
         void operator()(T *ptr) {
@@ -361,6 +366,50 @@ namespace Attributes::NoUniqueAddress
         static_assert(sizeof(ptrGood1) == sizeof(Type*));     /// <--- Here is the profit
         static_assert(sizeof(ptrGood2) == 2 * sizeof(Type*));
     }
+
+
+    struct EmptyClass {};
+    struct HasMember { int m; };
+
+    // The listed values are valid for x86_64/Linux/Clang and may differ on other platforms.
+
+    template <typename Member>
+    struct Basic
+    {
+        Member m;
+        int v;
+    };
+
+    // sizeof(Basic<Empty>) == 8 ((1+3) + 4)
+    // sizeof(Basic<HasMember>) == 8 (4 + 4)
+
+    template <typename Member>
+    struct Compressed
+    {
+        [[no_unique_address]] Member m;
+        int v;
+    };
+
+    // sizeof(Compressed<Empty>) == 4 (0 + 4)
+    // sizeof(Compressed<HasMember>) == 8 (4 + 4)
+
+    template <typename Member>
+    struct MaybeEmpty
+    {
+        [[no_unique_address]] Member m;
+    };
+
+    void Demo()
+    {
+        std::cout << std::format("sizeof(Basic<Empty>) == {}\n", sizeof(Basic<Empty>));                   // --> 8
+        std::cout << std::format("sizeof(Basic<HasMember>) == {}\n", sizeof(Basic<HasMember>));           // --> 8
+
+        std::cout << std::format("sizeof(Compressed<Empty>) == {}\n", sizeof(Compressed<Empty>));         // --> 4
+        std::cout << std::format("sizeof(Compressed<HasMember>) == {}\n", sizeof(Compressed<HasMember>)); // --> 8
+
+        std::cout << std::format("sizeof(MaybeEmpty<Empty>) == {}\n", sizeof(MaybeEmpty<Empty>));         // --> 1
+        std::cout << std::format("sizeof(MaybeEmpty<HasMember>) == {}\n", sizeof(MaybeEmpty<HasMember>)); // --> 4
+    }
 }
 
 
@@ -374,7 +423,7 @@ void Attributes::TestAll()
 
     // Nodiscard::NoDiscard_Class();
     // Nodiscard::NoDiscard_Class2();
-    Nodiscard::NoDiscard_Class_IgnoreError();
+    // Nodiscard::NoDiscard_Class_IgnoreError();
 
     // Nodiscard::NoDiscard_Constructor();
     // Nodiscard::NoDiscard_Constructor2();
@@ -387,4 +436,5 @@ void Attributes::TestAll()
 
     // NoUniqueAddress::Test();
     // NoUniqueAddress::Test2();
+    NoUniqueAddress::Demo();
 };

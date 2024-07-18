@@ -92,7 +92,7 @@ int main([[maybe_unused]] int argc,
     // Arrays::TestAll();
     // Asserts::TestAll();
     // Atomic::TestAll();
-    // Attributes::TestAll();
+    Attributes::TestAll();
     // Auto::TestAll();
     // BitSet::TestAll();
     // BitwiseOperation::TestAll();
@@ -152,7 +152,7 @@ int main([[maybe_unused]] int argc,
     // Types::Tests();
     // Tuple::TestAll();
     // TypeCast::TestAll();
-    Int::TestAll();
+    // Int::TestAll();
     // Templates::TestAll();
     // Utilities::TestAll();
     // UniquePtr_Tests::TestAll();
