@@ -867,7 +867,7 @@ void Chrono::TestAll()
     // CurrentTime::PrintTime_One();
     // CurrentTime::PrintTime_Two();
 
-    Duration::Create_Simple();
+    // Duration::Create_Simple();
     // Duration::Measure_Duration();
     // Duration::HighResolution__PeriodDuration();
     // Duration::SteadyClock__PeriodDuration();

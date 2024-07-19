@@ -51,7 +51,7 @@ namespace CircularBuffer
         {
             if (overflow && writePos == readPos)
             {
-                // TODO
+                return false;
             }
 
             buffer[writePos++] = value;
@@ -62,9 +62,62 @@ namespace CircularBuffer
             }
             return true;
         }
+
+        void print()
+        {
+            for (int i = 0; i < Capacity; ++i)
+                std::cout << '[' << i << "] = " << buffer[i] << ", ";
+            std::cout << "(" << readPos << ", " << writePos << ") | overflow = " << std::boolalpha << overflow << std::endl;
+        }
     };
 }
 
 void CircularBuffer::TestAll()
 {
-};
+    CircularBuffer<int, 5> buffer;
+
+    auto get = [&]() {
+        if (int val = 0; buffer.read(val))
+            std::cout << val << std::endl;
+        else
+            std::cout << "GET False" << std::endl;
+    };
+
+    auto add = [&](int v) {
+        if (buffer.add(v))
+            std::cout << v << " added" << std::endl;
+        else
+            std::cout << "ADD False" << std::endl;
+    };
+
+    buffer.print();
+
+    add(1);
+    add(2);
+    add(3);
+
+    buffer.print();
+
+    get();
+
+    buffer.print();
+
+    get();
+    get();
+    get();
+
+    add(4);
+    add(5);
+    add(6);
+    add(7);
+    //add(8);
+
+    buffer.print();
+
+    get();
+    get();
+    get();
+    get();
+
+    buffer.print();
+}
