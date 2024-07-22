@@ -1164,7 +1164,7 @@ int main([[maybe_unused]] int argc,
     // Crow::TestAll();
     // Comparators::TestAll();
     // CollectionsTests::TestAll();
-    // Coroutines::TestAll();
+    Coroutines::TestAll();
     // CopyElision_RVO::TestAll();
     // ConstexprMap::TestAll();
     // DebugLogger::TestAll();

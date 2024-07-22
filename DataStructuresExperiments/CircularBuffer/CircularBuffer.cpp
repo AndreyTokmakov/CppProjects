@@ -74,6 +74,7 @@ namespace CircularBuffer
 
 void CircularBuffer::TestAll()
 {
+    std::cout << __PRETTY_FUNCTION__  << std::endl;
     CircularBuffer<int, 5> buffer;
 
     auto get = [&]() {
@@ -89,6 +90,7 @@ void CircularBuffer::TestAll()
         else
             std::cout << "ADD False" << std::endl;
     };
+
 
     buffer.print();
 
