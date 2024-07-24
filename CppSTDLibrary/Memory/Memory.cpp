@@ -28,6 +28,7 @@
 #include <memory_resource>
 #include <cstdlib> // for std::byte
 #include <iomanip>
+#include <functional>
 
 
 #define DEBUG_OUTPUT
@@ -1647,6 +1648,64 @@ namespace Memory::RestrictObjectHeapCreation
     }
 }
 
+namespace VectorOfUniquePointers_KeepReference_StoredInVector
+{
+    struct Client
+    {
+        int value {0};
+
+        explicit Client(int v) : value {v} { std::cout << "Client(" << value << ") created\n"; }
+        ~Client() { std::cout << "Client(" << value << ") destroyed\n"; }
+        void close() { std::cout << "Client(" << value << ") closed\n"; }
+
+        void info() {
+            std::cout << "info Client(" << value << ")\n";
+        }
+    };
+
+    template<typename T>
+    struct Closer
+    {
+        void operator()(T *ptr) const {
+            ptr->close();
+            delete ptr;
+        }
+    };
+
+    using ClientDeleter = Closer<Client>;
+
+
+    // The idea of the test is to save a pointer in the LAMBDA function to an object in
+    // the form of a unique_ptr, which will then be moved to VECTOR
+    void Test()
+    {
+        std::vector<std::unique_ptr<Client, ClientDeleter>> clients;
+
+        std::function<void(void)> callback;
+
+        {
+            auto client = std::unique_ptr<Client, ClientDeleter>(new Client{123}, ClientDeleter{});
+            callback = [client_ref = client.get()] {
+                client_ref->info();
+            };
+
+            clients.push_back(std::move(client));
+        }
+
+        std::cout << std::string(100, '=') << std::endl;
+
+        callback();
+        callback();
+
+        clients.back()->value = 100500;
+
+        callback();
+
+        std::cout << std::string(100, '=') << std::endl;
+    }
+
+}
+
 void Memory::TestAll()
 {
     Alignment::TestAll();
@@ -1728,7 +1787,11 @@ void Memory::TestAll()
 
 	//------------------------------------------------------------------------//
 
-	// Tracker::Test();
+    VectorOfUniquePointers_KeepReference_StoredInVector::Test();
+
+    //------------------------------------------------------------------------//
+
+    // Tracker::Test();
 
 	// PolymorphicMemoryResources::NotAllocatingMemoryContainers();
 	// PolymorphicMemoryResources::NotAllocatingMemoryAtAll();

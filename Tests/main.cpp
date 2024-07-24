@@ -1164,7 +1164,7 @@ int main([[maybe_unused]] int argc,
     // Crow::TestAll();
     // Comparators::TestAll();
     // CollectionsTests::TestAll();
-    Coroutines::TestAll();
+    // Coroutines::TestAll();
     // CopyElision_RVO::TestAll();
     // ConstexprMap::TestAll();
     // DebugLogger::TestAll();
@@ -1176,7 +1176,7 @@ int main([[maybe_unused]] int argc,
     // FunctionCall_LookUp::TestAll();
     // LowLatencyLogger::TestAll();
     // Multithreading::TestAll();
-    // Memory::TestAll();
+    Memory::TestAll();
     // MaxStack::TestAll();
     // Math::TestAll();
     // UniquePtr_Size::SizeTest();
@@ -1205,6 +1205,26 @@ int main([[maybe_unused]] int argc,
     // OrderBook2::TestAll();
     // MatchingOrderBook::TestAll();
     // MatchingOrderBookEx::TestAll();
+
+
+    /*
+    uint16_t retryMaxCount {10};
+
+    try {
+        uint16_t retryCount{0};
+
+        while (true) {
+            std::cout << retryCount << std::endl;
+            if (++retryCount >= retryMaxCount) {
+                throw std::runtime_error("The maximum allowed number of attempts to create a producer has been reached ");
+            }
+        }
+    }
+    catch (const std::exception& exc)
+    {
+        std::cerr << "Exception. Message: " << exc.what() << std::endl;
+    }*/
+
 
 
     return EXIT_SUCCESS;

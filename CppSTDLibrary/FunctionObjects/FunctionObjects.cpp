@@ -26,6 +26,7 @@
 
 #include "../Integer/Integer.h"
 #include "FunctionObjects.h"
+#include "CallbackTests.h"
 #include "MemberFunctionPointer.h"
 
 
@@ -667,7 +668,8 @@ void FunctionObjects::TestAll()
 {
 	// Auto::Return_Type_Hint();
 
-    MemberFunctionPointer::TestAll();
+    // MemberFunctionPointer::TestAll();
+    CallbackTests::TestAll();
 
 	// BindTests::FuncPtr_Tests();
 	// BindTests::Bind_Test_1();

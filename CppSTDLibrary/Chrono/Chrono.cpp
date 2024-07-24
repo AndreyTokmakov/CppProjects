@@ -206,7 +206,7 @@ namespace Chrono::Duration
             std::this_thread::sleep_for(std::chrono::seconds(1));
 
             std::chrono::steady_clock::time_point end = std::chrono::steady_clock::now();
-            std::chrono::duration<int> timeElapsed = std::chrono::duration_cast<std::chrono::duration<int>>(end - start);
+                std::chrono::duration<int> timeElapsed = std::chrono::duration_cast<std::chrono::duration<int>>(end - start);
             std::cout << "Time passed: " << timeElapsed.count() << std::endl;
 
             if (timeElapsed.count() >= timeout)

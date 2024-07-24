@@ -14,6 +14,7 @@ Description : C++ Memory test
 #include <vector>
 #include <chrono>
 #include <cstring>
+#include <functional>
 
 #include "../Helpers/Helpers.h"
 #include "CustomStackAllocator.h"
@@ -672,6 +673,123 @@ namespace Memory::CustomAllocatorTest
 }
 #endif
 
+
+namespace VectorOfUniquePointers_CustomDeleter
+{
+    struct Client
+    {
+        int value {0};
+
+        explicit Client(int v) : value {v} { std::cout << "Client(" << value << ") created\n"; }
+
+        Client(const Client&)  { std::cout << "Client(" << value << ") copy constructor\n"; }
+        Client& operator=(const Client&)  { std::cout << "Client(" << value << ") copy assignment\n"; return *this; }
+
+        Client(Client&&) noexcept  { std::cout << "Client(" << value << ") move constructor\n"; }
+        Client& operator==(Client&&) noexcept { std::cout << "Client(" << value << ") move assignment\n"; return *this; }
+
+        ~Client()    { std::cout << "Client(" << value << ") destroyed\n"; }
+        void close() { std::cout << "Client(" << value << ") closed\n"; }
+        void info()  { std::cout << "Client(" << value << ") info\n"; }
+    };
+
+    template<typename T>
+    struct Closer
+    {
+        void operator()(T *ptr) const {
+            ptr->close();
+            delete ptr;
+        }
+    };
+
+    using ClientDeleter = Closer<Client>;
+
+    void handle(Client& client)
+    {
+        client.info();
+    }
+
+    void Test()
+    {
+        std::vector<std::unique_ptr<Client, ClientDeleter>> clients;
+
+        for (int i = 0; i < 5; ++i)
+            clients.push_back(std::unique_ptr<Client, ClientDeleter>(new Client{i}, ClientDeleter{}));
+    }
+
+    void Test_PasRef()
+    {
+        {
+            auto client = std::unique_ptr<Client, ClientDeleter>(new Client{123}, ClientDeleter{});
+            handle(*client);
+
+        }
+        std::cout << std::string(100, '=') << std::endl;
+        {
+            Client client{2};
+            handle(client);
+            client.close();
+        }
+    }
+
+}
+
+namespace VectorOfUniquePointers_KeepReference_StoredInVector
+{
+    struct Client
+    {
+        int value {0};
+
+        explicit Client(int v) : value {v} { std::cout << "Client(" << value << ") created\n"; }
+        ~Client() { std::cout << "Client(" << value << ") destroyed\n"; }
+        void close() { std::cout << "Client(" << value << ") closed\n"; }
+
+        void info() {
+            std::cout << "info Client(" << value << ")\n";
+        }
+    };
+
+    template<typename T>
+    struct Closer
+    {
+        void operator()(T *ptr) const {
+            ptr->close();
+            delete ptr;
+        }
+    };
+
+    using ClientDeleter = Closer<Client>;
+
+    void Test()
+    {
+        std::vector<std::unique_ptr<Client, ClientDeleter>> clients;
+
+        std::function<void(void)> callback;
+
+        {
+            auto client = std::unique_ptr<Client, ClientDeleter>(new Client{123}, ClientDeleter{});
+            callback = [client_ref = client.get()] {
+                client_ref->info();
+            };
+
+            clients.push_back(std::move(client));
+        }
+
+        std::cout << std::string(100, '=') << std::endl;
+
+        callback();
+        callback();
+
+        clients.back()->value = 100500;
+
+        callback();
+
+        std::cout << std::string(100, '=') << std::endl;
+    }
+
+}
+
+
 void Memory::TestAll()
 {
     // CleanUP_Exception_Test();
@@ -704,6 +822,10 @@ void Memory::TestAll()
 
     // AlignedStackAllocator::TestAll();
     // CustomStackAllocator::TestAll();
-    UsingCustomAllocator_List::TestAll();
+    // UsingCustomAllocator_List::TestAll();
+
+    // VectorOfUniquePointers_CustomDeleter::Test();
+    VectorOfUniquePointers_CustomDeleter::Test_PasRef();
+    // VectorOfUniquePointers_KeepReference_StoredInVector::Test();
 
 }
