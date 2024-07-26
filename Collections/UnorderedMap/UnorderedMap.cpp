@@ -929,7 +929,7 @@ void UnorderedMap::TEST_ALL()
 	// Erase_Loop();
 
 	// Try_Emplace();
-    // Try_Emplace_CustomType();
+    Try_Emplace_CustomType();
 	// Try_Emplace_Ptr();
 
 	// Extract();
@@ -947,8 +947,8 @@ void UnorderedMap::TEST_ALL()
     // TransparentComparators::PerformanceTest();
 
     // HeterogeneousLookup::Test();
-    HeterogeneousLookup2::Test_Bad();
-    HeterogeneousLookup2::Test_OK();
+    // HeterogeneousLookup2::Test_Bad();
+    // HeterogeneousLookup2::Test_OK();
 
     // InvalidateIterators::CheckValueIterators_MAP();
 

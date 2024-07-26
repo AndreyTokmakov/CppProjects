@@ -1145,6 +1145,21 @@ int main([[maybe_unused]] int argc,
 
     // Enums::Tests();
 
+    struct T {
+        int v{0};
+
+        bool operator==(const T& obj) const noexcept
+        {
+            return v == obj.v;
+        }
+
+        bool operator!=(const T& obj) const noexcept
+        {
+            return v != obj.v;
+        }
+    };
+
+    std::cout << std::boolalpha << (T{} != T{}) << std::endl;
 
 
     /** * * * * *  Move to lib * * * * * **/
@@ -1176,7 +1191,7 @@ int main([[maybe_unused]] int argc,
     // FunctionCall_LookUp::TestAll();
     // LowLatencyLogger::TestAll();
     // Multithreading::TestAll();
-    Memory::TestAll();
+    // Memory::TestAll();
     // MaxStack::TestAll();
     // Math::TestAll();
     // UniquePtr_Size::SizeTest();

@@ -13,50 +13,51 @@
 
 namespace Map {
 
-	using String = std::string;
-	using CString = const String&;
+    using String = std::string;
+    using CString = const String &;
 
-	template <class T, typename KeyType, typename ValueType>
-	//typename std::enable_if<std::is_base_of<std::map<KeyType, ValueType>, T>::value, T*>::type
-	void print_map_s(const T& dictionary) {
-		static_assert(std::is_base_of<std::map<KeyType, ValueType>, T>::value);
-		for (auto &[key, value] : dictionary)
-			std::cout << key << "  ==  " << value << std::endl;
-	}
+    template<class T, typename KeyType, typename ValueType>
+    //typename std::enable_if<std::is_base_of<std::map<KeyType, ValueType>, T>::value, T*>::type
+    void print_map_s(const T &dictionary) {
+        static_assert(std::is_base_of<std::map<KeyType, ValueType>, T>::value);
+        for (auto &[key, value]: dictionary)
+            std::cout << key << "  ==  " << value << std::endl;
+    }
 
-	template<typename K, typename V>
-	std::ostream& operator<<(std::ostream& stream, const std::map<K,V>& map) {
-		for (const auto& [k, v]: map)
-			stream << k << " = " << v << std::endl;
-		return stream;
-	}
+    template<typename K, typename V>
+    std::ostream &operator<<(std::ostream &stream, const std::map<K, V> &map) {
+        for (const auto &[k, v]: map)
+            stream << k << " = " << v << std::endl;
+        return stream;
+    }
 
 
-	/*
-	template <class T,
-			  typename KeyType,
-			  typename ValueType>
-	void print_map_ss(const typename std::enable_if<std::is_base_of<std::map<KeyType, ValueType>, T>::value>::type& dictionary) {
-		for (auto &[key, value] : dictionary)
-			std::cout << key << "  ==  " << value << std::endl;
-	}
-	*/
-	template <typename T>
-	void print_map(const T& dictionary) {
-		for (auto &[key, value] : dictionary)
-			std::cout << key << "  ==  " << value << std::endl;
-	}
+    /*
+    template <class T,
+              typename KeyType,
+              typename ValueType>
+    void print_map_ss(const typename std::enable_if<std::is_base_of<std::map<KeyType, ValueType>, T>::value>::type& dictionary) {
+        for (auto &[key, value] : dictionary)
+            std::cout << key << "  ==  " << value << std::endl;
+    }
+    */
+    template<typename T>
+    void print_map(const T &dictionary) {
+        for (auto &[key, value]: dictionary)
+            std::cout << key << "  ==  " << value << std::endl;
+    }
 
-	template <typename T>
-	void print_map_info(const T& dictionary, std::string_view text) {
-		std::cout << text << std::endl;
-		print_map(dictionary);
-	}
+    template<typename T>
+    void print_map_info(const T &dictionary, std::string_view text) {
+        std::cout << text << std::endl;
+        print_map(dictionary);
+    }
 
-    void emplace_duplicate_entry()
-    {
-        std::map<std::string, std::string> dict {
-            {"One", "I"}, {"Two", "II"}, {"Three", "III"},
+    void emplace_duplicate_entry() {
+        std::map<std::string, std::string> dict{
+                {"One",   "I"},
+                {"Two",   "II"},
+                {"Three", "III"},
         };
 
         auto [iter, ok] = dict.emplace("Four", "IV");
@@ -70,10 +71,11 @@ namespace Map {
         std::cout << dict << std::endl;
     }
 
-    void try_emplace_duplicate_entry()
-    {
-        std::map<std::string, std::string> dict {
-                {"One", "I"}, {"Two", "II"}, {"Three", "III"},
+    void try_emplace_duplicate_entry() {
+        std::map<std::string, std::string> dict{
+                {"One",   "I"},
+                {"Two",   "II"},
+                {"Three", "III"},
         };
 
         auto [iter, ok] = dict.try_emplace("Four", "IV");
@@ -88,350 +90,345 @@ namespace Map {
     }
 
 
-    void emplace_test()
-	{
-		std::map<std::string, std::string> m;
+    void emplace_test() {
+        std::map<std::string, std::string> m;
 
-		// uses pair's move constructor
-		m.emplace(std::make_pair(std::string("a"), std::string("a")));
+        // uses pair's move constructor
+        m.emplace(std::make_pair(std::string("a"), std::string("a")));
 
-		// uses pair's converting move constructor
-		m.emplace(std::make_pair("b", "abcd"));
+        // uses pair's converting move constructor
+        m.emplace(std::make_pair("b", "abcd"));
 
-		// uses pair's template constructor
-		m.emplace("d", "ddd");
+        // uses pair's template constructor
+        m.emplace("d", "ddd");
 
-		// uses pair's piecewise constructor
-		m.emplace(std::piecewise_construct,
-			std::forward_as_tuple("c"),
-			std::forward_as_tuple(10, 'c'));
+        // uses pair's piecewise constructor
+        m.emplace(std::piecewise_construct,
+                  std::forward_as_tuple("c"),
+                  std::forward_as_tuple(10, 'c'));
 
-		// for (const auto &p : m) 
-		// 	std::cout << p.first << " => " << p.second << '\n';
+        // for (const auto &p : m)
+        // 	std::cout << p.first << " => " << p.second << '\n';
 
-		for (auto &[key, value] : m)
-			std::cout << key << " => " << value << std::endl;
-	}
+        for (auto &[key, value]: m)
+            std::cout << key << " => " << value << std::endl;
+    }
 
     void emplace_test1() {
-        std::map<int, std::pair<double, double>> metrics {};
+        std::map<int, std::pair<double, double>> metrics{};
         metrics.emplace(1, std::make_pair(1.0f, 1.0f));
     }
 
-	void emplace_return() {
-		std::map<std::string, std::string> dict;
+    void emplace_return() {
+        std::map<std::string, std::string> dict;
 
-		dict.emplace("key1", "value1");
-		dict.emplace("key2", "value2");
-		auto [iter, ok] = dict.emplace("key3", "value3");
+        dict.emplace("key1", "value1");
+        dict.emplace("key2", "value2");
+        auto [iter, ok] = dict.emplace("key3", "value3");
 
-		for (const auto& entry : dict)
-			std::cout << entry.first << " = " << entry.second << std::endl;
+        for (const auto &entry: dict)
+            std::cout << entry.first << " = " << entry.second << std::endl;
 
         iter->second.append("_11").append("_22");
 
-		std::cout << std::endl;
-		for (const auto& entry : dict)
-			std::cout << entry.first << " = " << entry.second << std::endl;
-	}
+        std::cout << std::endl;
+        for (const auto &entry: dict)
+            std::cout << entry.first << " = " << entry.second << std::endl;
+    }
 
-	void emplace_vs_insert()
-	{
-		std::map<std::string, Integer> dictionary;
+    void emplace_vs_insert() {
+        std::map<std::string, Integer> dictionary;
 
-		std::cout << "Test using 'emplace()'. No copy construcors shall be called.\n" << std::endl;
+        std::cout << "Test using 'emplace()'. No copy construcors shall be called.\n" << std::endl;
 
-		dictionary.emplace("Key1", 10);
-		dictionary.emplace("Key2", 20);
-		dictionary.emplace("Key3", 30);
+        dictionary.emplace("Key1", 10);
+        dictionary.emplace("Key2", 20);
+        dictionary.emplace("Key3", 30);
 
-		for (auto &[key, value] : dictionary)
-			std::cout << key << "  ==  " << value << std::endl;
-		dictionary.clear();
+        for (auto &[key, value]: dictionary)
+            std::cout << key << "  ==  " << value << std::endl;
+        dictionary.clear();
 
-		std::cout << "\n\nTest using '()'. Copy construcors SHALL be called. (TEST1)\n" << std::endl;
+        std::cout << "\n\nTest using '()'. Copy construcors SHALL be called. (TEST1)\n" << std::endl;
 
-		dictionary.insert(std::make_pair<String, Integer>("Key1", Integer(10)));
-		dictionary.insert(std::make_pair<String, Integer>("Key2", Integer(20)));
-		dictionary.insert(std::make_pair<String, Integer>("Key3", Integer(30)));
+        dictionary.insert(std::make_pair<String, Integer>("Key1", Integer(10)));
+        dictionary.insert(std::make_pair<String, Integer>("Key2", Integer(20)));
+        dictionary.insert(std::make_pair<String, Integer>("Key3", Integer(30)));
 
-		for (auto &[key, value] : dictionary)
-			std::cout << key << "  ==  " << value << std::endl;
-		dictionary.clear();
+        for (auto &[key, value]: dictionary)
+            std::cout << key << "  ==  " << value << std::endl;
+        dictionary.clear();
 
-		std::cout << "\n------------------------TEST 3 -----------------------------\n" << std::endl;
+        std::cout << "\n------------------------TEST 3 -----------------------------\n" << std::endl;
 
-		dictionary.insert(std::pair("Key1", 10));
-		dictionary.insert(std::pair("Key2", 20));
-		dictionary.insert(std::pair("Key3", 30));
+        dictionary.insert(std::pair("Key1", 10));
+        dictionary.insert(std::pair("Key2", 20));
+        dictionary.insert(std::pair("Key3", 30));
 
-		for (auto &[key, value] : dictionary)
-			std::cout << key << "  ==  " << value << std::endl;
-		dictionary.clear();
-	}
+        for (auto &[key, value]: dictionary)
+            std::cout << key << "  ==  " << value << std::endl;
+        dictionary.clear();
+    }
 
-	void try_emplace_vs_emplace() {
-		std::map<std::string, Integer> dictionary;
-		std::cout << "************************ emplace() test ***********************\n" << std::endl;
+    void try_emplace_vs_emplace() {
+        std::map<std::string, Integer> dictionary;
+        std::cout << "************************ emplace() test ***********************\n" << std::endl;
 
-		dictionary.emplace("Key1", 10);
-		dictionary.emplace("Key2", 20);
-		dictionary.emplace("Key3", 30);
-		std::cout << ">>> Using 'emplace' to add an element Integer(40) with existing key 'Key3' <<<" << std::endl;
-		dictionary.emplace("Key3", 40);
-
-		print_map_info(dictionary, ">>> Collection contains:\n");
-		std::cout << "\n\n" << std::endl;
-		dictionary.clear();
-
-		std::cout << "\n************************ try_emplace() test ***********************\n" << std::endl;
-
-		dictionary.emplace("Key1", 10);
-		dictionary.emplace("Key2", 20);
-		dictionary.emplace("Key3", 30);
-		std::cout << ">>> Using 'try_emplace' to add an element Integer(40) with existing key 'Key3' <<<" << std::endl;
-		dictionary.try_emplace("Key3", 40);
-
-		print_map_info(dictionary, ">>> Collection contains:\n");
-		std::cout << "\n\n" << std::endl;
-	}
-
-
-	void emplace_test_2_ReferenceWrapper()
-	{
-		std::cout << "Test using 'emplace()'. No copy construcors shall be called.\n" << std::endl;
-		std::map<std::string, Integer> dictionary;
-
-		dictionary.emplace("Key1", 10);
-		dictionary.emplace("Key2", 20);
-		dictionary.emplace("Key3", 30);
-
-		for (auto &[key, value] : dictionary)
-			std::cout << key << "  ==  " << value << std::endl;
-		dictionary.clear();
-
-
-		std::cout << "\n\nTest using 'std::reference_wrapper<Integer>'. No copy construcors shall be called.\n" << std::endl;
-		std::map<std::string, std::reference_wrapper<Integer>> dictionary_refs;
-		//std::map<std::string, Integer> dictionary_refs;
-
-		Integer int1(10);
-		Integer int2(20);
-		Integer int3(30);
-
-		dictionary_refs.insert_or_assign("Key1", int1);
-		dictionary_refs.insert_or_assign("Key2", int2);
-		dictionary_refs.insert_or_assign("Key3", int3);
-
-		for (auto &[key, value] : dictionary_refs)
-			std::cout << key << "  ==  " << value << std::endl;
-
-		int2.setValue(22);
-		std::cout << "\nPrint map again:" << std::endl;
-		for (auto &[key, value] : dictionary_refs)
-			std::cout << key << "  ==  " << value << std::endl;
-
-		dictionary.clear();
-	}
-
-	void insert()
-	{
-		{
-			std::map<std::string, std::string> dict;
-
-			dict.insert({ "key1", "value1" });
-			dict.insert({ "key2", "value2" });
-			dict.insert({ "key3", "value3" });
-
-			for (const auto& entry : dict)
-				std::cout << entry.first << " = " << entry.second << std::endl;
-
-			std::cout << "\nAfter update:" << std::endl;
-
-			dict.insert({ "key3", "value3_Updated" });
-			for (const auto& entry : dict)
-				std::cout << entry.first << " = " << entry.second << std::endl;
-		}
-		std::cout << "\n------------------------------ Insert or assign --------------------------------------------\n" << std::endl;
-		{
-			std::map<std::string, std::string> dict;
-
-			dict.insert_or_assign("key1", "value1");
-			dict.insert_or_assign("key2", "value2");
-			dict.insert_or_assign("key3", "value3");
-
-			for (const auto& entry : dict)
-				std::cout << entry.first << " = " << entry.second << std::endl;
-
-			std::cout << "\nAfter update:" << std::endl;
-
-			dict.insert_or_assign("key3", "value3_Updated");
-			for (const auto& entry : dict)
-				std::cout << entry.first << " = " << entry.second << std::endl;
-		}
-	}
-
-	void insert_CopyElement_Test()
-	{
-		std::map<std::string, Integer> dict;
-		Integer i1 {1}, i2 {2};
-		std::cout << i1 << " " << i2 << std::endl;
-		dict.insert({"1", std::move(i1)});
-		dict.insert({"2", std::move(i2)});
-		std::cout << dict << std::endl;
-	}
-
-	void insert_return()
-	{
-		std::map<std::string, std::string> dict {
-				{"key1", "value1"}, {"key2", "value2"}
-		};
-		auto [iter, ok] = dict.insert(std::pair("key3", "value3"));
-		std::cout << dict <<  std::endl;
-		iter->second = "Updated";
-		std::cout << dict << std::endl;
-	}
-
-	void AT_vs_Operator() {
-		{
-			std::map<int, std::string> dict{ {1, "one"},{2, "two"},{3, "three"} };
-
-			for (const auto&[k, v] : dict)
-				std::cout << k << " = " << v << std::endl;
-
-			if (0 == dict[4].compare("four")) {
-				std::cout << "We have four at 4" << std::endl;
-			}
-			else {
-				std::cout << "Oppsss!" << std::endl;
-			}
-
-			for (const auto&[k, v] : dict)
-				std::cout << k << " = " << v << std::endl;
-		}
-
-		std::cout << "------------------------------------ Test2 (at) -------------------------------------" << std::endl;
-
-		{
-			std::map<int, std::string> dict{ {1, "one"},{2, "two"},{3, "three"} };
-
-			for (const auto&[k, v] : dict)
-				std::cout << k << " = " << v << std::endl;
-
-			try {
-				const auto& value = dict.at(4);
-				if (0 == value.compare("four")) 
-					std::cout << "We have four at 4" << std::endl;
-			}
-			catch (...) {
-				std::cout << "Oppsss!" << std::endl;
-			}
-
-			for (const auto&[k, v] : dict)
-				std::cout << k << " = " << v << std::endl;
-		}
-	}
-
-	void insert_vs_operator()
-	{
-		std::cout << "\n--------------------------------- Insert() --------------------------\n" << std::endl;
-		{
-			std::map<std::string, Integer> dict;
-			dict.insert({ "key1", 1 });
-		}
-		std::cout << "\n--------------------------------- Emplace() --------------------------\n" << std::endl;
-		{
-			std::map<std::string, Integer> dict;
-			dict.emplace("key1", 1);
-		}
-		std::cout << "\n--------------------------------- Operator[]--------------------------\n" << std::endl;
-		{
-			std::map<std::string, Integer> dict;
-			dict["key1"] = 1;
-		}
-	}
-
-	void insert_result()
-	{
-		std::map<std::string, std::string> dict;
-
-		dict.insert(std::pair("key1", "value1"));
-		dict.insert(std::pair("key2", "value2"));
-
-		if (auto[iter, result] = dict.insert(std::pair("key3", "value3")); true == result) {
-			std::cout << "Add 'key3' Successed " << std::endl;
-		} else {
-			std::cout << "Add 'key3' Failed " << std::endl;
-		}
-
-		if (auto[iter, result] = dict.insert(std::pair("key3", "value3")); true == result) {
-			std::cout << "Add 'key3' Successed " << std::endl;
-		}
-		else {
-			std::cout << "Add 'key3' Failed " << std::endl;
-		}
-	}
-
-	void try_emplace_test() {
-		using namespace std::literals;
-		std::map<std::string, std::string> dictionary;
-
-		dictionary.try_emplace("Key1", "Value1");
-		dictionary.try_emplace("Key2", "Value2");
-		dictionary.try_emplace("Key3", "Value3");
-
-		print_map_info(dictionary, ">>> Before:");
-
-		dictionary.try_emplace("Key3", "Value3New");
-
-		print_map_info(dictionary, "\nAfter (dictionary.try_emplace(\"Key3\", \"Value3New\")):");
-
-		dictionary.try_emplace("Key4", "Value3New");
-
-		print_map_info(dictionary, "\nAfter (dictionary.try_emplace(\"Key4\", \"Value3New\")):");
-	}
-
-	void try_emplace_test_2() {
-		std::map<std::string, Integer> intMap;
-
-		intMap.try_emplace("Key1", 11);
-		intMap.try_emplace("Key2", 22);
-		intMap.try_emplace("Key3", 33);
-
-		std::cout << "      Object 'Integer(44)' shall not be constructed" << std::endl;
-		intMap.try_emplace("Key3", 44);
-
-		Integer int5(55);
-		std::cout << "      Object 'Integer(55)' WILL be constructed. But will not be inserted" << std::endl;
-		intMap.try_emplace("Key3", int5);
-
-		std::cout << "      Object 'Integer(66)' WILL be constructed and WILL be inserted" << std::endl;
-		intMap.try_emplace("Key6", 66);
-
-		print_map(intMap);
-	}
-
-	void try_emplace_test_3()
-	{
-		std::map<std::string, Integer> dictionary;
+        dictionary.emplace("Key1", 10);
+        dictionary.emplace("Key2", 20);
+        dictionary.emplace("Key3", 30);
+        std::cout << ">>> Using 'emplace' to add an element Integer(40) with existing key 'Key3' <<<" << std::endl;
+        dictionary.emplace("Key3", 40);
+
+        print_map_info(dictionary, ">>> Collection contains:\n");
+        std::cout << "\n\n" << std::endl;
+        dictionary.clear();
+
+        std::cout << "\n************************ try_emplace() test ***********************\n" << std::endl;
+
+        dictionary.emplace("Key1", 10);
+        dictionary.emplace("Key2", 20);
+        dictionary.emplace("Key3", 30);
+        std::cout << ">>> Using 'try_emplace' to add an element Integer(40) with existing key 'Key3' <<<" << std::endl;
+        dictionary.try_emplace("Key3", 40);
+
+        print_map_info(dictionary, ">>> Collection contains:\n");
+        std::cout << "\n\n" << std::endl;
+    }
+
+
+    void emplace_test_2_ReferenceWrapper() {
+        std::cout << "Test using 'emplace()'. No copy construcors shall be called.\n" << std::endl;
+        std::map<std::string, Integer> dictionary;
+
+        dictionary.emplace("Key1", 10);
+        dictionary.emplace("Key2", 20);
+        dictionary.emplace("Key3", 30);
+
+        for (auto &[key, value]: dictionary)
+            std::cout << key << "  ==  " << value << std::endl;
+        dictionary.clear();
+
+
+        std::cout << "\n\nTest using 'std::reference_wrapper<Integer>'. No copy construcors shall be called.\n" << std::endl;
+        std::map<std::string, std::reference_wrapper<Integer>> dictionary_refs;
+        //std::map<std::string, Integer> dictionary_refs;
+
+        Integer int1(10);
+        Integer int2(20);
+        Integer int3(30);
+
+        dictionary_refs.insert_or_assign("Key1", int1);
+        dictionary_refs.insert_or_assign("Key2", int2);
+        dictionary_refs.insert_or_assign("Key3", int3);
+
+        for (auto &[key, value]: dictionary_refs)
+            std::cout << key << "  ==  " << value << std::endl;
+
+        int2.setValue(22);
+        std::cout << "\nPrint map again:" << std::endl;
+        for (auto &[key, value]: dictionary_refs)
+            std::cout << key << "  ==  " << value << std::endl;
+
+        dictionary.clear();
+    }
+
+    void insert() {
+        {
+            std::map<std::string, std::string> dict;
+
+            dict.insert({"key1", "value1"});
+            dict.insert({"key2", "value2"});
+            dict.insert({"key3", "value3"});
+
+            for (const auto &entry: dict)
+                std::cout << entry.first << " = " << entry.second << std::endl;
+
+            std::cout << "\nAfter update:" << std::endl;
+
+            dict.insert({"key3", "value3_Updated"});
+            for (const auto &entry: dict)
+                std::cout << entry.first << " = " << entry.second << std::endl;
+        }
+        std::cout << "\n------------------------------ Insert or assign --------------------------------------------\n"
+                  << std::endl;
+        {
+            std::map<std::string, std::string> dict;
+
+            dict.insert_or_assign("key1", "value1");
+            dict.insert_or_assign("key2", "value2");
+            dict.insert_or_assign("key3", "value3");
+
+            for (const auto &entry: dict)
+                std::cout << entry.first << " = " << entry.second << std::endl;
+
+            std::cout << "\nAfter update:" << std::endl;
+
+            dict.insert_or_assign("key3", "value3_Updated");
+            for (const auto &entry: dict)
+                std::cout << entry.first << " = " << entry.second << std::endl;
+        }
+    }
+
+    void insert_CopyElement_Test() {
+        std::map<std::string, Integer> dict;
+        Integer i1{1}, i2{2};
+        std::cout << i1 << " " << i2 << std::endl;
+        dict.insert({"1", std::move(i1)});
+        dict.insert({"2", std::move(i2)});
+        std::cout << dict << std::endl;
+    }
+
+    void insert_return() {
+        std::map<std::string, std::string> dict{
+                {"key1", "value1"},
+                {"key2", "value2"}
+        };
+        auto [iter, ok] = dict.insert(std::pair("key3", "value3"));
+        std::cout << dict << std::endl;
+        iter->second = "Updated";
+        std::cout << dict << std::endl;
+    }
+
+    void AT_vs_Operator() {
+        {
+            std::map<int, std::string> dict{{1, "one"},
+                                            {2, "two"},
+                                            {3, "three"}};
+
+            for (const auto &[k, v]: dict)
+                std::cout << k << " = " << v << std::endl;
+
+            if (0 == dict[4].compare("four")) {
+                std::cout << "We have four at 4" << std::endl;
+            } else {
+                std::cout << "Oppsss!" << std::endl;
+            }
+
+            for (const auto &[k, v]: dict)
+                std::cout << k << " = " << v << std::endl;
+        }
+
+        std::cout << "------------------------------------ Test2 (at) -------------------------------------" << std::endl;
+
+        {
+            std::map<int, std::string> dict{{1, "one"},
+                                            {2, "two"},
+                                            {3, "three"}};
+
+            for (const auto &[k, v]: dict)
+                std::cout << k << " = " << v << std::endl;
+
+            try {
+                const auto &value = dict.at(4);
+                if (0 == value.compare("four"))
+                    std::cout << "We have four at 4" << std::endl;
+            }
+            catch (...) {
+                std::cout << "Oppsss!" << std::endl;
+            }
+
+            for (const auto &[k, v]: dict)
+                std::cout << k << " = " << v << std::endl;
+        }
+    }
+
+    void insert_vs_operator() {
+        std::cout << "\n--------------------------------- Insert() --------------------------\n" << std::endl;
+        {
+            std::map<std::string, Integer> dict;
+            dict.insert({"key1", 1});
+        }
+        std::cout << "\n--------------------------------- Emplace() --------------------------\n" << std::endl;
+        {
+            std::map<std::string, Integer> dict;
+            dict.emplace("key1", 1);
+        }
+        std::cout << "\n--------------------------------- Operator[]--------------------------\n" << std::endl;
+        {
+            std::map<std::string, Integer> dict;
+            dict["key1"] = 1;
+        }
+    }
+
+    void insert_result() {
+        std::map<std::string, std::string> dict;
+
+        dict.insert(std::pair("key1", "value1"));
+        dict.insert(std::pair("key2", "value2"));
+
+        if (auto [iter, result] = dict.insert(std::pair("key3", "value3")); true == result) {
+            std::cout << "Add 'key3' Successed " << std::endl;
+        } else {
+            std::cout << "Add 'key3' Failed " << std::endl;
+        }
+
+        if (auto [iter, result] = dict.insert(std::pair("key3", "value3")); true == result) {
+            std::cout << "Add 'key3' Successed " << std::endl;
+        } else {
+            std::cout << "Add 'key3' Failed " << std::endl;
+        }
+    }
+
+    void try_emplace_test() {
+        using namespace std::literals;
+        std::map<std::string, std::string> dictionary;
+
+        dictionary.try_emplace("Key1", "Value1");
+        dictionary.try_emplace("Key2", "Value2");
+        dictionary.try_emplace("Key3", "Value3");
+
+        print_map_info(dictionary, ">>> Before:");
+
+        dictionary.try_emplace("Key3", "Value3New");
+
+        print_map_info(dictionary, "\nAfter (dictionary.try_emplace(\"Key3\", \"Value3New\")):");
+
+        dictionary.try_emplace("Key4", "Value3New");
+
+        print_map_info(dictionary, "\nAfter (dictionary.try_emplace(\"Key4\", \"Value3New\")):");
+    }
+
+    void try_emplace_test_2() {
+        std::map<std::string, Integer> intMap;
+
+        intMap.try_emplace("Key1", 11);
+        intMap.try_emplace("Key2", 22);
+        intMap.try_emplace("Key3", 33);
+
+        std::cout << "      Object 'Integer(44)' shall not be constructed" << std::endl;
+        intMap.try_emplace("Key3", 44);
+
+        Integer int5(55);
+        std::cout << "      Object 'Integer(55)' WILL be constructed. But will not be inserted" << std::endl;
+        intMap.try_emplace("Key3", int5);
+
+        std::cout << "      Object 'Integer(66)' WILL be constructed and WILL be inserted" << std::endl;
+        intMap.try_emplace("Key6", 66);
+
+        print_map(intMap);
+    }
+
+    void try_emplace_test_3() {
+        std::map<std::string, Integer> dictionary;
         [[maybe_unused]]
-		auto [iterator1, succeed1] = dictionary.try_emplace("Key1", 111);
+        auto [iterator1, succeed1] = dictionary.try_emplace("Key1", 111);
 
-		std::cout << ">>> Using 'try_emplace' to add an element Integer(777) with existing key 'Key1' <<<" << std::endl;
+        std::cout << ">>> Using 'try_emplace' to add an element Integer(777) with existing key 'Key1' <<<" << std::endl;
 
         [[maybe_unused]]
-		auto [iterator2, succeed2] = dictionary.try_emplace("Key1", 777);
+        auto [iterator2, succeed2] = dictionary.try_emplace("Key1", 777);
 
         [[maybe_unused]]
-		auto[iterator3, succeed3] = dictionary.try_emplace("Key2", 222);
+        auto [iterator3, succeed3] = dictionary.try_emplace("Key2", 222);
 
-		assert(succeed1);
-		assert(!succeed2);
-		assert(succeed3);
+        assert(succeed1);
+        assert(!succeed2);
+        assert(succeed3);
 
-		for (auto&&[key, value] : dictionary)
-			std::cout << key << ": " << value << "\n";
-	}
+        for (auto &&[key, value]: dictionary)
+            std::cout << key << ": " << value << "\n";
+    }
 
 
     void TryEmplace_vs_Emplace()
@@ -445,10 +442,31 @@ namespace Map {
         std::cout << s1 << "            <------ 's' is empty! Its has been moved!!\n";
         std::cout << m["Hello"] << std::endl;
 
-		std::string s2 = "C++";
+        std::string s2 = "C++";
         m.try_emplace("Hello", std::move(s2));
         std::cout << s2 << "         <------ 's' is empty! Its has NOT been moved!!\n";
         std::cout << m["Hello"] << std::endl;
+    }
+
+    void TryEmplace_SmartPointer()
+    {
+        std::map<std::string, std::shared_ptr<Integer>> dictionary;
+
+        {
+            auto [iter, result] = dictionary.try_emplace("one", nullptr);
+            if (result) {
+                iter->second = std::make_shared<Integer>(1);
+            }
+            dictionary["one"].get()->printInfo();
+        }
+
+        {
+            auto [iter, result] = dictionary.try_emplace("one", nullptr);
+            if (result) {
+                iter->second = std::make_shared<Integer>(1);
+            }
+            dictionary["one"].get()->printInfo();
+        }
     }
 
 
@@ -1210,6 +1228,7 @@ void Map::TEST_ALL()
 	// try_emplace_test_LAMBDA();
 	// Try_emplace_vs_Emplace();
     // TryEmplace_vs_Emplace();
+    TryEmplace_SmartPointer();
 
 	// emplace_hint_test1();
 	// Rbegin_Rend_Test();
@@ -1240,6 +1259,6 @@ void Map::TEST_ALL()
 	// Test::Iterators_Invalidation();
 
 
-    MoveFromMap::Test();
+    // MoveFromMap::Test();
 
 }

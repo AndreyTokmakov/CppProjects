@@ -1200,7 +1200,7 @@ void SharedPtr_Tests::TestAll()
 	// Atomic::Test();
 
 	// Aliasing::Test();
-	Aliasing::Test_UseCount();
+	// Aliasing::Test_UseCount();
 
 	// TESTS::Test();
 	// TESTS::EmplaceToVector();
