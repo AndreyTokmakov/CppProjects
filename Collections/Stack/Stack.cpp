@@ -14,7 +14,7 @@
 #include <stack>
 #include <vector>
 
-#include "../Integer/Integer.h"
+#include "../Helpers/Integer.h"
 #include "Stack.h"
 
 using String = std::string;

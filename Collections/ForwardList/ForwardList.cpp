@@ -15,7 +15,7 @@
 #include <forward_list>
 #include <array>
 
-#include "../Integer/Integer.h"
+#include "../Helpers/Integer.h"
 #include "ForwardList.h"
 
 using String = std::string;

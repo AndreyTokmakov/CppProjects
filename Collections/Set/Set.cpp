@@ -17,7 +17,7 @@
 #include <string_view>
 #include <vector>
 
-#include "../Integer/Integer.h"
+#include "../Helpers/Integer.h"
 #include "Set.h"
 
 namespace Set {

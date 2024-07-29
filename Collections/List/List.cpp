@@ -15,12 +15,16 @@ Description : C++ List container testing
 #include <algorithm>
 
 #include "List.h"
-#include "../Integer/Integer.h"
+#include "../Helpers/Wrapper.h"
 
-namespace List {
+using Helpers::Integer;
+
+namespace
+{
 
 	template<typename T>
-	void print_list(const T& list) {
+	void print_list(const T& list)
+    {
 		std::for_each(list.begin(), list.end(), [](const auto& val) {
 			std::cout << val << " ";
 		});
@@ -36,10 +40,22 @@ namespace List {
 		});
 		std::cout << postfix;
 	}
+
+
+    template<typename T>
+    std::ostream& operator<<(std::ostream& ostr, const std::list<T>& list)
+    {
+        std::cout << __PRETTY_FUNCTION__ << std::endl;
+        for (const auto& i : list)
+            ostr << " " << i;
+        return ostr;
+    }
 }
 
-namespace List {
-	void Constructors() {
+namespace List
+{
+	void Constructors()
+    {
 		// c++11 initializer list syntax:
 		std::list<std::string> words1{ "the", "frogurt", "is", "also", "cursed" };
 		print_list_ex(words1, "");
@@ -58,13 +74,6 @@ namespace List {
 		// words4 is {"Mo", "Mo", "Mo", "Mo", "Mo"}
 		std::list<std::string> words4(5, "Mo");
 		print_list_ex(words4);
-	}
-
-	template<typename T>
-	std::ostream& operator<<(std::ostream& ostr, const std::list<T>& list) {
-		for (const auto& i : list)
-			ostr << " " << i;
-		return ostr;
 	}
 
 	void Reverse_and_Sort()
@@ -234,7 +243,8 @@ namespace List {
 		//std::cout << list[30] << std::endl;
 	}
 
-	void Sort() {
+	void Sort()
+    {
 		{
 			std::list<int> list = { 9,8,7,6,5,4,3,2,1};
 			print_list_ex(list, "");
@@ -250,7 +260,21 @@ namespace List {
 			list.sort([](int a, int b) { return a > b;  });
 			print_list_ex(list, "");
 		}
-	}
+    }
+
+    void Sort_WithCustomValue()
+    {
+        std::list<Integer> list = {3, 2, 1};
+        std::cout << std::string(120, '=') << std::endl;
+
+        std::cout << list << std::endl;
+
+        list.sort([](const Integer& a, const Integer&  b) { return b > a;  });
+
+        std::cout << list << std::endl;
+
+        std::cout << std::string(120, '=') << std::endl;
+    }
 
 	void Merge() {
 		{
@@ -464,10 +488,11 @@ void List::TestAll()
 	// Insert();
     // Insert_ReturnValue();
 
-	Remove();
+	// Remove();
 	// Remove_IF();
 
 	// Sort();
+	Sort_WithCustomValue();
 
 	// Merge();
 

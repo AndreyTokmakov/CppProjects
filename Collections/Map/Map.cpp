@@ -9,7 +9,7 @@
 #include <cassert>
 #include <ranges>
 
-#include "../Integer/Integer.h"
+#include "../Helpers/Integer.h"
 
 namespace Map {
 
@@ -1191,7 +1191,7 @@ namespace Map::MoveFromMap
     }
 }
 
-void Map::TEST_ALL()
+void Map::TestAll()
 {
 	// test_loops();
 	// test_loops_backwards();

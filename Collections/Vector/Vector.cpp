@@ -18,7 +18,7 @@ Description : C++ STL Vector container testing
 #include <future>
 #include <algorithm>
 #include <chrono>
-#include "../Integer/Integer.h"
+#include "../Helpers/Integer.h"
 
 
 /** Vector_Testing namespace: **/

@@ -22,7 +22,7 @@
 
 
 #include "Deque.h"
-#include "../Integer/Integer.h"
+#include "../Helpers/Integer.h"
 
 namespace Deque {
 

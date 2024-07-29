@@ -11,7 +11,7 @@
 #define MAP_CONTAINER_TESTS__H_
 
 namespace Map {
-	void TEST_ALL();
+	void TestAll();
 };
 
 #endif /* MAP_CONTAINER_TESTS__H_ */

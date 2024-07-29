@@ -14,7 +14,7 @@
 #include <algorithm>
 #include <array>
 
-#include "../Integer/Integer.h"
+#include "../Helpers/Integer.h"
 #include "Array.h"
 
 namespace Array {

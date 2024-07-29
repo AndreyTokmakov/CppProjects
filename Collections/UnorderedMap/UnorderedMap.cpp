@@ -18,7 +18,7 @@
 #include <chrono>
 #include <array>
 
-#include "../Integer/Integer.h"
+#include "../Helpers/Integer.h"
 #include "../Helpers/Helpers.h"
 #include "UnorderedMap.h"
 

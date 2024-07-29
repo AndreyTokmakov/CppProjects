@@ -15,7 +15,7 @@
 #include <cassert>
 #include <vector>
 
-#include "../Integer/Integer.h"
+#include "../Helpers/Integer.h"
 #include "../Helpers/Helpers.h"
 
 #include "UnorderedSet.h"

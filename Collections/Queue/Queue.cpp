@@ -14,7 +14,7 @@
 #include <queue>
 #include <list>
 
-#include "../Integer/Integer.h"
+#include "../Helpers/Integer.h"
 #include "Queue.h"
 
 namespace Queue {
