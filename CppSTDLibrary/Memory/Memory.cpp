@@ -1708,10 +1708,10 @@ namespace VectorOfUniquePointers_KeepReference_StoredInVector
 
 void Memory::TestAll()
 {
-    Alignment::TestAll();
+    // Alignment::TestAll();
     // AlignedStackAllocator::TestAll();
     // CustomStackAllocator::TestAll();
-    // MemoryUsageMonitor::TestAll();
+    MemoryUsageMonitor::TestAll();
 
 
 	// Delete_Array();
@@ -1787,7 +1787,7 @@ void Memory::TestAll()
 
 	//------------------------------------------------------------------------//
 
-    VectorOfUniquePointers_KeepReference_StoredInVector::Test();
+    // VectorOfUniquePointers_KeepReference_StoredInVector::Test();
 
     //------------------------------------------------------------------------//
 

@@ -233,7 +233,7 @@ namespace Chrono::Duration
     {
         std::chrono::steady_clock::time_point start = std::chrono::steady_clock::now();
 
-        std::this_thread::sleep_for(std::chrono::milliseconds(125));
+        std::this_thread::sleep_for(std::chrono::microseconds (125));
 
         std::chrono::steady_clock::time_point end = std::chrono::steady_clock::now();
         std::chrono::duration<double> time_span = std::chrono::duration_cast<std::chrono::duration<double>>(end - start);
@@ -400,7 +400,7 @@ namespace Chrono::StringFormat
 
     struct CurrentTime
     {
-        const std::chrono::time_point<std::chrono::high_resolution_clock> now { std::chrono::system_clock::now() };
+        const std::chrono::time_point<std::chrono::system_clock> now { std::chrono::system_clock::now() };
     };
 
     struct SyncTimeStream
@@ -870,7 +870,7 @@ void Chrono::TestAll()
     // Duration::Create_Simple();
     // Duration::Measure_Duration();
     // Duration::HighResolution__PeriodDuration();
-    // Duration::SteadyClock__PeriodDuration();
+    Duration::SteadyClock__PeriodDuration();
     // Duration::Time_From_Duration();
     // Duration::Zero_Duration();
     // Duration::Min_Max();

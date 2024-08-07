@@ -117,7 +117,7 @@ int main([[maybe_unused]] int argc,
     // FilesStreams::TestAll();
     // Filesystem::TestAll();
     // Format::TestAll();
-    FunctionObjects::TestAll();
+    // FunctionObjects::TestAll();
     // Hashing::TestAll();
     // Lambdas::TestAll();
     // LifetimeExtension::TestAll();
@@ -126,7 +126,7 @@ int main([[maybe_unused]] int argc,
     // MoveSemantics_RuleOfFive::TestAll();
     // Numbers::TestAll();
     // Math::TestAll();
-    // Memory::TestAll();
+    Memory::TestAll();
     // Metaprogramming::TestAll();
     // InlineNamespaces::TestAll();
     // NumericLimits::TestAll();

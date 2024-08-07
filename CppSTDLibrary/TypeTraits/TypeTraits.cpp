@@ -762,6 +762,47 @@ namespace TypeTraits::TypeIdentity
     }
 }
 
+
+namespace TypeTraits::TriviallyCopyable
+{
+    struct A { int m; };
+    struct B { B(B const&) {} };
+    struct C { virtual void foo() {} };
+
+    struct D
+    {
+        int m;
+
+        D(D const&) = default; // -> trivially copyable
+        explicit D(int x) : m(x + 1) {}
+    };
+
+    struct Order
+    {
+        Order(const Order &) = default;
+        Order(Order &&) = default;
+        Order &operator=(const Order &) = default;
+        Order &operator=(Order &&) = default;
+        ~Order() = default;
+
+        static inline bool canAmend(const Order &amendOrder, const Order &initOrder)
+        {
+            // ......
+            return true;
+        }
+    };
+
+
+    void Examples()
+    {
+        static_assert(std::is_trivially_copyable_v<A> == true);
+        static_assert(std::is_trivially_copyable_v<B> == false);
+        static_assert(std::is_trivially_copyable_v<C> == false);
+        static_assert(std::is_trivially_copyable_v<D> == true);
+        static_assert(std::is_trivially_copyable_v<Order> == true);
+    }
+}
+
 void TypeTraits::TestAll()
 {
 	// IsClass::Test();
@@ -812,4 +853,6 @@ void TypeTraits::TestAll()
 	// std::false_type ??????
 
     TypeIdentity::Test();
+
+    TriviallyCopyable::Examples();
 };
