@@ -55,26 +55,25 @@ namespace ProcessStatusInfo
         {
             while (std::getline(statusFile, line))
             {
-
-                if (std::string::npos != line.find("VmRSS")) {
-                    status.memoryUsage =  atoi(line.data() + 6) / 1024.0;
+                if (line.starts_with("VmRSS")) {
+                    status.memoryUsage = atoi(line.data() + 6) / 1024.0;
                 }
-                else if (0 == line.find("Pid:")) {
+                else if (line.starts_with("Pid:")) {
                     status.processId = atoi(line.data() + line.find_first_not_of(' ', 5));
                 }
-                else if (0 == line.find("PPid:")) {
+                else if (line.starts_with("PPid:")) {
                     status.parentId = atoi(line.data() + line.find_first_not_of(' ', 6));
                 }
-                else if (0 == line.find("Threads:")) {
+                else if (line.starts_with("Threads:")) {
                     status.threadsCount = atoi(line.data() + line.find_first_not_of(' ', 9));
                 }
-                else if (0 == line.find("VmPeak:")) {
+                else if (line.starts_with("VmPeak:")) {
                     status.peakVirtualMemSize = atoi(line.data() + line.find_first_not_of(' ', 8));
                 }
-                else if (0 == line.find("voluntary_ctxt_switches:")) {
+                else if (line.starts_with("voluntary_ctxt_switches:")) {
                     status.contextSwitches = atoi(line.data() + line.find_first_not_of(' ', 25));
                 }
-                else if (0 == line.find("Name:")) {
+                else if (line.starts_with("Name:")) {
                     status.name.assign(line.data() + line.find_first_not_of(' ', 6));
                 }
             };
