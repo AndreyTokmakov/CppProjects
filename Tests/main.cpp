@@ -1145,23 +1145,6 @@ int main([[maybe_unused]] int argc,
 
     // Enums::Tests();
 
-    struct T {
-        int v{0};
-
-        bool operator==(const T& obj) const noexcept
-        {
-            return v == obj.v;
-        }
-
-        bool operator!=(const T& obj) const noexcept
-        {
-            return v != obj.v;
-        }
-    };
-
-    std::cout << std::boolalpha << (T{} != T{}) << std::endl;
-
-
     /** * * * * *  Move to lib * * * * * **/
 
     // OperatorCall_ExplicitTypeSpecialization::Test();
@@ -1205,7 +1188,7 @@ int main([[maybe_unused]] int argc,
     // Iterators::TestAll();
     // Strings::TestAll();
     // Performance::TestAll();
-    // Templates::TestAll();
+    Templates::TestAll();
     // TestAssignments::TestAll();
     // TableFormatter::TestAll();
 

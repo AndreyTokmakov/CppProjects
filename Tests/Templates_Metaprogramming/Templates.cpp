@@ -433,6 +433,42 @@ namespace Templates::TemplatedSpecialisation
     }
 }
 
+namespace CompressedPair
+{
+    template<typename T,
+            typename Del,
+            bool hasEmptyBase = std::is_empty_v<Del> and not std::is_final_v<Del>>
+    struct compressed_pair
+    {
+        T*   data{};
+        Del* deleter{};
+
+        compressed_pair() = default;
+
+        compressed_pair(T* ptr, Del* del)
+        : data{ptr}
+        , deleter{del}
+        {}
+
+        T*   first() { return data; }
+        Del& second() { return *deleter; }
+    };
+
+    template<typename T, typename Del>
+    struct compressed_pair<T, Del, true> : public Del
+    {
+        T* data{};
+        compressed_pair() = default;
+
+        explicit compressed_pair(T* ptr): data{ptr} {
+        }
+
+        T*   first() { return data; }
+        Del& second() { return *this; }
+    };
+}
+
+
 void Templates::TestAll()
 {
     // FoldExpressions::MatchingTests();
@@ -449,5 +485,5 @@ void Templates::TestAll()
 
     // Templated_Templates::Container_WithTemplated_Types();
 
-    TemplatedSpecialisation::Test();
+    // TemplatedSpecialisation::Test();
 }
