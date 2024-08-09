@@ -23,7 +23,6 @@ add_executable(${PROJECT_NAME}
 		ConsoleInOut/ConsoleInOut.cpp ConsoleInOut/ConsoleInOut.h
 		DateAndTime/DateAndTime.cpp DateAndTime/DateAndTime.h
 		ConstConstexprMutable/ConstConstexprMutable.cpp ConstConstexprMutable/ConstConstexprMutable.h
-		CopyElision/CopyElision.cpp CopyElision/CopyElision.h
 		EnumTests/EnumTests.cpp EnumTests/EnumTests.h
 		Exceptions/Exceptions.cpp Exceptions/Exceptions.h
 		Errors/Errors.cpp Errors/Errors.h
@@ -91,6 +90,8 @@ add_executable(${PROJECT_NAME}
 		Templates/FoldExpressions.cpp  Templates/FoldExpressions.h
 		Templates/NTTP.cpp Templates/NTTP.h
 		Templates/TemplateSpecialization.cpp Templates/TemplateSpecialization.h
+		RVO_CopyElision/CopyElision.cpp RVO_CopyElision/CopyElision.h
+		RVO_CopyElision/RVO_FailureCases.cpp RVO_CopyElision/RVO_FailureCases.h
 )
 
 # Link libraries to the project/executable

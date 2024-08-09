@@ -25,7 +25,8 @@ Description : Cpp STD lib
 #include "Concepts/Concepts.h"
 #include "ConsoleInOut/ConsoleInOut.h"
 #include "ConstConstexprMutable/ConstConstexprMutable.h"
-#include "CopyElision/CopyElision.h"
+#include "RVO_CopyElision/CopyElision.h"
+#include "RVO_CopyElision/RVO_FailureCases.h"
 #include "Comparators/Comparators.h"
 #include "CTAD/ClassTemplateArgumentDeduction.h"
 #include "Format/Format.h"
@@ -103,6 +104,7 @@ int main([[maybe_unused]] int argc,
     // ConsoleInOut::TestAll();
     // ConstConstexprMutable::TestAll();
     // CopyElision::TestAll();
+    RVO_FailureCases::TestAll();
     // ClassTemplateArgumentDeduction::TestAll();
     // DateAndTime::TestAll();
     // EnumTests::TestAll();
@@ -126,7 +128,7 @@ int main([[maybe_unused]] int argc,
     // MoveSemantics_RuleOfFive::TestAll();
     // Numbers::TestAll();
     // Math::TestAll();
-    Memory::TestAll();
+    // Memory::TestAll();
     // Metaprogramming::TestAll();
     // InlineNamespaces::TestAll();
     // NumericLimits::TestAll();
