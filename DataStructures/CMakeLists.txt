@@ -48,6 +48,7 @@ add_executable(${PROJECT_NAME}
 		MinStack/MinStack.cpp MinStack/MinStack.h
 		MinHeap/MinHeap.cpp MinHeap/MinHeap.h
 		Heap_WithComparator/HeapWithComparator.cpp Heap_WithComparator/HeapWithComparator.h
+		Compressed_Pair/CompressedPair.cpp  Compressed_Pair/CompressedPair.h
 		Wrapper/Wrapper.h
 )
 

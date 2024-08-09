@@ -1,11 +1,11 @@
-//============================================================================
-// Name        : DataStructures.cpp
-// Created on  : 16.08.2020
-// Author      : Tokmakov Andrey
-// Version     : 1.0
-// Copyright   : Your copyright notice
-// Description : C++ custom data structures.
-//============================================================================
+/**============================================================================
+Name        : main.cpp
+Created on  : 09.08.2024
+Author      : Tokmakov Andrey
+Version     : 1.0
+Copyright   : Your copyright notice
+Description : DataStructures
+============================================================================**/
 
 #include "Array/Array.h"
 #include "LRUCache/LRUCache.h"
@@ -41,6 +41,7 @@
 #include "LockFreeDataStructures/LockFreeQueue.h"
 #include "RAII_CommitWrapper/RAII_CommitWrapper.h"
 #include "ObjectNumberLimiter/ObjectNumberLimiter.h"
+#include "Compressed_Pair/CompressedPair.h"
 #include "Trie/Trie.h"
 
 
@@ -62,7 +63,7 @@ int main([[maybe_unused]] int argc,
     // CustomVector::TestAll();
     // ExecutorAdapter::TestAll();
     // ExecutorAdapter2::TestAll();
-    Finalizers::TestAll();
+    // Finalizers::TestAll();
     // Function::Test();
     // HashTable::TestAll();
     // LinkedLists::TEST_ALL();
@@ -78,6 +79,7 @@ int main([[maybe_unused]] int argc,
     // MinMaxStack::TestAll();
     // MinHeap::TestAll();
     // HeapWithComparator::TestAll();
+    CompressedPair::TestAll();
 
     // Memory::AlignedStackAllocator::TestAll();
     // Memory::CustomStackAllocator::TestAll();

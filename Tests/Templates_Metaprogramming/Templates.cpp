@@ -435,37 +435,66 @@ namespace Templates::TemplatedSpecialisation
 
 namespace CompressedPair
 {
+    // First
     template<typename T,
-            typename Del,
-            bool hasEmptyBase = std::is_empty_v<Del> and not std::is_final_v<Del>>
+             typename Deleter,
+             bool hasEmptyBase = std::is_empty_v<Deleter> and not std::is_final_v<Deleter>>
     struct compressed_pair
     {
-        T*   data{};
-        Del* deleter{};
+        T* data {};
+        Deleter* deleter {};
 
-        compressed_pair() = default;
-
-        compressed_pair(T* ptr, Del* del)
-        : data{ptr}
-        , deleter{del}
-        {}
-
-        T*   first() { return data; }
-        Del& second() { return *deleter; }
-    };
-
-    template<typename T, typename Del>
-    struct compressed_pair<T, Del, true> : public Del
-    {
-        T* data{};
-        compressed_pair() = default;
-
-        explicit compressed_pair(T* ptr): data{ptr} {
+        compressed_pair() {   std::cout << __PRETTY_FUNCTION__  << " First "<< std::endl;};
+        compressed_pair(T* ptr, Deleter* del): data {ptr}, deleter{del} {
         }
 
         T*   first() { return data; }
-        Del& second() { return *this; }
+        Deleter& second() { return *deleter; }
     };
+
+    // Second
+    template<typename T, typename Deleter>
+    struct compressed_pair<T, Deleter, true> : public Deleter
+    {
+        T* data {};
+
+        compressed_pair() {   std::cout << __PRETTY_FUNCTION__  << " Second "<< std::endl;};
+        explicit compressed_pair(T* ptr): data { ptr } {
+            std::cout << __PRETTY_FUNCTION__ << std::endl;
+        }
+
+        T* first() { return data; }
+        Deleter& second() { return *this; }
+    };
+
+    struct DeleterSimple {};
+    struct DeleterSimpleFinal final {};
+
+    template<typename T>
+    struct DeleterSimpleComplex final
+    {
+        int counter = 0;
+
+        void operator()(const T* ptr) {
+            delete ptr;
+        }
+    };
+
+    void Tests()
+    {
+        {
+            compressed_pair<int, DeleterSimple>      pair;  // Second specialization
+            std::cout << sizeof(pair) << std::endl;
+        }
+        {
+            compressed_pair<int, DeleterSimpleFinal> pair;  // First
+            std::cout << sizeof(pair) << std::endl;
+        }
+        {
+            compressed_pair<int, DeleterSimpleComplex<int>> pair;  // First
+            std::cout << sizeof(pair) << std::endl;
+        }
+    }
 }
 
 
@@ -486,4 +515,6 @@ void Templates::TestAll()
     // Templated_Templates::Container_WithTemplated_Types();
 
     // TemplatedSpecialisation::Test();
+
+    CompressedPair::Tests();
 }
