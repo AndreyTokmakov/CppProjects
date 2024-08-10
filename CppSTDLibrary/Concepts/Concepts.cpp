@@ -1559,33 +1559,6 @@ namespace Concepts::Callables
     }
 }
 
-namespace Concepts::Derived_From {
-
-    struct A { };
-    struct B : A { };
-    struct C {};
-
-    template <typename Ty>
-    concept DerivedFromA = std::derived_from<Ty, A>;
-
-    template<DerivedFromA T>
-    void func(T v) {
-    }
-
-
-    void Test() {
-
-        A objA;
-        B objB;
-        [[maybe_unused]] C objC;
-
-
-        func(objA);
-        func(objB);
-        // func(objC);   // Compile error
-    }
-}
-
 
 namespace Conversations {
 
@@ -2569,6 +2542,80 @@ namespace Concepts::CheckTypes
     }
 }
 
+namespace Concepts::STD
+{
+    struct A {};
+    struct B: A {};
+    struct C: A {};
+    struct D: B {};
+
+}
+
+namespace Concepts::STD::Common_With
+{
+    struct A {};
+    struct B: A {};
+    struct C: A {};
+    struct D: B {};
+
+    void HaveCommonClass()
+    {
+        static_assert(std::common_with<B, D>);     // True
+        static_assert(not std::common_with<B, C>); // False
+        static_assert(std::common_with<A, B>);     // True
+    }
+}
+
+
+namespace Concepts::STD::Same_AS
+{
+    using AA = A;
+
+    void CheckTypeAreSame()
+    {
+        auto a = 10, b = 20;
+
+        static_assert(std::same_as<A, AA>);                     // True
+        static_assert(std::same_as<decltype(a), decltype(b)>);  // True
+    }
+}
+
+
+namespace Concepts::STD::Derived_From
+{
+    struct A { };
+    struct B : A { };
+    struct C {};
+
+    template <typename Ty>
+    concept DerivedFromA = std::derived_from<Ty, A>;
+
+    template<DerivedFromA T>
+    void func(T v) {
+    }
+
+    void SimpleExample()
+    {
+        static_assert(std::derived_from<A, A>);
+        static_assert(std::derived_from<B, A>);
+        static_assert(not std::derived_from<C, A>); //
+    }
+
+    void ComplexTest()
+    {
+        A objA;
+        B objB;
+        [[maybe_unused]] C objC;
+
+
+        func(objA);
+        func(objB);
+        // func(objC);   // Compile error
+    }
+}
+
+//
+
 void Concepts::TestAll()
 {
     // MovableTest();
@@ -2618,12 +2665,15 @@ void Concepts::TestAll()
     // Callables::Test_Predicate_PrintVector();
 
     // Noexcept::Tests();
-    //Noexcept::ChecK_Assignment_Cant_Throw();
-    Noexcept::Check_If_Type_CanBe_Noexcept_Swapped();
+    // Noexcept::ChecK_Assignment_Cant_Throw();
+    // Noexcept::Check_If_Type_CanBe_Noexcept_Swapped();
 
 
+    STD::Common_With::HaveCommonClass();
+    STD::Same_AS::CheckTypeAreSame();
+    STD::Derived_From::SimpleExample();
+    STD::Derived_From::ComplexTest();
 
-    // Derived_From::Test();
 
     // Concepts_With_Auto::Test();
     // Concepts_With_Auto::Print_Tests();
