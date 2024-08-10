@@ -1188,7 +1188,7 @@ int main([[maybe_unused]] int argc,
     // Iterators::TestAll();
     // Strings::TestAll();
     // Performance::TestAll();
-    Templates::TestAll();
+    // Templates::TestAll();
     // TestAssignments::TestAll();
     // TableFormatter::TestAll();
 
@@ -1223,6 +1223,15 @@ int main([[maybe_unused]] int argc,
         std::cerr << "Exception. Message: " << exc.what() << std::endl;
     }*/
 
+
+    const int var = 10;
+
+    int& ref = const_cast<int&>(var);
+
+    ref = 123;
+
+    std::cout << ref << std::endl;
+    std::cout << var << std::endl;
 
 
     return EXIT_SUCCESS;

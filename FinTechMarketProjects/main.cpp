@@ -23,6 +23,7 @@
 #include "Asymptoto/Asymptoto.h"
 
 #include "Framework/AppMain.h"
+#include "MatchingEngine/MatchingEngine.h"
 
 
 #include <iostream>
@@ -267,7 +268,9 @@ int main([[maybe_unused]] int argc,
 
     //Asymptoto::TestAll();
 
-    AppMain::TestAll(args);
+    MatchingEngine::TestAll();
+
+    // AppMain::TestAll(args);
 
     return EXIT_SUCCESS;
 }

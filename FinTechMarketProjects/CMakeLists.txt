@@ -24,6 +24,9 @@ add_executable(${PROJECT_NAME}
         NEW/OrderBookNew.h NEW/OrderBookNew.cpp
         Asymptoto/Asymptoto.cpp Asymptoto/Asymptoto.h
 
+        MatchingEngine/Order.cpp MatchingEngine/Order.h
+        MatchingEngine/MatchingEngine.cpp MatchingEngine/MatchingEngine.h
+
         Framework/DataProvider.h Framework/DataProvider.cpp Framework/Types.h
         Framework/OrderBook.h Framework/OrderBook.cpp
         Framework/AppMain.h Framework/AppMain.cpp
