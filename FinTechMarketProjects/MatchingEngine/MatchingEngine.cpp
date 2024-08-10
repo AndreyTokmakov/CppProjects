@@ -197,21 +197,22 @@ namespace TestMatchingEngine
             }
         }
 
-        void handleOrderAmend(const Order& order)
+        void handleOrderAmend(Order& order)
         {
+            std::cout << "---- AMEND ---- " << std::endl;
             if (const auto orderByIDIter = orderByIDMap.find(order.orderId);
-                    orderByIDMap.end() != orderByIDIter)
+                orderByIDMap.end() != orderByIDIter)
             {
-                // TODO:
-                //  0. Side changes --> Exit | Error
-                //  1. If price changed --> Do the MATCHING() --> MATCHING --> to separate function
-
-                /*
-                ReferencesBlock& orderRefs = orderByIDIter->second;
-                orderRefs.samePriceOrderList->erase(orderRefs.priceOrderIter);
-                orders.erase(orderRefs.orderIter);
-                orderByIDMap.erase(orderByIDIter);
-                */
+                Order& orderOriginal = *(orderByIDIter->second.orderIter);
+                if (orderOriginal.side != order.side) {
+                    return;
+                } else if (orderOriginal.price != order.price) {
+                    handleOrderCancel(order);
+                    handleOrderNew(order);
+                } else if (orderOriginal.price == order.price) {
+                    // TODO: update order parameters
+                    orderOriginal.quantity = order.quantity;
+                }
             }
         }
 
@@ -306,25 +307,57 @@ namespace Tests
         engine.info();
         std::cout << std::string(160, '=') << std::endl;
 
-
         {
             Order order;
             order.side = OrderSide::BUY;
             order.price = 15;
-            order.quantity = 8;
+            order.quantity = 11;
             order.orderId = getNextOrderID();
             engine.processOrder(order);
         }
 
+        engine.info();
+        std::cout << std::string(160, '=') << std::endl;
+    }
+
+    void Trade_AMEND()
+    {
+        int count = 10;
+        uint64_t orderIdInitial = getNextOrderID(), orderId = orderIdInitial;
+        OrderMatchingEngine engine;
+        Order orderAmend;
+        for (int i = 0, price = 10; i < count; ++i)
+        {
+            if (price > 16)
+                price = 10;
+
+            Order order;
+            order.side = OrderSide::SELL;
+            order.price = price+=2;
+            order.quantity = 3;
+            order.orderId = ++orderId;
+
+            engine.processOrder(order);
+
+            if (orderId ==  orderIdInitial + (count) / 2){
+                orderAmend = order;
+            }
+        }
+
+        engine.info();
+
+        orderAmend.action = OrderActionType::AMEND;
+        engine.processOrder(orderAmend);
+        std::cout << orderAmend.orderId << std::endl;
         std::cout << std::string(160, '=') << std::endl;
 
         engine.info();
-        std::cout << std::string(160, '=') << std::endl;
     }
 }
 
 void MatchingEngine::TestAll()
 {
     // Tests::Trade_SELL();
-    Tests::Trade_BUY();
+    // Tests::Trade_BUY();
+    Tests::Trade_AMEND();
 }
