@@ -7,6 +7,8 @@ project(${PROJECT_NAME} VERSION ${PROJECT_VERSION} LANGUAGES CXX)
 
 add_compile_options(-c -Wall -Wextra -O3 -std=c++2a)
 
+include_directories(Utilities)
+
 # include all components
 add_executable(${PROJECT_NAME}
         main.cpp
@@ -33,6 +35,8 @@ add_executable(${PROJECT_NAME}
         Framework/Common/Types.h
         Framework/Memory/MemoryPool.h Framework/Memory/StackAllocator.h
         Framework/Tests/Tests.cpp Framework/Tests/Tests.h Framework/Tests/Wrapper.h
+
+        Utilities/Utilities.cpp Utilities/Utilities.h
 )
 
 # Link libraries to the project/executable

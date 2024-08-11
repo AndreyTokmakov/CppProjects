@@ -7,12 +7,16 @@ Copyright   : Your copyright notice
 Description : MatchingEngine.cpp
 ============================================================================**/
 
+#include "Utilities.h"
 #include "MatchingEngine.h"
 #include "Order.h"
 
 #include <iostream>
+#include <numbers>
+#include <numeric>
 
 #include <list>
+#include <forward_list>
 #include <vector>
 #include <map>
 #include <unordered_map>
@@ -199,7 +203,6 @@ namespace TestMatchingEngine
 
         void handleOrderAmend(Order& order)
         {
-            std::cout << "---- AMEND ---- " << std::endl;
             if (const auto orderByIDIter = orderByIDMap.find(order.orderId);
                 orderByIDMap.end() != orderByIDIter)
             {
@@ -216,7 +219,7 @@ namespace TestMatchingEngine
             }
         }
 
-        void info()
+        void info(bool printTrades = true)
         {
             for (const auto& [orderId, orderIter]: orderByIDMap) {
                 Order& orderOne = *orderIter.orderIter;
@@ -239,6 +242,8 @@ namespace TestMatchingEngine
             std::cout << "SELL: " << std::endl; printOrders(sellOrders);
 
             std::cout << std::string(160, '=') << std::endl;
+            if (!printTrades)
+                return;
             for (const auto& trade: trades.trades)
             {
                 std::cout << "Trade(Buy: {id: " << trade.buyOrderInfo.id  << ", price: " << trade.buyOrderInfo.price << "}, "
@@ -347,11 +352,129 @@ namespace Tests
         engine.info();
 
         orderAmend.action = OrderActionType::AMEND;
+        orderAmend.quantity = 2323;
+
         engine.processOrder(orderAmend);
         std::cout << orderAmend.orderId << std::endl;
         std::cout << std::string(160, '=') << std::endl;
 
         engine.info();
+    }
+
+    void Trade_AMEND_PriceUpdate()
+    {
+        int count = 10;
+        uint64_t orderIdInitial = getNextOrderID(), orderId = orderIdInitial;
+        OrderMatchingEngine engine;
+        Order orderAmend;
+        for (int i = 0, price = 10; i < count; ++i)
+        {
+            if (price > 16)
+                price = 10;
+
+            Order order;
+            order.side = OrderSide::SELL;
+            order.price = price+=2;
+            order.quantity = 3;
+            order.orderId = ++orderId;
+
+            engine.processOrder(order);
+
+            if (orderId ==  orderIdInitial + (count) / 2){
+                orderAmend = order;
+            }
+        }
+
+        engine.info();
+
+        orderAmend.action = OrderActionType::AMEND;
+        orderAmend.price = orderAmend.price - 3;
+
+        engine.processOrder(orderAmend);
+        std::cout << orderAmend.orderId << std::endl;
+        std::cout << std::string(160, '=') << std::endl;
+
+        engine.info();
+    }
+
+    void Load_Test()
+    {
+        constexpr uint32_t pricesCount { 50 }, initialPrice { 10 };
+        constexpr uint32_t buyOrders { 100 }, sellOrders { 100 }, cancelOrders { 30 };
+
+        OrderMatchingEngine engine;
+
+        std::vector<int32_t> prices(pricesCount);
+        std::iota(prices.begin(), prices.end(), initialPrice);
+
+        std::vector<uint64_t> iDs;
+        iDs.reserve(pricesCount * buyOrders * 10);
+
+
+        Utilities::ScopedTimer timer { "TEST"};
+        uint64_t count = 0;
+        Order order;
+
+        for (int i = 0; i < 300; ++i)
+        {
+            for (int32_t price: prices) {
+                for (int32_t n = 0; n < buyOrders; ++n) {
+                    iDs.push_back(getNextOrderID());
+
+                    order.side = OrderSide::BUY;
+                    order.price = price;
+                    order.quantity = 10;
+                    order.orderId = iDs.back();
+
+                    engine.processOrder(order);
+                    ++count;
+                }
+            }
+            for (int32_t price: prices) {
+                for (int32_t n = 0; n < sellOrders; ++n) {
+                    iDs.push_back(getNextOrderID());
+
+                    order.side = OrderSide::SELL;
+                    order.price = price;
+                    order.quantity = 10;
+                    order.orderId = iDs.back();
+
+                    engine.processOrder(order);
+                    ++count;
+                }
+            }
+            for (int32_t price: prices) {
+                for (int32_t n = 0; n < sellOrders; ++n) {
+                    iDs.push_back(getNextOrderID());
+
+                    order.side = OrderSide::SELL;
+                    order.price = price;
+                    order.quantity = 10;
+                    order.orderId = iDs.back();
+
+                    engine.processOrder(order);
+                    ++count;
+                }
+            }
+            for (int32_t price: prices) {
+                for (int32_t n = 0; n < buyOrders; ++n) {
+                    iDs.push_back(getNextOrderID());
+
+                    order.side = OrderSide::BUY;
+                    order.price = price;
+                    order.quantity = 10;
+                    order.orderId = iDs.back();
+
+                    engine.processOrder(order);
+                    ++count;
+                }
+            }
+
+            iDs.clear();
+        }
+
+        //engine.info(false);
+        std::cout << count << std::endl;
     }
 }
 
@@ -359,5 +482,8 @@ void MatchingEngine::TestAll()
 {
     // Tests::Trade_SELL();
     // Tests::Trade_BUY();
-    Tests::Trade_AMEND();
+    // Tests::Trade_AMEND();
+    // Tests::Trade_AMEND_PriceUpdate();
+
+    Tests::Load_Test();
 }
