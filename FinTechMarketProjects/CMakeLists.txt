@@ -5,6 +5,14 @@ set(CMAKE_C_FLAGS_RELEASE "${CMAKE_C_FLAGS_RELEASE} -pthread")
 set(PROJECT_VERSION 1.0.0.0)
 project(${PROJECT_NAME} VERSION ${PROJECT_VERSION} LANGUAGES CXX)
 
+
+find_package(Boost REQUIRED COMPONENTS
+        log_setup
+        log
+        filesystem
+        program_options
+)
+
 add_compile_options(-c -Wall -Wextra -O3 -std=c++2a)
 
 include_directories(Utilities)
@@ -42,4 +50,5 @@ add_executable(${PROJECT_NAME}
 # Link libraries to the project/executable
 target_link_libraries(${PROJECT_NAME} PUBLIC
         pthread
+        ${Boost_LIBRARIES}
 )

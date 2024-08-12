@@ -22,6 +22,8 @@ Description : MatchingEngine.cpp
 #include <unordered_map>
 #include <cstdint>
 
+#include <boost/container/flat_map.hpp>
+
 namespace
 {
     uint64_t getNextOrderID()
@@ -97,8 +99,14 @@ namespace TestMatchingEngine
 
         // TODO: Test replace std::map --> boost::flat_map [std::list --> shall be pointer?]
         //       Since look performance of this lookup is more critical one
+
+#if 0
         std::map<Order::Price, PriceOrderList, std::less<>> buyOrders;
         std::map<Order::Price, PriceOrderList, std::greater<>> sellOrders;
+#else
+        boost::container::flat_map<Order::Price, PriceOrderList, std::less<>> buyOrders;
+        boost::container::flat_map<Order::Price, PriceOrderList, std::greater<>> sellOrders;
+#endif
 
         Trades trades;
 
@@ -399,7 +407,7 @@ namespace Tests
 
     void Load_Test()
     {
-        constexpr uint32_t pricesCount { 50 }, initialPrice { 10 };
+        constexpr uint32_t pricesCount { 50  }, initialPrice { 10 };
         constexpr uint32_t buyOrders { 100 }, sellOrders { 100 }, cancelOrders { 30 };
 
         OrderMatchingEngine engine;
@@ -415,7 +423,7 @@ namespace Tests
         uint64_t count = 0;
         Order order;
 
-        for (int i = 0; i < 300; ++i)
+        for (int i = 0; i < 400; ++i)
         {
             for (int32_t price: prices) {
                 for (int32_t n = 0; n < buyOrders; ++n) {
@@ -477,6 +485,10 @@ namespace Tests
         std::cout << count << std::endl;
     }
 }
+
+// TODO:
+//  1. Add allocator to create Orders --> may help when Order size is large
+//     OrderPool -- Tests
 
 void MatchingEngine::TestAll()
 {

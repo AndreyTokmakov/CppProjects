@@ -1324,7 +1324,8 @@ namespace MoveSemantics_RuleOfFive::RVO {
 		return integer;
 	}
 
-	Integer&& getInteger_FromVector(size_t index) {
+	Integer&& getInteger_FromVector(size_t index)
+    {
 		std::vector<Integer> nums;
 		nums.reserve(10);
 		for (int i : {1, 2, 3, 4, 5})
@@ -1347,7 +1348,8 @@ namespace MoveSemantics_RuleOfFive::RVO {
 		integer.printInfo();
 	}
 
-	void GetObject_FromVector() {
+	void GetObject_FromVector()
+    {
 		Integer&& integer = getInteger_FromVector(2);
 		integer.printInfo();
 	}
@@ -1764,7 +1766,7 @@ void MoveSemantics_RuleOfFive::TestAll()
 
 	// RVO::GetObject_FromFunction();
 	// RVO::GetObject_FromFunction_Bad();
-	// RVO::GetObject_FromVector();
+	RVO::GetObject_FromVector();
 
 	/***************************************************************************/
 
@@ -1785,5 +1787,5 @@ void MoveSemantics_RuleOfFive::TestAll()
     /***************************************************************************/
 
     // UseAfterMove_Pitfalls::MoveVector_WithAllocator();
-    UseAfterMove_Pitfalls::MoveString_Depending_SSO();
+    // UseAfterMove_Pitfalls::MoveString_Depending_SSO();
 }
