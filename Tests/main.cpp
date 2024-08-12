@@ -1174,7 +1174,7 @@ int main([[maybe_unused]] int argc,
     // FunctionCall_LookUp::TestAll();
     // LowLatencyLogger::TestAll();
     // Multithreading::TestAll();
-    // Memory::TestAll();
+    Memory::TestAll();
     // MaxStack::TestAll();
     // Math::TestAll();
     // UniquePtr_Size::SizeTest();
@@ -1222,16 +1222,6 @@ int main([[maybe_unused]] int argc,
     {
         std::cerr << "Exception. Message: " << exc.what() << std::endl;
     }*/
-
-
-    const int var = 10;
-
-    int& ref = const_cast<int&>(var);
-
-    ref = 123;
-
-    std::cout << ref << std::endl;
-    std::cout << var << std::endl;
 
 
     return EXIT_SUCCESS;

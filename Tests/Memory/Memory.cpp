@@ -313,13 +313,11 @@ namespace Memory
 
 
 
-namespace Memory::UniquePtrExperiments
-{
+namespace Memory::UniquePtrExperiments {
     using namespace Helpers;
 
-    void PointerToObjectOnStack()
-    {
-        auto longDeleter = [](Integer* ptr) {
+    void PointerToObjectOnStack() {
+        auto longDeleter = [](Integer *ptr) {
             std::cout << "Skip deletion for Long(" << ptr << ")\n";
             //delete ptr;
         };
@@ -334,17 +332,20 @@ namespace Memory::UniquePtrExperiments
 
     }
 
-    template <typename T>
+    template<typename T>
     struct CustomDeleter {
         CustomDeleter() = default;
-        CustomDeleter(const CustomDeleter&) = default;
-        CustomDeleter(CustomDeleter&) = default;
-        CustomDeleter(CustomDeleter&&)  noexcept = default;
-        void operator()(T* p) const { delete p; };
+
+        CustomDeleter(const CustomDeleter &) = default;
+
+        CustomDeleter(CustomDeleter &) = default;
+
+        CustomDeleter(CustomDeleter &&) noexcept = default;
+
+        void operator()(T *p) const { delete p; };
     };
 
-    void CustomDeleterTests()
-    {
+    void CustomDeleterTests() {
 
         {
             std::cout << "Example 1\n";
@@ -371,6 +372,46 @@ namespace Memory::UniquePtrExperiments
             std::unique_ptr<int, const CustomDeleter<int> &> f7(new int(), deleter); // reference CustomDeleter
             std::unique_ptr<int, CustomDeleter<int>> f8 = std::move(f7); // copy CustomDeleter
             //std::unique_ptr<int, CustomDeleter<int>&> f9 = std::move(f8); // Won't compile
+        }
+    }
+
+    void handle_RValue_One(std::unique_ptr<Integer>&& integer)
+    {
+    }
+
+    void handle_RValue_Two(std::unique_ptr<Integer>&& integer)
+    {
+        std::unique_ptr<Integer> dest = std::move(integer);
+    }
+
+    void handle_LValue(std::unique_ptr<Integer> integer)
+    {
+    }
+
+    void Pass_Unique_Ptr_Object()
+    {
+        {
+            std::unique_ptr<Integer> var{std::make_unique<Integer>(111)};
+            std::cout << std::string(160, '=') << std::endl;
+            handle_RValue_One(std::move(var));
+            std::cout << std::string(160, '=') << std::endl;
+        }
+
+        std::cout << std::endl;
+
+        {
+            std::unique_ptr<Integer> var{std::make_unique<Integer>(222)};
+            std::cout << std::string(160, '=') << std::endl;
+            handle_RValue_Two(std::move(var));
+            std::cout << std::string(160, '=') << std::endl;
+        }
+
+        std::cout << std::endl;
+        {
+            std::unique_ptr<Integer> var{std::make_unique<Integer>(333)};
+            std::cout << std::string(160, '=') << std::endl;
+            handle_LValue(std::move(var));
+            std::cout << std::string(160, '=') << std::endl;
         }
     }
 }
@@ -786,8 +827,8 @@ namespace VectorOfUniquePointers_KeepReference_StoredInVector
 
         std::cout << std::string(100, '=') << std::endl;
     }
-
 }
+
 
 
 void Memory::TestAll()
@@ -797,6 +838,7 @@ void Memory::TestAll()
 
     // UniquePtrExperiments::PointerToObjectOnStack();
     // UniquePtrExperiments::CustomDeleterTests();
+    UniquePtrExperiments::Pass_Unique_Ptr_Object();
 
     // Memset_vs_Assignment();
     // Memset_vs_Assignment_Perf();
@@ -825,7 +867,7 @@ void Memory::TestAll()
     // UsingCustomAllocator_List::TestAll();
 
     // VectorOfUniquePointers_CustomDeleter::Test();
-    VectorOfUniquePointers_CustomDeleter::Test_PasRef();
+    // VectorOfUniquePointers_CustomDeleter::Test_PasRef();
     // VectorOfUniquePointers_KeepReference_StoredInVector::Test();
 
 }
