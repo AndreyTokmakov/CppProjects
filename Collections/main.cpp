@@ -32,14 +32,14 @@ int main([[maybe_unused]] int argc,
          [[maybe_unused]] char** argv)
 {
 	// TEST(Array);
-	List::TestAll();
+	// List::TestAll();
 	// TEST(ForwardList);
 	// TEST(Deque);
 	// TEST(Stack);
 	// TEST(Heap);
 	// Vector::TestAll();
 	// TEST(Valarray);
-	// Map::TestAll();
+	Map::TestAll();
 	// MultiMap::TestAll();
     // TEST(UnorderedMap);
     // TEST(Set);

@@ -1191,6 +1191,47 @@ namespace Map::MoveFromMap
     }
 }
 
+
+void* operator new(std::size_t sz)
+{
+    std::cout << "Allocating: " << sz << '\n';
+    return std::malloc(sz);
+}
+
+namespace Map::Heterogeneous_Lookup
+{
+
+    void Lookup_Basic()
+    {
+        std::map<std::string, int> intMap
+        {
+            { "Hello Super Long String", 1 },
+            { "Another Longish String", 2 },
+            { "This cannot fall into SSO buffer", 3 }
+        };
+
+        std::cout << std::string(160, '=') << std::endl;
+
+        intMap.contains("Key_One__Longer_than_SSO");
+    }
+
+    void Transparent_Lookup()
+    {
+        std::map<std::string, int, std::less<>> intMap
+        {
+            { "Hello Super Long String", 1 },
+            { "Another Longish String", 2 },
+            { "This cannot fall into SSO buffer", 3 }
+        };
+
+        std::cout << std::string(160, '=') << std::endl;
+
+        intMap.contains("Key_One__Longer_than_SSO");
+    }
+}
+
+
+
 void Map::TestAll()
 {
 	// test_loops();
@@ -1228,7 +1269,7 @@ void Map::TestAll()
 	// try_emplace_test_LAMBDA();
 	// Try_emplace_vs_Emplace();
     // TryEmplace_vs_Emplace();
-    TryEmplace_SmartPointer();
+    // TryEmplace_SmartPointer();
 
 	// emplace_hint_test1();
 	// Rbegin_Rend_Test();
@@ -1260,5 +1301,8 @@ void Map::TestAll()
 
 
     // MoveFromMap::Test();
+
+    // Heterogeneous_Lookup::Lookup_Basic();
+    Heterogeneous_Lookup::Transparent_Lookup();
 
 }
