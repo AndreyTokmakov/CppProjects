@@ -1,5 +1,7 @@
 cmake_minimum_required(VERSION 3.16 FATAL_ERROR)
 
+set(CMAKE_CXX_STANDARD 26)
+
 project(Tests)
 set(CMAKE_C_FLAGS_RELEASE "${CMAKE_C_FLAGS_RELEASE} -pthread")
 set(PROJECT_VERSION 1.0.0.0)
@@ -54,6 +56,7 @@ add_executable(${PROJECT_NAME}
         Math/Math.cpp Math/Math.h
         ObjectOrientedExperimetns/OOP_Experiments.cpp ObjectOrientedExperimetns/OOP_Experiments.h
         Cpp23_Features/Cpp23_Features.cpp Cpp23_Features/Cpp23_Features.h
+        Cpp23_Features/StackTrace.cpp Cpp23_Features/StackTrace.h
         Auto/AutoTests.cpp Auto/AutoTests.h
         ObjectOrientedExperimetns/VirtualTables.cpp ObjectOrientedExperimetns/VirtualTables.h
         Heap/Heap.cpp Heap/Heap.h

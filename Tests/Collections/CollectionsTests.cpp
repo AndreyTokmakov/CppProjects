@@ -16,6 +16,7 @@ Description : CollectionsTests
 #include <list>
 #include <vector>
 #include <array>
+#include <map>
 
 #include <memory>
 #include <chrono>
@@ -672,8 +673,59 @@ namespace CollectionsTests::HeterogeneousLookup2
 
 #include <experimental/io_context>
 
-namespace CollectionsTests::FlatMap
+namespace CollectionsTests::UseStringKey_Optimize
 {
+    size_t counter = 0;
+
+    struct StringWrapper
+    {
+        std::string data;
+        size_t hash;
+
+        explicit StringWrapper(std::string str) : data { std::move(str)},
+             hash { std::hash<std::string>{}(data) } {
+        }
+
+        bool operator<(const StringWrapper& rhs) const
+        {
+            return rhs.hash > hash;
+        }
+    };
+
+
+
+
+
+    void Test()
+    {
+        std::map<StringWrapper, std::string> dict {};
+
+        //dict[StringWrapper("1", 11)] = "One";
+        //dict[StringWrapper("3", 33)] = "Three";
+        //dict[StringWrapper("2", 24)] = "Two";
+
+        dict.emplace("1", "One");
+        dict.emplace("3", "Three");
+        dict.emplace("2", "Two");
+
+        for (const auto& [key, value]: dict) {
+            std::cout << '[' << key.data << ',' << key.hash << "] = " << value << std::endl;
+        }
+
+        std::cout << std::string(160, '=') << std::endl;
+
+
+        StringWrapper str = StringWrapper{"sdsdsdsdsd"};
+        str.hash = 2;
+
+        const auto iter = dict.find(str);
+        if (dict.end() != iter) {
+            std::cout << '[' << iter->first.data << ',' << iter->first.hash << "] = " << iter->second << std::endl;
+        } else {
+            std::cout << "Not found" << std::endl;
+        }
+
+    }
 
 };
 
@@ -699,5 +751,8 @@ void CollectionsTests::TestAll()
 
     // HeterogeneousLookup::Test();
     // HeterogeneousLookup2::Test_Bad();
-    HeterogeneousLookup2::Test_OK();
+    // HeterogeneousLookup2::Test_OK();
+
+
+    UseStringKey_Optimize::Test();
 };

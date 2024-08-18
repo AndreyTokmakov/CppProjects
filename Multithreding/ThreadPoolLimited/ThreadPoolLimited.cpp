@@ -10,6 +10,7 @@ Description : ThreadPool with limited queue capacity
 #include "ThreadPoolLimited.h"
 
 #include <iostream>
+#include <algorithm>
 #include <syncstream>
 #include <functional>
 

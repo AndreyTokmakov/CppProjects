@@ -4,7 +4,7 @@ project(FinTechMarketProjects)
 set(CMAKE_C_FLAGS_RELEASE "${CMAKE_C_FLAGS_RELEASE} -pthread")
 set(PROJECT_VERSION 1.0.0.0)
 project(${PROJECT_NAME} VERSION ${PROJECT_VERSION} LANGUAGES CXX)
-
+set(CMAKE_CXX_STANDARD 26)
 
 find_package(Boost REQUIRED COMPONENTS
         log_setup

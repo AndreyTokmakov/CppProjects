@@ -10,6 +10,7 @@ Description : EventLoop
 #include "EventLoop.h"
 
 #include <iostream>
+#include <algorithm>
 #include <functional>
 #include <thread>
 #include <condition_variable>

@@ -111,6 +111,7 @@ namespace TestMatchingEngine
 
         void processOrder(Order& order)
         {
+            // TODO: Remove branching ???
             switch (order.action)
             {
                 case OrderActionType::NEW:
@@ -126,6 +127,7 @@ namespace TestMatchingEngine
 
         unsigned long long matchOrder(Order& order)
         {
+            // TODO: Remove branching ???
             if (OrderSide::SELL == order.side) {
                 matchOrder(order, buyOrders);
             } else {
@@ -156,6 +158,7 @@ namespace TestMatchingEngine
 
                 Trade& trade = trades.addTrade();
                 trade.setQuantity(std::min(matchedOrder.quantity,order.quantity));
+                // TODO: Remove branching ???
                 if (OrderSide::SELL == order.side) {
                     trade.setBuyOrder(matchedOrder).setSellOrder(order);
                 } else {
@@ -190,6 +193,7 @@ namespace TestMatchingEngine
             {
                 auto& [orderIter, priceOrderIter, priceLevelOrderList] = iterOrderMap->second;
                 orderIter = orders.insert(orders.end(), order);
+                // TODO: Remove branching ???
                 priceLevelOrderList = (OrderSide::BUY == order.side) ?
                                       &buyOrders[order.price] : &sellOrders[order.price];
                 priceOrderIter = priceLevelOrderList->insert(priceLevelOrderList->end(), orderIter);
@@ -213,6 +217,7 @@ namespace TestMatchingEngine
             if (const auto orderByIDIter = orderByIDMap.find(order.orderId);
                 orderByIDMap.end() != orderByIDIter)
             {
+                // TODO: Remove branching ???
                 Order& orderOriginal = *(orderByIDIter->second.orderIter);
                 if (orderOriginal.side != order.side) {
                     return;

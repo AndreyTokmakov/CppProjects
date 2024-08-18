@@ -11,10 +11,12 @@ Description : MatchingEngineWithAlloc.cpp
 #include "Order.h"
 
 #include <iostream>
+#include <memory>
 #include <numeric>
 #include <list>
 #include <forward_list>
 #include <vector>
+#include <map>
 #include <unordered_map>
 #include <cstdint>
 
@@ -24,7 +26,7 @@ namespace
 {
     uint64_t getNextOrderID()
     {
-        static uint64_t id { 1'000 };
+        static uint64_t id { 10'000 };
         return id++;
     }
 }
@@ -260,7 +262,12 @@ namespace MatchingEngine_WithAllocator
         using OrderPtr = std::unique_ptr<Order, Memory::ObjectPool<Order>::Deleter>;
         using OrderPtrIter = typename std::list<OrderPtr>::iterator;
         using PriceOrderList = std::list<OrderPtrIter>;
+        using PriceOrderListPtr = std::unique_ptr<PriceOrderList>;
         using PriceOrderIter = typename PriceOrderList::iterator;
+
+        template <class K, class T, class Compare>
+        using PriceLevelsMapType = boost::container::flat_map<K, T, Compare>;
+        // using PriceLevelsMapType = std::map<K, T, Compare>;
 
         struct ReferencesBlock
         {
@@ -274,8 +281,8 @@ namespace MatchingEngine_WithAllocator
 
         std::unordered_map<Order::IDType, ReferencesBlock> orderByIDMap;
 
-        boost::container::flat_map<Order::Price, PriceOrderList, std::less<>> buyOrders;
-        boost::container::flat_map<Order::Price, PriceOrderList, std::greater<>> sellOrders;
+        PriceLevelsMapType<Order::Price, PriceOrderListPtr, std::less<>> buyOrders;
+        PriceLevelsMapType<Order::Price, PriceOrderListPtr, std::greater<>> sellOrders;
 
         OrderPtr makeOrder() {
             return ordersPool.acquireObject();
@@ -283,12 +290,13 @@ namespace MatchingEngine_WithAllocator
 
         void processOrder(OrderPtr&& order)
         {
+            // TODO: Remove branching ???  - Fedor Pikus
             switch (order->action)
             {
                 case OrderActionType::NEW:
                     return handleOrderNew(std::move(order));
                 case OrderActionType::CANCEL:
-                    return handleOrderCancel(std::move(order));
+                    return handleOrderCancel(order);
                 case OrderActionType::AMEND:
                     return handleOrderAmend(std::move(order));
                 default:
@@ -298,21 +306,60 @@ namespace MatchingEngine_WithAllocator
 
         unsigned long long matchOrder(Order& order)
         {
-            // TODO:
-            return 1;
+            // TODO: Remove branch  - Fedor Pikus
+            if (OrderSide::SELL == order.side) {
+                matchOrder(order, buyOrders);
+            } else {
+                matchOrder(order, sellOrders);
+            }
+
+            // Return remaining quantity
+            return order.quantity;
         }
 
         template<typename OrderSideMap>
         void matchOrder(Order& order, OrderSideMap& oppositeSideOrdersPriceMap)
         {
-            // TODO:
+            auto matchedPriceLevelIter = oppositeSideOrdersPriceMap.lower_bound(order.price);
+            while (oppositeSideOrdersPriceMap.end() != matchedPriceLevelIter && order.quantity > 0)
+            {
+                matchOrderList(order, matchedPriceLevelIter->second.get());
+                ++matchedPriceLevelIter;
+            }
         }
 
-
         void matchOrderList(Order& order,
-                            PriceOrderList& matchedOrderList)
+                            PriceOrderList* matchedOrderList)
         {
-            // TODO:
+            for (auto orderIter = matchedOrderList->begin(); matchedOrderList->end() != orderIter;)
+            {
+                // TODO: Check for performance: multiple dereferences
+                Order& matchedOrder = **(*orderIter);
+
+                // TODO: Remove branch - Fedor Pikus
+                // Trade& trade = trades.addTrade();
+                // trade.setQuantity(std::min(matchedOrder.quantity,order.quantity));
+                if (OrderSide::SELL == order.side) {
+                    // trade.setBuyOrder(matchedOrder).setSellOrder(order);
+                } else {
+                    // trade.setBuyOrder(order).setSellOrder(matchedOrder);
+                }
+
+                if (order.quantity >= matchedOrder.quantity)
+                {
+                    order.quantity -= matchedOrder.quantity;
+                    matchedOrder.quantity = 0;
+
+                    /** Deleting order **/
+                    orderByIDMap.erase(matchedOrder.orderId);
+                    matchedOrderList->erase(orderIter++);
+                } else {
+                    matchedOrder.quantity -= order.quantity;
+                    order.quantity = 0;
+                    ++orderIter;
+                    return;;
+                }
+            }
         }
 
         void handleOrderNew(OrderPtr&& orderIn)
@@ -326,30 +373,112 @@ namespace MatchingEngine_WithAllocator
                     order.orderId, ReferencesBlock{});
             if (inserted)
             {
-                auto& [orderIter, priceOrderIter, priceLevelOrderList] =
-                        iterOrderMap->second;
-                orderIter = orders.insert(orders.end(), std::move(orderIn));
-                priceLevelOrderList = (OrderSide::BUY == order.side) ?
-                                      &buyOrders[order.price] : &sellOrders[order.price];
-                priceOrderIter = priceLevelOrderList->insert(priceLevelOrderList->end(), orderIter);
+                iterOrderMap->second.orderIter = orders.insert(orders.end(), std::move(orderIn));
+                // TODO: Remove branch - Fedor Pikus
+                PriceOrderListPtr& lvlListPtr = ((OrderSide::BUY == order.side) ? buyOrders.emplace(order.price, nullptr) :
+                        sellOrders.emplace(order.price, nullptr)).first->second;
+                if (!lvlListPtr) {
+                    lvlListPtr = std::make_unique<PriceOrderList>();
+                    iterOrderMap->second.priceLevelOrderList = lvlListPtr.get();
+                }
+                iterOrderMap->second.priceOrderIter = iterOrderMap->second.priceLevelOrderList->insert(
+                        iterOrderMap->second.priceLevelOrderList->end(), iterOrderMap->second.orderIter);
             }
         }
 
-        void handleOrderCancel(OrderPtr&& order)
+        void handleOrderCancel(const OrderPtr& order)
         {
-            // TODO:
+            // std::cout << "handleOrderCancel(id: " << order->orderId << ")\n";
+            if (const auto orderByIDIter = orderByIDMap.find(order->orderId);
+                orderByIDMap.end() != orderByIDIter)
+            {
+                auto& [orderIter, priceOrderIter, priceLevelOrderList] = orderByIDIter->second;
+
+                std::cout << orderIter->get()->orderId << " to be CANCEL-ed\n";
+
+                if (priceLevelOrderList) {
+                    std::cout << "priceLevelOrderList size = " << priceLevelOrderList->size() << "\n";
+                    //if (priceLevelOrderList->end() != orderIter{}
+                }
+
+                // priceLevelOrderList->erase(priceOrderIter);
+                //orders.erase(orderIter);
+                //orderByIDMap.erase(orderByIDIter);
+            }
         }
 
         void handleOrderAmend(OrderPtr&& order)
         {
-            // TODO:
-        }
-
-        void info(bool printTrades = true)
-        {
-            // TODO:
+            if (const auto orderByIDIter = orderByIDMap.find(order->orderId);
+                    orderByIDMap.end() != orderByIDIter)
+            {
+                Order& orderOriginal = **(orderByIDIter->second.orderIter);
+                if (orderOriginal.side != order->side) {
+                    return;
+                } else if (orderOriginal.price != order->price) {
+                    handleOrderCancel(order);
+                    handleOrderNew(std::move(order));
+                } else if (orderOriginal.price == order->price) {
+                    // TODO: update order parameters
+                    orderOriginal.quantity = order->quantity;
+                }
+            }
         }
     };
+
+
+    void info(const OrderMatchingEngine& engine, bool printTrades = true)
+    {
+        for (const auto& [orderId, orderIter]: engine.orderByIDMap) {
+            Order& orderOne = **orderIter.orderIter;
+            Order& orderTwo = ***orderIter.priceOrderIter;
+            if (orderId != orderOne.orderId || orderId != orderTwo.orderId) {
+                std::cerr << "ERROR: ID: " << orderId << "!= " << orderOne.orderId << std::endl;
+            }
+        }
+
+        auto printOrders = [](const auto& orderMap) {
+            for (const auto& [price, ordersList]: orderMap) {
+                std::cout << "\tPrice: [" << price << "]" << std::endl;
+                for (const auto & orderIter: *ordersList) {
+                    Common::printOrder(**orderIter);
+                }
+            }
+        };
+
+        // std::cout << engine.ordersPool.size() << std::endl;
+        std::cout << "BUY:  " << std::endl; printOrders(engine.buyOrders);
+        std::cout << "SELL: " << std::endl; printOrders(engine.sellOrders);
+
+        /*
+        std::cout << std::string(160, '=') << std::endl;
+        if (!printTrades)
+            return;
+        for (const auto& trade: trades.trades)
+        {
+            std::cout << "Trade(Buy: {id: " << trade.buyOrderInfo.id  << ", price: " << trade.buyOrderInfo.price << "}, "
+                      << "Sell: {id: " << trade.sellOrderInfo.id << ", price: " << trade.sellOrderInfo.price << "}, "
+                      << "quantity: " << trade.quantity << ")\n";
+        }
+        */
+    }
+
+    void info_validate(const OrderMatchingEngine& engine)
+    {
+        std::cout << std::string(160, '=') << std::endl;
+        for (const auto& [orderId, orderDataIter]: engine.orderByIDMap)
+        {
+            auto& [orderIter, priceOrderIter, priceLevelOrderList] = orderDataIter;
+
+            const Order& order = **orderIter;
+            OrderMatchingEngine::PriceOrderList* priceLvlList = priceLevelOrderList;
+
+            std::cout << "Order [id: " << order.orderId << ", price: " << order.price << "]\n";
+            if (priceLvlList) {
+                std::cout << "\tPrice lvl : [ptr: " << priceLvlList << ", size: " << priceLvlList->size() << "]\n";
+            }
+        }
+    }
 }
 
 
@@ -375,19 +504,54 @@ namespace MatchingEngine_NO_WithAllocator::Tests
             engine.processOrder(order);
         }
 
-        std::cout << engine.ordersPool.size() << std::endl;
-
     }
 }
 
 namespace MatchingEngine_WithAllocator::Tests
 {
-    void Trade_SELL()
+    void ProcessOrders()
     {
         OrderMatchingEngine engine;
 
-        Utilities::ScopedTimer timer { "TEST"};
-        for (int i = 0, price = 10; i < 8'000'000; ++i)
+        for (int i = 0, price = 10; i < 10; ++i)
+        {
+            if (price > 16) price = 10;
+            OrderMatchingEngine::OrderPtr order = engine.makeOrder();
+            order->side = OrderSide::BUY;
+            order->price = price+=2;
+            order->quantity = 3;
+            order->orderId = getNextOrderID();
+
+            engine.processOrder(std::move(order));
+        }
+
+        info_validate(engine);
+    }
+
+    void ProcessOrders_SamePrice()
+    {
+        OrderMatchingEngine engine;
+
+        for (int i = 0; i < 1; ++i)
+        {
+            OrderMatchingEngine::OrderPtr order = engine.makeOrder();
+            order->side = OrderSide::BUY;
+            order->price = 10;
+            order->quantity = 3;
+            order->orderId = getNextOrderID();
+
+            engine.processOrder(std::move(order));
+        }
+
+        info_validate(engine);
+    }
+
+    void Trade_Cancel_Order()
+    {
+        OrderMatchingEngine engine;
+
+        // Utilities::ScopedTimer timer { "TEST"};
+        for (int i = 0, price = 10; i < 10; ++i)
         {
             if (price > 16)
                 price = 10;
@@ -401,8 +565,16 @@ namespace MatchingEngine_WithAllocator::Tests
             engine.processOrder(std::move(order));
         }
 
-        std::cout << engine.ordersPool.size() << std::endl;
+        info(engine);
 
+        for (Order::OrderID orderID: {1000})
+        {
+            OrderMatchingEngine::OrderPtr order = engine.makeOrder();
+            order->action = OrderActionType::CANCEL;
+            order->orderId = orderID;
+            engine.processOrder(std::move(order));
+        }
+        info(engine);
     }
 }
 
@@ -412,5 +584,8 @@ void MatchingEngine_WithAllocator_Tests()
     // using namespace MatchingEngine_NO_WithAllocator::Tests;
     using namespace MatchingEngine_WithAllocator::Tests;
 
-    Trade_SELL();
+    ProcessOrders();
+    // ProcessOrders_SamePrice();
+
+    // Trade_Cancel_Order();
 }

@@ -29,6 +29,7 @@
 #include <cstdlib> // for std::byte
 #include <iomanip>
 #include <functional>
+#include <memory_resource>
 
 
 #define DEBUG_OUTPUT
@@ -1428,7 +1429,8 @@ namespace Memory::PolymorphicMemoryResources {
 		}
 	}
 
-	void _TESTS_() {
+	void _TESTS_()
+    {
 		// std::pmr::unordered_map<std::pmr::string, std::pmr::string> dict;
 		// std::pmr::
 
@@ -1436,6 +1438,8 @@ namespace Memory::PolymorphicMemoryResources {
 		// const auto p = std::get_temporary_buffer<std::string>(4);
 		// requires that p.first is passed to return_temporary_buffer
 		// (beware of early exit points and exceptions)
+
+        // std::pmr::list<std::pmr::string> container{ &pool };
 	}
 }
 
@@ -1796,7 +1800,7 @@ void Memory::TestAll()
 	// PolymorphicMemoryResources::NotAllocatingMemoryContainers();
 	// PolymorphicMemoryResources::NotAllocatingMemoryAtAll();
 	// PolymorphicMemoryResources::ReusingMemoryPools();
-	// PolymorphicMemoryResources::_TESTS_();
+	PolymorphicMemoryResources::_TESTS_();
 
 	// Alligned_New_Delete::Simple_OverAlligned_New();
 	// Alligned_New_Delete::Custom_Alligned_New();

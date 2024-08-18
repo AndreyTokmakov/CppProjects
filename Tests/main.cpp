@@ -50,6 +50,7 @@ Description : Tests C++ project
 #include <format>
 #include <iomanip>
 #include <expected>
+#include <print>
 
 #include <experimental/socket>
 #include <experimental/scope>
@@ -89,6 +90,7 @@ Description : Tests C++ project
 #include "TableFormatter/TableFormatter.h"
 #include "Coroutines/Coroutines.h"
 #include "Cpp23_Features/Cpp23_Features.h"
+#include "Cpp23_Features/StackTrace.h"
 #include "Auto/AutoTests.h"
 #include "Heap/Heap.h"
 #include "Comparators/Comparators.h"
@@ -1119,6 +1121,21 @@ namespace PipelineOperator
     }
 }
 
+namespace Designated_Initialization
+{
+    struct Data
+    {
+        int a;
+        int b;
+        int c;
+    };
+
+    void Test()
+    {
+        Data data {.a = 10, .c = 13};
+    }
+}
+
 
 int main([[maybe_unused]] int argc,
          [[maybe_unused]] char** argv)
@@ -1126,6 +1143,23 @@ int main([[maybe_unused]] int argc,
     const std::vector<std::string_view> args(argv + 1, argv + argc);
     // WrapperTests::Test();
     // StaticCounter::Test();
+
+    enum class OrderSide : uint8_t
+    {
+        BUY = 0x00,
+        SELL = 0x01,
+    };
+
+    std::map<int, int> buyOrders, sellOrders;
+    std::map<int, int>* orders[2] {&buyOrders, &sellOrders};
+
+    orders[static_cast<uint32_t>(OrderSide::SELL)]->emplace(1,1);
+    orders[static_cast<uint32_t>(OrderSide::BUY)]->emplace(1,1);
+    orders[static_cast<uint32_t>(OrderSide::SELL)]->emplace(2,2);
+
+    std::cout << buyOrders.size() << std::endl;
+    std::cout << sellOrders.size() << std::endl;
+
 
     // MoveExperiments::MoveStringToArray_Segfault();
     // MoveExperiments::test_perfect_forwarding();
@@ -1147,6 +1181,10 @@ int main([[maybe_unused]] int argc,
 
     /** * * * * *  Move to lib * * * * * **/
 
+    // Coroutines::TestAll();
+    // StackTrace::TestAll();
+
+
     // OperatorCall_ExplicitTypeSpecialization::Test();
     // ReturnTypeCast::tests();
     // CallFunctionByName::Test();
@@ -1162,7 +1200,6 @@ int main([[maybe_unused]] int argc,
     // Crow::TestAll();
     // Comparators::TestAll();
     // CollectionsTests::TestAll();
-    // Coroutines::TestAll();
     // CopyElision_RVO::TestAll();
     // ConstexprMap::TestAll();
     // DebugLogger::TestAll();
@@ -1174,7 +1211,7 @@ int main([[maybe_unused]] int argc,
     // FunctionCall_LookUp::TestAll();
     // LowLatencyLogger::TestAll();
     // Multithreading::TestAll();
-    Memory::TestAll();
+    // Memory::TestAll();
     // MaxStack::TestAll();
     // Math::TestAll();
     // UniquePtr_Size::SizeTest();

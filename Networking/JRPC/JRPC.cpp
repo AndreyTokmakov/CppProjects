@@ -9,12 +9,14 @@ Description : JRPC.cpp
 
 #include "JRPC.h"
 
+/*
 #include <grpcpp/grpcpp.h>
 
 using grpc::Server;
 using grpc::ServerBuilder;
 using grpc::ServerContext;
 using grpc::Status;
+*/
 
 /*
 namespace JRPC

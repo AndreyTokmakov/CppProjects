@@ -17,8 +17,8 @@ namespace MatchingEngine
 {
     void TestAll()
     {
-        // OrderMatchingEngineTests();
-        MatchingEngine_WithAllocator_Tests();
+        OrderMatchingEngineTests();
+        // MatchingEngine_WithAllocator_Tests();
     }
 }
 

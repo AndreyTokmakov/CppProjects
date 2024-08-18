@@ -28,7 +28,7 @@ Description : Cpp23_Features
 
 // #include <experimental/reflect>
 
-#include <stacktrace>
+
 // #include <flat_map>
 // #include <flat_set>
 
@@ -181,17 +181,6 @@ namespace Cpp23_Features::Multidimensional_Operator
 
         std::cout << numbers[0][1] << '\n';
     }
-}
-
-namespace Cpp23_Features::StackTrace
-{
-
-    void test()
-    {
-        // auto x = std::stacktrace::current();
-
-    }
-
 }
 
 namespace Cpp23_Features::Expected

@@ -14,6 +14,7 @@ Description : C++ Optimisation and Performance Tuning experiments
 #include "CacheLineAccessEffects/CacheLineAccessEffects.h"
 #include "SpecificOptimizationTopics/OptimizationTricks.h"
 #include "DoubleBuffering/DoubleBuffering.h"
+#include "BranchLessCodeExamples/BranchLessCodeExamples.h"
 
 #include <iostream>
 #include <string_view>
@@ -63,7 +64,8 @@ int main([[maybe_unused]] int argc,
     // CacheLineAccessEffects::TestAll();
     // OptimizationTricks::TestAll();
     // Numa::TestAll();
-    DoubleBuffering::TestAll();
+    // DoubleBuffering::TestAll();
+    BranchLessCodeExamples::TestAll();
 
     return EXIT_SUCCESS;
 }

@@ -12,6 +12,7 @@ Description : ThreadPool with limited queue capacity
 #include <iostream>
 #include <syncstream>
 #include <functional>
+#include <algorithm>
 
 #include <thread>
 #include <future>

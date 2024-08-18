@@ -172,7 +172,7 @@ namespace Chrono
                       << static_cast<unsigned>(d.month()) << " / "
                       << static_cast<unsigned>(d.day()) << '\n';
 
-            //auto tp{std::chrono::sys_days{d} + 18h + 30min};
+            auto tp{std::chrono::sys_days{d} + 18h + 30min};
             //std::cout << " UTC:" << tp << ' \n ' ;
         }
 

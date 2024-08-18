@@ -3,6 +3,7 @@
 #include <iostream>
 #include <algorithm>
 #include <map>
+#include <memory>
 #include <vector>
 #include <string>
 #include <string_view>
@@ -409,7 +410,8 @@ namespace Map {
         print_map(intMap);
     }
 
-    void try_emplace_test_3() {
+    void try_emplace_test_3()
+    {
         std::map<std::string, Integer> dictionary;
         [[maybe_unused]]
         auto [iterator1, succeed1] = dictionary.try_emplace("Key1", 111);
@@ -422,14 +424,47 @@ namespace Map {
         [[maybe_unused]]
         auto [iterator3, succeed3] = dictionary.try_emplace("Key2", 222);
 
-        assert(succeed1);
-        assert(!succeed2);
-        assert(succeed3);
-
         for (auto &&[key, value]: dictionary)
             std::cout << key << ": " << value << "\n";
     }
 
+    void Try_Emplace_Value_Pointer()
+    {
+        std::map<std::string, std::unique_ptr<Integer>> dictionary;
+        const std::string key {"One"};
+
+        Integer* valuePtr {nullptr };
+        if (auto [iter, ok] = dictionary.try_emplace(key, nullptr); ok) {
+            std::cout << "Inserted\n";
+            iter->second = std::make_unique<Integer>(10);
+            valuePtr = iter->second.get();
+        }
+        else {
+            std::cout << "Not inserted\n";
+            valuePtr = iter->second.get();
+        }
+
+        if (!valuePtr) {
+            std::cout << "No data\n";
+        } else {
+            valuePtr->printInfo();
+        }
+
+        if (auto [iter, ok] = dictionary.try_emplace(key); ok) {
+            std::cout << "Inserted\n";
+            valuePtr = iter->second.get();
+        }
+        else {
+            std::cout << "Not inserted\n";
+            valuePtr = iter->second.get();
+        }
+
+        if (!valuePtr) {
+            std::cout << "No data\n";
+        } else {
+           valuePtr->printInfo();
+        }
+    }
 
     void TryEmplace_vs_Emplace()
     {
@@ -1192,11 +1227,13 @@ namespace Map::MoveFromMap
 }
 
 
+#if 0
 void* operator new(std::size_t sz)
 {
     std::cout << "Allocating: " << sz << '\n';
     return std::malloc(sz);
 }
+#endif
 
 namespace Map::Heterogeneous_Lookup
 {
@@ -1266,6 +1303,7 @@ void Map::TestAll()
 	// try_emplace_test();
 	// try_emplace_test_2();
 	// try_emplace_test_3();
+    Try_Emplace_Value_Pointer();
 	// try_emplace_test_LAMBDA();
 	// Try_emplace_vs_Emplace();
     // TryEmplace_vs_Emplace();
@@ -1303,6 +1341,6 @@ void Map::TestAll()
     // MoveFromMap::Test();
 
     // Heterogeneous_Lookup::Lookup_Basic();
-    Heterogeneous_Lookup::Transparent_Lookup();
+    // Heterogeneous_Lookup::Transparent_Lookup();
 
 }

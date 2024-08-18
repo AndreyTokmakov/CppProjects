@@ -15,6 +15,8 @@ Description : Coroutines
 #include <format>
 #include <coroutine>
 #include <thread>
+#include <print>
+#include <generator>
 
 namespace
 {
@@ -23,18 +25,37 @@ namespace
         (std::cout << ... << std::forward<Args>(args)) << std::endl;
     }
 }
-/*
+
+
 namespace Coroutines::Generators
 {
-    std::generator<int> generatorForNumbers(int begin, int inc= 1){
-
-        for (int i= begin;; i += inc){
+    std::generator<int> generateNumbers(int begin, int end)
+    {
+        for (int i = begin; i < end; ++i) {
             co_yield i;
         }
+    }
+
+    void TestGenerator()
+    {
+        std::generator<int> numbers = generateNumbers(0, 10);
+
+        std::cout << std::string(160, '=') << std::endl;
+        for (int counter = 0; int n: numbers) {
+            std::print("{0} ", n);
+            if (++counter >= 5)
+                break;
+        }
+        std::cout << '\n' << std::string(160, '=') << std::endl;
+        for (int counter = 0; int n: numbers) {
+            std::print("{0} ", n);
+            if (++counter >= 5)
+                break;
+        }
+        std::cout << '\n' <<std::string(160, '=') << std::endl;
 
     }
 }
- */
 
 
 namespace SimpleExample
@@ -449,17 +470,19 @@ namespace DemoFour
 
 void Coroutines::TestAll()
 {
-    // SimpleExample::Test();
+    SimpleExample::Test();
     // SimpleExample2::Test();
 
     // DemoOne::test();
-
     // DemoTwo::test();
     // DemoTwo::test2();
     // DemoTwo::testFixed();
-
     // DemoThree::test();
-
     // DemoFour::Test();
+
+    // Generators::TestGenerator();
+
+
+
 };
 

@@ -18,6 +18,7 @@ add_executable(${PROJECT_NAME}
         Valgrind/ValgrindExperiments.cpp Valgrind/ValgrindExperiments.h
         CacheLineAccessEffects/CacheLineAccessEffects.cpp CacheLineAccessEffects/CacheLineAccessEffects.h
         DoubleBuffering/DoubleBuffering.cpp DoubleBuffering/DoubleBuffering.h
+        BranchLessCodeExamples/BranchLessCodeExamples.cpp BranchLessCodeExamples/BranchLessCodeExamples.h
 )
 
 TARGET_LINK_LIBRARIES(${PROJECT_NAME}
