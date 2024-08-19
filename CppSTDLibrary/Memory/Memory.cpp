@@ -1438,8 +1438,6 @@ namespace Memory::PolymorphicMemoryResources {
 		// const auto p = std::get_temporary_buffer<std::string>(4);
 		// requires that p.first is passed to return_temporary_buffer
 		// (beware of early exit points and exceptions)
-
-        // std::pmr::list<std::pmr::string> container{ &pool };
 	}
 }
 

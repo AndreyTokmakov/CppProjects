@@ -62,6 +62,7 @@ add_executable(${PROJECT_NAME}
 		SharedPtr/SharedPtrTests.cpp SharedPtr/SharedPtrTests.h
 		SourceLocation/SourceLocation.cpp SourceLocation/SourceLocation.h
 		Span/Span.cpp Span/Span.h
+		Print/Print.cpp Print/Print.h
 		Streams/Streams.cpp Streams/Streams.h
 		String/String.cpp String/String.h
 		String/StringUtilities.cpp String/StringUtilities.h

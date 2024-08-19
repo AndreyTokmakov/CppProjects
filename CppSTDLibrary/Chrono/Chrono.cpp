@@ -860,6 +860,21 @@ namespace Chrono::TimeZones
 }
 
 
+namespace Chrono::Parse
+{
+    void SimpleTest()
+    {
+        const std::string timeString = "2022-07-01 15:30:00";
+        std::chrono::time_point<std::chrono::system_clock> timePoint;
+
+        std::istringstream  ss {timeString};
+        ss >> std::chrono::parse(std::string {"%Y-%m-%d %H:%M:%S"}, timePoint);
+
+        std::time_t tt = std::chrono::system_clock::to_time_t(timePoint);
+        std::cout << "Parsed time: " << std::ctime(&tt);
+    }
+}
+
 void Chrono::TestAll()
 {
     // CurrentTime::Asctime();
@@ -870,7 +885,7 @@ void Chrono::TestAll()
     // Duration::Create_Simple();
     // Duration::Measure_Duration();
     // Duration::HighResolution__PeriodDuration();
-    Duration::SteadyClock__PeriodDuration();
+    // Duration::SteadyClock__PeriodDuration();
     // Duration::Time_From_Duration();
     // Duration::Zero_Duration();
     // Duration::Min_Max();
@@ -903,6 +918,8 @@ void Chrono::TestAll()
     // TimeZones::Get_Time_Zone_By_Name();
     // TimeZones::Zones_Tests();
 
+
+    Parse::SimpleTest();
 
     // Steady_clock();
     // Clock_Test();

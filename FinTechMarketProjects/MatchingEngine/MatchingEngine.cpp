@@ -272,7 +272,7 @@ namespace TestMatchingEngine::Tests
     void Trade_SELL()
     {
         OrderMatchingEngine engine;
-        for (int i = 0, price = 10; i < 10; ++i)
+        for (int i = 0, price = 10; i < 3; ++i)
         {
             if (price > 16)
                 price = 10;
@@ -497,10 +497,10 @@ void OrderMatchingEngineTests()
 {
     using namespace TestMatchingEngine::Tests;
 
-    // Tests::Trade_SELL();
-    // Tests::Trade_BUY();
-    // Tests::Trade_AMEND();
-    // Tests::Trade_AMEND_PriceUpdate();
+    Trade_SELL();
+    // Trade_BUY();
+    // Trade_AMEND();
+    // Trade_AMEND_PriceUpdate();
 
-    Load_Test();
+    // Load_Test();
 }

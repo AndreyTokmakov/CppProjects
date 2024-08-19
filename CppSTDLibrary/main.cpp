@@ -49,6 +49,7 @@ Description : Cpp STD lib
 #include "Locale/Locale.h"
 #include "Literals/Literals.h"
 #include "Math/Math.h"
+#include "Print/Print.h"
 #include "PolymorphicMemoryResources/PolymorphicMemoryResources.h"
 #include "MoveSemantics_RuleOfFive/MoveSemantics_RuleOfFive.h"
 #include "NameSpaces/InlineNamespaces.h"
@@ -128,13 +129,14 @@ int main([[maybe_unused]] int argc,
     // MoveSemantics_RuleOfFive::TestAll();
     // Numbers::TestAll();
     // Math::TestAll();
-    Memory::TestAll();
+    // Memory::TestAll();
     // Metaprogramming::TestAll();
     // InlineNamespaces::TestAll();
     // NumericLimits::TestAll();
     // ObjectOrientedProgramming::TestAll();
     // Optional::TestAll();
     // PolymorphicMemoryResources::TestAll();
+    Print::TestAll();
     // Random::TestAll();
     // Ranges::TestAll();
     // ReferenceWrapper::TestAll();
