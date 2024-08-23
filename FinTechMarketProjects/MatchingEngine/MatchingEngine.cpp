@@ -272,7 +272,7 @@ namespace TestMatchingEngine::Tests
     void Trade_SELL()
     {
         OrderMatchingEngine engine;
-        for (int i = 0, price = 10; i < 3; ++i)
+        for (int i = 0, price = 10; i < 5; ++i)
         {
             if (price > 16)
                 price = 10;
@@ -497,10 +497,26 @@ void OrderMatchingEngineTests()
 {
     using namespace TestMatchingEngine::Tests;
 
-    Trade_SELL();
+    // Trade_SELL();
     // Trade_BUY();
     // Trade_AMEND();
     // Trade_AMEND_PriceUpdate();
 
     // Load_Test();
+
+    using List = std::list<int>;
+    boost::container::flat_map<int, List*, std::less<>> buyOrders;
+
+    List* ptr123 = buyOrders[123];
+
+    buyOrders[123]->push_back(1);
+    buyOrders[123]->push_back(2);
+    buyOrders[123]->push_back(3);
+
+    std::cout << ptr123.size() << std::endl;
+    for (int i = 0; i < 100; ++i)
+    {
+        buyOrders[i];
+        std::cout << ptr123.size() << std::endl;
+    }
 }
