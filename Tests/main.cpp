@@ -1144,21 +1144,6 @@ int main([[maybe_unused]] int argc,
     // WrapperTests::Test();
     // StaticCounter::Test();
 
-    enum class OrderSide : uint8_t
-    {
-        BUY = 0x00,
-        SELL = 0x01,
-    };
-
-    std::map<int, int> buyOrders, sellOrders;
-    std::map<int, int>* orders[2] {&buyOrders, &sellOrders};
-
-    orders[static_cast<uint32_t>(OrderSide::SELL)]->emplace(1,1);
-    orders[static_cast<uint32_t>(OrderSide::BUY)]->emplace(1,1);
-    orders[static_cast<uint32_t>(OrderSide::SELL)]->emplace(2,2);
-
-    std::cout << buyOrders.size() << std::endl;
-    std::cout << sellOrders.size() << std::endl;
 
 
     // MoveExperiments::MoveStringToArray_Segfault();
@@ -1217,7 +1202,7 @@ int main([[maybe_unused]] int argc,
     // UniquePtr_Size::SizeTest();
     // ExpressionTemplates::TestAll();
     // ObjectOrientedExperiments::RAIIWrapper::TestAll();
-    // ObjectOrientedExperiments::OOP_Experiments::TestAll();
+    ObjectOrientedExperiments::OOP_Experiments::TestAll();
     // ObjectOrientedExperiments::VirtualTables::TestAll();
     // Optional::TestAll();
     // PointsAndLines::TestAll();           // Geometry

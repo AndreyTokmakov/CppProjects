@@ -450,7 +450,7 @@ void ObjectOrientedExperiments::OOP_Experiments::TestAll()
 {
     // OOP_Experiments::FriendTests
 
-    // OOP_Test::ExampleTwo::test();  // overrided method call
+    // OOP_Test::ExampleTwo::test();     // overrided method call
     // OOP_Test::ExampleThree::test();   // static binding
 
     // OOP::MoveTest_CallMoveConstructor();
@@ -467,6 +467,20 @@ void ObjectOrientedExperiments::OOP_Experiments::TestAll()
     // Change_Overrided_Method_Visibility::Test();
 
     // ShadowingMemberVariable::Test();
+
+
+
+    struct Base {
+        virtual ~Base() = default;
+    };
+
+    struct Derived: Base {
+        ~Derived() override {
+            std::cout << __PRETTY_FUNCTION__ << std::endl;
+        }
+    };
+
+    std::unique_ptr<Base> ptr { std::make_unique<Derived>()};
 
 
 };
