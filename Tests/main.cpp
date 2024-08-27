@@ -1137,12 +1137,108 @@ namespace Designated_Initialization
 }
 
 
+namespace LookUpTests
+{
+    namespace Utils
+    {
+        std::string foo() {
+            return {"A::foo()"};
+        }
+
+        template<class>
+        struct Hash;
+
+        template<class>
+        struct HashEx;
+    }
+
+    std::string foo() {
+        return {"foo() | free function"};
+    }
+
+    template<>
+    struct Utils::Hash<int>
+    {
+        std::string callFoo() {
+            return foo();
+        }
+    };
+
+    template<>
+    struct Utils::HashEx<int>
+    {
+        std::string callFoo() {
+            return LookUpTests::foo();
+        }
+    };
+
+    void Unexpected_Method_Call_Resolution()
+    {
+        std::cout << Utils::Hash<int>{}.callFoo()   << std::endl; // ===>   A::foo()
+        std::cout << Utils::HashEx<int>{}.callFoo() << std::endl; // ===>   foo() | free function
+    }
+
+
+    namespace my
+    {
+        struct Book
+        {
+            struct Hash
+            {
+                size_t operator()(const Book& b) const {
+                    return 1;
+                }
+            };
+        };
+
+        /*
+        template<>
+        struct std::hash<Book>: my::Book::Hash {
+
+        };
+        */
+    }
+
+
+    namespace A { int x = 0; }
+    namespace B { int x = 0; }
+
+
+};
+
+
+
 int main([[maybe_unused]] int argc,
          [[maybe_unused]] char** argv)
 {
     const std::vector<std::string_view> args(argv + 1, argv + argc);
+
     // WrapperTests::Test();
     // StaticCounter::Test();
+
+
+    LookUpTests::Unexpected_Method_Call_Resolution();
+
+
+
+    struct CharTable
+    {
+        static_assert(CHAR_BIT == 8);
+        std::array<bool, 256> _is_whitespace {};
+
+        CharTable() {
+            _is_whitespace.fill(false);
+        }
+
+        [[nodiscard]] bool is_whitespace(char c) const {
+            return this->_is_whitespace[c];
+        }
+    };
+
+    CharTable table;
+    char c = 33;
+    bool is_whitespace = table.is_whitespace(c);
+    std::cout << is_whitespace << "\n";
 
 
 
@@ -1202,7 +1298,7 @@ int main([[maybe_unused]] int argc,
     // UniquePtr_Size::SizeTest();
     // ExpressionTemplates::TestAll();
     // ObjectOrientedExperiments::RAIIWrapper::TestAll();
-    ObjectOrientedExperiments::OOP_Experiments::TestAll();
+    // ObjectOrientedExperiments::OOP_Experiments::TestAll();
     // ObjectOrientedExperiments::VirtualTables::TestAll();
     // Optional::TestAll();
     // PointsAndLines::TestAll();           // Geometry
