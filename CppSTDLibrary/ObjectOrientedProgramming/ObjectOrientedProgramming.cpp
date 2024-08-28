@@ -16,6 +16,7 @@
 #include <variant>
 
 #include "ObjectOrientedProgramming.h"
+#include "RefQualifierMemberFunctions.h"
 #include "../Integer/Integer.h"
 
 #include "Operators.h"
@@ -3087,6 +3088,7 @@ void ObjectOrientedProgramming::TestAll()
     // ExceptionInConstructor();
 
     // Operators::TestAll();
+    RefQualifierMemberFunctions::TestAll();
 
 
     // ******************************** CONSTRUCTORS: *********************************//
@@ -3197,7 +3199,7 @@ void ObjectOrientedProgramming::TestAll()
     // Covariant_Return_Type::testPointers();
     // Covariant_Return_Type::testPointers1();
     // Covariant_Return_Type::testStartPointers();
-    Covariant_Return_Type::testStartPointers1();
+    // Covariant_Return_Type::testStartPointers1();
     // Covariant_Return_Type::Return_UniquePtr_WithDerivedClass();
 
     // ******************************** Polymorphism: *********************************//

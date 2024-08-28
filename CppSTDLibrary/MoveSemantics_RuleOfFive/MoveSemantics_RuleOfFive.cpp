@@ -1537,59 +1537,6 @@ namespace MoveSemantics_RuleOfFive::Tests {
 	}
 }
 
-namespace MoveSemantics_RuleOfFive::Method_Invoked_OnlyForRValueRefs
-{
-    struct FooBar {
-        auto func() && {}
-    };
-
-    void Test() {
-        auto a = FooBar{};
-        //a.func();           // Does not compile, 'a' is not an r-value
-        std::move(a).func();  // Compiles
-        FooBar{}.func();      // Compiles
-    }
-
-
-    class Keeper {
-        std::vector<int> data{2, 3, 4};
-
-    public:
-        Keeper() {
-            std::cout << "Keeper::Keeper()\n";
-        }
-
-        ~Keeper() {
-            std::cout << "Keeper::~Keeper()\n";
-        }
-
-        auto &items() &{
-            return data;
-        }
-
-        // INFO: From a performance point of view, you might see an unnecessary copy in Keeper::data.
-        //       The compiler isn't able to implicitly move the return value here.
-        //       It needs a little help from us.
-        auto items() &&{
-            // return data;  // OK - but move is better
-            return std::move(data);
-        }
-    };
-
-    void RValue_Only_Object_Methods() {
-        {
-            auto k = Keeper();
-            for (auto &item: k.items())
-                std::cout << item << std::endl;
-        }
-        std::cout << "--------------------------------------------------\n";
-        {
-            for (auto &item: Keeper().items())
-                std::cout << item << std::endl;
-        }
-    }
-}
-
 namespace MoveSemantics_RuleOfFive::Move_Overload_vs_PerfectForwarding
 {
 
@@ -1770,14 +1717,9 @@ void MoveSemantics_RuleOfFive::TestAll()
 
 	/***************************************************************************/
 
-
 	// Move::MoveVector();
 	// Move::Move_Value();
 	// Move::Move_String_ToConstructor();
-
-
-    // Method_Invoked_OnlyForRValueRefs::Test();
-    // Method_Invoked_OnlyForRValueRefs::RValue_Only_Object_Methods();
 
 	// Tests::Lifitime_Extenstion_Test();
 

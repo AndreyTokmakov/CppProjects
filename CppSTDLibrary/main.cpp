@@ -56,6 +56,7 @@ Description : Cpp STD lib
 #include "Numbers/Numbers.h"
 #include "NumericLimits/NumericLimits.h"
 #include "ObjectOrientedProgramming/ObjectOrientedProgramming.h"
+#include "ObjectOrientedProgramming/RefQualifierMemberFunctions.h"
 #include "OptionalTests/OptionalTests.h"
 #include "Random/Random.h"
 #include "Ranges/Ranges.h"
@@ -133,10 +134,10 @@ int main([[maybe_unused]] int argc,
     // Metaprogramming::TestAll();
     // InlineNamespaces::TestAll();
     // NumericLimits::TestAll();
-    // ObjectOrientedProgramming::TestAll();
+    ObjectOrientedProgramming::TestAll();
     // Optional::TestAll();
     // PolymorphicMemoryResources::TestAll();
-    Print::TestAll();
+    // Print::TestAll();
     // Random::TestAll();
     // Ranges::TestAll();
     // ReferenceWrapper::TestAll();
