@@ -23,6 +23,7 @@ add_executable(${PROJECT_NAME}
         InterprocessCommunication/Semaphore.cpp
         InterprocessCommunication/Semaphore.h InterprocessCommunication/SharedMemory.cpp
         InterprocessCommunication/SharedMemory.h
+        InterprocessCommunication/SharedMemory_AtomicValue.h InterprocessCommunication/SharedMemory_AtomicValue.cpp
         InterprocessCommunication/Pipes.cpp InterprocessCommunication/Pipes.h
         InterprocessCommunication/SharedMemoryDataExchange.cpp InterprocessCommunication/SharedMemoryDataExchange.h
         Users/Users.cpp Users/Users.h

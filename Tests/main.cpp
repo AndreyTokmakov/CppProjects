@@ -18,6 +18,7 @@ Description : Tests C++ project
 #include <tuple>
 #include <ranges>
 #include <cassert>
+#include <condition_variable>
 
 #include <exception>
 #include <thread>
@@ -1206,6 +1207,68 @@ namespace LookUpTests
 
 };
 
+struct TypeTeller
+{
+    void operator()(this auto&& self)
+    {
+        using SelfType = decltype(self);
+        using UnrefSelfType = std::remove_reference_t<SelfType>;
+        if constexpr (std::is_lvalue_reference_v<SelfType>)
+        {
+            if constexpr (std::is_const_v<UnrefSelfType>)
+                std::cout << "const lvalue\n";
+            else
+                std::cout << "mutable lvalue\n";
+        }
+        else
+        {
+            if constexpr (std::is_const_v<UnrefSelfType>)
+                std::cout << "const rvalue\n";
+            else
+                std::cout << "mutable rvalue\n";
+        }
+    }
+};
+
+
+namespace DeducingThis
+{
+    struct X_implicit
+    {
+        void foo() &{};
+        void foo() const &{};
+        void bar() &&{};
+    };
+
+    struct X_explicit
+    {
+        void foo(this auto &) {};
+        void foo(this auto const &) {};
+        void bar(this auto &&) {};
+    };
+
+    struct CRTP_TestClass
+   {
+        template<typename Self>
+        void bar(this Self &&s) {
+            std::forward<Self>(s).foo();
+        }
+
+        void foo() && { std::cout << "foo &&" << std::endl; }
+        void foo() &  { std::cout << "foo & " << std::endl; }
+    };
+
+    CRTP_TestClass foo() {
+        return {};
+    }
+
+    void CRTP_Test()
+    {
+        foo().bar();
+        auto a = foo();
+        a.bar();
+    }
+}
 
 
 int main([[maybe_unused]] int argc,
@@ -1216,31 +1279,16 @@ int main([[maybe_unused]] int argc,
     // WrapperTests::Test();
     // StaticCounter::Test();
 
+    // LookUpTests::Unexpected_Method_Call_Resolution();
 
-    LookUpTests::Unexpected_Method_Call_Resolution();
-
-
-
-    struct CharTable
-    {
-        static_assert(CHAR_BIT == 8);
-        std::array<bool, 256> _is_whitespace {};
-
-        CharTable() {
-            _is_whitespace.fill(false);
-        }
-
-        [[nodiscard]] bool is_whitespace(char c) const {
-            return this->_is_whitespace[c];
-        }
-    };
-
-    CharTable table;
-    char c = 33;
-    bool is_whitespace = table.is_whitespace(c);
-    std::cout << is_whitespace << "\n";
+    // DeducingThis::CRTP_Test();
 
 
+    const unsigned long long MAX_AMOUNT1   = 10000000000000000000UL;
+    const unsigned long long MAX_AMOUNT2   = std::numeric_limits<unsigned long long>::max();
+
+    std::cout << MAX_AMOUNT1 << std::endl;
+    std::cout << MAX_AMOUNT2 << std::endl;
 
     // MoveExperiments::MoveStringToArray_Segfault();
     // MoveExperiments::test_perfect_forwarding();

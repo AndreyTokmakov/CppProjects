@@ -67,8 +67,10 @@
 
 #include "InterprocessCommunication/Semaphore.h"
 #include "InterprocessCommunication/SharedMemory.h"
+#include "InterprocessCommunication/SharedMemory_AtomicValue.h"
 #include "InterprocessCommunication/SharedMemoryDataExchange.h"
 #include "InterprocessCommunication/Pipes.h"
+
 #include "Users/Users.h"
 #include "TimeAndDate/Time.h"
 #include "TimeAndDate/Timer.h"
@@ -215,12 +217,12 @@ int main([[maybe_unused]] int argc,
 
     // NotifyTest();
 
-    Semaphore::TestAll(params);
+    // Semaphore::TestAll(params);
 
     // SharedMemory::TestAll(params);
     // SharedMemoryDataExchange::TestAll(params);
     // Pipes::TestAll(params);
-
+    SharedMemory_AtomicValue::TestAll();
 
     return EXIT_SUCCESS;
 }
