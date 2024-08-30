@@ -3796,7 +3796,7 @@ void Numeric::TestAll()
 
     // Numeric::Rotate_Array();
 
-    Numeric::GreatestCommonDivisor();
+    // Numeric::GreatestCommonDivisor();
     // Numeric::LeastCommonMultiple();
     // Numeric::LongestCommonSubsequence();
     // Numeric::FinabochiNumeric();
@@ -3804,7 +3804,7 @@ void Numeric::TestAll()
     // Numeric::CountAndSaySequence_Generate();
     // Numeric::CountAndSaySequence_Get_Kth_Token();
     // Numeric::CountOrderedPairs();
-    // Numeric::ReverseNumber();
+    Numeric::ReverseNumber();
     // Numeric::IsPalindrome();
     // Numeric::GetNumberOfDigit();
     // Numeric::RearangeArray();

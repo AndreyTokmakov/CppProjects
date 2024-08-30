@@ -1284,11 +1284,6 @@ int main([[maybe_unused]] int argc,
     // DeducingThis::CRTP_Test();
 
 
-    const unsigned long long MAX_AMOUNT1   = 10000000000000000000UL;
-    const unsigned long long MAX_AMOUNT2   = std::numeric_limits<unsigned long long>::max();
-
-    std::cout << MAX_AMOUNT1 << std::endl;
-    std::cout << MAX_AMOUNT2 << std::endl;
 
     // MoveExperiments::MoveStringToArray_Segfault();
     // MoveExperiments::test_perfect_forwarding();

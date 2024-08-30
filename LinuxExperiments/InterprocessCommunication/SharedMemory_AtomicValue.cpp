@@ -58,9 +58,13 @@ namespace SharedMemory_AtomicValue::Basic
             {
                 /** Shared memory already exist. **/
                 sharedMemory = ::shm_open(sharedMemoryObjName.data(), O_EXCL|O_RDWR, S_IRWXU|S_IRWXG);
-                std::cout << "Open existing memory" << std::endl;
+                std::cout <<  "Main  Process: Open existing memory" << std::endl;
             } else
                 error("Failure on shm_open");
+        }
+        else {
+            std::cout <<  "Main  Process: " << sharedMemoryObjName <<  "segment is created. Descriptor = "
+                      << sharedMemory << std::endl;
         }
 
         if (INVALID_HANDLE == ::ftruncate(sharedMemory, sizeof(ObjectType))) {
@@ -73,21 +77,22 @@ namespace SharedMemory_AtomicValue::Basic
                                                 sharedMemory,
                                                 0);
 
-        *value = 1234567;
+        *value = 1122;
 
-        std::this_thread::sleep_for(std::chrono::seconds (10));
-
+        std::this_thread::sleep_for(std::chrono::seconds (1));
         CloseSharedSegment(sharedMemory);
     }
 
     void Read()
     {
+        std::this_thread::sleep_for(std::chrono::milliseconds (250));
         int sharedMemory = ::shm_open(sharedMemoryObjName.data(),
                                       O_CREAT | O_RDWR, S_IRWXU | S_IRWXG);
         if (INVALID_HANDLE == sharedMemory) {
             return error("shm_open()");
         } else {
-            std::cout << sharedMemoryObjName << " segment is opened. Descriptor = " << sharedMemory << std::endl;
+            std::cout <<  "Child Process: " << sharedMemoryObjName <<  "segment is opened.  Descriptor = "
+                      << sharedMemory << std::endl;
         }
 
         ObjectType* value = (ObjectType*)::mmap(nullptr,
@@ -96,8 +101,22 @@ namespace SharedMemory_AtomicValue::Basic
                                                 sharedMemory,
                                                 0);
 
-       std::cout << *value << std::endl;
+       std::cout << "Child Process: Value = " << *value << std::endl;
     }
+
+    void MultiProcessTest()
+    {
+        if (const pid_t pid = fork(); pid == 0) { /** Child **/
+            Read();
+        }
+        else if (pid > 0) { /** Parent **/
+            Create();
+        }
+        else {
+            std::cout << "Unable to create child process" << std::endl;
+        }
+    }
+
 };
 
 namespace SharedMemory_AtomicValue::Atomic
@@ -168,9 +187,10 @@ namespace SharedMemory_AtomicValue::Atomic
 
 void SharedMemory_AtomicValue::TestAll()
 {
-    // using namespace Basic;
-    using namespace Atomic;
+    using namespace Basic;
+    // using namespace Atomic;
 
-    Create();
+    // Create();
     // Read();
+    MultiProcessTest();
 };
