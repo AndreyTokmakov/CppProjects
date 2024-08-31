@@ -121,7 +121,8 @@ namespace SharedMemory_AtomicValue::Basic
 
 namespace SharedMemory_AtomicValue::Atomic
 {
-    using ObjectType = std::atomic<int>;
+    using ObjectType = std::atomic<uint64_t>;
+    // using ObjectType = uint64_t;
 
     void Create()
     {
@@ -133,7 +134,7 @@ namespace SharedMemory_AtomicValue::Atomic
             {
                 /** Shared memory already exist. **/
                 sharedMemory = ::shm_open(sharedMemoryObjName.data(), O_EXCL|O_RDWR, S_IRWXU|S_IRWXG);
-                std::cout << "Open existing memory" << std::endl;
+                //std::cout << "Open existing memory" << std::endl;
             } else
                 error("Failure on shm_open");
         }
@@ -148,15 +149,15 @@ namespace SharedMemory_AtomicValue::Atomic
                                                 sharedMemory,
                                                 0);
 
-        value->store(10);
+        // value->store(10);
 
-        std::this_thread::sleep_for(std::chrono::seconds (5));
+        std::this_thread::sleep_for(std::chrono::microseconds (40));
+        for (int i = 0; i < 5'000'000'000; i++) {
+            ++(*value);
+        }
 
-        std::cout << "changing to 123" << std::endl;
-        value->store(123);
-
-        std::this_thread::sleep_for(std::chrono::seconds (5));
-
+        std::cout << "Create: Value = " << *value << std::endl;
+        std::this_thread::sleep_for(std::chrono::seconds (1));
         CloseSharedSegment(sharedMemory);
     }
 
@@ -167,7 +168,7 @@ namespace SharedMemory_AtomicValue::Atomic
         if (INVALID_HANDLE == sharedMemory) {
             return error("shm_open()");
         } else {
-            std::cout << sharedMemoryObjName << " segment is opened. Descriptor = " << sharedMemory << std::endl;
+            //std::cout << sharedMemoryObjName << " segment is opened. Descriptor = " << sharedMemory << std::endl;
         }
 
         ObjectType* value = (ObjectType*)::mmap(nullptr,
@@ -175,20 +176,34 @@ namespace SharedMemory_AtomicValue::Atomic
                                                 PROT_READ | PROT_WRITE, MAP_SHARED,
                                                 sharedMemory,
                                                 0);
+        // value->store(10);
+        for (int i = 0; i < 5'000'000'000; i++) {
+            ++(*value);
+        }
 
-        const int32_t currentValue = value->load(std::memory_order_relaxed);
-        std::cout << currentValue << std::endl;
+        std::cout << "Read: Value = " << *value << std::endl;
+        // value->wait(currentValue);
+        // std::cout << "Done: " << value->load(std::memory_order_relaxed) << std::endl;
+    }
 
-        std::cout << "waiting ....." << std::endl;
-        value->wait(currentValue);
-        std::cout << "Done: " << value->load(std::memory_order_relaxed) << std::endl;
+    void MultiProcessTest()
+    {
+        if (const pid_t pid = fork(); pid == 0) { /** Child **/
+            Read();
+        }
+        else if (pid > 0) { /** Parent **/
+            Create();
+        }
+        else {
+            std::cout << "Unable to create child process" << std::endl;
+        }
     }
 };
 
 void SharedMemory_AtomicValue::TestAll()
 {
-    using namespace Basic;
-    // using namespace Atomic;
+    // using namespace Basic;
+    using namespace Atomic;
 
     // Create();
     // Read();
