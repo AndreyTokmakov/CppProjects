@@ -26,6 +26,8 @@ add_executable(${PROJECT_NAME}
         InterprocessCommunication/SharedMemory_AtomicValue.h InterprocessCommunication/SharedMemory_AtomicValue.cpp
         InterprocessCommunication/Pipes.cpp InterprocessCommunication/Pipes.h
         InterprocessCommunication/SharedMemoryDataExchange.cpp InterprocessCommunication/SharedMemoryDataExchange.h
+        InterprocessCommunication/MultiprocessQueue.cpp InterprocessCommunication/MultiprocessQueue.h
+        InterprocessCommunication/SemMutex.cpp InterprocessCommunication/SemMutex.h
         Users/Users.cpp Users/Users.h
         TimeAndDate/Time.cpp TimeAndDate/Time.h
         TimeAndDate/Timer.cpp TimeAndDate/Timer.h
