@@ -64,7 +64,6 @@
 #include "Networking/WebServerSimple.h"
 #include "Networking/Utilities.h"
 
-
 #include "InterprocessCommunication/Semaphore.h"
 #include "InterprocessCommunication/SharedMemory.h"
 #include "InterprocessCommunication/SharedMemory_AtomicValue.h"
@@ -72,6 +71,7 @@
 #include "InterprocessCommunication/Pipes.h"
 #include "InterprocessCommunication/MultiprocessQueue.h"
 #include "InterprocessCommunication/SemMutex.h"
+#include "InterprocessCommunication/UnixSockets.h"
 
 #include "Users/Users.h"
 #include "TimeAndDate/Time.h"
@@ -224,8 +224,9 @@ int main([[maybe_unused]] int argc,
     // SharedMemory::TestAll(params);
     // SharedMemoryDataExchange::TestAll(params);
     // Pipes::TestAll(params);
-    SharedMemory_AtomicValue::TestAll();
+    // SharedMemory_AtomicValue::TestAll();
     // SemMutex::TestAll();
+    UnixSockets::TestAll();
 
     return EXIT_SUCCESS;
 }
