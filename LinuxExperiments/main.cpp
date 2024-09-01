@@ -225,8 +225,8 @@ int main([[maybe_unused]] int argc,
     // SharedMemoryDataExchange::TestAll(params);
     // Pipes::TestAll(params);
     // SharedMemory_AtomicValue::TestAll();
-    // SemMutex::TestAll();
-    UnixSockets::TestAll();
+    SemMutex::TestAll();
+    // UnixSockets::TestAll();
 
     return EXIT_SUCCESS;
 }

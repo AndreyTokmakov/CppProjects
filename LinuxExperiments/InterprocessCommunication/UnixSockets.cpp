@@ -9,18 +9,14 @@ Description : UnixSockets.cpp
 
 #include "UnixSockets.h"
 
-#include <unistd.h> // for fork()
-#include <stdio.h> // for printf
-#include <stdlib.h> // for exit()
+#include <unistd.h>
+#include <cerrno>
 #include <sys/socket.h>
-#include <sys/un.h> // socket in Unix
-#include <errno.h>
+#include <sys/un.h>
 
 #include <iostream>
 #include <string_view>
 #include <thread>
-#include <optional>
-#include <format>
 #include <chrono>
 
 #define RESULT_SUCCESS   (0)
@@ -105,7 +101,7 @@ namespace UnixSockets
             return error("CLIENT: Connect error");
         }
 
-        std::cout << "CLIENT: Sending message to server.." << std::endl;
+        std::cout << "CLIENT: ==> Sending message to server.." << std::endl;
         constexpr std::string_view message { "HELLO FROM CLIENT" };
         // const int64_t bytesSend = ::send(clientSocket, message.data(), message.size(), 0);
         const int64_t bytesSend = ::write(clientSocket, message.data(), message.size());
@@ -119,7 +115,7 @@ namespace UnixSockets
             return error("CLIENT: Error when receiving message() failed");
         } else {
             buffer.resize(bytesReceived);
-            std::cout << "CLIENT: Data received: " << buffer << std::endl;
+            std::cout << "CLIENT: <== Data received: " << buffer << std::endl;
         }
 
         return 0;
@@ -147,12 +143,12 @@ namespace UnixSockets
         std::cout << "SERVER: Socket listening..." << std::endl;
         sockaddr clientAddr {};
         const int clientSocket = ::accept(serverSocket, &clientAddr, (socklen_t*)&len);
-        SocketGuard clientSocketGuard { clientSocket };
         if (INVALID_HANDLE == clientSocket) {
             return error("SERVER: accept() failed");
         } else {
             std::cout << "SERVER: Connection request" << std::endl;
         }
+        SocketGuard clientSocketGuard { clientSocket };
 
         std::string buffer(1024, '\0');
         const int64_t bytesReceived = ::recv(clientSocket, buffer.data(), buffer.size(), 0);
@@ -160,10 +156,10 @@ namespace UnixSockets
             return error("SERVER: Error when receiving message() failed");
         } else {
             buffer.resize(bytesReceived);
-            std::cout << "SERVER: Data received: " << buffer << std::endl;
+            std::cout << "SERVER: <== Data received: " << buffer << std::endl;
         }
 
-        std::cout << "SERVER: Sending the response..." << std::endl;
+        std::cout << "SERVER: ==> Sending the response..." << std::endl;
         constexpr std::string_view message { "HELLO FROM SERVER" };
         // const int64_t bytesSend = ::send(clientSocket, message.data(), message.size(), 0);
         const int64_t bytesSend = ::write(clientSocket, message.data(), message.size());
