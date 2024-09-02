@@ -14,56 +14,132 @@ Description : SharedMemory_AtomicValue.cpp
 #include <thread>
 #include <array>
 #include <csignal>
+#include <utility>
 
 #include "../common.h"
 
+#define RESULT_OK       ( 0)
 #define INVALID_HANDLE  (-1)
+
+#define ASSERT_NOT(error_value, actual, func_name) \
+    if (error_value == actual)           \
+        throw std::runtime_error(std::string(func_name) + "() failed. Error = " + std::to_string(errno));
 
 namespace
 {
-    constexpr std::string_view sharedMemoryObjName {"__SHARED_MEMORY_ATOMIC_OBJECT__1__" };
+    constexpr std::string_view sharedSegmentName { "__SHARED_MEMORY_SEGMENT_NAME_00000__1__" };
 
-    void error(const std::string &func)
-    {
+    int error(const std::string &func) {
         std::cerr << func << " failed. Error = " << errno << std::endl;
-    }
-
-    void CloseSharedSegment(int sharedHandle)
-    {
-        if (0 != ::close(sharedHandle)) {
-            error("close()");
-        } else {
-            std::cout << sharedHandle << " handle is closed" << std::endl;
-        }
-
-        if (0 != ::shm_unlink(sharedMemoryObjName.data())) {
-            error("shm_unlink()");
-        } else {
-            std::cout << sharedMemoryObjName << " segment is removed" << std::endl;
-        }
+        return errno;
     }
 }
 
+
+namespace SharedMemoryUtilities
+{
+    struct SharedDataHeader
+    {
+        uint32_t useCount { 0 };
+        std::atomic<uint64_t> someTestCounter { 0 };
+    };
+
+    struct SharedData
+    {
+        int32_t handle { INVALID_HANDLE };
+        SharedDataHeader* header { nullptr };
+
+        ~SharedData()
+        {
+            if (INVALID_HANDLE == handle || nullptr == header)
+                return;
+            if (0 == --header->useCount)
+            {
+                std::cout << "Closing shared memory [handle: " << handle << ", name: " << sharedSegmentName << "]\n";
+                if (RESULT_OK != ::close(handle)) {
+                    error("close()");
+                }
+
+                std::cout << "Unlink shared memory segment " << sharedSegmentName << std::endl;
+                if (RESULT_OK != ::shm_unlink(sharedSegmentName.data())) {
+                    error("shm_unlink()");
+                }
+            }
+        }
+
+        SharedData() = default;
+
+        SharedData(const SharedData&) = delete;
+        SharedData(SharedData&& sharedData) noexcept :
+                handle { std::exchange(sharedData.handle, INVALID_HANDLE) },
+                header { std::exchange(sharedData.header, nullptr) } {
+        }
+
+        SharedData& operator=(const SharedData&) = delete;
+        SharedData& operator=(SharedData&&) noexcept = delete;
+    };
+
+    SharedData createSharedMemSegment()
+    {
+        SharedData sharedData;
+        sharedData.handle = ::shm_open(sharedSegmentName.data(),
+                                       O_CREAT | O_RDWR | O_EXCL | O_TRUNC, S_IRWXU | S_IRWXG);
+        if (INVALID_HANDLE != sharedData.handle)
+        {
+            const int retCode = ::ftruncate(sharedData.handle, sizeof(SharedDataHeader));
+            ASSERT_NOT(INVALID_HANDLE, retCode, "ftruncate");
+        }
+        else
+        {
+            if (EEXIST == errno) { /** Shared memory already exist. **/
+                sharedData.handle= ::shm_open(sharedSegmentName.data(),O_CREAT | O_RDWR, S_IRWXU | S_IRWXG);
+            } else { // TODO: Use std::source_location
+                throw std::runtime_error("shm_open() failed. Error = " + std::to_string(errno));
+            }
+        }
+        ASSERT_NOT(INVALID_HANDLE, sharedData.handle, "shm_open");
+        return sharedData;
+    }
+
+    SharedData createSharedMapping()
+    {
+        SharedData sharedData = createSharedMemSegment();
+        void *area = ::mmap(nullptr,
+                            sizeof(SharedDataHeader),
+                            PROT_READ | PROT_WRITE, MAP_SHARED,
+                            sharedData.handle,
+                            0);
+        ASSERT_NOT(MAP_FAILED, area, "mmap");
+
+        sharedData.header = reinterpret_cast<SharedDataHeader*>(area);
+
+        ++sharedData.header->useCount;
+        ASSERT_NOT(nullptr, sharedData.header, "reinterpret_cast<Data*>(area)");
+        return sharedData;
+    }
+}
+
+#if 0
 namespace SharedMemory_AtomicValue::Basic
 {
     using ObjectType = int32_t;
 
     void Create()
     {
-        int sharedMemory = ::shm_open(sharedMemoryObjName.data(),
+        int sharedMemory = ::shm_open(sharedSegmentName.data(),
                                       O_CREAT|O_RDWR|O_EXCL|O_TRUNC, S_IRWXU|S_IRWXG);
         if (INVALID_HANDLE == sharedMemory)
         {
             if (EEXIST == errno)
             {
                 /** Shared memory already exist. **/
-                sharedMemory = ::shm_open(sharedMemoryObjName.data(), O_EXCL|O_RDWR, S_IRWXU|S_IRWXG);
+                sharedMemory = ::shm_open(sharedSegmentName.data(), O_EXCL|O_RDWR, S_IRWXU|S_IRWXG);
                 std::cout <<  "Main  Process: Open existing memory" << std::endl;
             } else
                 error("Failure on shm_open");
         }
         else {
-            std::cout <<  "Main  Process: " << sharedMemoryObjName <<  "segment is created. Descriptor = "
+            std::cout <<  "Main  Process: " << sharedSegmentName <<  "segment is created. Descriptor = "
                       << sharedMemory << std::endl;
         }
 
@@ -86,12 +162,12 @@ namespace SharedMemory_AtomicValue::Basic
     void Read()
     {
         std::this_thread::sleep_for(std::chrono::milliseconds (250));
-        int sharedMemory = ::shm_open(sharedMemoryObjName.data(),
+        int sharedMemory = ::shm_open(sharedSegmentName.data(),
                                       O_CREAT | O_RDWR, S_IRWXU | S_IRWXG);
         if (INVALID_HANDLE == sharedMemory) {
             return error("shm_open()");
         } else {
-            std::cout <<  "Child Process: " << sharedMemoryObjName <<  "segment is opened.  Descriptor = "
+            std::cout <<  "Child Process: " << sharedSegmentName <<  "segment is opened.  Descriptor = "
                       << sharedMemory << std::endl;
         }
 
@@ -116,83 +192,50 @@ namespace SharedMemory_AtomicValue::Basic
             std::cout << "Unable to create child process" << std::endl;
         }
     }
-
 };
+#endif
+
+
+uint64_t testsCount = 500'000'000;
+
 
 namespace SharedMemory_AtomicValue::Atomic
 {
-    using ObjectType = std::atomic<uint64_t>;
-    // using ObjectType = uint64_t;
+    using namespace SharedMemoryUtilities;
 
-    void Create()
+    void ProcParent()
     {
-        int sharedMemory = ::shm_open(sharedMemoryObjName.data(),
-                                      O_CREAT|O_RDWR|O_EXCL|O_TRUNC, S_IRWXU|S_IRWXG);
-        if (INVALID_HANDLE == sharedMemory)
-        {
-            if (EEXIST == errno)
-            {
-                /** Shared memory already exist. **/
-                sharedMemory = ::shm_open(sharedMemoryObjName.data(), O_EXCL|O_RDWR, S_IRWXU|S_IRWXG);
-                //std::cout << "Open existing memory" << std::endl;
-            } else
-                error("Failure on shm_open");
+        SharedData data = createSharedMapping();
+        std::this_thread::sleep_for(std::chrono::milliseconds (1));
+
+        for (uint64_t i = 0; i < testsCount; ++i) {
+            ++data.header->someTestCounter;
         }
 
-        if (INVALID_HANDLE == ::ftruncate(sharedMemory, sizeof(ObjectType))) {
-            error("Error on ftruncate()");
-        }
-
-        ObjectType* value = (ObjectType*)::mmap(nullptr,
-                                                sizeof(ObjectType),
-                                                PROT_READ | PROT_WRITE, MAP_SHARED,
-                                                sharedMemory,
-                                                0);
-
-        // value->store(10);
-
-        std::this_thread::sleep_for(std::chrono::microseconds (40));
-        for (int i = 0; i < 5'000'000'000; i++) {
-            ++(*value);
-        }
-
-        std::cout << "Create: Value = " << *value << std::endl;
         std::this_thread::sleep_for(std::chrono::seconds (1));
-        CloseSharedSegment(sharedMemory);
+        std::cout << data.header->someTestCounter << std::endl;
     }
 
-    void Read()
+    void ProcChild()
     {
-        int sharedMemory = ::shm_open(sharedMemoryObjName.data(),
-                                      O_CREAT | O_RDWR, S_IRWXU | S_IRWXG);
-        if (INVALID_HANDLE == sharedMemory) {
-            return error("shm_open()");
-        } else {
-            //std::cout << sharedMemoryObjName << " segment is opened. Descriptor = " << sharedMemory << std::endl;
+        std::this_thread::sleep_for(std::chrono::milliseconds (1));
+        SharedData data = createSharedMapping();
+
+        for (uint64_t i = 0; i < testsCount; ++i) {
+            ++data.header->someTestCounter;
         }
 
-        ObjectType* value = (ObjectType*)::mmap(nullptr,
-                                                sizeof(ObjectType),
-                                                PROT_READ | PROT_WRITE, MAP_SHARED,
-                                                sharedMemory,
-                                                0);
-        // value->store(10);
-        for (int i = 0; i < 5'000'000'000; i++) {
-            ++(*value);
-        }
-
-        std::cout << "Read: Value = " << *value << std::endl;
-        // value->wait(currentValue);
-        // std::cout << "Done: " << value->load(std::memory_order_relaxed) << std::endl;
+        std::this_thread::sleep_for(std::chrono::seconds (1));
+        std::cout << data.header->someTestCounter << std::endl;
     }
 
     void MultiProcessTest()
     {
         if (const pid_t pid = fork(); pid == 0) { /** Child **/
-            Read();
+            ProcChild();
         }
         else if (pid > 0) { /** Parent **/
-            Create();
+            ProcParent();
         }
         else {
             std::cout << "Unable to create child process" << std::endl;
