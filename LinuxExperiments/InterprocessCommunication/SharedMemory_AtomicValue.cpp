@@ -27,7 +27,7 @@ Description : SharedMemory_AtomicValue.cpp
 
 namespace
 {
-    constexpr std::string_view sharedSegmentName { "__SHARED_MEMORY_SEGMENT_NAME_00000__1__" };
+    constexpr std::string_view sharedSegmentName { "__SHARED_MEMORY_SEGMENT_NAME_00000__2__" };
 
     int error(const std::string &func) {
         std::cerr << func << " failed. Error = " << errno << std::endl;
@@ -41,6 +41,11 @@ namespace SharedMemoryUtilities
     struct SharedDataHeader
     {
         uint32_t useCount { 0 };
+    };
+
+    struct SharedDataBlock
+    {
+        SharedDataHeader header { 0 };
         // std::atomic<uint64_t> someTestCounter { 0 };
         uint64_t someTestCounter { 0 };
     };
@@ -48,13 +53,21 @@ namespace SharedMemoryUtilities
     struct SharedData
     {
         int32_t handle { INVALID_HANDLE };
-        SharedDataHeader* header { nullptr };
+        SharedDataBlock* sharedDataBlock { nullptr };
+
+        inline uint32_t incrementUseCount() noexcept {
+            return ++(sharedDataBlock->header.useCount);
+        }
+
+        inline uint32_t decrementUseCount() noexcept {
+            return sharedDataBlock->header.useCount == 0 ? 0 : --(sharedDataBlock->header.useCount);
+        }
 
         ~SharedData()
         {
-            if (INVALID_HANDLE == handle || nullptr == header)
+            if (INVALID_HANDLE == handle || nullptr == sharedDataBlock)
                 return;
-            if (0 == --header->useCount)
+            if (0 == decrementUseCount())
             {
                 std::cout << "Closing shared memory [handle: " << handle << ", name: " << sharedSegmentName << "]\n";
                 if (RESULT_OK != ::close(handle)) {
@@ -73,7 +86,7 @@ namespace SharedMemoryUtilities
         SharedData(const SharedData&) = delete;
         SharedData(SharedData&& sharedData) noexcept :
                 handle { std::exchange(sharedData.handle, INVALID_HANDLE) },
-                header { std::exchange(sharedData.header, nullptr) } {
+                sharedDataBlock { std::exchange(sharedData.sharedDataBlock, nullptr) } {
         }
 
         SharedData& operator=(const SharedData&) = delete;
@@ -87,7 +100,7 @@ namespace SharedMemoryUtilities
                                        O_CREAT | O_RDWR | O_EXCL | O_TRUNC, S_IRWXU | S_IRWXG);
         if (INVALID_HANDLE != sharedData.handle)
         {
-            const int retCode = ::ftruncate(sharedData.handle, sizeof(SharedDataHeader));
+            const int retCode = ::ftruncate(sharedData.handle, sizeof(SharedDataBlock));
             ASSERT_NOT(INVALID_HANDLE, retCode, "ftruncate");
         }
         else
@@ -106,16 +119,16 @@ namespace SharedMemoryUtilities
     {
         SharedData sharedData = createSharedMemSegment();
         void *area = ::mmap(nullptr,
-                            sizeof(SharedDataHeader),
+                            sizeof(SharedDataBlock),
                             PROT_READ | PROT_WRITE, MAP_SHARED,
                             sharedData.handle,
                             0);
         ASSERT_NOT(MAP_FAILED, area, "mmap");
 
-        sharedData.header = reinterpret_cast<SharedDataHeader*>(area);
+        sharedData.sharedDataBlock = reinterpret_cast<SharedDataBlock*>(area);
+        sharedData.incrementUseCount();
 
-        ++sharedData.header->useCount;
-        ASSERT_NOT(nullptr, sharedData.header, "reinterpret_cast<Data*>(area)");
+        ASSERT_NOT(nullptr, sharedData.sharedDataBlock, "reinterpret_cast<SharedDataBlock*>(area)");
         return sharedData;
     }
 }
@@ -208,22 +221,22 @@ namespace SharedMemory_AtomicValue::Atomic
     {
         SharedData data = createSharedMapping();
         for (uint64_t i = 0; i < testsCount; ++i) {
-            ++data.header->someTestCounter;
+            ++data.sharedDataBlock->someTestCounter;
         }
 
         std::this_thread::sleep_for(std::chrono::seconds (1));
-        std::cout << data.header->someTestCounter << std::endl;
+        std::cout << data.sharedDataBlock->someTestCounter << std::endl;
     }
 
     void ProcChild()
     {
         SharedData data = createSharedMapping();
         for (uint64_t i = 0; i < testsCount; ++i) {
-            ++data.header->someTestCounter;
+            ++data.sharedDataBlock->someTestCounter;
         }
 
         std::this_thread::sleep_for(std::chrono::seconds (1));
-        std::cout << data.header->someTestCounter << std::endl;
+        std::cout << data.sharedDataBlock->someTestCounter << std::endl;
     }
 
     void MultiProcessTest()

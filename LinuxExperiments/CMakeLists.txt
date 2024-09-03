@@ -20,14 +20,14 @@ add_executable(${PROJECT_NAME}
         Networking/WebServerSimple.cpp Networking/WebServerSimple.h
         Environment/Environment.cpp Environment/Environment.h
         SystemInformation/SystemInformation.cpp SystemInformation/SystemInformation.h
-        InterprocessCommunication/Semaphore.cpp
-        InterprocessCommunication/Semaphore.h InterprocessCommunication/SharedMemory.cpp
-        InterprocessCommunication/SharedMemory.h
+        InterprocessCommunication/Semaphore.cpp InterprocessCommunication/Semaphore.h
+        InterprocessCommunication/SharedMemory.cpp InterprocessCommunication/SharedMemory.h
         InterprocessCommunication/SharedMemory_AtomicValue.h InterprocessCommunication/SharedMemory_AtomicValue.cpp
         InterprocessCommunication/Pipes.cpp InterprocessCommunication/Pipes.h
         InterprocessCommunication/SharedMemoryDataExchange.cpp InterprocessCommunication/SharedMemoryDataExchange.h
         InterprocessCommunication/MultiprocessQueue.cpp InterprocessCommunication/MultiprocessQueue.h
         InterprocessCommunication/SemMutex.cpp InterprocessCommunication/SemMutex.h
+        InterprocessCommunication/SharedMutex.cpp InterprocessCommunication/SharedMutex.h
         InterprocessCommunication/UnixSockets.cpp InterprocessCommunication/UnixSockets.h
         Users/Users.cpp Users/Users.h
         TimeAndDate/Time.cpp TimeAndDate/Time.h

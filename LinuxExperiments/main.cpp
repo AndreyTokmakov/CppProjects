@@ -71,6 +71,7 @@
 #include "InterprocessCommunication/Pipes.h"
 #include "InterprocessCommunication/MultiprocessQueue.h"
 #include "InterprocessCommunication/SemMutex.h"
+#include "InterprocessCommunication/SharedMutex.h"
 #include "InterprocessCommunication/UnixSockets.h"
 
 #include "Users/Users.h"
@@ -224,7 +225,8 @@ int main([[maybe_unused]] int argc,
     // SharedMemory::TestAll(params);
     // SharedMemoryDataExchange::TestAll(params);
     // Pipes::TestAll(params);
-    SharedMemory_AtomicValue::TestAll();
+    // SharedMemory_AtomicValue::TestAll();
+    SharedMutex::TestAll();
     // SemMutex::TestAll();
     // UnixSockets::TestAll();
 
