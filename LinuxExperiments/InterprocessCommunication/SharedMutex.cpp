@@ -380,6 +380,16 @@ namespace SharedMutex::Simple
            }
        }
    }
+
+    void MultiProcessTest()
+    {
+        if (const pid_t pid = fork(); pid == 0) { /** Child **/
+            ProcessOne();
+        }
+        else if (pid > 0) { /** Parent **/
+            ProcessTwo();
+        }
+    }
 }
 
 void SharedMutex::TestAll()
@@ -389,6 +399,7 @@ void SharedMutex::TestAll()
     // ProcChild();
 
     // Simple::ProcessOne();
-    Simple::ProcessTwo();
+    // Simple::ProcessTwo();
+
 
 }
