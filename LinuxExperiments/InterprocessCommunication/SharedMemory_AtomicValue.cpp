@@ -41,7 +41,8 @@ namespace SharedMemoryUtilities
     struct SharedDataHeader
     {
         uint32_t useCount { 0 };
-        std::atomic<uint64_t> someTestCounter { 0 };
+        // std::atomic<uint64_t> someTestCounter { 0 };
+        uint64_t someTestCounter { 0 };
     };
 
     struct SharedData
@@ -206,8 +207,6 @@ namespace SharedMemory_AtomicValue::Atomic
     void ProcParent()
     {
         SharedData data = createSharedMapping();
-        std::this_thread::sleep_for(std::chrono::milliseconds (1));
-
         for (uint64_t i = 0; i < testsCount; ++i) {
             ++data.header->someTestCounter;
         }
@@ -218,9 +217,7 @@ namespace SharedMemory_AtomicValue::Atomic
 
     void ProcChild()
     {
-        std::this_thread::sleep_for(std::chrono::milliseconds (1));
         SharedData data = createSharedMapping();
-
         for (uint64_t i = 0; i < testsCount; ++i) {
             ++data.header->someTestCounter;
         }
@@ -240,6 +237,8 @@ namespace SharedMemory_AtomicValue::Atomic
         else {
             std::cout << "Unable to create child process" << std::endl;
         }
+
+        std::cout << "Done" << std::endl;
     }
 };
 
