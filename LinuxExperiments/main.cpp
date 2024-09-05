@@ -81,6 +81,7 @@
 #include "Modules/Modules.h"
 #include "OpenSSL/OpenSSL.h"
 
+#include "IO_Uring/IOUringExperiments.h"
 
 
 void PollTest()
@@ -226,9 +227,11 @@ int main([[maybe_unused]] int argc,
     // SharedMemoryDataExchange::TestAll(params);
     // Pipes::TestAll(params);
     // SharedMemory_AtomicValue::TestAll();
-    SharedMutex::TestAll();
+    // SharedMutex::TestAll();
     // SemMutex::TestAll();
     // UnixSockets::TestAll();
+
+    IOUringExperiments::TestAll();
 
     return EXIT_SUCCESS;
 }

@@ -33,7 +33,14 @@ add_executable(${PROJECT_NAME}
         TimeAndDate/Time.cpp TimeAndDate/Time.h
         TimeAndDate/Timer.cpp TimeAndDate/Timer.h
         Modules/Modules.cpp Modules/Modules.h
-        OpenSSL/OpenSSL.cpp OpenSSL/OpenSSL.h Networking/Utilities.cpp Networking/Utilities.h TestsAndExperiments/TestAndExperiments.cpp TestsAndExperiments/TestAndExperiments.h TestsAndExperiments/FindProcessForTCPConnection.cpp TestsAndExperiments/FindProcessForTCPConnection.h Processes/ProcessManager.cpp Processes/ProcessManager.h ModulesKernel/ModulesKernel.cpp ModulesKernel/ModulesKernel.h)
+        OpenSSL/OpenSSL.cpp OpenSSL/OpenSSL.h
+        Networking/Utilities.cpp Networking/Utilities.h
+        TestsAndExperiments/TestAndExperiments.cpp TestsAndExperiments/TestAndExperiments.h
+        TestsAndExperiments/FindProcessForTCPConnection.cpp TestsAndExperiments/FindProcessForTCPConnection.h
+        Processes/ProcessManager.cpp Processes/ProcessManager.h
+        ModulesKernel/ModulesKernel.cpp ModulesKernel/ModulesKernel.h
+        IO_Uring/IOUringExperiments.cpp IO_Uring/IOUringExperiments.h
+)
 
 # Link libraries to the project/executable
 target_link_libraries(${PROJECT_NAME} PUBLIC
