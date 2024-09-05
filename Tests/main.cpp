@@ -1287,6 +1287,12 @@ int main([[maybe_unused]] int argc,
     // DeducingThis::CRTP_Test();
 
 
+    const std::deque<int> * deque_inst = new std::deque<int>{1, 2, 3, 4, 5};
+
+    std::cout << (*deque_inst)[3] << std::endl;
+    std::cout << deque_inst->operator[](3)<< std::endl;
+
+
 
     // MoveExperiments::MoveStringToArray_Segfault();
     // MoveExperiments::test_perfect_forwarding();

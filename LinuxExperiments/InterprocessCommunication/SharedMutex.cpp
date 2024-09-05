@@ -26,7 +26,7 @@ Description : SharedMutex.cpp
 
 namespace SharedMutex::SharedMemoryUtilities
 {
-    constexpr std::string_view sharedSegmentName { "__SHARED_MEMORY_SEGMENT_NAME_00000__3__" };
+    constexpr std::string_view sharedSegmentName { "__SHARED_MEMORY_SEGMENT_NAME_00000__1__" };
 
     int error(const std::string &func) {
         std::cerr << func << " failed. Error = " << errno << std::endl;
@@ -259,15 +259,14 @@ namespace SharedMutex
 
 namespace SharedMutex::Simple
 {
-   void ProcessOne()
+   void ProcessParent()
    {
-       int32_t handle = ::shm_open(sharedSegmentName.data(),
-                                      O_CREAT | O_RDWR | O_EXCL | O_TRUNC, S_IRWXU | S_IRWXG);
+       const int32_t handle = ::shm_open(sharedSegmentName.data(),
+                                         O_CREAT | O_RDWR | O_EXCL | O_TRUNC, S_IRWXU | S_IRWXG);
        ASSERT_NOT(INVALID_HANDLE, handle, "shm_open");
 
        const int retCode = ::ftruncate(handle, sizeof(pthread_mutex_t));
        ASSERT_NOT(INVALID_HANDLE, retCode, "ftruncate");
-
 
        void *area = ::mmap(nullptr,
                            sizeof(pthread_mutex_t),
@@ -284,22 +283,18 @@ namespace SharedMutex::Simple
            ::pthread_mutexattr_setpshared(&attr, PTHREAD_PROCESS_SHARED);
            ::pthread_mutexattr_settype(&attr,  PTHREAD_MUTEX_FAST_NP);
 
-           if (RESULT_OK != ::pthread_mutex_init(mutex, &attr))
-           {
+           if (RESULT_OK != ::pthread_mutex_init(mutex, &attr)) {
                ::free(mutex);
                std::cout << "Unable to create mutex" << std::endl;
-           } else
-           {
+           } else {
                std::cout << "Mutex(" << mutex << ")\n";
            }
 
            std::cout << "Waiting\n";
            int32_t result = ::pthread_mutex_lock(mutex);
            if (RESULT_OK != result) {
-               // throw std::runtime_error("Unable to lock mutex");
                std::cout << "Unable to lock mutex"<< std::endl;
-           }
-           else {
+           } else {
                std::cout << "Locked(" << mutex << ")\n";
            };
 
@@ -331,9 +326,9 @@ namespace SharedMutex::Simple
        }
    }
 
-   void ProcessTwo()
+   void ProcessChild()
    {
-
+       std::this_thread::sleep_for(std::chrono::microseconds (5));
        int32_t handle = ::shm_open(sharedSegmentName.data(), O_CREAT | O_RDWR, S_IRWXU | S_IRWXG);
        ASSERT_NOT(INVALID_HANDLE, handle, "shm_open");
 
@@ -384,10 +379,10 @@ namespace SharedMutex::Simple
     void MultiProcessTest()
     {
         if (const pid_t pid = fork(); pid == 0) { /** Child **/
-            ProcessOne();
+            ProcessChild();
         }
         else if (pid > 0) { /** Parent **/
-            ProcessTwo();
+            ProcessParent();
         }
     }
 }
@@ -400,6 +395,5 @@ void SharedMutex::TestAll()
 
     // Simple::ProcessOne();
     // Simple::ProcessTwo();
-
-
+    Simple::MultiProcessTest();
 }
