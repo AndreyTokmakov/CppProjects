@@ -8,6 +8,9 @@ project(${PROJECT_NAME} VERSION ${PROJECT_VERSION} LANGUAGES CXX)
 find_package(OpenSSL REQUIRED)
 add_compile_options(-c -Wall -Wextra -O3 -std=c++2a)
 
+include_directories(${THIRD_PARTY_DIR}/liburing/install_dir/include)
+link_directories(${THIRD_PARTY_DIR}/liburing/install_dir/lib)
+
 # include all components
 add_executable(${PROJECT_NAME}
         main.cpp
@@ -49,4 +52,5 @@ target_link_libraries(${PROJECT_NAME} PUBLIC
         crypt
         crypto
         ssl
+        uring
 )
