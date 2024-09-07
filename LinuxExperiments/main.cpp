@@ -65,6 +65,7 @@
 #include "Networking/Utilities.h"
 
 #include "InterprocessCommunication/Semaphore.h"
+#include "InterprocessCommunication/SharedMemoryWrapper.h"
 #include "InterprocessCommunication/SharedMemory.h"
 #include "InterprocessCommunication/SharedMemory_AtomicValue.h"
 #include "InterprocessCommunication/SharedMemoryDataExchange.h"
@@ -224,6 +225,7 @@ int main([[maybe_unused]] int argc,
     // Semaphore::TestAll(params);
 
     // SharedMemory::TestAll(params);
+    SharedMemoryWrapper::TestAll();
     // SharedMemoryDataExchange::TestAll(params);
     // Pipes::TestAll(params);
     // SharedMemory_AtomicValue::TestAll();
@@ -231,7 +233,7 @@ int main([[maybe_unused]] int argc,
     // SemMutex::TestAll();
     // UnixSockets::TestAll();
 
-    IOUringExperiments::TestAll();
+    // IOUringExperiments::TestAll();
 
     return EXIT_SUCCESS;
 }

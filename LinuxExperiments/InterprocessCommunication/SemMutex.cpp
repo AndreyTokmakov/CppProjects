@@ -17,8 +17,10 @@ Description : SemMutex.cpp
 #include <thread>
 #include <optional>
 #include <format>
-#include <chrono>
 #include <utility>
+
+
+#include <chrono>
 
 
 namespace
@@ -43,7 +45,7 @@ namespace
 
     struct SharedDataHeader
     {
-        uint32_t useCount { 0 };
+        std::atomic<uint32_t> useCount { 1 };
         uint64_t someTestCounter { 0 };
     };
 
@@ -56,7 +58,9 @@ namespace
         {
             if (INVALID_HANDLE == handle || nullptr == header)
                 return;
-            if (0 == --header->useCount)
+            const uint32_t count = header->useCount.fetch_sub(1);
+            std::cout << "Usage count = " << count << std::endl;
+            if (1 == count)
             {
                 std::cout << "Closing shared memory [handle: " << handle << ", name: " << sharedSegmentName << "]\n";
                 if (RESULT_OK != ::close(handle)) {
@@ -116,7 +120,9 @@ namespace
 
         sharedData.header = reinterpret_cast<SharedDataHeader*>(area);
 
-        ++sharedData.header->useCount;
+        sharedData.header->useCount.fetch_add(1);
+
+        // TODO: Remove
         ASSERT_NOT(nullptr, sharedData.header, "reinterpret_cast<Data*>(area)");
         return sharedData;
     }
@@ -199,40 +205,54 @@ namespace SemMutex::Tests
             ProcParent();
     }
 
-    uint64_t testsCount = 50'000'000'000;
+    // uint64_t testsCount = 50'000'000'000;
+    uint64_t testsCount = 10;
 
     void ChildProcess()
     {
-        std::this_thread::sleep_for(std::chrono::milliseconds (1));
+        std::this_thread::sleep_for(std::chrono::milliseconds (10));
         std::optional<sem_t*> semaphore = openSemaphore();
+        if (!semaphore) {
+            std::cout << "ChildProcess: Failed to open semaphore" << std::endl;
+            return;
+        }
+
         SharedData data = createSharedMapping();
 
         for (uint64_t i = 0; i < testsCount; ++i)
         {
-            //LockGuard lock {semaphore.value()};
+            LockGuard lock {semaphore.value()};
             ++data.header->someTestCounter;
+
+            std::cout << data.header->someTestCounter << std::endl;
+            std::this_thread::sleep_for(std::chrono::milliseconds (100));
         }
 
-        std::this_thread::sleep_for(std::chrono::seconds (1));
-        std::cout << data.header->someTestCounter << std::endl;
     }
 
     void ParentProcess()
     {
         std::optional<sem_t*> semaphore = createSemaphore();
-        std::this_thread::sleep_for(std::chrono::milliseconds (10));
         SharedData data = createSharedMapping();
+        if (!semaphore) {
+            std::cout << "ParentProcess: Failed to create semaphore" << std::endl;
+            return;
+        }
+        std::this_thread::sleep_for(std::chrono::milliseconds (10));
 
         for (uint64_t i = 0; i < testsCount; ++i)
         {
-            //LockGuard lock {semaphore.value()};
+            LockGuard lock {semaphore.value()};
             ++data.header->someTestCounter;
+
+            std::cout << data.header->someTestCounter << std::endl;
+            std::this_thread::sleep_for(std::chrono::milliseconds (100));
         }
 
-        std::this_thread::sleep_for(std::chrono::seconds (1));
-        std::cout << data.header->someTestCounter << std::endl;
 
         closeSemaphore(semaphore);
+        std::this_thread::sleep_for(std::chrono::seconds (2));
+
     }
 
     void MultiProcessTest()
@@ -252,4 +272,15 @@ void SemMutex::TestAll()
 {
     Tests::MultiProcessTest();
     // Tests::MultiProcessSharedDataTest();
+
+    // SharedData data = createSharedMapping();
+
+
+    /*
+    std::atomic<uint32_t> counter {0};
+    std::cout << counter.fetch_add(1, std::memory_order_relaxed) << std::endl;
+    std::cout << counter.load(std::memory_order_relaxed) << std::endl;
+    std::cout << counter.fetch_sub(1, std::memory_order_relaxed) << std::endl;
+    std::cout << counter.load(std::memory_order_relaxed) << std::endl;
+    */
 }
