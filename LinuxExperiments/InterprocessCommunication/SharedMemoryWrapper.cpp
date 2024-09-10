@@ -46,6 +46,7 @@ namespace SharedMemoryWrapper
     struct SharedDataHeader
     {
         std::atomic<uint32_t> useCount { 0 };
+        //uint32_t useCount { 0 };
     };
 
     struct SharedDataBlock
@@ -61,11 +62,13 @@ namespace SharedMemoryWrapper
         SharedDataBlock* sharedDataBlock { nullptr };
 
         inline uint32_t incrementUseCount() const noexcept {
-            return sharedDataBlock->header.useCount.fetch_add(1, std::memory_order_relaxed) + 1;
+            // return sharedDataBlock->header.useCount.fetch_add(1, std::memory_order_relaxed) + 1;
+            return ++sharedDataBlock->header.useCount;
         }
 
         inline uint32_t decrementUseCount() const noexcept {
-            return sharedDataBlock->header.useCount.fetch_sub(1, std::memory_order_relaxed) - 1;
+            // return sharedDataBlock->header.useCount.fetch_sub(1, std::memory_order_relaxed) - 1;
+            return --sharedDataBlock->header.useCount;
         }
 
         // TODO: Rename
@@ -77,6 +80,7 @@ namespace SharedMemoryWrapper
                                 PROT_READ | PROT_WRITE, MAP_SHARED,
                                 handle,
                                 0);
+
             ASSERT_NOT(MAP_FAILED, mappedArea, "mmap");
 
             sharedDataBlock = reinterpret_cast<SharedDataBlock*>(mappedArea);
@@ -142,6 +146,7 @@ namespace SharedMemoryWrapper
                                        O_CREAT | O_RDWR | O_EXCL | O_TRUNC, S_IRWXU | S_IRWXG);
         if (INVALID_HANDLE != sharedData.handle)
         {
+            std::cout << "Block created: " << sharedData.handle << std::endl;
             const int retCode = ::ftruncate(sharedData.handle, sizeof(SharedDataBlock));
             ASSERT_NOT(INVALID_HANDLE, retCode, "ftruncate")
         }
@@ -152,11 +157,13 @@ namespace SharedMemoryWrapper
             } else { // TODO: Use std::source_location
                 throw std::runtime_error("shm_open() failed. Error = " + std::to_string(errno));
             }
+            std::cout << "Block opened: " << sharedData.handle << std::endl;
         }
         ASSERT_NOT(INVALID_HANDLE, sharedData.handle, "shm_open");
 
         sharedData.allocateShared();
-        std::cout << "DEBUG:  [count:" << sharedData.sharedDataBlock->header.useCount.load(std::memory_order::relaxed)
+
+        std::cout << "DEBUG:  [count:" << sharedData.sharedDataBlock->header.useCount
                   << ", handle: " << sharedData.handle
                   << ", sharedDataBlock: " << sharedData.mappedArea << "]\n";
         return sharedData;
@@ -164,15 +171,32 @@ namespace SharedMemoryWrapper
 }
 
 
+namespace SharedMemoryWrapper::Synchronisation
+{
+    struct SharedData
+    {
+        int32_t handle { INVALID_HANDLE };
+        void *mappedArea { nullptr };
+        SharedDataBlock *sharedDataBlock { nullptr };
+    };
+}
+
 namespace SharedMemoryWrapper::Tests
 {
     void Create_And_Close_SingleProcess()
     {
-        SharedData data1 = getSharedData();
+        try {
+            SharedData data1 = getSharedData();
+            ++data1.sharedDataBlock->someTestCounter;
+            std::cout << "Test counter: " << data1.sharedDataBlock->someTestCounter << std::endl;
+        }
+        catch (const std::exception& exc) {
+            std::cerr << exc.what() << std::endl;
+        }
 
-        ++data1.sharedDataBlock->someTestCounter;
-        std::cout << "Test counter: " << data1.sharedDataBlock->someTestCounter << std::endl;
 
+
+        /*
         SharedData data2 = getSharedData();
 
         ++data1.sharedDataBlock->someTestCounter;
@@ -181,7 +205,30 @@ namespace SharedMemoryWrapper::Tests
         SharedData data3 = getSharedData();
 
         ++data1.sharedDataBlock->someTestCounter;
-        std::cout << "Test counter: " << data1.sharedDataBlock->someTestCounter << std::endl;
+        std::cout << "Test counter: " << data1.sharedDataBlock->someTestCounter << std::endl;*/
+    }
+
+
+    void ProcParent()
+    {
+        SharedData data = getSharedData();
+        ++data.sharedDataBlock->someTestCounter;
+        std::this_thread::sleep_for(std::chrono::microseconds (10));
+    }
+
+    void ProcChild()
+    {
+        std::this_thread::sleep_for(std::chrono::microseconds (1));
+        SharedData data = getSharedData();
+        ++data.sharedDataBlock->someTestCounter;
+    }
+
+    void MultiProcessTest()
+    {
+        if (const pid_t pid = fork(); pid == 0)
+            ProcChild();
+        else
+            ProcParent();
     }
 
     void Atomics()
@@ -196,7 +243,7 @@ namespace SharedMemoryWrapper::Tests
 
 void SharedMemoryWrapper::TestAll()
 {
-
-    Tests::Create_And_Close_SingleProcess();
+    // Tests::Create_And_Close_SingleProcess();
+    Tests::MultiProcessTest();
     // Tests::Atomics();
 }
