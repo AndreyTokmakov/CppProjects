@@ -45,7 +45,8 @@ namespace SharedMemoryWrapper
 
     struct SharedDataHeader
     {
-        std::atomic<uint32_t> useCount { 1 };
+        std::atomic<uint32_t> useCount { 0 };
+        //uint32_t useCount { 0 };
     };
 
     struct SharedDataBlock
@@ -57,14 +58,56 @@ namespace SharedMemoryWrapper
     struct SharedData
     {
         int32_t handle { INVALID_HANDLE };
+        void* mappedArea { nullptr };
         SharedDataBlock* sharedDataBlock { nullptr };
 
-        inline uint32_t incrementUseCount() noexcept {
-            return sharedDataBlock->header.useCount.fetch_add(1, std::memory_order_relaxed) + 1;
+        inline uint32_t incrementUseCount() const noexcept {
+            // return sharedDataBlock->header.useCount.fetch_add(1, std::memory_order_relaxed) + 1;
+            return ++sharedDataBlock->header.useCount;
         }
 
-        inline uint32_t decrementUseCount() noexcept {
-            return sharedDataBlock->header.useCount.fetch_sub(1, std::memory_order_relaxed) - 1;
+        inline uint32_t decrementUseCount() const noexcept {
+            // return sharedDataBlock->header.useCount.fetch_sub(1, std::memory_order_relaxed) - 1;
+            return --sharedDataBlock->header.useCount;
+        }
+
+        // TODO: Rename
+        void allocateShared()
+        {
+            /** Create Memory mapping **/
+            mappedArea = ::mmap(nullptr,
+                                sizeof(SharedDataBlock),
+                                PROT_READ | PROT_WRITE, MAP_SHARED,
+                                handle,
+                                0);
+
+            ASSERT_NOT(MAP_FAILED, mappedArea, "mmap");
+
+            sharedDataBlock = reinterpret_cast<SharedDataBlock*>(mappedArea);
+            ASSERT_NOT(nullptr, sharedDataBlock, "reinterpret_cast<SharedDataBlock*>(area)");
+
+            incrementUseCount();
+        }
+
+        void deallocate() const
+        {
+            std::cout << "\tDeallocate mapping [area: " << mappedArea << ", size: " << sizeof(SharedDataBlock) << "]\n";
+            if (RESULT_OK != ::munmap(mappedArea, sizeof(SharedDataBlock))) {
+                error("munmap()");
+            }
+        }
+
+        void closeAndUnlink() const
+        {
+            std::cout << "\tClosing shared memory [handle: " << handle << ", name: " << sharedSegmentName << "]\n";
+            if (RESULT_OK != ::close(handle)) {
+                error("close()");
+            }
+
+            std::cout << "\tUnlink shared memory segment " << sharedSegmentName << std::endl;
+            if (RESULT_OK != ::shm_unlink(sharedSegmentName.data())) {
+                error("shm_unlink()");
+            }
         }
 
         ~SharedData()
@@ -72,18 +115,14 @@ namespace SharedMemoryWrapper
             if (INVALID_HANDLE == handle || nullptr == sharedDataBlock)
                 return;
             const uint32_t count = decrementUseCount();
-            std::cout << "Usage count = " << count << std::endl;
+            std::cout << "~SharedData() [count:" << count << ", handle: " << handle
+                      << ", sharedDataBlock: " << sharedDataBlock << "]\n";
             if (0 == count)
             {
-                std::cout << "Closing shared memory [handle: " << handle << ", name: " << sharedSegmentName << "]\n";
-                if (RESULT_OK != ::close(handle)) {
-                    error("close()");
-                }
-
-                std::cout << "Unlink shared memory segment " << sharedSegmentName << std::endl;
-                if (RESULT_OK != ::shm_unlink(sharedSegmentName.data())) {
-                    error("shm_unlink()");
-                }
+                deallocate();
+                closeAndUnlink();
+                handle = INVALID_HANDLE;
+                sharedDataBlock = nullptr;
             }
         }
 
@@ -105,51 +144,106 @@ namespace SharedMemoryWrapper
         SharedData sharedData;
         sharedData.handle = ::shm_open(sharedSegmentName.data(),
                                        O_CREAT | O_RDWR | O_EXCL | O_TRUNC, S_IRWXU | S_IRWXG);
-        bool existingBlock { false };
         if (INVALID_HANDLE != sharedData.handle)
         {
-            const int retCode = ::ftruncate(sharedData.handle, sizeof(SharedDataHeader));
+            std::cout << "Block created: " << sharedData.handle << std::endl;
+            const int retCode = ::ftruncate(sharedData.handle, sizeof(SharedDataBlock));
             ASSERT_NOT(INVALID_HANDLE, retCode, "ftruncate")
         }
         else
         {
             if (EEXIST == errno) { /** Shared memory already exist. **/
                 sharedData.handle = ::shm_open(sharedSegmentName.data(),O_CREAT | O_RDWR, S_IRWXU | S_IRWXG);
-                existingBlock = true;
             } else { // TODO: Use std::source_location
                 throw std::runtime_error("shm_open() failed. Error = " + std::to_string(errno));
             }
+            std::cout << "Block opened: " << sharedData.handle << std::endl;
         }
         ASSERT_NOT(INVALID_HANDLE, sharedData.handle, "shm_open");
 
-        /** Create Memory mapping **/
-        void *area = ::mmap(nullptr,
-                            sizeof(SharedDataBlock),
-                            PROT_READ | PROT_WRITE, MAP_SHARED,
-                            sharedData.handle,
-                            0);
-        ASSERT_NOT(MAP_FAILED, area, "mmap");
+        sharedData.allocateShared();
 
-        sharedData.sharedDataBlock = reinterpret_cast<SharedDataBlock*>(area);
-        ASSERT_NOT(nullptr, sharedData.sharedDataBlock, "reinterpret_cast<SharedDataBlock*>(area)");
-
-        sharedData.incrementUseCount();
+        std::cout << "DEBUG:  [count:" << sharedData.sharedDataBlock->header.useCount
+                  << ", handle: " << sharedData.handle
+                  << ", sharedDataBlock: " << sharedData.mappedArea << "]\n";
         return sharedData;
+    }
+}
+
+
+namespace SharedMemoryWrapper::Synchronisation
+{
+    struct SharedData
+    {
+        int32_t handle { INVALID_HANDLE };
+        void *mappedArea { nullptr };
+        SharedDataBlock *sharedDataBlock { nullptr };
+    };
+}
+
+namespace SharedMemoryWrapper::Tests
+{
+    void Create_And_Close_SingleProcess()
+    {
+        try {
+            SharedData data1 = getSharedData();
+            ++data1.sharedDataBlock->someTestCounter;
+            std::cout << "Test counter: " << data1.sharedDataBlock->someTestCounter << std::endl;
+        }
+        catch (const std::exception& exc) {
+            std::cerr << exc.what() << std::endl;
+        }
+
+
+
+        /*
+        SharedData data2 = getSharedData();
+
+        ++data1.sharedDataBlock->someTestCounter;
+        std::cout << "Test counter: " << data1.sharedDataBlock->someTestCounter << std::endl;
+
+        SharedData data3 = getSharedData();
+
+        ++data1.sharedDataBlock->someTestCounter;
+        std::cout << "Test counter: " << data1.sharedDataBlock->someTestCounter << std::endl;*/
+    }
+
+
+    void ProcParent()
+    {
+        SharedData data = getSharedData();
+        ++data.sharedDataBlock->someTestCounter;
+        std::this_thread::sleep_for(std::chrono::microseconds (10));
+    }
+
+    void ProcChild()
+    {
+        std::this_thread::sleep_for(std::chrono::microseconds (1));
+        SharedData data = getSharedData();
+        ++data.sharedDataBlock->someTestCounter;
+    }
+
+    void MultiProcessTest()
+    {
+        if (const pid_t pid = fork(); pid == 0)
+            ProcChild();
+        else
+            ProcParent();
+    }
+
+    void Atomics()
+    {
+        std::atomic<uint32_t> counter {0};
+        std::cout << counter.fetch_add(1, std::memory_order_relaxed) << std::endl;
+        std::cout << counter.load(std::memory_order_relaxed) << std::endl;
+        std::cout << counter.fetch_sub(1, std::memory_order_relaxed) << std::endl;
+        std::cout << counter.load(std::memory_order_relaxed) << std::endl;
     }
 }
 
 void SharedMemoryWrapper::TestAll()
 {
-
-    SharedData data1 = getSharedData();
-    SharedData data2 = getSharedData();
-    SharedData data3 = getSharedData();
-
-    /*
-    std::atomic<uint32_t> counter {0};
-    std::cout << counter.fetch_add(1, std::memory_order_relaxed) << std::endl;
-    std::cout << counter.load(std::memory_order_relaxed) << std::endl;
-    std::cout << counter.fetch_sub(1, std::memory_order_relaxed) << std::endl;
-    std::cout << counter.load(std::memory_order_relaxed) << std::endl;
-    */
+    // Tests::Create_And_Close_SingleProcess();
+    Tests::MultiProcessTest();
+    // Tests::Atomics();
 }

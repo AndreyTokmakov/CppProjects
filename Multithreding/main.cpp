@@ -22,6 +22,7 @@
 #include "ThreadPoolBlocking/ThreadPoolBlocking.h"
 #include "ThreadPoolLimited/ThreadPoolLimited.h"
 #include "Atomic/Atomic.h"
+#include "Atomic/Atomic_Bool.h"
 #include "Atomic/Atomic_MemoryOrder.h"
 #include "Atomic/AtomicFlag.h"
 #include "Atomic/Atomic_CompareExchange.h"
@@ -63,6 +64,7 @@ int main([[maybe_unused]] int argc,
 
     // Atomic::TestAll();
     // AtomicFlag::TestAll();
+    Atomic_Bool::TestAll();
     // Atomic_MemoryOrder::TestAll();
     // Atomic_CompareExchange::TestAll();
     // Atomic_IsLockFree::TestAll();
@@ -88,7 +90,7 @@ int main([[maybe_unused]] int argc,
 
     // SpinLock::TestAll();
 
-    StoppingThreads::TestAll();
+    // StoppingThreads::TestAll();
 
     // ThreadPools::TEST_ALL();
     // ThreadPoolBlocking::TEST_ALL();

@@ -20,6 +20,7 @@ add_executable(${PROJECT_NAME}
         Atomic/Atomic_CompareExchange.cpp Atomic/Atomic_CompareExchange.h
         Atomic/Atomic_IsLockFree.cpp Atomic/Atomic_IsLockFree.h
         Atomic/AtomicPerformanceTests.cpp Atomic/AtomicPerformanceTests.h
+        Atomic/Atomic_Bool.cpp Atomic/Atomic_Bool.h
         Barrier/Barrier.cpp Barrier/Barrier.h
         CallOnce/CallOnce.cpp CallOnce/CallOnce.h
         ConditionVariable/ConditionVariable.cpp ConditionVariable/ConditionVariable.h
