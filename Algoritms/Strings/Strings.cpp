@@ -518,7 +518,8 @@ namespace Strings
     }
 }
 
-namespace Strings {
+namespace Strings
+{
     void _removeDuplicates(std::string &text) {
         char tmp[256] = {0};
         size_t u_index = 0;
@@ -547,8 +548,8 @@ namespace Strings {
     void _removeDuplicates3(std::string &text) {
         size_t index = 0;
         for (char tmp[256]{0}; char c : text)
-        if (0 == tmp[c]++)
-            text[index++] = c;
+            if (0 == tmp[c]++)
+                text[index++] = c;
         text.resize(index);
     }
 
@@ -616,23 +617,40 @@ namespace Strings {
             std::cout << text << std::endl;
         }
     }
+}
 
-    //--------------------------------------------------------------------------------------//
-
-    void reverse_string(std::string &str) {
+namespace Strings
+{
+    void reverse_string(std::string &str)
+    {
         for (size_t idx = 0, size = str.size(); idx < size / 2; ++idx)
             std::swap(str[idx], str[size - idx - 1]);
     }
 
-    void ReverseString() {
-        std::string text{"123456789"};
-        reverse_string(text);
-
-        std::cout << text << std::endl;
+    void reverse_string_good(std::string &str)
+    {
+        for (size_t front = 0, end = str.size() - 1; end >= front; ++front, --end)
+            std::swap(str[front], str[end]);
     }
 
-    //--------------------------------------------------------------------------------------//
+    void ReverseString()
+    {
+        {
+            std::string text{"123456789"};
+            reverse_string(text);
+            std::cout << text << std::endl;
+        }
+        {
+            std::string text{"123456789"};
+            reverse_string_good(text);
+            std::cout << text << std::endl;
+        }
 
+    }
+}
+
+namespace Strings
+{
     bool _is_K_rotate_equals(const std::string &str1, const std::string &str2, size_t K) {
         for (size_t pos = 0; pos < str1.size(); pos++, K++)
             if (str2[K % str1.size()] != str1[pos])
@@ -2426,7 +2444,7 @@ void Strings::TestAll()
     // Strings::Atoi_Extended();
     // Strings::StrLen();
 
-    // Strings::ReverseString();
+    Strings::ReverseString();
     // Strings::RotateString();
 
     // Strings::Reverse_Words_in_String();
@@ -2473,7 +2491,7 @@ void Strings::TestAll()
     // Strings::LongestSubstringWithoutRepeatingCharacters();
     // Strings::LongestSubstringWithoutRepeatingCharacters2();
     // Strings::Find_LongestSubstring_With_K_DistinctCharacters();
-    Strings::MaxSubstringLength_Of_K_max_Unique_Elements();
+    // Strings::MaxSubstringLength_Of_K_max_Unique_Elements();
     // Strings::LongestConsecutiveCharacters();
 
 
