@@ -645,7 +645,6 @@ namespace Strings
             reverse_string_good(text);
             std::cout << text << std::endl;
         }
-
     }
 }
 
