@@ -774,10 +774,10 @@ namespace WaitFree
     }
 }
 
+
 void Multithreading::TestAll()
 {
-    Queue::TestAll();
-
+    //  Queue::TestAll();
 
     // WaitFree::Test();
 

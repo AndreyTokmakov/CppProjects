@@ -34,6 +34,7 @@ add_executable(${PROJECT_NAME}
         Collections/Queue.cpp Collections/Queue.h
         Collections/BlockingQueue.cpp Collections/BlockingQueue.h
         Collections/SingleConsumerProducerQueue.cpp Collections/SingleConsumerProducerQueue.h
+        Collections/Single_ConsumerProducerQueue_Two.cpp Collections/Single_ConsumerProducerQueue_Two.h
         Multithreading_Communication/Multithreading_Communication.cpp Multithreading_Communication/Multithreading_Communication.h
         Multithreading_Performance/Multithreading_Performance.cpp Multithreading_Performance/Multithreading_Performance.h
         PackagedTask/PackagedTask.cpp PackagedTask/PackagedTask.h

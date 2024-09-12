@@ -47,6 +47,7 @@
 #include "Collections/BlockingQueue.h"
 #include "Collections/LockFreeQueue.h"
 #include "Collections/SingleConsumerProducerQueue.h"
+#include "Collections/Single_ConsumerProducerQueue_Two.h"
 #include "Multithreading_Performance/Multithreading_Performance.h"
 #include "Barrier/Barrier.h"
 #include "FalseSharing/FalseSharingExperiments.h"
@@ -64,7 +65,7 @@ int main([[maybe_unused]] int argc,
 
     // Atomic::TestAll();
     // AtomicFlag::TestAll();
-    Atomic_Bool::TestAll();
+    // Atomic_Bool::TestAll();
     // Atomic_MemoryOrder::TestAll();
     // Atomic_CompareExchange::TestAll();
     // Atomic_IsLockFree::TestAll();
@@ -109,6 +110,7 @@ int main([[maybe_unused]] int argc,
 
     // Multithreading_Collections::TestAll();
     // SingleConsumerProducerQueue::TestAll();
+    Single_ConsumerProducerQueue_Two::TestAll();
     // Queue::TestAll();
     // BlockingQueue::TestAll();
     // LockFreeQueue::TEST_ALL()
