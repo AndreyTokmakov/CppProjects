@@ -50,6 +50,7 @@ Description : Software design patterns C++ test project
 #include "LazyInitialization/LazyInitialization.h"
 #include "MVC/ModelViewController.h"
 #include "DependencyInjection/DependencyInjection.h"
+#include "TypeID/TypeID.h"
 
 
 int main([[maybe_unused]]  int argc,
@@ -89,7 +90,7 @@ int main([[maybe_unused]]  int argc,
     // Interpreter::Test();
     // Mediator::TestAll();
     // Memento::TestAll();
-    Observer::TestAll();
+    // Observer::TestAll();
     // State::TestAll();
     // TemplateMethod::TestAll();
     // Visitor::test();
@@ -103,6 +104,7 @@ int main([[maybe_unused]]  int argc,
     // CopyAndSwap::TEST_ALL();   ---- TESTs
     // TagDispatching::Test();
     // VirtualConstructor::Test();
+    TypeID::TestAll();
 
 
     // ExecutorAdapter::TestAll();

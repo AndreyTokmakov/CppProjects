@@ -33,7 +33,9 @@ add_executable(${PROJECT_NAME}
 		Observer/Observer.cpp Observer/Observer.h
 		Prototype/Prototype.cpp Prototype/Prototype.h
 		Proxy/Document.cpp Proxy/CarProxy.cpp Proxy/Proxy.h
+		Prototype/PrototypeDemoTwo.cpp
 		Proxy/Subject.cpp
+		Proxy/DatabaseProxy.cpp
 		RAII/RAII.cpp
 		Singleton/Singleton.cpp Singleton/Singleton.h Singleton/SingletonCRTP.cpp
 		ExecutorAdapter/ExecutorAdapter.cpp ExecutorAdapter/ExecutorAdapter.h
@@ -71,8 +73,9 @@ add_executable(${PROJECT_NAME}
 		DependencyInjection/DependencyInjection.h
 		Adapter/ChargingPhoneAdapter.cpp Adapter/ChargingPhoneAdapter.cpp
 		Decorator/WindowDecorator.cpp CRTP/CRTP_Cloneable.cpp CRTP/CRTP_Cloneable.h
-        Prototype/PrototypeDemoTwo.cpp
-		Proxy/DatabaseProxy.cpp
+        TypeID/TypeID.cpp
+
+
 )
 
 # Link libraries to the project/executable

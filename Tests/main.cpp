@@ -1210,68 +1210,74 @@ namespace LookUpTests
 
 };
 
-struct TypeTeller
+namespace Types_Experiments
 {
-    void operator()(this auto&& self)
+    struct TypeExplorer
     {
-        using SelfType = decltype(self);
-        using UnrefSelfType = std::remove_reference_t<SelfType>;
-        if constexpr (std::is_lvalue_reference_v<SelfType>)
+        void operator()(this auto&& self)
         {
-            if constexpr (std::is_const_v<UnrefSelfType>)
-                std::cout << "const lvalue\n";
+            using SelfType = decltype(self);
+            using UnrefSelfType = std::remove_reference_t<SelfType>;
+            if constexpr (std::is_lvalue_reference_v<SelfType>)
+            {
+                if constexpr (std::is_const_v<UnrefSelfType>)
+                    std::cout << "const lvalue\n";
+                else
+                    std::cout << "mutable lvalue\n";
+            }
             else
-                std::cout << "mutable lvalue\n";
+            {
+                if constexpr (std::is_const_v<UnrefSelfType>)
+                    std::cout << "const rvalue\n";
+                else
+                    std::cout << "mutable rvalue\n";
+            }
         }
-        else
+    };
+
+
+
+    struct TypeIdCnt
+    {
+        template<typename>
+        static uint32_t GetUniqueId()
         {
-            if constexpr (std::is_const_v<UnrefSelfType>)
-                std::cout << "const rvalue\n";
-            else
-                std::cout << "mutable rvalue\n";
+            static const uint32_t TypeId = NewTypeId();
+            return TypeId;
         }
+
+    private:
+
+        static uint32_t NewTypeId()
+        {
+            static std::atomic<uint32_t> CurrentId = 0;
+            return CurrentId++;
+        }
+    };
+
+    template<typename T>
+    static uint32_t GetTypeId()
+    {
+        return TypeIdCnt::GetUniqueId<T>();
+    }
+
+    struct A {};
+    struct B {};
+    struct C: A {};
+
+    void Test_Get_TypeID()
+    {
+        std::cout << "int   = " << GetTypeId<int>() << std::endl;
+        std::cout << "short = " << GetTypeId<short>() << std::endl;
+        std::cout << "char  = " << GetTypeId<char>() << std::endl;
+        std::cout << "int   = " << GetTypeId<int>() << std::endl;
+        std::cout << "A     = " << GetTypeId<A>() << std::endl;
+        std::cout << "B     = " << GetTypeId<B>() << std::endl;
+        std::cout << "C     = " << GetTypeId<C>() << std::endl;
+        std::cout << "A     = " << GetTypeId<A>() << std::endl;
     }
 };
 
-
-namespace DeducingThis
-{
-    struct X_implicit
-    {
-        void foo() &{};
-        void foo() const &{};
-        void bar() &&{};
-    };
-
-    struct X_explicit
-    {
-        void foo(this auto &) {};
-        void foo(this auto const &) {};
-        void bar(this auto &&) {};
-    };
-
-    struct CRTP_TestClass
-   {
-        template<typename Self>
-        void bar(this Self &&s) {
-            std::forward<Self>(s).foo();
-        }
-
-        void foo() && { std::cout << "foo &&" << std::endl; }
-        void foo() &  { std::cout << "foo & " << std::endl; }
-    };
-
-    CRTP_TestClass foo() {
-        return {};
-    }
-
-    void CRTP_Test()
-    {
-        foo().bar();
-        auto a = foo();
-        a.bar();
-    }
-}
 
 
 int main([[maybe_unused]] int argc,
@@ -1284,13 +1290,7 @@ int main([[maybe_unused]] int argc,
 
     // LookUpTests::Unexpected_Method_Call_Resolution();
 
-    // DeducingThis::CRTP_Test();
-
-
-    const std::deque<int> * deque_inst = new std::deque<int>{1, 2, 3, 4, 5};
-
-    std::cout << (*deque_inst)[3] << std::endl;
-    std::cout << deque_inst->operator[](3)<< std::endl;
+    Types_Experiments::Test_Get_TypeID();
 
 
 
