@@ -974,19 +974,32 @@ namespace Lambdas::Tests {
 	}
 
 
-	void LAMBDA_CONCEPT() {
 
-		auto sum1 = []<std::integral T> (T a, T b) -> T { return a + b; };
-		// auto sum2 = [](T a, T b)  requires std::integral<T> { return a + b; };
+}
 
-		auto a = sum1(1, 2);
-		std::cout << a << std::endl;
+namespace Lambdas::Concepts
+{
+    void Using_Existing_STD_Concepts()
+    {
+        auto sum1 = []<std::integral T> (T a, T b) -> T { return a + b; };
+        // auto sum2 = [](T a, T b)  requires std::integral<T> { return a + b; };
+
+        std::integral auto a = sum1(1, 2);
+        std::cout << a << std::endl;
 #if 0
-		auto a = sum1(1.3, 2);
+        auto a = sum1(1.3, 2);
 #endif
+    }
 
+    void Using_Required_Keyword()
+    {
+        auto sum = []<typename T> requires std::integral<T> (const T& a, const T& b) {
+            return a + b;
+        };
 
-	}
+        std::cout << sum(1, 2) << std::endl;
+        // std::cout << sum(1, 2.1) << std::endl;
+    }
 }
 
 namespace Lambdas::Constexpr_Constevel_Lambda {
@@ -1068,7 +1081,11 @@ void Lambdas::TestAll()
 	// Tests::_TEST_();
 	// Tests::TYPE_TEST_();
 	// Tests::VECTOR_OF_LAMBDAS();
-	// Tests::LAMBDA_CONCEPT();
+
+
+    Concepts::Using_Existing_STD_Concepts();
+    Concepts::Using_Required_Keyword();
+
 
 	// High_Order_Function::PredicateComposition_WhenAll();
 	// High_Order_Function::PredicateComposition_WhenAll_Concepts();

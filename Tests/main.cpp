@@ -1235,49 +1235,21 @@ namespace Types_Experiments
         }
     };
 
-
-
-    struct TypeIdCnt
-    {
-        template<typename>
-        static uint32_t GetUniqueId()
-        {
-            static const uint32_t TypeId = NewTypeId();
-            return TypeId;
-        }
-
-    private:
-
-        static uint32_t NewTypeId()
-        {
-            static std::atomic<uint32_t> CurrentId = 0;
-            return CurrentId++;
-        }
-    };
-
-    template<typename T>
-    static uint32_t GetTypeId()
-    {
-        return TypeIdCnt::GetUniqueId<T>();
-    }
-
-    struct A {};
-    struct B {};
-    struct C: A {};
-
-    void Test_Get_TypeID()
-    {
-        std::cout << "int   = " << GetTypeId<int>() << std::endl;
-        std::cout << "short = " << GetTypeId<short>() << std::endl;
-        std::cout << "char  = " << GetTypeId<char>() << std::endl;
-        std::cout << "int   = " << GetTypeId<int>() << std::endl;
-        std::cout << "A     = " << GetTypeId<A>() << std::endl;
-        std::cout << "B     = " << GetTypeId<B>() << std::endl;
-        std::cout << "C     = " << GetTypeId<C>() << std::endl;
-        std::cout << "A     = " << GetTypeId<A>() << std::endl;
-    }
 };
 
+
+template <typename Ret>
+auto validated = []<typename ... Types>(Types&& ... vals) {
+    return [...validators=std::forward<Types>(vals)]<typename...Args>(Args&&...args)
+    -> std::optional<Ret> {
+        if ((validators(args...) && ...)) {
+            return std::optional { Ret { std::forward<Args>(args)... } };
+        }
+        else {
+            return std::nullopt;
+        }
+    };
+};
 
 
 int main([[maybe_unused]] int argc,
@@ -1290,8 +1262,24 @@ int main([[maybe_unused]] int argc,
 
     // LookUpTests::Unexpected_Method_Call_Resolution();
 
-    Types_Experiments::Test_Get_TypeID();
 
+    auto password_validator = validated<std::string>(
+            [](std::string_view sv){
+                std::cout << "-1-" << std::endl;
+                return sv.size() >= 10;
+            },
+            [](std::string_view sv){
+                std::cout << "-2-" << std::endl;
+                return sv.find_first_of("0123456789") != std::string_view::npos;
+            },
+            [](std::string_view sv){
+                std::cout << "-3-" << std::endl;
+                return sv.find_first_of("!@#$%^&*()_-+=") != std::string_view::npos;
+            }
+    );
+
+    std::cout << password_validator("abcdefghj$1").value_or("Password error") << std::endl;
+    std::cout << password_validator("1abcdefghj$1").value_or("Password error") << std::endl;
 
 
     // MoveExperiments::MoveStringToArray_Segfault();
