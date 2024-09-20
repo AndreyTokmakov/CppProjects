@@ -73,16 +73,21 @@ namespace Date_Time_Chrono
 
 namespace Date_Time_Chrono::TimeToString
 {
-    std::string getCurrentTime() noexcept
+    constexpr char FORMAT[] { "%d-%02d-%02d %02d:%02d:%02d.%06ld" };
+
+    std::string getCurrentTime(const time_point<system_clock>& timestamp = system_clock::now()) noexcept
     {
-        const std::chrono::time_point now { std::chrono::system_clock::now() };
-        const time_t in_time_t { std::chrono::system_clock::to_time_t(std::chrono::system_clock::now()) };
-        const std::chrono::duration nowMs = std::chrono::duration_cast<std::chrono::microseconds>(
-                now.time_since_epoch()) % 1000000;
-        std::stringstream ss;
-        ss << std::put_time(std::localtime(&in_time_t), "%a %b %d %Y %T")
-           << '.' << std::setfill('0') << std::setw(6) << nowMs.count();
-        return ss.str();
+        const time_t time { std::chrono::system_clock::to_time_t(timestamp) };
+        std::tm tm {};
+        ::localtime_r(&time, &tm);
+
+        std::string buffer(64, '\0');
+        const int32_t size = std::sprintf(buffer.data(), FORMAT,
+                     tm.tm_year + 1900, tm.tm_mon + 1, tm.tm_mday, tm.tm_hour, tm.tm_min, tm.tm_sec,
+                     duration_cast<microseconds>(timestamp - time_point_cast<seconds>(timestamp)).count());
+        buffer.resize(size);
+        buffer.shrink_to_fit();
+        return buffer;
     }
 
     std::string getDaytimeString()
@@ -125,7 +130,7 @@ void Date_Time_Chrono::TestAll()
     // ChronoTests();
     // Year_Month_Day_Test();
     // Year_Month_Day_Test_2();
-    // TimeToString::Test();
+    TimeToString::Test();
     // Experiments::test();
 
 
@@ -146,17 +151,4 @@ void Date_Time_Chrono::TestAll()
     */
 
 
-    using namespace std::chrono;
-    // Get current time with precision of milliseconds | time_point<system_clock, milliseconds>
-    const system_clock::time_point currentTime = system_clock::now();
-
-    const int64_t integral_duration = currentTime.time_since_epoch().count();
-
-    const system_clock::time_point currentTimeNew { system_clock::duration { integral_duration } };
-
-    // test
-    if (currentTimeNew != currentTime)
-        std::cout << "Failure." << std::endl;
-    else
-        std::cout << "Success." << std::endl;
 }
