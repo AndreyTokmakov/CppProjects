@@ -123,7 +123,7 @@ int main([[maybe_unused]] int argc,
     // Format::TestAll();
     // FunctionObjects::TestAll();
     // Hashing::TestAll();
-    // Lambdas::TestAll();
+    Lambdas::TestAll();
     // LifetimeExtension::TestAll();
     // Locale::TestAll();
     // Literals::TestAll();
