@@ -129,12 +129,34 @@ void Date_Time_Chrono::TestAll()
     // Experiments::test();
 
 
-    const std::time_t t = std::time(nullptr);
-    const tm* timeInfo = std::localtime(&t);
+    /*
 
-    std::cout << sizeof (t) << std::endl;
+    const std::chrono::system_clock::time_point currentTime = std::chrono::system_clock::now();
+    const time_t time = std::chrono::system_clock::to_time_t(currentTime);
 
-    // std::string_view strTime(asctime(timeInfo));
-    // strTime.remove_suffix(1);
-    // std::cout << strTime << std::endl;
+    std::cout << "now (time_point)       : " << currentTime << std::endl;
+    std::cout << "now (time_since_epoch) : " << currentTime.time_since_epoch() << std::endl;
+    std::cout << "now (uint64_t)         : " << currentTime.time_since_epoch().count() << std::endl;
+    std::cout << "time (time_t)          : " << time << std::endl;
+
+    const std::chrono::duration<int64_t> duration { currentTime.time_since_epoch().count() };
+    const std::chrono::time_point<std::chrono::system_clock> currentTimeNew (duration);
+
+    std::cout << "now (time_point) (new) : " << currentTimeNew << std::endl;
+    */
+
+
+    using namespace std::chrono;
+    // Get current time with precision of milliseconds | time_point<system_clock, milliseconds>
+    const system_clock::time_point currentTime = system_clock::now();
+
+    const int64_t integral_duration = currentTime.time_since_epoch().count();
+
+    const system_clock::time_point currentTimeNew { system_clock::duration { integral_duration } };
+
+    // test
+    if (currentTimeNew != currentTime)
+        std::cout << "Failure." << std::endl;
+    else
+        std::cout << "Success." << std::endl;
 }

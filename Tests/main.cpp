@@ -1279,6 +1279,15 @@ namespace Types_Experiments
 };
 
 
+std::string getTimeString()
+{
+    std::string timeStr(16, '\0');
+    const std::time_t time = std::time(nullptr);
+    const size_t len = std::strftime(&timeStr[0], timeStr.size(), "%Y%m%d_%H%M%S", std::localtime(&time));
+    timeStr.resize(len);
+    return timeStr;
+}
+
 
 int main([[maybe_unused]] int argc,
          [[maybe_unused]] char** argv)
@@ -1290,7 +1299,7 @@ int main([[maybe_unused]] int argc,
 
     // LookUpTests::Unexpected_Method_Call_Resolution();
 
-    Types_Experiments::Test_Get_TypeID();
+    // Types_Experiments::Test_Get_TypeID();
 
 
 
@@ -1337,7 +1346,7 @@ int main([[maybe_unused]] int argc,
     // ConstexprMap::TestAll();
     // DebugLogger::TestAll();
     // DesignPatterns::TestAll();
-    // Date_Time_Chrono::TestAll();
+    Date_Time_Chrono::TestAll();
     // Heap::TestAll();
     // Iterators::TestAll();
     // Files::TestAll();

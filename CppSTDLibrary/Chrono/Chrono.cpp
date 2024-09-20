@@ -875,6 +875,27 @@ namespace Chrono::Parse
     }
 }
 
+
+namespace Chrono::Cast_Conversation
+{
+    void TimePoint_to_Long_and_Back()
+    {
+        using namespace std::chrono;
+
+        // Get current time with precision of milliseconds | time_point<system_clock, milliseconds>
+        const system_clock::time_point currentTime = system_clock::now();
+
+        const int64_t integral_duration = currentTime.time_since_epoch().count();
+        const system_clock::time_point currentTimeNew { system_clock::duration { integral_duration } };
+
+        // test
+        if (currentTimeNew != currentTime)
+            std::cout << "Failure." << std::endl;
+        else
+            std::cout << "Success." << std::endl;
+    }
+}
+
 void Chrono::TestAll()
 {
     // CurrentTime::Asctime();
@@ -910,16 +931,16 @@ void Chrono::TestAll()
     // StringFormat::Format3();
     // StringFormat::StringToTime();
 
+    Cast_Conversation::TimePoint_to_Long_and_Back();
+
     // FunctionPerformance::GetCurrentTime_Performance();
     // FunctionPerformance::TestGetCurrentTimeFunctions();
-
 
     // TimeZones::Test();
     // TimeZones::Get_Time_Zone_By_Name();
     // TimeZones::Zones_Tests();
 
-
-    Parse::SimpleTest();
+    // Parse::SimpleTest();
 
     // Steady_clock();
     // Clock_Test();

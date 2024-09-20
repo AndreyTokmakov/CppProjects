@@ -224,6 +224,12 @@ void Strings::TestAll()
     // UtilitiesTests::Random_String();
 
 
+    std::string order { R"({"type": "notification", "status": "NEW"})" };
+
+    order.replace(order.find(R"("NEW")"),5, R"("N1EW")");
+
+    std::cout <<order << std::endl;
+
 
     /*
     auto getStr = [](const std::string& str) {

@@ -745,7 +745,7 @@ namespace Strings
     }
 
     void MoveZerosToEnd() {
-        for (const std::string &testStr: {"a0b0c0d0e"}) {
+        for (const std::string &testStr: {"1001"}) {
             {
                 auto s{testStr};
                 _move_zeros_to_end(s);
@@ -1548,7 +1548,8 @@ namespace Strings
 
     //--------------------------------------------------------------------------------------//
 
-    void Remove_Add_Chars() {
+    void Remove_Add_Chars()
+    {
         std::string text = "a1b2a3b4a5b6232323";
 
         size_t pos = 0;
@@ -1576,13 +1577,15 @@ namespace Strings
 
     // ERROR: if  text = "dcbefebcfe", mask = "fd" we have resul = 'dcbefebcf' instread 'dcbef'
     std::string _minimum_length_substrings(const std::string& text,
-                                           const std::string& mask) {
+                                           const std::string& mask)
+    {
         size_t chars[256] = { 0 };
         for (size_t pos = 0; pos < text.length(); pos++)
             chars[text[pos]] = pos + 1;
 
         size_t start = text.length(), end = 0;
-        for (char c : mask) {
+        for (const char c : mask)
+        {
             if (0 == chars[c])
                 return "";
             start = std::min(chars[c], start);
@@ -1591,7 +1594,9 @@ namespace Strings
         return text.substr(start - 1, end - start + 1);
     }
 
-    std::string _minimum_length_substrings_2(const std::string& text, const std::string& mask) {
+    std::string _minimum_length_substrings_2(const std::string& text,
+                                             const std::string& mask)
+    {
         // Hask map of elements in MASK
         size_t mask_chars[256] = { 0 };
         for (char c : mask)
@@ -2151,7 +2156,7 @@ namespace Strings
         return std::string{words[longestIdx]};
     }
 
-    std::string longest_word_fast(const std::string& input)
+    std::string longest_word_fast(const std::string& inp ut)
     {
         uint32_t startMax {0}, endMax {0}, prev {0}, idx {};
         for (; idx < input.size(); ++idx) {
@@ -2443,7 +2448,7 @@ void Strings::TestAll()
     // Strings::Atoi_Extended();
     // Strings::StrLen();
 
-    Strings::ReverseString();
+    // Strings::ReverseString();
     // Strings::RotateString();
 
     // Strings::Reverse_Words_in_String();
@@ -2465,7 +2470,7 @@ void Strings::TestAll()
 
     // Strings::MoveCharsToEnd();
     // Strings::MoveZerosToEnd();
-    // Strings::Remove_Add_Chars();
+    Strings::Remove_Add_Chars();
     // Strings::RemoveDuplicates();
     // Strings::RemoveCharsOfOneString_FromAnother();
 
