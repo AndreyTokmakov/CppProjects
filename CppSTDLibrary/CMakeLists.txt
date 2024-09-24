@@ -1,7 +1,9 @@
 cmake_minimum_required(VERSION 3.16)
 project(CppSTDLibrary)
 
-set(CMAKE_CXX_STANDARD 23)
+set(CMAKE_CXX_STANDARD 26)
+# add_compile_options(-c -Wall -Wextra -O3 -std=c++26)
+add_compile_options(-c -Wall -O3 -std=c++26)
 
 add_executable(${PROJECT_NAME}
         main.cpp

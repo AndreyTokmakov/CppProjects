@@ -19,7 +19,6 @@ Description : Tests C++ project
 #include <ranges>
 #include <cassert>
 #include <condition_variable>
-
 #include <exception>
 #include <thread>
 #include <future>
@@ -27,10 +26,8 @@ Description : Tests C++ project
 #include <syncstream>
 #include <utility>
 #include <format>
-
 #include <numeric>
 #include <queue>
-
 #include <utility>
 #include <vector>
 #include <any>
@@ -55,9 +52,6 @@ Description : Tests C++ project
 
 #include <experimental/socket>
 #include <experimental/scope>
-
-/** Reflections **/
-// #include <experimental/meta>
 
 #include "Algorithms/Algorithms.h"
 #include "BinManipulation/BinManipulation.h"
@@ -1279,13 +1273,81 @@ namespace Types_Experiments
 };
 
 
-std::string getTimeString()
+#if 0
+/** Reflections **/
+// #include <experimental/meta>
+
+namespace Reflections
 {
-    std::string timeStr(16, '\0');
-    const std::time_t time = std::time(nullptr);
-    const size_t len = std::strftime(&timeStr[0], timeStr.size(), "%Y%m%d_%H%M%S", std::localtime(&time));
-    timeStr.resize(len);
-    return timeStr;
+    enum class Color {
+        Red,
+        Green,
+        Blue
+    };
+
+    template<typename E> requires std::is_enum_v<E>
+    constexpr std::string enum_to_string_1(E value)
+    {
+        std::string result = "<unnamed>";
+
+        [:expand(std::meta::enumerators_of(^E)):] >> [&]<auto e>{
+            if (value == [:e:]) {
+                result = std::meta::identifier_of(e);
+            }
+        };
+        return result;
+    }
+
+    template <typename E>
+    requires std::is_enum_v<E>
+    constexpr std::optional<E> string_to_enum_2(std::string_view name)
+    {
+        template for (constexpr auto e : std::meta::enumerators_of(^E)) {
+            if (name == std::meta::identifier_of(e)) {
+                return [:e:];
+            }
+        }
+        return std::nullopt;
+    }
+
+    void EnumToString()
+    {
+        std::cout << "enum_to_string(Color::red): " << enum_to_string_1(Color::Red) << '\n';
+        std::cout << "enum_to_string(Color::red): " << enum_to_string_2(Color::Red) << '\n';
+    }
+}
+
+#endif
+
+
+namespace ADL_LookUp::Function_Templates
+{
+
+    template<typename T>
+    void funk(T v)
+    {
+        std::cout << __PRETTY_FUNCTION__ << std::endl;
+    }
+
+    void funk(int v)
+    {
+        std::cout << __PRETTY_FUNCTION__ << std::endl;
+    }
+
+
+    void funk(int* v)
+    {
+        std::cout << __PRETTY_FUNCTION__ << std::endl;
+    }
+
+    void Template_vs_Int_Parameter()
+    {
+        int v { 123 };
+        funk(v);
+        funk(&v);
+
+        funk("");
+    }
 }
 
 
@@ -1296,11 +1358,10 @@ int main([[maybe_unused]] int argc,
 
     // WrapperTests::Test();
     // StaticCounter::Test();
-
     // LookUpTests::Unexpected_Method_Call_Resolution();
-
     // Types_Experiments::Test_Get_TypeID();
 
+    ADL_LookUp::Function_Templates::Template_vs_Int_Parameter();
 
 
     // MoveExperiments::MoveStringToArray_Segfault();
@@ -1308,18 +1369,13 @@ int main([[maybe_unused]] int argc,
     // MoveExperiments::test_overload();
 
     // FindMinMaxValues::TestAll();
-
     // LockFreeQueue::Test();
-
     // ScopeExit::ScopeExit();
-
     // UBBook::Test();
-
     // PipelineOperator::SimplePipeTest();
-
     // StringTest_SSO::Tests();
-
     // Enums::Tests();
+
 
     /** * * * * *  Move to lib * * * * * **/
 
@@ -1346,7 +1402,7 @@ int main([[maybe_unused]] int argc,
     // ConstexprMap::TestAll();
     // DebugLogger::TestAll();
     // DesignPatterns::TestAll();
-    Date_Time_Chrono::TestAll();
+    // Date_Time_Chrono::TestAll();
     // Heap::TestAll();
     // Iterators::TestAll();
     // Files::TestAll();

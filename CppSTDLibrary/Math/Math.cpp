@@ -8,13 +8,17 @@
 //============================================================================
 
 #include "Math.h"
-#include <math.h>
+#include <cmath>
 
 #include <iostream>
 #include <string>
 #include <string_view>
 #include <array>
 #include <iomanip>
+#include <climits>
+#include <limits>
+#include <numeric>
+
 
 namespace Math {
 
@@ -556,9 +560,37 @@ namespace Math::Types {
 
         std::cout << quat << std::endl;
     }
-
 }
 
+
+namespace Math
+{
+    void Saturated_Operations()
+    {
+        constexpr int a = std::add_sat(3, 4); /// NO saturation occurs, T = int
+        static_assert(a == 7);
+
+        constexpr uint8_t b = std::add_sat<uint8_t>(UCHAR_MAX, 4); /// saturated
+        static_assert(b == std::numeric_limits<uint8_t>::max());
+
+        constexpr uint8_t c = std::add_sat(UCHAR_MAX, 4); /// NOT saturated, T = int
+        // add_sat(int, int) returns int tmp == 259, then assignment truncates 259 % 256 == 3
+        static_assert(c == 3);
+
+        //  unsigned char d = std::add_sat(252, c); // Error: inconsistent deductions for T
+
+        constexpr uint8_t e = std::add_sat<uint8_t>(251, a); /// saturated
+        static_assert(e == std::numeric_limits<uint8_t>::max());
+        // 251 is of type T = unsigned char, `a` is converted to unsigned char value;
+        // might yield an int -> unsigned char conversion warning for `a`
+
+        constexpr int8_t f = std::add_sat<int8_t>(-123, -3);  /// NOT saturated  -->  g == -126
+        constexpr int8_t g = std::add_sat<int8_t>(-123, -13); /// saturated      -->  g == -128 instead of -136
+
+        static_assert(f == -126);
+        static_assert(g == std::numeric_limits<int8_t>::min());
+    }
+}
 
 
 void Math::TestAll()
@@ -586,6 +618,8 @@ void Math::TestAll()
 	// IntegerFunctions::Trunk();
 	// IntegerFunctions::Nearbyint();
 	// IntegerFunctions::Remainder();
+
+    Saturated_Operations();
 
 
     // Experimets::FuncTests();
