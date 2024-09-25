@@ -59,6 +59,33 @@ namespace Coroutines::Generators
     }
 }
 
+namespace SimpleExample0
+{
+    struct Task
+    {
+        struct promise_type
+        {
+            Task get_return_object() { return {}; }
+            std::suspend_always initial_suspend() { return {}; }
+            std::suspend_always final_suspend() noexcept { return {}; }
+            void return_void() {}
+            void unhandled_exception() {}
+        };
+    };
+
+    Task create_task()
+    {
+        std::cout << "Coroutine start\n";
+        co_await std::suspend_always{};
+        std::cout << "Coroutine resumed\n";
+    }
+
+    void Test()
+    {
+        Task r = create_task();
+        std::cout << "Main function continues\n";
+    }
+}
 
 namespace SimpleExample
 {
@@ -541,9 +568,10 @@ namespace DemoFour
 
 void Coroutines::TestAll()
 {
+    SimpleExample0::Test();
     // SimpleExample::Test();
     // SimpleExample2::Test();
-    SimpleExample3::Test();
+    // SimpleExample3::Test();
 
     // DemoOne::test();
     // DemoTwo::test();
