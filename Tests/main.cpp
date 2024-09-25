@@ -1322,7 +1322,6 @@ namespace Reflections
 
 namespace ADL_LookUp::Function_Templates
 {
-
     template<typename T>
     void funk(T v)
     {
@@ -1350,6 +1349,32 @@ namespace ADL_LookUp::Function_Templates
     }
 }
 
+namespace ADL_LookUp::Implicit_Bool_From_SV
+{
+    using namespace std::string_view_literals;
+
+    auto stringify(bool b) -> std::string_view {
+        std::cout << __PRETTY_FUNCTION__ << std::endl;
+        return b ? "true" : "false";
+    }
+
+    std::string_view stringify(std::string_view s)  {
+        std::cout << __PRETTY_FUNCTION__ << std::endl;
+        return s;
+    }
+
+    void From_StringView()
+    {
+        std::cout << stringify(true) << "\n";
+
+        // const char[7] --> const char* --> к bool
+        // All built-in conversions have higher priority ove user-defined conversion to std::string_view via its constructor.
+        std::cout << stringify("string") << "\n";
+
+        std::cout << stringify("string"sv) << "\n";
+    }
+}
+
 
 int main([[maybe_unused]] int argc,
          [[maybe_unused]] char** argv)
@@ -1361,7 +1386,10 @@ int main([[maybe_unused]] int argc,
     // LookUpTests::Unexpected_Method_Call_Resolution();
     // Types_Experiments::Test_Get_TypeID();
 
-    ADL_LookUp::Function_Templates::Template_vs_Int_Parameter();
+    // ADL_LookUp::Function_Templates::Template_vs_Int_Parameter();
+    // ADL_LookUp::Implicit_Bool_From_SV::From_StringView();
+
+
 
 
     // MoveExperiments::MoveStringToArray_Segfault();
@@ -1379,7 +1407,7 @@ int main([[maybe_unused]] int argc,
 
     /** * * * * *  Move to lib * * * * * **/
 
-    // Coroutines::TestAll();
+    Coroutines::TestAll();
     // StackTrace::TestAll();
 
 

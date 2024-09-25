@@ -16,6 +16,8 @@ Description : Coroutines
 #include <coroutine>
 #include <thread>
 #include <print>
+#include <mutex>
+#include <thread>
 #include <generator>
 
 namespace
@@ -156,6 +158,75 @@ namespace SimpleExample2
         r.mHandle.resume(); // equivalent to r.mHandle();
     }
 }
+
+namespace SimpleExample3
+{
+    struct Awaitable
+    {
+        bool await_ready() const noexcept {
+            return false;
+        }
+
+        void await_suspend(std::coroutine_handle<> ) const noexcept {
+            std::this_thread::sleep_for(std::chrono::seconds (1UL));
+        }
+
+        void await_resume() const noexcept {
+        }
+    };
+
+    std::mutex mtx;
+
+    struct Task
+    {
+        struct promise_type
+        {
+            promise_type() = default;
+            // promise_type(std::mutex& m): mtx {m} {}
+
+            std::suspend_always initial_suspend()
+            {
+                std::cout << "Acquiring lock (initial_suspend)\n";
+                mtx.lock();
+                std::cout << "Acquiring lock (exit)\n";
+                return {};
+            }
+
+            std::suspend_always final_suspend() noexcept
+            {
+                std::cout << "Releasing lock (final_suspend)\n";
+                mtx.unlock();
+                return {};
+            }
+
+            Task get_return_object()
+            {
+                return Task {};
+            }
+
+            void return_void() {}
+            void unhandled_exception() {}
+        };
+
+        Task operator co_await() {
+            return *this;
+        }
+    };
+
+    Task async_task()
+    {
+        std::cout << "Starting the async task ....\n";
+        co_await Awaitable (); // Simulating some IO operation (explicit suspension)
+        co_return;
+    }
+
+    void Test()
+    {
+        std::jthread t1([]{ async_task(); }), t2([]{ async_task(); });
+    }
+}
+
+
 
 
 namespace Coroutines::DemoOne
@@ -470,8 +541,9 @@ namespace DemoFour
 
 void Coroutines::TestAll()
 {
-    SimpleExample::Test();
+    // SimpleExample::Test();
     // SimpleExample2::Test();
+    SimpleExample3::Test();
 
     // DemoOne::test();
     // DemoTwo::test();
