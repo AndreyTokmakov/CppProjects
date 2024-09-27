@@ -3,12 +3,17 @@
                 Setup GCC
 =================================================================================================
 
-export GCC_VERSION=13.1
-export GCC_PATH=/home/andtokm/DiskS/Utils/bin/gcc-$GCC_VERSION
+export GCC_VERSION=14.2
+export UTILS_PATH=/home/andtokm/DiskS/Utils
+export GCC_PATH=${UTILS_PATH}/bin/gcc-$GCC_VERSION
 
-export PATH=${GCC_PATH}/bin:${PATH}
+export PATH=${GCC_PATH}/bin:${UTILS_PATH}/cmake/cmake-3.30/bin/:${PATH}
+
 export LD_LIBRARY_PATH=${GCC_PATH}/lib64
 export CC=gcc-$GCC_VERSION CXX=g++-$GCC_VERSION
+
+
+make
 
 =================================================================================================
                 Compile and run

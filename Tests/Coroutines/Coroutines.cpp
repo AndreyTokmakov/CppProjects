@@ -565,13 +565,196 @@ namespace DemoFour
 }
 
 
+namespace Coroutines::Example4
+{
+    // https://www.alibabacloud.com/blog/a-comprehensive-discussion-on-c%2B%2B20-coroutines_600889
+
+
+    template <bool ReadyFlag>
+    struct Awaiter
+    {
+        bool await_ready() noexcept
+        {
+            std::cout << "await_ready: " << std::boolalpha << ReadyFlag << std::endl;
+            return ReadyFlag;
+        }
+        void await_resume() noexcept
+        {
+            std::cout << "await_resume" << std::endl;
+        }
+        void await_suspend(std::coroutine_handle<>) noexcept
+        {
+            std::cout << "await_suspend" << std::endl;
+        }
+    };
+
+    struct TaskPromise
+    {
+        struct promise_type
+         {
+            TaskPromise get_return_object()
+            {
+                std::cout << "get_return_object" << std::endl;
+                return TaskPromise{std::coroutine_handle<promise_type>::from_promise(*this)};
+            }
+
+            Awaiter<true> initial_suspend() noexcept
+            {
+                std::cout << "TaskPromise::promise_type::initial_suspend" << std::endl;
+                return {};
+            }
+
+            Awaiter<true> final_suspend() noexcept
+            {
+                std::cout << "final_suspend" << std::endl;
+                return {};
+            }
+
+            void unhandled_exception()
+            {
+                std::cout << "unhandled_exception" << std::endl;
+            }
+
+            void return_void() noexcept
+            {
+                std::cout << "return_void" << std::endl;
+            }
+        };
+
+        void resume()
+        {
+            std::cout << "resume" << std::endl;
+            handle.resume();
+        }
+
+        std::coroutine_handle<promise_type> handle;
+    };
+
+    TaskPromise task_func()
+    {
+        std::cout << "task first run" << std::endl;
+        co_await Awaiter<false>{};
+        std::cout << "task resume" << std::endl;
+    }
+
+    void test()
+    {
+        auto promise = task_func();
+        promise.resume();
+
+        /**  OUTPUT:
+        get_return_object
+        initial_suspend
+        await_ready: 1
+        await_resume
+        task first run
+        await_ready: 0
+        await_suspend
+        resume
+        await_resume
+        task resume
+        return_void
+        final_suspend
+        await_ready: 1
+        await_resume
+         */
+    }
+}
+
+namespace Coroutines::Behavior_Interface_Functions
+{
+    struct TaskPromise
+    {
+        struct promise_type
+        {
+            TaskPromise get_return_object()
+            {
+                std::cout << "get_return_object(), thread_id: " << std::this_thread::get_id() << std::endl;
+                return TaskPromise{std::coroutine_handle<promise_type>::from_promise(*this)};
+            }
+
+            std::suspend_always initial_suspend() noexcept {
+                return {};
+            }
+
+            std::suspend_always final_suspend() noexcept {
+                return {};
+            }
+
+            void unhandled_exception() {}
+            void return_void() noexcept {}
+
+            size_t data = 0;
+        };
+
+        std::coroutine_handle<promise_type> handle;
+    };
+
+    struct Awaiter
+    {
+        bool await_ready() noexcept {
+            std::cout << "await_ready(), thread_id: " << std::this_thread::get_id() << std::endl;
+            return false;
+        }
+
+        void await_suspend(std::coroutine_handle<TaskPromise::promise_type> handle) noexcept
+        {
+            std::cout << "await_suspend(), thread_id: " << std::this_thread::get_id() << std::endl;
+            auto thread = std::thread([=]() {
+                std::this_thread::sleep_for(std::chrono::seconds(1));
+                handle.promise().data = 1;
+                handle.resume();
+            });
+            thread.join();
+        }
+
+        void await_resume() noexcept
+        {
+            std::cout << "await_resume(), thread_id: " << std::this_thread::get_id() << std::endl;
+        }
+    };
+
+    TaskPromise task_func()
+    {
+        std::cout << "task_func() step 1, thread_id: " << std::this_thread::get_id() << std::endl;
+        co_await Awaiter{};
+        std::cout << "task_func() step 2, thread_id: " << std::this_thread::get_id() << std::endl;
+    }
+
+    void test()
+    {
+        std::cout << "main(), thread_id: " << std::this_thread::get_id() << std::endl;
+        auto promise = task_func();
+        std::cout << "main(), data: " << promise.handle.promise().data << ", thread_id: " << std::this_thread::get_id() << std::endl;
+        promise.handle.resume();
+        std::cout << "main(), data: " << promise.handle.promise().data << ", thread_id: " << std::this_thread::get_id() << std::endl;
+
+        /**
+        main(), thread_id: 140571971472256
+        get_return_object(), thread_id: 140571971472256
+        main(), data: 0, thread_id: 140571971472256
+        task_func() step 1, thread_id: 140571971472256
+        await_ready(), thread_id: 140571971472256
+        await_suspend(), thread_id: 140571971472256
+        await_resume(), thread_id: 140571971458816
+        task_func() step 2, thread_id: 140571971458816
+        main(), data: 1, thread_id: 140571971472256
+        */
+    }
+}
+
 
 void Coroutines::TestAll()
 {
-    SimpleExample0::Test();
+    // SimpleExample0::Test();
     // SimpleExample::Test();
     // SimpleExample2::Test();
     // SimpleExample3::Test();
+
+    // Example4::test();
+
+    Behavior_Interface_Functions::test();
+
 
     // DemoOne::test();
     // DemoTwo::test();

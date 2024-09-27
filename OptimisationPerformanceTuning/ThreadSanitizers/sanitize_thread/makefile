@@ -35,7 +35,7 @@ CXXFLAGS += -fsanitize=thread
 
 CXXFLAGS += -std=c++23 -DESRI_UNIX $(INCLUDEDIRS)
 
-CXX = g++-13.1
+CXX = g++-14.2
 
 LDFLAGS = $(LIBDIRS) $(LIBS)
 

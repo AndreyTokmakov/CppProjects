@@ -17,7 +17,7 @@ PROGRAM = test_bin
 
 INCLUDEDIRS = 
 LIBDIRS = 
-LIBS = -lasan -static-libasan
+LIBS = -lasan -static-libasan -lubsan
 
 # The CXXSOURCES macro contains a list of source files.
 # The CXXOBJECTS macro converts the CXXSOURCES macro into a list of object files.
@@ -31,9 +31,11 @@ CXXSOURCES = main.cpp
 CXXOBJECTS = $(CXXSOURCES:.cpp=.o)  # expands to list of object files
 CXXFLAGS = -std=c++23 -DESRI_UNIX $(INCLUDEDIRS)
 
+# CXXFLAGS = -fPIE -pie -g
 CXXFLAGS += -fsanitize=integer-divide-by-zero
+# CXXFLAGS += -fsanitize=undefined
 
-CXX = g++-13.1
+CXX = g++-14.2
 
 LDFLAGS = $(LIBDIRS) $(LIBS)
 
