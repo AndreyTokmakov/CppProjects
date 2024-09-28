@@ -26,16 +26,24 @@
 #include "../Integer/Integer.h"
 
 
-namespace Concepts {
+namespace Concepts
+{
+    struct BaseObject { };
+    struct Object { };
 
-    class BaseObject {
-    public:
+
+    struct AddableObject
+    {
+        AddableObject operator+(const AddableObject&) {
+            return *this;
+        }
     };
+}
 
-    struct Object {
-    };
-
-    struct Object_NotMovable {
+namespace Concepts
+{
+    struct Object_NotMovable
+    {
         Object_NotMovable(Object_NotMovable&& obj) noexcept = delete;
         Object_NotMovable& operator=(Object_NotMovable&& obj) noexcept = delete;
     };
@@ -53,101 +61,10 @@ namespace Concepts {
         }
     };
 
-    void MovableTest() {
-        MovableVector<Concepts::Object> v;
-        // MovableVector<Concepts::Object_NotMovable> v;
-    }
-
-    //--------------------------------------------------------------------------------------------//
-
-    template <class T>
-    concept Integral = std::is_integral<T>::value;
-
-    template <class T>
-    concept SignedIntegral = Integral<T> && std::is_signed<T>::value;
-
-    template <class T>
-    concept UnsignedIntegral = Integral<T> && !SignedIntegral<T>;
-
-    template <class T>
-    concept IsNotDoubleType = !std::is_same_v<T, double>;
-
-    template<SignedIntegral T>
-    void handleSignedValue(T val) {
-    }
-
-    template<UnsignedIntegral T>
-    void handleUnsignedValue(T val) {
-    }
-
-
-
-    void It_Not_Void_Test() {
-        auto foo = [] <IsNotDoubleType T>(T v) {};
-
-#if 0
-        double v = 1'23;
-        foo(v);
-#endif
-
-    }
-
-    void Signed_Tests() {
-        {
-            int a{ 0 };
-            handleSignedValue(a);
-        }
-        {
-            unsigned int a{ 0 };
-
-            // ERROR !!!!!!!
-            // handleSignedValue(a);
-        }
-    }
-
-    void Unsigned_Tests() {
-        {
-            int a{ 0 };
-
-            // ERROR HERE
-            // handleUnsignedValue(a);
-        }
-        {
-            unsigned int a{ 0 };
-            handleUnsignedValue(a);
-        }
-    }
-
-
-    template<typename T>
-    concept Addable = requires(T a, T b) {
-        a + b;
-    };
-
-    template<typename T>
-    concept Subtractable = requires(T a, T b) {
-        a - b;
-    };
-
-    template<typename T>
-    requires Addable<T>
-    auto func1(T a, T b) -> decltype(a - b)
-    requires Subtractable<T> // Addable<T> && Subtractable<T>
+    void MovableTest()
     {
-        return a - b;
-    }
-
-
-    void Lambda_Concept_Tests() {
-
-        std::cout << func1(10, 3) << std::endl;
-
-        auto func2 = []<typename T> requires Addable<T>(T a, T b) -> decltype(a - b)
-        requires Subtractable<T> {
-            return a - b;
-        };
-
-        std::cout << func2(10, 3) << std::endl;
+        MovableVector<Object> v;
+        // MovableVector<Concepts::Object_NotMovable> v;
     }
 };
 
@@ -218,9 +135,120 @@ namespace Concepts::STDConcepts
     }
 }
 
-namespace Concepts::Custom_Concepts {
+namespace Concepts::Custom_Concepts
+{
 
-    namespace Simple {
+    template <class T>
+    concept Integral = std::is_integral<T>::value;
+
+    template <class T>
+    concept SignedIntegral = Integral<T> && std::is_signed<T>::value;
+
+    template <class T>
+    concept UnsignedIntegral = Integral<T> && !SignedIntegral<T>;
+
+    template <class T>
+    concept IsNotDoubleType = !std::is_same_v<T, double>;
+
+    template<SignedIntegral T>
+    void handleSignedValue(T val) {
+    }
+
+    template<UnsignedIntegral T>
+    void handleUnsignedValue(T val) {
+    }
+
+    void It_Not_Void_Test()
+    {
+        auto foo = [] <IsNotDoubleType T>(T v) {};
+        double v = 1'23;
+
+        // foo(v);    WILL NOT COMPIE
+    }
+
+    void Signed_Tests()
+    {
+        {
+            int a{ 0 };
+            handleSignedValue(a);
+        }
+        {
+            unsigned int a{ 0 };
+
+            // ERROR !!!!!!!
+            // handleSignedValue(a);
+        }
+    }
+
+    void Unsigned_Tests()
+    {
+        {
+            int a{ 0 };
+
+            // ERROR HERE
+            // handleUnsignedValue(a);
+        }
+        {
+            unsigned int a{ 0 };
+            handleUnsignedValue(a);
+        }
+    }
+
+    template<typename T>
+    concept Addable = requires(T a, T b) {
+        a + b;
+        b + a;
+        { a + b } -> std::same_as<T>;
+        { b + a } -> std::same_as<T>;
+    };
+
+    template<typename T>
+    concept Subtractable = requires(T a, T b) {
+        a - b;
+        b - a;
+        { a - b } -> std::same_as<T>;
+        { b - a } -> std::same_as<T>;
+    };
+
+    template<typename T> requires Addable<T>
+    auto func1(T a, T b) -> decltype(a - b)
+    requires Subtractable<T> // Addable<T> && Subtractable<T>
+    {
+        return a - b;
+    }
+
+    template<Addable T>
+    T add(T a, T b)
+    {
+        return a + b;
+    }
+
+    void Addable_Test()
+    {
+        add(1, 2);
+        /// add("", "");
+        add(std::string{""}, std::string{""});
+        /// add(BaseObject{}, BaseObject{});
+        add(AddableObject{}, AddableObject{});
+
+        // AddableObject a, b;
+        // auto c = a + b;
+    }
+
+    void Lambda_Concept_Tests() {
+
+        std::cout << func1(10, 3) << std::endl;
+
+        auto func2 = []<typename T> requires Addable<T>(T a, T b) -> decltype(a - b)
+        requires Subtractable<T> {
+            return a - b;
+        };
+
+        std::cout << func2(10, 3) << std::endl;
+    }
+
+    namespace Simple
+    {
 
         template<typename Type>
         concept CheckCustomSize = requires(Type val) {
@@ -392,7 +420,8 @@ namespace Concepts::Custom_Concepts {
         std::cout << "After: " << value << std::endl;
     }
 
-    void Incrementable_Test() {
+    void Incrementable_Test()
+    {
         auto Increment4 = [](Incrementable auto var) {
             std::cout << "Before: " << var << std::endl;
             var++;
@@ -400,12 +429,10 @@ namespace Concepts::Custom_Concepts {
         };
 
 
-
         Increment(1);
         Increment2(1);
         Increment3(1);
         Increment4(1);
-
 #if 0
         Increment(std::string("s"));
             Increment2(std::string("s"))
@@ -1115,7 +1142,8 @@ namespace Concepts::Requires_With_Constexpr {
     }
 }
 
-namespace Concepts::Requires {
+namespace Concepts::Requires
+{
 
     template<typename T>
     concept Addable = requires(T a, T b) {
@@ -2619,18 +2647,16 @@ namespace Concepts::STD::Derived_From
 void Concepts::TestAll()
 {
     // MovableTest();
-    // Signed_Tests();
-    // Unsigned_Tests();
 
     // Lambda_Concept_Tests();
 
-    // It_Not_Void_Test();
 
 
     // STDConcepts::Copyable();
 
 
     // Custom_Concepts::SimpleTest();
+    Custom_Concepts::Addable_Test();
     // Custom_Concepts::IsPointer();
     // Custom_Concepts::Hashable_Test();
     // Custom_Concepts::Incrementable_Test();
@@ -2641,6 +2667,11 @@ void Concepts::TestAll()
     // Custom_Concepts::CheckCollection_HasPushBack_Method();
     // Custom_Concepts::CheckCollection_HasPushBack_Method_2(); // not working
     // Custom_Concepts::Check_BaseType_ContainsMethod_ReturnValue();
+    // Custom_Concepts::It_Not_Void_Test();
+    // Custom_Concepts::Lambda_Concept_Tests();
+    // Custom_Concepts::Signed_Tests();
+    // Custom_Concepts::Unsigned_Tests();
+
 
     // Requires::FunctionDefinition_Examples();
     // Requires::SimpleTest();
@@ -2669,10 +2700,10 @@ void Concepts::TestAll()
     // Noexcept::Check_If_Type_CanBe_Noexcept_Swapped();
 
 
-    STD::Common_With::HaveCommonClass();
-    STD::Same_AS::CheckTypeAreSame();
-    STD::Derived_From::SimpleExample();
-    STD::Derived_From::ComplexTest();
+    // STD::Common_With::HaveCommonClass();
+    // STD::Same_AS::CheckTypeAreSame();
+    // STD::Derived_From::SimpleExample();
+    // STD::Derived_From::ComplexTest();
 
 
     // Concepts_With_Auto::Test();

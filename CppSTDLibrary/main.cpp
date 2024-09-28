@@ -100,9 +100,9 @@ int main([[maybe_unused]] int argc,
     // BitSet::TestAll();
     // BitwiseOperation::TestAll();
     // Byte::TestAll();
-    Chrono::TestAll();
+    // Chrono::TestAll();
     // Comparators::TestAll();
-    // Concepts::TestAll();
+    Concepts::TestAll();
     // ConsoleInOut::TestAll();
     // ConstConstexprMutable::TestAll();
     // CopyElision::TestAll();
@@ -123,7 +123,7 @@ int main([[maybe_unused]] int argc,
     // Format::TestAll();
     // FunctionObjects::TestAll();
     // Hashing::TestAll();
-    Lambdas::TestAll();
+    // Lambdas::TestAll();
     // LifetimeExtension::TestAll();
     // Locale::TestAll();
     // Literals::TestAll();

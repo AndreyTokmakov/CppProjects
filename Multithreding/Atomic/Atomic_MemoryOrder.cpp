@@ -20,6 +20,9 @@ Description : Atomic_MemoryOrder.cpp
 #include <format>
 #include <syncstream>
 
+#include <print>
+#include <format>
+
 namespace
 {
     std::string timeString()
@@ -312,6 +315,32 @@ namespace Atomic_MemoryOrder::FailureCases
     }
 }
 
+namespace Atomic_MemoryOrder::Relaxed_Ordering_Missmatch_Tests
+{
+    void benchmark()
+    {
+        constexpr uint64_t maxCount { 10'000'000'000 };
+        std::atomic<uint64_t> x = 0, y = 0;
+
+        std::jthread t1{[&] {
+            for (uint64_t i = 0; i < maxCount; ++i) {
+                x.store(i, std::memory_order_relaxed);
+                y.store(i, std::memory_order_relaxed);
+            }
+        }};
+
+        std::jthread t2{[&] {
+            int count_mismatch = 0;
+            for (uint64_t i = 0; i < maxCount; ++i) {
+                auto yy = y.load(std::memory_order_relaxed);
+                auto xx = x.load(std::memory_order_relaxed);
+                if (xx < yy) count_mismatch++;
+            }
+            std::print("Mismatch count: {}\n", count_mismatch);
+        }};
+    }
+}
+
 
 void Atomic_MemoryOrder::TestAll()
 {
@@ -325,6 +354,8 @@ void Atomic_MemoryOrder::TestAll()
     // CompareExchange::Weak_Test_1();
     // CompareExchange::Strong_Test_1();
 
-    FailureCases::SetMultipleVariables();
+    // FailureCases::SetMultipleVariables();
+
+    Relaxed_Ordering_Missmatch_Tests::benchmark();
 
 }

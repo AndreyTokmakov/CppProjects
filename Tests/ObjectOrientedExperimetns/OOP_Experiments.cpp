@@ -446,8 +446,7 @@ namespace ObjectOrientedExperiments::ShadowingMemberVariable
 
 
 
-void ObjectOrientedExperiments::OOP_Experiments::TestAll()
-{
+void ObjectOrientedExperiments::OOP_Experiments::TestAll() {
     // OOP_Experiments::FriendTests
 
     // OOP_Test::ExampleTwo::test();     // overrided method call
@@ -469,14 +468,36 @@ void ObjectOrientedExperiments::OOP_Experiments::TestAll()
     // ShadowingMemberVariable::Test();
 
 
+    struct Object
+    {
+        Object() {
+            std::cout << __PRETTY_FUNCTION__  << std::endl;
+            throw std::runtime_error("Doing bad thing");
+        }
+        ~Object() {
+            std::cout << __PRETTY_FUNCTION__  << std::endl;
+            // throw std::runtime_error("Doing bad thing");
+        }
+    };
 
     struct Base {
         virtual ~Base() = default;
     };
 
-    struct Derived: Base {
-        ~Derived() override {
-            std::cout << __PRETTY_FUNCTION__ << std::endl;
+    struct Derived: Base
+    {
+        Object obj;
+
+        Derived() try {
+            std::cout << __PRETTY_FUNCTION__  << std::endl;
+        } catch (const std::exception& exc) {
+            std::cout << __PRETTY_FUNCTION__ << " (Exception)"  << std::endl;
+        }
+
+        ~Derived() override try {
+            std::cout << __PRETTY_FUNCTION__  << std::endl;
+        } catch (const std::exception& exc) {
+            std::cout << __PRETTY_FUNCTION__ << " (Exception)"  << std::endl;
         }
     };
 

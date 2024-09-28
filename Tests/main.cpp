@@ -1407,7 +1407,7 @@ int main([[maybe_unused]] int argc,
 
     /** * * * * *  Move to lib * * * * * **/
 
-    Coroutines::TestAll();
+    // Coroutines::TestAll();
     // StackTrace::TestAll();
 
 
@@ -1443,7 +1443,7 @@ int main([[maybe_unused]] int argc,
     // UniquePtr_Size::SizeTest();
     // ExpressionTemplates::TestAll();
     // ObjectOrientedExperiments::RAIIWrapper::TestAll();
-    // ObjectOrientedExperiments::OOP_Experiments::TestAll();
+    ObjectOrientedExperiments::OOP_Experiments::TestAll();
     // ObjectOrientedExperiments::VirtualTables::TestAll();
     // Optional::TestAll();
     // PointsAndLines::TestAll();           // Geometry
