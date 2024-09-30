@@ -112,7 +112,7 @@ namespace Barrier
         std::barrier barrier(threadsCount);
 
         auto task = [&]() {
-            const int secondsToSleep = getRandomInteger(1, 10);
+            const uint32_t secondsToSleep = getRandomInteger(1, 10);
             std::osyncstream {std::cout} << std::this_thread::get_id()<< " thread started. Sleep time = "
                     << secondsToSleep << std::endl;
 
@@ -128,7 +128,7 @@ namespace Barrier
         for (size_t idx = 0; idx < threadsCount; ++idx)
             threads.emplace_back(task);
 
-        std::this_thread::sleep_for(std::chrono::milliseconds(100));
+        std::this_thread::sleep_for(std::chrono::milliseconds(100U));
 
         std::cout << getCurrentTime() << " waiting for all threads to finish...\n";
         barrier.arrive_and_wait();
@@ -147,7 +147,7 @@ namespace Barrier
         std::barrier barrier(threadsCount, on_completion);
 
         auto task = [&]() {
-            const int secondsToSleep = getRandomInteger(1, 4);
+            const uint32_t secondsToSleep = getRandomInteger(1, 4);
             std::osyncstream {std::cout} << std::this_thread::get_id()<< " thread started. Sleep time = "
                                          << secondsToSleep << std::endl;
 
@@ -177,7 +177,7 @@ namespace Barrier
         auto work = [&](std::string&& name) {
             std::cout << name << " job started\n";
             phase.arrive_and_wait();
-            std::this_thread::sleep_for(std::chrono::seconds(1));
+            std::this_thread::sleep_for(std::chrono::seconds(1U));
             std::cout << name << " job completed\n";
             phase.arrive_and_wait();
         };

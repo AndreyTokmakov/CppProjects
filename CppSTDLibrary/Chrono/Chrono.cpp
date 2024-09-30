@@ -751,7 +751,7 @@ namespace Chrono::Years
     }
 }
 
-namespace Chrono::CurrentTime
+namespace Chrono::Time_To_String
 {
 
     void Asctime()
@@ -784,6 +784,30 @@ namespace Chrono::CurrentTime
         const time_t time = std::chrono::system_clock::to_time_t(now);
 
         std::cout << std::put_time(std::localtime(&time), "%Y-%m-%d %X") << std::endl;
+    }
+
+
+    constexpr char FORMAT[] { "%d-%02d-%02d %02d:%02d:%02d.%06ld" };
+
+    std::string getCurrentTime(const std::chrono::time_point<std::chrono::system_clock>& timestamp
+        = std::chrono::system_clock::now()) noexcept
+    {
+        const time_t time { std::chrono::system_clock::to_time_t(timestamp) };
+        std::tm tm {};
+        ::localtime_r(&time, &tm);
+
+        std::string buffer(64, '\0');
+        const int32_t size = std::sprintf(buffer.data(), FORMAT,
+               tm.tm_year + 1900, tm.tm_mon + 1, tm.tm_mday, tm.tm_hour, tm.tm_min, tm.tm_sec,
+               duration_cast<std::chrono::microseconds>(timestamp - time_point_cast<std::chrono::seconds>(timestamp)).count());
+        buffer.resize(size);
+        buffer.shrink_to_fit();
+        return buffer;
+    }
+
+    void Time_With_Milliseconds()
+    {
+        std::cout << getCurrentTime() << std::endl;
     }
 }
 
@@ -898,10 +922,11 @@ namespace Chrono::Cast_Conversation
 
 void Chrono::TestAll()
 {
-    // CurrentTime::Asctime();
-    // CurrentTime::Localtime();
-    // CurrentTime::PrintTime_One();
-    // CurrentTime::PrintTime_Two();
+    // Time_To_String::Asctime();
+    // Time_To_String::Localtime();
+    // Time_To_String::PrintTime_One();
+    // Time_To_String::PrintTime_Two();
+    Time_To_String::Time_With_Milliseconds();
 
     // Duration::Create_Simple();
     // Duration::Measure_Duration();
@@ -931,8 +956,7 @@ void Chrono::TestAll()
     // StringFormat::Format3();
     // StringFormat::StringToTime();
 
-
-    Cast_Conversation::TimePoint_to_Long_and_Back();
+    // Cast_Conversation::TimePoint_to_Long_and_Back();
 
     // FunctionPerformance::GetCurrentTime_Performance();
     // FunctionPerformance::TestGetCurrentTimeFunctions();

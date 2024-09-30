@@ -66,7 +66,7 @@ int main([[maybe_unused]] int argc,
     // Atomic::TestAll();
     // AtomicFlag::TestAll();
     // Atomic_Bool::TestAll();
-    Atomic_MemoryOrder::TestAll();
+    // Atomic_MemoryOrder::TestAll();
     // Atomic_CompareExchange::TestAll();
     // Atomic_IsLockFree::TestAll();
     // AtomicPerformanceTests::TestAll();
@@ -77,7 +77,8 @@ int main([[maybe_unused]] int argc,
     // Exceptions_Handling::TEST_ALL();
     // Future::TEST_ALL();
 
-    // Latch::TEST_ALL();
+    Latch::TEST_ALL();
+
     // Multithreading_Performance::TEST_ALL();
     // Multithreading_Communication::TEST_ALL();
     // Promise::TEST_ALL();
