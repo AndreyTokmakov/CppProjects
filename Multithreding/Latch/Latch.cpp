@@ -131,7 +131,6 @@ namespace Latch::SharedResourceTest
         // Atomically decrements the counter and blocks until the counter reaches zero.
         resource.allReady.arrive_and_wait();
 
-
         debug("Worker ", workerId,  " can continue.");
         // Simulated work for each thread
         for (int i{ 0 }; i < workerId; ++i)
@@ -146,7 +145,7 @@ namespace Latch::SharedResourceTest
         SharedResource resource;
         std::vector<std::jthread> workers;
 
-        for (int i { 0 }; i < resource.numOfThreads; ++i) {
+        for (int i { 0 }; i < SharedResource::numOfThreads; ++i) {
             workers.emplace_back(startWorkAtTheSameTime, std::ref(resource), i);
         }
     }

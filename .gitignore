@@ -41,4 +41,6 @@
 /FuzzingExperiments/fuzzer
 /FuzzingExperiments/crash*
 .idea/
+test_bin
+
 

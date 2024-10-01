@@ -91,14 +91,15 @@ namespace Map {
     }
 
 
-    void emplace_test() {
+    void emplace_test()
+    {
         std::map<std::string, std::string> m;
 
         // uses pair's move constructor
-        m.emplace(std::make_pair(std::string("a"), std::string("a")));
+        m.emplace(std::string("a"), std::string("a"));
 
         // uses pair's converting move constructor
-        m.emplace(std::make_pair("b", "abcd"));
+        m.emplace("b", "abcd");
 
         // uses pair's template constructor
         m.emplace("d", "ddd");

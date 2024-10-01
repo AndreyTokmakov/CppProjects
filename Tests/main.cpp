@@ -1390,6 +1390,15 @@ int main([[maybe_unused]] int argc,
     // ADL_LookUp::Implicit_Bool_From_SV::From_StringView();
 
 
+    const std::vector<std::string> parts { "one", "two", "three"};
+
+    std::string json { "{"};
+    int32_t size = parts.size();
+    while (size-- > 0) {
+        json.append(std::string("'").append(parts[size]).append("',"));
+    }
+    json.back() = '}';
+    std::cout << json << std::endl;
 
 
     // MoveExperiments::MoveStringToArray_Segfault();
@@ -1443,7 +1452,7 @@ int main([[maybe_unused]] int argc,
     // UniquePtr_Size::SizeTest();
     // ExpressionTemplates::TestAll();
     // ObjectOrientedExperiments::RAIIWrapper::TestAll();
-    ObjectOrientedExperiments::OOP_Experiments::TestAll();
+    // ObjectOrientedExperiments::OOP_Experiments::TestAll();
     // ObjectOrientedExperiments::VirtualTables::TestAll();
     // Optional::TestAll();
     // PointsAndLines::TestAll();           // Geometry
