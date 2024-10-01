@@ -100,7 +100,7 @@ int main([[maybe_unused]] int argc,
     // BitSet::TestAll();
     // BitwiseOperation::TestAll();
     // Byte::TestAll();
-    Chrono::TestAll();
+    // Chrono::TestAll();
     // Comparators::TestAll();
     // Concepts::TestAll();
     // ConsoleInOut::TestAll();
@@ -114,7 +114,7 @@ int main([[maybe_unused]] int argc,
     // Exceptions::TestAll();
     // Expected::TestAll();
     // StrongTypes::TestAll();
-    // InitializerList::TestAll();
+    InitializerList::TestAll();
     // InlineVariables::TestAll();
     // Initialization::TestAll();
     // IteratorTests::TestAll();
