@@ -45,6 +45,7 @@ add_executable(${PROJECT_NAME}
 		LifetimeExtension/LifetimeExtension.cpp LifetimeExtension/LifetimeExtension.h
 		Literals/Literals.cpp Literals/Literals.h
 		Locale/Locale.cpp Locale/Locale.h
+		Overflow/Overflow.cpp
 		Math/Math.cpp Math/Math.h
 		Memory/Memory.cpp Memory/Memory.h
 		Memory/MemoryUsageMonitor.cpp Memory/MemoryUsageMonitor.h
@@ -96,6 +97,8 @@ add_executable(${PROJECT_NAME}
 		Templates/TemplateSpecialization.cpp Templates/TemplateSpecialization.h
 		RVO_CopyElision/CopyElision.cpp RVO_CopyElision/CopyElision.h
 		RVO_CopyElision/RVO_FailureCases.cpp RVO_CopyElision/RVO_FailureCases.h
+		Overflow/Overflow.cpp
+		Overflow/Overflow.h
 )
 
 # Link libraries to the project/executable

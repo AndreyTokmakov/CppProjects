@@ -1389,16 +1389,15 @@ int main([[maybe_unused]] int argc,
     // ADL_LookUp::Function_Templates::Template_vs_Int_Parameter();
     // ADL_LookUp::Implicit_Bool_From_SV::From_StringView();
 
+    // bool __builtin_add_overflow(type1 a, type2 b, type3 *res);
+    // bool __builtin_sub_overflow(type1 a, type2 b, type3* res);
+    // bool __builtin_mul_overflow(type1 a, type2 b, type3* res);
 
-    const std::vector<std::string> parts { "one", "two", "three"};
 
-    std::string json { "{"};
-    int32_t size = parts.size();
-    while (size-- > 0) {
-        json.append(std::string("'").append(parts[size]).append("',"));
-    }
-    json.back() = '}';
-    std::cout << json << std::endl;
+    int32_t result { 0 };
+    int32_t a { std::numeric_limits<int32_t>::max() / 2 + 1 };
+    int32_t b { std::numeric_limits<int32_t>::max() / 2  + 1};
+    std::cout << std::boolalpha << __builtin_add_overflow(a, b, &result) << std::endl;
 
 
     // MoveExperiments::MoveStringToArray_Segfault();
