@@ -12,6 +12,7 @@ Description : Date_Time_Chrono
 #include <iostream>
 #include <chrono>
 #include <format>
+#include <thread>
 
 namespace Date_Time_Chrono
 {
@@ -125,30 +126,49 @@ namespace Date_Time_Chrono::Experiments
     }
 }
 
+
+namespace Date_Time_Chrono::Sleep
+{
+    template<typename Predicate>
+    void sleep_conditional(const uint32_t milliseconds,
+                           Predicate predicate,
+                           const uint32_t wakeupIntervalMs = 100)
+    {
+        uint32_t timeout = milliseconds / wakeupIntervalMs;
+        while (timeout-- > 0 && predicate())
+        {
+            std::this_thread::sleep_for(std::chrono::milliseconds(wakeupIntervalMs));
+        }
+    }
+
+
+    void Test()
+    {
+        std::cout << TimeToString::getCurrentTime() << std::endl;
+        bool run = true;
+        {
+            std::jthread t1 ([&] {
+                sleep_conditional(5 * 1000, [&] -> bool { return run; });
+            });
+
+            std::jthread t2 ([&] {
+                std::this_thread::sleep_for(std::chrono::seconds(2));
+                run = false;
+            });
+        }
+        std::cout << TimeToString::getCurrentTime() << std::endl;
+    }
+}
+
 void Date_Time_Chrono::TestAll()
 {
     // ChronoTests();
     // Year_Month_Day_Test();
     // Year_Month_Day_Test_2();
-    TimeToString::Test();
+    // TimeToString::Test();
     // Experiments::test();
 
 
-    /*
-
-    const std::chrono::system_clock::time_point currentTime = std::chrono::system_clock::now();
-    const time_t time = std::chrono::system_clock::to_time_t(currentTime);
-
-    std::cout << "now (time_point)       : " << currentTime << std::endl;
-    std::cout << "now (time_since_epoch) : " << currentTime.time_since_epoch() << std::endl;
-    std::cout << "now (uint64_t)         : " << currentTime.time_since_epoch().count() << std::endl;
-    std::cout << "time (time_t)          : " << time << std::endl;
-
-    const std::chrono::duration<int64_t> duration { currentTime.time_since_epoch().count() };
-    const std::chrono::time_point<std::chrono::system_clock> currentTimeNew (duration);
-
-    std::cout << "now (time_point) (new) : " << currentTimeNew << std::endl;
-    */
-
+    Sleep::Test();
 
 }

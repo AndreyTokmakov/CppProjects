@@ -1389,17 +1389,6 @@ int main([[maybe_unused]] int argc,
     // ADL_LookUp::Function_Templates::Template_vs_Int_Parameter();
     // ADL_LookUp::Implicit_Bool_From_SV::From_StringView();
 
-    // bool __builtin_add_overflow(type1 a, type2 b, type3 *res);
-    // bool __builtin_sub_overflow(type1 a, type2 b, type3* res);
-    // bool __builtin_mul_overflow(type1 a, type2 b, type3* res);
-
-
-    int32_t result { 0 };
-    int32_t a { std::numeric_limits<int32_t>::max() / 2 + 1 };
-    int32_t b { std::numeric_limits<int32_t>::max() / 2  + 1};
-    std::cout << std::boolalpha << __builtin_add_overflow(a, b, &result) << std::endl;
-
-
     // MoveExperiments::MoveStringToArray_Segfault();
     // MoveExperiments::test_perfect_forwarding();
     // MoveExperiments::test_overload();
@@ -1418,12 +1407,10 @@ int main([[maybe_unused]] int argc,
     // Coroutines::TestAll();
     // StackTrace::TestAll();
 
-
     // OperatorCall_ExplicitTypeSpecialization::Test();
     // ReturnTypeCast::tests();
     // CallFunctionByName::Test();
     // ReturnClass_MemberRef_CopyCTor::tests();
-
 
     // Algorithms::TestAll();
     // AutoTests::TestAll();
@@ -1438,7 +1425,7 @@ int main([[maybe_unused]] int argc,
     // ConstexprMap::TestAll();
     // DebugLogger::TestAll();
     // DesignPatterns::TestAll();
-    // Date_Time_Chrono::TestAll();
+    Date_Time_Chrono::TestAll();
     // Heap::TestAll();
     // Iterators::TestAll();
     // Files::TestAll();

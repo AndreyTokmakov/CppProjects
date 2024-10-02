@@ -920,13 +920,48 @@ namespace Chrono::Cast_Conversation
     }
 }
 
+namespace Chrono::Sleep_Conditiona
+{
+    template<typename Predicate>
+    void sleep_conditional(const uint32_t milliseconds,
+                           Predicate predicate,
+                           const uint32_t wakeupIntervalMs = 100)
+    {
+        uint32_t timeout = milliseconds / wakeupIntervalMs;
+        while (timeout-- > 0 && predicate())
+        {
+            std::this_thread::sleep_for(std::chrono::milliseconds(wakeupIntervalMs));
+        }
+    }
+
+
+    void Test()
+    {
+        std::cout << TimeToString::getCurrentTime() << std::endl;
+        bool run = true;
+        {
+            std::jthread t1 ([&] {
+                sleep_conditional(5 * 1000, [&] -> bool { return run; });
+            });
+
+            std::jthread t2 ([&] {
+                std::this_thread::sleep_for(std::chrono::seconds(2));
+                run = false;
+            });
+        }
+        std::cout << TimeToString::getCurrentTime() << std::endl;
+    }
+}
+
+
+
 void Chrono::TestAll()
 {
     // Time_To_String::Asctime();
     // Time_To_String::Localtime();
     // Time_To_String::PrintTime_One();
     // Time_To_String::PrintTime_Two();
-    Time_To_String::Time_With_Milliseconds();
+    // Time_To_String::Time_With_Milliseconds();
 
     // Duration::Create_Simple();
     // Duration::Measure_Duration();
@@ -957,6 +992,8 @@ void Chrono::TestAll()
     // StringFormat::StringToTime();
 
     // Cast_Conversation::TimePoint_to_Long_and_Back();
+
+    Sleep_Conditiona::Test();
 
     // FunctionPerformance::GetCurrentTime_Performance();
     // FunctionPerformance::TestGetCurrentTimeFunctions();
