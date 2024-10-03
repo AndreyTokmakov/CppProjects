@@ -101,7 +101,7 @@ int main([[maybe_unused]] int argc,
     // BitSet::TestAll();
     // BitwiseOperation::TestAll();
     // Byte::TestAll();
-    // Chrono::TestAll();
+    Chrono::TestAll();
     // Comparators::TestAll();
     // Concepts::TestAll();
     // ConsoleInOut::TestAll();
@@ -137,7 +137,7 @@ int main([[maybe_unused]] int argc,
     // NumericLimits::TestAll();
     // ObjectOrientedProgramming::TestAll();
     // Optional::TestAll();
-    Overflow::TestAll();
+    // Overflow::TestAll();
     // PolymorphicMemoryResources::TestAll();
     // Print::TestAll();
     // Random::TestAll();

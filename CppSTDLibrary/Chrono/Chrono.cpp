@@ -19,6 +19,7 @@
 #include <iomanip>
 #include <ctime>
 #include <cstdio>
+#include <functional>
 
 
 namespace Chrono
@@ -184,8 +185,8 @@ namespace Chrono::Duration
 {
     void Create_Simple()
     {
-        const std::chrono::seconds seconds10 {10};
-        const std::chrono::minutes minutes5 {5};
+        const std::chrono::seconds seconds10 { 10U };
+        const std::chrono::minutes minutes5 { 5U };
 
         std::cout << (minutes5 > seconds10 ? "minutes5  > seconds1" : "seconds10 > minutes5") << std::endl;
 
@@ -203,7 +204,7 @@ namespace Chrono::Duration
 
         for (int i = 0; i < 20; ++i)
         {
-            std::this_thread::sleep_for(std::chrono::seconds(1));
+            std::this_thread::sleep_for(std::chrono::seconds(1U));
 
             std::chrono::steady_clock::time_point end = std::chrono::steady_clock::now();
                 std::chrono::duration<int> timeElapsed = std::chrono::duration_cast<std::chrono::duration<int>>(end - start);
@@ -221,7 +222,7 @@ namespace Chrono::Duration
     {
         const std::chrono::high_resolution_clock::time_point start = std::chrono::high_resolution_clock::now();
 
-        std::this_thread::sleep_for(std::chrono::milliseconds(125));
+        std::this_thread::sleep_for(std::chrono::milliseconds(125U));
 
         const std::chrono::high_resolution_clock::time_point end = std::chrono::high_resolution_clock::now();
         const std::chrono::duration<double> time_span = duration_cast<std::chrono::duration<double>>(end - start);
@@ -233,7 +234,7 @@ namespace Chrono::Duration
     {
         std::chrono::steady_clock::time_point start = std::chrono::steady_clock::now();
 
-        std::this_thread::sleep_for(std::chrono::microseconds (125));
+        std::this_thread::sleep_for(std::chrono::microseconds (125U));
 
         std::chrono::steady_clock::time_point end = std::chrono::steady_clock::now();
         std::chrono::duration<double> time_span = std::chrono::duration_cast<std::chrono::duration<double>>(end - start);
@@ -284,10 +285,10 @@ namespace Chrono::Duration
 
     void DurationCast()
     {
-        std::chrono::seconds one_second(1);
+        std::chrono::seconds one_second(1U);
         std::chrono::milliseconds ms = std::chrono::duration_cast<std::chrono::milliseconds>(one_second);
 
-        ms += std::chrono::milliseconds(2500);  // 2500 millisecond
+        ms += std::chrono::milliseconds(2500U);  // 2500 millisecond
         one_second = std::chrono::duration_cast<std::chrono::seconds> (ms);
 
         std::cout << "milliseconds: " << ms.count() << std::endl;
@@ -335,13 +336,13 @@ namespace Chrono::Duration
             // days, weeks, months, years were added in C++20
 
             // A year duration is the length of an average year
-            day_t days_in_year = std::chrono::years{1};
+            day_t days_in_year = std::chrono::years{1U};
             // days_in_year == 365.2425
 
             std::cout << std::format("Days in Year  : {:%Q%q}", days_in_year) << std::endl;
 
             // A month is 1/12 of a year
-            day_t days_in_month = std::chrono::months{1};
+            day_t days_in_month = std::chrono::months{1U};
             // days_in_month == days_in_year / 12 == 30.436875
 
             std::cout << std::format("Days in Month : {:%Q%q}", days_in_month) << std::endl;
@@ -547,27 +548,27 @@ namespace Chrono::CalendarDate
         std::cout << std::boolalpha;
 
         std::cout << "March: " << March << '\n';
-        std::cout << "March + months(3): " << March + months(3) << '\n';
-        std::cout << "March - months(25): " << March - months(25) << '\n';
+        std::cout << "March + months(3): " << March + months(3U) << '\n';
+        std::cout << "March - months(25): " << March - months(25U) << '\n';
         std::cout << "July - June: " <<  July - June << '\n';
         std::cout << "June < July: " << (June < July) << "\n\n";
 
         std::cout << "Saturday: " << Saturday << '\n';
-        std::cout << "Saturday + days(3): " << Saturday + days(3) << '\n';
-        std::cout << "Saturday - days(22): " << Saturday - days(22) << '\n';
+        std::cout << "Saturday + days(3): " << Saturday + days(3U) << '\n';
+        std::cout << "Saturday - days(22): " << Saturday - days(22U) << '\n';
         std::cout << "Saturday - Monday: " <<  Saturday - Monday << "\n\n";
 
         std::cout << "2021y/March: " << 2021y/March << '\n';
-        std::cout << "2021y/March + years(3) - months(35): " << 2021y/March + years(3) - months(35) << '\n';
+        std::cout << "2021y/March + years(3) - months(35): " << 2021y/March + years(3U) - months(35U) << '\n';
         std::cout << "2022y/July - 2021y/June: " << 2022y/July - 2021y/June << '\n';
         std::cout << "2021y/June > 2021y/July: " << (2021y/June > 2021y/July) << "\n\n";
 
 
         std::cout << "2021y/March/Saturday[last]: " << 2021y/March/Saturday[last] << '\n';
         std::cout << "2021y/March/Saturday[last] + months(13) + years(3): "
-                  << 2021y/March/Saturday[last] + months(13) + years(3) << '\n';
+                  << 2021y/March/Saturday[last] + months(13U) + years(3U) << '\n';
         std::cout << "2021y/July/Saturday[last] - months(1) == 2021y/June/Saturday[last]: "
-                  << (2021y/July/Saturday[last] - months(1) == 2021y/June/Saturday[last])
+                  << (2021y/July/Saturday[last] - months(1U) == 2021y/June/Saturday[last])
                 << "\n\n";
     }
 }
@@ -671,7 +672,7 @@ namespace Chrono::Months
     void Enumerate_Each_Month_of_Year()
     {
         const std::chrono::year_month_day first = 2021y / 1 / 5;
-        for (std::chrono::year_month_day d = first; d.year() == first.year(); d += std::chrono::months{1}) {
+        for (std::chrono::year_month_day d = first; d.year() == first.year(); d += std::chrono::months{1U}) {
             std::cout << static_cast<int>(d.year()) << " / "
                       << static_cast<unsigned>(d.month()) << " / "
                       << static_cast<unsigned>(d.day()) << '\n';
@@ -857,7 +858,7 @@ namespace Chrono::TimeZones
             std::cout << std::format("\t{}: {}\n", prague->name(), local);
             std::cout << std::format("\t{}: {}\n\n", newyork->name(), remote);
 
-            meeting += weeks{1};
+            meeting += weeks{1U};
         }
     }
 
@@ -920,20 +921,20 @@ namespace Chrono::Cast_Conversation
     }
 }
 
-namespace Chrono::Sleep_Conditiona
+namespace Chrono::Sleep_Conditional
 {
-    template<typename Predicate>
+    template<typename Predicate,
+             typename Rep = int64_t,
+             int64_t Den = 1000>
     void sleep_conditional(const uint32_t milliseconds,
                            Predicate predicate,
-                           const uint32_t wakeupIntervalMs = 100)
+                           const std::chrono::duration<Rep, std::ratio<1, Den>>& wakeupInterval = std::chrono::milliseconds(100U))
     {
-        uint32_t timeout = milliseconds / wakeupIntervalMs;
-        while (timeout-- > 0 && predicate())
-        {
-            std::this_thread::sleep_for(std::chrono::milliseconds(wakeupIntervalMs));
+        int64_t iterationsMax = milliseconds / wakeupInterval.count() * (Den / 1000);
+        while (iterationsMax-- > 0 && predicate()) {
+            std::this_thread::sleep_for(wakeupInterval);
         }
     }
-
 
     void Test()
     {
@@ -941,18 +942,19 @@ namespace Chrono::Sleep_Conditiona
         bool run = true;
         {
             std::jthread t1 ([&] {
-                sleep_conditional(5 * 1000, [&] -> bool { return run; });
+                sleep_conditional(5 * 1000,
+                                  [&] -> bool { return run; },
+                                  std::chrono::microseconds (100U));
             });
 
             std::jthread t2 ([&] {
-                std::this_thread::sleep_for(std::chrono::seconds(2));
+                std::this_thread::sleep_for(std::chrono::seconds(2U));
                 run = false;
             });
         }
         std::cout << TimeToString::getCurrentTime() << std::endl;
     }
 }
-
 
 
 void Chrono::TestAll()
@@ -993,7 +995,9 @@ void Chrono::TestAll()
 
     // Cast_Conversation::TimePoint_to_Long_and_Back();
 
-    Sleep_Conditiona::Test();
+    Sleep_Conditional::Test();
+
+
 
     // FunctionPerformance::GetCurrentTime_Performance();
     // FunctionPerformance::TestGetCurrentTimeFunctions();
