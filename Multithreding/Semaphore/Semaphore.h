@@ -11,7 +11,7 @@
 #define SEMAPHORE_TESTS_INCLUDE_GUARD__H
 
 namespace Semaphore {
-    void TEST_ALL();
+    void TestAll();
 };
 
 #endif // !SEMAPHORE_TESTS_INCLUDE_GUARD__H

@@ -1,11 +1,11 @@
-//============================================================================
-// Name        : Semaphore.cpp
-// Created on  : 20.05.2021
-// Author      : Tokmakov Andrey
-// Version     : 1.0
-// Copyright   : Your copyright notice
-// Description : Threads src class
-//============================================================================
+/**============================================================================
+Name        : Semaphore.cpp
+Created on  : 20.05.2021
+Author      : Andrei Tokmakov
+Version     : 1.0
+Copyright   : Your copyright notice
+Description : Semaphore
+============================================================================**/
 
 #include "../ThreadHelperUtilities/ThreadHelperUtilities.h"
 #include "Semaphore.h"
@@ -17,17 +17,19 @@
 #include <semaphore>
 #include <syncstream>
 #include <queue>
+#include <latch>
 
 
 using namespace std::literals;
 
 
-namespace Semaphore::BinarySemaphore {
+namespace Semaphore::BinarySemaphore
+{
 
     std::binary_semaphore semaphoreOne {0};
     std::binary_semaphore semaphoreTwo {0};
 
-    void thread_proc(int timeout = 3) {
+    void thread_proc(uint32_t timeout = 3) {
         // wait for a signal from the main proc  by attempting to decrement the semaphore
         semaphoreOne.acquire();
         THREAD_INFO << "Got signal from 'semaphoreOne'\n";
@@ -190,7 +192,7 @@ namespace Semaphore::CountingSemaphore
         std::counting_semaphore<> semaphore {0};
 
         auto producer = [&]() {
-            std::this_thread::sleep_for(std::chrono::seconds(2));
+            std::this_thread::sleep_for(std::chrono::seconds(2u));
             std::osyncstream(std::cout) << time() << "Producer: releasing the semaphore" << '\n';
             semaphore.release();
         };
@@ -216,7 +218,7 @@ namespace Semaphore::CountingSemaphore
         auto producer = [&]() {
             myVec.insert(myVec.end(), {0, 1, 0, 3});
 
-            std::this_thread::sleep_for(std::chrono::seconds(2));
+            std::this_thread::sleep_for(std::chrono::seconds(2u));
 
             std::osyncstream(std::cout) << "Producer: Data prepared." << '\n';
             prepareSignal.release();
@@ -309,7 +311,73 @@ namespace Semaphore::CountingSemaphore
 }
 
 
-void Semaphore::TEST_ALL()
+namespace Semaphore::Consumer_Producer
+{
+    struct SharedResource
+    {
+        static inline constexpr int BUFFER_SIZE { 10 };
+        std::array<int, BUFFER_SIZE> data {};
+
+        // Semaphores to control the execution flow between producer and consumer
+        std::binary_semaphore producer { 1 };
+        std::binary_semaphore consumer { 0 };
+
+        // Latch to ensure main waits for both threads (producer and consumer) to complete before proceeding
+        std::latch done{2};
+    };
+
+    void consumeData(SharedResource& resource)
+    {
+        for (int i = 0; i < SharedResource::BUFFER_SIZE; ++i)
+        {
+            // Wait for the producer to signal that data is ready
+            resource.consumer.acquire();
+
+            std::osyncstream { std::cout } << "Consumer Reads:  " << resource.data[i] << '\n';
+            std::this_thread::sleep_for(std::chrono::milliseconds(5u));
+
+            // Signal the producer to continue production
+            resource.producer.release();
+        }
+        // Signal completion of the consumer thread to the latch
+        resource.done.count_down();
+    }
+
+    void produceData(SharedResource& resource)
+    {
+        for (int i = 0; i < SharedResource::BUFFER_SIZE; ++i)
+        {
+            // Wait for the consumer to signal readiness
+            resource.producer.acquire();
+            resource.data[i] = i;
+
+            std::osyncstream { std::cout } << "Producer writes: " << resource.data[i] << '\n';
+            std::this_thread::sleep_for(std::chrono::milliseconds(10u));
+
+            // Signal the consumer that data is ready
+            resource.consumer.release();
+        }
+        // Signal completion of the producer thread to the latch
+        resource.done.count_down();
+    }
+
+    void runDemo()
+    {
+        SharedResource resource;
+        std::jthread producer(produceData, std::ref(resource));
+        std::jthread consumer(consumeData, std::ref(resource));
+
+        // Main thread waits here until both threads signal completion via the latch
+        resource.done.wait();
+
+        // Output the data processed by threads
+        for (int value : resource.data) {
+            std::osyncstream { std::cout } << value << " ";
+        }
+    }
+}
+
+void Semaphore::TestAll()
 {
     // BinarySemaphore::Release_Acquire_BasicTest();
     // BinarySemaphore::Release_TRY_Acquire__BasicTest();
@@ -318,8 +386,10 @@ void Semaphore::TEST_ALL()
     // BinarySemaphore::Simple_Acquire_Release();
     // BinarySemaphore::Semaphore_VS_ConditionalVariable();
 
-    CountingSemaphore::BasicTest();
+    // CountingSemaphore::BasicTest();
     // CountingSemaphore::Producer_Consumer();
     // CountingSemaphore::WorkQueue_Demo();
+
+    Consumer_Producer::runDemo();
 };
 
