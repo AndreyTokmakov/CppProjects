@@ -69,15 +69,38 @@ namespace Nlohmann
     {
         std::cout << json::parse(std::ifstream (R"(../../Json/data/snapshot.json)")) << std::endl;
     }
+
+
+    void Create_and_Parse_Json()
+    {
+        nlohmann::json jsonData;
+        jsonData["marketId"] = 112233;
+        jsonData["name"] = "TEST_1";
+
+        const std::string jsonString = jsonData.dump();
+        std::cout << jsonData << "\n" << jsonString << std::endl;
+
+        const nlohmann::json jsonData_New = nlohmann::json::parse(jsonString);
+        std::cout << jsonData_New << std::endl;
+
+        // std::string_view value = jsonDataEx["name"].get<std::string_view>();
+        // std::cout << value << std::endl;
+    }
 }
+
+
+
 
 // INFO: https://www.studyplan.dev/pro-cpp/json
 
 void Nlohmann::TestAll()
 {
-    checkIsValid();
+    // checkIsValid();
     // ParseJson_StringStream();
 
     // ParseJson_File();
     // ParseJson_File2();
+
+    Create_and_Parse_Json();
+
 }
