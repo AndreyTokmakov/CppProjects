@@ -754,5 +754,19 @@ void CollectionsTests::TestAll()
     // HeterogeneousLookup2::Test_OK();
 
 
-    UseStringKey_Optimize::Test();
+    // UseStringKey_Optimize::Test();
+
+
+    std::map<std::string, bool> m_mapMarketRecovery {
+            {"one", true },
+            {"two", true },
+    };
+
+
+    const bool res  = std::all_of(m_mapMarketRecovery.cbegin(), m_mapMarketRecovery.cend(),[]
+        (const std::pair<const std::basic_string<char>, bool>& iter) {
+        return iter.second;
+    });
+
+    std::cout << std::boolalpha << res << std::endl;
 };

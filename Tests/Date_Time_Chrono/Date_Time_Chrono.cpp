@@ -152,7 +152,7 @@ namespace Date_Time_Chrono::Sleep
             });
 
             std::jthread t2 ([&] {
-                std::this_thread::sleep_for(std::chrono::seconds(2));
+                std::this_thread::sleep_for(std::chrono::seconds(2U));
                 run = false;
             });
         }

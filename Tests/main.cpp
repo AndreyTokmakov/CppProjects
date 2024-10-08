@@ -1401,7 +1401,6 @@ int main([[maybe_unused]] int argc,
     // StringTest_SSO::Tests();
     // Enums::Tests();
 
-
     /** * * * * *  Move to lib * * * * * **/
 
     // Coroutines::TestAll();
@@ -1420,12 +1419,12 @@ int main([[maybe_unused]] int argc,
     // Concepts::TestAll();
     // Crow::TestAll();
     // Comparators::TestAll();
-    // CollectionsTests::TestAll();
+    CollectionsTests::TestAll();
     // CopyElision_RVO::TestAll();
     // ConstexprMap::TestAll();
     // DebugLogger::TestAll();
     // DesignPatterns::TestAll();
-    Date_Time_Chrono::TestAll();
+    // Date_Time_Chrono::TestAll();
     // Heap::TestAll();
     // Iterators::TestAll();
     // Files::TestAll();
