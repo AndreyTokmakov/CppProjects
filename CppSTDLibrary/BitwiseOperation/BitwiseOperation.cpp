@@ -48,9 +48,18 @@ namespace BitUtils
         return ! (value & 1);
     }
 
-    constexpr bool is_pow_of_2(int value) noexcept {
+    constexpr bool is_pow_of_2(const int value) noexcept {
         return (value && !(value & value - 1));
     }
+
+    constexpr int divide_by_2(const int value) {
+        return value >> 1 ;
+    }
+
+    constexpr int multiply_by_2(const int value) {
+        return value << 1 ;
+    }
+
 }
 
 
@@ -221,27 +230,20 @@ namespace BitwiseOperation
         show_bits(num);
     }
 
-    void Divide_By_2()
+
+    void Divide_By_2_Test()
     {
-        int value = 24;
-        std::cout << value << " --> ";
-        value >>= 1;
-        std::cout << value << std::endl;
+        for (const int v: {1, 2, 4, 6, 8, 10})
+        {
+            std::cout << v << " = " << BitUtils::divide_by_2(v) << std::endl;
+        }
     }
 
     void Multiplying_By_2()
     {
+        for (const int v: { 1, 2, 4, 6, 8, 10 })
         {
-            int value = 24;
-            std::cout << value << " --> ";
-            value <<= 1;
-            std::cout << value << std::endl;
-        }
-        {
-            int value = 121;
-            std::cout << value << " --> ";
-            value <<= 1;
-            std::cout << value << std::endl;
+            std::cout << v << " = " << BitUtils::multiply_by_2(v) << std::endl;
         }
     }
 
@@ -467,10 +469,10 @@ void BitwiseOperation::TestAll()
     // SetBit();
     // UnSetBit();
 
-    Swap_Two_Numbers();
+    // Swap_Two_Numbers();
 
-    // Divide_By_2();
-    // Multiplying_By_2();
+    // Divide_By_2_Test();
+    Multiplying_By_2();
     // Check_Two_Numbers_Are_Equal();
 
 
