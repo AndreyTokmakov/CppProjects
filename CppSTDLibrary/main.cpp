@@ -99,9 +99,9 @@ int main([[maybe_unused]] int argc,
     // Attributes::TestAll();
     // Auto::TestAll();
     // BitSet::TestAll();
-    BitwiseOperation::TestAll();
+    // BitwiseOperation::TestAll();
     // Byte::TestAll();
-    // Chrono::TestAll();
+    Chrono::TestAll();
     // Comparators::TestAll();
     // Concepts::TestAll();
     // ConsoleInOut::TestAll();

@@ -19,6 +19,8 @@ Description : Undefined Behavior C++ tests
 #include <optional>
 #include <algorithm>
 #include <numeric>
+#include <format>
+#include <print>
 
 
 namespace Numeric
@@ -67,6 +69,66 @@ namespace Numeric
     }
 }
 
+namespace Move
+{
+    // https://github.com/Nekrolm/ubbook/blob/master/syntax/move.md
+
+    struct Person
+    {
+        std::string name;
+        int age { 0 };
+    };
+
+    std::ostream& operator<<(std::ostream& stream, const Person& person)
+    {
+        stream << std::format("Person(name: {}, age: {})", person.name, person.age);
+        return stream;
+    }
+
+    /// реализация алгоритма remove_if содержит ошибку:
+    /// Ошибка не даст о себе знать до тех пор, пока элементы контейнера не будут содержать полей,
+    /// не учитывающих возможность самоприсваивания.
+
+    template <class T, class P>
+    void remove_if(std::vector<T>& v, P&& predicate)
+    {
+        size_t new_size = 0;
+        for (auto&& x : v) {
+            if (!predicate(x)) {
+                v[new_size] = std::move(x); /// self-move-assignment!
+                ++new_size;
+            }
+        }
+        v.resize(new_size);
+    }
+
+    void Remove_IF_Bug_Self_Assignment()
+    {
+        std::vector<Person> persons {
+                Person { "John", 30 },
+                Person { "Mary", 25 }
+        };
+
+        for (const auto& p: persons){
+            std::cout << p << "\n";
+        }
+
+        remove_if(persons, [](const Person& p) {  return p.age < 20; });
+
+        for (const auto& p : persons){
+            std::cout << p << "\n"; /// все name пустые!
+        }
+    }
+
+    void String_Self_Assignment()
+    {
+        std::string name { "qwerty"};
+        std::print("name before: {}\n", name);
+        name = std::move(name);
+        std::print("name after : {}\n", name);
+    }
+}
+
 
 int main([[maybe_unused]] int argc,
          [[maybe_unused]] char** argv)
@@ -75,7 +137,12 @@ int main([[maybe_unused]] int argc,
 
     // Numeric::Char_Sign_Extension();
     // Numeric::Integer_Promotion_Error();
-    Numeric::Narrowing();
+    // Numeric::Narrowing();
+
+    // Move::Remove_IF_Bug_Self_Assignment();
+    Move::String_Self_Assignment();
+
+
 
     return EXIT_SUCCESS;
 }

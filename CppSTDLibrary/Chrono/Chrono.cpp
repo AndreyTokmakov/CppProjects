@@ -218,6 +218,18 @@ namespace Chrono::Duration
         }
     }
 
+    void Duration_Milliseconds()
+    {
+        constexpr uint32_t milliseconds { 375};
+
+        std::chrono::system_clock::time_point timePoint { std::chrono::system_clock::now() };
+        std::this_thread::sleep_for(std::chrono::milliseconds(milliseconds));
+
+        const std::chrono::milliseconds msDuration = std::chrono::duration_cast<std::chrono::milliseconds>(
+                std::chrono::system_clock::now() - timePoint);
+        std::cout << msDuration.count() << std::endl;
+    }
+
     void HighResolution__PeriodDuration()
     {
         const std::chrono::high_resolution_clock::time_point start = std::chrono::high_resolution_clock::now();
@@ -957,6 +969,36 @@ namespace Chrono::Sleep_Conditional
 }
 
 
+namespace Chrono::TimeOut
+{
+    bool isTimeout(int milliseconds = 100)
+    {
+        static std::chrono::system_clock::time_point timePoint { std::chrono::system_clock::now() };
+        const std::chrono::system_clock::time_point timeNow { std::chrono::system_clock::now() };
+        const std::chrono::milliseconds msDuration = std::chrono::duration_cast<std::chrono::milliseconds>(timeNow - timePoint);
+
+        if (msDuration.count() >= milliseconds) {
+            std::cout << Time_To_String::getCurrentTime(timePoint) << std::endl;
+            timePoint = timeNow;
+            return true;
+        }
+
+        return false;
+    }
+
+    void CheckTimeoutFunction()
+    {
+        while (true)
+        {
+            std::this_thread::sleep_for(std::chrono::milliseconds (250U));
+            if (!isTimeout(1000))
+            {
+                std::cout << "Not ready\n";
+            }
+        }
+    }
+}
+
 void Chrono::TestAll()
 {
     // Time_To_String::Asctime();
@@ -966,6 +1008,7 @@ void Chrono::TestAll()
     // Time_To_String::Time_With_Milliseconds();
 
     // Duration::Create_Simple();
+    // Duration::Duration_Milliseconds();
     // Duration::Measure_Duration();
     // Duration::HighResolution__PeriodDuration();
     // Duration::SteadyClock__PeriodDuration();
@@ -993,11 +1036,13 @@ void Chrono::TestAll()
     // StringFormat::Format3();
     // StringFormat::StringToTime();
 
+
+    TimeOut::CheckTimeoutFunction();
+
+
     // Cast_Conversation::TimePoint_to_Long_and_Back();
 
     // Sleep_Conditional::Test();
-
-
 
     // FunctionPerformance::GetCurrentTime_Performance();
     // FunctionPerformance::TestGetCurrentTimeFunctions();
