@@ -62,10 +62,10 @@ int main([[maybe_unused]] int argc,
     // Variables_MemoryLayout::TestAll();
     // ValgrindExperiments::TestAll();
     // CacheLineAccessEffects::TestAll();
-    // OptimizationTricks::TestAll();
+    OptimizationTricks::TestAll();
     // Numa::TestAll();
     // DoubleBuffering::TestAll();
-    BranchLessCodeExamples::TestAll();
+    // BranchLessCodeExamples::TestAll();
 
     return EXIT_SUCCESS;
 }

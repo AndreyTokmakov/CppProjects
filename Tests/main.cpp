@@ -1375,6 +1375,42 @@ namespace ADL_LookUp::Implicit_Bool_From_SV
     }
 }
 
+namespace BitwiseOperations
+{
+    enum class Weekdays
+    {
+        Monday = 0x01,
+        Tuesday = 0x02,
+        Wednesday = 0x03,
+        Thursday = 0x08,
+        Friday = 0x19,
+        Saturday = 0x20,
+        Sunday = 0x40
+    };
+
+    bool isWorkday(Weekdays day)
+    {
+        if (static_cast<int>(day) & (static_cast<int>(Weekdays::Monday) |
+                                     static_cast<int>(Weekdays::Tuesday) |
+                                     static_cast<int>(Weekdays::Wednesday) |
+                                     static_cast<int>(Weekdays::Thursday) |
+                                     static_cast<int>(Weekdays::Friday)))
+        {
+            return true;
+        }
+        return false;
+    }
+
+    void test()
+    {
+        for (Weekdays day: { Weekdays::Monday, Weekdays::Tuesday, Weekdays::Wednesday, Weekdays::Thursday,
+                             Weekdays::Friday, Weekdays::Saturday, Weekdays::Sunday })
+        {
+            std::cout << "isWorkday: " << std::boolalpha << isWorkday(day) << std::endl;
+        }
+    }
+}
+
 
 int main([[maybe_unused]] int argc,
          [[maybe_unused]] char** argv)
@@ -1401,6 +1437,10 @@ int main([[maybe_unused]] int argc,
     // StringTest_SSO::Tests();
     // Enums::Tests();
 
+
+    BitwiseOperations::test();
+
+
     /** * * * * *  Move to lib * * * * * **/
 
     // Coroutines::TestAll();
@@ -1419,7 +1459,7 @@ int main([[maybe_unused]] int argc,
     // Concepts::TestAll();
     // Crow::TestAll();
     // Comparators::TestAll();
-    CollectionsTests::TestAll();
+    // CollectionsTests::TestAll();
     // CopyElision_RVO::TestAll();
     // ConstexprMap::TestAll();
     // DebugLogger::TestAll();
