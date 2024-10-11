@@ -27,13 +27,13 @@ int main([[maybe_unused]] int argc,
 		 [[maybe_unused]] char** argv)
 {
 	// Graphs::TEST_ALL();
-	// LinkedList::TEST_ALL();
+	LinkedList::TEST_ALL();
 	// Heap_Algoritms::TEST_ALL();
     // Trees::TEST_ALL();
 	// Queues::TEST_ALL();
 	// Stack::TEST_ALL();
 	// Sorting::TEST_ALL();
-	Strings::TestAll();
+	// Strings::TestAll();
 	// Interviews::TEST_ALL();
     // Numeric::TestAll();
     // MultiThreading::TestAll();

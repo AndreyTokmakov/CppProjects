@@ -10,6 +10,7 @@ Description : Software design patterns C++ test project
 #include <chrono>
 #include <thread>
 
+#include "AccessToken/AccessToken.h"
 #include "CopyAndSwap/CopyAndSwap.h"
 #include "Prototype/Prototype.h"
 #include "Interpreter/Interpreter.h"
@@ -104,7 +105,9 @@ int main([[maybe_unused]]  int argc,
     // CopyAndSwap::TEST_ALL();   ---- TESTs
     // TagDispatching::Test();
     // VirtualConstructor::Test();
-    TypeID::TestAll();
+    // TypeID::TestAll();
+
+    AccessToken::TestAll();
 
 
     // ExecutorAdapter::TestAll();

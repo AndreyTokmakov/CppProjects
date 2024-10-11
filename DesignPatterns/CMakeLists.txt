@@ -59,23 +59,32 @@ add_executable(${PROJECT_NAME}
 		LazyInitialization/LazyInitialization.cpp
 		LazyInitialization/LazyInitialization.h
 		ChainOfResponsibility/Example2.cpp
-		Command/Command_MethodPtr.cpp Iterator/RangeIterator.cpp Mediator/ChatMediator.cpp
-		Observer/ObserverBasic.cpp TemplateMethod/TemplateMethod_ExampleTwo.cpp Observer/ObserverMediator.cpp
-		TemplateMethod/TemplateMethod_ExampleThree.cpp Visitor/DynamicComponentsVisitor.cpp
-		Visitor/DynamicComponentsVisitor.cpp Visitor/DynamicComponentsVisitor.cpp
-		Observer/ObserverSubject.cpp Visitor/CarVisitor.cpp
-		PImpl/PImpl.h PImpl/PImpl.cpp PImpl/PImplDemo2.cpp
-		Monostate/Monostate.cpp Monostate/Monostate.h
-		NVI/NVI_SimpleExample.cpp NVI/NVI_SimpleExample.h
-		Decorator/MoneyTaxesDecoratorOne.cpp Decorator/MoneyTaxesDecoratorOne.h
-		Decorator/MoneyTaxesDecoratorTwo.cpp Decorator/MoneyTaxesDecoratorTwo.h Observer/LambdaObserver.cpp
-		MVC/ModelViewController.cpp MVC/ModelViewController.h DependencyInjection/DependencyInjection.cpp
-		DependencyInjection/DependencyInjection.h
-		Adapter/ChargingPhoneAdapter.cpp Adapter/ChargingPhoneAdapter.cpp
-		Decorator/WindowDecorator.cpp CRTP/CRTP_Cloneable.cpp CRTP/CRTP_Cloneable.h
+		Command/Command_MethodPtr.cpp
+		Iterator/RangeIterator.cpp Mediator/ChatMediator.cpp
+		Observer/ObserverBasic.cpp
+		TemplateMethod/TemplateMethod_ExampleTwo.cpp
+		Observer/ObserverMediator.cpp
+		TemplateMethod/TemplateMethod_ExampleThree.cpp
+		Visitor/DynamicComponentsVisitor.cpp
+		Visitor/DynamicComponentsVisitor.cpp
+		Visitor/DynamicComponentsVisitor.cpp
+		Observer/ObserverSubject.cpp
+		Visitor/CarVisitor.cpp
+		PImpl/PImpl.cpp
+		PImpl/PImplDemo2.cpp
+		Monostate/Monostate.cpp
+		NVI/NVI_SimpleExample.cpp
+		Decorator/MoneyTaxesDecoratorOne.cpp
+		Decorator/MoneyTaxesDecoratorTwo.cpp
+		Observer/LambdaObserver.cpp
+		MVC/ModelViewController.cpp
+		DependencyInjection/DependencyInjection.cpp
+		Adapter/ChargingPhoneAdapter.cpp
+		Adapter/ChargingPhoneAdapter.cpp
+		Decorator/WindowDecorator.cpp
+		CRTP/CRTP_Cloneable.cpp
         TypeID/TypeID.cpp
-
-
+		AccessToken/AccessToken.cpp
 )
 
 # Link libraries to the project/executable
