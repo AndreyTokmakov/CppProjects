@@ -27,7 +27,8 @@ add_compile_options(-c -Wall -Wextra -O3 -std=c++2a)
 # include all components
 add_executable(${PROJECT_NAME}
         main.cpp
-        CertificateGenerator.cpp CertificateGenerator.h
+        CertificateGenerator.cpp
+        Encryption.cpp
 )
 
  # Link phread library

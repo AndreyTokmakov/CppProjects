@@ -57,7 +57,9 @@
 #include <openssl/x509v3.h>
 #include <openssl/crypto.h>
 #include <openssl/opensslv.h>
+
 #include "CertificateGenerator.h"
+#include "Encryption.h"
 
 
 namespace
@@ -350,7 +352,7 @@ int main([[maybe_unused]] int argc,
          [[maybe_unused]] char** argv)
 {
     const std::vector<std::string_view> args(argv + 1, argv + argc);
-    printVersionInfo();
+    // printVersionInfo();
 
     // Experiments::TestCertificate();
     // Experiments::TestCertificate_PEM();
@@ -363,6 +365,7 @@ int main([[maybe_unused]] int argc,
 
     // Errors::InspectErrors();
 
+    Encryption::TestAll();
 
 
     return EXIT_SUCCESS;
