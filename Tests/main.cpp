@@ -1411,6 +1411,13 @@ namespace BitwiseOperations
     }
 }
 
+template < typename T >
+T mean(std::vector< T > const &var)
+{
+    auto sum = std::accumulate(var.begin(), var.end(), T(0));
+    return sum / var.size();
+}
+
 
 int main([[maybe_unused]] int argc,
          [[maybe_unused]] char** argv)
@@ -1435,10 +1442,8 @@ int main([[maybe_unused]] int argc,
     // UBBook::Test();
     // PipelineOperator::SimplePipeTest();
     // StringTest_SSO::Tests();
-    // Enums::Tests();
 
-
-    BitwiseOperations::test();
+    // BitwiseOperations::test();
 
 
     /** * * * * *  Move to lib * * * * * **/
@@ -1459,7 +1464,7 @@ int main([[maybe_unused]] int argc,
     // Concepts::TestAll();
     // Crow::TestAll();
     // Comparators::TestAll();
-    // CollectionsTests::TestAll();
+    CollectionsTests::TestAll();
     // CopyElision_RVO::TestAll();
     // ConstexprMap::TestAll();
     // DebugLogger::TestAll();

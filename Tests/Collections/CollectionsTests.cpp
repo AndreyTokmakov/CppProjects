@@ -724,11 +724,59 @@ namespace CollectionsTests::UseStringKey_Optimize
         } else {
             std::cout << "Not found" << std::endl;
         }
-
     }
-
 };
 
+namespace CollectionsTests::MapOfVectors_MoveValue
+{
+    using Helpers::Integer;
+
+    template<typename... Args>
+    std::vector<Integer> create(Args&&... args)
+    {
+        constexpr size_t size = sizeof...(args);
+        std::vector<Integer> result;
+        result.reserve(size);
+        (result.emplace_back(args), ...);
+        return result;
+    }
+
+    void func(std::vector<Integer>&& ids)
+    {
+        std::vector<Integer> temp = std::move(ids);
+    }
+
+    void MoveMapValue()
+    {
+        std::map<int, std::vector<Integer>> heavyMap;
+        heavyMap[1] = create(1,2,3);
+        heavyMap[2] = create(4,5,6);
+        heavyMap[3] = create(7,8,9);
+
+        std::cout << std::string(180, '-') << std::endl;
+        {
+            std::map<int, std::vector<Integer>> heavyMap2;
+            heavyMap2[1] = std::move(heavyMap[1]);
+        }
+        std::cout << std::string(180, '-') << std::endl;
+    }
+
+    void MoveMapValue_PassToFunc()
+    {
+        std::map<int, std::vector<Integer>> heavyMap;
+        heavyMap[1] = create(1,2,3);
+        heavyMap[2] = create(4,5,6);
+        heavyMap[3] = create(7,8,9);
+
+        std::cout << std::string(180, '-') << std::endl;
+        {
+            std::map<int, std::vector<Integer>> heavyMap2;
+            heavyMap2[1] = std::move(heavyMap[1]);
+            func(std::move(heavyMap2[1]));
+        }
+        std::cout << std::string(180, '-') << std::endl;
+    }
+}
 
 void CollectionsTests::TestAll()
 {
@@ -757,16 +805,6 @@ void CollectionsTests::TestAll()
     // UseStringKey_Optimize::Test();
 
 
-    std::map<std::string, bool> m_mapMarketRecovery {
-            {"one", true },
-            {"two", true },
-    };
-
-
-    const bool res  = std::all_of(m_mapMarketRecovery.cbegin(), m_mapMarketRecovery.cend(),[]
-        (const std::pair<const std::basic_string<char>, bool>& iter) {
-        return iter.second;
-    });
-
-    std::cout << std::boolalpha << res << std::endl;
+    // MapOfVectors_MoveValue::MoveMapValue();
+    MapOfVectors_MoveValue::MoveMapValue_PassToFunc();
 };

@@ -59,27 +59,33 @@ namespace
 
 namespace Encryption
 {
-
-
     void encrypt(const std::vector<uint8_t>& key,
                  const std::vector<uint8_t>& message,
                  const std::vector<uint8_t>& iv,
                  std::vector<uint8_t>& output)
     {
         output.resize(message.size() * AES_BLOCK_SIZE);
-        const size_t messageLen = message.size();
         int outlen = 0;
 
         std::unique_ptr<EVP_CIPHER_CTX, decltype(&::EVP_CIPHER_CTX_free)> ctx {
                 EVP_CIPHER_CTX_new(), ::EVP_CIPHER_CTX_free
         };
 
-        int res = EVP_EncryptInit(ctx.get(), EVP_aes_256_cbc(), key.data(), iv.data());
-        res = EVP_EncryptUpdate(ctx.get(), output.data(), &outlen, message.data(), messageLen);
+        if (0 == EVP_EncryptInit(ctx.get(), EVP_aes_256_cbc(), key.data(), iv.data())) {
+            std::cerr << "Error: EVP_EncryptInit() failed" << std::endl;
+            return;
+        }
+        if (0 == EVP_EncryptUpdate(ctx.get(), output.data(), &outlen, message.data(), message.size())) {
+            std::cerr << "Error: EVP_EncryptUpdate() failed" << std::endl;
+            return;
+        }
         size_t total_out = outlen;
-        res = EVP_EncryptFinal(ctx.get(), output.data()+total_out, &outlen);
-        total_out += outlen;
+        if (0 == EVP_EncryptFinal(ctx.get(), output.data()+total_out, &outlen)) {
+            std::cerr << "Error: EVP_EncryptUpdate() failed" << std::endl;
+            return;
+        }
 
+        total_out += outlen;
         output.resize(total_out);
     }
 
@@ -93,15 +99,146 @@ namespace Encryption
                 EVP_CIPHER_CTX_new(), ::EVP_CIPHER_CTX_free
         };
 
-        const size_t messageLen = message.size();
-        int res { 0 }, outlen {0 };
-        res = EVP_DecryptInit(ctx.get(), EVP_aes_256_cbc(), key.data(), iv.data());
-        res = EVP_DecryptUpdate(ctx.get(), output.data(), &outlen, message.data(), messageLen);
+        int outlen {0 };
+        if (0 == EVP_DecryptInit(ctx.get(), EVP_aes_256_cbc(), key.data(), iv.data())) {
+            std::cerr << "Error: EVP_EncryptInit() failed" << std::endl;
+            return;
+        }
+        if (0 == EVP_DecryptUpdate(ctx.get(), output.data(), &outlen, message.data(), message.size())) {
+            std::cerr << "Error: EVP_DecryptUpdate() failed" << std::endl;
+            return;
+        }
         size_t total_out = outlen;
-        res = EVP_DecryptFinal(ctx.get(), output.data() + outlen, &outlen);
-        total_out += outlen;
+        if (0 == EVP_DecryptFinal(ctx.get(), output.data() + outlen, &outlen)) {
+            std::cerr << "Error: EVP_DecryptUpdate() failed" << std::endl;
+            return;
+        }
 
+        total_out += outlen;
         output.resize(total_out);
+    }
+
+
+    void Test()
+    {
+        const std::string iv = "1234567890123456", key = "passwordpasswordpasswordpassword";
+        const std::string message = "Some Crypto Text";
+
+        const std::vector<uint8_t> ivBytes { str2Bytes(iv) };
+        std::vector<uint8_t> dataEncrypted, dataDecrypted;
+
+        Encryption::encrypt(str2Bytes(key), str2Bytes(message), ivBytes, dataEncrypted);
+        Encryption::decrypt(str2Bytes(key), dataEncrypted, ivBytes, dataDecrypted);
+
+        std::cout << bytes2Str(dataEncrypted) << std::endl;
+        std::cout << bytes2Str(dataDecrypted) << std::endl;
+    }
+};
+
+
+namespace EncryptionEx
+{
+    void encrypt(const std::vector<uint8_t>& key,
+                 const std::vector<uint8_t>& message,
+                 const std::vector<uint8_t>& iv,
+                 std::vector<uint8_t>& output)
+    {
+        output.resize(message.size() * AES_BLOCK_SIZE);
+        int outlen = 0;
+
+        std::unique_ptr<EVP_CIPHER_CTX, decltype(&::EVP_CIPHER_CTX_free)> ctx {
+                EVP_CIPHER_CTX_new(), ::EVP_CIPHER_CTX_free
+        };
+
+        if (0 == EVP_EncryptInit_ex2(ctx.get(), EVP_aes_256_cbc(), key.data(), iv.data(), nullptr)) {
+            std::cerr << "Error: EVP_EncryptInit() failed" << std::endl;
+            return;
+        }
+        if (0 == EVP_EncryptUpdate(ctx.get(), output.data(), &outlen, message.data(), message.size())) {
+            std::cerr << "Error: EVP_EncryptUpdate() failed" << std::endl;
+            return;
+        }
+        size_t total_out = outlen;
+        if (0 == EVP_EncryptFinal_ex(ctx.get(), output.data()+total_out, &outlen)) {
+            std::cerr << "Error: EVP_EncryptUpdate() failed" << std::endl;
+            return;
+        }
+
+        total_out += outlen;
+        output.resize(total_out);
+    }
+
+    void decrypt(const std::vector<uint8_t>& key,
+                 const std::vector<uint8_t>& message,
+                 const std::vector<uint8_t>& iv,
+                 std::vector<uint8_t>& output)
+    {
+        output.resize(message.size() * 3);
+        std::unique_ptr<EVP_CIPHER_CTX, decltype(&::EVP_CIPHER_CTX_free)> ctx {
+                EVP_CIPHER_CTX_new(), ::EVP_CIPHER_CTX_free
+        };
+
+        int outlen {0 };
+        if (0 == EVP_EncryptInit_ex2(ctx.get(), EVP_aes_256_cbc(), key.data(), iv.data(), nullptr)) {
+            std::cerr << "Error: EVP_EncryptInit() failed" << std::endl;
+            return;
+        }
+        if (0 == EVP_DecryptUpdate(ctx.get(), output.data(), &outlen, message.data(), message.size())) {
+            std::cerr << "Error: EVP_DecryptUpdate() failed" << std::endl;
+            return;
+        }
+        size_t total_out = outlen;
+        if (0 == EVP_EncryptFinal_ex(ctx.get(), output.data() + outlen, &outlen)) {
+            std::cerr << "Error: EVP_DecryptUpdate() failed" << std::endl;
+            return;
+        }
+
+        total_out += outlen;
+        output.resize(total_out);
+    }
+
+    void Test()
+    {
+        const std::string iv = "1234567890123456", key = "some_password", salt = "_SOME_HARDCODED_TEXT";
+        const std::string secretData = "-----BEGIN PGP PUBLIC KEY BLOCK-----\n"
+                                       "xsFNBGVDTIABEACUuJWQqyYtyZ78+ABbS1XhR5AT5FzaGFo+emWmlIdgcYuAh5Qm\n"
+                                       "7JaLVQOCZEP5aKcjIAb8rboK+G5/WLIdcoTz4pBm+SXHEwfE6RB5BQjtHLYDPuoT\n"
+                                       "k0OKA9wzOwu3o48NfCS1Mp94z0li4uoNvjKFxXj0FvZr07OH1FPCyzz1F2F/7yXX\n"
+                                       "wdeTWWbFwU67NxqXvuY1PscxU/CqNYiNFy2+tpsyBtMsCBggCfb/f8Ci6+mYnK8j\n"
+                                       "HgJEA3jOZ6p5Fhxel7rPFqfrUAATmlzLxtmW2Q0KTFIrhNECmTz5iM5DetBleJX9\n"
+                                       "Nwe5QXXujWXuF3CR64Dlynu4JUsaO6FEhrmoakDksSVhSSv4V0uEbGKQ3ezs5FIb\n"
+                                       "PL2KifUgnfC6exFHjxLG8ZTf0FoEID+tag6AlzTuoYZgOxfYFUVbyW7kSkYcUaJ6\n"
+                                       "VGVDk71lmlMenTyHiGbWpy5FH0gRnGc0bkHZ49Ak1Gs/kOe96YuQ+BA0k/7NnQYT\n"
+                                       "I1JJyxNPFf6EF8XZ5PQ5r2YJXrME1UHyZKCmviyItJZIeWq0ppAOp6r8vgGUBL3R\n"
+                                       "xNzwfMT0fXKhTMmqi3DPS22+0JWRvs1CiH+BQeDCAVM9f/3Ny11pFcnteeUrMCa9\n"
+                                       "v4rxPY1StZINzDlpGvQH1ztXF5YZ4AuINZRH3HMhQK7h8kIpOB6nRH9gewARAQAB\n"
+                                       "zT1BYnJhaGFtIExpbmNvbG4gKEhvbmVzdCBBYmUpIDxhYnJhaGFtLmxpbmNvbG5A\n"
+                                       "d2hpdGVob3VzZS5nb3Y+wsGKBBMBCAA0BQJlQ0yBAhsOBAsJCAcFFQgJCgsFFgID\n"
+                                       "AQACHgEWIQS0ICq4W8XKR91psjInjzsSygStCwAKCRAnjzsSygStC55pEACUPhsu\n"
+                                       "2oJP5JNhYCFtLN16c+80+S4tt2pXGXS9vWZShlwIo2n9v+khy0EgB76RPNjFVdzO\n"
+                                       "fEISZ4r5I2CF7w5zb6iKTwBIsYJ7siXbsrm+vBchUr+ONtsuXNvT/ZQULkEmoeQO\n"
+                                       "GpvFtqUgfQOTsxLGk5jNjuS4HWBsVdCPYLAIcIfifPqxTlL6CZ78P71vzSUO69Gq\n"
+                                       "iFAihh97wChAb0qxEqlPterYHOldx3GfLaBstLGP2rUyiSLCPAl+KJdmEKXvx3MP\n"
+                                       "LYJhOLb3bs+rireXCjRoCDPcnKhszJndhvI1ZfoQ9FhUNQ10sHXDRYLKAtpqwc6W\n"
+                                       "KaIHP16BtvlwhsF/GlwXiTPS1anPEH+o5mCEqlHwXyD8YZnxRCuA9dg+sgkbT2yU\n"
+                                       "d9dJDFpBPlXPJcu0JVHiCGscc1jv/aoXiKpEwuF9qjFV8n3MGYEkEyzj6onuO+Aj\n"
+                                       "cdf+gvk84kJ//xFc0rJgId3s45Lv6SLlal+Og95nwn9JOS1xTkPYDJztT33AcSOP\n"
+                                       "VKCxdX1p2AfhjGkG2lHr9Wp0cXE8b4TRgBOIDt85zsb+nnQj77XTzB3CTu7lRL5f\n"
+                                       "VfN+hui9DALdM+5j+yeToeLtU6CpCTNcgwDmEP8paiGtObad8aBySrVLvfgDDJm8\n"
+                                       "YN3u2sNMN8wzH1i3s482LALcNBZYDe+VpHZu/g==\n"
+                                       "=/kav\n"
+                                       "-----END PGP PUBLIC KEY BLOCK-----";
+        const std::string payload =  secretData + salt;
+
+        const std::vector<uint8_t> ivBytes { str2Bytes(iv) };
+        std::vector<uint8_t> dataEncrypted, dataDecrypted;
+
+        Encryption::encrypt(str2Bytes(key), str2Bytes(payload), ivBytes, dataEncrypted);
+        Encryption::decrypt(str2Bytes(key), dataEncrypted, ivBytes, dataDecrypted);
+
+        std::string result = bytes2Str(dataDecrypted);
+        result.erase(secretData.size());
+        std::cout << result << std::endl;
     }
 };
 
@@ -109,15 +246,6 @@ namespace Encryption
 
 void Encryption::TestAll()
 {
-    const std::string iv = "1234567890123456", key = "passwordpasswordpasswordpassword";
-    const std::string message = "Some secret Message";
-
-    const std::vector<uint8_t> ivBytes { str2Bytes(iv) };
-    std::vector<uint8_t> dataEncrypted, dataDecrypted;
-
-    Encryption::encrypt(str2Bytes(key), str2Bytes(message), ivBytes, dataEncrypted);
-    std::cout << bytes2Str(dataEncrypted) << std::endl;
-
-    Encryption::decrypt(str2Bytes(key), dataEncrypted, ivBytes, dataDecrypted);
-    std::cout << bytes2Str(dataDecrypted) << std::endl;
+    // Encryption::Test();
+    EncryptionEx::Test();
 };
