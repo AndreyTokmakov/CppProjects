@@ -324,9 +324,7 @@ namespace Strategy::Strategy_Text
 
 void Strategy::Test()
 {
-    // SimpleStrategy::Test();
-
-    Calculations::Test();
-
+    SimpleStrategy::Test();
+    // Calculations::Test();
     // Strategy_Text::Test();
 }

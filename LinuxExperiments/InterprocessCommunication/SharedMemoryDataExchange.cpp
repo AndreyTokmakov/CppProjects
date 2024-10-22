@@ -748,7 +748,7 @@ namespace SharedMemoryDataExchange::DemoThree
 
     void test()
     {
-        constexpr uint32_t num = 10'000'000;
+        constexpr uint32_t num = 10;
 
 #if 0
         Exchange<TypeExchange::Consumer> consumer {"__SHARED_MEMORY_OBJECT_00000002"};
@@ -763,7 +763,8 @@ namespace SharedMemoryDataExchange::DemoThree
                              "777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777"
                              "8888888888888888888888888888888888888888888888888888888888888888888888888888888"};
         Exchange<TypeExchange::Producer> producer {"__SHARED_MEMORY_OBJECT_00000002"};
-        for (uint32_t i = 0; i < num; ++i) {
+        for (uint32_t i = 0; i < num; ++i)
+        {
             // producer.PutMessage("TestMessage__" + std::to_string(i));
             producer.PutMessage(message);
         }

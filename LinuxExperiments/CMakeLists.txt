@@ -14,36 +14,37 @@ link_directories(${THIRD_PARTY_DIR}/liburing/install_dir/lib)
 # include all components
 add_executable(${PROJECT_NAME}
         main.cpp
-        Files/Files.cpp Files/Files.h
-        Processes/Processes.cpp Processes/Processes.h
-        common.h
-        Logs/Logs.cpp Logs/Logs.h
-        ShellCommands/ShellCommands.cpp ShellCommands/ShellCommands.h
-        Networking/Servers.cpp Networking/Servers.h
-        Networking/WebServerSimple.cpp Networking/WebServerSimple.h
-        Environment/Environment.cpp Environment/Environment.h
-        SystemInformation/SystemInformation.cpp SystemInformation/SystemInformation.h
-        InterprocessCommunication/Semaphore.cpp InterprocessCommunication/Semaphore.h
-        InterprocessCommunication/SharedMemory.cpp InterprocessCommunication/SharedMemory.h
-        InterprocessCommunication/SharedMemory_AtomicValue.h InterprocessCommunication/SharedMemory_AtomicValue.cpp
-        InterprocessCommunication/Pipes.cpp InterprocessCommunication/Pipes.h
-        InterprocessCommunication/SharedMemoryDataExchange.cpp InterprocessCommunication/SharedMemoryDataExchange.h
-        InterprocessCommunication/SharedMemoryWrapper.cpp InterprocessCommunication/SharedMemoryWrapper.h
-        InterprocessCommunication/MultiprocessQueue.cpp InterprocessCommunication/MultiprocessQueue.h
-        InterprocessCommunication/SemMutex.cpp InterprocessCommunication/SemMutex.h
-        InterprocessCommunication/SharedMutex.cpp InterprocessCommunication/SharedMutex.h
-        InterprocessCommunication/UnixSockets.cpp InterprocessCommunication/UnixSockets.h
-        Users/Users.cpp Users/Users.h
-        TimeAndDate/Time.cpp TimeAndDate/Time.h
-        TimeAndDate/Timer.cpp TimeAndDate/Timer.h
-        Modules/Modules.cpp Modules/Modules.h
-        OpenSSL/OpenSSL.cpp OpenSSL/OpenSSL.h
-        Networking/Utilities.cpp Networking/Utilities.h
-        TestsAndExperiments/TestAndExperiments.cpp TestsAndExperiments/TestAndExperiments.h
-        TestsAndExperiments/FindProcessForTCPConnection.cpp TestsAndExperiments/FindProcessForTCPConnection.h
-        Processes/ProcessManager.cpp Processes/ProcessManager.h
-        ModulesKernel/ModulesKernel.cpp ModulesKernel/ModulesKernel.h
-        IO_Uring/IOUringExperiments.cpp IO_Uring/IOUringExperiments.h
+        Files/Files.cpp
+        Processes/Processes.cpp
+        Logs/Logs.cpp
+        ShellCommands/ShellCommands.cpp
+        Networking/Servers.cpp
+        Networking/WebServerSimple.cpp
+        Environment/Environment.cpp
+        SystemInformation/SystemInformation.cpp
+        InterprocessCommunication/Semaphore.cpp
+        InterprocessCommunication/SharedMemory.cpp
+        InterprocessCommunication/SharedBlock_WithSemaphore.cpp
+        InterprocessCommunication/SharedMemory_AtomicValue.cpp
+        InterprocessCommunication/Pipes.cpp
+        InterprocessCommunication/SharedMemoryDataExchange.cpp
+        InterprocessCommunication/SharedMemoryDataExchangeEx.cpp
+        InterprocessCommunication/SharedMemoryWrapper.cpp
+        InterprocessCommunication/MultiprocessQueue.cpp
+        InterprocessCommunication/SemMutex.cpp
+        InterprocessCommunication/SharedMutex.cpp
+        InterprocessCommunication/UnixSockets.cpp
+        Users/Users.cpp
+        TimeAndDate/Time.cpp
+        TimeAndDate/Timer.cpp
+        Modules/Modules.cpp
+        OpenSSL/OpenSSL.cpp
+        Networking/Utilities.cpp
+        TestsAndExperiments/TestAndExperiments.cpp
+        TestsAndExperiments/FindProcessForTCPConnection.cpp
+        Processes/ProcessManager.cpp
+        ModulesKernel/ModulesKernel.cpp
+        IO_Uring/IOUringExperiments.cpp
 )
 
 # Link libraries to the project/executable

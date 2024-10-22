@@ -1446,6 +1446,17 @@ int main([[maybe_unused]] int argc,
     // BitwiseOperations::test();
 
 
+
+    std::map<int, std::vector<int>> vectMap;
+    std::vector<int> values {1,2,3,4,5};
+
+    //vectMap[1] = std::vector<int>{6,7,8};
+    vectMap.emplace(1, values);
+
+    std::cout << vectMap[1] << std::endl;
+
+
+
     /** * * * * *  Move to lib * * * * * **/
 
     // Coroutines::TestAll();
@@ -1464,7 +1475,7 @@ int main([[maybe_unused]] int argc,
     // Concepts::TestAll();
     // Crow::TestAll();
     // Comparators::TestAll();
-    CollectionsTests::TestAll();
+    // CollectionsTests::TestAll();
     // CopyElision_RVO::TestAll();
     // ConstexprMap::TestAll();
     // DebugLogger::TestAll();
