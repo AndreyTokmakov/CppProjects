@@ -29,14 +29,14 @@ Description : SharedMemoryDataExchangeEx.cpp
 
 namespace
 {
+    using namespace std::chrono;
+
     constexpr std::string_view sharedSegmentName { "__SHARED_MEMORY_SEGMENT_NAME_00000__2__" };
     constexpr std::string_view FORMAT { "[%d-%02d-%02d %02d:%02d:%02d.%06ld] " };
 
     [[nodiscard]]
-    std::string now(const std::chrono::time_point<std::chrono::system_clock>& timestamp =
-            std::chrono::system_clock::now()) noexcept
+    std::string now(const time_point<system_clock>& timestamp = system_clock::now()) noexcept
     {
-        using namespace std::chrono;
         const time_t time { system_clock::to_time_t(timestamp) };
         std::tm tm {};
         ::localtime_r(&time, &tm);
@@ -72,13 +72,15 @@ namespace
 }
 
 
+
 namespace
 {
+    // TODO: Rename to Header
     struct SharedDataBlock
     {
-        uint32_t useCount { 0 };
-        // std::atomic<uint64_t> testCounter { 0 };
-        uint32_t testCounter { 0 };
+        static inline constexpr uint16_t semaphoreNameSize { 32 };
+
+        std::atomic<int32_t> useCount { 0 };
         std::array<char, 32> semaphoreName {};
 
         uint32_t size {0};
@@ -92,31 +94,28 @@ namespace
         std::string semaphoreName {}; // TODO: Remove ???
         SharedDataBlock* sharedDataBlock { nullptr };
 
-        static inline constexpr uint16_t semaphoreNameSize { 32 };
-
         [[nodiscard]]
         inline uint32_t incrementUseCount() const noexcept
         {
-            const auto count = sharedDataBlock->useCount;
+            const uint32_t count = sharedDataBlock->useCount.load();
             LOG << "incrementUseCount = " << count << " --> " << count + 1 << std::endl;
 
-            return ++(sharedDataBlock->useCount);
+            return sharedDataBlock->useCount.fetch_add(1) + 1;
         }
 
         [[nodiscard]]
         inline uint32_t decrementUseCount() const noexcept
         {
-            const auto count = sharedDataBlock->useCount;
-            LOG << "decrementUseCount = " << count << " --> " << count - 1 << std::endl;
+            const uint32_t count = sharedDataBlock->useCount.fetch_sub(1) - 1;
+            LOG << "decrementUseCount = " << count  + 1 << " --> " << count << std::endl;
 
-            return sharedDataBlock->useCount == 0 ? 0 : --(sharedDataBlock->useCount);
+            return count;
         }
 
         void initSemaphore()
         {
-            semaphoreName.assign(randomString(semaphoreNameSize));
-            memcpy(sharedDataBlock->semaphoreName.data(), semaphoreName.data(), semaphoreNameSize);
-
+            semaphoreName.assign(randomString(SharedDataBlock::semaphoreNameSize));
+            memcpy(sharedDataBlock->semaphoreName.data(), semaphoreName.data(), SharedDataBlock::semaphoreNameSize);
             semaphore = ::sem_open(semaphoreName.data(), O_CREAT, 0777, 0);
             ASSERT_NOT(SEM_FAILED, semaphore, "sem_open");
 
@@ -125,7 +124,7 @@ namespace
 
         void openSemaphore()
         {
-            semaphoreName.assign(sharedDataBlock->semaphoreName.data(), semaphoreNameSize);
+            semaphoreName.assign(sharedDataBlock->semaphoreName.data(), SharedDataBlock::semaphoreNameSize);
             semaphore = ::sem_open(semaphoreName.data(), O_CREAT);
             ASSERT_NOT(SEM_FAILED, semaphore, "sem_open");
 
@@ -173,6 +172,8 @@ namespace
         SharedData(const SharedData&) = delete;
         SharedData(SharedData&& sharedData) noexcept :
                 handle { std::exchange(sharedData.handle, INVALID_HANDLE) },
+                semaphore { std::exchange(sharedData.semaphore, nullptr) },
+                semaphoreName { std::move(sharedData.semaphoreName) },
                 sharedDataBlock { std::exchange(sharedData.sharedDataBlock, nullptr) } {
         }
 
@@ -231,11 +232,85 @@ namespace
     }
 }
 
+namespace SharedMemoryDataExchangeEx
+{
+    void Parent_WaitSemaphore()
+    {
+        SharedData data = createSharedMapping();
+        sem_wait(data.semaphore);
+    }
+
+    void Child_ReleaseSemaphore()
+    {
+        // std::this_thread::sleep_for(std::chrono::microseconds (1U));
+        SharedData data = createSharedMapping();
+        std::this_thread::sleep_for(std::chrono::seconds (1U));
+        sem_post(data.semaphore);
+    }
+
+    void Test()
+    {
+        const pid_t pid = fork();
+        if (0 == pid)
+            Child_ReleaseSemaphore(); /** Child **/
+        else if (pid > 0)
+            Parent_WaitSemaphore();   /** Parent **/
+        else
+            ERR << "Unable to create child process" << std::endl;
+
+        if (0 == pid) {
+            LOG << "* * * Done * * *" << std::endl;
+        }
+    }
+};
+
+namespace ExchangeMessages
+{
+    void ReadMessages(SharedData& sharedData)
+    {
+        uint32_t count = 0;
+        while (true)
+        {
+            sem_wait(sharedData.semaphore);
+            std::string_view data{sharedData.sharedDataBlock->buffer.data(),
+                                  sharedData.sharedDataBlock->size};
+            std::cout << ++count << " | Data: " << data << std::endl;
+            if ("quit" == data) {
+                break;
+            }
+        }
+    }
+
+    void PutMessage(SharedData& sharedData,
+                    std::string_view payload,
+                    uint32_t count = 0)
+    {
+        for (uint32_t idx = 0; idx < count; ++idx)
+        {
+            sharedData.sharedDataBlock->size = payload.length();
+            memcpy(sharedData.sharedDataBlock->buffer.data(), payload.data(), payload.size());
+            sem_post(sharedData.semaphore);
+        }
+    }
+
+    /**
+    > cp LinuxExperiments consume
+    > cp LinuxExperiments produce
+    > ./consume                       <--- Terminal 1
+    > ./produce 1234523232 1          <--- Terminal 2
+    **/
+
+    void Producer_Consumer([[maybe_unused]] const std::vector<std::string_view> &params)
+    {
+        SharedData data = createSharedMapping();
+        // ReadMessages(data);
+        PutMessage(data, params.front(), std::atoi(params[1].data()));
+    }
+};
 
 
 void SharedMemoryDataExchangeEx::TestAll([[maybe_unused]] const std::vector<std::string_view> &params)
 {
-    SharedData data = createSharedMapping();
-
-    std::this_thread::sleep_for(std::chrono::seconds (std::atoi(params.front().data())));
+    // SharedMemoryDataExchangeEx::Test();
+    ExchangeMessages::Producer_Consumer(params);
 }

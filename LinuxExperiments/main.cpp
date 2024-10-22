@@ -229,8 +229,8 @@ int main([[maybe_unused]] int argc,
     // SharedMemory::TestAll(params);
     // SharedMemoryWrapper::TestAll();
     // SharedMemoryDataExchange::TestAll(params);
-    // SharedMemoryDataExchangeEx::TestAll(params);
-    SharedBlock_WithSemaphore::TestAll(params);
+    SharedMemoryDataExchangeEx::TestAll(params);
+    // SharedBlock_WithSemaphore::TestAll(params);
     // Pipes::TestAll(params);
     // SharedMemory_AtomicValue::TestAll();
     // SharedMutex::TestAll();

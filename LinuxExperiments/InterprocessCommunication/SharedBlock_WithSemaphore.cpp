@@ -29,22 +29,22 @@ Description : SharedBlock_WithSemaphore.cpp
 
 namespace
 {
+    using namespace std::chrono;
+
     constexpr std::string_view sharedSegmentName { "__SHARED_MEMORY_SEGMENT_NAME_00000__2__" };
     constexpr std::string_view FORMAT { "[%d-%02d-%02d %02d:%02d:%02d.%06ld] " };
 
     [[nodiscard]]
-    std::string now(const std::chrono::time_point<std::chrono::system_clock>& timestamp =
-    std::chrono::system_clock::now()) noexcept
+    std::string now(const time_point<system_clock>& timestamp = system_clock::now()) noexcept
     {
-        using namespace std::chrono;
         const time_t time { system_clock::to_time_t(timestamp) };
         std::tm tm {};
         ::localtime_r(&time, &tm);
 
         std::string buffer(64, '\0');
         const int32_t size = std::sprintf(&(buffer.front()), FORMAT.data(),
-                                          tm.tm_year + 1900, tm.tm_mon + 1, tm.tm_mday, tm.tm_hour, tm.tm_min, tm.tm_sec,
-                                          duration_cast<microseconds>(timestamp - time_point_cast<seconds>(timestamp)).count());
+                      tm.tm_year + 1900, tm.tm_mon + 1, tm.tm_mday, tm.tm_hour, tm.tm_min, tm.tm_sec,
+                      duration_cast<microseconds>(timestamp - time_point_cast<seconds>(timestamp)).count());
         buffer.resize(size);
         buffer.shrink_to_fit();
         return buffer;
@@ -79,7 +79,7 @@ namespace
     {
         static inline constexpr uint16_t semaphoreNameSize { 32 };
 
-        std::atomic<uint32_t> useCount { 0 };
+        std::atomic<int32_t> useCount { 0 };
         std::array<char, 32> semaphoreName {};
     };
 
@@ -93,26 +93,25 @@ namespace
         [[nodiscard]]
         inline uint32_t incrementUseCount() const noexcept
         {
-            const auto count = sharedDataBlock->useCount.load();
+            const uint32_t count = sharedDataBlock->useCount.load();
             LOG << "incrementUseCount = " << count << " --> " << count + 1 << std::endl;
 
-            return ++(sharedDataBlock->useCount);
+            return sharedDataBlock->useCount.fetch_add(1) + 1;
         }
 
         [[nodiscard]]
         inline uint32_t decrementUseCount() const noexcept
         {
-            const auto count = sharedDataBlock->useCount.load();
-            LOG << "decrementUseCount = " << count << " --> " << count - 1 << std::endl;
+            const uint32_t count = sharedDataBlock->useCount.fetch_sub(1) - 1;
+            LOG << "decrementUseCount = " << count  + 1 << " --> " << count << std::endl;
 
-            return sharedDataBlock->useCount == 0 ? 0 : --(sharedDataBlock->useCount);
+            return count;
         }
 
         void initSemaphore()
         {
             semaphoreName.assign(randomString(SharedDataBlock::semaphoreNameSize));
             memcpy(sharedDataBlock->semaphoreName.data(), semaphoreName.data(), SharedDataBlock::semaphoreNameSize);
-
             semaphore = ::sem_open(semaphoreName.data(), O_CREAT, 0777, 0);
             ASSERT_NOT(SEM_FAILED, semaphore, "sem_open");
 
@@ -229,11 +228,67 @@ namespace
     }
 }
 
+namespace Create_Delete_Multiprocess_Test
+{
+    void ProcParent()
+    {
+        SharedData data = createSharedMapping();
+        std::this_thread::sleep_for(std::chrono::microseconds (200U));
+    }
+
+    void ProcChild()
+    {
+        std::this_thread::sleep_for(std::chrono::microseconds (1U));
+        SharedData data = createSharedMapping();
+        std::this_thread::sleep_for(std::chrono::microseconds (100U));
+    }
+
+    void Test()
+    {
+        if (const pid_t pid = fork(); pid == 0) /** Child **/
+            ProcChild();
+        else if (pid > 0) /** Parent **/
+            ProcParent();
+        else
+            ERR<< "Unable to create child process" << std::endl;
+        LOG << "Done" << std::endl;
+    }
+};
+
+namespace Wait_Semaphore_Multiprocess_Test
+{
+    void Parent_WaitSemaphore()
+    {
+        SharedData data = createSharedMapping();
+        sem_wait(data.semaphore);
+    }
+
+    void Child_ReleaseSemaphore()
+    {
+        // std::this_thread::sleep_for(std::chrono::microseconds (1U));
+        SharedData data = createSharedMapping();
+        std::this_thread::sleep_for(std::chrono::seconds (1U));
+        sem_post(data.semaphore);
+    }
+
+    void Test()
+    {
+        if (const pid_t pid = fork(); pid == 0)
+            Child_ReleaseSemaphore(); /** Child **/
+        else if (pid > 0)
+            Parent_WaitSemaphore();   /** Parent **/
+        else
+            ERR << "Unable to create child process" << std::endl;
+        LOG << "Done" << std::endl;
+    }
+};
 
 
 void SharedBlock_WithSemaphore::TestAll([[maybe_unused]] const std::vector<std::string_view> &params)
 {
-    SharedData data = createSharedMapping();
+    // Create_Delete_Multiprocess_Test::Test();
+    Wait_Semaphore_Multiprocess_Test::Test();
 
-    std::this_thread::sleep_for(std::chrono::seconds (std::atoi(params.front().data())));
+    // SharedData data = createSharedMapping();
+    // std::this_thread::sleep_for(std::chrono::seconds (std::atoi(params.front().data())));
 }
