@@ -71,6 +71,7 @@
 #include "InterprocessCommunication/SharedMemory_AtomicValue.h"
 #include "InterprocessCommunication/SharedMemoryDataExchange.h"
 #include "InterprocessCommunication/SharedMemoryDataExchangeEx.h"
+#include "InterprocessCommunication/SharedMemoryDataExchangeQueue.h"
 #include "InterprocessCommunication/Pipes.h"
 #include "InterprocessCommunication/MultiprocessQueue.h"
 #include "InterprocessCommunication/SemMutex.h"
@@ -229,7 +230,8 @@ int main([[maybe_unused]] int argc,
     // SharedMemory::TestAll(params);
     // SharedMemoryWrapper::TestAll();
     // SharedMemoryDataExchange::TestAll(params);
-    SharedMemoryDataExchangeEx::TestAll(params);
+    // SharedMemoryDataExchangeEx::TestAll(params);
+    SharedMemoryDataExchangeQueue::TestAll(params);
     // SharedBlock_WithSemaphore::TestAll(params);
     // Pipes::TestAll(params);
     // SharedMemory_AtomicValue::TestAll();

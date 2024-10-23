@@ -29,6 +29,7 @@ add_executable(${PROJECT_NAME}
         InterprocessCommunication/Pipes.cpp
         InterprocessCommunication/SharedMemoryDataExchange.cpp
         InterprocessCommunication/SharedMemoryDataExchangeEx.cpp
+        InterprocessCommunication/SharedMemoryDataExchangeQueue.cpp
         InterprocessCommunication/SharedMemoryWrapper.cpp
         InterprocessCommunication/MultiprocessQueue.cpp
         InterprocessCommunication/SemMutex.cpp
@@ -45,6 +46,8 @@ add_executable(${PROJECT_NAME}
         Processes/ProcessManager.cpp
         ModulesKernel/ModulesKernel.cpp
         IO_Uring/IOUringExperiments.cpp
+        InterprocessCommunication/SharedMemoryDataExchangeQueue.cpp
+        InterprocessCommunication/SharedMemoryDataExchangeQueue.h
 )
 
 # Link libraries to the project/executable
