@@ -32,7 +32,7 @@ namespace
 {
     using namespace std::chrono;
 
-    constexpr std::string_view sharedSegmentName { "__SHARED_MEMORY_SEGMENT_NAME_00000__2__" };
+    constexpr std::string_view sharedSegmentName { "__SHARED_MEMORY_SEGMENT_NAME_00000__1__" };
     constexpr std::string_view FORMAT { "[%d-%02d-%02d %02d:%02d:%02d.%06ld] " };
 
     [[nodiscard]]
@@ -70,20 +70,18 @@ namespace
             str.push_back(static_cast<char>(ud(generator)));
         return str;
     }
+
+    int32_t getRandomInt(const int32_t from = 0,
+                         const int32_t until = 10000) {
+        std::random_device rd;
+        std::mt19937 gen(rd());
+        std::uniform_real_distribution<> distribution(from, until);
+        return distribution(gen);
+    }
 }
 
 namespace
 {
-    /**   Message
-     *    {
-     *       size;
-     *       payload;
-     *    }
-     *
-     *    SIZE ?
-     *
-    **/
-
     // TODO: Rename to Header
     struct SharedDataBlock
     {
@@ -93,7 +91,8 @@ namespace
         std::array<char, 32> semaphoreReadName {};
         std::array<char, 32> semaphoreWriteName {};
 
-        uint32_t size { 0 };
+        uint32_t lastMsgPos {0};
+        uint32_t lastMsgRead {0};
         std::array<char, 1024 * 1024 * 32> buffer {};
     };
 
@@ -219,6 +218,35 @@ namespace
 
         SharedData& operator=(const SharedData&) = delete;
         SharedData& operator=(SharedData&&) noexcept = delete;
+
+        [[nodiscard]]
+        bool postMessage(const std::string_view payload) const
+        {
+            SemaphoreGuard guard {semaphoreWriter, semaphoreReader };
+
+            char* const msgStartPtr = sharedDataBlock->buffer.data() + sharedDataBlock->lastMsgPos;
+            const uint32_t messageLen = payload.size();
+
+            memcpy(msgStartPtr, &messageLen, sizeof(messageLen));
+            memcpy(msgStartPtr + sizeof(messageLen), payload.data(), payload.size());
+
+            sharedDataBlock->lastMsgPos += payload.size() + sizeof(messageLen);
+            return true;
+        }
+
+        [[nodiscard]]
+        bool getMessage(std::string& msg) const
+        {
+            SemaphoreGuard guard { semaphoreReader, semaphoreWriter };
+
+            char* const msgStartPtr = sharedDataBlock->buffer.data() + sharedDataBlock->lastMsgRead;
+            const uint32_t messageLen = *reinterpret_cast<uint32_t*>(msgStartPtr);
+
+            msg.assign(msgStartPtr + sizeof(uint32_t), messageLen);
+            sharedDataBlock->lastMsgRead += messageLen + sizeof(messageLen);
+
+            return true;
+        }
     };
 
     SharedData createSharedMemSegment()
@@ -277,10 +305,11 @@ namespace SharedMemoryDataExchangeQueue::Tests::SimpleTest
     void Parent_Consumer()
     {
         const SharedData data = createSharedMapping();
+        std::string msg;
         for (int i = 0; i < 5; ++i)
         {
-            SemaphoreGuard guard {data.semaphoreReader, data.semaphoreWriter };
-            LOG << "Processing data" << std::endl;
+            [[maybe_unused]] const bool result = data.getMessage(msg);
+            LOG << "Message received: " << msg << std::endl;
             std::this_thread::sleep_for(std::chrono::milliseconds (100U));
         }
     }
@@ -290,8 +319,9 @@ namespace SharedMemoryDataExchangeQueue::Tests::SimpleTest
         const SharedData data = createSharedMapping();
         for (int i = 0; i < 5; ++i)
         {
-            SemaphoreGuard guard {data.semaphoreWriter, data.semaphoreReader };
             LOG << "Sending data" << std::endl;
+            const std::string msg = randomString(getRandomInt(0, 32)).append("_").append(std::to_string(i));
+            [[maybe_unused]] const bool result = data.postMessage(msg);
             std::this_thread::sleep_for(std::chrono::milliseconds (100U));
         }
     }
@@ -310,157 +340,10 @@ namespace SharedMemoryDataExchangeQueue::Tests::SimpleTest
     }
 };
 
-namespace SharedMemoryDataExchangeQueue::Tests::ExchangeMessages
-{
-    void ReadMessages(SharedData &shData)
-    {
-        uint32_t count = 0;
-        while (true) {
-            SemaphoreGuard guard {shData.semaphoreReader, shData.semaphoreWriter };
-            std::string_view data { shData.sharedDataBlock->buffer.data(),
-                                    shData.sharedDataBlock->size};
-            std::cout << ++count << " | Data: " << data << std::endl;
-            if ("quit" == data) {
-                break;
-            }
-        }
-    }
-
-    void PutMessage(SharedData &shData,
-                    std::string_view payload,
-                    uint32_t count = 0)
-   {
-        for (uint32_t idx = 0; idx < count; ++idx) {
-            SemaphoreGuard guard {shData.semaphoreWriter, shData.semaphoreReader };
-            shData.sharedDataBlock->size = payload.length();
-            memcpy(shData.sharedDataBlock->buffer.data(), payload.data(), payload.size());
-        }
-    }
-
-    /**
-    > cp LinuxExperiments consume
-    > cp LinuxExperiments produce
-    > ./consume                       <--- Terminal 1
-    > ./produce 1234523232 1          <--- Terminal 2
-    **/
-
-    void Producer_Consumer([[maybe_unused]] const std::vector<std::string_view> &params)
-    {
-        SharedData data = createSharedMapping();
-        // ReadMessages(data);
-        PutMessage(data, params.front(), std::atoi(params[1].data()));
-    }
-}
-
-namespace SharedMemoryDataExchangeQueue::Tests::ExchangeMessagesMultiprocess
-{
-    void Consumer ()
-    {
-        SharedData shData = createSharedMapping();
-        uint32_t count = 0;
-        while (true)
-        {
-            SemaphoreGuard guard { shData.semaphoreReader, shData.semaphoreWriter };
-            const std::string data { shData.sharedDataBlock->buffer.data(),shData.sharedDataBlock->size };
-            std::cout << ++count << " | Data: " << data << std::endl;
-            if ("quit" == data) {
-                break;
-            }
-        }
-    }
-
-    void Producer()
-    {
-        SharedData shData = createSharedMapping();
-
-        std::string payload;
-        for (uint32_t idx = 0; idx < 10'000; ++idx)
-        {
-            payload = std::format("Hello_{}", idx + 1);
-            SemaphoreGuard guard { shData.semaphoreWriter, shData.semaphoreReader };
-
-            shData.sharedDataBlock->size = payload.length();
-            memcpy(shData.sharedDataBlock->buffer.data(), payload.data(), payload.size());
-        }
-
-        payload.assign("quit");
-        shData.sharedDataBlock->size = payload.length();
-        memcpy(shData.sharedDataBlock->buffer.data(), payload.data(), payload.size());
-    }
-
-    void MultiprocessTest()
-    {
-        const pid_t pid = fork();
-        if (0 == pid)
-            Producer(); /** Child **/
-        else if (pid > 0)
-            Consumer();  /** Parent **/
-    }
-};
-
-namespace SharedMemoryDataExchangeQueue::Tests::ExchangeMessagesMultiprocess_LoadTest
-{
-
-    void Consumer ()
-    {
-        SharedData shData = createSharedMapping();
-
-        const high_resolution_clock::time_point start { high_resolution_clock::now() };
-        uint64_t bytesRead = 0, count = 0;
-        while (true)
-        {
-            SemaphoreGuard guard { shData.semaphoreReader, shData.semaphoreWriter };
-            const std::string data { shData.sharedDataBlock->buffer.data(),shData.sharedDataBlock->size };
-
-            bytesRead += shData.sharedDataBlock->size;
-            ++count;
-            if ("quit" == data) {
-                break;
-            }
-        }
-
-        const double seconds = duration_cast<duration<double>>(high_resolution_clock::now() - start).count();
-
-        std::cout << "Time passed: " << seconds << ", Count: " << count << ", bytesRead: " << bytesRead << std::endl;
-        std::cout << "Bandwidth: " << (bytesRead / (1024 * 1024 * seconds))  << " Mbps"<< std::endl;
-    }
-
-    void Producer()
-    {
-        SharedData shData = createSharedMapping();
-
-        std::string payload = std::string(1024 * 128, 'x');
-        for (uint32_t idx = 0; idx < 1'00'000; ++idx)
-        {
-            // payload = std::format("Hello_{}", idx + 1);
-            SemaphoreGuard guard { shData.semaphoreWriter, shData.semaphoreReader };
-
-            shData.sharedDataBlock->size = payload.length();
-            memcpy(shData.sharedDataBlock->buffer.data(), payload.data(), payload.size());
-        }
-
-        payload.assign("quit");
-        shData.sharedDataBlock->size = payload.length();
-        memcpy(shData.sharedDataBlock->buffer.data(), payload.data(), payload.size());
-    }
-
-    void MultiprocessTest()
-    {
-        const pid_t pid = fork();
-        if (0 == pid)
-            Producer(); /** Child **/
-        else if (pid > 0)
-            Consumer();  /** Parent **/
-    }
-};
-
 
 void SharedMemoryDataExchangeQueue::TestAll([[maybe_unused]] const std::vector<std::string_view> &params)
 {
-    SharedData sharedData = createSharedMapping();
+    // SharedData data = createSharedMapping();
 
     Tests::SimpleTest::Test();
-    // Tests::ExchangeMessages::Producer_Consumer(params);
-    // Tests::ExchangeMessagesMultiprocess::MultiprocessTest();
-    // Tests::ExchangeMessagesMultiprocess_LoadTest::MultiprocessTest();
 }

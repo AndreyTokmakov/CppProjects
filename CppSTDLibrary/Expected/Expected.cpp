@@ -299,7 +299,7 @@ namespace Expected::MonadicOperations::TransformError
 
     std::string errorAsString(std::string&& error)
     {
-        return std::string {"ERROR: "}.append(error);
+        return std::string {"ERROR ----> : '"}.append(error).append("'");
     }
 
     std::expected<int, std::string> convertToInt(const std::string& input)
@@ -365,9 +365,9 @@ namespace Expected::MonadicOperations::Transform_OrElse
     }
 }namespace Expected::MonadicOperations::Transform
 {
-    std::string backToString(int value)
+    std::string backToString(const int value)
     {
-        return "[" + std::to_string(value) + "]";
+        return "'" + std::to_string(value) + "'";
     }
 
     std::expected<int, std::string> convertToInt(const std::string& input)
@@ -396,14 +396,10 @@ namespace Expected::MonadicOperations::Transform_OrElse
 void Expected::TestAll()
 {
     // BasicFunctions();
-
     // Test_OK();
-
     // Test_Error();
     // Test_Error_2();
-
     // Emplace();
-
     // Expected::Transform();
 
 
