@@ -147,11 +147,27 @@ public:
 };
 
 
+// TODO: FIXME -- User RValue ref ????
+template<typename ... Args>
+struct Params
+{
+    std::tuple<Args...> tup;
 
+    template<typename ... Types>
+    explicit Params(Types ... params)
+        : tup { std::make_tuple<Args...>( std::forward<Args>(params) ...) }
+    {
+
+        std::cout << std::get<0>(tup) << std::endl;
+        std::cout << std::get<1>(tup) << std::endl;
+        std::cout << std::get<2>(tup) << std::endl;
+    }
+};
 
 
 void ThreadPools::TestAll()
 {
+    /*
     using RetType = int;
 
     auto func = [](int timeout) -> RetType {
@@ -180,4 +196,17 @@ void ThreadPools::TestAll()
 
     const bool done = pool.source.request_stop();
     LOG << "Done: " << std::boolalpha << done << std::endl;
+    */
+
+/*
+    std::tuple params = std::make_tuple(1,'2', std::string{"3"});
+    std::cout << std::get<0>(params) << std::endl;
+    std::cout << std::get<1>(params) << std::endl;
+    std::cout << std::get<2>(params) << std::endl;
+*/
+
+    Params<int, char, std::string> params {123, 'X', std::string{"qwerty"}};
+
+
+
 };
