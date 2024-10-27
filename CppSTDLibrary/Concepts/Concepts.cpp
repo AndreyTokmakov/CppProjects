@@ -11,6 +11,8 @@
 #include <string>
 #include <vector>
 #include <set>
+#include <list>
+#include <map>
 
 
 #include <array>
@@ -632,7 +634,7 @@ namespace Concepts::Custom_Concepts
     {
         {
             std::set<int> v;
-            //PushBackToSomeVector_V2(v, 1);
+            PushBackToSomeVector_V2(v, 1);
         }
 
         {
@@ -1139,6 +1141,48 @@ namespace Concepts::Requires_With_Constexpr {
     {
         First first;
         std::cout << "getNumberOfElements(first): "  << getNumberOfElements(first) << '\n';
+    }
+
+
+
+    template<typename Coll>
+    concept HasPushBack = requires (Coll coll, typename Coll::value_type v) {
+        coll.push_back(v);
+    };
+
+    template<typename Coll>
+    concept SupportsPushBack = requires(Coll coll)
+    {
+        // type requirement: `typename Coll`, Coll type must be a valid type
+        typename Coll::value_type;
+
+        coll.push_back(std::declval<typename Coll::value_type>());
+
+        requires requires(typename Coll::value_type&& var) {
+            coll.push_back(std::move(var));
+        };
+    };
+
+
+    void PushBackToSomeCollection(auto& collection,
+                                  const auto& v) {
+        if constexpr (requires { collection.push_back(v); }) {
+            collection.push_back(v);
+        }
+        else {
+            collection.insert(v);
+        }
+    }
+
+    void PushBackToSomeCollection_CheckPushback_vs_Insert()
+    {
+        std::set<int> set;
+        std::vector<int> vector;
+        std::list<int> list;
+
+        PushBackToSomeCollection(set, 1);
+        PushBackToSomeCollection(vector, 1);
+        PushBackToSomeCollection(list, 1);
     }
 }
 
@@ -2656,7 +2700,7 @@ void Concepts::TestAll()
 
 
     // Custom_Concepts::SimpleTest();
-    Custom_Concepts::Addable_Test();
+    // Custom_Concepts::Addable_Test();
     // Custom_Concepts::IsPointer();
     // Custom_Concepts::Hashable_Test();
     // Custom_Concepts::Incrementable_Test();
@@ -2686,6 +2730,9 @@ void Concepts::TestAll()
 
     // Requires_With_Constexpr::Vector_vs_Array();
     // Requires_With_Constexpr::Constexpr_Check_Method();
+    Requires_With_Constexpr::PushBackToSomeCollection_CheckPushback_vs_Insert();
+
+
     // RequiresSequence::Test1();
 
     // Callables::Test_Invocable();

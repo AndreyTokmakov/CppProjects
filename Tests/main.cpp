@@ -1419,6 +1419,7 @@ T mean(std::vector< T > const &var)
 }
 
 
+
 int main([[maybe_unused]] int argc,
          [[maybe_unused]] char** argv)
 {
@@ -1445,15 +1446,6 @@ int main([[maybe_unused]] int argc,
 
     // BitwiseOperations::test();
 
-
-
-    std::map<int, std::vector<int>> vectMap;
-    std::vector<int> values {1,2,3,4,5};
-
-    //vectMap[1] = std::vector<int>{6,7,8};
-    vectMap.emplace(1, values);
-
-    std::cout << vectMap[1] << std::endl;
 
 
 

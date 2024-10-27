@@ -1,213 +1,183 @@
-//============================================================================
-// Name        : ThreadPools.cpp
-// Created on  : 28.10.2020
-// Author      : Tokmakov Andrey
-// Version     : 1.0
-// Copyright   : Your copyright notice
-// Description : ThreadPools src class
-//============================================================================
+/**============================================================================
+Name        : ThreadPools.cpp
+Created on  : 22.10.2024
+Author      : Andrei Tokmakov
+Version     : 1.0
+Copyright   : Your copyright notice
+Description : ThreadPools src class.cpp
+============================================================================**/
 
 #include <iostream>
 #include <future>         // std::async, std::future
 #include <chrono>         // std::chrono::milliseconds
-#include <string>
-#include <vector>
 #include <functional>
 #include <thread>
-#include <stdexcept>
-#include <algorithm>
+#include <string>
+#include <vector>
 #include <deque>
-#include <chrono>
+#include <syncstream>
 #include "ThreadPools.h"
-#include "../Integer/Integer.h"
-#include "../ThreadHelperUtilities/ThreadHelperUtilities.h"
-
-namespace ThreadPools::Utilities {
-
-    template<typename T>
-    class ThreadsafeQueue {
-    private:
-        mutable std::mutex mutex;
-        std::deque<T> qeque;
-        std::condition_variable updated;
-
-    public:
-        ThreadsafeQueue() {
-        }
-
-        void push(T&& new_value) {
-            {
-                std::lock_guard<std::mutex> lock(mutex);
-                qeque.push_back(std::move(new_value));
-            }
-            updated.notify_one();
-        }
-
-        template <typename... Args>
-        void emplace(Args&& ... args) {
-            {
-                std::lock_guard<std::mutex> lock(mutex);
-                qeque.emplace_back(std::forward<Args>(args)...);
-            }
-            updated.notify_one();
-        }
-
-        /*template <typename... Args>
-        void AddRange(Args&&... args) {
-            std::lock_guard<std::mtx> lock(mtx);
-            (elements.push_back(args), ...);
-        }*/
-
-        void wait_and_pop(T& value) {
-            std::unique_lock<std::mutex> lock(mutex);
-            updated.wait(lock, [this] {
-                return false == qeque.empty();
-            });
-            value = std::move(qeque.front());
-            qeque.pop_front();
-        }
-
-        template<class _Rep, class _Period>
-        bool wait_for_and_pop(T& value, const std::chrono::duration<_Rep, _Period>& _Rel_time) {
-            std::unique_lock<std::mutex> lock(mutex);
-            bool ok = updated.wait_for(lock, _Rel_time, [this] {
-                return false == qeque.empty();
-            });
-            if (false == ok)
-                return false;
-            value = std::move(qeque.front());
-            qeque.pop_front();
-            return true;
-        }
-
-        T&& wait_and_pop() {
-            std::unique_lock<std::mutex> lock(mutex);
-            updated.wait(lock, [this] {
-                return false == qeque.empty();
-            });
-            auto&& entry = qeque.front();
-            qeque.pop_front();
-            return std::move(entry);
-        }
-
-        bool try_pop(T& value) {
-            std::lock_guard<std::mutex> lock(mutex);
-            if (qeque.empty())
-                return false;
-            value = std::move(qeque.front());
-            qeque.pop_front();
-            return true;
-        }
-
-        std::shared_ptr<T> try_pop() {
-            std::lock_guard<std::mutex> lock(mutex);
-            if (qeque.empty())
-                return std::shared_ptr<T>();
-            std::shared_ptr<T> result =
-                    std::make_shared<T>(std::move(qeque.front()));
-            qeque.pop_front();
-            return result;
-        }
-
-        bool empty() const {
-            std::lock_guard<std::mutex> lock(mutex);
-            return qeque.empty();
-        }
-
-        bool size() const {
-            std::lock_guard<std::mutex> lock(mutex);
-            return qeque.size();
-        }
-    };
-};
-
-namespace ThreadPools::Pool1 {
-
-    template<typename Task = std::function<void()>>
-    class thread_pool {
-    private:
-        /** **/
-        Utilities::ThreadsafeQueue<Task> work_queue;
-        /** Run switch: **/
-        std::atomic_bool run {true};
-        /** **/
-        std::vector<std::thread> threads;
-
-        /** Maximum number of request handler workers: **/
-        static inline const unsigned int thread_count { std::thread::hardware_concurrency() };
-
-    private:
-        void worker_thread() {
-            Task task;
-            while (true == run) {
-                auto result = work_queue.wait_for_and_pop(task, std::chrono::milliseconds(2000));
-                // THREAD_INFO << "result = " << std::boolalpha << result << std::endl;
-                if (true == result) {
-                    task();
-                }
-            }
-        }
-
-        void worker_thread_old() {
-            Task task;
-            while (true == run) {
-                work_queue.wait_and_pop(task);
-                task();
-            }
-        }
-
-    public:
-        thread_pool(){
-            try {
-                for(size_t i = 0; i < thread_count; ++i) {
-                    threads.emplace_back(&thread_pool::worker_thread, this);
-                }
-            }
-            catch (...) {
-                run = false;
-                throw;
-            }
-        }
-
-        ~thread_pool() {
-            // run = false;
-            /** Join threads: **/
-            for (auto& T : threads)
-                T.join();
-        }
-
-        template<typename FunctionType>
-        void submit(FunctionType f) {
-            work_queue.push(Task(f));
-        }
-    };
 
 
-    //----------------------------------------------------------------------------------//
+#define LOG std::osyncstream(std::cout) << now()
+#define ERR std::osyncstream(std::cerr) << now()
 
-    void RunTest() {
-        auto job1 = []() {
-            THREAD_INFO << "Starting job" << std::endl;
-            std::this_thread::sleep_for(std::chrono::seconds(5));
-            THREAD_INFO << "Job done" << std::endl;
-        };
+namespace
+{
+    using namespace std::chrono;
 
-        auto job2 = []() {
-            THREAD_INFO << "Starting job" << std::endl;
-            std::this_thread::sleep_for(std::chrono::seconds(10));
-            THREAD_INFO << "Job done" << std::endl;
-        };
 
-        thread_pool pool;
-        pool.submit(job1);
-        pool.submit(job2);
+    constexpr std::string_view FORMAT { "[%d-%02d-%02d %02d:%02d:%02d.%06ld] " };
 
-        std::this_thread::sleep_for(std::chrono::seconds(30));
+    [[nodiscard]]
+    std::string now(const time_point<system_clock>& timestamp = system_clock::now()) noexcept
+    {
+        const time_t time { system_clock::to_time_t(timestamp) };
+        std::tm tm {};
+        ::localtime_r(&time, &tm);
 
-        pool.submit(job1);
+        std::string buffer(64, '\0');
+        const int32_t size = std::sprintf(&(buffer.front()), FORMAT.data(),
+                                          tm.tm_year + 1900, tm.tm_mon + 1, tm.tm_mday, tm.tm_hour, tm.tm_min, tm.tm_sec,
+                                          duration_cast<microseconds>(timestamp - time_point_cast<seconds>(timestamp)).count());
+        buffer.resize(size);
+        buffer.shrink_to_fit();
+        return buffer;
     }
+}
+
+template<typename T>
+struct ThreadPool;
+
+template<typename ReturnType, typename ... Args>
+struct ThreadPool<ReturnType (Args...)>
+{
+    using Task = std::function<ReturnType (Args...)>;
+    using PackagedTask = std::packaged_task<ReturnType (Args...)>;
+    using Future = std::future<ReturnType>;
+
+
+    mutable std::mutex mutex;
+    std::deque<PackagedTask> queue;   // TODO: rename ??
+    std::condition_variable updated;  // TODO: rename ??
+    std::vector<std::jthread> workers {};
+    std::stop_source source;
+
+    /** Maximum number of workers: **/
+    static inline const size_t threadsCount { std::thread::hardware_concurrency() };
+
+    static inline const duration<int64_t, std::ratio<1, 1000>> pollTimeout = milliseconds(500);
+
+private:
+
+    template<class Rep, class Period>
+    bool wait_for_and_pop(PackagedTask & task,
+                          const duration<Rep, Period> &timeout) noexcept
+    {
+        std::unique_lock<std::mutex> lock(mutex);
+        if (!updated.wait_for(lock, timeout, [this] { return !queue.empty();}))
+            return false;
+
+        task = std::move(queue.front());
+        queue.pop_front();
+        return true;
+    }
+
+    // TODO: Try-catch ???
+    void executor(const std::stop_source& source)
+    {
+        PackagedTask task; // FIXME: Use alias | template
+        while (!source.stop_requested())
+        {
+            if (auto result = wait_for_and_pop(task, pollTimeout); result) {
+                task(3);
+            }
+        }
+    }
+
+public:
+
+    ThreadPool()
+    {
+        workers.reserve(threadsCount);
+        for (size_t i = 0; i < threadsCount; ++i) {
+            workers.emplace_back(&ThreadPool::executor, this, source);
+        }
+    }
+
+    [[nodiscard("Its not for free")]]
+    bool empty() const noexcept
+    {
+        std::lock_guard<std::mutex> lock(mutex);
+        return queue.empty();
+    }
+
+    [[nodiscard("Its not for free")]]
+    size_t size() const noexcept
+    {
+        std::lock_guard<std::mutex> lock(mutex);
+        return queue.size();
+    }
+
+    Future submit(Task&& task) noexcept
+    {
+        PackagedTask packagedTask(task);
+        Future futureResult = packagedTask.get_future();
+        {
+            std::lock_guard<std::mutex> lock(mutex);
+            queue.push_back(std::move(packagedTask));
+        }
+        updated.notify_all(); // TODO:  one / all ?
+        return futureResult;
+    }
+
+#if 0
+    // TODO: Make it work!
+    template<typename... Args>
+    void emplace(Args &&... args) noexcept
+    {
+        {
+            std::lock_guard<std::mutex> lock(mutex);
+            queue.emplace_backd(std::forward<Args>(args)...);
+        }
+        updated.notify_all(); // TODO:  one / all ?
+    }
+#endif
+
 };
 
-void ThreadPools::TEST_ALL() {
-    Pool1::RunTest();
+
+
+
+
+void ThreadPools::TestAll()
+{
+    using RetType = int;
+
+    auto func = [](int timeout) -> RetType {
+        std::this_thread::sleep_for(std::chrono::milliseconds(1));
+        LOG << "Starting job" << std::endl;
+        std::this_thread::sleep_for(std::chrono::seconds(timeout));
+        LOG << "Job  done\n";
+        //return std::string("Task completed");
+        return 12345;
+    };
+
+    ThreadPool<int(int)> pool;
+    std::vector<std::future<RetType>> results;
+    for (int i = 0; i < 5; i++)
+    {
+        results.push_back(pool.submit(func));
+    }
+
+    LOG << "Waiting" << std::endl;
+    for ( auto& F: results)
+    {
+        auto result = F.get();
+        LOG<< result << std::endl;
+    }
+    LOG << "Jobs completed" << std::endl;
+
+    const bool done = pool.source.request_stop();
+    LOG << "Done: " << std::boolalpha << done << std::endl;
 };

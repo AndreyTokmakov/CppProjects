@@ -12,7 +12,7 @@
 
 namespace ThreadPools
 {
-    void TEST_ALL();
+    void TestAll();
 };
 
 #endif // !THREADS_POOL_TESTS_INCLUDE_GUARD__H

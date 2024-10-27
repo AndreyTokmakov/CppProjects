@@ -85,7 +85,7 @@ int main([[maybe_unused]] int argc,
     // PackagedTask::TEST_ALL();
     // ParallelExecutionAlgoritms::TEST_ALL();
 
-    Semaphore::TestAll();
+    // Semaphore::TestAll();
 
     // Synchronization::TEST_ALL();
     // SynchStream::TEST_ALL();
@@ -95,8 +95,7 @@ int main([[maybe_unused]] int argc,
 
     // StoppingThreads::TestAll();
 
-    // ThreadPools::TEST_ALL();
-    // ThreadPoolBlocking::TEST_ALL();
+    ThreadPools::TestAll();
     // ThreadPoolBlocking::TEST_ALL();
     // ThreadPoolLimited::TestAll();
 
