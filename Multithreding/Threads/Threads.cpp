@@ -19,42 +19,47 @@
 #include <exception>
 #include <functional>
 #include <semaphore>
+#include <utility>
+#include <type_traits>
 
 #include "Threads.h"
 
-namespace Threads {
-    class DisplayThread {
-    public:
+namespace Threads
+{
+    struct DisplayThread
+    {
         void operator()() {
             THREAD_INFO << "DisplayThread entered. Sleeping 2 seconds." << std::endl;
-            std::this_thread::sleep_for(std::chrono::seconds(2));
+            std::this_thread::sleep_for(std::chrono::seconds(2u));
             THREAD_INFO << "DisplayThread done" << std::endl;
         }
     };
 
-    class ThreadHandler {
-    private:
+    struct ThreadHandler
+    {
         std::string name;
         int count;
 
     public:
-        ThreadHandler(const std::string& n, int c) : name(n), count(c) {
-        }
+        ThreadHandler(std::string  n, int c) : name(std::move(n)), count(c) {}
 
     public:
-        void Task() {
+
+        void Task()
+        {
             THREAD_INFO << "Handler name: " << this->name << ". Count: " << this->count << std::endl;
             for (int i = 1; i <= this->count; i++) {
-                std::this_thread::sleep_for(std::chrono::seconds(1));
+                std::this_thread::sleep_for(std::chrono::seconds(1u));
                 THREAD_INFO << i << "  of " << this->count << std::endl;
             }
         }
 
-        void Task1(const std::string& _name, int _count) {
-            THREAD_INFO << "Handler name: " << _name << ". Count: " << _count << std::endl;
-            for (int i = 1; i <= _count; i++) {
-                std::this_thread::sleep_for(std::chrono::seconds(1));
-                THREAD_INFO << i << " of " << _count << std::endl;
+        void Task1(const std::string& _name, int count)
+        {
+            THREAD_INFO << "Handler name: " << _name << ". Count: " << count << std::endl;
+            for (int i = 1; i <= count; i++) {
+                std::this_thread::sleep_for(std::chrono::seconds(1u));
+                THREAD_INFO << i << " of " << count << std::endl;
             }
         }
 
@@ -67,7 +72,8 @@ namespace Threads {
 
     //////////////////////////////////////////
 
-    void Thead_as_ClassMethod() {
+    void Thead_as_ClassMethod()
+    {
         THREAD_INFO << "Started" << std::endl;
 
         ThreadHandler handler("TestThreadHandler", 5);
@@ -77,7 +83,8 @@ namespace Threads {
         THREAD_INFO << "Completed" << std::endl;
     }
 
-    void Thead_as_ClassMethod_Params() {
+    void Thead_as_ClassMethod_Params()
+    {
         THREAD_INFO << "Started" << std::endl;
 
         ThreadHandler handler("TestThreadHandler", 5);
@@ -87,7 +94,8 @@ namespace Threads {
         THREAD_INFO << "Completed" << std::endl;
     }
 
-    void Thead_as_ClassMethod_1() {
+    void Thead_as_ClassMethod_1()
+    {
         THREAD_INFO << "Started" << std::endl;
 
         ThreadHandler handler("TestThreadHandler", 5);
@@ -96,10 +104,48 @@ namespace Threads {
         THREAD_INFO << "Completed" << std::endl;
     }
 
-    void Create_Simple_Thread() {
-        const auto func = [](void)-> void {
+    template <typename Func, typename TupleType, size_t... Indices>
+    constexpr std::jthread create_thread_impl(Func&& task,
+                                              TupleType&& tup,
+                                              std::index_sequence<Indices...>)
+    {
+        return std::jthread(std::forward<Func>(task),
+                            std::get<Indices>(std::forward<TupleType>(tup))...);
+    }
+
+    void Create_Thread_Tuple_as_Params()
+    {
+        auto task = [](int num, const std::string& text) {
+            THREAD_INFO << "Value: " << num << ", text: " << text << std::endl;
+        };
+
+        std::tuple<int, std::string> param = std::make_tuple(12, "One1");
+
+        using _Indices = std::make_index_sequence<std::tuple_size_v<std::remove_reference_t<decltype(param)>>>;
+        std::jthread T = create_thread_impl(task,
+                                            std::forward<decltype(param)>(param),
+                                            _Indices{});
+    }
+
+    void Create_Thread_Tuple_as_Params_2()
+    {
+        auto task = [](int num, const std::string& text, float fVal) {
+            THREAD_INFO << "Value: " << num << ", text: " << text << ", fVal: " << fVal << std::endl;
+        };
+
+        std::tuple param = std::make_tuple(12, "One1", 0.1);
+
+        using _Indices = std::make_index_sequence<std::tuple_size_v<std::remove_reference_t<decltype(param)>>>;
+        std::jthread T = create_thread_impl(task,
+                                            std::forward<decltype(param)>(param),
+                                            _Indices{});
+    }
+
+    void Create_Simple_Thread()
+    {
+        const auto func = []()-> void {
             THREAD_INFO << " Entered. Sleeping 2 seconds." << std::endl;
-            std::this_thread::sleep_for(std::chrono::seconds(2));
+            std::this_thread::sleep_for(std::chrono::seconds(2u));
             THREAD_INFO << " Done" << std::endl;
         };
 
@@ -110,11 +156,12 @@ namespace Threads {
         THREAD_INFO << " Completed" << std::endl;
     }
 
-    void Create_Simple_Thread_Lambda() {
+    void Create_Simple_Thread_Lambda()
+    {
         THREAD_INFO << " Started" << std::endl;
         std::thread thread([](void)-> void {
             THREAD_INFO << " Entered. Sleeping 2 seconds." << std::endl;
-            std::this_thread::sleep_for(std::chrono::seconds(2));
+            std::this_thread::sleep_for(std::chrono::seconds(2u));
             THREAD_INFO << " Done" << std::endl;
         });
 
@@ -122,7 +169,8 @@ namespace Threads {
         THREAD_INFO << " Completed" << std::endl;
     }
 
-    void Create_Simple_Thread_Params() {
+    void Create_Simple_Thread_Params()
+    {
         const auto func = [](unsigned short timeout)-> void {
             THREAD_INFO << "Entered. Sleeping " << timeout << " seconds." << std::endl;
             std::this_thread::sleep_for(std::chrono::seconds(timeout));
@@ -137,11 +185,12 @@ namespace Threads {
     }
 
 
-    void Create_Simple_Thread_Params_By_Reference() {
+    void Create_Simple_Thread_Params_By_Reference()
+    {
         const auto func = [](int& value)-> void {
             THREAD_INFO << "Starting thread" << std::endl;
             for (int i = 0; i < 10; ++i) {
-                std::this_thread::sleep_for(std::chrono::milliseconds(100));
+                std::this_thread::sleep_for(std::chrono::milliseconds(100u));
                 value++;
             }
             THREAD_INFO << "Done" << std::endl;
@@ -166,7 +215,7 @@ namespace Threads {
 
         auto handler = [](auto func,  std::string text)-> void {
             THREAD_INFO << "Starting thread" << std::endl;
-            std::this_thread::sleep_for(std::chrono::seconds(2));
+            std::this_thread::sleep_for(std::chrono::seconds(2u));
             func(text);
             THREAD_INFO << "Done" << std::endl;
         };
@@ -232,7 +281,8 @@ namespace Threads::ThreadLocalStorage
 
     //-------------------------------------------------------------------//
 
-    void Test2() {
+    void Test2()
+    {
         thread_local unsigned int thread_local_counter = 1;
         std::mutex cout_mutex;
 
@@ -261,7 +311,7 @@ namespace Threads::ThreadLocalStorage
         void process(int values)
         {
             for (int i = 0; i < values; ++i) {
-                std::this_thread::sleep_for(std::chrono::milliseconds (100));
+                std::this_thread::sleep_for(std::chrono::milliseconds (100u));
                 numbers.push_back(i);
             }
             std::cout << "Address: " << &numbers << ", size: " << numbers.size() << std::endl;
@@ -295,7 +345,7 @@ namespace Threads::HandlingExceptions {
     void do_some_work()
     {
         THREAD_INFO << "Starting thread/n";
-        std::this_thread::sleep_for(std::chrono::seconds(4));
+        std::this_thread::sleep_for(std::chrono::seconds(4u));
         THREAD_INFO << "Thread throwing a runtime_error exception...\n";
         throw std::runtime_error{ "Exception from thread" };
     }
@@ -326,7 +376,8 @@ namespace Threads::HandlingExceptions {
         }
     }
 
-    void Run_Test() {
+    void Run_Test()
+    {
         try {
             doWorkInThread();
         }
@@ -342,6 +393,9 @@ void Threads::TEST_ALL()
     // Thead_as_ClassMethod_Params();
     // Thead_as_ClassMethod_1();
 
+    // Create_Thread_Tuple_as_Params();
+    Create_Thread_Tuple_as_Params_2();
+
     // Create_Simple_Thread();
     // Create_Simple_Thread_Lambda();
     // Create_Simple_Thread_Params();
@@ -352,7 +406,7 @@ void Threads::TEST_ALL()
 
     // ThreadLocalStorage::Test();
     // ThreadLocalStorage::Test2();
-    ThreadLocalStorage::Test3();
+    // ThreadLocalStorage::Test3();
 
     // VariousTests::Test();
 

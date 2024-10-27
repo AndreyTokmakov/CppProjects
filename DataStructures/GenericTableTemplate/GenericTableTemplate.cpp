@@ -46,11 +46,8 @@ struct GenericTable
 };
 
 
-
-
 void GenericTableTemplate::TestAll()
 {
-
     {
         GenericTable<int, char, std::string> table;
 
@@ -60,7 +57,6 @@ void GenericTableTemplate::TestAll()
 
         table.print();
     }
-
     {
         GenericTable<float, std::string> table;
 

@@ -369,6 +369,14 @@ namespace Tuple::Apply
         auto sum = [](auto a, auto b, auto c) { return a + b + c; };
         std::cout << std::apply(sum, tup) << std::endl;
     }
+
+
+    void PrintTuple()
+    {
+        std::apply([](const auto&... args){
+            (std::cout << ... << std::forward<decltype(args)>(args)) << std::endl;
+        }, std::make_tuple<int, char, std::string>(1, '=', "One"));
+    }
 }
 
 
@@ -447,9 +455,10 @@ void Tuple::TestAll()
 	// IterateValues2::IterateTest();
 
     // Apply::Sum_Tuple();
+    Apply::PrintTuple();
 
     // Reference_Wrapper::Create_Tuple_with_Ref();
-    Reference_Wrapper::Create_Tuple_with_ConstRef();
+    // Reference_Wrapper::Create_Tuple_with_ConstRef();
 
     // PrintTupleTests::PrintTestTuple();
 };
