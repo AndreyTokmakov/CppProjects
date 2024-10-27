@@ -155,14 +155,20 @@ struct Params
 
     template<typename ... Types>
     explicit Params(Types ... params)
-        : tup { std::make_tuple<Args...>( std::forward<Args>(params) ...) }
-    {
+        : tup { std::make_tuple<Args...>( std::forward<Args>(params) ...) } {
 
-        std::cout << std::get<0>(tup) << std::endl;
-        std::cout << std::get<1>(tup) << std::endl;
-        std::cout << std::get<2>(tup) << std::endl;
     }
 };
+
+
+template <size_t N = 0, typename... Ts>
+constexpr void print(std::tuple<Ts...> tup)
+{
+    if constexpr (N < sizeof...(Ts)) {
+        std::cout << get<N>(tup) << ' ';
+        print<N+1>(tup);
+    }
+}
 
 
 void ThreadPools::TestAll()
@@ -207,6 +213,6 @@ void ThreadPools::TestAll()
 
     Params<int, char, std::string> params {123, 'X', std::string{"qwerty"}};
 
-
+    print(params.tup);
 
 };

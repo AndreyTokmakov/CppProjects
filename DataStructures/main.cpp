@@ -21,6 +21,7 @@ Description : DataStructures
 #include "ThreadsafeQueue/ThreadsafeQueue.h"
 #include "SharedPtr/SharedPtr.h"
 #include "ObjectPools/ObjectPools.h"
+#include "GenericTableTemplate/GenericTableTemplate.h"
 #include "Optional/Optional.h"
 #include "Logger/Logger.h"
 #include "MinHeap/MinHeap.h"
@@ -79,7 +80,9 @@ int main([[maybe_unused]] int argc,
     // MinMaxStack::TestAll();
     // MinHeap::TestAll();
     // HeapWithComparator::TestAll();
-    CompressedPair::TestAll();
+    // CompressedPair::TestAll();
+
+    GenericTableTemplate::TestAll();
 
     // Memory::AlignedStackAllocator::TestAll();
     // Memory::CustomStackAllocator::TestAll();

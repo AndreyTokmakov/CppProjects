@@ -27,16 +27,17 @@ add_executable(${PROJECT_NAME}
 		Memory/CustomStackAllocator.cpp Memory/CustomStackAllocator.h
 		CustomVector/CustomVector.cpp CustomVector/CustomVector.h
 		ReferenceWrapper/ReferenceWrapper.cpp ReferenceWrapper/ReferenceWrapper.h
-		LinkedList/LinkedList.cpp LinkedList/LinkedList.h
-		ThreadPoolOne/ThreadPoolOne.cpp ThreadPoolOne/ThreadPoolOne.h
-		ThreadPoolTwo/ThreadPoolTwo.cpp ThreadPoolTwo/ThreadPoolTwo.h
-		CategoryTree/CategoryTree.cpp CategoryTree/CategoryTree.h
-		PriorityList/PriorityList.cpp PriorityList/PriorityList.h
-        RAII_CommitWrapper/RAII_CommitWrapper.cpp RAII_CommitWrapper/RAII_CommitWrapper.h
-		Array/Array.cpp Array/Array.h
-		Function/Function.cpp Function/Function.h
-		ExecutorAdapter/ExecutorAdapter.cpp ExecutorAdapter/ExecutorAdapter.h
-		HashTable/HashTable.cpp HashTable/HashTable.h
+		LinkedList/LinkedList.cpp
+		ThreadPoolOne/ThreadPoolOne.cpp
+		ThreadPoolTwo/ThreadPoolTwo.cpp
+		CategoryTree/CategoryTree.cpp
+		PriorityList/PriorityList.cpp
+        RAII_CommitWrapper/RAII_CommitWrapper.cpp
+		Array/Array.cpp
+		GenericTableTemplate/GenericTableTemplate.cpp
+		Function/Function.cpp
+		ExecutorAdapter/ExecutorAdapter.cpp
+		HashTable/HashTable.cpp
 		ExecutorAdapter2/ExecutorAdapter2.cpp ExecutorAdapter2/ExecutorAdapter2.h
 		ObjectNumberLimiter/ObjectNumberLimiter.cpp ObjectNumberLimiter/ObjectNumberLimiter.h
 		BinaryTree/BinaryTree.cpp BinaryTree/BinaryTree.h
