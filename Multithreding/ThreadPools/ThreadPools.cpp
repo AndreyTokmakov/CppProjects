@@ -46,6 +46,22 @@ namespace
     }
 }
 
+template<typename ReturnType,
+         typename ... Args>
+struct Context
+{
+    using Task = std::packaged_task<ReturnType (Args...)>;
+
+    Task task;
+    std::tuple<Args...> params;
+
+    template<typename Func, typename ... _Args>
+    explicit Context(Func&& _task, _Args&& ... params):
+       task { std::forward<Func>(_task) }, params { std::forward<_Args>(params)... } {
+    }
+};
+
+
 template<typename T>
 struct ThreadPool;
 
@@ -56,9 +72,12 @@ struct ThreadPool<ReturnType (Args...)>
     using PackagedTask = std::packaged_task<ReturnType (Args...)>;
     using Future = std::future<ReturnType>;
 
-
     mutable std::mutex mutex;
+
     std::deque<PackagedTask> queue;   // TODO: rename ??
+    std::deque<Context<ReturnType, Args...>> queue2;   // TODO: rename ??
+
+
     std::condition_variable updated;  // TODO: rename ??
     std::vector<std::jthread> workers {};
     std::stop_source source;
@@ -131,6 +150,13 @@ public:
         return futureResult;
     }
 
+    template<typename Func, typename ... _Args>
+    void submit2(Func&& task, _Args&& ... params) noexcept
+    {
+        queue2.emplace_back(std::forward<Func>(task),
+                            std::forward<_Args>(params)... );
+    }
+
 #if 0
     // TODO: Make it work!
     template<typename... Args>
@@ -143,37 +169,12 @@ public:
         updated.notify_all(); // TODO:  one / all ?
     }
 #endif
-
 };
 
-
-// TODO: FIXME -- User RValue ref ????
-template<typename ... Args>
-struct Params
-{
-    std::tuple<Args...> tup;
-
-    template<typename ... Types>
-    explicit Params(Types ... params)
-        : tup { std::make_tuple<Args...>( std::forward<Args>(params) ...) } {
-
-    }
-};
-
-
-template <size_t N = 0, typename... Ts>
-constexpr void print(std::tuple<Ts...> tup)
-{
-    if constexpr (N < sizeof...(Ts)) {
-        std::cout << get<N>(tup) << ' ';
-        print<N+1>(tup);
-    }
-}
 
 
 void ThreadPools::TestAll()
 {
-    /*
     using RetType = int;
 
     auto func = [](int timeout) -> RetType {
@@ -192,6 +193,12 @@ void ThreadPools::TestAll()
         results.push_back(pool.submit(func));
     }
 
+
+    pool.submit2(func, 1);
+
+
+
+
     LOG << "Waiting" << std::endl;
     for ( auto& F: results)
     {
@@ -202,17 +209,4 @@ void ThreadPools::TestAll()
 
     const bool done = pool.source.request_stop();
     LOG << "Done: " << std::boolalpha << done << std::endl;
-    */
-
-/*
-    std::tuple params = std::make_tuple(1,'2', std::string{"3"});
-    std::cout << std::get<0>(params) << std::endl;
-    std::cout << std::get<1>(params) << std::endl;
-    std::cout << std::get<2>(params) << std::endl;
-*/
-
-    Params<int, char, std::string> params {123, 'X', std::string{"qwerty"}};
-
-    print(params.tup);
-
 };

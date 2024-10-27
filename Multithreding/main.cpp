@@ -95,11 +95,11 @@ int main([[maybe_unused]] int argc,
 
     // StoppingThreads::TestAll();
 
-    // ThreadPools::TestAll();
+    ThreadPools::TestAll();
     // ThreadPoolBlocking::TEST_ALL();
     // ThreadPoolLimited::TestAll();
 
-    Threads::TEST_ALL();
+    // Threads::TEST_ALL();
     // JThreads::TEST_ALL();
 
     // FalseSharingExperiments::TEST_ALL();
