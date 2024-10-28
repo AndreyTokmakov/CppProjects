@@ -16,12 +16,12 @@ Description : Utilities.cpp
 
 namespace Utilities
 {
-    bool setThreadCore(int core_id) noexcept
+    bool setThreadCore(const uint32_t coreId) noexcept
     {
-        cpu_set_t cpuset;
-        CPU_ZERO(&cpuset);
-        CPU_SET(core_id, &cpuset);
-        return 0 == pthread_setaffinity_np(pthread_self(), sizeof(cpu_set_t), &cpuset);
+        cpu_set_t cpuSet {};
+        CPU_ZERO(&cpuSet);
+        CPU_SET(coreId, &cpuSet);
+        return 0 == pthread_setaffinity_np(pthread_self(), sizeof(cpu_set_t), &cpuSet);
     }
 }
 
@@ -38,7 +38,7 @@ namespace Utilities::Tests
 
         for(int i = 0; i < 4; ++i)
         {
-            std::this_thread::sleep_for(std::chrono::milliseconds (250));
+            std::this_thread::sleep_for(std::chrono::milliseconds (250u));
             std::osyncstream(std::cout) << threadId << " | " << i << ": on CPU " << sched_getcpu() << "\n";
         }
     }

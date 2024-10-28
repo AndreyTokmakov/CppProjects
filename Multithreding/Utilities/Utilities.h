@@ -33,7 +33,7 @@ namespace Utilities
         ~ScopedTimer();
     };
 
-    bool setThreadCore(int core_id) noexcept;
+    bool setThreadCore(const uint32_t coreId) noexcept;
 
     void TestAll();
 };

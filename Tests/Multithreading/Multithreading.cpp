@@ -161,7 +161,7 @@ namespace Multithreading::Experiments
                     contactPoints.emplace(PairUtils::UnorderedPair<int>{id1, id2}, pt);
                     std::cout << id1 << ", " << id2 << std::endl;
                 }
-                std::this_thread::sleep_for(std::chrono::milliseconds(250));
+                std::this_thread::sleep_for(std::chrono::milliseconds(250u));
             }
         };
 
@@ -247,7 +247,7 @@ namespace Multithreading::SwitchingThreads
         std::mutex mtx1, mtx2;
         size_t counter = 0;
 
-        const auto func1 = [&](int timeout) -> void {
+        const auto func1 = [&](uint32_t timeout) -> void {
             for (size_t i = 0, v = 0; i < 5; ++i)
             {
                 mtx1.lock();
@@ -261,7 +261,7 @@ namespace Multithreading::SwitchingThreads
             }
         };
 
-        const auto func2 = [&](int timeout) -> void {
+        const auto func2 = [&](uint32_t timeout) -> void {
             for (size_t i = 0, v = 0; i < 5; ++i)
             {
                 mtx2.lock();
@@ -362,7 +362,7 @@ namespace Multithreading::SwitchingThreads_SpinLock
         for (size_t idx = 1; idx <= 3; ++idx) {
             jobs.emplace_back(std::async(std::launch::async, [&worker, idx]()
             {
-                const int32_t sleepTime = getRandomInt(0, 5);
+                const uint32_t sleepTime = getRandomInt(0, 5);
                 std::this_thread::sleep_for(std::chrono::seconds(sleepTime));
 
                 switch (idx) {
@@ -467,10 +467,10 @@ namespace Multithreading::Pools
         static inline const size_t MAX_CAPACITY { 1 };
 
         static inline const std::chrono::duration<int64_t, std::ratio<1, 1000>> TIMEOUT =
-                std::chrono::milliseconds(2000);
+                std::chrono::milliseconds(2000u);
 
         static inline const std::chrono::duration<int64_t, std::ratio<1, 1000>> POLL_TIMEOUT =
-                std::chrono::milliseconds(250);
+                std::chrono::milliseconds(250u);
 
     private:
 
@@ -557,7 +557,7 @@ namespace Multithreading::Pools
 
         auto task = []() {
             std::osyncstream(std::cout) << "Starting job\n";
-            std::this_thread::sleep_for(std::chrono::seconds(1));
+            std::this_thread::sleep_for(std::chrono::seconds(1u));
             std::osyncstream(std::cout) << "Job done\n";
         };
 
@@ -643,7 +643,7 @@ namespace Multithreading::SimpleThreadSafeCollection
         });
 
         std::cout << "Done\n";
-        std::this_thread::sleep_for(std::chrono::seconds(5));
+        std::this_thread::sleep_for(std::chrono::seconds(5u));
     }
 }
 
@@ -711,7 +711,7 @@ namespace Future
 {
     void WaitForFuture_RangeBasedLoop_Copy()
     {
-        auto calculate = [](int timeout) {
+        auto calculate = [](uint32_t timeout) {
             std::osyncstream(std::cout) << "Starting job\n";
             std::this_thread::sleep_for(std::chrono::seconds(timeout));
             std::osyncstream(std::cout) << "Job done\n";
@@ -775,9 +775,51 @@ namespace WaitFree
 }
 
 
+namespace Thread_CPU_Affinity
+{
+    bool setThreadCore(const uint32_t coreId) noexcept
+    {
+        cpu_set_t cpuSet {};
+        CPU_ZERO(&cpuSet);
+        CPU_SET(coreId, &cpuSet);
+        return 0 == pthread_setaffinity_np(pthread_self(), sizeof(cpu_set_t), &cpuSet);
+    }
+
+    int32_t getGpu() noexcept
+    {
+        return sched_getcpu();
+    }
+
+    void thread_affinity_worker(int coreId)
+    {
+        const auto threadId { std::this_thread::get_id() };
+        if (!setThreadCore(coreId))
+        {
+            std::cerr << "Failed to set core " << coreId << " for " << threadId << std::endl;
+            return;
+        }
+
+        for(int i = 0; i < 4; ++i)
+        {
+            std::this_thread::sleep_for(std::chrono::milliseconds (250u));
+            std::osyncstream(std::cout) << threadId << " | " << i << ": on CPU " << getGpu() << "\n";
+        }
+    }
+
+    void testThreadAffinity()
+    {
+        std::jthread thread1(thread_affinity_worker, 1);
+        std::jthread thread2(thread_affinity_worker, 2);
+    }
+}
+
+
+
+
+
 void Multithreading::TestAll()
 {
-    //  Queue::TestAll();
+    // Queue::TestAll();
 
     // WaitFree::Test();
 
@@ -797,4 +839,6 @@ void Multithreading::TestAll()
     // FalseSharingExperiments::Benchmark();
 
     // Future::WaitForFuture_RangeBasedLoop_Copy();
+
+    Thread_CPU_Affinity::testThreadAffinity();
 }

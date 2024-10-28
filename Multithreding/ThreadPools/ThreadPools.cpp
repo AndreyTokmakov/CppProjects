@@ -47,17 +47,20 @@ namespace
 }
 
 template<typename ReturnType,
-         typename ... Args>
+        typename ... Args>
 struct Context
 {
     using Task = std::packaged_task<ReturnType (Args...)>;
+    using Params = std::tuple<Args...>;
 
     Task task;
-    std::tuple<Args...> params;
+    Params params;
+
+    Context() = default;
 
     template<typename Func, typename ... _Args>
     explicit Context(Func&& _task, _Args&& ... params):
-       task { std::forward<Func>(_task) }, params { std::forward<_Args>(params)... } {
+            task { std::forward<Func>(_task) }, params { std::forward<_Args>(params)... } {
     }
 };
 
@@ -68,48 +71,62 @@ struct ThreadPool;
 template<typename ReturnType, typename ... Args>
 struct ThreadPool<ReturnType (Args...)>
 {
-    using Task = std::function<ReturnType (Args...)>;
-    using PackagedTask = std::packaged_task<ReturnType (Args...)>;
     using Future = std::future<ReturnType>;
+    using Ctx = Context<ReturnType, Args...>; // TODO: rename
+    using ParamsType = typename Ctx::Params;
+    using Indices = std::make_index_sequence<std::tuple_size_v<std::remove_reference_t<ParamsType>>>;
 
     mutable std::mutex mutex;
-
-    std::deque<PackagedTask> queue;   // TODO: rename ??
-    std::deque<Context<ReturnType, Args...>> queue2;   // TODO: rename ??
-
+    std::deque<Ctx> queue;   // TODO: rename ??
 
     std::condition_variable updated;  // TODO: rename ??
     std::vector<std::jthread> workers {};
-    std::stop_source source;
+    std::stop_source stopSource;
 
     /** Maximum number of workers: **/
+    // static inline const size_t threadsCount { 1 };
     static inline const size_t threadsCount { std::thread::hardware_concurrency() };
 
-    static inline const duration<int64_t, std::ratio<1, 1000>> pollTimeout = milliseconds(500);
+    static inline constexpr std::chrono::duration<uint64_t, std::ratio<1, 1000>> pollTimeout{
+            std::chrono::milliseconds(500u)
+    };
 
 private:
 
     template<class Rep, class Period>
-    bool wait_for_and_pop(PackagedTask & task,
+    bool wait_for_and_pop(Ctx& taskContext,
                           const duration<Rep, Period> &timeout) noexcept
     {
         std::unique_lock<std::mutex> lock(mutex);
         if (!updated.wait_for(lock, timeout, [this] { return !queue.empty();}))
             return false;
 
-        task = std::move(queue.front());
+        taskContext = std::move(queue.front());
         queue.pop_front();
         return true;
+    }
+
+    template<typename Func,
+             typename TupleType,
+             size_t... Indices>
+    constexpr void invokeTask(Func&& task,
+                              TupleType&& tup,
+                              std::index_sequence<Indices...>)
+    {
+        std::invoke(task, std::get<Indices>(std::forward<TupleType>(tup))...);
+        // task(std::get<Indices>(std::forward<TupleType>(tup))...);
     }
 
     // TODO: Try-catch ???
     void executor(const std::stop_source& source)
     {
-        PackagedTask task; // FIXME: Use alias | template
+        Ctx taskContext;
+        constexpr std::integer_sequence idxSequence = Indices {};
         while (!source.stop_requested())
         {
-            if (auto result = wait_for_and_pop(task, pollTimeout); result) {
-                task(3);
+            if (const bool result = wait_for_and_pop(taskContext, pollTimeout); result)
+            {
+                invokeTask(taskContext.task, std::forward<ParamsType>(taskContext.params), idxSequence);
             }
         }
     }
@@ -120,7 +137,7 @@ public:
     {
         workers.reserve(threadsCount);
         for (size_t i = 0; i < threadsCount; ++i) {
-            workers.emplace_back(&ThreadPool::executor, this, source);
+            workers.emplace_back(&ThreadPool::executor, this, stopSource);
         }
     }
 
@@ -138,66 +155,38 @@ public:
         return queue.size();
     }
 
-    Future submit(Task&& task) noexcept
+    template<typename Func, typename ... _Args>
+    Future submit(Func&& task, _Args&& ... params) noexcept
     {
-        PackagedTask packagedTask(task);
-        Future futureResult = packagedTask.get_future();
-        {
-            std::lock_guard<std::mutex> lock(mutex);
-            queue.push_back(std::move(packagedTask));
-        }
+        std::unique_lock<std::mutex> lock { mutex };
+        Future futureResult = queue.emplace_back(std::forward<Func>(task),
+                                                 std::forward<_Args>(params)... ).task.get_future();
+        lock.unlock();
         updated.notify_all(); // TODO:  one / all ?
         return futureResult;
     }
-
-    template<typename Func, typename ... _Args>
-    void submit2(Func&& task, _Args&& ... params) noexcept
-    {
-        queue2.emplace_back(std::forward<Func>(task),
-                            std::forward<_Args>(params)... );
-    }
-
-#if 0
-    // TODO: Make it work!
-    template<typename... Args>
-    void emplace(Args &&... args) noexcept
-    {
-        {
-            std::lock_guard<std::mutex> lock(mutex);
-            queue.emplace_backd(std::forward<Args>(args)...);
-        }
-        updated.notify_all(); // TODO:  one / all ?
-    }
-#endif
 };
-
 
 
 void ThreadPools::TestAll()
 {
-    using RetType = int;
+    using RetType = std::string;
 
-    auto func = [](int timeout) -> RetType {
-        std::this_thread::sleep_for(std::chrono::milliseconds(1));
+    auto func = [](uint32_t timeout) -> RetType {
+        std::this_thread::sleep_for(std::chrono::milliseconds(1u));
         LOG << "Starting job" << std::endl;
         std::this_thread::sleep_for(std::chrono::seconds(timeout));
         LOG << "Job  done\n";
-        //return std::string("Task completed");
-        return 12345;
+        return std::string("Task completed(timeout: " + std::to_string(timeout) + ")");
+        // return 12345;
     };
 
-    ThreadPool<int(int)> pool;
+    ThreadPool<RetType(int)> pool;
     std::vector<std::future<RetType>> results;
-    for (int i = 0; i < 5; i++)
+    for (int i = 1; i <= 3; i++)
     {
-        results.push_back(pool.submit(func));
+        results.push_back(pool.submit(func, i));
     }
-
-
-    pool.submit2(func, 1);
-
-
-
 
     LOG << "Waiting" << std::endl;
     for ( auto& F: results)
@@ -207,6 +196,6 @@ void ThreadPools::TestAll()
     }
     LOG << "Jobs completed" << std::endl;
 
-    const bool done = pool.source.request_stop();
+    const bool done = pool.stopSource.request_stop();
     LOG << "Done: " << std::boolalpha << done << std::endl;
 };

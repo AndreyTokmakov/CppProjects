@@ -1002,13 +1002,6 @@ namespace Move_Copy_Tests
     }
 }
 
-bool setThreadCore(int core_id) noexcept
-{
-    cpu_set_t cpuset;
-    CPU_ZERO(&cpuset);
-    CPU_SET(core_id, &cpuset);
-    return 0 == pthread_setaffinity_np(pthread_self(), sizeof(cpu_set_t), &cpuset);
-}
 
 
 
@@ -1478,7 +1471,7 @@ int main([[maybe_unused]] int argc,
     // Files::TestAll();
     // FunctionCall_LookUp::TestAll();
     // LowLatencyLogger::TestAll();
-    // Multithreading::TestAll();
+    Multithreading::TestAll();
     // Memory::TestAll();
     // MaxStack::TestAll();
     // Math::TestAll();
