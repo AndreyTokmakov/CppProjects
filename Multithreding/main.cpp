@@ -63,11 +63,11 @@ int main([[maybe_unused]] int argc,
 {
     // AsyncLaunch::TEST_ALL();
 
-    Atomic::TestAll();
+    // Atomic::TestAll();
     // AtomicFlag::TestAll();
     // Atomic_Bool::TestAll();
     // Atomic_MemoryOrder::TestAll();
-    // Atomic_CompareExchange::TestAll();
+    Atomic_CompareExchange::TestAll();
     // Atomic_IsLockFree::TestAll();
     // AtomicPerformanceTests::TestAll();
 

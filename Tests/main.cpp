@@ -1404,13 +1404,6 @@ namespace BitwiseOperations
     }
 }
 
-template < typename T >
-T mean(std::vector< T > const &var)
-{
-    auto sum = std::accumulate(var.begin(), var.end(), T(0));
-    return sum / var.size();
-}
-
 
 
 int main([[maybe_unused]] int argc,
