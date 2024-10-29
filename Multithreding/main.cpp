@@ -63,7 +63,7 @@ int main([[maybe_unused]] int argc,
 {
     // AsyncLaunch::TEST_ALL();
 
-    // Atomic::TestAll();
+    Atomic::TestAll();
     // AtomicFlag::TestAll();
     // Atomic_Bool::TestAll();
     // Atomic_MemoryOrder::TestAll();
@@ -95,7 +95,7 @@ int main([[maybe_unused]] int argc,
 
     // StoppingThreads::TestAll();
 
-    ThreadPools::TestAll();
+    // ThreadPools::TestAll();
     // ThreadPoolBlocking::TEST_ALL();
     // ThreadPoolLimited::TestAll();
 

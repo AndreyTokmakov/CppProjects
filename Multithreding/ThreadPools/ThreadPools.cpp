@@ -77,9 +77,9 @@ struct ThreadPool<ReturnType (Args...)>
     using Indices = std::make_index_sequence<std::tuple_size_v<std::remove_reference_t<ParamsType>>>;
 
     mutable std::mutex mutex;
-    std::deque<Ctx> queue;   // TODO: rename ??
+    std::deque<Ctx> taskQueue;
 
-    std::condition_variable updated;  // TODO: rename ??
+    std::condition_variable taskAdded;
     std::vector<std::jthread> workers {};
     std::stop_source stopSource;
 
@@ -98,11 +98,11 @@ private:
                           const duration<Rep, Period> &timeout) noexcept
     {
         std::unique_lock<std::mutex> lock(mutex);
-        if (!updated.wait_for(lock, timeout, [this] { return !queue.empty();}))
+        if (!taskAdded.wait_for(lock, timeout, [this] { return !taskQueue.empty();}))
             return false;
 
-        taskContext = std::move(queue.front());
-        queue.pop_front();
+        taskContext = std::move(taskQueue.front());
+        taskQueue.pop_front();
         return true;
     }
 
@@ -145,24 +145,24 @@ public:
     bool empty() const noexcept
     {
         std::lock_guard<std::mutex> lock(mutex);
-        return queue.empty();
+        return taskQueue.empty();
     }
 
     [[nodiscard("Its not for free")]]
     size_t size() const noexcept
     {
         std::lock_guard<std::mutex> lock(mutex);
-        return queue.size();
+        return taskQueue.size();
     }
 
     template<typename Func, typename ... _Args>
     Future submit(Func&& task, _Args&& ... params) noexcept
     {
         std::unique_lock<std::mutex> lock { mutex };
-        Future futureResult = queue.emplace_back(std::forward<Func>(task),
+        Future futureResult = taskQueue.emplace_back(std::forward<Func>(task),
                                                  std::forward<_Args>(params)... ).task.get_future();
         lock.unlock();
-        updated.notify_all(); // TODO:  one / all ?
+        taskAdded.notify_all(); // TODO:  one / all ?
         return futureResult;
     }
 };
