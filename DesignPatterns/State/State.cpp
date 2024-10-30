@@ -295,58 +295,64 @@ namespace State::TCPStateMachine_Visitor
     struct EventDisconnect { };
     struct EventTimeout { };
 
-    using Event = std::variant<EventConnect,EventConnected, EventDisconnect, EventTimeout>;
-
     struct Idle { };
-
-    struct Connecting {
+    struct Connected { };
+    struct Connecting
+    {
         std::string                 m_address;
         uint32_t                    m_trial = 0;
         static constexpr uint8_t    m_max_trial = 3;
     };
-    struct Connected { };
 
+    using Event = std::variant<EventConnect,EventConnected, EventDisconnect, EventTimeout>;
     using State = std::variant<Idle, Connecting, Connected>;
 
 
     struct TransitionsHandler
     {
-        std::optional<State> operator()(Idle&, const EventConnect &e) {
+        std::optional<State> operator()(Idle&, const EventConnect &event) const
+        {
             std::cout << "Idle -> Connect" << std::endl;
-            return Connecting{e.m_address};
+            return Connecting{event.m_address};
         }
 
-        std::optional<State> operator()(Connecting&, const EventConnected &) {
+        std::optional<State> operator()(Connecting&, const EventConnected &) const
+        {
             std::cout << "Connecting -> Connected" << std::endl;
             return Connected{};
         }
 
-        std::optional<State> operator()(Connecting &s, const EventTimeout &) {
+        std::optional<State> operator()(Connecting &s, const EventTimeout &) const
+        {
             std::cout << "Connecting -> Timeout" << std::endl;
             return ++s.m_trial < Connecting::m_max_trial ? std::nullopt : std::optional<State>(Idle{});
         }
 
-        std::optional<State> operator()(Connected&, const EventDisconnect &) {
+        std::optional<State> operator()(Connected&, const EventDisconnect &) const
+        {
             std::cout << "Connected -> Disconnect" << std::endl;
             return Idle{};
         }
 
         template <typename State_t, typename Event_t>
-        std::optional<State> operator()(State_t &, const Event_t &) const {
+        std::optional<State> operator()(State_t &, const Event_t &) const
+        {
             std::cout << "Unknown" << std::endl;
             return std::nullopt;
         }
     };
 
-    template <typename StateVariant, typename EventVariant, typename Transitions>
-    struct Bluetooth {
+    template <typename StateVariant,
+              typename EventVariant,
+              typename Transitions>
+    struct Bluetooth
+    {
         StateVariant currentState;
 
         void dispatch(const EventVariant &event)
         {
-            std::optional<StateVariant> new_state = visit(Transitions{}, currentState, event);
-            if (new_state)
-                currentState = *std::move(new_state);
+            if (std::optional<StateVariant> newState = std::visit(Transitions{}, currentState, event))
+                currentState = *std::move(newState);
         }
 
         template <typename... Events>
