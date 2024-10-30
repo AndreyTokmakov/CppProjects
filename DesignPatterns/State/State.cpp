@@ -173,7 +173,8 @@ namespace State::TCPStateMachine
         timeout
     };
 
-    inline std::ostream &operator<<(std::ostream &os, const Event event) {
+    inline std::ostream &operator<<(std::ostream &os, const Event event)
+    {
         switch (event) {
             case Event::connect: os << "connect"; break;
             case Event::connected: os << "connected"; break;
@@ -183,7 +184,8 @@ namespace State::TCPStateMachine
         return os;
     }
 
-    struct IState {
+    struct IState
+    {
         virtual std::unique_ptr<IState> onEvent(Event event) = 0;
 
         [[nodiscard]]
@@ -193,79 +195,71 @@ namespace State::TCPStateMachine
     };
 
     /** States: **/
-    struct Idle : IState {
+
+    struct Idle : IState
+    {
         std::unique_ptr<IState> onEvent(Event event) override;
 
         [[nodiscard]]
-        std::string getName() const override;
+        std::string getName() const override {
+            return {"Idle" };
+        }
     };
 
-    struct Connecting : IState {
-        std::unique_ptr<IState> onEvent(Event event) override;
+    struct Connected : IState
+    {
+        std::unique_ptr<IState> onEvent(Event event) override
+        {
+            std::cout << getName() << " ==> " << event;
+            if (Event::disconnect == event)
+                return std::make_unique<Idle>();
+            return nullptr;
+        }
 
         [[nodiscard]]
-        std::string getName() const override;
+        std::string getName() const override {
+            return {"Connected"};
+        }
+    };
+
+    struct Connecting : IState
+    {
+        std::unique_ptr<IState> onEvent(Event event) override
+        {
+            std::cout << getName() << " ==> " << event;
+            switch (event) {
+                case Event::connected:
+                    return std::make_unique<Connected>();
+                case Event::timeout:
+                    return ++m_trial < m_max_trial ? nullptr : std::make_unique<Idle>();
+                case Event::connect:
+                    [[fallthrough]];
+                case Event::disconnect:
+                    return nullptr;
+            }
+            return nullptr;
+        }
+
+        [[nodiscard]]
+        std::string getName() const override {
+            return {"Connecting"};
+        }
 
     private:
         uint32_t                    m_trial = 0;
         static constexpr uint8_t    m_max_trial = 3;
     };
 
-    struct Connected : IState {
-        std::unique_ptr<IState> onEvent(Event e) override;
 
-        [[nodiscard]]
-        std::string getName() const override;
-    };
-
-
-
-
-    std::unique_ptr<IState> Idle::onEvent(Event event) {
-        std::cout << getName() << " ==> " << event;
-        if (Event::connect == event)
-            return std::make_unique<Connecting>();
-        return nullptr;
-    }
-
-    std::string Idle::getName() const {
-        return {"Idle"};
-    }
-
-    std::unique_ptr<IState> Connecting::onEvent(Event event)
+    std::unique_ptr<IState> Idle::onEvent(Event event)
     {
         std::cout << getName() << " ==> " << event;
-        switch (event) {
-            case Event::connected:
-                return std::make_unique<Connected>();
-                break;
-            case Event::timeout:
-                return ++m_trial < m_max_trial ? nullptr : std::make_unique<Idle>();
-                break;
-            case Event::connect:
-                [[fallthrough]];
-            case Event::disconnect:
-                return nullptr;
-                break;
+        if (Event::connect == event) {
+            return std::make_unique<struct Connecting>();
         }
         return nullptr;
     }
 
-    std::string Connecting::getName() const {
-        return {"Connecting"};
-    }
-
-    std::unique_ptr<IState> Connected::onEvent(Event event)
-    {
-        std::cout << getName() << " ==> " << event;
-        if (Event::disconnect == event)
-            return std::make_unique<Idle>();
-        return nullptr;
-    }
-
-    std::string Connected::getName() const {
-        return {"Connected"};
-    }
 
     struct Bluetooth
     {
@@ -273,7 +267,8 @@ namespace State::TCPStateMachine
 
         void dispatch(Event e)
         {
-            auto stateNew = state->onEvent(e);
+            std::cout << "dispatching '" << e << "' event: ";
+            std::unique_ptr<IState> stateNew = state->onEvent(e);
             if (stateNew)
                 state = std::move(stateNew);
 
@@ -374,10 +369,10 @@ namespace State::TCPStateMachine_Visitor
 
 void State::TestAll()
 {
-    ClimateControl::Test();
+    // ClimateControl::Test();
 
     // TCPStateMachine::Test();
 
-    // TCPStateMachine_Visitor::Test();
+    TCPStateMachine_Visitor::Test();
 }
 
