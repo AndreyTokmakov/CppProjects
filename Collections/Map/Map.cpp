@@ -116,7 +116,19 @@ namespace Map {
             std::cout << key << " => " << value << std::endl;
     }
 
-    void emplace_test1() {
+    void emplace_test_existing()
+    {
+        std::map<int, int> dict;
+
+        const int value = dict.emplace(1, 123).first->second;
+
+        std::cout << value << std::endl;
+        std::cout << dict << std::endl;
+
+    }
+
+    void emplace_test1()
+    {
         std::map<int, std::pair<double, double>> metrics{};
         metrics.emplace(1, std::make_pair(1.0f, 1.0f));
     }
@@ -1279,6 +1291,7 @@ void Map::TestAll()
     // try_emplace_duplicate_entry();
 
 	// emplace_test();
+	emplace_test_existing();
 	// emplace_test1();
 	// emplace_return();
 	// emplace_vs_insert();
@@ -1304,7 +1317,7 @@ void Map::TestAll()
 	// try_emplace_test();
 	// try_emplace_test_2();
 	// try_emplace_test_3();
-    Try_Emplace_Value_Pointer();
+    // Try_Emplace_Value_Pointer();
 	// try_emplace_test_LAMBDA();
 	// Try_emplace_vs_Emplace();
     // TryEmplace_vs_Emplace();

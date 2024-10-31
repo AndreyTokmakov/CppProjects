@@ -1457,14 +1457,16 @@ int main([[maybe_unused]] int argc,
     // CopyElision_RVO::TestAll();
     // ConstexprMap::TestAll();
     // DebugLogger::TestAll();
-    // DesignPatterns::TestAll();
+
+    DesignPatterns::TestAll();
+
     // Date_Time_Chrono::TestAll();
     // Heap::TestAll();
     // Iterators::TestAll();
     // Files::TestAll();
     // FunctionCall_LookUp::TestAll();
     // LowLatencyLogger::TestAll();
-    Multithreading::TestAll();
+    // Multithreading::TestAll();
     // Memory::TestAll();
     // MaxStack::TestAll();
     // Math::TestAll();

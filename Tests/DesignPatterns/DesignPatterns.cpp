@@ -24,6 +24,8 @@ Description : DesignPatterns
 #include <thread>
 #include <unordered_map>
 #include <initializer_list>
+#include <functional>
+#include <memory>
 
 namespace DesignPatterns::Singleton
 {
@@ -1225,6 +1227,201 @@ namespace DesignPatterns::Observer
     }
 }
 
+namespace DesignPatterns::Observer_LinedIn_Example
+{
+
+    /**
+     * Observer - listener to the Updates.
+     * Example of implementation that relies on the CRTP design pattern provided by the
+     * std library: std::enable_shared_from_this<>.
+     * This way we prevent that any member function creates the shared_ptr of
+     * the enclosing class, will not create a new shared_ptr - with the new control block around the
+     * same underlying pointer "this", but rather references the up front created shared_ptr with the
+     * single control block - calling std::share_from_this()
+    */
+    template <typename Update>
+    class Subscriber : public std::enable_shared_from_this<Subscriber<Update>>
+    {
+
+    public:
+
+        using update_callback = std::function<void(const Update&)>;
+        using error_callback = std::function<void(std::exception_ptr e)>;
+        using completion_callback = std::function<void()>;
+
+        /**
+         * Gateway for factoring the enclosing class.
+         * This is the entry point for factoring the instance of the class, as
+         * precondition for std::share_from_this() is a valid call that doesn't throw
+        */
+        [[nodiscard]] static std::shared_ptr<Subscriber> create(update_callback updateCallback,
+                                                                error_callback errorCallback,
+                                                                completion_callback completionCallback)
+        {
+            return std::shared_ptr<Subscriber>(new Subscriber(updateCallback, errorCallback, completionCallback));
+        }
+
+        // Common interface - for subscribing/unsubscribing
+        template <typename Publisher>
+        void subsribe(std::shared_ptr<Publisher> publisher)
+        {
+            if(publisher)[[likely]] publisher->subsribe(this->share_from_this());
+        }
+
+        template <typename Publisher>
+        void unsubsribe(std::shared_ptr<Publisher> publisher)
+        {
+            if(publisher)[[likely]] publisher->unsubsribe(this->share_from_this());
+        }
+
+        // Interface - customization points, aligned with the Observer concept
+        void onNext(const Update& update)
+        {
+            if (updateCallback_) std::invoke(updateCallback_, update);
+        }
+
+        void onError(std::exception_ptr e)
+        {
+            if (errorCallback_) std::invoke(errorCallback_, e);
+        }
+
+        void onCompletion()
+        {
+            if (completionCallback_) std::invoke(completionCallback_);
+        }
+
+    private:
+        /**
+         * Hidden c-tor
+        */
+        explicit Subscriber(update_callback updateCallback,
+                            error_callback errorCallback,
+                            completion_callback completionCallback) noexcept:
+                updateCallback_(updateCallback),
+                errorCallback_(errorCallback),
+                completionCallback_(completionCallback)
+        {}
+
+    private:
+        update_callback updateCallback_;
+        error_callback errorCallback_;
+        completion_callback completionCallback_;
+
+    };
+
+    // Observer concept - interface
+    template <typename Update, template <class> class Observer>
+    concept is_observer = requires(Observer<Update>& observer, const Update& update, std::exception_ptr e)
+    {
+        {observer.onNext(update)} -> std::same_as<void>;
+        {observer.onError(e)} -> std::same_as<void>;
+        {observer.onCompletion()} -> std::same_as<void>;
+    };
+
+    /**https://www.linkedin.com/posts/damirljubic_compiler-explorer-c-x86-64-gcc-142-activity-7255932073566199808-3ZZa/?utm_source=share&utm_medium=member_desktop
+     * Publisher - the Observable that will emit the Updates to the
+     * all subscribed Observers
+     * Push model - emits the updates as they arrive to all listeners
+     */
+    template <typename Update, template <class> typename Observer>
+    requires is_observer<Update, Observer>
+    class Publisher final
+    {
+    public:
+        using observer_type = Observer<Update>;
+
+        ~Publisher()
+        {
+            completion();
+        }
+
+        void subscribe(const std::shared_ptr<observer_type>& observer)
+        {
+            std::lock_guard lock {lock_};
+            observers_.push_back(observer);
+        }
+
+        void unsubscribe(const std::shared_ptr<observer_type>& observer)
+        {
+            std::lock_guard lock {lock_};
+            observers_.erase(std::remove(observers_.begin(), observers_.end(), observer), observers_.end());
+        }
+
+        void notify(const Update& update)
+        {
+            push([&update](const std::shared_ptr<observer_type>& observer){
+                try {
+                    observer->onNext(update);
+                } catch(...) {
+                    std::exception_ptr e = std::current_exception();
+                    observer->onError(e);
+                }
+            });
+        }
+
+        // Publisher seas to emit the updates down the stream
+        void completion()
+        {
+            push([](const std::shared_ptr<observer_type>& observer) {
+                try {
+                    observer->onCompletion();
+                } catch(...) {
+                    std::exception_ptr e = std::current_exception();
+                    observer->onError(e);
+                }
+            });
+        }
+
+    private:
+        template <typename Func, typename...Args>
+        inline void push(Func&& func, Args&&...args)
+        {
+            std::lock_guard lock {lock_};
+
+            std::for_each(observers_.begin(), observers_.end(),
+                          [func = std::forward<Func>(func), ...args = std::forward<Args>(args)](const auto& observer)
+                          {
+                              if (const auto& ptr = observer.lock(); ptr)[[likely]]
+                              {
+                                  std::invoke(func, ptr, args...);
+                              }
+                          });
+        }
+    private:
+
+        mutable std::mutex lock_{};
+        std::vector<std::weak_ptr<observer_type>> observers_;
+    };
+
+
+    struct Int
+    {
+        constexpr Int(int val) noexcept: val { val } {}
+        constexpr operator int() const { return val; }
+
+    private:
+        int val;
+    };
+
+    void Demo()
+    {
+        using subscriber_t = Subscriber<Int>;
+
+        auto subscriber = subscriber_t::create(
+                [](const Int& update) { std::cout << update << '\n';},
+                nullptr,
+                []{ std::cout << "Completed!\n"; }
+        );
+
+        using publisher_t = Publisher<Int, Subscriber>;
+        std::shared_ptr<publisher_t> publisher = std::make_shared<publisher_t>();
+        publisher->subscribe(subscriber);
+        publisher->notify(Int{11});
+    }
+
+}
+
+
 namespace DesignPatterns::Decorator
 {
     struct Money {
@@ -1574,6 +1771,7 @@ void DesignPatterns::TestAll()
     // Monostate::test();
 
     // Observer::test();
+    Observer_LinedIn_Example::Demo();
 
     // Decorator::test();
 
