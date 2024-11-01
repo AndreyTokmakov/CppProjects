@@ -89,10 +89,10 @@ int main([[maybe_unused]]  int argc,
     // Command::TestAll();
     // Iterator::Test();
     // Interpreter::Test();
-    // Mediator::TestAll();
+    Mediator::TestAll();
     // Memento::TestAll();
     // Observer::TestAll();
-    State::TestAll();
+    // State::TestAll();
     // TemplateMethod::TestAll();
     // Visitor::test();
     /// NULL OBJECT

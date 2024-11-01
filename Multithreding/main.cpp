@@ -67,7 +67,7 @@ int main([[maybe_unused]] int argc,
     // AtomicFlag::TestAll();
     // Atomic_Bool::TestAll();
     // Atomic_MemoryOrder::TestAll();
-    Atomic_CompareExchange::TestAll();
+    // Atomic_CompareExchange::TestAll();
     // Atomic_IsLockFree::TestAll();
     // AtomicPerformanceTests::TestAll();
 
@@ -91,7 +91,7 @@ int main([[maybe_unused]] int argc,
     // SynchStream::TEST_ALL();
     // SynchStream_Custom::TEST_ALL();
 
-    // SpinLock::TestAll();
+    SpinLock::TestAll();
 
     // StoppingThreads::TestAll();
 

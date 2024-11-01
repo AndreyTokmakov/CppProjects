@@ -37,9 +37,8 @@ namespace ShapeDecorator
     };
 
 
-    class Circle : public Shape
+    class Circle final : public Shape
     {
-    private:
         Point center;
         double radius;
 

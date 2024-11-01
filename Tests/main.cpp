@@ -1405,6 +1405,21 @@ namespace BitwiseOperations
 }
 
 
+void handle_pips(const long long price)
+{
+    auto commission = price;
+    if (commission < 0)
+        commission = 0 - commission;
+
+    std::cout << "commission: " << commission << std::endl;
+}
+
+void handle_pips_2(const long long price)
+{
+    auto commission = std::abs(price);
+
+    std::cout << "commission: " << commission << std::endl;
+}
 
 int main([[maybe_unused]] int argc,
          [[maybe_unused]] char** argv)
@@ -1433,7 +1448,11 @@ int main([[maybe_unused]] int argc,
     // BitwiseOperations::test();
 
 
+    handle_pips(100);
+    handle_pips(-100);
 
+    handle_pips_2(100);
+    handle_pips_2(-100);
 
     /** * * * * *  Move to lib * * * * * **/
 
@@ -1458,7 +1477,7 @@ int main([[maybe_unused]] int argc,
     // ConstexprMap::TestAll();
     // DebugLogger::TestAll();
 
-    DesignPatterns::TestAll();
+    // DesignPatterns::TestAll();
 
     // Date_Time_Chrono::TestAll();
     // Heap::TestAll();

@@ -752,7 +752,7 @@ namespace PerformanceExperiments::Atomic_vs_Volatile
 void PerformanceExperiments::TestAll()
 {
     // CV_vs_Atomic::RunBenchmark();
-    // SpinLock_vs_Mutex::RunBenchmark();
+    SpinLock_vs_Mutex::RunBenchmark();
     // AtomicCounter_vs_Mutex::RunBenchmark();
-    Atomic_vs_Volatile::RunBenchmark();
+    // Atomic_vs_Volatile::RunBenchmark();
 };

@@ -17,6 +17,8 @@ Description : Chat room Mediator pattern example
 
 namespace Mediator::Chat
 {
+    using UserID = uint64_t;
+
     struct IChatRoom
     {
         virtual void sendMessage(const std::string& message, size_t userId) = 0;
@@ -47,15 +49,15 @@ namespace Mediator::Chat
     {
     public:
         std::shared_ptr<IChatRoom> mediator { nullptr };
-        size_t id {0};
+        UserID id {0};
         std::string name {};
 
     public:
-        User(size_t id, std::string name): id { id }, name { std::move(name) } {
+        User(const UserID id, std::string name): id { id }, name { std::move(name) } {
             // Do something
         }
 
-        User(std::shared_ptr<IChatRoom> room, size_t id, std::string name):
+        User(std::shared_ptr<IChatRoom> room, const UserID id, std::string name):
                 mediator { std::move(room) }, id { id }, name { std::move(name) } {
             // Do something
         }
@@ -75,21 +77,23 @@ namespace Mediator::Chat
         }
 
         [[nodiscard]]
-        size_t getID() const noexcept override {
+        UserID getID() const noexcept override {
             return id;
         }
     };
 
-    class ChatRoom: public IChatRoom,
-                    public std::enable_shared_from_this<ChatRoom>
+    class ChatRoom final : public IChatRoom,
+                           public std::enable_shared_from_this<ChatRoom>
     {
         std::unordered_map<size_t, std::weak_ptr<IUser>> usersMap {};
 
     public:
         void sendMessage(const std::string& message,
-                         size_t userId) override {
+                         const UserID userId) override {
             if (const auto userIter = usersMap.find(userId); usersMap.end() != userIter) {
-                userIter->second.lock()->receive(message);
+                if (const std::shared_ptr<IUser> user = userIter->second.lock(); user) {
+                    user->receive(message);
+                }
             }
         }
 
@@ -97,38 +101,33 @@ namespace Mediator::Chat
         {
             std::cout << "'" << user->getName() << "' has entered the chat room\n";
 
-            /*
-            for (const auto& [id, usr]: usersMap)
-                usr.lock()->userJoined(user);
-
-            usersMap[user->getID()] = user;
-            user->setRoom(this->shared_from_this());
-            */
-
-            usersMap[user->getID()] = user;
+            usersMap.emplace(user->getID(), user);
             user->setRoom(this->shared_from_this());
 
-            for (const auto& [id, usrWPtr]: usersMap) {
-                if (const auto usr = usrWPtr.lock(); nullptr != usr && user->getID() != id)
-                    usr->userJoined(user);
+            for (const auto& [userID, userPtrWeak]: usersMap)
+            {
+                if (const std::shared_ptr<IUser>& exisingUser = userPtrWeak.lock(); exisingUser && user->getID() != userID)
+                {
+                    exisingUser->userJoined(user);
+                }
             }
         }
     };
 
-    class ChatUser: public User
+    class ChatUser final : public User
     {
     public:
         [[maybe_unused]]
-        ChatUser(std::shared_ptr<IChatRoom> room, size_t id, std::string name):
+        ChatUser(std::shared_ptr<IChatRoom> room, const UserID id, std::string name):
                 User { std::move(room), id, std::move(name) } {
         }
 
-        ChatUser(size_t id, std::string name):
+        ChatUser(const UserID id, std::string name):
                 User {nullptr, id, std::move(name)} {
         }
 
         void send(const std::string& message,
-                  size_t userId) override {
+                  const UserID userId) override {
             std::cout << name << " ==> Sending message: " << message << std::endl;
             mediator->sendMessage(message, userId);
         }
