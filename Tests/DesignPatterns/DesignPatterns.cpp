@@ -1265,29 +1265,34 @@ namespace DesignPatterns::Observer_LinedIn_Example
         template <typename Publisher>
         void subsribe(std::shared_ptr<Publisher> publisher)
         {
-            if(publisher)[[likely]] publisher->subsribe(this->share_from_this());
+            if (publisher) [[likely]]
+                publisher->subsribe(this->share_from_this());
         }
 
         template <typename Publisher>
         void unsubsribe(std::shared_ptr<Publisher> publisher)
         {
-            if(publisher)[[likely]] publisher->unsubsribe(this->share_from_this());
+            if (publisher)[[likely]]
+                publisher->unsubsribe(this->share_from_this());
         }
 
         // Interface - customization points, aligned with the Observer concept
         void onNext(const Update& update)
         {
-            if (updateCallback_) std::invoke(updateCallback_, update);
+            if (updateCallback_)
+                std::invoke(updateCallback_, update);
         }
 
         void onError(std::exception_ptr e)
         {
-            if (errorCallback_) std::invoke(errorCallback_, e);
+            if (errorCallback_)
+                std::invoke(errorCallback_, e);
         }
 
         void onCompletion()
         {
-            if (completionCallback_) std::invoke(completionCallback_);
+            if (completionCallback_)
+                std::invoke(completionCallback_);
         }
 
     private:
@@ -1313,9 +1318,9 @@ namespace DesignPatterns::Observer_LinedIn_Example
     template <typename Update, template <class> class Observer>
     concept is_observer = requires(Observer<Update>& observer, const Update& update, std::exception_ptr e)
     {
-        {observer.onNext(update)} -> std::same_as<void>;
-        {observer.onError(e)} -> std::same_as<void>;
-        {observer.onCompletion()} -> std::same_as<void>;
+        { observer.onNext(update) } -> std::same_as<void>;
+        { observer.onError(e) } -> std::same_as<void>;
+        { observer.onCompletion() } -> std::same_as<void>;
     };
 
     /**https://www.linkedin.com/posts/damirljubic_compiler-explorer-c-x86-64-gcc-142-activity-7255932073566199808-3ZZa/?utm_source=share&utm_medium=member_desktop
