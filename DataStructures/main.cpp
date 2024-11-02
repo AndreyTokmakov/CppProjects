@@ -43,6 +43,7 @@ Description : DataStructures
 #include "RAII_CommitWrapper/RAII_CommitWrapper.h"
 #include "ObjectNumberLimiter/ObjectNumberLimiter.h"
 #include "Compressed_Pair/CompressedPair.h"
+#include "ThreadPool/ThreadPool.h"
 #include "Trie/Trie.h"
 
 
@@ -82,13 +83,14 @@ int main([[maybe_unused]] int argc,
     // HeapWithComparator::TestAll();
     // CompressedPair::TestAll();
 
-    GenericTableTemplate::TestAll();
+    // GenericTableTemplate::TestAll();
 
     // Memory::AlignedStackAllocator::TestAll();
     // Memory::CustomStackAllocator::TestAll();
 
     // Memory::Shared_Ptr_Tests();
 
+    ThreadPool::TestAll();
     // ThreadPoolOne::TEST_ALL();
     // ThreadPoolTwo::TEST_ALL();
     // ThreadPoolLimited::TestAll();

@@ -110,7 +110,7 @@ namespace ThreadPoolTwo
 
         /** Maximum number of request handler workers: **/
         // static inline const size_t MAX_CAPACITY { std::thread::hardware_concurrency() * 2 };
-        static inline const size_t MAX_CAPACITY { 100 };
+        static inline constexpr size_t MAX_CAPACITY { 100 };
 
         static inline const std::chrono::duration<int64_t, std::ratio<1, 1000>> TIMEOUT =
                 std::chrono::milliseconds(2000);

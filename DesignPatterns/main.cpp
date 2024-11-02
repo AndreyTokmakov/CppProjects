@@ -85,11 +85,11 @@ int main([[maybe_unused]]  int argc,
     /** Behaviour patterns **/
     // Strategy::Test();
     // Policy::Test();
-    // ChainOfResponsibility::TestAll();
+    ChainOfResponsibility::TestAll();
     // Command::TestAll();
     // Iterator::Test();
     // Interpreter::Test();
-    Mediator::TestAll();
+    // Mediator::TestAll();
     // Memento::TestAll();
     // Observer::TestAll();
     // State::TestAll();

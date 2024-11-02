@@ -51,6 +51,8 @@ add_executable(${PROJECT_NAME}
 		Heap_WithComparator/HeapWithComparator.cpp Heap_WithComparator/HeapWithComparator.h
 		Compressed_Pair/CompressedPair.cpp  Compressed_Pair/CompressedPair.h
 		Wrapper/Wrapper.h
+		ThreadPool/ThreadPool.cpp
+		ThreadPool/ThreadPool.h
 )
 
 # Link libraries to the project/executable

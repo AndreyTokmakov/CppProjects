@@ -13,8 +13,8 @@ Description : Chain of pesponsibility pattern src
 
 namespace ChainOfResponsibility
 {
-    struct Handler {
-    public:
+    struct Handler
+    {
         virtual Handler *SetNext(Handler *handler) = 0;
         virtual std::string Handle(const std::string& request) = 0;
         virtual ~Handler() = default;
