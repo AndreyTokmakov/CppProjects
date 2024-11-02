@@ -16,8 +16,8 @@ Description : ThreadPools src class.cpp
 #include <vector>
 #include <deque>
 #include <syncstream>
-#include "ThreadPools.h"
 
+#include "ThreadPools.h"
 
 #define LOG std::osyncstream(std::cout) << now()
 #define ERR std::osyncstream(std::cerr) << now()
@@ -47,7 +47,7 @@ namespace
 }
 
 template<typename ReturnType,
-        typename ... Args>
+         typename ... Args>
 struct Context
 {
     using Task = std::packaged_task<ReturnType (Args...)>;
@@ -58,10 +58,16 @@ struct Context
 
     Context() = default;
 
-    template<typename Func, typename ... _Args>
-    explicit Context(Func&& _task, _Args&& ... params):
-            task { std::forward<Func>(_task) }, params { std::forward<_Args>(params)... } {
+    template<typename Func, typename ... ParamTypes>
+    explicit Context(Func&& task, ParamTypes&& ... params):
+            task { std::forward<Func>(task) }, params { std::forward<ParamTypes>(params)... } {
     }
+
+    Context(const Context& ctx) = delete;
+    Context& operator=(const Context& ctx) = delete;
+
+    Context(Context&& ctx) noexcept  = default;
+    Context& operator=(Context&& ctx) noexcept = default;
 };
 
 
@@ -77,15 +83,11 @@ struct ThreadPool<ReturnType (Args...)>
     using Indices = std::make_index_sequence<std::tuple_size_v<std::remove_reference_t<ParamsType>>>;
 
     mutable std::mutex mutex;
+    std::condition_variable taskAdded;
     std::deque<Ctx> taskQueue;
 
-    std::condition_variable taskAdded;
     std::vector<std::jthread> workers {};
     std::stop_source stopSource;
-
-    /** Maximum number of workers: **/
-    // static inline const size_t threadsCount { 1 };
-    static inline const size_t threadsCount { std::thread::hardware_concurrency() };
 
     static inline constexpr std::chrono::duration<uint64_t, std::ratio<1, 1000>> pollTimeout{
             std::chrono::milliseconds(500u)
@@ -124,16 +126,17 @@ private:
         constexpr std::integer_sequence idxSequence = Indices {};
         while (!source.stop_requested())
         {
-            if (const bool result = wait_for_and_pop(taskContext, pollTimeout); result)
-            {
-                invokeTask(taskContext.task, std::forward<ParamsType>(taskContext.params), idxSequence);
+            if (const bool result = wait_for_and_pop(taskContext, pollTimeout); result) {
+                invokeTask(taskContext.task,
+                           std::forward<ParamsType>(taskContext.params),
+                           idxSequence);
             }
         }
     }
 
 public:
 
-    ThreadPool()
+    explicit ThreadPool(uint32_t threadsCount = std::thread::hardware_concurrency())
     {
         workers.reserve(threadsCount);
         for (size_t i = 0; i < threadsCount; ++i) {
@@ -181,9 +184,9 @@ void ThreadPools::TestAll()
         // return 12345;
     };
 
-    ThreadPool<RetType(int)> pool;
+    ThreadPool<RetType(int)> pool(2);
     std::vector<std::future<RetType>> results;
-    for (int i = 1; i <= 3; i++)
+    for (int i = 1; i <= 4; i++)
     {
         results.push_back(pool.submit(func, i));
     }

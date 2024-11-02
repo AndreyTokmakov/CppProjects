@@ -91,11 +91,12 @@ int main([[maybe_unused]] int argc,
     // SynchStream::TEST_ALL();
     // SynchStream_Custom::TEST_ALL();
 
-    SpinLock::TestAll();
+    // SpinLock::TestAll();
 
     // StoppingThreads::TestAll();
 
-    // ThreadPools::TestAll();
+    ThreadPools::TestAll();
+
     // ThreadPoolBlocking::TEST_ALL();
     // ThreadPoolLimited::TestAll();
 
