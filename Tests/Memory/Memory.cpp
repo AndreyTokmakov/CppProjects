@@ -20,7 +20,7 @@ Description : C++ Memory test
 #include "CustomStackAllocator.h"
 #include "AlignedStackAllocator.h"
 #include "UsingCustomAllocator_List.h"
-
+#include "ObjectMemoryPool.h"
 
 namespace Memory
 {
@@ -833,12 +833,14 @@ namespace VectorOfUniquePointers_KeepReference_StoredInVector
 
 void Memory::TestAll()
 {
+    ObjectMemoryPool::TestAll();
+
     // CleanUP_Exception_Test();
     // SharedPtrLeak();
 
     // UniquePtrExperiments::PointerToObjectOnStack();
     // UniquePtrExperiments::CustomDeleterTests();
-    UniquePtrExperiments::Pass_Unique_Ptr_Object();
+    // UniquePtrExperiments::Pass_Unique_Ptr_Object();
 
     // Memset_vs_Assignment();
     // Memset_vs_Assignment_Perf();

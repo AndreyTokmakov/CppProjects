@@ -75,7 +75,7 @@ Description : Tests C++ project
 #include "ConstexprMap/ConstexprMap.h"
 #include "Multithreading/Multithreading.h"
 #include "DesignPatterns/DesignPatterns.h"
-#include "Iterators/Iterators.h"
+#include "Iterators/Iterators.h"3
 #include "Math/Math.h"
 #include "Files_Filesystem/Files.h"
 #include "Helpers/Helpers.h"
@@ -83,6 +83,7 @@ Description : Tests C++ project
 #include "CopyElision_RVO/CopyElision_RVO.h"
 #include "Performance/Performance.h"
 #include "Memory/Memory.h"
+#include "Memory/ObjectMemoryPool.h"
 #include "BinaryAnalyzer/BinaryAnalyzer.h"
 #include "TestAssignments/TestAssignments.h"
 #include "TableFormatter/TableFormatter.h"
@@ -1405,21 +1406,6 @@ namespace BitwiseOperations
 }
 
 
-void handle_pips(const long long price)
-{
-    auto commission = price;
-    if (commission < 0)
-        commission = 0 - commission;
-
-    std::cout << "commission: " << commission << std::endl;
-}
-
-void handle_pips_2(const long long price)
-{
-    auto commission = std::abs(price);
-
-    std::cout << "commission: " << commission << std::endl;
-}
 
 int main([[maybe_unused]] int argc,
          [[maybe_unused]] char** argv)
@@ -1448,11 +1434,6 @@ int main([[maybe_unused]] int argc,
     // BitwiseOperations::test();
 
 
-    handle_pips(100);
-    handle_pips(-100);
-
-    handle_pips_2(100);
-    handle_pips_2(-100);
 
     /** * * * * *  Move to lib * * * * * **/
 

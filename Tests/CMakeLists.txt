@@ -57,17 +57,17 @@ add_executable(${PROJECT_NAME}
         Math/Math.cpp Math/Math.h
         ObjectOrientedExperimetns/OOP_Experiments.cpp ObjectOrientedExperimetns/OOP_Experiments.h
         Cpp23_Features/Cpp23_Features.cpp Cpp23_Features/Cpp23_Features.h
-        Cpp23_Features/StackTrace.cpp Cpp23_Features/StackTrace.h
-        Auto/AutoTests.cpp Auto/AutoTests.h
-        ObjectOrientedExperimetns/VirtualTables.cpp ObjectOrientedExperimetns/VirtualTables.h
-        Heap/Heap.cpp Heap/Heap.h
-        Comparators/Comparators.cpp Comparators/Comparators.h
-        FindMinMaxValues/FindMinMaxValues.cpp FindMinMaxValues/FindMinMaxValues.h
-        FunctionCall_LookUp/FunctionCall_LookUp.cpp FunctionCall_LookUp/FunctionCall_LookUp.h
-        Memory/AlignedStackAllocator.cpp Memory/AlignedStackAllocator.h
-        Memory/UsingCustomAllocator_List.cpp Memory/UsingCustomAllocator_List.h
+        Cpp23_Features/StackTrace.cpp
+        Auto/AutoTests.cpp
+        ObjectOrientedExperimetns/VirtualTables.cpp
+        Heap/Heap.cpp
+        Comparators/Comparators.cpp
+        FindMinMaxValues/FindMinMaxValues.cpp
+        FunctionCall_LookUp/FunctionCall_LookUp.cpp
+        Memory/AlignedStackAllocator.cpp
+        Memory/UsingCustomAllocator_List.cpp
+        Memory/ObjectMemoryPool.cpp
         Logging/LowLatencyLogger.cpp
-        Logging/LowLatencyLogger.h
 )
 
 message(STATUS "EXTRA_LIBS: ${EXTRA_LIBS}")
