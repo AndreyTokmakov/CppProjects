@@ -15,6 +15,38 @@ Description : ObjectMemoryPool.cpp
 #include <numeric>
 #include <cmath>
 
+#include <thread>
+#include <syncstream>
+
+
+#define LOG std::osyncstream(std::cout) << now()
+#define ERR std::osyncstream(std::cerr) << now()
+
+
+namespace
+{
+    using namespace std::chrono;
+
+    constexpr std::string_view FORMAT { "[%d-%02d-%02d %02d:%02d:%02d.%06ld] " };
+
+    [[nodiscard]]
+    std::string now(const time_point<system_clock>& timestamp = system_clock::now()) noexcept
+    {
+        const time_t time { system_clock::to_time_t(timestamp) };
+        std::tm tm {};
+        ::localtime_r(&time, &tm);
+
+        std::string buffer(64, '\0');
+        const int32_t size = std::sprintf(&(buffer.front()), FORMAT.data(),
+                                          tm.tm_year + 1900, tm.tm_mon + 1, tm.tm_mday, tm.tm_hour, tm.tm_min, tm.tm_sec,
+                                          duration_cast<microseconds>(timestamp - time_point_cast<seconds>(timestamp)).count());
+        buffer.resize(size);
+        buffer.shrink_to_fit();
+        return buffer;
+    }
+}
+
+
 namespace ObjectMemoryPool
 {
     template <typename Ty, typename Allocator = std::allocator<Ty>>
@@ -142,7 +174,54 @@ namespace ObjectMemoryPool
     };
 }
 
+
+namespace ThreadLocalStorage
+{
+    struct Worker
+    {
+        static inline thread_local std::vector<std::string> params = []{
+            LOG << "Vector is created for thread " << std::this_thread::get_id() << std::endl;
+            return std::vector<std::string>{};
+        }();
+
+        std::vector<std::jthread> pool;
+
+        void executor() const
+        {
+            LOG << "Starting job" << std::endl;
+
+            for (int i = 0; i < 4; ++i)
+                params.emplace_back(now());
+
+            std::this_thread::sleep_for(std::chrono::seconds(1u));
+
+            for (const std::string& s: params)
+                std::cout << s << ' ';
+            std::cout << std::endl;
+        }
+
+        void start()
+        {
+            for (uint32_t idx = 0; idx < 4; ++idx)
+            {
+                std::this_thread::sleep_for(std::chrono::microseconds (250u));
+                pool.emplace_back(&Worker::executor, this);
+            }
+        }
+
+        ~Worker()
+        {
+            for (auto& T: pool)
+                T.join();
+        }
+    };
+
+}
+
 void ObjectMemoryPool::TestAll()
 {
+
+    ThreadLocalStorage::Worker worker {};
+    worker.start();
 
 }
