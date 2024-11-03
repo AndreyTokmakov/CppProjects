@@ -52,7 +52,6 @@ namespace ObjectMemoryPool
     template <typename Ty, typename Allocator = std::allocator<Ty>>
     class ObjectPool final
     {
-    private:
         using object_type = Ty;
         using pointer = object_type*;
         using size_type = typename std::vector<pointer>::size_type;
@@ -62,28 +61,28 @@ namespace ObjectMemoryPool
 
     private:
         std::vector<pointer> pool;
-        std::vector<pointer> available;
+        static inline thread_local std::vector<pointer> available;
 
-        static constexpr size_type DEFAULT_CHUNK_SIZE { 5 };
-        static constexpr size_type GROWTH_STRATEGY { 2 };
+        static inline constexpr size_type DEFAULT_CHUNK_SIZE { 5 };
+        static inline constexpr size_type GROWTH_STRATEGY { 2 };
 
-        size_type _new_block_size { DEFAULT_CHUNK_SIZE };
-        size_type _size { 0 };
-        size_type _capacity { 0 };
+        size_type newBlockSize { DEFAULT_CHUNK_SIZE };
+        size_type size { 0 };
+        size_type capacity { 0 };
 
         void addChunk()
         {
             // Allocate a new chunk of uninitialized memory
-            pointer newBlock { m_allocator.allocate(_new_block_size) };
+            pointer newBlock { m_allocator.allocate(newBlockSize) };
 
             // Keep all allocated blocks in 'pool' to delete them later:
             pool.push_back(newBlock);
 
-            available.resize(_new_block_size);
+            available.resize(newBlockSize);
             std::iota(std::begin(available), std::end(available), newBlock);
 
-            _capacity += _new_block_size;
-            _new_block_size *= GROWTH_STRATEGY;
+            capacity += newBlockSize;
+            newBlockSize *= GROWTH_STRATEGY;
         }
 
         // The allocator to use for allocating and deallocating chunks.
@@ -101,7 +100,7 @@ namespace ObjectMemoryPool
 
                 // Return object mem pointer back to pool
                 pool->available.push_back(object);
-                --pool->_size;
+                --pool->size;
             }
         };
 
@@ -115,7 +114,7 @@ namespace ObjectMemoryPool
             // Trivial
         }
 
-        virtual ~ObjectPool()
+        ~ObjectPool()
         {   // Note: this implementation assumes that all objects handed out by this
             // pool have been returned to the pool before the pool is destroyed.
             // The following statement asserts if that is not the case.
@@ -156,20 +155,20 @@ namespace ObjectMemoryPool
 
             // Remove the object from the list of free objects.
             available.pop_back();
-            ++_size;
+            ++size;
 
             // Wrap the initialized object and return it.
             return std::unique_ptr<object_type, Deleter> { objectPtr, Deleter{this}};
         }
 
         [[nodiscard]]
-        size_type size() const noexcept {
-            return _size;
+        size_type Size() const noexcept {
+            return size;
         }
 
         [[nodiscard]]
-        size_type capacity() const noexcept {
-            return _capacity;
+        size_type Capacity() const noexcept {
+            return capacity;
         }
     };
 }
@@ -186,7 +185,7 @@ namespace ThreadLocalStorage
 
         std::vector<std::jthread> pool;
 
-        void executor() const
+        void executor()
         {
             LOG << "Starting job" << std::endl;
 
