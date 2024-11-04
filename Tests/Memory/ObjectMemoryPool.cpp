@@ -60,14 +60,16 @@ namespace ObjectMemoryPool
                       "Type of the Objects in the pool can not be void");
 
     private:
+
+        std::mutex mutex;
         std::vector<pointer> pool;
+
         static inline thread_local std::vector<pointer> available;
 
         static inline constexpr size_type DEFAULT_CHUNK_SIZE { 5 };
         static inline constexpr size_type GROWTH_STRATEGY { 2 };
 
         size_type newBlockSize { DEFAULT_CHUNK_SIZE };
-        size_type size { 0 };
         size_type capacity { 0 };
 
         void addChunk()
@@ -98,9 +100,8 @@ namespace ObjectMemoryPool
             {
                 std::destroy_at(object);
 
-                // Return object mem pointer back to pool
+                /// Return object mem pointer back to pool
                 pool->available.push_back(object);
-                --pool->size;
             }
         };
 
@@ -149,22 +150,15 @@ namespace ObjectMemoryPool
             // Get a free object.
             const pointer objectPtr { available.back() };
 
-            // Initialize, i.e. construct, an instance of T in an uninitialized block of memory
-            // using placement new, and perfectly forward any provided arguments to the constructor.
             pointer obj = new (objectPtr) object_type { std::forward<Args>(args)... };
 
             // Remove the object from the list of free objects.
             available.pop_back();
-            ++size;
 
             // Wrap the initialized object and return it.
             return std::unique_ptr<object_type, Deleter> { objectPtr, Deleter{this}};
         }
 
-        [[nodiscard]]
-        size_type Size() const noexcept {
-            return size;
-        }
 
         [[nodiscard]]
         size_type Capacity() const noexcept {
