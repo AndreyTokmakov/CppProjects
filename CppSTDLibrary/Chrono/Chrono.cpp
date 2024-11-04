@@ -20,6 +20,7 @@
 #include <ctime>
 #include <cstdio>
 #include <functional>
+#include <print>
 
 
 namespace Chrono
@@ -614,6 +615,18 @@ namespace Chrono::FunctionPerformance
             auto duration = std::chrono::duration_cast<std::chrono::microseconds>(end - start).count();
             std::cout << "Result: " << duration << " microseconds" << std::endl;
         }
+
+        {
+            auto start = std::chrono::high_resolution_clock::now();
+
+            for (int i = 0; i < COUNT; ++i) {
+                auto now = std::chrono::high_resolution_clock::now();
+            }
+
+            auto end = std::chrono::high_resolution_clock::now();
+            auto duration = std::chrono::duration_cast<std::chrono::microseconds>(end - start).count();
+            std::cout << "Result: " << duration << " microseconds" << std::endl;
+        }
     }
 
 
@@ -999,6 +1012,120 @@ namespace Chrono::TimeOut
     }
 }
 
+
+namespace Chrono::Print_Time
+{
+    /**
+     * Advanced Formatting Options
+     * Year and Month:
+     *      {0:%Y}: Full year (e.g., 2024).
+     *      {0:%y}: Last two digits of the year (e.g., 24).
+     *      {0:%B}: Full month name (e.g., November).
+     *      {0:%b}: Abbreviated month name (e.g., Nov).
+     *
+     * Day and Week:
+     *      {0:%d}: Day of the month, zero-padded (e.g., 01).
+     *      {0:%A}: Full weekday name (e.g., Friday).
+     *      {0:%a}: Abbreviated weekday name (e.g., Fri).
+     *
+     * Time of Day:
+     *      {0:%H}: Hour (24-hour clock), zero-padded (e.g., 14).
+     *      {0:%I}: Hour (12-hour clock), zero-padded (e.g., 02).
+     *      {0:%M}: Minute, zero-padded (e.g., 05).
+     *      {0:%S}: Second, zero-padded (e.g., 09).
+     *      {0:%p}: AM/PM designation.
+     *
+     * Time Zone:
+     *      {0:%Z}: Time zone abbreviation (e.g., UTC).
+     *      {0:%z}: Offset from UTC (e.g., +0000).
+     *
+    **/
+    void Print_Formating()
+    {
+        auto now = std::chrono::system_clock::now();
+        std::print("now is {}", now);
+        std::print("Full date and time: {0:%Y-%m-%d %H:%M:%S}\n", now);
+        std::print("Date only: {0:%F}\n", now);
+        std::print("Time only: {0:%T}\n", now);
+        std::print("Day of the week: {0:%A}\n", now);
+        std::print("Month name: {0:%B}\n", now);
+        std::print("12-hour clock with AM/PM: {0:%I:%M:%S %p}\n", now);
+        std::print("ISO 8601 format: {0:%FT%T%z}\n", now);
+    }
+
+
+    void TimeZones_Formating()
+    {
+        const auto now = std::chrono::system_clock::now();
+        auto zt_local = std::chrono::zoned_time { std::chrono::current_zone(), now };
+        std::print("now is {} UTC and local is: {}\n", now, zt_local);
+
+        constexpr std::string_view Warsaw { "Europe/Warsaw" };
+        constexpr std::string_view NewYork { "America/New_York" };
+        constexpr std::string_view Tokyo { "Asia/Tokyo" };
+        constexpr std::string_view Dubai { "Asia/Dubai" };
+
+        try
+        {
+            const std::chrono::zoned_time zt_w{Warsaw, now};
+            std::print("Warsaw  : {0:%F} {0:%R}\n", zt_w);
+
+            const std::chrono::zoned_time zt_ny{NewYork, now};
+            std::print("New York: {0:%F} {0:%R}\n", zt_ny);
+
+            const std::chrono::zoned_time zt_t{Tokyo, now};
+            std::print("Tokyo   : {0:%F} {0:%R}\n", zt_t);
+
+            const std::chrono::zoned_time zt_d{Dubai, now};
+            std::print("Dubai   : {0:%F} {0:%R}\n", zt_d);
+        }
+        catch (std::runtime_error& ex)
+        {
+            std::print("Error: {}", ex.what());
+        }
+    }
+
+    void Daylight_Saving_Time ()
+    {
+        try
+        {
+            const auto now = std::chrono::floor<std::chrono::minutes>(std::chrono::system_clock::now());
+            auto zt_local = std::chrono::zoned_time{ "Asia/Dubai", now };
+            std::print("now is {} UTC and Dubai is: {}\n", now, zt_local);
+
+            auto info = zt_local.get_info();
+            std::print("local time info: \nabbrev: {},\n begin {}, end {}, \noffset {}, save {}\n",
+                       info.abbrev, info.begin, info.end, info.offset, info.save);
+        }
+        catch (std::runtime_error& ex)
+        {
+            std::print("Error: {}", ex.what());
+        }
+    }
+
+    void printInfo(std::chrono::sys_days sd,
+                   std::string_view zone)
+    {
+        auto zt_local = std::chrono::zoned_time{ zone, std::chrono::sys_days{sd} };
+        auto info = zt_local.get_info();
+        std::print("time info for {:%F} in {}:\nabbrev: {},\nbegin {}, end {}, \noffset {}, save {}\n",
+                   sd, zone, info.abbrev, info.begin, info.end, info.offset, info.save);
+    }
+
+    void Print_TimeZope_Info()
+    {
+        try
+        {
+            printInfo(std::chrono::year{ 2024 } / 9 / 14, "Asia/Dubai");
+            printInfo(std::chrono::year{ 2024 } / 11 / 14, "Asia/Dubai");
+        }
+        catch (std::runtime_error& ex)
+        {
+            std::print("Error: {}", ex.what());
+        }
+    }
+}
+
 void Chrono::TestAll()
 {
     // Time_To_String::Asctime();
@@ -1037,13 +1164,18 @@ void Chrono::TestAll()
     // StringFormat::StringToTime();
 
 
-    TimeOut::CheckTimeoutFunction();
+    // Print_Time::Print_Formating();
+    // Print_Time::TimeZones_Formating();
+    // Print_Time::Daylight_Saving_Time();
+    Print_Time::Print_TimeZope_Info();
+
+
+    // TimeOut::CheckTimeoutFunction();
 
 
     // Cast_Conversation::TimePoint_to_Long_and_Back();
 
     // Sleep_Conditional::Test();
-
     // FunctionPerformance::GetCurrentTime_Performance();
     // FunctionPerformance::TestGetCurrentTimeFunctions();
 
@@ -1070,5 +1202,8 @@ void Chrono::TestAll()
     // Localtime_TM();
 
     // Experiments();
+
+
+
 };
 
