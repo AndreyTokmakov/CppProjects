@@ -8,6 +8,7 @@ Description : ObjectMemoryPool.cpp
 ============================================================================**/
 
 #include "ObjectMemoryPool.h"
+#include "../Helpers/Helpers.h"
 
 #include <iostream>
 #include <memory>
@@ -61,18 +62,16 @@ namespace ObjectMemoryPool
 
     private:
 
+        static inline constexpr size_type DEFAULT_CHUNK_SIZE { 10 };
+
         std::mutex mutex;
         std::vector<pointer> pool;
 
-        static inline thread_local std::vector<pointer> available;
-
-        static inline constexpr size_type DEFAULT_CHUNK_SIZE { 5 };
-        static inline constexpr size_type GROWTH_STRATEGY { 2 };
+        static inline thread_local std::vector<pointer> localPool;
 
         size_type newBlockSize { DEFAULT_CHUNK_SIZE };
-        size_type capacity { 0 };
 
-        void addChunk()
+        void addChunk(std::vector<pointer>& poolLocal)
         {
             // Allocate a new chunk of uninitialized memory
             pointer newBlock { m_allocator.allocate(newBlockSize) };
@@ -80,17 +79,14 @@ namespace ObjectMemoryPool
             // Keep all allocated blocks in 'pool' to delete them later:
             pool.push_back(newBlock);
 
-            available.resize(newBlockSize);
-            std::iota(std::begin(available), std::end(available), newBlock);
-
-            capacity += newBlockSize;
-            newBlockSize *= GROWTH_STRATEGY;
+            poolLocal.resize(newBlockSize);
+            std::iota(std::begin(poolLocal), std::end(poolLocal), newBlock);
         }
 
         // The allocator to use for allocating and deallocating chunks.
         Allocator m_allocator;
 
-    protected:
+    public:
 
         struct Deleter final
         {
@@ -101,11 +97,12 @@ namespace ObjectMemoryPool
                 std::destroy_at(object);
 
                 /// Return object mem pointer back to pool
-                pool->available.push_back(object);
+                pool->localPool.push_back(object);
             }
         };
 
     public:
+
         using ObjectPtr = std::unique_ptr<object_type, Deleter>;
 
     public:
@@ -119,13 +116,12 @@ namespace ObjectMemoryPool
         {   // Note: this implementation assumes that all objects handed out by this
             // pool have been returned to the pool before the pool is destroyed.
             // The following statement asserts if that is not the case.
-            assert(available.size() == DEFAULT_CHUNK_SIZE * (std::pow(2, pool.size()) - 1));
+            // assert(available.size() == DEFAULT_CHUNK_SIZE * (std::pow(2, pool.size()) - 1));
 
             // Deallocate all allocated memory.
-            size_t chunkSize{ DEFAULT_CHUNK_SIZE };
+            const size_t chunkSize { DEFAULT_CHUNK_SIZE };
             for (auto* chunk : pool) {
                 m_allocator.deallocate(chunk, chunkSize);
-                chunkSize *= GROWTH_STRATEGY;
             }
         }
 
@@ -143,28 +139,69 @@ namespace ObjectMemoryPool
         std::unique_ptr<object_type, Deleter> acquireObject(Args... args)
         {
             // If there are no free objects, allocate a new chunk.
-            if (available.empty()) {
-                addChunk();
+            if (localPool.empty()) {
+                addChunk(localPool);
             }
 
             // Get a free object.
-            const pointer objectPtr { available.back() };
+            const pointer objectPtr { localPool.back() };
 
             pointer obj = new (objectPtr) object_type { std::forward<Args>(args)... };
 
             // Remove the object from the list of free objects.
-            available.pop_back();
+            localPool.pop_back();
 
             // Wrap the initialized object and return it.
             return std::unique_ptr<object_type, Deleter> { objectPtr, Deleter{this}};
         }
-
-
-        [[nodiscard]]
-        size_type Capacity() const noexcept {
-            return capacity;
-        }
     };
+}
+
+
+namespace ObjectMemoryPool::Tests
+{
+    using namespace Helpers;
+
+    void SingleThreadTest()
+    {
+        ObjectPool<Integer> pool;
+
+        for (int i = 0; i < 3; ++i)
+        {
+            {
+                std::vector<ObjectPool<Integer>::ObjectPtr> objects;
+                for (int n = 1; n <= 10; ++n) {
+                    objects.push_back(pool.acquireObject(n));
+                    std::cout << objects.back() << std::endl;
+                }
+            }
+            std::cout << std::string(160, '-') << std::endl;
+        }
+    }
+
+    void MultiThreadTest()
+    {
+        ObjectPool<Integer> pool;
+
+        std::vector<std::jthread> workers;
+        for (int i = 0; i < 5; ++i)
+        {
+            workers.emplace_back([&pool]()
+            {
+                for (int i = 0; i < 3; ++i)
+                {
+                    std::vector<ObjectPool<Integer>::ObjectPtr> objects;
+                    for (int n = 1; n <= 10; ++n) {
+                        objects.push_back(pool.acquireObject(n));
+                        LOG << objects.back() << std::endl;
+                    }
+                    objects.clear();
+                    LOG << std::string(160, '-') << std::endl;
+                }
+            });
+        }
+    }
+
 }
 
 
@@ -214,7 +251,9 @@ namespace ThreadLocalStorage
 void ObjectMemoryPool::TestAll()
 {
 
-    ThreadLocalStorage::Worker worker {};
-    worker.start();
+    // ThreadLocalStorage::Worker worker {};
+    // worker.start();
 
+    // Tests::SingleThreadTest();
+    Tests::MultiThreadTest();
 }
