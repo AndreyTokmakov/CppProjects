@@ -12,12 +12,19 @@ Description : ObjectMemoryPool.cpp
 
 #include <iostream>
 #include <memory>
-#include <vector>
 #include <numeric>
 #include <cmath>
 
+#include <vector>
+#include <set>
+#include <unordered_set>
+
+#include <mutex>
 #include <thread>
 #include <syncstream>
+
+#include <format>
+#include <print>
 
 
 #define LOG std::osyncstream(std::cout) << now()
@@ -73,11 +80,12 @@ namespace ObjectMemoryPool
 
         void addChunk(std::vector<pointer>& poolLocal)
         {
+            std::unique_lock<std::mutex> lock { mutex };
             // Allocate a new chunk of uninitialized memory
             pointer newBlock { m_allocator.allocate(newBlockSize) };
-
             // Keep all allocated blocks in 'pool' to delete them later:
             pool.push_back(newBlock);
+            lock.unlock();
 
             poolLocal.resize(newBlockSize);
             std::iota(std::begin(poolLocal), std::end(poolLocal), newBlock);
@@ -119,9 +127,9 @@ namespace ObjectMemoryPool
             // assert(available.size() == DEFAULT_CHUNK_SIZE * (std::pow(2, pool.size()) - 1));
 
             // Deallocate all allocated memory.
-            const size_t chunkSize { DEFAULT_CHUNK_SIZE };
-            for (auto* chunk : pool) {
-                m_allocator.deallocate(chunk, chunkSize);
+            constexpr size_t chunkSize { DEFAULT_CHUNK_SIZE };
+            for (pointer chunkPtr : pool) {
+                m_allocator.deallocate(chunkPtr, chunkSize);
             }
         }
 
@@ -160,7 +168,7 @@ namespace ObjectMemoryPool
 
 namespace ObjectMemoryPool::Tests
 {
-    using namespace Helpers;
+    using Integer = Helpers::Wrapper<int, false>;
 
     void SingleThreadTest()
     {
@@ -183,23 +191,32 @@ namespace ObjectMemoryPool::Tests
     {
         ObjectPool<Integer> pool;
 
+        std::mutex mutex;
+        std::unordered_set<uint64_t> uniqueAddresses;
+
         std::vector<std::jthread> workers;
-        for (int i = 0; i < 5; ++i)
+        for (int threadNum = 0; threadNum < 12; ++threadNum)
         {
-            workers.emplace_back([&pool]()
-            {
-                for (int i = 0; i < 3; ++i)
+            workers.emplace_back([&pool, &uniqueAddresses, &mutex]() {
+                for (int m = 0; m < 100; ++m)
                 {
                     std::vector<ObjectPool<Integer>::ObjectPtr> objects;
-                    for (int n = 1; n <= 10; ++n) {
+                    for (int n = 1; n <= 20; ++n) {
                         objects.push_back(pool.acquireObject(n));
-                        LOG << objects.back() << std::endl;
+                        Integer* ptr = objects.back().get();
+
+                        std::lock_guard<std::mutex> setLock { mutex };
+                        uniqueAddresses.insert(reinterpret_cast<uint64_t>(ptr));
                     }
                     objects.clear();
-                    LOG << std::string(160, '-') << std::endl;
                 }
             });
         }
+
+        for (auto& worker : workers)
+            worker.join();
+
+        std::cout << uniqueAddresses.size() << std::endl;
     }
 
 }
@@ -207,10 +224,11 @@ namespace ObjectMemoryPool::Tests
 
 namespace ThreadLocalStorage
 {
+#
     struct Worker
     {
         static inline thread_local std::vector<std::string> params = []{
-            LOG << "Vector is created for thread " << std::this_thread::get_id() << std::endl;
+            // LOG << "Vector is created for thread " << std::this_thread::get_id() << std::endl;
             return std::vector<std::string>{};
         }();
 
@@ -250,10 +268,14 @@ namespace ThreadLocalStorage
 
 void ObjectMemoryPool::TestAll()
 {
+    using namespace std::string_view_literals;
 
     // ThreadLocalStorage::Worker worker {};
     // worker.start();
 
     // Tests::SingleThreadTest();
-    Tests::MultiThreadTest();
+    // Tests::MultiThreadTest();
+
+
+
 }
