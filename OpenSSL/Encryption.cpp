@@ -12,6 +12,8 @@ Description : Encryption.cpp
 #include <iostream>
 #include <utility>
 #include <vector>
+#include <fstream>
+#include <filesystem>
 #include <memory>
 
 #include <openssl/pem.h>
@@ -56,6 +58,125 @@ namespace
         return std::string(bytes.begin(), bytes.end());
     }
 }
+
+
+namespace FileUtilities
+{
+    constexpr size_t readBlockSize { 1024 };
+
+    void PrintFileContent(const std::filesystem::path &filePath)
+    {
+        if (std::ifstream file(filePath); file.is_open() && file.good())
+        {
+            std::string line;
+            while (std::getline(file, line)) {
+                std::cout << line << std::endl;
+            }
+        }
+    }
+
+    std::string ReadFile(const std::filesystem::path &filePath)
+    {
+        if (std::ifstream file(filePath); file.is_open() && file.good())
+        {
+            file.seekg(0, std::ios_base::end);
+            size_t fileSize = file.tellg(), bytesRead = 0;
+            file.seekg(0, std::ios_base::beg);
+
+            std::string text(fileSize, '\0');
+            while ((bytesRead += file.readsome(text.data() + bytesRead, readBlockSize)) < fileSize) { }
+            return text;
+        }
+        return {};
+    }
+
+    std::vector<uint8_t> ReadFileAsBytes(const std::filesystem::path &filePath)
+    {
+        if (std::fstream file(filePath , std::ios::in | std::ios::binary); file.is_open() && file.good())
+        {
+            file.seekg(0, std::ios_base::end);
+            size_t fileSize = file.tellg(), bytesRead = 0;
+            file.seekg(0, std::ios_base::beg);
+
+            std::vector<uint8_t> data (fileSize);
+            while ((bytesRead += file.readsome(reinterpret_cast<char *>(data.data() + bytesRead), readBlockSize)) < fileSize) { }
+            return data;
+        }
+        return {};
+    }
+
+    bool ReadFile2String(const std::filesystem::path &filePath,
+                         std::string& dst)
+    {
+        if (std::ifstream file(filePath); file.is_open() && file.good())
+        {
+            file.seekg(0, std::ios_base::end);
+            size_t fileSize = file.tellg(), bytesRead = 0;
+            file.seekg(0, std::ios_base::beg);
+
+            dst.resize(fileSize);
+            while ((bytesRead += file.readsome(dst.data() + bytesRead, readBlockSize)) < fileSize) { }
+            return true;
+        }
+        return false;
+    }
+
+    std::size_t getFileSize(const std::filesystem::path &filePath)
+    {
+        if (std::ifstream file(filePath); file.is_open() && file.good())
+        {
+            file.seekg(0, std::ios_base::end);
+            const size_t fileSize = file.tellg();
+            file.seekg(0, std::ios_base::beg);
+            return fileSize;
+        }
+        return std::string::npos;
+    }
+
+    std::size_t getFileSizeFS(const std::filesystem::path &filePath)
+    {
+        return std::filesystem::file_size(filePath);
+    }
+
+    int32_t WriteToFile(const std::filesystem::path& filePath,
+                        const std::string& text,
+                        std::ios_base::openmode mode)
+    {
+        if (std::ofstream file(filePath, mode); file.is_open() && file.good())
+        {
+            const int32_t pos = static_cast<int32_t>(file.tellp());
+            file.write(text.data(), std::ssize(text));
+            return static_cast<int32_t>(file.tellp()) - pos;
+        }
+        return -1;
+    }
+
+    int32_t WriteToFileBytes(const std::filesystem::path& filePath,
+                             const std::vector<uint8_t>& data,
+                             std::ios_base::openmode mode = std::ios::out | std::ios::binary)
+    {
+        if (std::fstream file(filePath, mode); file.is_open() && file.good())
+        {
+            const int32_t pos = static_cast<int32_t>(file.tellp());
+            file.write(reinterpret_cast<const char *>(data.data()), std::ssize(data));
+            return static_cast<int32_t>(file.tellp()) - pos;
+        }
+        return -1;
+    }
+
+    int32_t WriteToFile(const std::filesystem::path& filePath,
+                        const std::string& text)
+    {
+        return WriteToFile(filePath, text, std::ios_base::trunc);
+    }
+
+    int32_t AppendToFile(const std::filesystem::path& filePath,
+                         const std::string& text)
+    {
+        return WriteToFile(filePath, text, std::ios_base::app);
+    }
+}
+
 
 namespace Encryption
 {
@@ -178,11 +299,13 @@ namespace EncryptionEx
                 EVP_CIPHER_CTX_new(), ::EVP_CIPHER_CTX_free
         };
 
-        int outlen {0 };
+
         if (0 == EVP_EncryptInit_ex2(ctx.get(), EVP_aes_256_cbc(), key.data(), iv.data(), nullptr)) {
             std::cerr << "Error: EVP_EncryptInit() failed" << std::endl;
             return;
         }
+
+        int outlen { 0 };
         if (0 == EVP_DecryptUpdate(ctx.get(), output.data(), &outlen, message.data(), message.size())) {
             std::cerr << "Error: EVP_DecryptUpdate() failed" << std::endl;
             return;
@@ -199,7 +322,7 @@ namespace EncryptionEx
 
     void Test()
     {
-        const std::string iv = "1234567890123456", key = "some_password", salt = "_SOME_HARDCODED_TEXT";
+        const std::string iv = "1234567890123456", key = "some_password";
         const std::string secretData = "-----BEGIN PGP PUBLIC KEY BLOCK-----\n"
                                        "xsFNBGVDTIABEACUuJWQqyYtyZ78+ABbS1XhR5AT5FzaGFo+emWmlIdgcYuAh5Qm\n"
                                        "7JaLVQOCZEP5aKcjIAb8rboK+G5/WLIdcoTz4pBm+SXHEwfE6RB5BQjtHLYDPuoT\n"
@@ -228,7 +351,7 @@ namespace EncryptionEx
                                        "YN3u2sNMN8wzH1i3s482LALcNBZYDe+VpHZu/g==\n"
                                        "=/kav\n"
                                        "-----END PGP PUBLIC KEY BLOCK-----";
-        const std::string payload =  secretData + salt;
+        const std::string payload =  secretData;
 
         const std::vector<uint8_t> ivBytes { str2Bytes(iv) };
         std::vector<uint8_t> dataEncrypted, dataDecrypted;
@@ -240,6 +363,83 @@ namespace EncryptionEx
         result.erase(secretData.size());
         std::cout << result << std::endl;
     }
+
+
+    /**
+
+    openssl enc -aes-256-cbc -in api_key.txt -out api_key.out -pass pass:some_password
+    openssl aes-256-cbc -d -in api_key.out -out api_key_dest.txt -pass pass:some_password
+
+    openssl enc -aes-256-cbc -pbkdf2 -in api_key.txt -out api_key.out -pass pass:some_password
+    openssl aes-256-cbc -pbkdf2 -d -in api_key.out -out api_key_dest.txt -pass pass:some_password
+
+    openssl enc -aes-256-cbc -in api_key.txt -out api_key.out -iv 1234567890123456 -pbkdf2
+    openssl aes-256-cbc -d -in api_key.out -out api_key_dest.txt -iv 1234567890123456 -pbkdf2
+
+    openssl enc -aes-256-cbc -pbkdf2 -in api_key.txt -out api_key.out -iv 1234567890123456 -pass pass:some_password
+    openssl aes-256-cbc -pbkdf2 -d -in api_key.out -out api_key_dest.txt -iv 1234567890123456 -pass pass:some_password
+
+    **/
+
+    void Encrypt_Decrypt_ViaFile()
+    {
+        const std::string iv = "1234567890123456", key = "some_password";
+        const std::filesystem::path fileInput { R"(/home/andtokm/DiskS/Temp/SSL/api_key.txt)" };
+        // const std::filesystem::path fileEncrypted { R"(/home/andtokm/DiskS/Temp/SSL/api_key.out)" };
+
+        const std::string dataToEncrypt = FileUtilities::ReadFile(fileInput);
+        const std::vector<uint8_t> ivBytes { str2Bytes(iv) };
+
+        std::vector<uint8_t> dataEncrypted;
+        Encryption::encrypt(str2Bytes(key), str2Bytes(dataToEncrypt), ivBytes, dataEncrypted);
+
+        // FileUtilities::WriteToFileBytes(fileEncrypted, dataEncrypted);
+
+        const std::vector<uint8_t> encryptedData = FileUtilities::ReadFileAsBytes(fileInput);
+
+        std::vector<uint8_t> dataDecrypted = dataEncrypted;
+        Encryption::decrypt(str2Bytes(key), dataEncrypted, ivBytes, dataDecrypted);
+    }
+
+
+    std::string ReadFileSlow(const std::filesystem::path &filePath)
+    {
+        std::string text;
+        if (true)
+        {
+            //file.seekg(0, std::ios_base::end);
+            //size_t fileSize = file.tellg(), bytesRead = 0;
+            //file.seekg(0, std::ios_base::beg);
+
+            text.assign("qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq_111111111111111111111111111_123");
+        }
+        return text;
+    }
+
+
+    void Encrypt_Decrypt_ViaFileEx()
+    {
+
+        const std::filesystem::path fileInput { R"(/home/andtokm/DiskS/Temp/SSL/api_key.txt)" };
+        const std::filesystem::path fileEncrypted { R"(/home/andtokm/DiskS/Temp/SSL/api_key.out)" };
+        ReadFileSlow(fileInput);
+
+        const std::string iv = "1234567890123456", key = "some_password";
+        const std::string dataToEncrypt = "qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq_111111111111111111111111111_123";
+
+        // FileUtilities::ReadFile(fileInput);
+
+        // std::cout << (dataToEncrypt == dataToEncrypt1) << std::endl;
+
+        const std::vector<uint8_t> ivBytes { str2Bytes(iv) };
+        std::vector<uint8_t> dataEncrypted, dataDecrypted;
+
+        Encryption::encrypt(str2Bytes(key), str2Bytes(dataToEncrypt), ivBytes, dataEncrypted);
+        Encryption::decrypt(str2Bytes(key), dataEncrypted, ivBytes, dataDecrypted);
+
+        const std::string result = bytes2Str(dataDecrypted);
+        std::cout << result << std::endl;
+    }
 };
 
 // https://helpmanual.io/man3/EVP_CIPHER_CTX_new-ssl/
@@ -247,5 +447,8 @@ namespace EncryptionEx
 void Encryption::TestAll()
 {
     // Encryption::Test();
-    EncryptionEx::Test();
+    // EncryptionEx::Test();
+
+    // EncryptionEx::Encrypt_Decrypt_ViaFile();
+    EncryptionEx::Encrypt_Decrypt_ViaFileEx();
 };
