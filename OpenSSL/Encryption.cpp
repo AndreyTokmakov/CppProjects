@@ -405,11 +405,11 @@ namespace EncryptionEx
     std::string ReadFileSlow(const std::filesystem::path &filePath)
     {
         std::string text;
-        if (true)
+        if (std::ifstream file(filePath); file.is_open() && file.good())
         {
-            //file.seekg(0, std::ios_base::end);
-            //size_t fileSize = file.tellg(), bytesRead = 0;
-            //file.seekg(0, std::ios_base::beg);
+            file.seekg(0, std::ios_base::end);
+            size_t fileSize = file.tellg(), bytesRead = 0;
+            file.seekg(0, std::ios_base::beg);
 
             text.assign("qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq_111111111111111111111111111_123");
         }
@@ -420,8 +420,8 @@ namespace EncryptionEx
     void Encrypt_Decrypt_ViaFileEx()
     {
 
-        const std::filesystem::path fileInput { R"(/home/andtokm/DiskS/Temp/SSL/api_key.txt)" };
-        const std::filesystem::path fileEncrypted { R"(/home/andtokm/DiskS/Temp/SSL/api_key.out)" };
+        const std::filesystem::path fileInput { R"(/home/andtokm/Temp/SSL/api_key.txt)" };
+        // const std::filesystem::path fileEncrypted { R"(/home/andtokm/DiskS/Temp/SSL/api_key.out)" };
         ReadFileSlow(fileInput);
 
         const std::string iv = "1234567890123456", key = "some_password";

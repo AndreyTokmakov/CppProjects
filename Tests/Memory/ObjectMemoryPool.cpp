@@ -71,7 +71,7 @@ namespace ObjectMemoryPool
 
         static inline constexpr size_type DEFAULT_CHUNK_SIZE { 10 };
 
-        std::mutex mutex;
+        mutable std::mutex mutex;
         std::vector<pointer> pool;
 
         static inline thread_local std::vector<pointer> localPool;
@@ -80,13 +80,13 @@ namespace ObjectMemoryPool
 
         void addChunk(std::vector<pointer>& poolLocal)
         {
-            std::unique_lock<std::mutex> lock { mutex };
             // Allocate a new chunk of uninitialized memory
-            pointer newBlock { m_allocator.allocate(newBlockSize) };
-            // Keep all allocated blocks in 'pool' to delete them later:
-            pool.push_back(newBlock);
-            lock.unlock();
-
+            const pointer newBlock { m_allocator.allocate(newBlockSize) };
+            {
+                std::unique_lock<std::mutex> lock { mutex };
+                // Keep all allocated blocks in 'pool' to delete them later:
+                pool.push_back(newBlock);
+            }
             poolLocal.resize(newBlockSize);
             std::iota(std::begin(poolLocal), std::end(poolLocal), newBlock);
         }
@@ -104,7 +104,7 @@ namespace ObjectMemoryPool
             {
                 std::destroy_at(object);
 
-                /// Return object mem pointer back to pool
+                /** Return object mem pointer back to pool **/
                 pool->localPool.push_back(object);
             }
         };
@@ -151,10 +151,7 @@ namespace ObjectMemoryPool
                 addChunk(localPool);
             }
 
-            // Get a free object.
-            const pointer objectPtr { localPool.back() };
-
-            pointer obj = new (objectPtr) object_type { std::forward<Args>(args)... };
+            pointer objectPtr = new (localPool.back()) object_type { std::forward<Args>(args)... };
 
             // Remove the object from the list of free objects.
             localPool.pop_back();
@@ -169,15 +166,16 @@ namespace ObjectMemoryPool
 namespace ObjectMemoryPool::Tests
 {
     using Integer = Helpers::Wrapper<int, false>;
+    using IntegerDebug = Helpers::Wrapper<int, true>;
 
     void SingleThreadTest()
     {
-        ObjectPool<Integer> pool;
+        ObjectPool<IntegerDebug> pool;
 
         for (int i = 0; i < 3; ++i)
         {
             {
-                std::vector<ObjectPool<Integer>::ObjectPtr> objects;
+                std::vector<ObjectPool<IntegerDebug>::ObjectPtr> objects;
                 for (int n = 1; n <= 10; ++n) {
                     objects.push_back(pool.acquireObject(n));
                     std::cout << objects.back() << std::endl;
@@ -201,12 +199,11 @@ namespace ObjectMemoryPool::Tests
                 for (int m = 0; m < 100; ++m)
                 {
                     std::vector<ObjectPool<Integer>::ObjectPtr> objects;
-                    for (int n = 1; n <= 20; ++n) {
+                    for (int n = 1; n <= 20; ++n)
+                    {
                         objects.push_back(pool.acquireObject(n));
-                        Integer* ptr = objects.back().get();
-
                         std::lock_guard<std::mutex> setLock { mutex };
-                        uniqueAddresses.insert(reinterpret_cast<uint64_t>(ptr));
+                        uniqueAddresses.insert(reinterpret_cast<uint64_t>( objects.back().get()));
                     }
                     objects.clear();
                 }
@@ -274,8 +271,5 @@ void ObjectMemoryPool::TestAll()
     // worker.start();
 
     // Tests::SingleThreadTest();
-    // Tests::MultiThreadTest();
-
-
-
+    Tests::MultiThreadTest();
 }
