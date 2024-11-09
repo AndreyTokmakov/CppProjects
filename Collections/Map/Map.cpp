@@ -897,7 +897,25 @@ namespace Map {
 		}
 	}
 
-	void UpperBound() {
+    void LowerBound_GreaterSorted()
+    {
+        std::map<int, std::string, std::greater<int>> map = {
+                {1, "one"},
+                {2, "two"},
+                {3, "three"},
+                {4, "four"},
+                {5, "five"}
+        };
+
+        auto lower = map.lower_bound(3);
+        std::cout << "Lower bound (3): [" << lower->first << "," << lower->second << "]" << std::endl;
+
+        auto upper = map.upper_bound(3);
+        std::cout << "Upper bound (3): [" << upper->first << "," << upper->second << "]" << std::endl;
+    }
+
+
+    void UpperBound() {
 		{
 			std::map<int, std::string> map = {
                     {1, "one"},
@@ -1291,7 +1309,7 @@ void Map::TestAll()
     // try_emplace_duplicate_entry();
 
 	// emplace_test();
-	emplace_test_existing();
+	// emplace_test_existing();
 	// emplace_test1();
 	// emplace_return();
 	// emplace_vs_insert();
@@ -1340,6 +1358,7 @@ void Map::TestAll()
     // Extract_ByITer_And_UpdateKey();
 
 	// LowerBound();
+    LowerBound_GreaterSorted();
 	// UpperBound();
 
 	// Modify_Value();
