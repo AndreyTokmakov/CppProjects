@@ -326,7 +326,6 @@ namespace Cpp23_Features::SizeT_Literals
 
 namespace ExplicitObjectParameters
 {
-#if 0
     struct X
     {
         //template<typename Self>
@@ -334,8 +333,36 @@ namespace ExplicitObjectParameters
 
         }
     };
-#endif
 }
+
+namespace Cpp23_Features::Enums
+{
+    enum class Weekdays
+    {
+        Monday,
+        Tuesday,
+        Wednesday,
+        Thursday,
+        Friday,
+        Saturday,
+        Sunday
+    };
+
+
+    void test()
+    {
+        Weekdays weekday = Weekdays::Sunday;
+
+        int type = std::to_underlying(weekday);
+
+        std::cout << std::format("Weekdays underlying type is '{}'", type) << std::endl;
+
+
+        static_assert(std::is_same_v<decltype(type), int>);
+        static_assert(std::is_scoped_enum<decltype(weekday)>::value);
+    }
+}
+
 
 
 void Cpp23_Features::TestAll()
@@ -346,11 +373,14 @@ void Cpp23_Features::TestAll()
     // Format::VFormatPrint();
 
 
+    Enums::test();
 
+
+    /*
     auto now = std::chrono::system_clock::now();
     auto today = std::chrono::floor<std::chrono::days>(now);
     std::cout << "Today is: " << today.time_since_epoch().count() << " days since epoch\n";
-
+    `*/
 
 
     // static_operator();
