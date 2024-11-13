@@ -101,9 +101,9 @@ int main([[maybe_unused]] int argc,
     // BitSet::TestAll();
     // BitwiseOperation::TestAll();
     // Byte::TestAll();
-    // Chrono::TestAll();
+    Chrono::TestAll();
     // Comparators::TestAll();
-    Concepts::TestAll();
+    // Concepts::TestAll();
     // ConsoleInOut::TestAll();
     // ConstConstexprMutable::TestAll();
     // CopyElision::TestAll();
