@@ -1920,8 +1920,8 @@ namespace Templates::Templated_Templates
 void Templates::TestAll()
 {
     // FoldExpressions::TestAll();
-    // NTTP::TestAll();
-    TemplateSpecialization::TestAll();
+    NTTP::TestAll();
+    // TemplateSpecialization::TestAll();
 
     // Is_Base_Of__Test();
     // Is_Same();

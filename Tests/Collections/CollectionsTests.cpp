@@ -806,5 +806,29 @@ void CollectionsTests::TestAll()
 
 
     // MapOfVectors_MoveValue::MoveMapValue();
-    MapOfVectors_MoveValue::MoveMapValue_PassToFunc();
+    // MapOfVectors_MoveValue::MoveMapValue_PassToFunc();
+
+
+    {
+        std::map<int, int, std::greater<int>> bids {
+            {1, 1}, {3,3}, {2,2}
+        };
+
+        for (const auto& [key, value]: bids) {
+            std::cout << key << ", " << value << std::endl;
+        }
+    }
+
+    {
+        std::map<int, int, std::less<int>> asks {
+                {1, 1}, {3,3}, {2,2}
+        };
+
+        for (const auto& [key, value]: asks) {
+            std::cout << key << ", " << value << std::endl;
+        }
+
+        asks.tr
+    }
+
 };

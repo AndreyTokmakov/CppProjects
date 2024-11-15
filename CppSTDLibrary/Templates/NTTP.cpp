@@ -11,6 +11,8 @@ Description : NTTP.cpp
 
 #include <iostream>
 #include <array>
+#include <vector>
+#include <map>
 #include <numeric>
 
 namespace NTTP
@@ -35,7 +37,6 @@ namespace NTTP
         // C++20: NTTP argument deduction and CTAD
         static_assert(sum<std::array{2, 7, 1, 8, 2, 8}>() == 28);
     }
-
 }
 
 void NTTP::TestAll()

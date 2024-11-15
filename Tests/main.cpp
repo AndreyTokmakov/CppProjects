@@ -1453,7 +1453,7 @@ int main([[maybe_unused]] int argc,
     // Concepts::TestAll();
     // Crow::TestAll();
     // Comparators::TestAll();
-    // CollectionsTests::TestAll();
+    CollectionsTests::TestAll();
     // CopyElision_RVO::TestAll();
     // ConstexprMap::TestAll();
     // DebugLogger::TestAll();
@@ -1467,7 +1467,7 @@ int main([[maybe_unused]] int argc,
     // FunctionCall_LookUp::TestAll();
     // LowLatencyLogger::TestAll();
     // Multithreading::TestAll();
-    Memory::TestAll();
+    // Memory::TestAll();
     // MaxStack::TestAll();
     // Math::TestAll();
     // UniquePtr_Size::SizeTest();

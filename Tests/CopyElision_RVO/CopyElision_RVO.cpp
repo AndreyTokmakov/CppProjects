@@ -14,9 +14,11 @@ Description : CopyElision_RVO
 #include <utility>
 #include <format>
 
-namespace CopyElision_RVO::SimpleExample {
+namespace CopyElision_RVO::SimpleExample
+{
 
-    struct NonMoveAndCopy final {
+    struct NonMoveAndCopy final
+    {
         NonMoveAndCopy() {
             std::cout << "NonMoveAndCopy()\n";
         }
@@ -221,6 +223,32 @@ namespace CopyElision_RVO::Tests
         Integer v = Holder().setValue().build();
         std::cout << "Value = " << v.getValue() << std::endl;
     }
+
+
+    Integer createSwitchCase(int val)
+    {
+        switch (val)
+        {
+            case 1: return Integer {1};
+            case 2: return Integer {2};
+            default: return Integer {0};
+        }
+    }
+
+    void Switch_Case_Create_Test()
+    {
+        {
+            Integer v = createSwitchCase(1);
+        }
+        std::cout << std::string(160, '-') << std::endl;
+        {
+            Integer v = createSwitchCase(2);
+        }
+        std::cout << std::string(160, '-') << std::endl;
+        {
+            Integer v = createSwitchCase(3);
+        }
+    }
 }
 
 
@@ -319,5 +347,7 @@ void CopyElision_RVO::TestAll()
     // Tests::UsingBuilder2();
     // Tests::UsingBuilder3();
 
-    NotDeclaredMoveConstructor::testAll();
+    // NotDeclaredMoveConstructor::testAll();
+
+    Tests::Switch_Case_Create_Test();
 }
