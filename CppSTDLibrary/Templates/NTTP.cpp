@@ -15,6 +15,7 @@ Description : NTTP.cpp
 #include <map>
 #include <numeric>
 
+
 namespace NTTP
 {
     template<std::array a> auto get_value() {
