@@ -1407,6 +1407,7 @@ namespace BitwiseOperations
 
 
 
+
 int main([[maybe_unused]] int argc,
          [[maybe_unused]] char** argv)
 {
@@ -1435,10 +1436,15 @@ int main([[maybe_unused]] int argc,
 
 
 
+
     /** * * * * *  Move to lib * * * * * **/
 
     // Coroutines::TestAll();
     // StackTrace::TestAll();
+    Cpp23_Features::TestAll();
+
+
+
 
     // OperatorCall_ExplicitTypeSpecialization::Test();
     // ReturnTypeCast::tests();
@@ -1449,7 +1455,7 @@ int main([[maybe_unused]] int argc,
     // AutoTests::TestAll();
     // BinManipulation::TestAll();
     // BinaryAnalyzer::TestAll();
-    // Cpp23_Features::TestAll();
+
     // Concepts::TestAll();
     // Crow::TestAll();
     // Comparators::TestAll();

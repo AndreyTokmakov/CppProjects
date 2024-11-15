@@ -549,6 +549,42 @@ namespace EnumTests::ToUnderlying
 }
 
 
+namespace EnumTests::Is_Scoped_Enum
+{
+    enum RGB
+    {
+        Red,
+        Green,
+        Black
+    };
+
+    enum class Weekdays
+    {
+        Monday,
+        Tuesday,
+        Wednesday,
+        Thursday,
+        Friday,
+        Saturday,
+        Sunday
+    };
+
+
+    void is_scoped()
+    {
+        Weekdays weekday = Weekdays::Sunday;
+
+        int type = std::to_underlying(weekday);
+        std::cout << std::format("Weekdays underlying type is '{}'", type) << std::endl;
+
+        static_assert(std::is_same_v<decltype(type), int>);
+
+        static_assert(std::is_scoped_enum<decltype(weekday)>::value);
+        static_assert(not std::is_scoped_enum<RGB>::value);
+    }
+}
+
+
 void EnumTests::TestAll()
 {
 	// EnumClassTests::PrintColor();
@@ -579,4 +615,6 @@ void EnumTests::TestAll()
     // UsingEmum_ClassScope::accessEnum_FromClassInstance();
 
 	ToUnderlying::To_Underlying();
+
+    Is_Scoped_Enum::is_scoped();
 };

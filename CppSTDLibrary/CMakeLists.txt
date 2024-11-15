@@ -7,98 +7,98 @@ add_compile_options(-c -Wall -O3 -std=c++26)
 
 add_executable(${PROJECT_NAME}
         main.cpp
-		Types.cpp Types.h
-		AggregateInitialization/AggregateInitialization.cpp AggregateInitialization/AggregateInitialization.h
-		Algorithms/Algorithms.cpp Algorithms/Algorithms.h
-		Any/Any.cpp Any/Any.h
-		Arrays/Arrays.cpp Arrays/Arrays.h
-		Asserts/Asserts.cpp Asserts/Asserts.h
-		Atomic/Atomic.cpp Atomic/Atomic.h
-		Attributes/Attributes.cpp Attributes/Attributes.h
-		Auto/Auto.cpp Auto/Auto.h
-		BitSet/BitSet.cpp BitSet/BitSet.h
-		BitwiseOperation/BitwiseOperation.cpp BitwiseOperation/BitwiseOperation.h
-		Byte/Byte.cpp Byte/Byte.h
-		Chrono/Chrono.cpp Chrono/Chrono.h
-		Concepts/Concepts.cpp Concepts/Concepts.h
-		CTAD/ClassTemplateArgumentDeduction.cpp CTAD/ClassTemplateArgumentDeduction.h
-		ConsoleInOut/ConsoleInOut.cpp ConsoleInOut/ConsoleInOut.h
-		DateAndTime/DateAndTime.cpp DateAndTime/DateAndTime.h
-		ConstConstexprMutable/ConstConstexprMutable.cpp ConstConstexprMutable/ConstConstexprMutable.h
-		EnumTests/EnumTests.cpp EnumTests/EnumTests.h
-		Exceptions/Exceptions.cpp Exceptions/Exceptions.h
-		Errors/Errors.cpp Errors/Errors.h
-		Helpers/UnorderedPair.h Helpers/Helpers.h Helpers/Wrapper.h Helpers/ScopedTimer.h
-		FilesStreams/FilesStreams.cpp FilesStreams/FilesStreams.h
-		Filesystem/Filesystem.cpp Filesystem/Filesystem.h
-		Format/Format.cpp Format/Format.h
-		Format/CustomTypesFormatters.cpp Format/CustomTypesFormatters.h
-		FunctionObjects/FunctionObjects.cpp FunctionObjects/FunctionObjects.h
-		FunctionObjects/MemberFunctionPointer.cpp FunctionObjects/MemberFunctionPointer.h
-		FunctionObjects/CallbackTests.cpp FunctionObjects/CallbackTests.h
-		Initialization/Initialization.cpp Initialization/Initialization.h
-		InitializerList/InitializerList.cpp InitializerList/InitializerList.h
-		InlineVariables/InlineVariables.cpp InlineVariables/InlineVariables.h
-		Integer/Integer.cpp Integer/Integer.h
-		IteratorTests/IteratorTests.cpp IteratorTests/IteratorTests.h
-		Lambdas/Lambdas.cpp Lambdas/Lambdas.h
-		LifetimeExtension/LifetimeExtension.cpp LifetimeExtension/LifetimeExtension.h
-		Literals/Literals.cpp Literals/Literals.h
-		Locale/Locale.cpp Locale/Locale.h
+		Types.cpp
+		AggregateInitialization/AggregateInitialization.cpp
+		Algorithms/Algorithms.cpp
+		Any/Any.cpp
+		Arrays/Arrays.cpp
+		Asserts/Asserts.cpp
+		Atomic/Atomic.cpp
+		Attributes/Attributes.cpp
+		Auto/Auto.cpp
+		BitSet/BitSet.cpp
+		BitwiseOperation/BitwiseOperation.cpp
+		Byte/Byte.cpp
+		Chrono/Chrono.cpp
+		Chrono/TimeZones.cpp
+		Concepts/Concepts.cpp
+		CTAD/ClassTemplateArgumentDeduction.cpp
+		ConsoleInOut/ConsoleInOut.cpp
+		DateAndTime/DateAndTime.cpp
+		ConstConstexprMutable/ConstConstexprMutable.cpp
+		EnumTests/EnumTests.cpp
+		Exceptions/Exceptions.cpp
+		Errors/Errors.cpp
+		Helpers/UnorderedPair.h
+		FilesStreams/FilesStreams.cpp
+		Filesystem/Filesystem.cpp
+		Format/Format.cpp
+		Format/CustomTypesFormatters.cpp
+		FunctionObjects/FunctionObjects.cpp
+		FunctionObjects/MemberFunctionPointer.cpp
+		FunctionObjects/CallbackTests.cpp
+		Initialization/Initialization.cpp
+		InitializerList/InitializerList.cpp
+		InlineVariables/InlineVariables.cpp
+		Integer/Integer.cpp
+		IteratorTests/IteratorTests.cpp
+		Lambdas/Lambdas.cpp
+		LifetimeExtension/LifetimeExtension.cpp
+		Literals/Literals.cpp
+		Locale/Locale.cpp
 		Overflow/Overflow.cpp
-		Math/Math.cpp Math/Math.h
-		Memory/Memory.cpp Memory/Memory.h
-		Memory/MemoryUsageMonitor.cpp Memory/MemoryUsageMonitor.h
-		Memory/Alignment.cpp Memory/Alignment.h
-		Memory/AlignedStackAllocator.cpp Memory/AlignedStackAllocator.h
-		Memory/CustomStackAllocator.cpp Memory/CustomStackAllocator.h
-		MoveSemantics_RuleOfFive/MoveSemantics_RuleOfFive.cpp MoveSemantics_RuleOfFive/MoveSemantics_RuleOfFive.h
-		Numbers/Numbers.cpp Numbers/Numbers.h
-		NumericLimits/NumericLimits.cpp NumericLimits/NumericLimits.h
-		ObjectOrientedProgramming/ObjectOrientedProgramming.cpp ObjectOrientedProgramming/ObjectOrientedProgramming.h
-		ObjectOrientedProgramming/Operators.cpp ObjectOrientedProgramming/Operators.h
-		ObjectOrientedProgramming/RefQualifierMemberFunctions.cpp ObjectOrientedProgramming/RefQualifierMemberFunctions.h
-		OptionalTests/OptionalTests.cpp OptionalTests/OptionalTests.h
-		PolymorphicMemoryResources/PolymorphicMemoryResources.cpp PolymorphicMemoryResources/PolymorphicMemoryResources.h
-		Random/Random.cpp Random/Random.h
-		Ranges/Ranges.cpp Ranges/Ranges.h
-		ReferenceWrapper/ReferenceWrapper.cpp ReferenceWrapper/ReferenceWrapper.h
-		SharedPtr/SharedPtrTests.cpp SharedPtr/SharedPtrTests.h
-		SourceLocation/SourceLocation.cpp SourceLocation/SourceLocation.h
+		Math/Math.cpp
+		Memory/Memory.cpp
+		Memory/MemoryUsageMonitor.cpp
+		Memory/Alignment.cpp
+		Memory/AlignedStackAllocator.cpp
+		Memory/CustomStackAllocator.cpp
+		MoveSemantics_RuleOfFive/MoveSemantics_RuleOfFive.cpp
+		Numbers/Numbers.cpp
+		NumericLimits/NumericLimits.cpp
+		ObjectOrientedProgramming/ObjectOrientedProgramming.cpp
+		ObjectOrientedProgramming/Operators.cpp
+		ObjectOrientedProgramming/RefQualifierMemberFunctions.cpp
+		OptionalTests/OptionalTests.cpp
+		PolymorphicMemoryResources/PolymorphicMemoryResources.cpp
+		Random/Random.cpp
+		Ranges/Ranges.cpp
+		ReferenceWrapper/ReferenceWrapper.cpp
+		SharedPtr/SharedPtrTests.cpp
+		SourceLocation/SourceLocation.cpp
 		Span/Span.cpp Span/Span.h
 		Print/Print.cpp Print/Print.h
 		Streams/Streams.cpp Streams/Streams.h
-		String/String.cpp String/String.h
-		String/StringUtilities.cpp String/StringUtilities.h
-		StringStream/StringStreamTests.cpp StringStream/StringStreamTests.h
-		StringView/StringViewTests.cpp StringView/StringViewTests.h
-		StructuredBinding/StructuredBinding.cpp StructuredBinding/StructuredBinding.h
-		StrongTypes/StrongTypes.cpp StrongTypes/StrongTypes.h
-		TestSupport/TestSupport.h
-		Tuple/TupleTests.cpp Tuple/TupleTests.h
-		TypeCast/TypeCast.cpp TypeCast/TypeCast.h
-		TypeTraits/TypeTraits.cpp TypeTraits/TypeTraits.h
-		UniquePtr/UniquePtr.cpp UniquePtr/UniquePtr.h
-		Utilities/Utilities.cpp Utilities/Utilities.h Utilities/Bind.cpp
-		Variant/Variant.cpp Variant/Variant.h
-		WeakPtr/WeakPtr.cpp WeakPtr/WeakPtr.h
-        Volatile/VolatileTests.cpp Volatile/VolatileTests.h
-		Hashing/Hashing.cpp Hashing/Hashing.h
-		Metaprogramming/Metaprogramming.cpp Metaprogramming/Metaprogramming.h
-		StarshipOperator/StarshipOperator.cpp StarshipOperator/StarshipOperator.h
-		Expected/Expected.cpp Expected/Expected.h
-		Types/Int.cpp Types/Int.h
-		NameSpaces/InlineNamespaces.cpp NameSpaces/InlineNamespaces.h
-		Comparators/Comparators.cpp Comparators/Comparators.h
+		String/String.cpp
+		String/StringUtilities.cpp
+		StringStream/StringStreamTests.cpp
+		StringView/StringViewTests.cpp
+		StructuredBinding/StructuredBinding.cpp
+		StrongTypes/StrongTypes.cpp
+		Tuple/TupleTests.cpp
+		TypeCast/TypeCast.cpp
+		TypeTraits/TypeTraits.cpp
+		UniquePtr/UniquePtr.cpp
+		Utilities/Utilities.cpp
+		Utilities/Bind.cpp
+		Variant/Variant.cpp
+		WeakPtr/WeakPtr.cpp
+        Volatile/VolatileTests.cpp
+		Hashing/Hashing.cpp
+		Metaprogramming/Metaprogramming.cpp
+		StarshipOperator/StarshipOperator.cpp
+		Expected/Expected.cpp
+		Types/Int.cpp
+		NameSpaces/InlineNamespaces.cpp
+		Comparators/Comparators.cpp
 		Templates/Templates.cpp Templates/Templates.h
-		Templates/ConditionalExplicit.h Templates/ConditionalExplicit.cpp
-		Templates/FoldExpressions.cpp  Templates/FoldExpressions.h
-		Templates/NTTP.cpp Templates/NTTP.h
-		Templates/TemplateSpecialization.cpp Templates/TemplateSpecialization.h
-		RVO_CopyElision/CopyElision.cpp RVO_CopyElision/CopyElision.h
-		RVO_CopyElision/RVO_FailureCases.cpp RVO_CopyElision/RVO_FailureCases.h
+		Templates/ConditionalExplicit.cpp
+		Templates/FoldExpressions.cpp
+		Templates/NTTP.cpp
+		Templates/TemplateSpecialization.cpp
+		RVO_CopyElision/CopyElision.cpp
+		RVO_CopyElision/RVO_FailureCases.cpp
 		Overflow/Overflow.cpp
-		Overflow/Overflow.h
 )
 
 # Link libraries to the project/executable
