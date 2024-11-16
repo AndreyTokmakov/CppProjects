@@ -1,11 +1,11 @@
-//============================================================================
-// Name        : Span.cpp
-// Created on  : 01.11.2020
-// Author      : Tokmakov Andrey
-// Version     : 1.0
-// Copyright   : Your copyright notice
-// Description : C++ Span src
-//============================================================================
+/**============================================================================
+Name        : Span.cpp
+Created on  : 01.11.2020
+Author      : Andrei Tokmakov
+Version     : 1.0
+Copyright   : Your copyright notice
+Description : C++ Span src
+============================================================================**/
 
 #include "Span.h"
 
@@ -19,8 +19,8 @@
 #include <list>
 #include <vector>
 
-namespace Span {
-
+namespace Span
+{
     template<typename T>
     std::ostream& operator<<(std::ostream& stream, const std::span<T>& span) {
         for (const auto& entry : span)
@@ -285,7 +285,7 @@ void Span::TestAll()
     // First_Substring();
 
     // Back();
-    // Last();
+    Last();
 
     // Size();
 
@@ -293,5 +293,5 @@ void Span::TestAll()
 
     // _Tests_();
 
-   StaticSize::Static_Sized_Array();
+   // StaticSize::Static_Sized_Array();
 }

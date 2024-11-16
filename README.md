@@ -39,3 +39,4 @@ git clone git@github.com:crayzeewulf/libserial.git
 git clone git@github.com:odygrd/quill.git
 git clone git@github.com:grpc/grpc.git
 git clone https://github.com/gabime/spdlog.git
+git clone git@github.com:kovacsnador/tinycoro.git
