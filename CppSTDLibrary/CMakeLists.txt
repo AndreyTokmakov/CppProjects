@@ -26,6 +26,7 @@ add_executable(${PROJECT_NAME}
 		ConsoleInOut/ConsoleInOut.cpp
 		DateAndTime/DateAndTime.cpp
 		ConstConstexprMutable/ConstConstexprMutable.cpp
+		ConstConstexprMutable/CompileTimeProgramming.cpp
 		EnumTests/EnumTests.cpp
 		Exceptions/Exceptions.cpp
 		Errors/Errors.cpp

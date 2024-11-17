@@ -42,7 +42,8 @@ namespace ExpressionTemplates::Classic
     };
 
     template<typename T>
-    MyVector<T> operator+ (const MyVector<T>& a, const MyVector<T>& b) {
+    MyVector<T> operator+ (const MyVector<T>& a, const MyVector<T>& b)
+    {
         MyVector<T> result(a.size());
         for (std::size_t s = 0; s <= a.size(); ++s){
             result[s] = a[s] + b[s];
@@ -51,7 +52,8 @@ namespace ExpressionTemplates::Classic
     }
 
     template<typename T>
-    MyVector<T> operator* (const MyVector<T>& a, const MyVector<T>& b) {
+    MyVector<T> operator* (const MyVector<T>& a, const MyVector<T>& b)
+    {
         MyVector<T> result(a.size());
         for (std::size_t s = 0; s <= a.size(); ++s){
             result[s] = a[s] * b[s];
@@ -60,8 +62,9 @@ namespace ExpressionTemplates::Classic
     }
 
     template<typename T>
-    std::ostream& operator<<(std::ostream& os, const MyVector<T>& cont) {
-        for (int i = 0; i < cont.size(); ++i) {
+    std::ostream& operator<<(std::ostream& os, const MyVector<T>& cont)
+    {
+        for (size_t i = 0; i < cont.size(); ++i) {
             os << cont[i] << ' ';
         }
         os << '\n';
@@ -89,7 +92,7 @@ namespace ExpressionTemplates::LazyExpression
         MyVector(const std::size_t n, const double initialValue) : cont(n, initialValue){
         }
 
-        MyVector(const Cont& other) : cont(other){
+        explicit MyVector(const Cont& other) : cont(other){
         }
 
         template<typename T2, typename R2>
@@ -112,7 +115,7 @@ namespace ExpressionTemplates::LazyExpression
             return cont[i];
         }
 
-        const Cont& data() const{
+        [[nodiscard]] const Cont& data() const{
             return cont;
         }
 
@@ -159,19 +162,22 @@ namespace ExpressionTemplates::LazyExpression
 
     template<typename T, typename R1, typename R2>
     MyVector<T, MyVectorAdd<T, R1, R2> >
-    operator+ (const MyVector<T, R1>& a, const MyVector<T, R2>& b){
+    operator+ (const MyVector<T, R1>& a, const MyVector<T, R2>& b)
+    {
         return MyVector<T, MyVectorAdd<T, R1, R2> >(MyVectorAdd<T, R1, R2 >(a.data(), b.data()));   // (1)
     }
 
     template<typename T, typename R1, typename R2>
     MyVector<T, MyVectorMul< T, R1, R2> >
-    operator* (const MyVector<T, R1>& a, const MyVector<T, R2>& b){
+    operator* (const MyVector<T, R1>& a, const MyVector<T, R2>& b)
+    {
         return MyVector<T, MyVectorMul<T, R1, R2> >(MyVectorMul<T, R1, R2 >(a.data(), b.data()));  // (2)
     }
 
     template<typename T>
-    std::ostream& operator<<(std::ostream& os, const MyVector<T>& cont){
-        for (int i = 0; i < cont.size(); ++i) {
+    std::ostream& operator<<(std::ostream& os, const MyVector<T>& cont)
+    {
+        for (size_t i = 0; i < cont.size(); ++i) {
             os << cont[i] << ' ';
         }
         os << '\n';

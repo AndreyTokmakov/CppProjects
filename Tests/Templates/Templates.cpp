@@ -498,8 +498,45 @@ namespace CompressedPair
 }
 
 
+/** Pack Indexing **/
+namespace pack_indexing
+{
+
+#if 0
+    template <typename... T>
+    constexpr auto first_plus_last(T... values) -> T...[0]
+    {
+        return T...[0](values...[0] + values...[sizeof...(values)-1]);
+    }
+#endif
+
+    void get_parameters_pack_element()
+    {
+        using namespace std::string_literals;
+
+#if 0
+        std::string hello = first_plus_last("Hello"s, "world"s, "goodbye"s, "World"s);
+        std::cout << "hello: " << hello << '\n';
+
+        constexpr int sum = first_plus_last(1, 2, 10);
+        std::cout << "sum: " << sum << "\n\n";
+#endif
+
+
+        std::cout << __cplusplus << std::endl;
+    }
+}
+
+
+
+
+
 void Templates::TestAll()
 {
+    using namespace std::string_literals;
+    using namespace std::string_view_literals;
+
+
     // FoldExpressions::MatchingTests();
     // FoldExpressions::PassingFunction_to_ClassTemplateArgument();
     // FoldExpressions::Recursive_Expansion();
@@ -516,5 +553,8 @@ void Templates::TestAll()
 
     // TemplatedSpecialisation::Test();
 
-    CompressedPair::Tests();
+    // CompressedPair::Tests();
+
+
+    pack_indexing::get_parameters_pack_element();
 }

@@ -61,8 +61,8 @@ Description : Tests C++ project
 #include "Encoding/Punycode.h"
 #include "Encoding/StringUtils.h"
 #include "Encoding/Convertaion_UTF8_UTF32.h"
-#include "ExpressionTemplates/ExpressionTemplates.h"
-#include "Templates_Metaprogramming/Templates.h"
+#include "Templates/ExpressionTemplates.h"
+#include "Templates/Templates.h"
 #include "Logging/LowLatencyLogger.h"
 #include "Crow/Crow.h"
 #include "DebugLogger/DebugLogger.h"
@@ -1407,6 +1407,48 @@ namespace BitwiseOperations
 
 
 
+namespace CompileTime_Programming
+{
+    template <int N>
+    struct factorial
+    {
+        static const int value = N * factorial<N - 1>::value;
+    };
+
+    template <>
+    struct factorial<0> {
+        static const int value = 1;
+    };
+
+
+    constexpr int factorialFunc(const int value)
+    {
+        int result = 1;
+        for (int i = 2; i <= value; i++)
+            result *= i;
+        return result;
+    };
+
+
+    void Factorial()
+    {
+        static_assert(1 == factorial<0>::value);
+        static_assert(1 == factorial<1>::value);
+        static_assert(2 == factorial<2>::value);
+        static_assert(6 == factorial<3>::value);
+        static_assert(24 == factorial<4>::value);
+
+        static_assert(1 == factorialFunc(0));
+        static_assert(1 == factorialFunc(1));
+        static_assert(2 == factorialFunc(2));
+        static_assert(6 == factorialFunc(3));
+        static_assert(24 == factorialFunc(4));
+    }
+}
+
+
+
+
 
 int main([[maybe_unused]] int argc,
          [[maybe_unused]] char** argv)
@@ -1436,36 +1478,33 @@ int main([[maybe_unused]] int argc,
 
 
 
-
     /** * * * * *  Move to lib * * * * * **/
 
     // Coroutines::TestAll();
     // StackTrace::TestAll();
-    Cpp23_Features::TestAll();
+    // Cpp23_Features::TestAll();
 
 
-
+    // CompileTime_Programming::Factorial();
 
     // OperatorCall_ExplicitTypeSpecialization::Test();
     // ReturnTypeCast::tests();
     // CallFunctionByName::Test();
     // ReturnClass_MemberRef_CopyCTor::tests();
 
+
     // Algorithms::TestAll();
     // AutoTests::TestAll();
     // BinManipulation::TestAll();
     // BinaryAnalyzer::TestAll();
-
     // Concepts::TestAll();
     // Crow::TestAll();
     // Comparators::TestAll();
-    CollectionsTests::TestAll();
+    // CollectionsTests::TestAll();
     // CopyElision_RVO::TestAll();
     // ConstexprMap::TestAll();
     // DebugLogger::TestAll();
-
     // DesignPatterns::TestAll();
-
     // Date_Time_Chrono::TestAll();
     // Heap::TestAll();
     // Iterators::TestAll();
@@ -1477,7 +1516,6 @@ int main([[maybe_unused]] int argc,
     // MaxStack::TestAll();
     // Math::TestAll();
     // UniquePtr_Size::SizeTest();
-    // ExpressionTemplates::TestAll();
     // ObjectOrientedExperiments::RAIIWrapper::TestAll();
     // ObjectOrientedExperiments::OOP_Experiments::TestAll();
     // ObjectOrientedExperiments::VirtualTables::TestAll();
@@ -1487,7 +1525,8 @@ int main([[maybe_unused]] int argc,
     // Iterators::TestAll();
     // Strings::TestAll();
     // Performance::TestAll();
-    // Templates::TestAll();
+    Templates::TestAll();
+    // ExpressionTemplates::TestAll();
     // TestAssignments::TestAll();
     // TableFormatter::TestAll();
 

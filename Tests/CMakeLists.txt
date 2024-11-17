@@ -14,49 +14,50 @@ add_compile_options(-c -Wall -O3 -std=c++26)
 add_executable(${PROJECT_NAME}
         main.cpp
         Assembly/AssemblyDemo.cpp
-        BinManipulation/BinManipulation.cpp BinManipulation/BinManipulation.h
-        ExpressionTemplates/ExpressionTemplates.h ExpressionTemplates/ExpressionTemplates.cpp
-        Punycode/Punycode.h Punycode/Punycode.cpp
-        Encoding/Enconding.cpp Encoding/Enconding.h
-        Encoding/URLDecoding.cpp Encoding/URLDecoding.h
-        Encoding/Punycode.cpp Encoding/Punycode.h
+        BinManipulation/BinManipulation.cpp
+        Punycode/Punycode.cpp
+        Encoding/Enconding.h
+        Encoding/URLDecoding.cpp
+        Encoding/Punycode.cpp
         Encoding/StringUtils_ToStudy.cpp
-        Encoding/StringUtils.cpp Encoding/StringUtils.h
-        Encoding/Unicode.cpp Encoding/Unicode.h
-        Crow/Crow.cpp Crow/Crow.h Crow/Logger.cpp Crow/Logger.h Crow/Utils.cpp Crow/Utils.h
-        Geometry/PointsAndLines.cpp Geometry/PointsAndLines.h
-        Encoding/PunycodeFinal.cpp Encoding/PunycodeFinal.h
-        Encoding/Convertaion_UTF8_UTF32.cpp Encoding/Convertaion_UTF8_UTF32.h
-        CopyElision_RVO/CopyElision_RVO.cpp CopyElision_RVO/CopyElision_RVO.h
-        Templates_Metaprogramming/Templates.cpp Templates_Metaprogramming/Templates.h
-        DebugLogger/DebugLogger.cpp DebugLogger/DebugLogger.h
-        Collections/CollectionsTests.cpp Collections/CollectionsTests.h
-        ObjectOrientedExperimetns/RAIIWrapper.cpp ObjectOrientedExperimetns/RAIIWrapper.h
-        Algorithms/Algorithms.cpp Algorithms/Algorithms.h
-        ConstexprMap/ConstexprMap.cpp ConstexprMap/ConstexprMap.h
-        Concepts/Concepts.cpp Concepts/Concepts.h
-        Multithreading/Multithreading.cpp Multithreading/Multithreading.h
-        Multithreading/Queue.cpp Multithreading/Queue.h
-        DesignPatterns/DesignPatterns.cpp DesignPatterns/DesignPatterns.h
-        Iterators/Iterators.cpp Iterators/Iterators.h
-        Files_Filesystem/Files.cpp Files_Filesystem/Files.h
-        Files_Filesystem/FileUtilities.cpp Files_Filesystem/FileUtilities.h
-        Helpers/Wrapper.h Helpers/UnorderedPair.h Helpers/Helpers.h Helpers/ScopedTimer.h
-        Strings/Strings.cpp Strings/Strings.h
-        Strings/StringUtilities.cpp Strings/StringUtilities.h
-        Performance/Performance.cpp Performance/Performance.h
-        Memory/Memory.cpp Memory/Memory.h
-        Memory/CustomStackAllocator.cpp Memory/CustomStackAllocator.h
-        BinaryAnalyzer/BinaryAnalyzer.cpp BinaryAnalyzer/BinaryAnalyzer.h
-        TestAssignments/TestAssignments.h  TestAssignments/TestAssignments.cpp
-        TestAssignments/ThinkCell.cpp TestAssignments/Bullish.cpp
-        TableFormatter/TableFormatter.cpp TableFormatter/TableFormatter.h
-        Coroutines/Coroutines.cpp Coroutines/Coroutines.h
-        Date_Time_Chrono/Date_Time_Chrono.cpp Date_Time_Chrono/Date_Time_Chrono.h
-        Optional/Optional.cpp Optional/Optional.h
-        Math/Math.cpp Math/Math.h
-        ObjectOrientedExperimetns/OOP_Experiments.cpp ObjectOrientedExperimetns/OOP_Experiments.h
-        Cpp23_Features/Cpp23_Features.cpp Cpp23_Features/Cpp23_Features.h
+        Encoding/StringUtils.cpp
+        Encoding/Unicode.cpp
+        Crow/Crow.cpp Crow/Logger.cpp Crow/Utils.cpp
+        Geometry/PointsAndLines.cpp
+        Encoding/PunycodeFinal.cpp
+        Encoding/Convertaion_UTF8_UTF32.cpp
+        CopyElision_RVO/CopyElision_RVO.cpp
+        Templates/Templates.cpp
+        Templates/ExpressionTemplates.cpp
+        DebugLogger/DebugLogger.cpp
+        Collections/CollectionsTests.cpp
+        ObjectOrientedExperimetns/RAIIWrapper.cpp
+        Algorithms/Algorithms.cpp
+        ConstexprMap/ConstexprMap.cpp
+        Concepts/Concepts.cpp
+        Multithreading/Multithreading.cpp
+        Multithreading/Queue.cpp
+        DesignPatterns/DesignPatterns.cpp
+        Iterators/Iterators.cpp
+        Files_Filesystem/Files.cpp
+        Files_Filesystem/FileUtilities.cpp
+        Helpers/UnorderedPair.h
+        Strings/Strings.cpp
+        Strings/StringUtilities.cpp
+        Performance/Performance.cpp
+        Memory/Memory.cpp
+        Memory/CustomStackAllocator.cpp
+        BinaryAnalyzer/BinaryAnalyzer.cpp
+        TestAssignments/TestAssignments.cpp
+        TestAssignments/ThinkCell.cpp
+        TestAssignments/Bullish.cpp
+        TableFormatter/TableFormatter.cpp
+        Coroutines/Coroutines.cpp
+        Date_Time_Chrono/Date_Time_Chrono.cpp
+        Optional/Optional.cpp
+        Math/Math.cpp
+        ObjectOrientedExperimetns/OOP_Experiments.cpp
+        Cpp23_Features/Cpp23_Features.cpp
         Cpp23_Features/StackTrace.cpp
         Auto/AutoTests.cpp
         ObjectOrientedExperimetns/VirtualTables.cpp
