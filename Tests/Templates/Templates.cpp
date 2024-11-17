@@ -524,6 +524,22 @@ namespace pack_indexing
 
 
         std::cout << __cplusplus << std::endl;
+
+
+        // Check compiler version
+#if defined(__GNUC__)
+        std::cout << "Compiler: GCC" << std::endl;
+        std::cout << "Version: " << __GNUC__ << "." << __GNUC_MINOR__ << "." << __GNUC_PATCHLEVEL__ << std::endl;
+#elif defined(_MSC_VER)
+        std::cout << "Compiler: MSVC" << std::endl;
+      std::cout << "Version: " << _MSC_VER << std::endl;
+  #elif defined(__clang__)
+        std::cout << "Compiler: Clang" << std::endl;
+      std::cout << "Version: " << __clang_major__ << "." << __clang_minor__ << "." << __clang_patchlevel__ << std::endl;
+  #else
+        std::cout << "Compiler: Unknown" << std::endl;
+#endif
+
     }
 }
 

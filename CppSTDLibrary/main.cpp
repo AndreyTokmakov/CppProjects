@@ -78,6 +78,7 @@ Description : Cpp STD lib
 #include "UniquePtr/UniquePtr.h"
 #include "TypeTraits/TypeTraits.h"
 #include "Utilities/Utilities.h"
+#include "Utilities/CompillerVersion.h"
 #include "Tuple/TupleTests.h"
 #include "TypeCast/TypeCast.h"
 #include "Metaprogramming/Metaprogramming.h"
@@ -162,8 +163,9 @@ int main([[maybe_unused]] int argc,
     // Tuple::TestAll();
     // TypeCast::TestAll();
     // Int::TestAll();
-    Templates::TestAll();
+    // Templates::TestAll();
     // Utilities::TestAll();
+    CompilerVersion::TestAll();
     // UniquePtr_Tests::TestAll();
     // WeakPtr::TestAll();
 

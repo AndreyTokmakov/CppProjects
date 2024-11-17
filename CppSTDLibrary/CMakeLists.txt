@@ -82,6 +82,7 @@ add_executable(${PROJECT_NAME}
 		UniquePtr/UniquePtr.cpp
 		Utilities/Utilities.cpp
 		Utilities/Bind.cpp
+		Utilities/CompilerVersion.cpp
 		Variant/Variant.cpp
 		WeakPtr/WeakPtr.cpp
         Volatile/VolatileTests.cpp

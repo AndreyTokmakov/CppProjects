@@ -927,7 +927,8 @@ namespace Templates::VariadicTemplates {
     };
 
 
-    void ExtendedUsingDeclarations() {
+    void ExtendedUsingDeclarations()
+    {
         using MultiISB = Multi<int, std::string, bool>;
     }
 }
@@ -1379,6 +1380,7 @@ namespace Templates::Conditional
         std::cout << typeid(Type2).name() << std::endl;
         std::cout << typeid(Type3).name() << std::endl;
 
+        [[maybe_unused]]
         short int i = 1;    // code does not compile if type of i is not integral
 
         typedef std::conditional<true,  int, float>::type A;                     // int
