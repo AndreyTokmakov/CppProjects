@@ -19,6 +19,7 @@ Description : Cpp23_Features
 #include <utility>
 #include <format>
 #include <chrono>
+#include <cmath>
 
 
 
@@ -31,6 +32,9 @@ Description : Cpp23_Features
 
 // #include <flat_map>
 // #include <flat_set>
+
+// #include <experimental/executor>
+// #include <experimental/net>
 
 
 namespace Cpp23_Features
@@ -375,8 +379,53 @@ namespace Cpp23_Features::Extend_Init_Statement
 }
 
 
+namespace Cpp23_Features::Assume
+{
+    double process_positive(double x)
+    {
+        [[assume(x >= 0)]];
+        return std::sqrt(x); // No need for negative number checks
+    }
+
+    void negative_number_checks()
+    {
+        std::cout << process_positive(12) << std::endl;
+        std::cout << process_positive(-12) << std::endl;
+    }
+}
+
+
+namespace Cpp23_Features::New_Preprocessor_Directives
+{
+    void Conditions_Check()
+    {
+        // New style in C++23:
+#ifdef _WIN32
+#define PLATFORM "Windows"
+#elifdef __linux__
+#define PLATFORM "Linux"
+#elifdef __APPLE__
+        #define PLATFORM "macOS"
+#else
+    #warning "Unknown platform detected!"
+#endif
+    }
+}
+
+
+std::tuple<int, int> getTup()
+{
+    return {1,1};
+}
+
+
 void Cpp23_Features::TestAll()
 {
+
+    Assume::negative_number_checks();
+
+    New_Preprocessor_Directives::Conditions_Check();
+
 
     // Format::Format_to_N();
     // Format::VFormatTest1();
@@ -384,7 +433,7 @@ void Cpp23_Features::TestAll()
 
     // Enums::test();
 
-    Extend_Init_Statement::ForLoop_Alias_Declaration();
+    // Extend_Init_Statement::ForLoop_Alias_Declaration();
 
     /*
     auto now = std::chrono::system_clock::now();
