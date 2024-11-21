@@ -363,6 +363,16 @@ namespace Cpp23_Features::Enums
     }
 }
 
+namespace Cpp23_Features::Extend_Init_Statement
+{
+    void ForLoop_Alias_Declaration()
+    {
+        const std::vector<int> values { 1, 2, 3, 4, 5 };
+        for (using T = int; const T& val : values) {
+            std::cout << val << std::endl;
+        }
+    }
+}
 
 
 void Cpp23_Features::TestAll()
@@ -372,9 +382,9 @@ void Cpp23_Features::TestAll()
     // Format::VFormatTest1();
     // Format::VFormatPrint();
 
+    // Enums::test();
 
-    Enums::test();
-
+    Extend_Init_Statement::ForLoop_Alias_Declaration();
 
     /*
     auto now = std::chrono::system_clock::now();

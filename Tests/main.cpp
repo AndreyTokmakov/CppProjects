@@ -1482,7 +1482,9 @@ int main([[maybe_unused]] int argc,
 
     // Coroutines::TestAll();
     // StackTrace::TestAll();
-    // Cpp23_Features::TestAll();
+
+
+    Cpp23_Features::TestAll();
 
 
     // CompileTime_Programming::Factorial();
@@ -1525,7 +1527,7 @@ int main([[maybe_unused]] int argc,
     // Iterators::TestAll();
     // Strings::TestAll();
     // Performance::TestAll();
-    Templates::TestAll();
+    // Templates::TestAll();
     // ExpressionTemplates::TestAll();
     // TestAssignments::TestAll();
     // TableFormatter::TestAll();

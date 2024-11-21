@@ -165,8 +165,8 @@ int main([[maybe_unused]] int argc,
     // Int::TestAll();
     // Templates::TestAll();
     // Utilities::TestAll();
-    CompilerVersion::TestAll();
-    // UniquePtr_Tests::TestAll();
+    // CompilerVersion::TestAll();
+    UniquePtr::TestAll();
     // WeakPtr::TestAll();
 
     return EXIT_SUCCESS;

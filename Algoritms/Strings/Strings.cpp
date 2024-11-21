@@ -2156,7 +2156,7 @@ namespace Strings
         return std::string{words[longestIdx]};
     }
 
-    std::string longest_word_fast(const std::string& inp ut)
+    std::string longest_word_fast(const std::string& input)
     {
         uint32_t startMax {0}, endMax {0}, prev {0}, idx {};
         for (; idx < input.size(); ++idx) {

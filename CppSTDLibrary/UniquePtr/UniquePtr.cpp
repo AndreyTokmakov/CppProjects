@@ -12,17 +12,16 @@
 #include <fstream>
 #include <string_view>
 #include <memory>
+#include <utility>
 
 #include "../Integer/Integer.h"
+#include "../Helpers/Helpers.h"
 #include "UniquePtr.h"
 
-using String = std::string;
-using CString = const String&;
-
-namespace UniquePtr_Tests {
-
-	class IntegerDeleter {
-	public:
+namespace UniquePtr
+{
+	struct IntegerDeleter
+    {
 		void operator() (Integer* integer) {
 			std::cout << "****** Calling delete for Integer(" << integer->getValue() << ")" << std::endl;
 			delete integer;
@@ -37,34 +36,31 @@ namespace UniquePtr_Tests {
 		integer.printInfo();
 	}
 
-	class Object {
-	private:
-		String name;
+	class Object
+    {
+		std::string name;
 
 	public:
 		Object() : name("Empty") {
 			std::cout << __FUNCTION__ << std::endl;
 		}
-		Object(CString n) : name(n) {
+		explicit Object(std::string n) : name(std::move(n)) {
 
 			std::cout << __FUNCTION__ << std::endl;
 		}
-		virtual ~Object() {}
+		virtual ~Object()  = default;
 
 
 	public:
-		void setName(CString name) noexcept {
+		void setName(const std::string& name) noexcept {
 			this->name = name;
 		}
 
-		const String getName() const noexcept {
+        [[nodiscard]]
+        std::string getName() const noexcept {
 			return this->name;
 		}
-
 	};
-
-
-	/////////////////////////////////////////////////////////////////////
 
 	void MakeUnique_ObjectRequirements() {
 
@@ -213,7 +209,7 @@ namespace UniquePtr_Tests {
 	}
 }
 
-namespace UniquePtr_Tests::VariousTest {
+namespace UniquePtr::VariousTest {
 	struct deleter
 	{
 		bool use_free;
@@ -306,7 +302,7 @@ namespace UniquePtr_Tests::VariousTest {
 }
 
 
-namespace UniquePtr_Tests::Applications {
+namespace UniquePtr::Applications {
 
 	struct FileCloser {
 		void operator()(std::fstream* file) {
@@ -347,7 +343,7 @@ namespace UniquePtr_Tests::Applications {
 	}
 }
 
-namespace UniquePtr_Tests::Deleters {
+namespace UniquePtr::Deleters {
 
 
 	void Deleter_Test1()
@@ -501,7 +497,7 @@ namespace UniquePtr_Tests::Deleters {
 }
 
 
-namespace UniquePtr_Tests::Arrays
+namespace UniquePtr::Arrays
 {
 
 	void UniquePtr_Array() {
@@ -518,7 +514,7 @@ namespace UniquePtr_Tests::Arrays
 }
 
 
-namespace UniquePtr_Tests::TESTS
+namespace UniquePtr::TESTS
 {
 	void UniquePtr_Array()
     {
@@ -535,7 +531,7 @@ namespace UniquePtr_Tests::TESTS
 }
 
 
-namespace UniquePtr_Tests::Size_Depending_of_Params
+namespace UniquePtr::Size_Depending_of_Params
 {
 
     struct Deleter {
@@ -563,7 +559,7 @@ namespace UniquePtr_Tests::Size_Depending_of_Params
     }
 }
 
-namespace UniquePtr_Tests::Make_Unique_For_Overwrite
+namespace UniquePtr::Make_Unique_For_Overwrite
 {
     // Output Fibonacci numbers to an output iterator.
     template<typename OutputIt>
@@ -593,7 +589,35 @@ namespace UniquePtr_Tests::Make_Unique_For_Overwrite
 };
 
 
-void UniquePtr_Tests::TestAll()
+namespace UniquePtr
+{
+    template<typename T>
+    void checkPtr(const std::unique_ptr<T>& ptr)
+    {
+        if (ptr) {
+            std::cout << "OK. Exists!!!" << std::endl;
+        } else {
+            std::cout << "Empty" << std::endl;
+        }
+    }
+
+    void Check_If_Pointer_Initialized()
+    {
+        using Int = Helpers::Integer;
+
+        std::unique_ptr<Int> intPtr;
+        checkPtr(intPtr);
+
+        intPtr = std::make_unique<Int>();
+        checkPtr(intPtr);
+
+        intPtr.reset();
+        checkPtr(intPtr);
+    }
+}
+
+
+void UniquePtr::TestAll()
 {
 	// UniquePtr_Test1();
 
@@ -635,5 +659,7 @@ void UniquePtr_Tests::TestAll()
 
     // Size_Depending_of_Params::SizeTest();
 
-    Make_Unique_For_Overwrite::AllocateArray_AndInitialize();
+    // Make_Unique_For_Overwrite::AllocateArray_AndInitialize();
+
+    Check_If_Pointer_Initialized();
 };

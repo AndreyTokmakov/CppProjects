@@ -10,7 +10,8 @@
 #ifndef UNIQUE_PTR_TESTS__INCLUDE_GUARD__H
 #define UNIQUE_PTR_TESTS__INCLUDE_GUARD__H
 
-namespace UniquePtr_Tests {
+namespace UniquePtr
+{
 	void TestAll();
 };
 
