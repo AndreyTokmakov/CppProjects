@@ -60,7 +60,7 @@
 
 #include "CertificateGenerator.h"
 #include "Encryption.h"
-
+#include "EncryptionRSA.h"
 
 namespace
 {
@@ -365,7 +365,8 @@ int main([[maybe_unused]] int argc,
 
     // Errors::InspectErrors();
 
-    Encryption::TestAll();
+    // Encryption::TestAll();
+    EncryptionRSA::TestAll();
 
 
     return EXIT_SUCCESS;
