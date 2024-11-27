@@ -89,7 +89,7 @@ struct ThreadPool<ReturnType (Args...)>
     std::vector<std::jthread> workers {};
     std::stop_source stopSource;
 
-    static inline constexpr std::chrono::duration<uint64_t, std::ratio<1, 1000>> pollTimeout{
+    static inline constexpr std::chrono::duration<uint64_t, std::ratio<1, 1000>> pollTimeout {
             std::chrono::milliseconds(500u)
     };
 

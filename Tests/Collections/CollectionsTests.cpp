@@ -778,6 +778,32 @@ namespace CollectionsTests::MapOfVectors_MoveValue
     }
 }
 
+
+namespace CollectionsTests::Map
+{
+    struct SortOrderBook
+    {
+        SortOrderBook() {
+            std::cout << __PRETTY_FUNCTION__ << std::endl;
+        }
+
+        ~SortOrderBook() {
+            std::cout << __PRETTY_FUNCTION__ << std::endl;
+        }
+    };
+
+    void Try_Emplace_Value_Class()
+    {
+        std::map<int, SortOrderBook> orderBook;
+
+        auto iter = orderBook.try_emplace(1);
+        std::cout << std::boolalpha << iter.second << std::endl;
+
+        iter = orderBook.try_emplace(1);
+        std::cout << std::boolalpha << iter.second << std::endl;
+    }
+}
+
 void CollectionsTests::TestAll()
 {
     // CustomArrayTest::Test();
@@ -809,35 +835,5 @@ void CollectionsTests::TestAll()
     // MapOfVectors_MoveValue::MoveMapValue_PassToFunc();
 
 
-    /*
-    {
-        std::map<int, int, std::greater<int>> bids {
-            {1, 1}, {3,3}, {2,2}
-        };
-
-        for (const auto& [key, value]: bids) {
-            std::cout << key << ", " << value << std::endl;
-        }
-    }
-
-    {
-        std::map<int, int> asks {
-                {1, 1}, {3,3}, {2,2}
-        };
-
-        for (const auto& [key, value]: asks) {
-            std::cout << key << ", " << value << std::endl;
-        }
-    }
-    */
-
-    std::map<int, int, std::greater<int>> bids {
-            {1, 1}, {3,3}, {2,2}
-    };
-
-
-    bids.erase(bids.rbegin().base());
-
-
-
+    Map::Try_Emplace_Value_Class();
 };
