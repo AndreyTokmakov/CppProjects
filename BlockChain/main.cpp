@@ -166,6 +166,9 @@ namespace LibCryptoCpp
     }
 }
 
+
+/// CryptoCPP: https://github.com/weidai11/cryptopp
+
 int main([[maybe_unused]] int argc,
          [[maybe_unused]] char** argv)
 {
