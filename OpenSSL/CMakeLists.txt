@@ -29,6 +29,7 @@ add_executable(${PROJECT_NAME}
         main.cpp
         CertificateGenerator.cpp
         Encryption.cpp
+        EncryptionRSA.cpp
 )
 
  # Link phread library

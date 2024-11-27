@@ -1446,60 +1446,21 @@ namespace CompileTime_Programming
     }
 }
 
-namespace Optional_ForWidget_Class
+
+template <typename T>
+struct Some_Thread_Safe_Queue
 {
-    struct Params {};
+    std::mutex mtx;                      // <-- 40 bytes
+    std::deque<T> queue;                 // <-- 80 bytes
+    std::condition_variable condition;   // <-- 48 bytes
 
-    struct Widget
+    void push(T&& new_value)
     {
-        explicit Widget(Params params) {
-            std::cout << __PRETTY_FUNCTION__ << std::endl;
-        }
-
-        Widget() = delete;
-
-        Widget(const Widget&) = delete;
-        Widget& operator=(const Widget&) = delete;
-
-        Widget(Widget&&) noexcept = delete;
-        Widget& operator=(Widget&&) noexcept = delete;
-
-        static Widget createWidget()
-        {
-            return Widget {Params {}};
-        }
-    };
-
-    template<typename Func, typename... Args>
-    struct EmplaceHelper
-    {
-        using ObjectType = std::invoke_result_t<Func, Args...>;
-
-        Func& func;
-        std::tuple<Args&&...> args;
-
-        explicit EmplaceHelper(Func&& f, Args&&... args): func(f), args(std::forward<Args>(args)...) {
-        }
-
-        operator ObjectType()
-        {
-            return std::apply(func, args);
-        }
-    };
-
-    template<typename Func, typename... Args>
-    EmplaceHelper(Func&&, Args&&...) -> EmplaceHelper<Func, Args...>;
-
-    void CreateOptional()
-    {
-        EmplaceHelper eh([&] {return Widget::createWidget();});
-
-        // Widget x { eh };
-
-        //std::optional<Widget> w (Widget::createWidget());
-        // std::optional<Widget> w1 ( eh );
+        std::lock_guard<std::mutex> lock(mtx);
+        queue.push_back(std::move(new_value));
+        condition.notify_all();
     }
-}
+};
 
 
 
@@ -1529,14 +1490,14 @@ int main([[maybe_unused]] int argc,
 
     // BitwiseOperations::test();
 
-    // Optional_ForWidget_Class::CreateOptional();
-
-
     /** * * * * *  Move to lib * * * * * **/
 
     // Coroutines::TestAll();
     // StackTrace::TestAll();
 
+
+    int a[] = {1,2,3,4,5};
+    std::cout << sizeof(a) / sizeof (a[0]) << std::endl;
 
     // Cpp23_Features::TestAll();
 
@@ -1556,7 +1517,7 @@ int main([[maybe_unused]] int argc,
     // Concepts::TestAll();
     // Crow::TestAll();
     // Comparators::TestAll();
-    CollectionsTests::TestAll();
+    // CollectionsTests::TestAll();
     // CopyElision_RVO::TestAll();
     // ConstexprMap::TestAll();
     // DebugLogger::TestAll();
