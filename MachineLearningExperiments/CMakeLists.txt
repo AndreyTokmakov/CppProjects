@@ -18,9 +18,11 @@ if(Boost_VERSION LESS 106500)
 endif()
 message (STATUS "BOOST VERSION: ${Boost_VERSION}")
 
+#[[
 find_package(Boost REQUIRED COMPONENTS
 		system filesystem serialization
 )
+]]#
 
 SET(CMAKE_CXX_FLAGS -fopenmp)
 

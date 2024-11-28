@@ -12,7 +12,7 @@ else()
 endif()
 
 add_subdirectory(Algoritms)
-add_subdirectory(BlockChain)
+add_subdirectory(Cryptography)
 add_subdirectory(Collections)
 add_subdirectory(CLI)
 add_subdirectory(CppSTDLibrary)

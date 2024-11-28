@@ -62,6 +62,7 @@
 #include "Encryption.h"
 #include "EncryptionRSA.h"
 
+
 namespace
 {
     constexpr std::string_view certPath {
@@ -272,8 +273,8 @@ namespace Keys
     // https://www.dynamsoft.com/codepool/how-to-use-openssl-generate-rsa-keys-cc.html
     void Generate_RSA_Keys ()
     {
-        constexpr std::string_view publicKey { R"(/home/andtokm/tmp/SSL/public.pem)"};
-        constexpr std::string_view privateKey { R"(/home/andtokm/tmp/SSL/private.pem)"};
+        constexpr std::string_view publicKey { R"(/tmp/SSL/public.pem)"};
+        constexpr std::string_view privateKey { R"(/tmp/SSL/private.pem)"};
 
         /** generate rsa key **/
         ptrBigNumber bigNum {BN_new(), BN_free };
@@ -361,12 +362,12 @@ int main([[maybe_unused]] int argc,
 
     // CertificateGenerator::TestAll();
 
-    // Keys::Generate_RSA_Keys();
+    Keys::Generate_RSA_Keys();
 
     // Errors::InspectErrors();
 
     // Encryption::TestAll();
-    EncryptionRSA::TestAll();
+    // EncryptionRSA::TestAll();
 
 
     return EXIT_SUCCESS;

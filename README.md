@@ -29,7 +29,6 @@ sudo apt-get install build-essential cmake make libboost-all-dev libpcap-dev
 
 cd ..../third_party
 
-git clone https://gitlab.com/libeigen/eigen.git
 git clone git@github.com:catchorg/Catch2.git
 git clone git@github.com:libssh2/libssh2.git
 git clone git@github.com:open-source-parsers/jsoncpp.git
@@ -38,5 +37,7 @@ git clone git@github.com:nlohmann/json.git
 git clone git@github.com:crayzeewulf/libserial.git
 git clone git@github.com:odygrd/quill.git
 git clone git@github.com:grpc/grpc.git
-git clone https://github.com/gabime/spdlog.git
 git clone git@github.com:kovacsnador/tinycoro.git
+git clone https://gitlab.com/libeigen/eigen.git
+git clone https://github.com/gabime/spdlog.git
+git clone https://github.com/weidai11/cryptopp

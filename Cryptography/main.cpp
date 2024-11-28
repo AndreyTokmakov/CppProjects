@@ -1,87 +1,25 @@
-//============================================================================
-// Name        : BlockChain.cpp
-// Created on  : 15.09.2021
-// Author      : Tokmakov Andrey
-// Version     : 1.0
-// Copyright   : Your copyright notice
-// Description : BlockChain C++ project
-//============================================================================
+/**============================================================================
+Name        : Cryptography.cpp
+Created on  : 26.11.2024
+Author      : Andrei Tokmakov
+Version     : 1.0
+Copyright   : Your copyright notice
+Description : Cryptography tests and experiments
+============================================================================**/
 
 #include <iostream>
-#include <memory>
-#include <string>
-#include <string_view>
-#include <cstdint>
-#include <cstring>
-#include <fstream>
-#include <filesystem>
-#include <tuple>
-
-#include <thread>
-#include <future>
-
-#include <mutex>
-#include <atomic>
-
-#include <cmath>
-#include <numeric>
-#include <numbers>
-#include <ostream>
-
 #include <vector>
-#include <list>
-#include <map>
-#include <algorithm>
-#include <array>
-#include <set>
-#include <unordered_set>
-#include <unordered_map>
-#include <span>
+#include <string_view>
+#include <iomanip>
 
-#include <concepts>
-#include "cryptography/sha256_Original.h"
-#include "cryptography/Sha256.h"
+#include "experiments/sha256_Original.h"
+#include "experiments/Sha256.h"
 
 #include "rsa.h"
 #include "base64.h"
 #include "osrng.h"
 #include "modes.h"
 
-
-class Block {
-private:
-    uint32_t index { 0 };
-    int64_t nonce { -1 };
-    std::string data;
-    std::string hash;
-    std::string sPrevHash;
-    time_t time;
-
-
-public:
-    Block(uint32_t index, std::string sDataIn): index {index}, data { std::move(sDataIn)} {
-
-    }
-
-    void MineBlock(uint32_t nDifficulty);
-
-    std::string getHash();
-    std::string calculateHash() const;
-};
-
-
-class Blockchain {
-private:
-    uint32_t difficulty;
-    std::vector<Block> chain;
-
-public:
-    Blockchain();
-
-    // TODO: to list??
-    void AddBlock(Block bNew);
-    Block _GetLastBlock() const;
-};
 
 
 namespace Sha256Tests
