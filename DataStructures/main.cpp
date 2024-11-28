@@ -77,7 +77,7 @@ int main([[maybe_unused]] int argc,
     // RAII_CommitWrapper::TEST_ALL();
     // ReferenceWrapper::Test();
     // TwoSidedVector::TestAll();
-    // MinStack::TestAll();
+    MinStack::TestAll();
     // MinMaxStack::TestAll();
     // MinHeap::TestAll();
     // HeapWithComparator::TestAll();
@@ -90,7 +90,7 @@ int main([[maybe_unused]] int argc,
 
     // Memory::Shared_Ptr_Tests();
 
-    ThreadPool::TestAll();
+    // ThreadPool::TestAll();
     // ThreadPoolOne::TEST_ALL();
     // ThreadPoolTwo::TEST_ALL();
     // ThreadPoolLimited::TestAll();

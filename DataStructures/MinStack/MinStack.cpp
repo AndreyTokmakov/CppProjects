@@ -119,7 +119,7 @@ namespace MinStack::Two_Vectors_GOOD
         MinStack& push(int value)
         {
             store.push_back(value);
-            if (minStore.empty() || value <= minStore.back())
+            if (minStore.empty() || minStore.back() >= value)
                 minStore.push_back(value);
             return *this;
         }
@@ -128,12 +128,9 @@ namespace MinStack::Two_Vectors_GOOD
         {
             if (store.empty())
                 return;
-
-            const value_type poppedElement { store.back() };
-            store.pop_back();
-
-            if (poppedElement == minStore.back())
+            if (store.back() == minStore.back())
                 minStore.pop_back();
+            store.pop_back();
         }
 
         [[nodiscard]]
