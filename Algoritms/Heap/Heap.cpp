@@ -513,9 +513,11 @@ namespace Heap_Algoritms {
 		}
 	};
 
-	namespace Algoritms {
+	namespace Algoritms
+	{
 
-		bool IsMaxHeap(const std::vector<int>& data) {
+		bool IsMaxHeap(const std::vector<int>& data)
+		{
 			for (size_t i = 0; i <= (data.size() / 2 - 1); i++) {
 				if (data[i * 2 + 1] > data[i]) // If left child is greater, return false 
 					return false;
@@ -525,7 +527,8 @@ namespace Heap_Algoritms {
 			return true;
 		}
 
-		bool IsMinHeap(const std::vector<int>& data) {
+		bool IsMinHeap(const std::vector<int>& data)
+		{
 			for (size_t i = 0; i <= (data.size() / 2 - 1); i++) {
 				if (data[i] > data[i * 2 + 1])
 					return false;
@@ -535,13 +538,13 @@ namespace Heap_Algoritms {
 			return true;
 		}
 
-		/***************************************************************************************************************/
+		/***********************************************************************************************************/
 
 		// to heapify a subtree with root at given index 
 		void _MaxHeapify_1(std::vector<int>& numbers, size_t index)
 		{
-			auto left = 2 * index + 1;
-			auto right = 2 * index + 2;
+			const auto left = 2 * index + 1;
+			const auto right = 2 * index + 2;
 			auto largest = index;
 			if (left < numbers.size() && numbers[left] > numbers[index])
 				largest = left;
