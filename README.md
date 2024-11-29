@@ -6,16 +6,19 @@ Cpp project to synchronize C++ code base across multiple devieses
             C++ | GCC | CMAKE
 ====================================================================================
 
-export GCC_VERSION=13.2
-export GCC_PATH=/home/andtokm/DiskS/Utils/bin/gcc-$GCC_VERSION
+export GCC_VERSION=14.2
+export UTILS_PATH=/home/andtokm/DiskS/Utils
+export GCC_PATH=${UTILS_PATH}/bin/gcc-$GCC_VERSION
 
-export PATH=${GCC_PATH}/bin:${PATH}
 export LD_LIBRARY_PATH=${GCC_PATH}/lib64
 export CC=gcc-$GCC_VERSION CXX=g++-$GCC_VERSION
 
-mkdir build && cd build
+export PATH=${GCC_PATH}/bin::${PATH}
+export PATH=${GCC_PATH}/bin:${UTILS_PATH}/cmake/cmake-3.29.5/bin/:${PATH}
 
-cmake -DCMAKE_BUILD_TYPE=Release ..
+cmake -DCMAKE_BUILD_TYPE=Release -B./build
+
+cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_C_COMPILER=gcc-14.2 -DCMAKE_CXX_COMPILER=g++-14.2 -DCMAKE_CXX_STANDARD=23 -B./build
 
 ====================================================================================
             Libs
@@ -37,6 +40,7 @@ git clone git@github.com:nlohmann/json.git
 git clone git@github.com:crayzeewulf/libserial.git
 git clone git@github.com:odygrd/quill.git
 git clone git@github.com:grpc/grpc.git
+git clone git@github.com:abseil/abseil-cpp.git
 git clone git@github.com:kovacsnador/tinycoro.git
 git clone https://gitlab.com/libeigen/eigen.git
 git clone https://github.com/gabime/spdlog.git

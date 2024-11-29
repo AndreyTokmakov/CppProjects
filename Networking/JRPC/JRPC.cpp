@@ -9,14 +9,13 @@ Description : JRPC.cpp
 
 #include "JRPC.h"
 
-/*
 #include <grpcpp/grpcpp.h>
 
 using grpc::Server;
 using grpc::ServerBuilder;
 using grpc::ServerContext;
 using grpc::Status;
-*/
+
 
 /*
 namespace JRPC
@@ -40,7 +39,10 @@ namespace JRPC
     };
 }
 */
+
+
 void JRPC::TestAll()
 {
+    std::cout << __PRETTY_FUNCTION__ << std::endl;
 
 }

@@ -1463,7 +1463,6 @@ struct Some_Thread_Safe_Queue
 };
 
 
-
 int main([[maybe_unused]] int argc,
          [[maybe_unused]] char** argv)
 {
@@ -1496,8 +1495,9 @@ int main([[maybe_unused]] int argc,
     // StackTrace::TestAll();
 
 
-    int a[] = {1,2,3,4,5};
-    std::cout << sizeof(a) / sizeof (a[0]) << std::endl;
+    std::vector<int> data {1,2,3};
+    std::span<int> view {data};
+
 
     // Cpp23_Features::TestAll();
 

@@ -184,11 +184,11 @@ void ThreadPools::TestAll()
         // return 12345;
     };
 
-    ThreadPool<RetType(int)> pool(2);
+    ThreadPool<RetType(int)> pool(4);
     std::vector<std::future<RetType>> results;
-    for (int i = 1; i <= 4; i++)
+    for (int i = 1; i <= 8; i++)
     {
-        results.push_back(pool.submit(func, i));
+        results.push_back(pool.submit(func, 1));
     }
 
     LOG << "Waiting" << std::endl;

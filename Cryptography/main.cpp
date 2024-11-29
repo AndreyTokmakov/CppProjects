@@ -88,6 +88,9 @@ namespace LibCryptoCpp
         std::vector<uint8_t> key(AES_KEY_SIZE);
         std::vector<uint8_t> iv(CryptoPP::AES::BLOCKSIZE);
 
+        std::cout << "key.size() : " << key.size() << std::endl;
+        std::cout << "iv.size()  : " << iv.size() << std::endl;
+
         CryptoPP::BlockingRng rand;
         rand.GenerateBlock(key.data(), key.size());
         rand.GenerateBlock(iv.data(), iv.size());
