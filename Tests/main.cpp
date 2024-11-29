@@ -1495,10 +1495,6 @@ int main([[maybe_unused]] int argc,
     // StackTrace::TestAll();
 
 
-    std::vector<int> data {1,2,3};
-    std::span<int> view {data};
-
-
     // Cpp23_Features::TestAll();
 
 
