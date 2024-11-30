@@ -8,9 +8,13 @@ Description : Cryptography tests and experiments
 ============================================================================**/
 
 #include <iostream>
+#include <array>
 #include <vector>
 #include <string_view>
 #include <iomanip>
+#include <format>
+#include <fstream>
+#include <filesystem>
 
 #include "experiments/sha256_Original.h"
 #include "experiments/Sha256.h"
@@ -39,6 +43,39 @@ namespace Sha256Tests
         std::cout << "=======================================================================" << std::endl;
         std::cout << "'" << toSha256(input) << "'\n";
         std::cout << "'" << toSha256(input).length() << "'\n";
+    }
+}
+
+namespace FileUtilities
+{
+    constexpr size_t readBlockSize { 1024 };
+
+    std::string ReadFile(const std::filesystem::path &filePath)
+    {
+        if (std::ifstream file(filePath); file.is_open() && file.good())
+        {
+            file.seekg(0, std::ios_base::end);
+            size_t fileSize = file.tellg(), bytesRead = 0;
+            file.seekg(0, std::ios_base::beg);
+
+            std::string text(fileSize, '\0');
+            while ((bytesRead += file.readsome(text.data() + bytesRead, readBlockSize)) < fileSize) { }
+            return text;
+        }
+        return {};
+    }
+
+    int32_t WriteToFile(const std::filesystem::path& filePath,
+                        const std::string& text,
+                        std::ios_base::openmode mode)
+    {
+        if (std::ofstream file(filePath, mode); file.is_open() && file.good())
+        {
+            const int32_t pos = static_cast<int32_t>(file.tellp());
+            file.write(text.data(), std::ssize(text));
+            return static_cast<int32_t>(file.tellp()) - pos;
+        }
+        return -1;
     }
 }
 
@@ -80,10 +117,10 @@ namespace LibCryptoCpp
         return plain_text;
     }
 
-    void Tests()
+    void Tests_RandomPass()
     {
         constexpr size_t AES_KEY_SIZE = 256 / 8; //AES-256
-        constexpr std::string_view input {"This is a secret message."};
+        constexpr std::string_view input{"This is a secret message."};
 
         std::vector<uint8_t> key(AES_KEY_SIZE);
         std::vector<uint8_t> iv(CryptoPP::AES::BLOCKSIZE);
@@ -99,11 +136,38 @@ namespace LibCryptoCpp
         const std::string plain_text = decrypt(cipher, key, iv);
 
         std::cout << "cipher    : " << std::quoted(cipher) << std::endl;
-        std::cout << "plain_text: " << std::quoted(plain_text)<< std::endl;
+        std::cout << "plain_text: " << std::quoted(plain_text) << std::endl;
 
         if (plain_text != input) {
             std::cerr << "Error: plain text doesn't match the input" << std::endl;
         }
+    }
+
+    void Tests()
+    {
+        constexpr std::string_view input{"This is a secret message."};
+
+        std::vector<uint8_t> key {
+                0x8c, 0xd7, 0x6f, 0xf1, 0x32, 0xaa, 0x44, 0xb5, 0x44,0x71, 0x90, 0xf3, 0x4f, 0x52, 0xfd, 0x88,
+                0x3c, 0x4a,0xe3, 0x0, 0x42, 0xd9, 0x93, 0x40, 0xf5, 0x96, 0xa2, 0x30, 0x70, 0xf3, 0x3c, 0x78,
+                0x8c, 0xd7, 0x6f, 0xf1, 0x32, 0xaa, 0x44, 0xb5, 0x44,0x71, 0x90, 0xf3, 0x4f, 0x52, 0xfd, 0x88,
+                0x3c, 0x4a,0xe3, 0x0, 0x42, 0xd9, 0x93, 0x40, 0xf5, 0x96, 0xa2, 0x30, 0x70, 0xf3, 0x3c, 0x78
+        };
+        std::vector<uint8_t> iv {
+                0x9d, 0x85, 0xc7, 0x69, 0x7a, 0xec, 0xd4, 0x93, 0xa3, 0x4b, 0x1, 0x87, 0xb3, 0xf0, 0x46, 0x88
+        };
+
+        const std::string cipher = encrypt(input.data(), key, iv);
+        const std::string plain_text = decrypt(cipher, key, iv);
+
+        std::cout << "cipher    : " << std::quoted(cipher) << std::endl;
+        std::cout << "plain_text: " << std::quoted(plain_text) << std::endl;
+
+        if (plain_text != input) {
+            std::cerr << "Error: plain text doesn't match the input" << std::endl;
+        }
+
+
     }
 }
 
@@ -116,7 +180,10 @@ int main([[maybe_unused]] int argc,
     const std::vector<std::string_view> args(argv + 1, argv + argc);
 
     // Sha256Tests::Tests();
+
+    // LibCryptoCpp::Tests_RandomPass();
     LibCryptoCpp::Tests();
+
 
     return EXIT_SUCCESS;
 }

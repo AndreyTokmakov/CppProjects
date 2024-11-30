@@ -10,6 +10,7 @@
 #include "Byte.h"
 
 #include <iostream>
+#include <iomanip>
 
 namespace Byte {
     template <typename T>
@@ -68,9 +69,26 @@ namespace Byte::Size {
     }
 }
 
-void Byte::TestAll() {
+void printBytes_Hex()
+{
+    unsigned char bytes[] = {0x1A, 0xB4, 0xC8, 0x5F, 0x02};
+
+    // Print bytes as hexadecimal
+    for (unsigned char byte : bytes) {
+        std::cout << std::hex << std::setw(2) << std::setfill('0') << static_cast<int>(byte) << " ";
+    }
+
+    std::cout << std::endl;
+
+    // 1a b4 c8 5f 02
+}
+
+void Byte::TestAll()
+{
     // ToInt();
     // BaseTests();
 
     Size::Test();
+
+    printBytes_Hex();
 };

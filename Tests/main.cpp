@@ -1447,20 +1447,6 @@ namespace CompileTime_Programming
 }
 
 
-template <typename T>
-struct Some_Thread_Safe_Queue
-{
-    std::mutex mtx;                      // <-- 40 bytes
-    std::deque<T> queue;                 // <-- 80 bytes
-    std::condition_variable condition;   // <-- 48 bytes
-
-    void push(T&& new_value)
-    {
-        std::lock_guard<std::mutex> lock(mtx);
-        queue.push_back(std::move(new_value));
-        condition.notify_all();
-    }
-};
 
 
 int main([[maybe_unused]] int argc,
