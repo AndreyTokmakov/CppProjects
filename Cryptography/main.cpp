@@ -25,11 +25,28 @@ Description : Cryptography tests and experiments
 #include "modes.h"
 
 
+namespace
+{
+    static std::vector<uint8_t> str2Bytes(const std::string& message)
+    {
+        std::vector<uint8_t> out(message.size());
+        for (size_t n = 0; n < message.size(); n++) {
+            out[n] = message[n];
+        }
+        return out;
+    }
+
+    static std::string bytes2Str(const std::vector<uint8_t>& bytes)
+    {
+        return std::string(bytes.begin(), bytes.end());
+    }
+}
+
 
 namespace Sha256Tests
 {
-
-    void Tests() {
+    void Tests()
+    {
         std::string input = "1232323";
         std::string expected = "1092ab2771a1b8d2d88fad71b09d03875c6df0c429ab02faf522524d44cbe4a8";
 
@@ -65,14 +82,42 @@ namespace FileUtilities
         return {};
     }
 
+    std::vector<uint8_t> ReadFileAsBytes(const std::filesystem::path &filePath)
+    {
+        if (std::fstream file(filePath , std::ios::in | std::ios::binary); file.is_open() && file.good())
+        {
+            file.seekg(0, std::ios_base::end);
+            size_t fileSize = file.tellg(), bytesRead = 0;
+            file.seekg(0, std::ios_base::beg);
+
+            std::vector<uint8_t> data (fileSize);
+            while ((bytesRead += file.readsome(reinterpret_cast<char *>(data.data() + bytesRead), readBlockSize)) < fileSize) { }
+            return data;
+        }
+        return {};
+    }
+
     int32_t WriteToFile(const std::filesystem::path& filePath,
                         const std::string& text,
-                        std::ios_base::openmode mode)
+                        std::ios_base::openmode mode = std::ios::out)
     {
         if (std::ofstream file(filePath, mode); file.is_open() && file.good())
         {
             const int32_t pos = static_cast<int32_t>(file.tellp());
             file.write(text.data(), std::ssize(text));
+            return static_cast<int32_t>(file.tellp()) - pos;
+        }
+        return -1;
+    }
+
+    int32_t WriteToFileBytes(const std::filesystem::path& filePath,
+                             const std::vector<uint8_t>& data,
+                             std::ios_base::openmode mode = std::ios::out | std::ios::binary)
+    {
+        if (std::fstream file(filePath, mode); file.is_open() && file.good())
+        {
+            const int32_t pos = static_cast<int32_t>(file.tellp());
+            file.write(reinterpret_cast<const char *>(data.data()), std::ssize(data));
             return static_cast<int32_t>(file.tellp()) - pos;
         }
         return -1;
@@ -146,28 +191,27 @@ namespace LibCryptoCpp
     void Tests()
     {
         constexpr std::string_view input{"This is a secret message."};
-
-        std::vector<uint8_t> key {
-                0x8c, 0xd7, 0x6f, 0xf1, 0x32, 0xaa, 0x44, 0xb5, 0x44,0x71, 0x90, 0xf3, 0x4f, 0x52, 0xfd, 0x88,
-                0x3c, 0x4a,0xe3, 0x0, 0x42, 0xd9, 0x93, 0x40, 0xf5, 0x96, 0xa2, 0x30, 0x70, 0xf3, 0x3c, 0x78,
-                0x8c, 0xd7, 0x6f, 0xf1, 0x32, 0xaa, 0x44, 0xb5, 0x44,0x71, 0x90, 0xf3, 0x4f, 0x52, 0xfd, 0x88,
-                0x3c, 0x4a,0xe3, 0x0, 0x42, 0xd9, 0x93, 0x40, 0xf5, 0x96, 0xa2, 0x30, 0x70, 0xf3, 0x3c, 0x78
+        const std::vector<uint8_t> key {
+            0x8c, 0xd7, 0x6f, 0xf1, 0x32, 0xaa, 0x44, 0xb5, 0x44,0x71, 0x90, 0xf3, 0x4f, 0x52, 0xfd, 0x88,
+            0x3c, 0x4a,0xe3, 0x0, 0x42, 0xd9, 0x93, 0x40, 0xf5, 0x96, 0xa2, 0x30, 0x70, 0xf3, 0x3c, 0x78
         };
-        std::vector<uint8_t> iv {
-                0x9d, 0x85, 0xc7, 0x69, 0x7a, 0xec, 0xd4, 0x93, 0xa3, 0x4b, 0x1, 0x87, 0xb3, 0xf0, 0x46, 0x88
+        const std::vector<uint8_t> iv {
+            0x9d, 0x85, 0xc7, 0x69, 0x7a, 0xec, 0xd4, 0x93, 0xa3, 0x4b, 0x1, 0x87, 0xb3, 0xf0, 0x46, 0x88
         };
 
-        const std::string cipher = encrypt(input.data(), key, iv);
-        const std::string plain_text = decrypt(cipher, key, iv);
+        const std::string encryptedData = encrypt(input.data(), key, iv);
+        const std::filesystem::path dataFile { R"(/home/andtokm/Projects/CppProjects/Cryptography/data/data.txt)"};
+        FileUtilities::WriteToFile(dataFile, encryptedData);
 
-        std::cout << "cipher    : " << std::quoted(cipher) << std::endl;
+        const std::string dataFromFile = FileUtilities::ReadFile(dataFile);
+        const std::string plain_text = decrypt(dataFromFile, key, iv);
+
+        std::cout << "cipher    : " << std::quoted(encryptedData) << std::endl;
         std::cout << "plain_text: " << std::quoted(plain_text) << std::endl;
 
         if (plain_text != input) {
             std::cerr << "Error: plain text doesn't match the input" << std::endl;
         }
-
-
     }
 }
 

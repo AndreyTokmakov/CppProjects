@@ -416,10 +416,8 @@ namespace EncryptionEx
         return text;
     }
 
-
     void Encrypt_Decrypt_ViaFileEx()
     {
-
         const std::filesystem::path fileInput { R"(/home/andtokm/Temp/SSL/api_key.txt)" };
         // const std::filesystem::path fileEncrypted { R"(/home/andtokm/DiskS/Temp/SSL/api_key.out)" };
         ReadFileSlow(fileInput);
