@@ -75,7 +75,7 @@ Description : Tests C++ project
 #include "ConstexprMap/ConstexprMap.h"
 #include "Multithreading/Multithreading.h"
 #include "DesignPatterns/DesignPatterns.h"
-#include "Iterators/Iterators.h"3
+#include "Iterators/Iterators.h"
 #include "Math/Math.h"
 #include "Files_Filesystem/Files.h"
 #include "Helpers/Helpers.h"
@@ -1445,8 +1445,6 @@ namespace CompileTime_Programming
         static_assert(24 == factorialFunc(4));
     }
 }
-
-
 
 
 int main([[maybe_unused]] int argc,

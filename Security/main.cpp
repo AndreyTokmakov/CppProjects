@@ -18,8 +18,14 @@ Description : Cryptography tests and experiments
 
 #include "experiments/sha256_Original.h"
 #include "experiments/Sha256.h"
+#include "crc/CRC.h"
+#include "sha/Sha1.h"
+#include "SecureFIleBlockStorage/SecureFIleBlockStorage.h"
+#include "utils/FileUtilities.h"
 
 #include "rsa.h"
+#include "hex.h"
+#include "crc.h"
 #include "base64.h"
 #include "osrng.h"
 #include "modes.h"
@@ -63,66 +69,6 @@ namespace Sha256Tests
     }
 }
 
-namespace FileUtilities
-{
-    constexpr size_t readBlockSize { 1024 };
-
-    std::string ReadFile(const std::filesystem::path &filePath)
-    {
-        if (std::ifstream file(filePath); file.is_open() && file.good())
-        {
-            file.seekg(0, std::ios_base::end);
-            size_t fileSize = file.tellg(), bytesRead = 0;
-            file.seekg(0, std::ios_base::beg);
-
-            std::string text(fileSize, '\0');
-            while ((bytesRead += file.readsome(text.data() + bytesRead, readBlockSize)) < fileSize) { }
-            return text;
-        }
-        return {};
-    }
-
-    std::vector<uint8_t> ReadFileAsBytes(const std::filesystem::path &filePath)
-    {
-        if (std::fstream file(filePath , std::ios::in | std::ios::binary); file.is_open() && file.good())
-        {
-            file.seekg(0, std::ios_base::end);
-            size_t fileSize = file.tellg(), bytesRead = 0;
-            file.seekg(0, std::ios_base::beg);
-
-            std::vector<uint8_t> data (fileSize);
-            while ((bytesRead += file.readsome(reinterpret_cast<char *>(data.data() + bytesRead), readBlockSize)) < fileSize) { }
-            return data;
-        }
-        return {};
-    }
-
-    int32_t WriteToFile(const std::filesystem::path& filePath,
-                        const std::string& text,
-                        std::ios_base::openmode mode = std::ios::out)
-    {
-        if (std::ofstream file(filePath, mode); file.is_open() && file.good())
-        {
-            const int32_t pos = static_cast<int32_t>(file.tellp());
-            file.write(text.data(), std::ssize(text));
-            return static_cast<int32_t>(file.tellp()) - pos;
-        }
-        return -1;
-    }
-
-    int32_t WriteToFileBytes(const std::filesystem::path& filePath,
-                             const std::vector<uint8_t>& data,
-                             std::ios_base::openmode mode = std::ios::out | std::ios::binary)
-    {
-        if (std::fstream file(filePath, mode); file.is_open() && file.good())
-        {
-            const int32_t pos = static_cast<int32_t>(file.tellp());
-            file.write(reinterpret_cast<const char *>(data.data()), std::ssize(data));
-            return static_cast<int32_t>(file.tellp()) - pos;
-        }
-        return -1;
-    }
-}
 
 
 namespace LibCryptoCpp
@@ -131,16 +77,24 @@ namespace LibCryptoCpp
                        const std::vector<uint8_t>& key,
                        const std::vector<uint8_t>& iv)
     {
+        CryptoPP::AES::Encryption aes { CryptoPP::AES::Encryption(key.data(), key.size()) };
+        CryptoPP::CBC_Mode_ExternalCipher::Encryption aesCbc { CryptoPP::CBC_Mode_ExternalCipher::Encryption(aes, iv.data()) };
+
+        /* std::unique_ptr<CryptoPP::Base64Encoder> encoder {
+                std::make_unique<CryptoPP::Base64Encoder>(new CryptoPP::StringSink(cipher))
+        };
+
+        std::unique_ptr<CryptoPP::StreamTransformationFilter> transformFiler {
+                std::make_unique<CryptoPP::StreamTransformationFilter>(aes_cbc, encoder.get())
+        }; */
+
         std::string cipher;
+        CryptoPP::Base64Encoder* encoder = new CryptoPP::Base64Encoder(new CryptoPP::StringSink(cipher));
+        CryptoPP::StreamTransformationFilter* transformFiler = new CryptoPP::StreamTransformationFilter(aesCbc, encoder);
+        CryptoPP::StringSource ss(input, true, transformFiler);
 
-        auto aes = CryptoPP::AES::Encryption(key.data(), key.size());
-        auto aes_cbc = CryptoPP::CBC_Mode_ExternalCipher::Encryption(aes, iv.data());
-
-        CryptoPP::StringSource ss(
-            input,
-            true,
-            new CryptoPP::StreamTransformationFilter(aes_cbc,new CryptoPP::Base64Encoder(new CryptoPP::StringSink(cipher)))
-        );
+        // std::vector<uint8_t> data;
+        // CryptoPP::VectorSource vs(data, true, transformFiler);
 
         return cipher;
     }
@@ -200,7 +154,7 @@ namespace LibCryptoCpp
         };
 
         const std::string encryptedData = encrypt(input.data(), key, iv);
-        const std::filesystem::path dataFile { R"(/home/andtokm/Projects/CppProjects/Cryptography/data/data.txt)"};
+        const std::filesystem::path dataFile { R"(../../Security/data/data.txt)"};
         FileUtilities::WriteToFile(dataFile, encryptedData);
 
         const std::string dataFromFile = FileUtilities::ReadFile(dataFile);
@@ -224,9 +178,13 @@ int main([[maybe_unused]] int argc,
     const std::vector<std::string_view> args(argv + 1, argv + argc);
 
     // Sha256Tests::Tests();
-
     // LibCryptoCpp::Tests_RandomPass();
-    LibCryptoCpp::Tests();
+    // LibCryptoCpp::Tests();
+    // CRC::TestAll();
+    // Sha1::TestAll();
+
+    SecureFIleBlockStorage::TestAll();
+
 
 
     return EXIT_SUCCESS;
