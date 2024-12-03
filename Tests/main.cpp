@@ -92,7 +92,6 @@ Description : Tests C++ project
 #include "Cpp23_Features/StackTrace.h"
 #include "Auto/AutoTests.h"
 #include "Heap/Heap.h"
-#include "Comparators/Comparators.h"
 #include "FindMinMaxValues/FindMinMaxValues.h"
 #include "FindMinMaxValues/FindMinMaxValues.h"
 #include "FunctionCall_LookUp/FunctionCall_LookUp.h"
@@ -140,19 +139,6 @@ namespace
     }
 }
 
-std::string bin2hex(const std::string& input)
-{
-    std::string res;
-    const char hex[] = "0123456789ABCDEF";
-    for(auto sc : input)
-    {
-        unsigned char c = static_cast<unsigned char>(sc);
-        res += hex[c >> 4];
-        res += hex[c & 0xf];
-    }
-
-    return res;
-}
 
 class Graph
 {
@@ -199,31 +185,6 @@ struct Path: std::vector<T> {
         std::vector<T>::push_back(v);
     }
 };
-
-std::string FormatString(const std::string& s) {
-    std::string result;
-    result.reserve(s.size());
-
-    size_t  block = 0;
-    for (char c: s) {
-        if (' ' != c && '-' != c) {
-            result.push_back(c);
-            ++block;
-        }
-
-        if (block >= 3) {
-            result.push_back(' ');
-            block = 0;
-        }
-    }
-
-    if (result.size() > 3 && ' ' == result[result.size() -2])
-        std::swap(result[result.size() -2], result[result.size() -3]);
-
-    //std::cout << "[" << result[result.size() -2] << "]" << std::endl;
-
-    return result;
-}
 
 
 
@@ -301,7 +262,7 @@ namespace InvokeTest
         }
         */
 
-        auto getSelf()
+        Derived& getSelf() noexcept
         {
             auto &self = static_cast<Derived&>(*this);
             return self;
@@ -1464,7 +1425,7 @@ int main([[maybe_unused]] int argc,
     // MoveExperiments::test_perfect_forwarding();
     // MoveExperiments::test_overload();
 
-    // FindMinMaxValues::TestAll();
+    FindMinMaxValues::TestAll();
     // LockFreeQueue::Test();
     // ScopeExit::ScopeExit();
     // UBBook::Test();
@@ -1496,7 +1457,6 @@ int main([[maybe_unused]] int argc,
     // BinaryAnalyzer::TestAll();
     // Concepts::TestAll();
     // Crow::TestAll();
-    // Comparators::TestAll();
     // CollectionsTests::TestAll();
     // CopyElision_RVO::TestAll();
     // ConstexprMap::TestAll();

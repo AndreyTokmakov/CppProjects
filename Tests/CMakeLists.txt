@@ -62,7 +62,6 @@ add_executable(${PROJECT_NAME}
         Auto/AutoTests.cpp
         ObjectOrientedExperimetns/VirtualTables.cpp
         Heap/Heap.cpp
-        Comparators/Comparators.cpp
         FindMinMaxValues/FindMinMaxValues.cpp
         FunctionCall_LookUp/FunctionCall_LookUp.cpp
         Memory/AlignedStackAllocator.cpp

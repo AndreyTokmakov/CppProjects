@@ -47,6 +47,17 @@ namespace HexConverter
         return result;
     }
 
+    std::string bytesToHex(const std::string& bytesStr)
+    {
+        std::string result(bytesStr.size() * 2, '0');
+        for (size_t pos = 0; const uint8_t ch: bytesStr) {
+            result[pos++] = table[ch >> 4];
+            result[pos++] = table[ch & 0x0f];
+        }
+        return result;
+    }
+
+
     static constexpr uint8_t hexCode(unsigned char symbol) noexcept
     {
         if (symbol >= '0' && symbol <= '9')
@@ -108,6 +119,13 @@ void HexConverter::TestAll()
     {
         const std::string data {"some_test_data"};
         const std::string hexStr = bytesToHexStr(data.data(), data.size());
+        std::cout << hexStr << std::endl;
+    }
+
+
+    {
+        const std::string data {"some_test_data"};
+        const std::string hexStr = bytesToHex(data);
         std::cout << hexStr << std::endl;
     }
 
