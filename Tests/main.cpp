@@ -1425,7 +1425,7 @@ int main([[maybe_unused]] int argc,
     // MoveExperiments::test_perfect_forwarding();
     // MoveExperiments::test_overload();
 
-    FindMinMaxValues::TestAll();
+    // FindMinMaxValues::TestAll();
     // LockFreeQueue::Test();
     // ScopeExit::ScopeExit();
     // UBBook::Test();
@@ -1458,7 +1458,7 @@ int main([[maybe_unused]] int argc,
     // Concepts::TestAll();
     // Crow::TestAll();
     // CollectionsTests::TestAll();
-    // CopyElision_RVO::TestAll();
+    CopyElision_RVO::TestAll();
     // ConstexprMap::TestAll();
     // DebugLogger::TestAll();
     // DesignPatterns::TestAll();

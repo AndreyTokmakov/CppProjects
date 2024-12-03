@@ -109,7 +109,7 @@ int main([[maybe_unused]] int argc,
     // ConsoleInOut::TestAll();
     // ConstConstexprMutable::TestAll();
     // CompileTimeProgramming::TestAll();
-    // CopyElision::TestAll();
+    CopyElision::TestAll();
     // RVO_FailureCases::TestAll();
     // ClassTemplateArgumentDeduction::TestAll();
     // DateAndTime::TestAll();
@@ -166,7 +166,7 @@ int main([[maybe_unused]] int argc,
     // Templates::TestAll();
     // Utilities::TestAll();
     // CompilerVersion::TestAll();
-    UniquePtr::TestAll();
+    // UniquePtr::TestAll();
     // WeakPtr::TestAll();
 
     return EXIT_SUCCESS;

@@ -194,6 +194,12 @@ namespace CopyElision_RVO::Tests
         return i;
     }
 
+    Integer create_NRVO_2()
+    {
+        Integer i = Integer{2};
+        return i;
+    }
+
     void CreateTest()
     {
         std::cout << "-------------- RVO ---------------\n";
@@ -203,6 +209,10 @@ namespace CopyElision_RVO::Tests
         std::cout << "-------------- RNVO ---------------\n";
         {
             auto v = create_NRVO();
+        }
+        std::cout << "-------------- RNVO 2 ---------------\n";
+        {
+            auto v = create_NRVO_2();
         }
     }
 
@@ -341,7 +351,7 @@ void CopyElision_RVO::TestAll()
 {
     // SimpleExample::Test();
 
-    // Tests::CreateTest();
+    Tests::CreateTest();
 
     // Tests::UsingBuilder();
     // Tests::UsingBuilder2();
@@ -349,5 +359,5 @@ void CopyElision_RVO::TestAll()
 
     // NotDeclaredMoveConstructor::testAll();
 
-    Tests::Switch_Case_Create_Test();
+    // Tests::Switch_Case_Create_Test();
 }

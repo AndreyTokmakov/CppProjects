@@ -143,7 +143,7 @@ namespace Helpers
         }
 
         /** Postfix increment: **/
-        friend Wrapper operator++(Wrapper& origin, value_type) {
+        friend Wrapper operator++(Wrapper& origin, int) {
             const Wrapper oldValue { origin.value };
             ++origin.value;
             return oldValue;
@@ -156,7 +156,7 @@ namespace Helpers
         }
 
         /** Postfix decrement: **/
-        friend Wrapper operator--(Wrapper& origin, value_type) {
+        friend Wrapper operator--(Wrapper& origin, int) {
             const Wrapper oldValue { origin.value };
             origin.value--;
             return oldValue;

@@ -18,123 +18,17 @@
 #include <memory>
 
 #include "CopyElision.h"
-#include "../Integer/Integer.h"
+#include "../Helpers/Helpers.h"
 
-namespace GuaranteedCopyElision {
+using Helpers::Integer;
+using Helpers::Long;
 
-	struct Foo {
-		Foo() { std::cout << "Constructed" << std::endl; }
-		Foo(const Foo &) { std::cout << "Copy-constructed" << std::endl; }
-		Foo(Foo &&) { std::cout << "Move-constructed" << std::endl; }
-		~Foo() { std::cout << "Destructed" << std::endl; }
-	};
+namespace CopyElision
+{
+	struct Long_NonMove_NonCopy
+    {
+		long value { 0 };
 
-	Foo returnFoo_Test() {
-		return Foo();
-	}
-
-	void copyFooTest() {
-		Foo foo = returnFoo_Test();
-	}
-};
-
-namespace CopyElision {
-
-	class Long {
-	protected:
-		long value;
-
-	public:
-		Long(): value(0) {
-			std::cout << __FUNCTION__ << "(" << this->value << ")" << std::endl;
-		}
-
-		explicit Long(int val) : value(val) {
-			std::cout << __FUNCTION__ << "(" << this->value << ")" << std::endl;
-		}
-
-		Long(const Long &obj): value(obj.value) {
-			std::cout << __FUNCTION__ << " [Copy contructor]. (" << obj.value << ")" << std::endl;
-		}
-
-		Long(Long &&obj) : value(std::exchange(obj.value, 0)) {
-			std::cout << __FUNCTION__ << " [Move contructor]. (" << obj.value << ")" << std::endl;
-		}
-
-		Long& operator=(const Long& right) {
-			std::cout << "Long [Copy assignment operator]" << std::endl;
-			if (this == &right) {
-				return *this;
-			}
-			value = right.value;
-			return *this;
-		}
-
-		Long& operator=(Long&& integer) noexcept {
-			std::cout << "Long [Move assignment operator]" << std::endl;
-			this->value = std::exchange(integer.value, 0);
-			return *this;
-		}
-
-		virtual ~Long() {
-			std::cout << __FUNCTION__ << "(" << this->value << ")" << std::endl;
-		}
-
-		void printInfo() const noexcept {
-			std::cout << "Value =  " << this->value << std::endl;
-		}
-	};
-
-	//--------------------------------------------------------------------------//
-
-	class LongEx : public Long {
-		LongEx() : LongEx(0) {
-			std::cout << __FUNCTION__ << "(" << this->value << ")" << std::endl;
-		}
-
-		explicit LongEx(int val) : Long(val) {
-			std::cout << __FUNCTION__ << "(" << this->value << ")" << std::endl;
-		}
-
-		LongEx(const LongEx &obj) : Long(obj.value) {
-			std::cout << __FUNCTION__ << " [Copy contructor]. (" << obj.value << ")" << std::endl;
-		}
-
-		LongEx(LongEx &&obj) : Long(std::exchange(obj.value, 0)) {
-			std::cout << __FUNCTION__ << " [Move contructor]. (" << obj.value << ")" << std::endl;
-		}
-
-		LongEx& operator=(const LongEx& right) {
-			std::cout << "LongEx [Copy assignment operator]" << std::endl;
-			if (this == &right) {
-				return *this;
-			}
-			value = right.value;
-			return *this;
-		}
-
-		LongEx& operator=(LongEx&& integer) noexcept {
-			std::cout << "LongEx [Move assignment operator]" << std::endl;
-			this->value = std::exchange(integer.value, 0);
-			return *this;
-		}
-
-		virtual ~LongEx() {
-			std::cout << __FUNCTION__ << "(" << this->value << ")" << std::endl;
-		}
-
-		void printInfo() const noexcept {
-			std::cout << "Value =  " << this->value << std::endl;
-		}
-	};
-
-	//--------------------------------------------------------------------------//
-
-	class Long_NonMove_NonCopy {
-	private:
-		long value;
-
-	public:
 		Long_NonMove_NonCopy() : Long_NonMove_NonCopy(0) {
 			std::cout << "Long_NonMove_NonCopy (" << this->value << ")" << std::endl;
 		}
@@ -159,17 +53,19 @@ namespace CopyElision {
 	};
 }
 
+namespace CopyElision::Good
+{
 
-namespace CopyElision::Good {
-
-	Integer _getInteger() {
+	Integer getInteger()
+    {
 		Integer integer(1);
 		return integer;
 	}
 
-	void GetObject_FromFunction() {
-		Integer integer = _getInteger();
-		integer.printInfo();
+	void GetObject_FromFunction()
+    {
+		Integer integer = getInteger();
+		std::cout << integer.getValue() << std::endl;
 	}
 
 	//-------------------------------------------------------------------------------------//
@@ -197,14 +93,15 @@ namespace CopyElision::Good {
 
 	//-------------------------------------------------------------------------------------//
 
-	Long _get_ConCopy_Object_RNVO() {
-		Long obj(54321);
+	Long _get_ConCopy_Object_RNVO()
+    {
+		Long obj(3);
 		return obj;
 	}
 
 	void RNVO_Test() {
 		Long obj = _get_ConCopy_Object_RNVO();
-		obj.printInfo();
+        std::cout << obj.getValue() << std::endl;
 	}
 
 	//--------------------------------------------------------------------------------------//
@@ -214,9 +111,10 @@ namespace CopyElision::Good {
 		return obj;
 	}
 
-	void Get_Passed_Object() {
+	void Get_Passed_Object()
+    {
 		Long obj = _get_passed_object(Long(123));
-		obj.printInfo();
+        std::cout << obj.getValue() << std::endl;
 	}
 
 
@@ -227,9 +125,10 @@ namespace CopyElision::Good {
 		return T{ std::forward<Args>(args)... };
 	}
 
-	void GetObject_CreateForward() {
+	void GetObject_CreateForward()
+    {
 		auto obj = create<Long>(123);
-		obj.printInfo();
+        std::cout << obj.getValue() << std::endl;
 	}
 
 	//--------------------------------------------------------------------------------------//
@@ -243,9 +142,10 @@ namespace CopyElision::Good {
 		return std::move(nums[index]);
 	}
 
-	void GetObject_FromVector_MOVE() {
+	void GetObject_FromVector_MOVE()
+    {
 		Integer&& integer = _getInteger_FromVector(2);
-		integer.printInfo();
+        std::cout << integer.getValue() << std::endl;
 	}
 
 	//----------------------------------------------------------------------------------------//
@@ -390,20 +290,22 @@ namespace CopyElision::BAD {
 
 	void GetObject_FromFunction() {
 		Integer integer = _getInteger(Integer(123));
-		integer.printInfo();
+        std::cout << integer.getValue() << std::endl;
 	}
 
 	//-------------------------------------------------------//
 
-	Long _get_ConCopy_Object_RNVO() {
+	Long _get_ConCopy_Object_RNVO()
+    {
 		Long obj;
 		// Discard RNVO by using std::move()
 		return std::move(obj);
 	}
 
-	void RNVO_Test() {
+	void RNVO_Test()
+    {
 		Long obj = _get_ConCopy_Object_RNVO();
-		obj.printInfo();
+        std::cout << obj.getValue() << std::endl;
 	}
 
 	//-------------------------------------------------------//
@@ -415,13 +317,13 @@ namespace CopyElision::BAD {
 
 	void Get_Passed_Object() {
 		Long obj = _get_passed_object(Long(123));
-		obj.printInfo();
+        std::cout << obj.getValue() << std::endl;
 	}
 
 	void Get_Passed_Object_1() {
 		Long l(123);
 		Long obj = _get_passed_object(l);
-		obj.printInfo();
+        std::cout << obj.getValue() << std::endl;
 	}
 
 	//-----------------------------------------------------//
@@ -437,7 +339,7 @@ namespace CopyElision::BAD {
 
 	void GetObject_FromVector() {
 		Integer&& integer = _getInteger_FromVector(2);
-		integer.printInfo();
+        std::cout << integer.getValue() << std::endl;
 	}
 }
 
@@ -660,9 +562,65 @@ namespace CopyElision::NotDeclaredMoveConstructor
     }
 }
 
-void CopyElision::TestAll() {
+namespace CopyElision::BasicExamples
+{
+    Integer create_RVO(int v)
+    {
+        return {v};
+    }
 
-	// GuaranteedCopyElision::copyFooTest();
+    Integer create_RVO_2(int v)
+    {
+        return create_RVO(v);
+    }
+
+    Integer create_NRVO(int v)
+    {
+        Integer i {v};
+        return i;
+    }
+
+    Integer create_NRVO_2(int v)
+    {
+        Integer i = Integer{v};
+        return i;
+    }
+
+    Integer create_NRVO_3(int v)
+    {
+        Integer i = create_RVO_2(v);
+        return i;
+    }
+
+    void BasicTest()
+    {
+        std::cout << "-------------- RVO ---------------\n";
+        {
+            auto v = create_RVO(1);
+        }
+        std::cout << "-------------- RVO 2 ---------------\n";
+        {
+            auto v = create_RVO_2(2);
+        }
+        std::cout << "-------------- RNVO ---------------\n";
+        {
+            auto v = create_NRVO(3);
+        }
+        std::cout << "-------------- RNVO 2 ---------------\n";
+        {
+            auto v = create_NRVO_2(4);
+        }
+        std::cout << "-------------- RNVO 3 ---------------\n";
+        {
+            auto v = create_NRVO_3(5);
+        }
+    }
+}
+
+void CopyElision::TestAll()
+{
+
+    BasicExamples::BasicTest();
 
 	// GetObject_FromFunction();
 	// Good::GetObject_FromVector_MOVE();
@@ -686,6 +644,6 @@ void CopyElision::TestAll() {
 	// CustomTests::NRVO_Simple_Modif();
 	// CustomTests::NRVO_Simple_GetFromVector();
 
-    NotDeclaredMoveConstructor::testAll();
+    // NotDeclaredMoveConstructor::testAll();
 };
 
