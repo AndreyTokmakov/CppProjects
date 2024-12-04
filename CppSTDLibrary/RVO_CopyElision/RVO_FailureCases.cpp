@@ -249,15 +249,64 @@ namespace RVO_FailureCases::WrongType_Inheritance
 }
 
 
-// TODO:  [https://youtu.be/WyxUilrR6fU?t=1136]
-//  1 - When the return type is not the same as what's being returned ( Inheritance)
-//  2 - Multiple return statements returning DIFF types
+namespace RVO_FailureCases::Multiple_Objects
+{
+    Integer get_integer_multiple_objs_if_else_BAD(int v)
+    {
+        Integer one = Integer {1};
+        Integer other = Integer {v};
 
+        if (1 == v)
+            return one;
+
+        return other;
+    }
+
+    Integer get_integer_multiple_objs_if_else_OK(int v)
+    {
+        Integer obj = Integer {v};
+        if (1 == v)
+            obj.value = v;
+        return obj;
+    }
+
+    Integer get_integer_multiple_objs_if_else_OK_Multiple_Return(int v)
+    {
+        Integer obj = Integer {0};
+        if (1 == v)
+        {
+            obj.value = 1;
+            return obj;
+        }
+        else
+        {
+            obj.value = v;
+            return obj;
+        }
+    }
+
+    void Return_One_Of_Multiple_objects()
+    {
+        std::cout <<   "----------------- BAD ----------------\n"; {
+            Integer obj = get_integer_multiple_objs_if_else_BAD(1);
+        }
+        std::cout <<   "----------------- OK ----------------\n"; {
+            Integer obj = get_integer_multiple_objs_if_else_OK(1);
+        }
+        std::cout <<   "----------------- OK ----------------\n"; {
+            Integer obj = get_integer_multiple_objs_if_else_OK_Multiple_Return(1);
+        }
+    }
+}
+
+// TODO:  [https://youtu.be/WyxUilrR6fU?t=1136]
 void RVO_FailureCases::TestAll()
 {
     // If_Else_Branch::Test();
 
     // WrongType_Inheritance::Failure_Inheritance();
+
+    Multiple_Objects::Return_One_Of_Multiple_objects();
 
     // BAD::When_Return_Passed_Value();
 
@@ -266,5 +315,7 @@ void RVO_FailureCases::TestAll()
     // BAD::Return_Passed_Object();
     // BAD::Return_Passed_Object_Back();
 
-    BAD::GetObject_FromVector();
+    // BAD::GetObject_FromVector();
+
+
 }

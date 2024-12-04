@@ -109,8 +109,8 @@ int main([[maybe_unused]] int argc,
     // ConsoleInOut::TestAll();
     // ConstConstexprMutable::TestAll();
     // CompileTimeProgramming::TestAll();
-    CopyElision::TestAll();
-    // RVO_FailureCases::TestAll();
+    // CopyElision::TestAll();
+    RVO_FailureCases::TestAll();
     // ClassTemplateArgumentDeduction::TestAll();
     // DateAndTime::TestAll();
     // EnumTests::TestAll();
