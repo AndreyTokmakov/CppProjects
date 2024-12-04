@@ -299,6 +299,44 @@ namespace RVO_FailureCases::Multiple_Objects
     }
 }
 
+namespace RVO_FailureCases::Exceptions
+{
+    struct Error final : public std::runtime_error
+    {
+        explicit Error(const std::string& data) : runtime_error { data } {
+            std::cout << "Error(" << data << ")" << std::endl;
+        }
+
+        ~Error() override {
+            std::cout << "¬Error(" << runtime_error::what() << ")" << std::endl;
+        }
+
+        Error(const Error& exc) : runtime_error(exc)
+        {
+            std::cout << "Error(" << runtime_error::what() << "): copy constructor" << std::endl;
+        }
+
+        Error(Error&& exc) noexcept: runtime_error(std::move(exc))
+        {
+            std::cout << "Error(" << runtime_error::what() << ") noexcept: move constructor" << std::endl;
+        }
+
+        Error& operator=(const Error& exc)
+        {
+            std::cout << "Error(" << runtime_error::what()  << "): copy assignment" << std::endl;
+            return *this;
+        }
+
+        Error& operator=(Error&& exc) noexcept
+        {
+            //value = std::exchange(right.value, 0);
+            //std::cout << "LongEx(" << this->value << ") noexcept: move constructor" << std::endl;
+            return *this;
+        }
+    };
+
+}
+
 // TODO:  [https://youtu.be/WyxUilrR6fU?t=1136]
 void RVO_FailureCases::TestAll()
 {
