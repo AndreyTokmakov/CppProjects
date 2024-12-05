@@ -301,41 +301,81 @@ namespace RVO_FailureCases::Multiple_Objects
 
 namespace RVO_FailureCases::Exceptions
 {
-    struct Error final : public std::runtime_error
+    struct Exception final
     {
-        explicit Error(const std::string& data) : runtime_error { data } {
-            std::cout << "Error(" << data << ")" << std::endl;
+        std::string message;
+
+        explicit Exception(std::string&& msg) : message { std::move(msg) } {
+            std::cout << "Error(" << message << ")" << std::endl;
         }
 
-        ~Error() override {
-            std::cout << "¬Error(" << runtime_error::what() << ")" << std::endl;
+        ~Exception()  {
+            std::cout << "¬Error(" << message << ")" << std::endl;
         }
 
-        Error(const Error& exc) : runtime_error(exc)
+        [[nodiscard]]
+        const char* what() const noexcept {
+            return message.data();
+        }
+
+        Exception(const Exception& exc) : message { exc.message }
         {
-            std::cout << "Error(" << runtime_error::what() << "): copy constructor" << std::endl;
+            std::cout << "Error(" <<message << "): copy constructor" << std::endl;
         }
 
-        Error(Error&& exc) noexcept: runtime_error(std::move(exc))
+        Exception(Exception&& exc) noexcept: message { std::move(exc.message) }
         {
-            std::cout << "Error(" << runtime_error::what() << ") noexcept: move constructor" << std::endl;
+            std::cout << "Error(" << message << ") noexcept: move constructor" << std::endl;
         }
 
-        Error& operator=(const Error& exc)
+        Exception& operator=(const Exception& exc)
         {
-            std::cout << "Error(" << runtime_error::what()  << "): copy assignment" << std::endl;
+            message = exc.message;
+            std::cout << "operator= Error(" << message  << "): copy assignment" << std::endl;
             return *this;
         }
 
-        Error& operator=(Error&& exc) noexcept
+        Exception& operator=(Exception&& exc) noexcept
         {
-            //value = std::exchange(right.value, 0);
-            //std::cout << "LongEx(" << this->value << ") noexcept: move constructor" << std::endl;
+            message = std::move(exc.message);
+            std::cout << "operator= Error(" << message  << ") noexcept: move assignment" << std::endl;
             return *this;
         }
     };
 
+    void throw_func_1() {
+        Exception exc {"Failure"};
+        throw exc;
+    }
+
+    void Test_BAD()
+    {
+        try {
+            throw_func_1();
+        }
+        catch (const Exception& exc) {
+            std::cout << exc.what() << std::endl;
+        }
+
+        // Error(Failure)
+        // Error(Failure) noexcept: move constructor
+        // ~Error()
+        // Failure
+        // ~Error(Failure)
+    }
+
+    void Test_OK()
+    {
+        try {
+            throw Exception{"Failure"};
+        }
+        catch (const Exception& exc) {
+            std::cout << exc.what() << std::endl;
+        }
+    }
 }
+
+
 
 // TODO:  [https://youtu.be/WyxUilrR6fU?t=1136]
 void RVO_FailureCases::TestAll()
@@ -344,7 +384,7 @@ void RVO_FailureCases::TestAll()
 
     // WrongType_Inheritance::Failure_Inheritance();
 
-    Multiple_Objects::Return_One_Of_Multiple_objects();
+    // Multiple_Objects::Return_One_Of_Multiple_objects();
 
     // BAD::When_Return_Passed_Value();
 
@@ -355,5 +395,7 @@ void RVO_FailureCases::TestAll()
 
     // BAD::GetObject_FromVector();
 
+    Exceptions::Test_BAD();
+    Exceptions::Test_OK();
 
 }
