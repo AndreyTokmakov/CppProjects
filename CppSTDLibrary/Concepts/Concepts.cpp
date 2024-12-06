@@ -2686,16 +2686,49 @@ namespace Concepts::STD::Derived_From
     }
 }
 
-//
+
+namespace Concepts::CRPT_Replace
+{
+    struct AnimalTag {};
+
+    template<typename T>
+    concept Animal = requires(T animal) { animal.make_sound();} &&
+        std::derived_from<T, AnimalTag>;
+
+    void print(const Animal auto& animal) {
+        animal.make_sound();
+    }
+
+    struct Sheep: AnimalTag {
+        void make_sound() const { std::cout << __PRETTY_FUNCTION__ << std::endl; }
+    };
+
+    struct Cow: AnimalTag {
+        void make_sound() const { std::cout << __PRETTY_FUNCTION__ << std::endl; }
+    };
+
+    struct Dog: AnimalTag {
+        void make_sound() const { std::cout << __PRETTY_FUNCTION__ << std::endl; }
+    };
+
+    void Concepts_Instead_CRTP()
+    {
+        constexpr Cow cow;
+        print(cow);
+
+        constexpr Sheep sheep;
+        print(sheep);
+
+        constexpr Dog dog;
+        print(dog);
+    }
+}
+
 
 void Concepts::TestAll()
 {
     // MovableTest();
-
     // Lambda_Concept_Tests();
-
-
-
     // STDConcepts::Copyable();
 
 
@@ -2732,7 +2765,6 @@ void Concepts::TestAll()
     // Requires_With_Constexpr::Constexpr_Check_Method();
     Requires_With_Constexpr::PushBackToSomeCollection_CheckPushback_vs_Insert();
 
-
     // RequiresSequence::Test1();
 
     // Callables::Test_Invocable();
@@ -2760,17 +2792,11 @@ void Concepts::TestAll()
 
 
 
-
+    CRPT_Replace::Concepts_Instead_CRTP();
     // ConceptsAsInterface::passClassObjAsInterface();
-
     // NestedConcepts::CheckMethodReturnType();
-
-
-
     // SFINAE::ChooseOverloadedFunc_WithRequire();
-
     // Function_Constrains::Test_Function_Return_Int();
-
 
     // Conversations::String_Test();
     // Conversations::Convertible_To_Tests();

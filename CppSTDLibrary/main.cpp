@@ -105,12 +105,12 @@ int main([[maybe_unused]] int argc,
     // Byte::TestAll();
     // Chrono::TestAll();
     // Comparators::TestAll();
-    // Concepts::TestAll();
+    Concepts::TestAll();
     // ConsoleInOut::TestAll();
     // ConstConstexprMutable::TestAll();
     // CompileTimeProgramming::TestAll();
     // CopyElision::TestAll();
-    RVO_FailureCases::TestAll();
+    // RVO_FailureCases::TestAll();
     // ClassTemplateArgumentDeduction::TestAll();
     // DateAndTime::TestAll();
     // EnumTests::TestAll();
