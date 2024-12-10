@@ -86,8 +86,32 @@ namespace Nlohmann
         // std::string_view value = jsonDataEx["name"].get<std::string_view>();
         // std::cout << value << std::endl;
     }
+
+
+    void Create_and_Parse_Json_2()
+    {
+        nlohmann::json jsonData {
+            { "marketId", 112233 },
+            { "name", "TEST_1" },
+        };
+
+        const std::string jsonString = jsonData.dump();
+        std::cout << jsonData << "\n" << jsonString << std::endl;
+
+        const nlohmann::json jsonData_New = nlohmann::json::parse(jsonString);
+        std::cout << jsonData_New << std::endl;
+    }
 }
 
+
+namespace Nlohmann::Array
+{
+    void CreateArray()
+    {
+        nlohmann::json jsonArray = nlohmann::json::array({1,2,3});
+        std::cout << jsonArray << std::endl;
+    }
+}
 
 
 
@@ -101,6 +125,8 @@ void Nlohmann::TestAll()
     // ParseJson_File();
     // ParseJson_File2();
 
-    Create_and_Parse_Json();
+    // Create_and_Parse_Json();
+    Create_and_Parse_Json_2();
 
+    // Array::CreateArray();
 }

@@ -1413,6 +1413,7 @@ int main([[maybe_unused]] int argc,
 {
     const std::vector<std::string_view> args(argv + 1, argv + argc);
 
+
     // WrapperTests::Test();
     // StaticCounter::Test();
     // LookUpTests::Unexpected_Method_Call_Resolution();
@@ -1458,7 +1459,7 @@ int main([[maybe_unused]] int argc,
     // Concepts::TestAll();
     // Crow::TestAll();
     // CollectionsTests::TestAll();
-    CopyElision_RVO::TestAll();
+    // CopyElision_RVO::TestAll();
     // ConstexprMap::TestAll();
     // DebugLogger::TestAll();
     // DesignPatterns::TestAll();
@@ -1476,7 +1477,7 @@ int main([[maybe_unused]] int argc,
     // ObjectOrientedExperiments::RAIIWrapper::TestAll();
     // ObjectOrientedExperiments::OOP_Experiments::TestAll();
     // ObjectOrientedExperiments::VirtualTables::TestAll();
-    // Optional::TestAll();
+    Optional::TestAll();
     // PointsAndLines::TestAll();           // Geometry
 
     // Iterators::TestAll();
@@ -1486,7 +1487,6 @@ int main([[maybe_unused]] int argc,
     // ExpressionTemplates::TestAll();
     // TestAssignments::TestAll();
     // TableFormatter::TestAll();
-
 
     // Convertaion_UTF8_UTF32::TestAll();    // Encoding
     // Unicode::TestAll();                   // Encoding
@@ -1498,26 +1498,6 @@ int main([[maybe_unused]] int argc,
     // OrderBook2::TestAll();
     // MatchingOrderBook::TestAll();
     // MatchingOrderBookEx::TestAll();
-
-
-    /*
-    uint16_t retryMaxCount {10};
-
-    try {
-        uint16_t retryCount{0};
-
-        while (true) {
-            std::cout << retryCount << std::endl;
-            if (++retryCount >= retryMaxCount) {
-                throw std::runtime_error("The maximum allowed number of attempts to create a producer has been reached ");
-            }
-        }
-    }
-    catch (const std::exception& exc)
-    {
-        std::cerr << "Exception. Message: " << exc.what() << std::endl;
-    }*/
-
 
     return EXIT_SUCCESS;
 }

@@ -60,7 +60,7 @@ add_executable(${PROJECT_NAME}
 		ObjectOrientedProgramming/ObjectOrientedProgramming.cpp
 		ObjectOrientedProgramming/Operators.cpp
 		ObjectOrientedProgramming/RefQualifierMemberFunctions.cpp
-		OptionalTests/OptionalTests.cpp
+        Optional/Optional.cpp
 		PolymorphicMemoryResources/PolymorphicMemoryResources.cpp
 		Random/Random.cpp
 		Ranges/Ranges.cpp
