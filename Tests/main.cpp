@@ -1458,7 +1458,7 @@ int main([[maybe_unused]] int argc,
     // BinaryAnalyzer::TestAll();
     // Concepts::TestAll();
     // Crow::TestAll();
-    // CollectionsTests::TestAll();
+    CollectionsTests::TestAll();
     // CopyElision_RVO::TestAll();
     // ConstexprMap::TestAll();
     // DebugLogger::TestAll();
@@ -1477,7 +1477,7 @@ int main([[maybe_unused]] int argc,
     // ObjectOrientedExperiments::RAIIWrapper::TestAll();
     // ObjectOrientedExperiments::OOP_Experiments::TestAll();
     // ObjectOrientedExperiments::VirtualTables::TestAll();
-    Optional::TestAll();
+    // Optional::TestAll();
     // PointsAndLines::TestAll();           // Geometry
 
     // Iterators::TestAll();

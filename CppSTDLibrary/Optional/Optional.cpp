@@ -554,6 +554,7 @@ namespace MonadicOperations
             std::cout << value << std::endl;
         }
     }
+
 }
 
 

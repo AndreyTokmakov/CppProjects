@@ -802,6 +802,24 @@ namespace CollectionsTests::Map
         iter = orderBook.try_emplace(1);
         std::cout << std::boolalpha << iter.second << std::endl;
     }
+
+
+    void Emplace_Return_Value_Test()
+    {
+        constexpr int32_t marketId { 12345 };
+        std::map<int32_t, int32_t> seqNumMap;
+
+        int32_t seqNum = seqNumMap.emplace(marketId, 0).first->second;
+        std::cout << seqNum << std::endl;
+
+        seqNum = seqNumMap.emplace(marketId, 123).first->second;
+        std::cout << seqNum << std::endl;
+
+        seqNumMap[marketId] = 777;
+
+        seqNum = seqNumMap.emplace(marketId, 777).first->second;
+        std::cout << seqNum << std::endl;
+    }
 }
 
 void CollectionsTests::TestAll()
@@ -835,5 +853,6 @@ void CollectionsTests::TestAll()
     // MapOfVectors_MoveValue::MoveMapValue_PassToFunc();
 
 
-    Map::Try_Emplace_Value_Class();
+    // Map::Try_Emplace_Value_Class();
+    Map::Emplace_Return_Value_Test();
 };
