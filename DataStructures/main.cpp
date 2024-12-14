@@ -24,6 +24,7 @@ Description : DataStructures
 #include "GenericTableTemplate/GenericTableTemplate.h"
 #include "Optional/Optional.h"
 #include "Logger/Logger.h"
+#include "RingBuffer/RingBuffer.h"
 #include "MinHeap/MinHeap.h"
 #include "MinStack/MinStack.h"
 #include "MinMaxStack/MinMaxStack.h"
@@ -62,6 +63,7 @@ int main([[maybe_unused]] int argc,
     // BitSet::TEST_ALL();
     // CategoryTree::TEST_ALL();
     // CircularBuffers::TEST_ALL();
+    RingBuffer::TestAll();
     // CustomVector::TestAll();
     // ExecutorAdapter::TestAll();
     // ExecutorAdapter2::TestAll();
@@ -77,7 +79,7 @@ int main([[maybe_unused]] int argc,
     // RAII_CommitWrapper::TEST_ALL();
     // ReferenceWrapper::Test();
     // TwoSidedVector::TestAll();
-    MinStack::TestAll();
+    // MinStack::TestAll();
     // MinMaxStack::TestAll();
     // MinHeap::TestAll();
     // HeapWithComparator::TestAll();

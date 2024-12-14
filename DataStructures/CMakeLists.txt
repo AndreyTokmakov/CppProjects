@@ -10,23 +10,23 @@ add_compile_options(-c -Wall -Wextra -O3 -std=c++2a)
 # include all components
 add_executable(${PROJECT_NAME}
 		main.cpp
-		BitSet/BitSet.cpp BitSet/BitSet.h
-		CircularBuffers/CircularBuffers.cpp CircularBuffers/CircularBuffers.h
-		Logger/Logger.cpp Logger/Logger.h
-		LRUCache/LRUCache.cpp LRUCache/LRUCache.h
-		ObjectPools/ObjectPools.cpp ObjectPools/ObjectPools.h
-		LockFreeDataStructures/LockFreeQueue.cpp LockFreeDataStructures/LockFreeQueue.h
-		Finalizers/Finalizers.cpp Finalizers/Finalizers.h
-		Optional/Optional.cpp Optional/Optional.h
-		SharedPtr/SharedPtr.cpp SharedPtr/SharedPtr.h
-		ThreadsafeQueue/ThreadsafeQueue.cpp ThreadsafeQueue/ThreadsafeQueue.h
-		TTLCache/TTLCache.cpp TTLCache/TTLCache.h
-		Utilities/Integer.cpp Utilities/Integer.h
-		Utilities/ThreadHelperUtilities.cpp Utilities/ThreadHelperUtilities.h
-		Memory/AlignedStackAllocator.cpp Memory/AlignedStackAllocator.h
-		Memory/CustomStackAllocator.cpp Memory/CustomStackAllocator.h
-		CustomVector/CustomVector.cpp CustomVector/CustomVector.h
-		ReferenceWrapper/ReferenceWrapper.cpp ReferenceWrapper/ReferenceWrapper.h
+		BitSet/BitSet.cpp
+		CircularBuffers/CircularBuffers.cpp
+		Logger/Logger.cpp
+		LRUCache/LRUCache.cpp
+		ObjectPools/ObjectPools.cpp
+		LockFreeDataStructures/LockFreeQueue.cpp
+		Finalizers/Finalizers.cpp
+		Optional/Optional.cpp
+		SharedPtr/SharedPtr.cpp
+		ThreadsafeQueue/ThreadsafeQueue.cpp
+		TTLCache/TTLCache.cpp
+		Utilities/Integer.cpp
+		Utilities/ThreadHelperUtilities.cpp
+		Memory/AlignedStackAllocator.cpp
+		Memory/CustomStackAllocator.cpp
+		CustomVector/CustomVector.cpp
+		ReferenceWrapper/ReferenceWrapper.cpp
 		LinkedList/LinkedList.cpp
 		ThreadPoolOne/ThreadPoolOne.cpp
 		ThreadPoolTwo/ThreadPoolTwo.cpp
@@ -38,21 +38,21 @@ add_executable(${PROJECT_NAME}
 		Function/Function.cpp
 		ExecutorAdapter/ExecutorAdapter.cpp
 		HashTable/HashTable.cpp
-		ExecutorAdapter2/ExecutorAdapter2.cpp ExecutorAdapter2/ExecutorAdapter2.h
-		ObjectNumberLimiter/ObjectNumberLimiter.cpp ObjectNumberLimiter/ObjectNumberLimiter.h
-		BinaryTree/BinaryTree.cpp BinaryTree/BinaryTree.h
-		ThreadPoolLimited/ThreadPoolLimited.cpp ThreadPoolLimited/ThreadPoolLimited.h
-		Trie/Trie.cpp Trie/Trie.h
-		Utilities/Long.cpp Utilities/Long.h
-        TwoSidedVector/TwoSidedVector.cpp TwoSidedVector/TwoSidedVector.h
+		ExecutorAdapter2/ExecutorAdapter2.cpp
+		ObjectNumberLimiter/ObjectNumberLimiter.cpp
+		BinaryTree/BinaryTree.cpp
+		ThreadPoolLimited/ThreadPoolLimited.cpp
+		Trie/Trie.cpp
+		Utilities/Long.cpp
+        TwoSidedVector/TwoSidedVector.cpp
 		MinMaxStack/MinMaxStack.cpp
-		MinStack/MinStack.cpp MinStack/MinStack.h
-		MinHeap/MinHeap.cpp MinHeap/MinHeap.h
-		Heap_WithComparator/HeapWithComparator.cpp Heap_WithComparator/HeapWithComparator.h
-		Compressed_Pair/CompressedPair.cpp  Compressed_Pair/CompressedPair.h
+		MinStack/MinStack.cpp
+		MinHeap/MinHeap.cpp
+		Heap_WithComparator/HeapWithComparator.cpp
+		Compressed_Pair/CompressedPair.cpp
 		Wrapper/Wrapper.h
 		ThreadPool/ThreadPool.cpp
-		ThreadPool/ThreadPool.h
+		RingBuffer/RingBuffer.cpp
 )
 
 # Link libraries to the project/executable
