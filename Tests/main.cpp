@@ -1407,40 +1407,13 @@ namespace CompileTime_Programming
     }
 }
 
-template<typename T>
-void show_bits(T x)
-{
-    for (int i = (sizeof(T) * 8) - 1; i >= 0; i--)
-        std::cout << (x & (1u << i) ? '1' : '0');
-    std::cout << std::endl;
-}
-
-template<typename T>
-void set_bit(T& num, uint32_t bit)
-{
-    if (sizeof(T) * 8 > bit - 1 )
-    {
-        num |= (1 << (bit - 1));
-    }
-}
-
 
 
 int main([[maybe_unused]] int argc,
-         [[maybe_unused]] char** argv) {
+         [[maybe_unused]] char** argv)
+{
     const std::vector<std::string_view> args(argv + 1, argv + argc);
 
-
-    bool value = 32;
-
-    std::cout << std::boolalpha << value << std::endl;
-    show_bits(value);
-
-    set_bit(value, 2);
-
-
-    std::cout << std::boolalpha << value << std::endl;
-    show_bits(value);
 
 
     // WrapperTests::Test();
@@ -1512,7 +1485,7 @@ int main([[maybe_unused]] int argc,
     // Iterators::TestAll();
     // Strings::TestAll();
     // Performance::TestAll();
-    // Templates::TestAll();
+    Templates::TestAll();
     // ExpressionTemplates::TestAll();
     // TestAssignments::TestAll();
     // TableFormatter::TestAll();

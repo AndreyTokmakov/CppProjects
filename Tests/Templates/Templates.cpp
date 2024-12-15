@@ -543,7 +543,40 @@ namespace pack_indexing
     }
 }
 
+namespace Templates::FoldExpressions
+{
+    template<typename T, size_t... sizes>
+    auto concat(const std::array<T, sizes>&... arrays)
+    {
+        std::array<T, (sizes + ...)> resultArray;
+        size_t idx {};
+        ((std::copy_n(arrays.begin(), sizes, resultArray.begin() + idx), idx += sizes), ...);
+        return resultArray;
+    }
 
+    void Concatenate_Arrays()
+    {
+        std::array<int, 3> values1 {1, 2, 3};
+        std::array<int, 1> values2 {4};
+        std::array<int, 4> values3 {5,6,7,8};
+
+        {
+            const auto result = concat(values1, values2);
+            for (const auto &v: result) {
+                std::cout << v << ' ';
+            }
+            std::cout << std::endl;
+        }
+
+        {
+            const auto result = concat(values1, values2, values3);
+            for (const auto &v: result) {
+                std::cout << v << ' ';
+            }
+            std::cout << std::endl;
+        }
+    }
+}
 
 
 
@@ -559,6 +592,8 @@ void Templates::TestAll()
     // FoldExpressions::Recursive_Expansion_Two();
     // FoldExpressions::GetFirstElementType_CreateVector();
 
+    FoldExpressions::Concatenate_Arrays();
+
     // NTTP::testConfig();
     // NTTP::testPersonalBudget();
 
@@ -572,5 +607,5 @@ void Templates::TestAll()
     // CompressedPair::Tests();
 
 
-    pack_indexing::get_parameters_pack_element();
+    // pack_indexing::get_parameters_pack_element();
 }

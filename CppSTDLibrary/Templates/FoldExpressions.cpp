@@ -572,6 +572,41 @@ namespace FoldExpressions
     }
 }
 
+namespace FoldExpressions
+{
+    template<typename T, size_t... sizes>
+    auto concat(const std::array<T, sizes>&... arrays)
+    {
+        std::array<T, (sizes + ...)> resultArray;
+        size_t idx {};
+        ((std::copy_n(arrays.begin(), sizes, resultArray.begin() + idx), idx += sizes), ...);
+        return resultArray;
+    }
+
+    void Concatenate_Arrays()
+    {
+        std::array<int, 3> values1 {1, 2, 3};
+        std::array<int, 1> values2 {4};
+        std::array<int, 4> values3 {5,6,7,8};
+
+        {
+            const auto result = concat(values1, values2);
+            for (const auto &v: result) {
+                std::cout << v << ' ';
+            }
+            std::cout << std::endl;
+        }
+
+        {
+            const auto result = concat(values1, values2, values3);
+            for (const auto &v: result) {
+                std::cout << v << ' ';
+            }
+            std::cout << std::endl;
+        }
+    }
+}
+
 
 void FoldExpressions::TestAll()
 {
@@ -596,10 +631,13 @@ void FoldExpressions::TestAll()
     // Init_Vector_Class();
 
     // Classes::FoldClassMethod();
-    Classes::Call_All_Base_Class_Constructor();
+    // Classes::Call_All_Base_Class_Constructor();
+
+    Concatenate_Arrays();
 
     // FoldedPathTraversals();
     // FoldedMultiClassConstructors();
+
 
     // Average();
     // For_Each();
