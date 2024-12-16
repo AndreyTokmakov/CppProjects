@@ -169,6 +169,37 @@ namespace LibCryptoCpp
     }
 }
 
+namespace SecurityBug
+{
+    void f1()
+    {
+        /*
+        std::array<char, 8> secret {'p','a','s','s','w','o','r','d'};
+        std::cout << std::string(secret.data(), secret.size()) << std::endl;
+        */
+
+        char secret[] = {'p','a','s','s','w','o','r','d'};
+        std::cout << secret << std::endl;
+    }
+
+    void f2()
+    {
+        /*
+        std::array<char, 8> secret;
+        std::cout << std::string(secret.data(), secret.size()) << std::endl;
+        */
+
+        char secret[8];
+        std::cout << secret << std::endl;
+    }
+
+    void test()
+    {
+        f1();
+        f2();
+    }
+}
+
 
 /// CryptoCPP: https://github.com/weidai11/cryptopp
 
@@ -183,9 +214,12 @@ int main([[maybe_unused]] int argc,
     // CRC::TestAll();
     // Sha1::TestAll();
 
-    SecureFIleBlockStorage::TestAll();
+    // SecureFIleBlockStorage::TestAll();
+
+    /// AES-GCM ????
 
 
+    SecurityBug::test();
 
     return EXIT_SUCCESS;
 }

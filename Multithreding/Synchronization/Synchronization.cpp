@@ -69,7 +69,7 @@ namespace Synchronization
                 ++counter;
                 THREAD_INFO  << "Counter: " << counter << std::endl;
                 //mtx.unlock();
-                std::this_thread::sleep_for(std::chrono::milliseconds(10));
+                std::this_thread::sleep_for(std::chrono::milliseconds(10u));
             }
         };
 
@@ -91,7 +91,7 @@ namespace Synchronization
             const std::lock_guard<std::mutex> lock(mtx);
             ++sharedVariable;
             THREAD_INFO << sharedVariable << std::endl;
-            std::this_thread::sleep_for(std::chrono::milliseconds(100));
+            std::this_thread::sleep_for(std::chrono::milliseconds(100u));
             // g_i_mutex is automatically released when lock goes out of scope
         };
 
@@ -283,12 +283,12 @@ namespace Synchronization::UniqueLock
 
     void prepare_data() {
         THREAD_INFO << " Prepate data\n";
-        std::this_thread::sleep_for(std::chrono::seconds(3));
+        std::this_thread::sleep_for(std::chrono::seconds(3u));
     }
 
     void handle_data() {
         THREAD_INFO << " Handle data\n";
-        std::this_thread::sleep_for(std::chrono::seconds(3));
+        std::this_thread::sleep_for(std::chrono::seconds(3u));
     }
 
     std::unique_lock<std::mutex> processData() {
@@ -314,7 +314,7 @@ namespace Synchronization::SharedMutext {
         auto reader = [&]()->void {
             std::unique_lock<std::mutex> slk(mtx);
             THREAD_INFO << "Read i as " << i << "..." << std::endl;
-            std::this_thread::sleep_for(std::chrono::milliseconds(10));
+            std::this_thread::sleep_for(std::chrono::milliseconds(10u));
             THREAD_INFO << "Woke up..." << std::endl;
         };
 
@@ -373,10 +373,10 @@ namespace Synchronization::SharedMutext {
                 {
                     std::shared_lock lock(mtx);
                     std::osyncstream{std::cout} << "Reader: entered" << std::endl;
-                    std::this_thread::sleep_for(std::chrono::seconds(2));
+                    std::this_thread::sleep_for(std::chrono::seconds(2u));
                     std::osyncstream{std::cout} << "Reader: exited" << std::endl;
                 }
-                std::this_thread::sleep_for(std::chrono::milliseconds (100));
+                std::this_thread::sleep_for(std::chrono::milliseconds (100u));
             }
         };
 
@@ -384,7 +384,7 @@ namespace Synchronization::SharedMutext {
             while (true) {
                 std::lock_guard lock(mtx);
                 std::osyncstream {std::cout}  << "Writer: entered" << std::endl;
-                std::this_thread::sleep_for(std::chrono::seconds(2));
+                std::this_thread::sleep_for(std::chrono::seconds(2u));
                 std::osyncstream {std::cout}  << "Writer: exited" << std::endl;
             }
         };
@@ -414,7 +414,7 @@ namespace Synchronization::SharedTimedMutext {
         void update_or_add_entry(const std::string& domain, const dns_entry& dns_details) {
             std::lock_guard<std::shared_mutex> lock(entry_mutex);
             THREAD_INFO << "Updating cache." << std::endl;
-            std::this_thread::sleep_for(std::chrono::seconds(2)); //4Test
+            std::this_thread::sleep_for(std::chrono::seconds(2u)); //4Test
             entries[domain] = dns_details;
             THREAD_INFO << "Update done" << std::endl;
         }
@@ -429,7 +429,7 @@ namespace Synchronization::SharedTimedMutext {
             // both the threads get access to the integer i
             std::shared_lock<std::shared_timed_mutex> slk(m);
             THREAD_INFO << "Read i as " << i << "..." << std::endl;
-            std::this_thread::sleep_for(std::chrono::milliseconds(10));
+            std::this_thread::sleep_for(std::chrono::milliseconds(10u));
             THREAD_INFO << "Woke up..." << std::endl;
         };
 
@@ -444,14 +444,14 @@ namespace Synchronization::SharedTimedMutext {
     {
         DNSCache cache;
 
-        auto reader = [&cache](const std::string& domain, int timeout)-> void {
+        auto reader = [&cache](const std::string& domain, uint32_t timeout)-> void {
             while (true) {
                 std::this_thread::sleep_for(std::chrono::milliseconds(timeout));
                 cache.find_entry(domain);
             }
         };
 
-        auto writer = [&cache](const std::string& domain, int timeout)-> void {
+        auto writer = [&cache](const std::string& domain, uint32_t timeout)-> void {
             while (true) {
                 std::this_thread::sleep_for(std::chrono::seconds(timeout));
                 cache.update_or_add_entry(domain, "some_info");
@@ -476,7 +476,7 @@ namespace Synchronization::SharedTimedMutext {
             auto now = std::chrono::steady_clock::now();
 
             [[maybe_unused]]
-            auto result = mtx.try_lock_until(now + std::chrono::seconds(2));
+            auto result = mtx.try_lock_until(now + std::chrono::seconds(2u));
             THREAD_INFO << "Done" << std::endl;
         };
 
@@ -494,15 +494,15 @@ namespace Synchronization::SharedTimedMutext {
             std::ostringstream stream;
 
             for (int i = 0; i < 3; ++i) {
-                if (mtx.try_lock_for(std::chrono::milliseconds(100))) {
+                if (mtx.try_lock_for(std::chrono::milliseconds(100u))) {
                     stream << "success ";
-                    std::this_thread::sleep_for(std::chrono::milliseconds(100));
+                    std::this_thread::sleep_for(std::chrono::milliseconds(100u));
                     mtx.unlock();
                 }
                 else {
                     stream << "failed ";
                 }
-                std::this_thread::sleep_for(std::chrono::milliseconds(100));
+                std::this_thread::sleep_for(std::chrono::milliseconds(100u));
             }
 
             std::lock_guard<std::mutex> lock(cout_mutex);
@@ -568,7 +568,7 @@ namespace Synchronization::TimedMutex
         }, 5000);
 
 
-        std::this_thread::sleep_for(std::chrono::milliseconds(500));
+        std::this_thread::sleep_for(std::chrono::milliseconds(500u));
 
         auto job2 = std::async([&](unsigned int timeout)->void {
             for (int i = 0; i < 10; ++i) {
@@ -595,15 +595,15 @@ namespace Synchronization::TimedMutex
             std::ostringstream stream;
 
             for (int i = 0; i < 3; ++i) {
-                if (mtx.try_lock_for(std::chrono::milliseconds(100))) {
+                if (mtx.try_lock_for(std::chrono::milliseconds(100u))) {
                     stream << "success ";
-                    std::this_thread::sleep_for(std::chrono::milliseconds(100));
+                    std::this_thread::sleep_for(std::chrono::milliseconds(100u));
                     mtx.unlock();
                 }
                 else {
                     stream << "failed ";
                 }
-                std::this_thread::sleep_for(std::chrono::milliseconds(100));
+                std::this_thread::sleep_for(std::chrono::milliseconds(100u));
             }
 
             std::lock_guard<std::mutex> lock(cout_mutex);
@@ -628,7 +628,7 @@ namespace Synchronization::TimedMutex
         }, 5000);
 
 
-        std::this_thread::sleep_for(std::chrono::milliseconds(500));
+        std::this_thread::sleep_for(std::chrono::milliseconds(500u));
 
         auto job2 = std::async([&](unsigned int timeout)->void {
             for (int i = 0; i < 10; ++i) {
@@ -652,11 +652,11 @@ namespace Synchronization::TimedMutex
         const std::jthread holder = std::jthread([&mtx] {
             std::lock_guard<std::timed_mutex> lock {mtx};
             THREAD_INFO << "Blocking mutex for 2 sec" << std::endl;
-            std::this_thread::sleep_for(std::chrono::seconds(2));
+            std::this_thread::sleep_for(std::chrono::seconds(2u));
         });
 
         auto task = [&mtx]{
-            std::unique_lock<std::timed_mutex> lock {mtx, std::chrono::milliseconds (200)};
+            std::unique_lock<std::timed_mutex> lock {mtx, std::chrono::milliseconds (200u)};
             if (!lock.owns_lock())
                 THREAD_INFO << "Failed to get lock." << std::endl;
             else
@@ -666,7 +666,7 @@ namespace Synchronization::TimedMutex
 
         for (int i = 0; i < 3; ++i) {
             auto T1 = std::jthread(task);
-            std::this_thread::sleep_for(std::chrono::milliseconds(1200));
+            std::this_thread::sleep_for(std::chrono::milliseconds(1200u));
         }
     }
 }
@@ -696,7 +696,7 @@ namespace Synchronization::ScopedLock
     void send_mail([[maybe_unused]] const Employee& emp1,
                    [[maybe_unused]] const Employee& emp11) {
         // simulate a time-consuming messaging operation
-        std::this_thread::sleep_for(std::chrono::seconds(1));
+        std::this_thread::sleep_for(std::chrono::seconds(1u));
     }
 
     void assign_lunch_partner(Employee &e1, Employee &e2)
@@ -796,7 +796,7 @@ namespace Synchronization::ScopedLock
             std::lock_guard guard(cout_lock);
             std::cout << message << " @ " << ctime(&t);
         }
-        std::this_thread::sleep_for(std::chrono::milliseconds(rand() % 10));
+        std::this_thread::sleep_for(std::chrono::milliseconds(rand() % 10u));
     }
 
     void Good_Example()

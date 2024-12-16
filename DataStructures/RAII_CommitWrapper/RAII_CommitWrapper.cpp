@@ -1,11 +1,11 @@
-//============================================================================
-// Name        : RAII_CommitWrapper.cpp
-// Created on  : 16.06.22.
-// Author      : Tokmakov Andrei
-// Version     : 1.0
-// Copyright   : Your copyright notice
-// Description : RAII_CommitWrapper
-//============================================================================
+/**============================================================================
+Name        : RAII_CommitWrapper.cpp
+Created on  : 26.11.2022
+Author      : Andrei Tokmakov
+Version     : 1.0
+Copyright   : Your copyright notice
+Description : RAII_CommitWrapper
+============================================================================**/
 
 #include "RAII_CommitWrapper.h"
 
@@ -13,25 +13,46 @@
 #include <functional>
 #include <memory>
 
-namespace RAII_CommitWrapper::One
+namespace
 {
-    struct Connection {
+    struct Foo
+    {
+        ~Foo() {
+            std::cout << "~Foo::Foo()" << std::endl;
+        }
+
+        void func1() {
+            std::cout << "Foo::func1()" << std::endl;
+        }
+
+        void func2() {
+            std::cout << "Foo::func2()" << std::endl;
+        }
+    };
+
+    struct Connection
+    {
         std::string name {};
 
         explicit Connection(std::string&& s): name(std::move(s)) {
         }
 
-        void close() const noexcept {
+        void commit() const noexcept {
             std::cout << "SUCCESS: Closing connection(" << name << ")\n";
         }
 
-        void drop() const noexcept {
+        void rollback() const noexcept {
             std::cout << "FAILURE: Drop connection(" << name << ")\n";
         }
     };
+}
 
+
+namespace RAII_CommitWrapper::One
+{
     template<typename T>
-    struct Wrapper final {
+    struct Wrapper final
+    {
         T& objRef {};
         std::function<void(void)> callback {};
 
@@ -71,15 +92,16 @@ namespace RAII_CommitWrapper::One
     };
 
 
-    void OpenConnection1(bool throwException = true) {
+    void OpenConnection1(bool throwException = true)
+    {
         Connection connection { "TestConnection" };
 
         /*
         Wrapper<Connection> wrapper {connection, [objPtr = &connection] { objPtr->close(); }};
         */
 
-        CommitWrapper commitWrapper {[objPtr = &connection] { objPtr->close(); },
-                                     [objPtr = &connection] { objPtr->drop(); }};
+        CommitWrapper commitWrapper {[objPtr = &connection] { objPtr->commit(); },
+                                     [objPtr = &connection] { objPtr->rollback(); }};
 
         if (throwException)
             throw std::exception();
@@ -90,7 +112,8 @@ namespace RAII_CommitWrapper::One
         // close();
     }
 
-    void Test() {
+    void Test()
+    {
         try {
             OpenConnection1();
         } catch (...) {
@@ -111,8 +134,8 @@ namespace RAII_CommitWrapper::One
 namespace RAII_CommitWrapper::Two
 {
     template <typename Ret1, typename Ret2, class Type>
-    class ExecuteAdapter {
-    public:
+    struct ExecuteAdapter
+    {
         ExecuteAdapter(std::unique_ptr<Type> obj, Ret1(Type::*method1)(), Ret2(Type::*method2)()):
                 object { std::move(obj) }, inCaseOfSuccess { method1 }, inCaseOfFailure { method2 } {
         }
@@ -131,31 +154,66 @@ namespace RAII_CommitWrapper::Two
         bool ok {false};
     };
 
-    class Foo
-            {
-    public:
-        ~Foo() {
-            std::cout << "~Foo::Foo()" << std::endl;
-        }
-
-        void func1() {
-            std::cout << "Foo::func1()" << std::endl;
-        }
-
-        void func2() {
-            std::cout << "Foo::func2()" << std::endl;
-        }
-    };
-
     void Test()
     {
         ExecuteAdapter<void, void, Foo> adapter {std::make_unique<Foo>(), &Foo::func1, &Foo::func2};
     }
 }
 
-void RAII_CommitWrapper::TEST_ALL()
+namespace RAII_CommitWrapper::Three
+{
+    template<typename CommitFunc, typename RollbackFunc, class ObjectType>
+    struct CommitAdapter
+    {
+        CommitAdapter(ObjectType *ptrObj, CommitFunc commitFunc, RollbackFunc rollbackFunc) :
+                objectPtr{ptrObj}, commitCallback{commitFunc}, rollbackCallback{rollbackFunc}, succeeded{false} {
+        }
+
+        ~CommitAdapter() {
+            if (succeeded)
+                std::invoke(commitCallback, objectPtr);
+            else
+                std::invoke(rollbackCallback, objectPtr);
+        }
+
+        void success() noexcept {
+            succeeded = true;
+        }
+
+    private:
+
+        ObjectType *objectPtr{nullptr};
+        CommitFunc commitCallback{};
+        RollbackFunc rollbackCallback{};
+        bool succeeded{false};
+    };
+
+    template<typename CommitFunc = decltype(&Connection::commit),
+             typename RollbackFunc = decltype(&Connection::rollback),
+             typename ObjectType = Connection>
+    CommitAdapter<CommitFunc, RollbackFunc, ObjectType> getTransaction(Connection *connPtr)
+    {
+        return CommitAdapter{connPtr,
+                             &Connection::commit,
+                             &Connection::rollback
+        };
+    }
+
+    void Test()
+    {
+        std::unique_ptr<Connection> session { std::make_unique<Connection>("SQL Session") };
+        auto transaction = getTransaction(session.get());
+
+        //return;
+        transaction.success();
+    }
+}
+
+
+void RAII_CommitWrapper::Test()
 {
     // One::Test();
-    Two::Test();
+    // Two::Test();
+    Three::Test();
 }
 

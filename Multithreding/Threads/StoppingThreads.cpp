@@ -152,7 +152,7 @@ namespace StoppingThreads::BasicExamples
         // std::thread job(func);
         std::jthread job(worker, token);
 
-        std::this_thread::sleep_for(std::chrono::seconds(2));
+        std::this_thread::sleep_for(std::chrono::seconds(2U));
         // std::cout << "stop_possible() = " << std::boolalpha << token.stop_possible() << std::endl;
 
         job.request_stop();
