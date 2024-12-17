@@ -107,6 +107,51 @@ namespace Concepts::HasCallOperator
     }
 }
 
+namespace Concepts::Constraints_On_Member_Function
+{
+    using namespace std::string_view_literals;
+
+    template<typename T>
+    struct TypeWrapper
+    {
+        T value {};
+
+        constexpr TypeWrapper() = default;
+        explicit constexpr TypeWrapper(T v): value { v } {
+        }
+
+        void print() const noexcept {
+            std::cout << value << std::endl;
+        }
+
+        [[nodiscard]]
+        constexpr bool isZero() const noexcept requires std::integral<T> || std::floating_point<T>
+        {
+            return 0 == value;
+        }
+
+        [[nodiscard]]
+        constexpr bool isEmpty() const noexcept requires std::same_as<T, std::string_view>
+        {
+            return value.empty();
+        }
+    };
+
+    void Check_If_Function_Available()
+    {
+        {
+            constexpr TypeWrapper<int> wrapper {10};
+            static_assert(wrapper.isZero() == false);
+            // static_assert(wrapper.isEmpty() == false);  <--- Can not compile
+        }
+
+        {
+            constexpr TypeWrapper<std::string_view> wrapper { "Hellow World"sv };
+            // static_assert(wrapper.isZero() == false);  <--- Can not compile
+            static_assert(wrapper.isEmpty() == false);
+        }
+    }
+}
 
 void Concepts::TestAll()
 {
@@ -114,5 +159,7 @@ void Concepts::TestAll()
 
     // FoldExpression::CheckThatTypeSameAs();
 
-    HasCallOperator::CheckTypeIsFunctor();
+    // HasCallOperator::CheckTypeIsFunctor();
+
+    Constraints_On_Member_Function::Check_If_Function_Available();
 }

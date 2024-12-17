@@ -1408,7 +1408,6 @@ namespace CompileTime_Programming
 }
 
 
-
 int main([[maybe_unused]] int argc,
          [[maybe_unused]] char** argv)
 {
@@ -1458,7 +1457,7 @@ int main([[maybe_unused]] int argc,
     // AutoTests::TestAll();
     // BinManipulation::TestAll();
     // BinaryAnalyzer::TestAll();
-    // Concepts::TestAll();
+    Concepts::TestAll();
     // Crow::TestAll();
     // CollectionsTests::TestAll();
     // CopyElision_RVO::TestAll();
@@ -1485,7 +1484,7 @@ int main([[maybe_unused]] int argc,
     // Iterators::TestAll();
     // Strings::TestAll();
     // Performance::TestAll();
-    Templates::TestAll();
+    // Templates::TestAll();
     // ExpressionTemplates::TestAll();
     // TestAssignments::TestAll();
     // TableFormatter::TestAll();
