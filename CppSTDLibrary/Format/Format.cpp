@@ -293,10 +293,23 @@ namespace CustomFormatters
     */
 }
 
+namespace Format::Fill_Formated_String
+{
+
+    void PrintString_WithSpaces()
+    {
+        for (const std::string& lvl: {"INFO", "DEBUG", "WARNING", "ERROR", "CRITICAL"})
+        {
+            std::cout << std::format("[{:8s}]", lvl) << std::endl;
+        }
+    }
+}
+
+
 
 void Format::TestAll()
 {
-    CustomTypesFormatters::TestAll();
+    // CustomTypesFormatters::TestAll();
 
     // Format_Numbers();
 
@@ -326,4 +339,6 @@ void Format::TestAll()
 
     // Date_and_Time::FormatTime();
     // Date_and_Time::Format_TimePoint();
+
+    Fill_Formated_String::PrintString_WithSpaces();
 }

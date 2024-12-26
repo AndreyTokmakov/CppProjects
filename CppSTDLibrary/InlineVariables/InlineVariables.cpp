@@ -72,13 +72,16 @@ namespace Lib2
 #endif
 }
 
-namespace InlineNamespaces {
-	void Test() {
+namespace InlineNamespaces
+{
+	void Test()
+    {
 		// Uncomment #define LIB1_VERSION_2 to user another version
 		std::cout << Lib1::test(1) << std::endl;
 	}
 
-	void Test2() {
+	void Test2()
+    {
 		// Uncomment #define LIB1_VERSION_2 to user another version
 		std::cout << Lib2::test(1) << std::endl;
 	}
@@ -111,9 +114,9 @@ void InlineVariables::TestAll() {
 	
 	// std::cout << MyClass::name << std::endl;
 
-	// InlineNamespaces::Test();
+	InlineNamespaces::Test();
 	// InlineNamespaces::Test2();
 
 
-    Inlining::Test();
+    // Inlining::Test();
 };

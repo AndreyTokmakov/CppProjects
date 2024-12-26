@@ -1,20 +1,25 @@
 /**============================================================================
-Name        : RingBuffer.cpp
-Created on  : 14.12.2024
+Name        : RingBuffer_SPSC.cpp
+Created on  : 25.12.2024
 Author      : Andrei Tokmakov
 Version     : 1.0
 Copyright   : Your copyright notice
-Description : RingBuffer.cpp
+Description : RingBuffer_SPSC.cpp
 ============================================================================**/
 
-#include "RingBuffer.h"
+#include "RingBuffer_SPSC.h"
 
 #include <iostream>
+#include <string_view>
 #include <vector>
 
+#include <atomic>
+#include <thread>
+#include <future>
 
 
-namespace RingBuffer
+
+namespace RingBuffer_SPSC
 {
     template<typename T>
     struct RingBuffer
@@ -23,58 +28,90 @@ namespace RingBuffer
         using value_type = T;
         using collection_type = std::vector<value_type>;
 
-        size_type idxRead { 0 };
-        size_type idxWrite { 0 };
-        bool overlapped { false };
+        std::atomic<size_type> idxRead { 0 };
+        std::atomic<size_type> idxWrite { 0 };
+        std::atomic<bool> overflow {false };
         collection_type buffer {};
-        // TODO: add consumer lost counter ???
 
-        explicit RingBuffer(size_t size): idxRead { 0 }, idxWrite { 0 }, overlapped { false } {
+        explicit RingBuffer(size_t size): idxRead { 0 }, idxWrite { 0 }, overflow { false } {
             buffer.resize(size);
         }
 
         void put(const value_type& value)
         {
-            if (idxWrite == buffer.size()) {
-                idxWrite = 0;
-                overlapped = true;
+            size_type writeIdx = idxWrite.load(std::memory_order::relaxed);
+            if (writeIdx == buffer.size()) {
+                writeIdx = 0;
+                overflow = true;
             }
-            if (overlapped && idxWrite == idxRead) {
-                ++idxRead;
+
+            size_type readIdx = idxRead.load(std::memory_order::relaxed);
+            if (overflow && writeIdx == readIdx)
+            {
+                if (++readIdx >= buffer.size()) {
+                    readIdx = 0;
+                    overflow = false;
+                }
+                idxRead.store(readIdx, std::memory_order::release);
             }
-            buffer[idxWrite++] = value;
+
+            buffer[writeIdx++] = std::move(value);
+            idxWrite.store(writeIdx, std::memory_order::release);
         }
 
         void put(value_type&& value)
         {
-            if (idxWrite == buffer.size()) {
-                idxWrite = 0;
-                overlapped = true;
+            size_type writeIdx = idxWrite.load(std::memory_order::relaxed);
+            if (writeIdx == buffer.size()) {
+                writeIdx = 0;
+                overflow = true;
             }
-            if (overlapped && idxWrite == idxRead) {
-                ++idxRead;
+
+            size_type readIdx = idxRead.load(std::memory_order::relaxed);
+            if (overflow && writeIdx == readIdx)
+            {
+                if (++readIdx >= buffer.size()) {
+                    readIdx = 0;
+                    overflow = false;
+                }
+                idxRead.store(readIdx, std::memory_order::release);
             }
-            buffer[idxWrite++] = std::move(value);
+
+            buffer[writeIdx++] = std::move(value);
+            idxWrite.store(writeIdx, std::memory_order::release);
         }
 
         bool get(value_type& value)
         {
-            if (!overlapped && idxWrite == idxRead) {
+            size_type readIdx = idxRead.load(std::memory_order::relaxed);
+            if (!overflow && idxWrite == readIdx) {
                 return false;
             }
 
-            if (idxRead == buffer.size()) {
-                idxRead = 0;
-                overlapped = false;
+            if (readIdx >= buffer.size()) {
+                readIdx = 0;
+                overflow = false;
             }
 
-            value = std::move(buffer[idxRead++]);
+            value = std::move(buffer[readIdx++]);
+            idxRead.store(readIdx, std::memory_order::release);
             return true;
+        }
+
+        void printState()
+        {
+            std::cout << "idxRead: " << idxRead << ", idxWrite: " << idxWrite << std::endl;
+
+            std::cout << "[";
+            for (auto v: buffer)
+                std::cout << v << " ";
+            std::cout << "]\n";
         }
     };
 }
 
-namespace RingBuffer::TestUtils
+
+namespace RingBuffer_SPSC::TestUtils
 {
     size_t failuresCount { 0 };
 
@@ -116,6 +153,7 @@ namespace RingBuffer::TestUtils
             std::cerr << "ERROR: Result expected: " << std::boolalpha << resultExpected
                       << ", actual: " << std::boolalpha << resultActual << std::endl;
             ++failuresCount;
+            ringBuff.printState();
             return false;
         }
 
@@ -130,7 +168,48 @@ namespace RingBuffer::TestUtils
     }
 }
 
-namespace RingBuffer::Tests
+namespace RingBuffer_SPSC::MultithreadedTests
+{
+    void Test()
+    {
+        RingBuffer<std::string> buffer(32);
+
+        auto produce = [&buffer](const std::string& text) {
+            int64_t count = 0, n = 0;
+            while (true) {
+                buffer.put(std::string { text });
+                if (10'000 == ++count) {
+                    ++n;
+                    //std::cout << count * n << std::endl;
+                    count = 0;
+                }
+            }
+        };
+
+        auto consume = [&buffer]() {
+            int64_t count = 0, n = 0;
+            std::string str;
+            while (true) {
+                if (buffer.get(str)) {
+                    if (100'000 == ++count) {
+                        ++n;
+                        std::cout << count * n << std::endl;
+                        count = 0;
+                    }
+                }
+            }
+        };
+
+        auto producer = std::async(produce, std::string(128, 'X'));
+        auto consumer = std::async(consume);
+
+        producer.wait();
+        consumer.wait();
+    }
+}
+
+
+namespace RingBuffer_SPSC::Tests
 {
     using namespace TestUtils;
 
@@ -202,19 +281,16 @@ namespace RingBuffer::Tests
 
 }
 
-// TODO: Border tests
-
-void RingBuffer::TestAll()
+void RingBuffer_SPSC::TestAll()
 {
-    using namespace Tests;
+    MultithreadedTests::Test();
 
+#if 0
     Tests::get_empty_buffer();
     Tests::get_add_one();
     Tests::get_multiple_size_1();
     Tests::get_multiple_size_3();
     Tests::get_after_overlapped();
     Tests::put_and_get_no_overlapping_1();
-
-
-    PRINT_RESULT;
+#endif
 }

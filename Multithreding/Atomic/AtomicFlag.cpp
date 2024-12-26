@@ -115,7 +115,7 @@ namespace AtomicFlag::SpinLock
             std::osyncstream{std::cout} << timeString() << " Producer: Started\n";
             std::lock_guard lock {mtx};
 
-            std::this_thread::sleep_for(std::chrono::seconds(1));
+            std::this_thread::sleep_for(std::chrono::seconds(1UL));
             std::osyncstream{std::cout} << timeString() << " Producer: Done\n";
         };
 
@@ -123,7 +123,7 @@ namespace AtomicFlag::SpinLock
         {
             std::jthread a(producer);
             std::jthread b(consumer);
-            std::this_thread::sleep_for(std::chrono::milliseconds (10));
+            std::this_thread::sleep_for(std::chrono::milliseconds (10UL));
         }
     }
 
@@ -211,7 +211,7 @@ namespace AtomicFlag::Waiting
 
                 atomicFlag.test_and_set();
 
-                std::this_thread::sleep_for(std::chrono::seconds(1));
+                std::this_thread::sleep_for(std::chrono::seconds(1UL));
 
                 atomicFlag.notify_one();
                 std::osyncstream{std::cout} << timeString() << " Producer: notify_one " << std::endl;
