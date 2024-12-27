@@ -11,6 +11,7 @@ add_compile_options(-c -Wall -Wextra -O3 -std=c++2a)
 add_executable(${PROJECT_NAME}
 		main.cpp
 		BitSet/BitSet.cpp
+		BitFlags/BitFlags.cpp
 		CircularBuffers/CircularBuffers.cpp
 		Logger/Logger.cpp
 		LRUCache/LRUCache.cpp

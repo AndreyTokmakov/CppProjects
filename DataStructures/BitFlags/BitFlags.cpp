@@ -11,6 +11,7 @@ Description : BitFlags.cpp
 
 #include <iostream>
 #include <bitset>
+#include <cstdint>
 
 namespace BitFlags
 {
