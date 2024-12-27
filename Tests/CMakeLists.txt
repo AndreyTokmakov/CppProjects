@@ -15,6 +15,7 @@ add_executable(${PROJECT_NAME}
         main.cpp
         Assembly/AssemblyDemo.cpp
         BinManipulation/BinManipulation.cpp
+        BitFlags/BitFlags.cpp
         Punycode/Punycode.cpp
         Encoding/Enconding.h
         Encoding/URLDecoding.cpp
