@@ -24,8 +24,7 @@ Description :
 #include <vector>
 #include <unordered_map>
 
-
-
+#include <nlohmann/json.hpp>
 #include "../Utilities/Utilities.h"
 
 namespace
@@ -34,10 +33,13 @@ namespace
     constexpr int SOCKET_ERROR { -1 };
 }
 
-namespace MessagingProxy
+namespace Common
 {
-    enum class MessagingProxy: uint8_t
+    using namespace std::string_literals;
+
+    enum class MessageType: uint8_t
     {
+        Unknown = 0,
         Register,
         Delete,
         Ping,
@@ -46,13 +48,72 @@ namespace MessagingProxy
         Media,
     };
 
-    enum class MessagingStatus: uint8_t
+    enum class MessageStatus: uint8_t
     {
+        Unknown = 0,
         Send,
         Received,
         Read,
         NotDelivered
     };
+
+    struct Message
+    {
+        MessageType type { MessageType::Ping };
+        MessageStatus status { MessageStatus::Send };
+        // Originator | ID
+        // Destination | ID
+        // Data
+    };
+
+    Message parseMessage(const std::string& strMessage)
+    {
+        const nlohmann::json jsonMessage = nlohmann::json::parse(strMessage);
+
+        Message message;
+        message.type = jsonMessage["t"].get<MessageType>();
+        message.status = jsonMessage["s"].get<MessageStatus>();
+
+        return message;
+    }
+
+    std::string toString(const MessageType msgType)
+    {
+        switch (msgType)
+        {
+            case MessageType::Register : return "Register"s;
+            case MessageType::Delete : return "Delete"s;
+            case MessageType::Ping : return "Ping"s;
+            case MessageType::Message : return "Message"s;
+            case MessageType::Call : return "Call"s;
+            case MessageType::Media : return "Media"s;
+            default: return "Unknown"s;
+        }
+    }
+
+    std::string toString(const MessageStatus msgStatus)
+    {
+        switch (msgStatus)
+        {
+            case MessageStatus::Send : return "Send"s;
+            case MessageStatus::Received : return "Received"s;
+            case MessageStatus::Read : return "Read"s;
+            case MessageStatus::NotDelivered : return "NotDelivered"s;
+            default: return "Unknown"s;
+        }
+    }
+
+    std::string toString(const Message& message)
+    {
+        return std::string(R"({ "type":")") + toString(message.type) +
+            R"(", "status": ")" +  toString(message.status) + R"(" })";
+    }
+}
+
+
+namespace MessagingProxy
+{
+    using namespace Common;
 
     struct Proxy
     {
@@ -89,13 +150,39 @@ namespace MessagingProxy
                                         payload.data() ,
                                         receiveBufferSize,
                                         0 ,
-                                        reinterpret_cast<sockaddr*>(&senderAddress) , &len);
+                                        reinterpret_cast<sockaddr*>(&senderAddress),
+                                        &len);
                 payload.resize(bytesReceived);
-                std::cout << payload << std::endl;
+
+                std::cout << len << std::endl;
+
+                const Message message = parseMessage(payload);
+                std::cout << toString(message) << std::endl;
             }
         }
     };
+}
 
+
+
+namespace Tests
+{
+    using namespace MessagingProxy;
+    using namespace Common;
+
+    void runServer()
+    {
+        Proxy proxy;
+        proxy.runServer();
+    }
+
+    void parseTest()
+    {
+        const std::string strMessage = R"({"t": 1, "s": 1})";
+        const Message message = parseMessage(strMessage);
+
+        std::cout << toString(message) << std::endl;
+    }
 }
 
 // TODO:
@@ -123,21 +210,8 @@ namespace MessagingProxy
 // TODO: Message types:
 //  -  Use Protobuff ???
 
-/**
-Message:
-{
-    'type:': 1     <--- Binary ... not 'type'
-    'message id':  <--- Unique Per Client
-    'sender:':     <--- 'ID of originator USER ????'
-    'dest:':       <--- 'ID of dest USER ????'
-    'payload'      <--- if needed
-}
-
-**/
-
-
 void MessagingProxy::TestAll()
 {
-    Proxy proxy;
-    proxy.runServer();
+    Tests::runServer();
+    // Tests::parseTest();
 }

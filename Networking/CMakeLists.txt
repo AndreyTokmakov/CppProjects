@@ -18,7 +18,7 @@ link_directories(${THIRD_PARTY_DIR}/libssh2/build/src)
 
 include_directories(${THIRD_PARTY_DIR}/grpc/include)
 include_directories(${THIRD_PARTY_DIR}/abseil-cpp)
-# link_directories(${THIRD_PARTY_DIR}/jsoncpp/build/lib)
+include_directories(${THIRD_PARTY_DIR}/json/include)
 
 # find_package(gRPC CONFIG REQUIRED)
 # message(STATUS "Using gRPC ${gRPC_VERSION}")
