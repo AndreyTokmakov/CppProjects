@@ -48,6 +48,8 @@ Description : Tests C++ project
 #include "SSL/HTTPS_Server_ThreadPool.h"
 
 #include "APIServer/APIServer.h"
+#include "SecureMessagingProxy/MessagingProxy.h"
+
 
 #include "JRPC/JRPC.h"
 
@@ -98,7 +100,9 @@ int main([[maybe_unused]] int argc,
 
     // APIServer::TestAll();
 
-    JRPC::TestAll();
+    // JRPC::TestAll();
+
+    MessagingProxy::TestAll();
 
     return EXIT_SUCCESS;
 }
