@@ -118,10 +118,7 @@ void Print::TestAll()
 {
     // Print_Bits();
     // Chrono_Data_Time::Print_Formating();
-
     Alignment::Print_As_Table();
-
-
 
     /*
     constexpr std::string_view name = "Daniel"sv;
