@@ -11,6 +11,10 @@ Description : Print.cpp
 
 #include <print>
 #include <chrono>
+#include <unordered_map>
+#include <numbers>
+#include <numeric>
+#include <algorithm>
 
 
 namespace Print
@@ -63,11 +67,61 @@ namespace Print::Chrono_Data_Time
 
 }
 
+namespace Print::Alignment
+{
+    void Print_As_Table()
+    {
+        /// Store the data in an unordered_map (country -> size in km²)
+        const std::unordered_map<std::string, double> country_sizes = {
+            {"USA", 9833517},
+            {"Canada", 9984670},
+            {"Australia", 7692024},
+            {"China", 9596961},
+            {"Poland", 312696}
+        };
+
+        constexpr double KM_TO_MI = 0.386102; // Conversion factor
+        const double total_km = std::accumulate(country_sizes.begin(), country_sizes.end(), 0.0,
+          [](double sum, const auto& entry) { return sum + entry.second; });
+        const double total_mi = total_km * KM_TO_MI;
+
+        // Table headers
+        std::println("{:<15} | {:>15} | {:>15}", "Country", "Size (km²)", "Size (mi²)");
+        std::println("{:-<15}-+-{:-<15}-+-{:-<15}", "", "", ""); // Separator line
+
+        // Table rows
+        for (const auto& [country, size_km] : country_sizes) {
+            double size_mi = size_km * KM_TO_MI;
+            std::println("{:<15} | {:>15.0f} | {:>15.2f}", country, size_km, size_mi);
+        }
+
+        // Footer
+        std::println("{:-<15}-+-{:-<15}-+-{:-<15}", "", "", ""); // Separator line
+        std::println("{:<15} | {:>15.0f} | {:>15.2f}", "Total", total_km, total_mi);
+
+        /**
+        Country         |      Size (km²) |      Size (mi²)
+        ----------------+-----------------+----------------
+        Poland          |          312696 |       120732.55
+        China           |         9596961 |      3705405.84
+        Australia       |         7692024 |      2969905.85
+        Canada          |         9984670 |      3855101.06
+        USA             |         9833517 |      3796740.58
+        ----------------+-----------------+----------------
+        Total           |        37419868 |     14447885.87
+        **/
+    }
+}
+
+
 void Print::TestAll()
 {
-    Print_Bits();
+    // Print_Bits();
+    // Chrono_Data_Time::Print_Formating();
 
-    Chrono_Data_Time::Print_Formating();
+    Alignment::Print_As_Table();
+
+
 
     /*
     constexpr std::string_view name = "Daniel"sv;

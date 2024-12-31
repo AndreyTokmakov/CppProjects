@@ -1,11 +1,11 @@
-//============================================================================
-// Name        : Ranges.h
-// Created on  : 13.11.2020
-// Author      : Tokmakov Andrey
-// Version     : 1.0
-// Copyright   : Your copyright notice
-// Description : C++ Ranges src
-//============================================================================
+/**============================================================================
+Name        : Ranges.cpp
+Created on  : 13.08.2020
+Author      : Tokmakov Andrey
+Version     : 1.0
+Copyright   : Your copyright notice
+Description :  C++ Ranges
+============================================================================**/
 
 #define _CRT_SECURE_NO_WARNINGS
 
@@ -17,6 +17,7 @@
 #include <array>
 #include <vector>
 #include <string_view>
+#include <unordered_map>
 
 #include <map>
 #include <cstring>
@@ -81,6 +82,17 @@ namespace Ranges
         for (const auto& i : arr)
             ostr << i << ' ';
         return ostr;
+    }
+
+
+    template<typename K, typename V>
+    std::ostream& operator<<(std::ostream& stream, const std::map<K, V>& dict)
+    {
+        stream << "{ ";
+        for (const auto& [k, v] : dict)
+            stream << k << " : " << v << ", ";
+        stream << "}";
+        return stream;
     }
 
     template <class V>
@@ -739,23 +751,57 @@ namespace Ranges::Views
     {
         std::vector<std::pair<int,double>> data{{1,2.7}, {3, 4.2}, {-1, 3.3}};
 
-        for (auto v : data | std::views::elements<0>) {
+        for (const auto v : data | std::views::elements<0>) {
             std::cout << v << ' ';
         } // 1, 3, -1
 
         std::cout << std::endl;
 
-        for (auto v : data | std::views::elements<1>) {
+        for (const auto v : data | std::views::elements<1>) {
             std::cout << v << ' ';
         } // 2.7, 4.2, 3.3
         std::cout << std::endl;
 
         std::array<std::array<int,3>,3> grid{1,2,3,4,5,6,7,8,9};
-        for (auto v : grid | std::views::elements<2>) {
+        for (const auto v : grid | std::views::elements<2>) {
             std::cout << v << ' ';
         } // 3, 6, 9
 
         std::cout << std::endl;}
+}
+
+namespace Ranges::Ranges_To
+{
+    void Get_Even_Numbers()
+    {
+        const std::vector<int> numbers = { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 };
+
+        const auto even_numbers = numbers
+                        | std::views::filter([](int n) { return n % 2 == 0; })
+                        | std::ranges::to<std::vector>();
+
+        std::cout << even_numbers << std::endl; // Output: 2 4 6 8 10
+    }
+
+    void Get_Even_Numbers_Mapping()
+    {
+        const std::vector<int> numbers = { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 };
+        const std::unordered_map<int, std::string> number_to_text = {
+            {1, "one"}, {2, "two"}, {3, "three"}, {4, "four"}, {5, "five"},
+            {6, "six"}, {7, "seven"}, {8, "eight"}, {9, "nine"}, {10, "ten"}
+        };
+
+        const auto even_numbers = numbers
+                        | std::views::filter([](const int n) { return n % 2 == 0; })
+                        | std::ranges::to<std::vector>();
+
+        auto text_numbers_map = even_numbers | std::views::transform([&number_to_text](int n) {
+                    return std::pair{n, number_to_text.contains(n) ? number_to_text.at(n) : "unknown" };
+                  }) | std::ranges::to<std::map>();
+
+        std::cout << text_numbers_map << std::endl;
+        // OUTPUT: { 2 : two, 4 : four, 6 : six, 8 : eight, 10 : ten, }
+    }
 }
 
 void Ranges::TestAll()
@@ -774,7 +820,7 @@ void Ranges::TestAll()
     // View_DropWhile();
     // Join_View();
 
-    Views::Zip();
+    // Views::Zip();
     // Views::Repeat();
     // Views::Elements();
 
@@ -802,11 +848,14 @@ void Ranges::TestAll()
     // Transform::Test();
 
     // Iota::CreateView_DropAndTake();
-    Iota::CreateView_WithTransform();
+    //Iota::CreateView_WithTransform();
 
     // Take::Take_View();
     // Take::Take_Test_0();
     // Take::Take_Test();
+
+    // Ranges_To::Get_Even_Numbers();
+    Ranges_To::Get_Even_Numbers_Mapping();
 
     // Experiments();
 }

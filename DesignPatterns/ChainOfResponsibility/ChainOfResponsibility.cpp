@@ -14,8 +14,8 @@
 namespace ChainOfResponsibility
 {
     /** Criminal action class: **/
-    class CriminalAction {
-    private:
+    class CriminalAction
+    {
         friend class Policeman;
 
         /** Case complexity: **/
@@ -25,7 +25,7 @@ namespace ChainOfResponsibility
         std::string description;
 
     public:
-        CriminalAction(int complexity, std::string  description) :
+        CriminalAction(const int complexity, std::string  description) :
                 complexity(complexity), description(std::move(description)) {
         }
 
@@ -47,7 +47,7 @@ namespace ChainOfResponsibility
         virtual void investigateConcrete(const std::string& description) = 0;
 
     public:
-        explicit Policeman(int deduction): deduction(deduction), next(nullptr) {
+        explicit Policeman(const int deduction): deduction(deduction), next(nullptr) {
         }
 
         // Adds to the chain of responsibility a more experienced policeman who can take over investigation if the current fails

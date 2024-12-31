@@ -23,7 +23,7 @@ namespace Command::Switch_ON_OFF_Light
     };
 
     // Receiver Class
-    struct Light
+    struct Light final
     {
         virtual void on() {
             std::cout << "Light: The light is ON" << std::endl;
@@ -47,7 +47,7 @@ namespace Command::Switch_ON_OFF_Light
     };
 
     // Command for turning on the light
-    struct LightOnCommand: LightControlCommand
+    struct LightOnCommand final : LightControlCommand
     {
         using LightControlCommand::LightControlCommand;
 
@@ -69,11 +69,10 @@ namespace Command::Switch_ON_OFF_Light
     };
 
     // Invoker: Stores the ConcreteCommand object
-    class RemoteControl {
-    private:
+    struct RemoteControl
+    {
         std::shared_ptr<ICommand> command;
 
-    public:
         void setCommand(const std::shared_ptr<ICommand>& cmd) {
             this->command = cmd;
         }

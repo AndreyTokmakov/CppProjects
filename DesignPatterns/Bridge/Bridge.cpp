@@ -27,8 +27,8 @@ namespace Bridge::Clock
     };
 
 
-    class AlarmClock {
-    private:
+    class AlarmClock
+    {
         virtual void toWake() = 0;
 
     protected:
@@ -41,13 +41,12 @@ namespace Bridge::Clock
     };
 
 
-    class LockupAlarmClock : public AlarmClock {
-    private:
+    class LockupAlarmClock : public AlarmClock
+    {
         int hourAlarm;
         int minutesAlarm;
         bool waitForWake;
 
-    private:
         void toWake() override 	{
             this->bridge->notify();
             this->bridge->ring();

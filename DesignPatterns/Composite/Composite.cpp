@@ -20,7 +20,7 @@ namespace Composite::Pages
         virtual ~IPage() = default;
     };
 
-    class Page : public IPage {
+    class Page final : public IPage {
     public:
         void Add([[maybe_unused]] IPage& page) noexcept override {
             std::cout << "Something is added to the page" << std::endl;

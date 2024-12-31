@@ -29,7 +29,7 @@ namespace
         }
     };
 
-    class SpecialHandler : public Handler {
+    class SpecialHandler final : public Handler {
         int limit;
         int id;
 
