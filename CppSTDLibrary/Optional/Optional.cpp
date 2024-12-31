@@ -12,6 +12,7 @@ Description :
 #include <cassert>
 #include <complex>
 #include <list>
+#include <utility>
 #include <vector>
 #include <optional>
 #include <utility>
@@ -24,23 +25,24 @@ Description :
 
 namespace Optional
 {
-
 	template<typename T>
-	std::ostream& operator<<(std::ostream& stream, const std::vector<T>& vect) {
+	std::ostream& operator<<(std::ostream& stream, const std::vector<T>& vect)
+	{
 		for (const auto& v : vect)
 			stream << v << " ";
 		return stream;
 	}
 
-	class UserName {
-	private:
+	class UserName
+	{
 		std::string mName;
 
 	public:
-		explicit UserName(const std::string& str) : mName(str) {
+		explicit UserName(std::string str) : mName(std::move(str)) {
 			std::cout << "UserName::UserName(\'";
 			std::cout << mName << "\')\n";
 		}
+
 		~UserName() {
 			std::cout << "UserName::~UserName(\'";
 			std::cout << mName << "\')\n";
@@ -48,11 +50,11 @@ namespace Optional
 	};
 
 
-	class UserRecord {
-	public:
-		UserRecord(const std::string& name,
-			std::optional<std::string> nick,
-			std::optional<int> age) : mName{ name }, mNick{ nick }, mAge{ age } {
+	struct UserRecord
+	{
+		UserRecord(std::string  name,
+			const std::optional<std::string>& nick,
+			const std::optional<int> age) : mName{std::move( name )}, mNick{ nick }, mAge{ age } {
 		}
 
 		friend std::ostream& operator<< (std::ostream& stream, const UserRecord& user);
@@ -63,14 +65,15 @@ namespace Optional
 		std::optional<int> mAge;
 	};
 
-	std::ostream& operator << (std::ostream& os, const UserRecord& user) {
-		os << user.mName << ' ';
+	std::ostream& operator << (std::ostream& stream, const UserRecord& user)
+	{
+		stream << user.mName << ' ';
 		if (user.mNick) {
-			os << *user.mNick << ' ';
+			stream << *user.mNick << ' ';
 		}
 		if (user.mAge)
-			os << "age of " << *user.mAge;
-		return os;
+			stream << "age of " << *user.mAge;
+		return stream;
 	}
 
 	/////////////////////////////////////////////////////////////////////////////////
@@ -85,18 +88,17 @@ namespace Optional
 		return (false == value.empty()) ? std::optional<std::reference_wrapper<std::string>>{tmp} : std::nullopt;
 	}
 
-	//////////////////////////////////////////////////////////
-
-	void OptionalCreation() {
+	void OptionalCreation()
+	{
 		// empty:
 		std::optional<int> oEmpty;
-		std::optional<float> optional_float = std::nullopt;
+		constexpr std::optional<float> optional_float = std::nullopt;
 
 		std::cout << "optional_float = " << optional_float.value_or(0) << std::endl;
 
 		// direct:
-		std::optional<int> optional_int(10);
-		std::optional optional_int_deduced(10); // deduction guides
+		constexpr std::optional<int> optional_int(10);
+		constexpr std::optional optional_int_deduced(10); // deduction guides
 
 
 		std::cout << "optional_int = " << optional_int.value() << std::endl;
@@ -104,31 +106,33 @@ namespace Optional
 
 
 		// make_optional
-		auto optional_double = std::make_optional(3.0);
-		auto optional_complex = std::make_optional<std::complex<double>>(3.0, 4.0);
+		constexpr auto optional_double = std::make_optional(3.0);
+		const auto optional_complex = std::make_optional<std::complex<double>>(3.0, 4.0);
 
 		std::cout << "optional_double = " << optional_double.value() << std::endl;
 		std::cout << "optional_complex = " << optional_complex.value() << std::endl;
 
 		// in_place
-		std::optional<std::complex<double>> optional_complex_double{ std::in_place, 3.0, 4.0 };
+		const std::optional<std::complex<double>> optional_complex_double{ std::in_place, 3.0, 4.0 };
 		std::cout << "optional_complex_double = " << optional_complex_double.value() << std::endl;
 
 		// will call vector with direct init of {1, 2, 3}
 		std::optional<std::vector<int>> oVec(std::in_place, { 1, 2, 3 });
 
 		// copy/assign:
-		auto optional_int_copy = optional_int;
+		constexpr auto optional_int_copy = optional_int;
 		std::cout << "optional_int_copy = " << optional_int_copy.value() << std::endl;
 	}
 
 
-	void Create_In_Place() {
-		std::optional<std::vector<int>> v( { 1, 2, 3 });
+	void Create_In_Place()
+	{
+		const std::optional<std::vector<int>> v( { 1, 2, 3 });
 		std::cout << v.value() << std::endl;
 	}
 
-	std::optional<const char*> maybe_getenv(const std::string& variable) {
+	std::optional<const char*> maybe_getenv(const std::string& variable)
+	{
         if (const char* env_p = std::getenv(variable.data()))
             return env_p;
 		return std::nullopt;
@@ -144,18 +148,18 @@ namespace Optional
 		std::cout << "optional_from_string('Some_Value') returned " << optional_from_string("Some_Value").value_or("empty") << '\n' << std::endl;
 
 		// optional-returning factory functions are usable as conditions of while and if
-		if (auto str = optional_from_string("Some_Existing_Test_Value")) {
+		if (const auto str = optional_from_string("Some_Existing_Test_Value")) {
 			std::cout << "optional_from_string('Some_Existing_Test_Value') returned " << *str << std::endl;
 		}
 
-		if (auto str = optional_from_string("")) {
+		if (const auto str = optional_from_string("")) {
 			std::cout << "optional_from_string('') returned " << *str << std::endl;
 		}
 		else {
 			std::cout << "optional_from_string('') returned " << str.value_or("std::nullopt") << '\n' << std::endl;
 		}
 
-		if (auto str = optional_reference_from_string("Srting_Value_(Reference)")) {
+		if (const auto str = optional_reference_from_string("Srting_Value_(Reference)")) {
 			// using get() to access the reference_wrapper's value
 			std::cout << "optional_reference_from_string('Srting_Value_(Reference)') returned " << str->get() << std::endl;
 			str->get() = "Mothra";
@@ -194,7 +198,7 @@ namespace Optional
 		}
 
 		// by value_or()
-		std::optional<double> optional_double; // empty
+		constexpr std::optional<double> optional_double; // empty
 		std::cout << "option_double = " << optional_double.value_or(10.3) << std::endl;
 
 
@@ -202,18 +206,18 @@ namespace Optional
 	}
 
 
-	std::optional<std::string> getOptString(bool ok = false, const std::string& value = "") {
+	std::optional<std::string> getOptString(const bool ok = false, const std::string& value = "") {
 		return true == ok ? std::make_optional<std::string>(value) : std::nullopt;
 	}
 	
 	void GetParamValue_ByPtr() {
-		if (auto result = getOptString(true, "SomeTestValue"); result) {
+		if (const auto result = getOptString(true, "SomeTestValue"); result) {
 			std::cout << *result << std::endl;
 		} else {
 			std::cout << "Value is no set" << std::endl;
 		}
 
-		if (auto result = getOptString(); result) {
+		if (const auto result = getOptString(); result) {
 			std::cout << *result << std::endl;
 		} else {
 			std::cout << "Value is no set" << std::endl;
@@ -264,10 +268,11 @@ namespace Optional
 		oEmpty = UserName("Joe");
 	}
 
-	void CompareValues() {
-		std::optional<int> oEmpty;
-		std::optional<int> oTwo(2);
-		std::optional<int> oTen(10);
+	void CompareValues()
+	{
+		constexpr std::optional<int> oEmpty;
+		constexpr std::optional<int> oTwo(2);
+		constexpr std::optional<int> oTen(10);
 
 		std::cout << std::boolalpha;
 		std::cout << (oTen > oTwo) << std::endl;
@@ -276,52 +281,49 @@ namespace Optional
 		std::cout << (oEmpty == std::nullopt) << std::endl;
 		std::cout << (oTen == 10) << std::endl;
 
-		// We should get crashed herer
+		// We should get crashed here
 		assert(oTen != 10);
 	}
 
 
-	void UserWithOptionalName() {
-		UserRecord tim{ "Tim", "SuperTim", 16 };
-		UserRecord nano{ "Nathan", std::nullopt, std::nullopt };
+	void UserWithOptionalName()
+	{
+		const UserRecord tim{ "Tim", "SuperTim", 16 };
+		const UserRecord nano{ "Nathan", std::nullopt, std::nullopt };
 
 		std::cout << tim << "\n";
 		std::cout << nano << "\n";
 	}
 
 
-	std::optional<int> ParseInt(char*arg) {
+	std::optional<int> ParseInt(const std::string_view str)
+	{
 		try {
-			return std::stoi(std::string(arg));
+			return std::stoi(str.data());
 		}
 		catch (...) {
-			std::cout << "cannot convert '" << arg << "' to int!" << std::endl;
+			std::cout << "cannot convert '" << str << "' to int!" << std::endl;
 		}
 		return std::nullopt;
 	}
 
-	void Options_ParseIntTest() {
-		std::cout << " --------------- Test1:-----------------" << std::endl;
+	void Options_ParseIntTest()
+	{
+		using namespace std::string_view_literals;
+
+		for (const auto& [first, second]: std::array<std::pair<std::string_view, std::string_view>, 2>{
+			std::pair{"2"sv, "3"sv}, std::pair{"2"sv, "A"sv}})
 		{
-			auto oFirst = ParseInt((char*)("2"));
-			auto oSecond = ParseInt((char*)("33"));
-			if (oFirst && oSecond) {
-				std::cout << "sum of " << *oFirst << " and " << *oSecond;
-				std::cout << " is " << *oFirst + *oSecond << "\n";
-			}
-		}
-		std::cout << "\n--------------- Test1:-----------------" << std::endl;
-		{
-			auto oFirst = ParseInt((char*)("2"));
-			auto oSecond = ParseInt((char*)("ss"));
-			if (oFirst && oSecond) {
-				std::cout << "sum of " << *oFirst << " and " << *oSecond;
-				std::cout << " is " << *oFirst + *oSecond << "\n";
+			const std::optional<int> oFirst = ParseInt(first);
+			if (const std::optional<int> oSecond = ParseInt(second); oFirst && oSecond)
+			{
+				std::cout << *oFirst << " + " << *oSecond << " = " << *oFirst + *oSecond << "\n";
 			}
 		}
 	}
 
-	void ChangeValues() {
+	void ChangeValues()
+	{
 		std::cout << "----------------------- Test #1 ------------------------\n" << std::endl;
 		{
 			std::optional<Integer> optInteger = std::make_optional<Integer>(111);
@@ -360,8 +362,9 @@ namespace Optional
 		return result;
 	}
 
-	void Optional_Reference_Wrapper() {
-		std::optional<std::reference_wrapper<std::string>> result = GetOptStr();
+	void Optional_Reference_Wrapper()
+	{
+		const std::optional<std::reference_wrapper<std::string>> result = GetOptStr();
 		std::cout << "has values: " << std::boolalpha << result.has_value() << std::endl;
 		if (true == result.has_value()) {
 			std::cout << "Value: " << result.value().get() << std::endl;
@@ -371,17 +374,17 @@ namespace Optional
 	////////////////////////////////////////////////////////////////////////
 
 
-	struct Point {
-		Point(int a, int b) : x(a), y(b) { }
-		int x;
-		int y;
+	struct Point
+	{
+		Point(const int a, const int b) : x(a), y(b) { }
+		int x { 0 };
+		int y { 0 };
 	};
 
 
-	void Construct_IN_PLACE() {
-
+	void Construct_IN_PLACE()
+	{
 		std::optional<Point> opt1{ std::in_place, 0, 0 };
-
 		std::optional<Point> opt = std::make_optional<Point>(0, 0);
 	}
 
@@ -402,7 +405,7 @@ namespace Optional
 	}
 }
 
-namespace Optional::Apllications {
+namespace Optional::Applications {
 
 	std::optional<std::string> GetEnvironmentVariable(const std::string& variable) {
         return getenv(variable.data());
@@ -441,18 +444,26 @@ namespace MonadicOperations
             {10, "X"},
     };
 
-    std::optional<std::string> getFromCache(int key)
+	std::optional<std::string> getUserInput()
+	{
+		std::string input;
+		std::cout << "Enter your name: ";
+		std::getline(std::cin, input);
+		if (input.empty())
+			return std::nullopt;
+		return input;
+	}
+
+    std::optional<std::string> getFromCache(const int key)
     {
-        const auto iter = cache.find(key);
-        if (cache.end() != iter)
+	    if (const auto iter = cache.find(key); cache.end() != iter)
             return std::make_optional<std::string>(iter->second);
         return std::nullopt;
     }
 
-    std::optional<std::string> getFromDatabase(int key)
+    std::optional<std::string> getFromDatabase(const int key)
     {
-        const auto iter = database.find(key);
-        if (database.end() != iter)
+	    if (const auto iter = database.find(key); database.end() != iter)
             return std::make_optional<std::string>(iter->second);
         return std::nullopt;
     }
@@ -468,8 +479,8 @@ namespace MonadicOperations
         return tmp;
     }
 
-    template<typename _Ty>
-    std::ostream& operator<<(std::ostream& stream, const std::optional<_Ty>& opt)
+    template<typename Ty>
+    std::ostream& operator<<(std::ostream& stream, const std::optional<Ty>& opt)
     {
         if (opt.has_value())
             stream << opt.value();
@@ -509,14 +520,14 @@ namespace MonadicOperations
 
     void AndThen_Test()
     {
-        for (int val: {3, 7})
+        for (const int val: {3, 7})
         {
             const std::optional<std::string> result = getFromCache(val)
                     .and_then(decorate);
             std::cout << val << " --> " << result << std::endl;
         }
 
-        for (int val: {3, 7})
+        for (const int val: {3, 7})
         {
             const std::optional<std::string> result = getFromCache(val)
                     .and_then([](const std::string& str) { return std::make_optional<std::string>("OK"); });
@@ -527,7 +538,7 @@ namespace MonadicOperations
     void Transform_Test()
     {
         {
-            const std::optional<int> number = 5;
+	        constexpr std::optional<int> number = 5;
             const std::optional<int> squared = number.transform([](int x) { return x * x; });
             std::cout << number << " --> " << squared << std::endl;
         }
@@ -541,25 +552,40 @@ namespace MonadicOperations
 
     void OrElse_Transform()
     {
-        {
-            int value = getAge(103)
-                    .or_else([]() { return std::make_optional<int>(18); })
-                    .transform([](int age) { return age + 1; }).value();
-            std::cout << value << std::endl;
-        }
-        {
-            int value = getAge(29)
-                    .or_else([]() { return std::make_optional<int>(18); })
-                    .transform([](int age) { return age + 1; }).value();
-            std::cout << value << std::endl;
-        }
+		for (const int age: {10, 56, 123})
+		{
+			const int value = getAge(age)
+				.or_else([]() { return std::make_optional<int>(18); })
+				.transform([](const int v) { return v + 1; }).value();
+			std::cout << value << std::endl;
+		}
     }
+
+
+	void Transform_UserInput()
+	{
+		const std::optional<std::string> result = getUserInput()
+			.transform([](std::string name) {
+				std::transform(name.begin(), name.end(), name.begin(), ::toupper);
+				return name;
+			})
+			.and_then([](const std::string& name) {
+				if (name == "ADMIN")
+					return std::optional<std::string>("Welcome, Admin!");
+				return std::optional<std::string>("Hello, " + name + "!");
+			})
+			.or_else([] {
+				return std::optional<std::string>("No input provided.");
+			});
+
+		std::cout << *result << "\n";
+	}
 
 }
 
 
-void Optional::TestAll() {
-
+void Optional::TestAll()
+{
 	// OptionalCreation();
 	// OptionalCreation_Test2();
 	// Create_In_Place();
@@ -580,12 +606,13 @@ void Optional::TestAll() {
 
 	// VariousTests();
 
-	// Apllications::ReadEnvironment();
+	// Applications::ReadEnvironment();
 
 
     // MonadicOperations::OrElse_Test();
     // MonadicOperations::AndThen_Test();
     // MonadicOperations::Transform_Test();
-    MonadicOperations::OrElse_Transform();
+    // MonadicOperations::OrElse_Transform();
+    MonadicOperations::Transform_UserInput();
 };
 

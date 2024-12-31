@@ -739,6 +739,13 @@ namespace Ranges::Views
         }
     }
 
+    void Enumerate()
+    {
+        std::vector<int> range1 = {1, 2, 3};
+        const std::ranges::enumerate_view enumerated = std::views::enumerate(range1);
+        for (const auto& [index, value] : enumerated)
+            std::cout << "Index: " << index << ", Value: " << value << std::endl;
+    }
 
 
     /**
@@ -823,6 +830,7 @@ void Ranges::TestAll()
     // Views::Zip();
     // Views::Repeat();
     // Views::Elements();
+    Views::Enumerate();
 
     // Algorithms::For_Each();
     // Algorithms::Find_IF();
@@ -848,14 +856,15 @@ void Ranges::TestAll()
     // Transform::Test();
 
     // Iota::CreateView_DropAndTake();
-    //Iota::CreateView_WithTransform();
+    // Iota::CreateView_WithTransform();
 
     // Take::Take_View();
     // Take::Take_Test_0();
     // Take::Take_Test();
 
     // Ranges_To::Get_Even_Numbers();
-    Ranges_To::Get_Even_Numbers_Mapping();
+    // Ranges_To::Get_Even_Numbers_Mapping();
 
     // Experiments();
+
 }
