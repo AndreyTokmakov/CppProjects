@@ -8,6 +8,7 @@ Description : DataStructures
 ============================================================================**/
 
 #include "Array/Array.h"
+#include "BitFlags/BitFlags.h"
 #include "LRUCache/LRUCache.h"
 #include "TTLCache/TTLCache.h"
 #include "Function/Function.h"
@@ -62,10 +63,11 @@ int main([[maybe_unused]] int argc,
 
     // Array::TEST_ALL();
     // BitSet::TEST_ALL();
+    BitFlags::TestAll();
     // CategoryTree::TEST_ALL();
     // CircularBuffers::TEST_ALL();
     // RingBuffer::TestAll();
-    RingBuffer_SPSC::TestAll();
+    // RingBuffer_SPSC::TestAll();
     // CustomVector::TestAll();
     // ExecutorAdapter::TestAll();
     // ExecutorAdapter2::TestAll();

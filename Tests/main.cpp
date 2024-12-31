@@ -54,6 +54,7 @@ Description : Tests C++ project
 #include <experimental/scope>
 
 #include "Algorithms/Algorithms.h"
+#include "BitFlags/BitFlags.h"
 #include "BinManipulation/BinManipulation.h"
 #include "Geometry/PointsAndLines.h"
 #include "Concepts//Concepts.h"
@@ -1457,7 +1458,8 @@ int main([[maybe_unused]] int argc,
     // AutoTests::TestAll();
     // BinManipulation::TestAll();
     // BinaryAnalyzer::TestAll();
-    Concepts::TestAll();
+    BitFlags::TestAll();
+    // Concepts::TestAll();
     // Crow::TestAll();
     // CollectionsTests::TestAll();
     // CopyElision_RVO::TestAll();
