@@ -61,7 +61,9 @@ namespace Common
     {
         MessageType type { MessageType::Ping };
         MessageStatus status { MessageStatus::Send };
-        // Originator | ID
+        size_t userId { 0 };
+        // MessageID
+        // Originator | ID - Identifier
         // Destination | ID
         // Data
     };
@@ -71,8 +73,9 @@ namespace Common
         const nlohmann::json jsonMessage = nlohmann::json::parse(strMessage);
 
         Message message;
-        message.type = jsonMessage["t"].get<MessageType>();
-        message.status = jsonMessage["s"].get<MessageStatus>();
+        message.type = jsonMessage["t"].get<decltype(message.type)>();
+        message.status = jsonMessage["s"].get<decltype(message.status)>();
+        message.userId = jsonMessage["id"].get<decltype(message.userId)>();
 
         return message;
     }
@@ -106,7 +109,9 @@ namespace Common
     std::string toString(const Message& message)
     {
         return std::string(R"({ "type":")") + toString(message.type) +
-            R"(", "status": ")" +  toString(message.status) + R"(" })";
+            R"(", "status": ")" +  toString(message.status) +
+            R"(", "id": )" +  std::to_string(message.userId) +
+            R"( })";
     }
 }
 
@@ -115,6 +120,20 @@ namespace MessagingProxy
 {
     using namespace Common;
 
+    struct Session
+    {
+        sockaddr_in address { };
+
+        explicit Session(const sockaddr_in& addr) : address { addr } {
+        }
+
+        Session(const Session& other)  = default;
+        Session& operator=(const Session& other) = default;
+        Session(Session&& other) noexcept = default;
+        Session& operator=(Session&& other) noexcept = default;
+        ~Session() = default;
+    };
+
     struct Proxy
     {
         constexpr static uint32_t receiveBufferSize { 1024 };
@@ -122,6 +141,9 @@ namespace MessagingProxy
 
         int serverSocket { -1 };
         uint16_t serverPort { 52525 };
+
+        // TODO: Create struct Session (to store list of active sockaddr_in and etc)
+        std::unordered_map<size_t, Session> sessions {};
 
         // TODO: Messages Queue
         // TODO: Thread to process messages?
@@ -138,26 +160,37 @@ namespace MessagingProxy
             }
         }
 
+        void handleReceivedData(const std::string& data,
+                                const sockaddr_in& senderAddress)
+        {
+            // TODO: Store session [IP, Port] - 6 bytes?
+            const Message message = parseMessage(data);
+
+            const auto& [itSession, nonExisting] = sessions.emplace(1, senderAddress);
+            if (nonExisting)
+            {
+                std::cout << "New Session created" << std::endl;
+                std::cout << toString(message) << std::endl;
+            }
+        }
+
         void runServer()
         {
             sockaddr_in senderAddress {};
             socklen_t len = sizeof(senderAddress);
             std::string payload(receiveBufferSize, '0');
+            ssize_t bytesReceived { -1 };
 
             while (true)
             {
-                const ssize_t bytesReceived = ::recvfrom (serverSocket,
-                                        payload.data() ,
-                                        receiveBufferSize,
-                                        0 ,
-                                        reinterpret_cast<sockaddr*>(&senderAddress),
-                                        &len);
-                payload.resize(bytesReceived);
-
-                std::cout << len << std::endl;
-
-                const Message message = parseMessage(payload);
-                std::cout << toString(message) << std::endl;
+                bytesReceived = ::recvfrom(serverSocket,payload.data() ,receiveBufferSize, 0,
+                                           reinterpret_cast<sockaddr*>(&senderAddress), &len);
+                if (SOCKET_ERROR != bytesReceived) {
+                    payload.resize(bytesReceived);
+                    handleReceivedData(payload, senderAddress);
+                } else  {
+                    std::cerr << "Failed to receive data from server" << std::endl;
+                }
             }
         }
     };
@@ -169,6 +202,78 @@ namespace Tests
 {
     using namespace MessagingProxy;
     using namespace Common;
+
+    struct TestSession
+    {
+        int socket { INVALID_SOCKET };
+
+        explicit TestSession(const int socket) : socket { socket } {
+            std::cout << "TestSession(" << socket << ")" << std::endl;
+        }
+
+        TestSession(const TestSession& other) : socket { other.socket } {
+            std::cout << "TestSession(const TestSession& other)(" << socket << ")" << std::endl;
+        }
+
+        TestSession& operator=(const TestSession& other)
+        {
+            socket = other.socket;
+            std::cout << "TestSession& operator=(const TestSession& other)(" << socket << ")" << std::endl;
+            return *this;
+        }
+
+        TestSession(TestSession&& other) noexcept: socket { std::exchange(other.socket, INVALID_SOCKET) } {
+            std::cout << "TestSession(const TestSession& other)(" << socket << ")" << std::endl;
+        }
+
+        TestSession& operator=(TestSession&& other) noexcept
+        {
+            socket = std::exchange(other.socket, INVALID_SOCKET);
+            std::cout << "TestSession& operator=(TestSession&& other) noexcept (" << socket << ")" << std::endl;
+            return *this;
+        }
+
+        ~TestSession() {
+            std::cout << "~TestSession(" << socket << ")" << std::endl;
+            socket = INVALID_SOCKET;
+        }
+    };
+
+    struct TestSession2
+    {
+        sockaddr_in address { };
+
+        explicit TestSession2(const sockaddr_in& addr) : address { addr } {
+            std::cout << "TestSession2(" << "address" << ")" << std::endl;
+        }
+
+        TestSession2(const TestSession2& other) : address { other.address } {
+            std::cout << "TestSession2(const TestSession2& other)(" << "address" << ")" << std::endl;
+        }
+
+        TestSession2& operator=(const TestSession2& other)
+        {
+            address = other.address;
+            std::cout << "TestSession2& operator=(const TestSession2& other)(" << "address" << ")" << std::endl;
+            return *this;
+        }
+
+        TestSession2(TestSession2&& other) noexcept: address { other.address } {
+            std::cout << "TestSession2(const TestSession2& other)(" << "address" << ")" << std::endl;
+        }
+
+        TestSession2& operator=(TestSession2&& other) noexcept
+        {
+            //address = std::exchange(other.address, INVALID_SOCKET);
+            std::cout << "TestSession2& operator=(TestSession2&& other) noexcept (" << "address" << ")" << std::endl;
+            return *this;
+        }
+
+        ~TestSession2() {
+            std::cout << "~TestSession2(" << "address" << ")" << std::endl;
+            //address = INVALID_SOCKET;
+        }
+    };
 
     void runServer()
     {
@@ -182,6 +287,23 @@ namespace Tests
         const Message message = parseMessage(strMessage);
 
         std::cout << toString(message) << std::endl;
+    }
+
+    void emplaceSessionTest()
+    {
+        std::unordered_map<size_t, TestSession2> sessions {};
+        sockaddr_in senderAddress {};
+
+        {
+            const auto& [iter, ok] = sessions.emplace(1, senderAddress);
+            std::cout << std::boolalpha << ok << std::endl;
+        }
+
+        {
+            const auto& [iter, ok] = sessions.try_emplace(1, senderAddress);
+            std::cout << std::boolalpha << ok << std::endl;
+        }
+
     }
 }
 
@@ -214,4 +336,5 @@ void MessagingProxy::TestAll()
 {
     Tests::runServer();
     // Tests::parseTest();
+    // Tests::emplaceSessionTest();
 }
