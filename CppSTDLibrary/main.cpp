@@ -96,7 +96,7 @@ int main([[maybe_unused]] int argc,
     // Algorithms::TestAll();
     // Any::TestAll();
     // Arrays::TestAll();
-    // Asserts::TestAll();
+    Asserts::TestAll();
     // Atomic::TestAll();
     // Attributes::TestAll();
     // Auto::TestAll();
@@ -144,7 +144,7 @@ int main([[maybe_unused]] int argc,
     // PolymorphicMemoryResources::TestAll();
     // Print::TestAll();
     // Random::TestAll();
-    Ranges::TestAll();
+    // Ranges::TestAll();
     // ReferenceWrapper::TestAll();
     // StarshipOperator::TestAll();
     // Streams::TestAll();

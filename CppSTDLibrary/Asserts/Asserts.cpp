@@ -1,42 +1,34 @@
-//============================================================================
-// Name        : Asserts.cpp
-// Created on  : 06.07.2020
-// Author      : Tokmakov Andrey
-// Version     : 1.0
-// Copyright   : Your copyright notice
-// Description : C++ std asserts src
-//============================================================================
+/**============================================================================
+Name        : Asserts.cpp
+Created on  : 06.07.2020
+Author      : Andrei Tokmakov
+Version     : 1.0
+Copyright   : Your copyright notice
+Description :
+============================================================================**/
 
 #include <iostream>
 #include <cassert>
 #include <functional>
-#include <algorithm>
-
-#include <string>
 #include <string_view>
+#include <memory>
 
 #include "Asserts.h"
 
-namespace Asserts {
-    using String = std::string;
-    using CString = const String&;
-}
-
-namespace Asserts::StaticAssers {
-    using String = std::string;
-    using CString = const String&;
-
+namespace Asserts::StaticAsserts
+{
     template <typename T, size_t Size>
-    class Vector {
+    class Vector
+    {
         static_assert(Size > 3, "Size is too small");
-        T _points[Size];
+        T points[Size] {};
     };
 
     template <typename T1, typename T2>
     auto add(T1 t1, T2 t2) -> decltype(t1 + t2)
     {
-        static_assert(std::is_integral<T1>::value, "Type T1 must be integral");
-        static_assert(std::is_integral<T2>::value, "Type T2 must be integral");
+        static_assert(std::is_integral_v<T1>, "Type T1 must be integral");
+        static_assert(std::is_integral_v<T2>, "Type T2 must be integral");
 
         return t1 + t2;
     }
@@ -70,26 +62,33 @@ namespace Asserts::StaticAssers {
 
     template <class T>
     T f(T i) {
-        static_assert(std::is_integral<T>::value, "Integet type required");
+        static_assert(std::is_integral_v<T>, "Integer type required");
         return i;
     }
 
     void Test3()
     {
         std::cout << std::boolalpha;
-        std::cout << std::is_integral<A>::value << std::endl;
-        std::cout << std::is_integral<float>::value << std::endl;
-        std::cout << std::is_integral<int>::value << std::endl;
+        std::cout << std::is_integral_v<A> << std::endl;
+        std::cout << std::is_integral_v<float> << std::endl;
+        std::cout << std::is_integral_v<int> << std::endl;
         std::cout << f(123) << std::endl;
 
         // ERROR
         // std::cout << f("") << std::endl;
     }
+
+    void Assert_With_Constexpr_Formated_Message()
+    {
+        static_assert(sizeof(A) == 1, std::format("Unexpected sizeof: expected 1, got {}", sizeof(A)));
+    }
 };
 
-namespace Asserts::Assert_RunTime {
+namespace Asserts::Assert_RunTime
+{
 
-    void Test1() {
+    void Test1()
+    {
         assert(2 + 2 == 4);
         std::cout << "Assert 1 OK" << std::endl;
 
@@ -97,42 +96,46 @@ namespace Asserts::Assert_RunTime {
         std::cout << "Assert 2 OK" << std::endl;
     }
 
-    void Test2() {
+    void Test2()
+    {
         assert(2 + 2 == 4), "Error text 1";
         std::cout << "Assert 1 OK" << std::endl;
 
         assert(2 + 2 == 5), "Error text 2";
         std::cout << "Assert 2 OK" << std::endl;
-
     }
 
-    void Test3() {
+    void Test3()
+    {
         assert((2 * 2 == 4) && "TEXT_1");
         assert((2 * 2 == 5) && "TEXT_2");
     }
 
-    void Test4() {
+    void Test4()
+    {
         assert((2 * 2 > 4) && "ERRR");
     }
 
-    void Test5() {
-        int* ptr = new int(123);
-        std::cout << *ptr << std::endl;
+    void Test5()
+    {
+        std::unique_ptr<int> intPtr = std::make_unique<int>(123);
+        std::cout << *intPtr << std::endl;
         assert(ptr && "Ptr is NULL");
 
-        int* ptr_nullptr = nullptr;
-        assert(ptr_nullptr && "Ptr is NULL");
+        std::unique_ptr<int> intPtrNull = nullptr;
+        assert(intPtrNull && "Ptr is NULL");
     }
 }
 
 void Asserts::TestAll()
 {
-    // StaticAssers::Test1();
-    // StaticAssers::Test2();
-    // StaticAssers::Test3();
+    // StaticAsserts::Test1();
+    // StaticAsserts::Test2();
+    // StaticAsserts::Test3();
+    StaticAsserts::Assert_With_Constexpr_Formated_Message();
 
     // Assert_RunTime::Test1();
-    Assert_RunTime::Test2();
+    // Assert_RunTime::Test2();
     // Assert_RunTime::Test3();
     // Assert_RunTime::Test4();
     // Assert_RunTime::Test5();
