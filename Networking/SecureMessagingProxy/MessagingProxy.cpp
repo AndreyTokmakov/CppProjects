@@ -22,6 +22,7 @@ Description :
 #include <print>
 
 #include <array>
+#include <fstream>
 #include <vector>
 #include <unordered_map>
 
@@ -146,10 +147,85 @@ namespace MessagingProxy
         HashType userName { 0 };
         HashType password { 0 };
 
+        UserInfo() = default;
+
         UserInfo(const UserId id, const HashType uname, const HashType passwd):
             userId { id }, userName { uname }, password { passwd }
         {
-            std::print("Mismatch count: {}\n", userId);
+            // std::print("User (id: {},  name: {}, password: {})\n", userId, userName, password);
+        }
+    };
+
+    struct IStorage
+    {
+        [[nodiscard]]
+        virtual bool storeUsers(const std::unordered_map<UserId, UserInfo>& users) noexcept = 0;
+
+        [[nodiscard]]
+        virtual std::unordered_map<UserId, UserInfo> loadUsers() noexcept = 0;
+
+        virtual ~IStorage() = default;
+    };
+
+    struct FileStorage final: IStorage
+    {
+        std::fstream file;
+
+        explicit FileStorage(const std::filesystem::path& path)
+        {
+            file.open(path, std::ios::out | std::ios::in | std::ios::binary);
+            if (!file.is_open() && !file.good())
+            {
+                throw std::runtime_error("Failed to open file " + path.string());
+            }
+        }
+
+        [[nodiscard]]
+        bool storeUsers(const std::unordered_map<UserId, UserInfo>& users) noexcept override
+        {
+            if (!file.is_open())
+                return false;
+
+            file.seekg(0, std::ios_base::beg);
+            for (const auto& [_, userInfo] : users) {
+                file.write(reinterpret_cast<const char*>(&userInfo.userId), sizeof(userInfo.userId));
+                file.write(reinterpret_cast<const char*>(&userInfo.userName), sizeof(userInfo.userName));
+                file.write(reinterpret_cast<const char*>(&userInfo.password), sizeof(userInfo.password));
+            }
+            return true;
+        }
+
+        // TODO: --> std::expected
+        // TODO: --> Return VECTOR?
+        [[nodiscard]]
+        std::unordered_map<UserId, UserInfo> loadUsers() noexcept override
+        {
+            if (!file.is_open())
+                return {};
+
+            file.seekg(0, std::ios_base::end);
+            int64_t bytesToRead = file.tellg();
+            file.seekg(0, std::ios_base::beg);
+
+            UserInfo info;
+            std::unordered_map<UserId, UserInfo> users;
+            while (bytesToRead > 0)
+            {
+                file.read(reinterpret_cast<std::istream::char_type*>(&info.userId), sizeof(info.userId));
+                file.read(reinterpret_cast<std::istream::char_type*>(&info.userName), sizeof(info.userName));
+                file.read(reinterpret_cast<std::istream::char_type*>(&info.password), sizeof(info.password));
+                bytesToRead -= sizeof(info.userId) + sizeof(info.userName) + sizeof(info.password);
+                users[info.userId] = info;
+            }
+
+            return users;
+        }
+
+        ~FileStorage() override
+        {
+            if (file.is_open()) {
+                file.close();
+            }
         }
     };
 
@@ -262,6 +338,12 @@ namespace Tests
 {
     using namespace MessagingProxy;
     using namespace Common;
+
+    std::ostream& operator<<(std::ostream& stream, const UserInfo& uInfo)
+    {
+        stream << std::format("User (id: {},  name: {}, password: {})", uInfo.userId, uInfo.userName, uInfo.password);
+        return stream;
+    }
 
     struct TestSession
     {
@@ -392,11 +474,113 @@ namespace Tests
 
     void String_View_from_Bytes()
     {
-        const std::array<uint8_t, 1024> bytes { 'h', 'e', 'l', 'l', 'o'};
-        std::string_view payload(reinterpret_cast<const char*>(bytes.data()), 5);
+        constexpr std::array<uint8_t, 1024> bytes { 'h', 'e', 'l', 'l', 'o'};
+        const std::string_view payload(reinterpret_cast<const char*>(bytes.data()), 5);
 
 
         std::cout << payload << std::endl;
+    }
+
+    struct TestFileStorage final: IStorage
+    {
+        std::fstream file;
+
+        explicit TestFileStorage(const std::filesystem::path& path)
+        {
+            file.open(path, std::ios::out | std::ios::in | std::ios::binary);
+            if (!file.is_open() && !file.good())
+            {
+                throw std::runtime_error("Failed to open file " + path.string());
+            }
+        }
+
+        ~TestFileStorage() override
+        {
+            if (file.is_open()) {
+                file.close();
+            }
+        }
+
+        [[nodiscard]]
+        bool storeUsers(const std::unordered_map<UserId, UserInfo>& users) noexcept override
+        {
+            if (!file.is_open())
+                return false;
+
+            file.seekg(0, std::ios_base::beg);
+            for (const auto& [_, userInfo] : users) {
+                file.write(reinterpret_cast<const char*>(&userInfo.userId), sizeof(userInfo.userId));
+                file.write(reinterpret_cast<const char*>(&userInfo.userName), sizeof(userInfo.userName));
+                file.write(reinterpret_cast<const char*>(&userInfo.password), sizeof(userInfo.password));
+            }
+            return true;
+        }
+
+        // TODO: --> std::expected
+        // TODO: --> Return VECTOR?
+        [[nodiscard]]
+        std::unordered_map<UserId, UserInfo> loadUsers() noexcept override
+        {
+            if (!file.is_open())
+                return {};
+
+            file.seekg(0, std::ios_base::end);
+            int64_t bytesToRead = file.tellg();
+            file.seekg(0, std::ios_base::beg);
+
+            UserInfo info;
+            std::unordered_map<UserId, UserInfo> users;
+            while (bytesToRead > 0)
+            {
+                file.read(reinterpret_cast<std::istream::char_type*>(&info.userId), sizeof(info.userId));
+                file.read(reinterpret_cast<std::istream::char_type*>(&info.userName), sizeof(info.userName));
+                file.read(reinterpret_cast<std::istream::char_type*>(&info.password), sizeof(info.password));
+                bytesToRead -= sizeof(info.userId) + sizeof(info.userName) + sizeof(info.password);
+                users[info.userId] = info;
+            }
+
+            return users;
+        }
+    };
+
+    void FileIO_Test()
+    {
+        int value = 123;
+        std::fstream file (R"(/home/andtokm/Temp/storage.dat)",
+                           std::ios::out | std::ios::in | std::ios::binary);
+
+        // file.write(reinterpret_cast<char*>(&value), 4);
+
+        int result = 0;
+        file.read(reinterpret_cast<std::istream::char_type*>(&result), sizeof(result));
+
+        std::cout << result << std::endl;
+
+        file.close();
+    }
+
+    void storageTest_Store()
+    {
+        std::unique_ptr<IStorage> storage = std::make_unique<FileStorage>("/home/andtokm/Temp/storage.dat");
+        const std::unordered_map<UserId, UserInfo> users
+        {
+            {1, UserInfo {111, 111, 111}},
+            {2, UserInfo {222, 222, 222}},
+            {3, UserInfo {333, 333, 333}},
+        };
+
+        [[maybe_unused]]
+        auto result = storage->storeUsers(users);
+    }
+
+    void storageTest_Load()
+    {
+        const std::unique_ptr<IStorage> storage = std::make_unique<FileStorage>("/home/andtokm/Temp/storage.dat");
+        std::unordered_map<UserId, UserInfo> users = storage->loadUsers();
+
+        for (const auto& [_, userInfo] : users) {
+           std::cout << userInfo<< std::endl;
+        }
     }
 }
 
@@ -437,11 +621,15 @@ namespace Tests
 
 void MessagingProxy::TestAll()
 {
-    Tests::runServer();
+    // Tests::runServer();
 
     // Tests::parseTest();
     // Tests::parseTest_BytesArray();
     // Tests::emplaceSessionTest();
     // Tests::HashingTest();
     // Tests::String_View_from_Bytes();
+
+    // Tests::FileIO_Test();
+    Tests::storageTest_Store();
+    Tests::storageTest_Load();
 }
