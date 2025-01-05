@@ -26,6 +26,9 @@ Description :
 #include <vector>
 #include <unordered_map>
 
+#include <atomic>
+#include <thread>
+
 #include <nlohmann/json.hpp>
 #include "../Utilities/Utilities.h"
 
@@ -136,7 +139,6 @@ namespace Common
     }
 }
 
-
 namespace MessagingProxy
 {
     using namespace Common;
@@ -155,6 +157,12 @@ namespace MessagingProxy
             // std::print("User (id: {},  name: {}, password: {})\n", userId, userName, password);
         }
     };
+
+    std::ostream& operator<<(std::ostream& stream, const UserInfo& uInfo)
+    {
+        stream << std::format("User (id: {},  name: {}, password: {})", uInfo.userId, uInfo.userName, uInfo.password);
+        return stream;
+    }
 
     struct IStorage
     {
@@ -250,6 +258,7 @@ namespace MessagingProxy
     {
         constexpr static uint32_t receiveBufferSize { 1024 };
         constexpr static std::string_view host {"0.0.0.0"};
+        constexpr static std::string_view dbPath {"/home/andtokm/Temp/storage.dat"};
 
         Socket serverSocket { -1 };
         uint16_t serverPort { 52525 };
@@ -257,6 +266,8 @@ namespace MessagingProxy
         // TODO: Create struct Session (to store list of active sockaddr_in and etc)
         std::unordered_map<HashType, Session> sessions {};
         std::unordered_map<UserId, UserInfo> users {};
+
+        std::unique_ptr<IStorage> storage { nullptr };
 
         // TODO: Messages Queue
         // TODO: Thread to process messages?
@@ -271,6 +282,8 @@ namespace MessagingProxy
             if (SOCKET_ERROR == ::bind(serverSocket, reinterpret_cast<sockaddr*>(&server), sizeof(server))) {
                 throw std::runtime_error("Failed to bind socket on port " + std::to_string(serverPort));
             }
+
+            storage = std::make_unique<FileStorage>(dbPath);
         }
 
         ~Proxy()
@@ -283,13 +296,17 @@ namespace MessagingProxy
                                 const sockaddr_in& senderAddress)
         {
             const Message message = parseMessage(data);
-            std::cout << toString(message) << std::endl;
+            // std::cout << toString(message) << std::endl;
+
+            // TODO:
+            //  - Parse???
+            //  - Put to RingBuffer ???
 
             if (MessageType::Register == message.type)
             {
-                const auto& [iter, created] = users.try_emplace(1, message.userId, message.originator, 0);
+                const auto& [iter, created] = users.try_emplace(message.userId, message.userId, message.originator, 0);
                 if (created) {
-                    std::cout << "New User created(Id:" << iter->second.userId << ")"<< std::endl;
+                    std::cout << "New User created: " << iter->second << std::endl;
                 }
                 else {
                     std::cout << "Handling existing user: ID = " << message.userId<< std::endl;
@@ -298,7 +315,8 @@ namespace MessagingProxy
             else if (MessageType::Message == message.type)
             {
                 // TODO: Add session
-                if (const auto& [itSession, nonExisting] = sessions.try_emplace(1, senderAddress); nonExisting)
+                if (const auto& [itSession, ok] = sessions.try_emplace(message.originator, senderAddress);
+                    ok)
                 {
                     std::cout << "New Session created" << std::endl;
                 }
@@ -338,12 +356,6 @@ namespace Tests
 {
     using namespace MessagingProxy;
     using namespace Common;
-
-    std::ostream& operator<<(std::ostream& stream, const UserInfo& uInfo)
-    {
-        stream << std::format("User (id: {},  name: {}, password: {})", uInfo.userId, uInfo.userName, uInfo.password);
-        return stream;
-    }
 
     struct TestSession
     {
@@ -545,12 +557,8 @@ namespace Tests
 
     void FileIO_Test()
     {
-        int value = 123;
         std::fstream file (R"(/home/andtokm/Temp/storage.dat)",
                            std::ios::out | std::ios::in | std::ios::binary);
-
-        // file.write(reinterpret_cast<char*>(&value), 4);
-
         int result = 0;
         file.read(reinterpret_cast<std::istream::char_type*>(&result), sizeof(result));
 
@@ -604,7 +612,6 @@ namespace Tests
 // TODO: **** SERVER ****
 //  - Online Clients list? | Sessions  [hash, {ip, port}]
 //  - Register Client list: [ID, HASH] + ptr to the session ???
-//  -
 
 // TODO: Message types:
 //  -  Use Protobuff ???
@@ -621,7 +628,7 @@ namespace Tests
 
 void MessagingProxy::TestAll()
 {
-    // Tests::runServer();
+    Tests::runServer();
 
     // Tests::parseTest();
     // Tests::parseTest_BytesArray();
@@ -630,6 +637,6 @@ void MessagingProxy::TestAll()
     // Tests::String_View_from_Bytes();
 
     // Tests::FileIO_Test();
-    Tests::storageTest_Store();
-    Tests::storageTest_Load();
+    // Tests::storageTest_Store();
+    // Tests::storageTest_Load();
 }

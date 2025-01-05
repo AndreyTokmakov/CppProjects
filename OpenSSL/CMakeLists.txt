@@ -30,6 +30,8 @@ add_executable(${PROJECT_NAME}
         CertificateGenerator.cpp
         Encryption.cpp
         EncryptionRSA.cpp
+        ../Databases/MySQL/MySQL.cpp
+        ../Databases/MySQL/MySQL.h
 )
 
  # Link phread library

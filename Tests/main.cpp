@@ -91,6 +91,7 @@ Description : Tests C++ project
 #include "Coroutines/Coroutines.h"
 #include "Cpp23_Features/Cpp23_Features.h"
 #include "Cpp23_Features/StackTrace.h"
+#include "Cpp23_Features/Execution.h"
 #include "Auto/AutoTests.h"
 #include "Heap/Heap.h"
 #include "FindMinMaxValues/FindMinMaxValues.h"
@@ -1439,11 +1440,12 @@ int main([[maybe_unused]] int argc,
 
     /** * * * * *  Move to lib * * * * * **/
 
-    // Coroutines::TestAll();
-    // StackTrace::TestAll();
-
 
     // Cpp23_Features::TestAll();
+    Execution::TestAll();
+    // StackTrace::TestAll();
+
+    // Coroutines::TestAll();
 
 
     // CompileTime_Programming::Factorial();

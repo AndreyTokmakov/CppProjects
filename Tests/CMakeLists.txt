@@ -69,6 +69,7 @@ add_executable(${PROJECT_NAME}
         Memory/UsingCustomAllocator_List.cpp
         Memory/ObjectMemoryPool.cpp
         Logging/LowLatencyLogger.cpp
+        Cpp23_Features/Execution.cpp
 )
 
 message(STATUS "EXTRA_LIBS: ${EXTRA_LIBS}")
