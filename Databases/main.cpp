@@ -13,6 +13,8 @@ Description : Databases
 
 #include "MySQL/MySQL.h"
 #include "MySQL/MySqlX.h"
+#include "MySQL/SQLite.h"
+
 #include "PostgreSQL/PostgreSQL.h"
 
 int main([[maybe_unused]] int argc,
@@ -21,7 +23,8 @@ int main([[maybe_unused]] int argc,
     const std::vector<std::string_view> args(argv + 1, argv + argc);
 
     // MySQL::TestAll();
-    MySqlX::TestAll();
+    // MySqlX::TestAll();
+    SQLite::TestAll();
 
     return EXIT_SUCCESS;
 }
