@@ -12,6 +12,7 @@ Description : Databases
 #include <string_view>
 
 #include "MySQL/MySQL.h"
+#include "MySQL/MySqlX.h"
 #include "PostgreSQL/PostgreSQL.h"
 
 int main([[maybe_unused]] int argc,
@@ -19,7 +20,8 @@ int main([[maybe_unused]] int argc,
 {
     const std::vector<std::string_view> args(argv + 1, argv + argc);
 
-    MySQL::TestAll();
+    // MySQL::TestAll();
+    MySqlX::TestAll();
 
     return EXIT_SUCCESS;
 }

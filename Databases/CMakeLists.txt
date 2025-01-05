@@ -30,6 +30,7 @@ add_executable(${PROJECT_NAME}
         MySQL/MySQL.cpp
         PostgreSQL/PostgreSQL.cpp
         PostgreSQL/PostgreSQL.h
+        MySQL/MySqlX.cpp
 )
 
 message(STATUS "EXTRA_LIBS: ${EXTRA_LIBS}")
