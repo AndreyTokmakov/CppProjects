@@ -24,7 +24,8 @@ int main([[maybe_unused]] int argc,
 
     // MySQL::TestAll();
     // MySqlX::TestAll();
-    SQLite::TestAll();
+    // SQLite::TestAll();
+    PostgreSQL::TestAll();
 
     return EXIT_SUCCESS;
 }
