@@ -8,6 +8,7 @@ Description : Multithreading performance experiments
 ============================================================================**/
 
 #include "PerformanceExperiments.h"
+#include "../Utilities/Utilities.h"
 
 #include <iostream>
 #include <condition_variable>
@@ -17,40 +18,13 @@ Description : Multithreading performance experiments
 #include <syncstream>
 #include <iomanip>
 
-namespace Utils
-{
-    struct ScopedTimer
-    {
-        const std::string_view benchmarkName;
-        const std::chrono::high_resolution_clock::time_point start {
-                std::chrono::high_resolution_clock::now()
-        };
-
-        explicit ScopedTimer(std::string_view info) :
-                benchmarkName {info} {
-        }
-
-        ScopedTimer(const ScopedTimer&) = delete;
-        ScopedTimer(ScopedTimer&&) = delete;
-        ScopedTimer& operator=(const ScopedTimer&) = delete;
-        ScopedTimer& operator=(ScopedTimer&&) = delete;
-
-        ~ScopedTimer()
-        {
-            const std::chrono::high_resolution_clock::time_point end = std::chrono::high_resolution_clock::now();
-            const std::chrono::duration<double> time_span = duration_cast<std::chrono::duration<double>>(end - start);
-
-            std::cout << std::left << std::setw(19) << benchmarkName << ":  ";
-            std::cout << time_span.count() << " seconds.\n";
-        }
-    };
-}
+#include "ConditionVariable_vs_Atomic.h"
 
 namespace PerformanceExperiments::CV_vs_Atomic
 {
     struct RunnerBase
     {
-        static constexpr int MaxCountTimes {1'000'000};
+        static constexpr int MaxCountTimes { 1'000'000 };
 
         virtual void ping() noexcept = 0;
         virtual void pong() noexcept = 0;
@@ -59,7 +33,7 @@ namespace PerformanceExperiments::CV_vs_Atomic
         virtual ~RunnerBase() = default;
     };
 
-    struct CVEngine: RunnerBase
+    struct CVEngine final : RunnerBase
     {
         std::condition_variable cv;
         std::mutex mtx;
@@ -113,36 +87,32 @@ namespace PerformanceExperiments::CV_vs_Atomic
         }
     };
 
-    struct AtomicEngine: RunnerBase
+    struct AtomicEngine final : RunnerBase
     {
         std::atomic_flag pass;
-        std::atomic_int counter;
 
         void ping() noexcept override
         {
             int counterLocal = 0;
-            while (counterLocal <= MaxCountTimes) {
+            while (counterLocal <= MaxCountTimes)
+            {
                 pass.wait(false);
                 pass.clear();
                 ++counterLocal;
-                ++counter;
                 pass.notify_one();
-                // std::osyncstream {std::cout}  << "ping: " << counterLocal << std::endl;
             }
-            // std::osyncstream {std::cout} << "ping: done!!!" << std::endl;
         }
 
         void pong() noexcept override
         {
             int counterLocal = 0;
-            while (counterLocal < MaxCountTimes) {
+            while (counterLocal < MaxCountTimes)
+            {
                 pass.wait(true);
                 pass.test_and_set();
                 ++counterLocal;
                 pass.notify_one();
-                // std::osyncstream {std::cout}  << "pong: " << counterLocal << std::endl;
             }
-            // std::osyncstream {std::cout} << "pong: done!!!" << std::endl;
         }
 
         bool start() noexcept override
@@ -156,7 +126,7 @@ namespace PerformanceExperiments::CV_vs_Atomic
     void RunBenchmark()
     {
         {
-            Utils::ScopedTimer timer {"Atomic variable     "};
+            Utilities::ScopedTimer timer {"Atomic variable     "};
             if (auto engine = new AtomicEngine(); engine->start()) {
                 std::jthread ping = std::jthread(&AtomicEngine::ping, engine);
                 std::jthread pong = std::jthread(&AtomicEngine::pong, engine);
@@ -164,7 +134,7 @@ namespace PerformanceExperiments::CV_vs_Atomic
         }
 
         {
-            Utils::ScopedTimer timer {"Conditional variable"};
+            Utilities::ScopedTimer timer {"Conditional variable"};
             if (auto engine = new CVEngine(); engine->start()) {
                 std::jthread ping = std::jthread(&CVEngine::ping, engine);
                 std::jthread pong = std::jthread(&CVEngine::pong, engine);
@@ -369,7 +339,7 @@ namespace PerformanceExperiments::SpinLock_vs_Mutex
             };
 
             {
-                Utils::ScopedTimer timer {"Mutex"};
+                Utilities::ScopedTimer timer {"Mutex"};
                 std::vector<std::jthread> jobs;
                 for (int t = 0; t < threadsMax; ++t)
                     jobs.emplace_back(task);
@@ -389,7 +359,7 @@ namespace PerformanceExperiments::SpinLock_vs_Mutex
             };
 
             {
-                Utils::ScopedTimer timer{"SpinLock"};
+                Utilities::ScopedTimer timer{"SpinLock"};
                 std::vector<std::jthread> jobs;
                 for (int t = 0; t < threadsMax; ++t)
                     jobs.emplace_back(task);
@@ -409,7 +379,7 @@ namespace PerformanceExperiments::SpinLock_vs_Mutex
             };
 
             {
-                Utils::ScopedTimer timer {"SpinLock2"};
+                Utilities::ScopedTimer timer {"SpinLock2"};
                 std::vector<std::jthread> jobs;
                 for (int t = 0; t < threadsMax; ++t)
                     jobs.emplace_back(task);
@@ -429,7 +399,7 @@ namespace PerformanceExperiments::SpinLock_vs_Mutex
             };
 
             {
-                Utils::ScopedTimer timer {"SpinLock2_Int"};
+                Utilities::ScopedTimer timer {"SpinLock2_Int"};
                 std::vector<std::jthread> jobs;
                 for (int t = 0; t < threadsMax; ++t)
                     jobs.emplace_back(task);
@@ -450,7 +420,7 @@ namespace PerformanceExperiments::SpinLock_vs_Mutex
             };
 
             {
-                Utils::ScopedTimer timer {"SpinLock2_Int_Timer"};
+                Utilities::ScopedTimer timer {"SpinLock2_Int_Timer"};
                 std::vector<std::jthread> jobs;
                 for (int t = 0; t < threadsMax; ++t)
                     jobs.emplace_back(task);
@@ -470,7 +440,7 @@ namespace PerformanceExperiments::SpinLock_vs_Mutex
             };
 
             {
-                Utils::ScopedTimer timer {"SpinLock2_Timer_Ex"};
+                Utilities::ScopedTimer timer {"SpinLock2_Timer_Ex"};
                 std::vector<std::jthread> jobs;
                 for (int t = 0; t < threadsMax; ++t)
                     jobs.emplace_back(task);
@@ -489,7 +459,7 @@ namespace PerformanceExperiments::SpinLock_vs_Mutex
             };
 
             {
-                Utils::ScopedTimer timer {"SpinLock3"};
+                Utilities::ScopedTimer timer {"SpinLock3"};
                 std::vector<std::jthread> jobs;
                 for (int t = 0; t < threadsMax; ++t)
                     jobs.emplace_back(task);
@@ -509,7 +479,7 @@ namespace PerformanceExperiments::SpinLock_vs_Mutex
             };
 
             {
-                Utils::ScopedTimer timer {"SpinLock4"};
+                Utilities::ScopedTimer timer {"SpinLock4"};
                 std::vector<std::jthread> jobs;
                 for (int t = 0; t < threadsMax; ++t)
                     jobs.emplace_back(task);
@@ -529,7 +499,7 @@ namespace PerformanceExperiments::SpinLock_vs_Mutex
             };
 
             {
-                Utils::ScopedTimer timer {"spin_mutex_M2"};
+                Utilities::ScopedTimer timer {"spin_mutex_M2"};
                 std::vector<std::jthread> jobs;
                 for (int t = 0; t < threadsMax; ++t)
                     jobs.emplace_back(task);
@@ -585,7 +555,7 @@ namespace PerformanceExperiments::AtomicCounter_vs_Mutex
             };
 
             {
-                Utils::ScopedTimer timer {"Mutex"};
+                Utilities::ScopedTimer timer {"Mutex"};
                 std::vector<std::jthread> jobs;
                 for (int t = 0; t < threadsMax; ++t)
                     jobs.emplace_back(task);
@@ -602,7 +572,7 @@ namespace PerformanceExperiments::AtomicCounter_vs_Mutex
             };
 
             {
-                Utils::ScopedTimer timer {"atomic"};
+                Utilities::ScopedTimer timer {"atomic"};
                 std::vector<std::jthread> jobs;
                 for (int t = 0; t < threadsMax; ++t)
                     jobs.emplace_back(task);
@@ -619,7 +589,7 @@ namespace PerformanceExperiments::AtomicCounter_vs_Mutex
             };
 
             {
-                Utils::ScopedTimer timer {"atomic"};
+                Utilities::ScopedTimer timer {"atomic"};
                 std::vector<std::jthread> jobs;
                 for (int t = 0; t < threadsMax; ++t)
                     jobs.emplace_back(task);
@@ -637,7 +607,7 @@ namespace PerformanceExperiments::AtomicCounter_vs_Mutex
             };
 
             {
-                Utils::ScopedTimer timer {"atomic"};
+                Utilities::ScopedTimer timer {"atomic"};
                 std::vector<std::jthread> jobs;
                 for (int t = 0; t < threadsMax; ++t)
                     jobs.emplace_back(task);
@@ -655,7 +625,7 @@ namespace PerformanceExperiments::AtomicCounter_vs_Mutex
             };
 
             {
-                Utils::ScopedTimer timer {"atomic"};
+                Utilities::ScopedTimer timer {"atomic"};
                 std::vector<std::jthread> jobs;
                 for (int t = 0; t < threadsMax; ++t)
                     jobs.emplace_back(task);
@@ -681,13 +651,13 @@ namespace PerformanceExperiments::Atomic_vs_Volatile
         constexpr size_t iterCount { 100'000'000 };
 
         {
-            Utils::ScopedTimer timer {"atomicCounter"};
+            Utilities::ScopedTimer timer {"atomicCounter"};
             for (size_t t = 0; t < iterCount; ++t)
                 atomicCounter.fetch_add(1, std::memory_order::relaxed);
         }
 
         {
-            Utils::ScopedTimer timer {"volatileCounter"};
+            Utilities::ScopedTimer timer {"volatileCounter"};
             for (size_t t = 0; t < iterCount; ++t)
                 volatileCounter += 1;
         }
@@ -711,7 +681,7 @@ namespace PerformanceExperiments::Atomic_vs_Volatile
             };
 
             {
-                Utils::ScopedTimer timer {"atomicCounter"};
+                Utilities::ScopedTimer timer {"atomicCounter"};
                 std::vector<std::jthread> jobs;
                 for (int32_t t = 0; t < threadsMax / 2; ++t) {
                     jobs.emplace_back(writer);
@@ -732,7 +702,7 @@ namespace PerformanceExperiments::Atomic_vs_Volatile
             };
 
             {
-                Utils::ScopedTimer timer {"volatileCounter"};
+                Utilities::ScopedTimer timer {"volatileCounter"};
                 std::vector<std::jthread> jobs;
                 for (uint32_t t = 0; t < threadsMax / 2; ++t) {
                     jobs.emplace_back(writer);
@@ -751,8 +721,10 @@ namespace PerformanceExperiments::Atomic_vs_Volatile
 
 void PerformanceExperiments::TestAll()
 {
+    ConditionVariable_vs_Atomic::TestAll();
+
     // CV_vs_Atomic::RunBenchmark();
-    SpinLock_vs_Mutex::RunBenchmark();
+    // SpinLock_vs_Mutex::RunBenchmark();
     // AtomicCounter_vs_Mutex::RunBenchmark();
     // Atomic_vs_Volatile::RunBenchmark();
 };

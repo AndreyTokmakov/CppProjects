@@ -91,7 +91,7 @@ int main([[maybe_unused]] int argc,
     // SynchStream::TEST_ALL();
     // SynchStream_Custom::TEST_ALL();
 
-    SpinLock::TestAll();
+    // SpinLock::TestAll();
 
     // StoppingThreads::TestAll();
 
@@ -104,7 +104,7 @@ int main([[maybe_unused]] int argc,
     // JThreads::TEST_ALL();
 
     // FalseSharingExperiments::TEST_ALL();
-    // PerformanceExperiments::TestAll();
+    PerformanceExperiments::TestAll();
 
     // Utilities::TestAll();
 

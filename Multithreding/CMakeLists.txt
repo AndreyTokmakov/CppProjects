@@ -52,6 +52,8 @@ add_executable(${PROJECT_NAME}
         SpinLock/SpinLock.h SpinLock/SpinLock.cpp
         Threads/StoppingThreads.h Threads/StoppingThreads.cpp
         Utilities/Utilities.h Utilities/Utilities.cpp Utilities/Wrapper.h
+        PerformanceExperiments/ConditionVariable_vs_Atomic.cpp
+        PerformanceExperiments/ConditionVariable_vs_Atomic.h
 )
 
 # Link libraries to the project/executable
