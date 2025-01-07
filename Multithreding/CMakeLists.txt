@@ -11,49 +11,48 @@ add_compile_options(-c -Wall -Wextra -O3 -std=c++26)
 # include all components
 add_executable(${PROJECT_NAME}
         main.cpp
-        ThreadPoolBlocking/ThreadPoolBlocking.cpp ThreadPoolBlocking/ThreadPoolBlocking.h
-        AsyncLaunch/AsyncLaunch.cpp AsyncLaunch/AsyncLaunch.h
-        ThreadHelperUtilities/ThreadHelperUtilities.cpp ThreadHelperUtilities/ThreadHelperUtilities.h
-        Atomic/Atomic.cpp Atomic/Atomic.h
-        Atomic/Atomic_MemoryOrder.cpp Atomic/Atomic_MemoryOrder.h
-        Atomic/AtomicFlag.cpp Atomic/AtomicFlag.h
-        Atomic/Atomic_CompareExchange.cpp Atomic/Atomic_CompareExchange.h
-        Atomic/Atomic_IsLockFree.cpp Atomic/Atomic_IsLockFree.h
-        Atomic/AtomicPerformanceTests.cpp Atomic/AtomicPerformanceTests.h
-        Atomic/Atomic_Bool.cpp Atomic/Atomic_Bool.h
-        Barrier/Barrier.cpp Barrier/Barrier.h
-        CallOnce/CallOnce.cpp CallOnce/CallOnce.h
-        ConditionVariable/ConditionVariable.cpp ConditionVariable/ConditionVariable.h
-        Exceptions_Handling/Exceptions_Handling.cpp Exceptions_Handling/Exceptions_Handling.h
-        Future/Future.cpp Future/Future.h
-        Integer/Integer.h
-        JThreads/JThreads.cpp JThreads/JThreads.h
-        Latch/Latch.cpp Latch/Latch.h
-        Collections/LockFreeQueue.cpp Collections/LockFreeQueue.h
-        Collections/Multithreading_Collections.cpp Collections/Multithreading_Collections.h
-        Collections/Queue.cpp Collections/Queue.h
-        Collections/BlockingQueue.cpp Collections/BlockingQueue.h
-        Collections/SingleConsumerProducerQueue.cpp Collections/SingleConsumerProducerQueue.h
-        Collections/Single_ConsumerProducerQueue_Two.cpp Collections/Single_ConsumerProducerQueue_Two.h
-        Multithreading_Communication/Multithreading_Communication.cpp Multithreading_Communication/Multithreading_Communication.h
-        Multithreading_Performance/Multithreading_Performance.cpp Multithreading_Performance/Multithreading_Performance.h
-        PackagedTask/PackagedTask.cpp PackagedTask/PackagedTask.h
-        ParallelExecutionAlgoritms/ParallelExecutionAlgoritms.cpp ParallelExecutionAlgoritms/ParallelExecutionAlgoritms.h
-        Promise/Promise.cpp Promise/Promise.h
-        Semaphore/Semaphore.cpp Semaphore/Semaphore.h
-        Synchronization/Synchronization.cpp Synchronization/Synchronization.h
-        ThreadPools/ThreadPools.cpp ThreadPools/ThreadPools.h
-        Threads/Threads.cpp Threads/Threads.h
-        ThreadPoolLimited/ThreadPoolLimited.cpp ThreadPoolLimited/ThreadPoolLimited.h
-        FalseSharing/FalseSharingExperiments.cpp FalseSharing/FalseSharingExperiments.h
-        SynchStream_Custom/SynchStream_Custom.cpp SynchStream_Custom/SynchStream_Custom.h
-        SynchStream/SynchStream.cpp SynchStream/SynchStream.h
-        PerformanceExperiments/PerformanceExperiments.cpp PerformanceExperiments/PerformanceExperiments.h
-        SpinLock/SpinLock.h SpinLock/SpinLock.cpp
-        Threads/StoppingThreads.h Threads/StoppingThreads.cpp
-        Utilities/Utilities.h Utilities/Utilities.cpp Utilities/Wrapper.h
+        ThreadPoolBlocking/ThreadPoolBlocking.cpp
+        AsyncLaunch/AsyncLaunch.cpp
+        ThreadHelperUtilities/ThreadHelperUtilities.cpp
+        Atomic/Atomic.cpp
+        Atomic/Atomic_MemoryOrder.cpp
+        Atomic/AtomicFlag.cpp
+        Atomic/Atomic_CompareExchange.cpp
+        Atomic/Atomic_IsLockFree.cpp
+        Atomic/AtomicPerformanceTests.cpp
+        Atomic/Atomic_Bool.cpp
+        Barrier/Barrier.cpp
+        CallOnce/CallOnce.cpp
+        ConditionVariable/ConditionVariable.cpp
+        Exceptions_Handling/Exceptions_Handling.cpp
+        Future/Future.cpp
+        JThreads/JThreads.cpp
+        Latch/Latch.cpp
+        Collections/LockFreeQueue.cpp
+        Collections/Multithreading_Collections.cpp
+        Collections/Queue.cpp
+        Collections/BlockingQueue.cpp
+        Collections/SingleConsumerProducerQueue.cpp
+        Collections/Single_ConsumerProducerQueue_Two.cpp
+        Multithreading_Communication/Multithreading_Communication.cpp
+        Multithreading_Performance/Multithreading_Performance.cpp
+        PackagedTask/PackagedTask.cpp
+        ParallelExecutionAlgoritms/ParallelExecutionAlgoritms.cpp
+        Promise/Promise.cpp
+        Semaphore/Semaphore.cpp
+        Synchronization/Synchronization.cpp
+        ThreadPools/ThreadPools.cpp
+        Threads/Threads.cpp
+        ThreadPoolLimited/ThreadPoolLimited.cpp
+        FalseSharing/FalseSharingExperiments.cpp
+        SynchStream_Custom/SynchStream_Custom.cpp
+        SynchStream/SynchStream.cpp
+        PerformanceExperiments/PerformanceExperiments.cpp
+        SpinLock/SpinLock.cpp
+        Threads/StoppingThreads.cpp
+        Utilities/Utilities.cpp
         PerformanceExperiments/ConditionVariable_vs_Atomic.cpp
-        PerformanceExperiments/ConditionVariable_vs_Atomic.h
+        PerformanceExperiments/SpinLock.cpp
 )
 
 # Link libraries to the project/executable

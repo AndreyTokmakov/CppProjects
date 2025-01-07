@@ -1,18 +1,18 @@
 /**============================================================================
-Name        : ConditionVariable_vs_Atomic.h
-Created on  : 06.01.2025
+Name        : SpinLock.h
+Created on  : 07.01.2025
 Author      : Andrei Tokmakov
 Version     : 1.0
 Copyright   : Your copyright notice
 Description :
 ============================================================================**/
 
-#ifndef CONDITIONVARIABLE_VS_ATOMIC_H
-#define CONDITIONVARIABLE_VS_ATOMIC_H
+#ifndef SPINLOCK_H
+#define SPINLOCK_H
 
-namespace ConditionVariable_vs_Atomic
+namespace SpinLock
 {
     void benchmarks();
-}
+};
 
-#endif //CONDITIONVARIABLE_VS_ATOMIC_H
+#endif //SPINLOCK_H
