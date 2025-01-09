@@ -153,6 +153,47 @@ namespace Concepts::Constraints_On_Member_Function
     }
 }
 
+namespace Concepts::DependencyInjection
+{
+    template<typename Type>
+    concept Interface = requires (Type obj) {
+        { obj.func() } -> std::same_as<void>;
+    };
+
+    struct DefaultImpl
+    {
+        void func() {
+            std::cout << "DefaultImpl::func()" << std::endl;
+        }
+    };
+
+    template<typename ...>
+    inline auto InjectedInterface = DefaultImpl {};
+
+    template<typename ... Args>
+        requires (sizeof...(Args) == 0)
+    void call_func()
+    {
+        Interface auto& iface = InjectedInterface<Args...>;
+        iface.func();
+    }
+
+    struct InjectedImplOne
+    {
+        void func() {
+            std::cout << "InjectedImpl_One::func()" << std::endl;
+        }
+    };
+
+    template<>
+    inline auto InjectedInterface<> = InjectedImplOne {};
+
+    void MyFunc()
+    {
+        call_func();
+    }
+}
+
 void Concepts::TestAll()
 {
     // If_Constexpr_Concepts();
@@ -161,5 +202,7 @@ void Concepts::TestAll()
 
     // HasCallOperator::CheckTypeIsFunctor();
 
-    Constraints_On_Member_Function::Check_If_Function_Available();
+    //Constraints_On_Member_Function::Check_If_Function_Available();
+
+    DependencyInjection::MyFunc();
 }

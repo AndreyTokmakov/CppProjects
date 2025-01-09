@@ -27,6 +27,8 @@ Description : DesignPatterns
 #include <functional>
 #include <memory>
 
+#include "../Helpers/Wrapper.h"
+
 namespace DesignPatterns::Singleton
 {
     class FileRepository
@@ -1242,75 +1244,72 @@ namespace DesignPatterns::Observer_LinedIn_Example
     template <typename Update>
     class Subscriber : public std::enable_shared_from_this<Subscriber<Update>>
     {
-
-    public:
-
         using update_callback = std::function<void(const Update&)>;
         using error_callback = std::function<void(std::exception_ptr e)>;
         using completion_callback = std::function<void()>;
 
+        update_callback updateCallback;
+        error_callback errorCallback;
+        completion_callback completionCallback;
+
+    public:
         /**
          * Gateway for factoring the enclosing class.
          * This is the entry point for factoring the instance of the class, as
          * precondition for std::share_from_this() is a valid call that doesn't throw
         */
-        [[nodiscard]] static std::shared_ptr<Subscriber> create(update_callback updateCallback,
-                                                                error_callback errorCallback,
-                                                                completion_callback completionCallback)
+        [[nodiscard]]
+        static std::shared_ptr<Subscriber> create(update_callback updateCallback,
+                                                  error_callback errorCallback,
+                                                  completion_callback completionCallback)
         {
-            return std::shared_ptr<Subscriber>(new Subscriber(updateCallback, errorCallback, completionCallback));
+            return std::shared_ptr<Subscriber>(new Subscriber(
+                std::move(updateCallback), std::move(errorCallback), std::move(completionCallback)));
         }
 
         // Common interface - for subscribing/unsubscribing
         template <typename Publisher>
-        void subsribe(std::shared_ptr<Publisher> publisher)
+        void subscribe(const Publisher* publisher)
         {
             if (publisher) [[likely]]
                 publisher->subsribe(this->share_from_this());
         }
 
         template <typename Publisher>
-        void unsubsribe(std::shared_ptr<Publisher> publisher)
+        void unsubscribe(const Publisher* publisher)
         {
             if (publisher)[[likely]]
                 publisher->unsubsribe(this->share_from_this());
         }
 
-        // Interface - customization points, aligned with the Observer concept
         void onNext(const Update& update)
         {
-            if (updateCallback_)
-                std::invoke(updateCallback_, update);
+            if (updateCallback)
+                std::invoke(updateCallback, update);
         }
 
-        void onError(std::exception_ptr e)
+        void onError(const std::exception_ptr& exc)
         {
-            if (errorCallback_)
-                std::invoke(errorCallback_, e);
+            if (errorCallback)
+                std::invoke(errorCallback, exc);
         }
 
         void onCompletion()
         {
-            if (completionCallback_)
-                std::invoke(completionCallback_);
+            if (completionCallback)
+                std::invoke(completionCallback);
         }
 
     private:
-        /**
-         * Hidden c-tor
-        */
-        explicit Subscriber(update_callback updateCallback,
-                            error_callback errorCallback,
-                            completion_callback completionCallback) noexcept:
-                updateCallback_(updateCallback),
-                errorCallback_(errorCallback),
-                completionCallback_(completionCallback)
+
+        explicit Subscriber(update_callback callbackUpdate,
+                            error_callback callbackError,
+                            completion_callback callbackCompletion) noexcept:
+                updateCallback { std::move( callbackUpdate ) },
+                errorCallback {std::move( callbackError )},
+                completionCallback {std::move( callbackCompletion )}
         {}
 
-    private:
-        update_callback updateCallback_;
-        error_callback errorCallback_;
-        completion_callback completionCallback_;
 
     };
 
@@ -1323,7 +1322,9 @@ namespace DesignPatterns::Observer_LinedIn_Example
         { observer.onCompletion() } -> std::same_as<void>;
     };
 
-    /**https://www.linkedin.com/posts/damirljubic_compiler-explorer-c-x86-64-gcc-142-activity-7255932073566199808-3ZZa/?utm_source=share&utm_medium=member_desktop
+    /**
+     * https://www.linkedin.com/posts/damirljubic_compiler-explorer-c-x86-64-gcc-142-activity-7255932073566199808-
+     *      3ZZa/?utm_source=share&utm_medium=member_desktop
      * Publisher - the Observable that will emit the Updates to the
      * all subscribed Observers
      * Push model - emits the updates as they arrive to all listeners
@@ -1399,31 +1400,96 @@ namespace DesignPatterns::Observer_LinedIn_Example
     };
 
 
-    struct Int
-    {
-        constexpr Int(int val) noexcept: val { val } {}
-        constexpr operator int() const { return val; }
-
-    private:
-        int val;
-    };
-
     void Demo()
     {
-        using subscriber_t = Subscriber<Int>;
+        using Integer = Helpers::Integer;
+        using SubscriberType = Subscriber<Integer>;
 
-        auto subscriber = subscriber_t::create(
-                [](const Int& update) { std::cout << update << '\n';},
+        const auto subscriber = SubscriberType::create(
+                [](const Integer& update) { std::cout << update << '\n';},
                 nullptr,
                 []{ std::cout << "Completed!\n"; }
         );
 
-        using publisher_t = Publisher<Int, Subscriber>;
-        std::shared_ptr<publisher_t> publisher = std::make_shared<publisher_t>();
+        using publisher_t = Publisher<Integer, Subscriber>;
+        const std::shared_ptr<publisher_t> publisher = std::make_shared<publisher_t>();
         publisher->subscribe(subscriber);
-        publisher->notify(Int{11});
+        publisher->notify(Integer{11});
     }
+}
 
+namespace DesignPatterns::Observer_LinedIn_Example_BAD
+{
+    class ChessPiece
+    {
+    public:
+        // Observer type: a callback that accepts an int (piece's position).
+        // It could be anything, as long as we use it as a callback.
+        using Observer = std::function<void(int)>;
+
+        void addObserver(const Observer& observer)
+        {
+            observers.push_back(observer);
+        }
+
+        // Last time I didn't show how to remove an observer. How about this implementation using a lambda?
+        void removeObserver(const Observer &observer)
+        {
+            std::erase_if(observers, [&observer](const Observer &obs) {
+                return obs.target_type() == observer.target_type();}
+            );
+        }
+
+        void setPosition(const int pos)
+        {
+            position = pos;
+            notifyObservers(); //This is where things happen. This will call all the observers functors.
+        }
+
+    private:
+        void notifyObservers()
+        {
+            for (const auto &observer : observers)
+            {
+                observer(position); // sends the notification to every observer.
+            }
+        }
+
+        int position = 1;                // Just using an int to exemplify the functor calls...
+        std::vector<Observer> observers; // List of callbacks (observers).
+    };
+
+    // One example of a functor could be some logic that updates the board!
+    struct BoardUpdater
+    {
+        void operator()(int position) const
+        {
+            std::cout << "[Board] Updating chessboard: Piece moved to position " << position << "\n";
+        }
+    };
+
+    // Another example of a functor could be a logger that writes something everytime a notification arrives!
+    struct MoveLogger
+    {
+        void operator()(int position) const
+        {
+            std::cout << "[Logger] New position logged: " << position << "\n";
+        }
+    };
+
+    void Demo()
+    {
+        ChessPiece knight;
+
+        knight.addObserver(BoardUpdater());
+        knight.addObserver(MoveLogger());
+
+        knight.setPosition(3); //This will trigger the functors!!!
+
+        knight.removeObserver(MoveLogger()); //Now we disable the logger, just for fun!
+
+        knight.setPosition(5); //Here, only the board updater will be called.
+    }
 }
 
 
@@ -1671,7 +1737,9 @@ namespace DesignPatterns::TagDispatching_RegisterIO
     {
         Register<0x4000'0000, ReadWrite> r1;  /// OK
         r1 = 10;                              /// OK
-        std::uint32_t value1 = r1;            /// OK
+
+        [[maybe_unused]]
+        std::uint32_t value1 = r1;         /// OK
 
         Register<0x4000'0000, Write> r2;      /// OK
         r2 = 10U;                             /// OK
@@ -1679,6 +1747,8 @@ namespace DesignPatterns::TagDispatching_RegisterIO
 
         Register<0x4000'0000, Read> r3;        /// OK
         // r3 = 10;                            /// ---> Compilation error
+
+        [[maybe_unused]]
         std::uint32_t value3 = r3;             /// OK
     }
 }
@@ -1776,7 +1846,8 @@ void DesignPatterns::TestAll()
     // Monostate::test();
 
     // Observer::test();
-    Observer_LinedIn_Example::Demo();
+    // Observer_LinedIn_Example::Demo();
+    Observer_LinedIn_Example_BAD::Demo();
 
     // Decorator::test();
 

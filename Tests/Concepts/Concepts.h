@@ -10,7 +10,8 @@ Description : Concepts.h
 #ifndef CPPPROJECTS_CONCEPTS_H
 #define CPPPROJECTS_CONCEPTS_H
 
-namespace Concepts {
+namespace Concepts
+{
     void TestAll();
 };
 

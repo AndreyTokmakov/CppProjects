@@ -1409,13 +1409,10 @@ namespace CompileTime_Programming
     }
 }
 
-
 int main([[maybe_unused]] int argc,
          [[maybe_unused]] char** argv)
 {
     const std::vector<std::string_view> args(argv + 1, argv + argc);
-
-
 
     // WrapperTests::Test();
     // StaticCounter::Test();
@@ -1442,7 +1439,7 @@ int main([[maybe_unused]] int argc,
 
 
     // Cpp23_Features::TestAll();
-    Execution::TestAll();
+    // Execution::TestAll();
     // StackTrace::TestAll();
 
     // Coroutines::TestAll();
@@ -1460,14 +1457,14 @@ int main([[maybe_unused]] int argc,
     // AutoTests::TestAll();
     // BinManipulation::TestAll();
     // BinaryAnalyzer::TestAll();
-    BitFlags::TestAll();
+    // BitFlags::TestAll();
     // Concepts::TestAll();
     // Crow::TestAll();
     // CollectionsTests::TestAll();
     // CopyElision_RVO::TestAll();
     // ConstexprMap::TestAll();
     // DebugLogger::TestAll();
-    // DesignPatterns::TestAll();
+    DesignPatterns::TestAll();
     // Date_Time_Chrono::TestAll();
     // Heap::TestAll();
     // Iterators::TestAll();
