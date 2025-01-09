@@ -37,30 +37,37 @@ add_executable(${PROJECT_NAME}
 		Proxy/Subject.cpp
 		Proxy/DatabaseProxy.cpp
 		RAII/RAII.cpp
-		Singleton/Singleton.cpp Singleton/Singleton.h Singleton/SingletonCRTP.cpp
-		ExecutorAdapter/ExecutorAdapter.cpp ExecutorAdapter/ExecutorAdapter.h
-		State/State.cpp State/State.h
-		Strategy/Strategy.cpp Strategy/Strategy.h
-		Visitor/Visitor.cpp Visitor/Visitor.h Visitor/StockVisitor.cpp
+		Singleton/Singleton.cpp
+		Singleton/SingletonCRTP.cpp
+		ExecutorAdapter/ExecutorAdapter.cpp
+		State/State.cpp
+		Strategy/Strategy.cpp
+		Visitor/Visitor.cpp
+		Visitor/StockVisitor.cpp
 		Visitor/DynamicComponentsVisitor.cpp
 		Builder/HtmlBuilder.cpp
-		TypeErasure/TypeErasure.cpp TypeErasure/TypeErasure.h TypeErasure/TypeErasure_CallOperator.cpp
-		CopyAndSwap/CopyAndSwap.cpp CopyAndSwap/CopyAndSwap.h
-		TagDispatching/TagDispatching.cpp TagDispatching/TagDispatching.h TagDispatching/TagDispatching_RegisterIO.cpp
-		Policy/Policy.cpp Policy/Policy.cpp Policy/CheckingPolicy.cpp
-		Iterator/Iterator.cpp Iterator/Iterator.h
+		TypeErasure/TypeErasure.cpp
+		TypeErasure/TypeErasure_CallOperator.cpp
+		CopyAndSwap/CopyAndSwap.cpp
+		TagDispatching/TagDispatching.cpp
+		TagDispatching/TagDispatching_RegisterIO.cpp
+		Policy/Policy.cpp
+		Policy/Policy.cpp
+		Policy/CheckingPolicy.cpp
+		Iterator/Iterator.cpp
 		Builder/UserBuilder.cpp
-		RAII/RAII.cpp RAII/RAII.h
-		VirtualConstructor/VirtualConstructor.cpp VirtualConstructor/VirtualConstructor.h
-		State/State.cpp State/State.h
-		TemplateMethod/TemplateMethod.cpp TemplateMethod/TemplateMethod.h
-		Adapter/BaseAdapter.cpp Adapter/GoodExample.cpp Bridge/DrawingBridge.cpp Bridge/DrawingBridgeTwo.cpp
-		Decorator/ShapeDecorator.cpp Decorator/ShapeDecorator.h
+		RAII/RAII.cpp
+		VirtualConstructor/VirtualConstructor.cpp
+		TemplateMethod/TemplateMethod.cpp
+		Adapter/BaseAdapter.cpp Adapter/GoodExample.cpp
+		Bridge/DrawingBridge.cpp
+		Bridge/DrawingBridgeTwo.cpp
+		Decorator/ShapeDecorator.cpp
 		LazyInitialization/LazyInitialization.cpp
-		LazyInitialization/LazyInitialization.h
 		ChainOfResponsibility/Example2.cpp
 		Command/Command_MethodPtr.cpp
-		Iterator/RangeIterator.cpp Mediator/ChatMediator.cpp
+		Iterator/RangeIterator.cpp
+		Mediator/ChatMediator.cpp
 		Observer/ObserverBasic.cpp
 		TemplateMethod/TemplateMethod_ExampleTwo.cpp
 		Observer/ObserverMediator.cpp
@@ -85,6 +92,7 @@ add_executable(${PROJECT_NAME}
 		CRTP/CRTP_Cloneable.cpp
         TypeID/TypeID.cpp
 		AccessToken/AccessToken.cpp
+		FactoryClasses/FactoryClasses.cpp
 )
 
 # Link libraries to the project/executable

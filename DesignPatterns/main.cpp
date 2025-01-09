@@ -52,6 +52,7 @@ Description : Software design patterns C++ test project
 #include "MVC/ModelViewController.h"
 #include "DependencyInjection/DependencyInjection.h"
 #include "TypeID/TypeID.h"
+#include "FactoryClasses/FactoryClasses.h"
 
 
 int main([[maybe_unused]]  int argc,
@@ -61,6 +62,7 @@ int main([[maybe_unused]]  int argc,
     // AbstractFactory::TestAll();
     // Builder::TestAll();
     // FabricMethod::TestAll();
+    FactoryClasses::TestAll();
     // Prototype::TestAll();
     // Singleton::TestAll();;
     // Monostate::TestAll();;
@@ -85,7 +87,7 @@ int main([[maybe_unused]]  int argc,
     /** Behaviour patterns **/
     // Strategy::Test();
     // Policy::Test();
-    ChainOfResponsibility::TestAll();
+    // ChainOfResponsibility::TestAll();
     // Command::TestAll();
     // Iterator::Test();
     // Interpreter::Test();
