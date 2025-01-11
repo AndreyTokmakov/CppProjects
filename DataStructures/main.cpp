@@ -63,7 +63,7 @@ int main([[maybe_unused]] int argc,
 
     // Array::TEST_ALL();
     // BitSet::TEST_ALL();
-    BitFlags::TestAll();
+    // BitFlags::TestAll();
     // CategoryTree::TEST_ALL();
     // CircularBuffers::TEST_ALL();
     // RingBuffer::TestAll();

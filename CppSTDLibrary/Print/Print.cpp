@@ -118,7 +118,12 @@ void Print::TestAll()
 {
     // Print_Bits();
     // Chrono_Data_Time::Print_Formating();
-    Alignment::Print_As_Table();
+    // Alignment::Print_As_Table();
+
+    /** Not yet supported: https://www.youtube.com/watch?v=G6hhZGUE9S4 **/
+    // std::println("{}", std::pair { 42, 42.5});
+    // std::println("{}", std::tuple  {1, '2', 3.0, "Four"});
+
 
     /*
     constexpr std::string_view name = "Daniel"sv;
