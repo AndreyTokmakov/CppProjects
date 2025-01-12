@@ -56,6 +56,7 @@
 #include "SpinLock/SpinLock.h"
 #include "PerformanceExperiments/PerformanceExperiments.h"
 #include "Utilities/Utilities.h"
+#include "Collections/RingBuffer.h"
 
 
 int main([[maybe_unused]] int argc,
@@ -104,7 +105,7 @@ int main([[maybe_unused]] int argc,
     // JThreads::TEST_ALL();
 
     // FalseSharingExperiments::TEST_ALL();
-    PerformanceExperiments::TestAll();
+    // PerformanceExperiments::TestAll();
 
     // Utilities::TestAll();
 
@@ -116,6 +117,7 @@ int main([[maybe_unused]] int argc,
     // Queue::TestAll();
     // BlockingQueue::TestAll();
     // LockFreeQueue::TEST_ALL()
+    RingBuffer::TestAll();
 
     return EXIT_SUCCESS;
 }

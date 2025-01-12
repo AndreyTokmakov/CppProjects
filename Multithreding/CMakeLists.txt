@@ -34,6 +34,7 @@ add_executable(${PROJECT_NAME}
         Collections/BlockingQueue.cpp
         Collections/SingleConsumerProducerQueue.cpp
         Collections/Single_ConsumerProducerQueue_Two.cpp
+        Collections/RingBuffer.cpp
         Multithreading_Communication/Multithreading_Communication.cpp
         Multithreading_Performance/Multithreading_Performance.cpp
         PackagedTask/PackagedTask.cpp
