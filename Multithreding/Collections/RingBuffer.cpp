@@ -19,9 +19,9 @@ Description : RingBuffer.cpp
 namespace RingBuffer
 {
     template<typename T>
-   struct RingBuffer
+    struct RingBuffer
     {
-        using size_type = size_t;
+        using size_type = uint32_t;
         using value_type = T;
         using collection_type = std::vector<value_type>;
 
@@ -30,7 +30,7 @@ namespace RingBuffer
         std::atomic<bool> overflow {false };
         collection_type buffer {};
 
-        explicit RingBuffer(size_t size): idxRead { 0 }, idxWrite { 0 }, overflow { false } {
+        explicit RingBuffer(size_type size): idxRead { 0 }, idxWrite { 0 }, overflow { false } {
             buffer.resize(size);
         }
 
@@ -101,7 +101,7 @@ namespace RingBuffer
         {
             size_type readIdx = idxRead.load(std::memory_order::relaxed);
             if (!overflow && idxWrite == readIdx) {
-                idxWrite.wait(readIdx, std::memory_order::relaxed);
+                idxWrite.wait(readIdx);
             }
 
             if (readIdx >= buffer.size()) {

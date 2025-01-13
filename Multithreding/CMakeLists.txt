@@ -52,6 +52,7 @@ add_executable(${PROJECT_NAME}
         SpinLock/SpinLock.cpp
         Threads/StoppingThreads.cpp
         Utilities/Utilities.cpp
+        Utilities/Utilities_Tests.cpp
         PerformanceExperiments/ConditionVariable_vs_Atomic.cpp
         PerformanceExperiments/SpinLock.cpp
 )
