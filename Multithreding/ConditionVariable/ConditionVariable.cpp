@@ -22,7 +22,7 @@
 #include <format>
 
 #include "ConditionVariable.h"
-#include "../ThreadHelperUtilities/ThreadHelperUtilities.h"
+#include "../Utilities/Utilities.h"
 
 using namespace std::chrono_literals;
 

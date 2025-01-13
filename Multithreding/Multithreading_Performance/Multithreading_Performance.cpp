@@ -7,11 +7,11 @@
 // Description : Multithread performance tests class
 //============================================================================
 
-#include "../ThreadHelperUtilities/ThreadHelperUtilities.h"
+#include "../Utilities/Utilities.h"
 #include "Multithreading_Performance.h"
 
 #include <iostream>
-#include <atomic>         // std::atomic, std::atomic_flag, ATOMIC_FLAG_INIT
+#include <atomic>
 #include <condition_variable>
 #include <mutex>
 #include <thread>
@@ -21,8 +21,8 @@
 #include <future>
 #include <cassert>
 
-
-namespace Multithreading_Performance::Atomic_vs_Mutex {
+namespace Multithreading_Performance::Atomic_vs_Mutex
+{
 
     class SynchStorage {
     private:

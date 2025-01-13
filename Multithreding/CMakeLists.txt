@@ -13,10 +13,10 @@ add_executable(${PROJECT_NAME}
         main.cpp
         ThreadPoolBlocking/ThreadPoolBlocking.cpp
         AsyncLaunch/AsyncLaunch.cpp
-        ThreadHelperUtilities/ThreadHelperUtilities.cpp
         Atomic/Atomic.cpp
         Atomic/Atomic_MemoryOrder.cpp
         Atomic/AtomicFlag.cpp
+        Atomic/Atomic_Wait.cpp
         Atomic/Atomic_CompareExchange.cpp
         Atomic/Atomic_IsLockFree.cpp
         Atomic/AtomicPerformanceTests.cpp

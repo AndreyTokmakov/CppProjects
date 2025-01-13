@@ -20,7 +20,7 @@
 #include <deque>
 
 #include "../Integer/Integer.h"
-#include "../ThreadHelperUtilities/ThreadHelperUtilities.h"
+#include "../Utilities/Utilities.h"
 #include "Multithreading_Communication.h"
 
 namespace Multithreading_Communication {

@@ -14,7 +14,7 @@
 #include <string_view>
 #include <future>
 #include <chrono>
-#include "../ThreadHelperUtilities/ThreadHelperUtilities.h"
+#include "../Utilities/Utilities.h"
 
 
 namespace AsyncLaunch {
@@ -25,13 +25,13 @@ namespace AsyncLaunch {
 
         auto asyncDefault = std::async([]()-> void {
             THREAD_INFO << "Second thread (id: " << std::this_thread::get_id() << "). Started." << std::endl;
-            std::this_thread::sleep_for(std::chrono::seconds(9));
+            std::this_thread::sleep_for(std::chrono::seconds(9u));
             THREAD_INFO << "Second thread (id: " << std::this_thread::get_id() << "). Ended." << std::endl;
         });
 
 
         THREAD_INFO << "Main thread: Before sleep." << std::endl;
-        std::this_thread::sleep_for(std::chrono::seconds(5));
+        std::this_thread::sleep_for(std::chrono::seconds(5u));
         THREAD_INFO << "Main thread: Sleep ended." << std::endl;
 
         THREAD_INFO << "Main thread: Waiting for the second Thread..." << std::endl;
@@ -93,7 +93,7 @@ namespace AsyncLaunch {
 
     void Asynch_vs_Defered() {
         auto some_task = [](unsigned long timeout)-> void {
-            std::this_thread::sleep_for(std::chrono::milliseconds(50));
+            std::this_thread::sleep_for(std::chrono::milliseconds(50u));
             THREAD_INFO << "Task started. Sleeping for " << timeout << " seconds\n";
             std::this_thread::sleep_for(std::chrono::seconds(timeout));
             THREAD_INFO << "Done!\n";
@@ -104,7 +104,7 @@ namespace AsyncLaunch {
         std::future<void> futureAsync = std::async(std::launch::async, some_task, timeout);
 
         THREAD_INFO << "After std::launch::async task. Point 1\n";
-        std::this_thread::sleep_for(std::chrono::seconds(3));
+        std::this_thread::sleep_for(std::chrono::seconds(3u));
         THREAD_INFO << "After std::launch::async task. Point 2\n";
 
         futureAsync.wait();
@@ -115,7 +115,7 @@ namespace AsyncLaunch {
         std::future<void> futureDeferred = std::async(std::launch::deferred, some_task, timeout);
 
         THREAD_INFO << "After std::launch::deferred task. Point 1\n";
-        std::this_thread::sleep_for(std::chrono::seconds(3));
+        std::this_thread::sleep_for(std::chrono::seconds(3u));
         THREAD_INFO << "After std::launch::deferred task. Point 2\n";
 
         futureDeferred.get();
@@ -124,16 +124,16 @@ namespace AsyncLaunch {
     void Asynch_vs_Defered_2()
     {
         THREAD_INFO << "with launch::async:\n";
-        std::future<void> foo = std::async(std::launch::async, print_ten, " * ", std::chrono::milliseconds(250));
-        std::future<void> bar = std::async(std::launch::async, print_ten, " $ ", std::chrono::milliseconds(250));
+        std::future<void> foo = std::async(std::launch::async, print_ten, " * ", std::chrono::milliseconds(250u));
+        std::future<void> bar = std::async(std::launch::async, print_ten, " $ ", std::chrono::milliseconds(250u));
 
         foo.get();
         bar.get();
         THREAD_INFO << "\n\n";
 
         THREAD_INFO << "with launch::deferred:" << std::endl;
-        foo = std::async(std::launch::deferred, print_ten, " * ", std::chrono::milliseconds(250));
-        bar = std::async(std::launch::deferred, print_ten, " $ ", std::chrono::milliseconds(250));
+        foo = std::async(std::launch::deferred, print_ten, " * ", std::chrono::milliseconds(250u));
+        bar = std::async(std::launch::deferred, print_ten, " $ ", std::chrono::milliseconds(250u));
 
         foo.get();
         bar.get();
@@ -154,7 +154,7 @@ namespace AsyncLaunch {
         auto async_task = std::async(std::launch::async, task, 3, "Asynch_Task");
         auto deferred_task = std::async(std::launch::deferred, task, 3, "Deffered_Task");
 
-        std::chrono::milliseconds span(99);
+        std::chrono::milliseconds span(99u);
         while (async_task.wait_for(span) == std::future_status::timeout)
             std::cout << ". " << std::flush;
 

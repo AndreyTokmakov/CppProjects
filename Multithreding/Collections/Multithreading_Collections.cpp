@@ -21,7 +21,7 @@
 
 #include "Multithreading_Collections.h"
 #include "../Integer/Integer.h"
-#include "../ThreadHelperUtilities/ThreadHelperUtilities.h"
+#include "../Utilities/Utilities.h"
 
 namespace Multithreading_Collections::ThreadSafeContainer
 {

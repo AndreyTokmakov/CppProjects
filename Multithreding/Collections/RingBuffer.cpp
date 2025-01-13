@@ -34,6 +34,29 @@ namespace RingBuffer
             buffer.resize(size);
         }
 
+       void put(const value_type& value)
+       {
+           size_type writeIdx = idxWrite.load(std::memory_order::relaxed);
+           if (writeIdx == buffer.size()) {
+               writeIdx = 0;
+               overflow = true;
+           }
+
+           size_type readIdx = idxRead.load(std::memory_order::relaxed);
+           if (overflow && writeIdx == readIdx)
+           {
+               if (++readIdx >= buffer.size()) {
+                   readIdx = 0;
+                   overflow = false;
+               }
+               idxRead.store(readIdx, std::memory_order::release);
+           }
+
+           buffer[writeIdx++] = std::move(value);
+           idxWrite.store(writeIdx, std::memory_order::release);
+           idxWrite.notify_one();
+       }
+
         void put(value_type&& value)
         {
             size_type writeIdx = idxWrite.load(std::memory_order::relaxed);
@@ -54,6 +77,7 @@ namespace RingBuffer
 
             buffer[writeIdx++] = std::move(value);
             idxWrite.store(writeIdx, std::memory_order::release);
+            idxWrite.notify_one();
         }
 
         bool get(value_type& value)
@@ -77,7 +101,7 @@ namespace RingBuffer
         {
             size_type readIdx = idxRead.load(std::memory_order::relaxed);
             if (!overflow && idxWrite == readIdx) {
-                idxWrite.wait(readIdx);
+                idxWrite.wait(readIdx, std::memory_order::relaxed);
             }
 
             if (readIdx >= buffer.size()) {
@@ -250,7 +274,7 @@ namespace RingBuffer::Tests
         RingBuffer<int> buffer(3);
 
         for (int i = 1; i <= 5; ++i)
-            buffer.put(int(i));
+            buffer.put(i);
 
         getAndCompare(buffer, 3);
     }
@@ -261,7 +285,7 @@ namespace RingBuffer::Tests
         RingBuffer<int> buffer(3);
 
         for (int i = 1; i <= 5; ++i)
-            buffer.put(int(i));
+            buffer.put(i);
 
         getWaitAndCompare(buffer, 3);
     }
@@ -272,7 +296,7 @@ namespace RingBuffer::Tests
         RingBuffer<int> buffer(10);
 
         for (int i = 1; i <= 10; ++i)
-            buffer.put(int(i));
+            buffer.put(i);
 
         for (int i = 1; i <= 10; ++i)
             getAndCompare(buffer, i);
@@ -284,7 +308,7 @@ namespace RingBuffer::Tests
         RingBuffer<int> buffer(10);
 
         for (int i = 1; i <= 10; ++i)
-            buffer.put(int(i));
+            buffer.put(i);
 
         for (int i = 1; i <= 10; ++i)
             getWaitAndCompare(buffer, i);
@@ -305,20 +329,26 @@ namespace RingBuffer::MultithreadedTests
         EXIT_IF_FAILURES_EXISTS;
         RingBuffer<int> buffer(10);
 
-        auto produce = [&buffer]() {
-            std::osyncstream{std::cout} << "producer started" << std::endl;
-            std::this_thread::sleep_for(std::chrono::seconds(1));
-            std::osyncstream{std::cout} << "producer ended" << std::endl;
-        };
-        auto consume = [&buffer]() {
-            std::osyncstream{std::cout} << "consumer started" << std::endl;
-            int v {0};
-            buffer.get(v);
-            std::osyncstream{std::cout} << "Producer ended" << std::endl;
+        auto produce = [&buffer](const std::string& name) {
+            std::osyncstream { std::cout } << name << " started" << std::endl;
+            std::this_thread::sleep_for(std::chrono::seconds(4u));
+            buffer.put(123);
+            std::osyncstream { std::cout } << name << " done" << std::endl;
         };
 
-        std::jthread producer = std::jthread(produce);
-        std::jthread consumer = std::jthread(consume);
+        auto consume = [&buffer](const std::string& name) {
+            std::osyncstream { std::cout } << name << " started" << std::endl;
+            int v {0};
+            buffer.get_wait(v);
+            std::osyncstream { std::cout } << name << " done" << std::endl;
+        };
+
+        std::vector<std::jthread> tasks;
+        tasks.emplace_back(produce, "Producer-1");
+        tasks.emplace_back(consume, "Consumer-1");
+        tasks.emplace_back(consume, "Consumer-2");
+
+
     }
 
 }

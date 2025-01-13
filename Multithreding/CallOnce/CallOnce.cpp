@@ -8,14 +8,13 @@
 //============================================================================
 
 #include <iostream>
-
 #include <future>
 #include <thread>
 #include <mutex>
 #include <atomic>
 #include <vector>
 
-#include "../ThreadHelperUtilities/ThreadHelperUtilities.h"
+#include "../Utilities/Utilities.h"
 #include "CallOnce.h"
 
 namespace CallOnce::SimpleTests {

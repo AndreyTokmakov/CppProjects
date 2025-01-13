@@ -17,7 +17,7 @@
 #include <execution>
 #include <format>
 
-#include "../ThreadHelperUtilities/ThreadHelperUtilities.h"
+#include "../Utilities/Utilities.h"
 #include "Promise.h"
 
 namespace

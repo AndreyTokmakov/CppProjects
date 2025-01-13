@@ -1,46 +1,29 @@
-//============================================================================
-// Name        : Atomic.cpp
-// Created on  : 30.09.2020
-// Author      : Tokmakov Andrey
-// Version     : 1.0
-// Copyright   : Your copyright notice
-// Description : Atomic src class
-//============================================================================
+/**============================================================================
+Name        : Atomic.cpp
+Created on  : 30.09.2020
+Author      : Andrei Tokmakov
+Version     : 1.0
+Copyright   : Your copyright notice
+Description :
+============================================================================**/
 
-#include "Atomic.h"
 #include <iostream>
-#include <atomic>         // std::atomic, std::atomic_flag, ATOMIC_FLAG_INIT
-#include <condition_variable>
+#include <atomic>
 #include <mutex>
 #include <thread>
 #include <queue>
-#include <string>
 #include <chrono>
 #include <future>
-#include <cassert>
 #include <syncstream>
 
-#include "../ThreadHelperUtilities/ThreadHelperUtilities.h"
-
-
-
-namespace
-{
-    std::string timeString()
-    {
-        std::string buffer;
-        buffer.reserve(32);
-        std::format_to(std::back_inserter(buffer), "{:%Y-%m-%d %H:%M:%OS}", std::chrono::system_clock::now());
-        buffer.shrink_to_fit();
-        return buffer;
-    }
-}
-
+#include "Atomic.h"
+#include "../Utilities/Utilities.h"
 
 namespace Atomic::Atomic_INT
 {
 
-    void Test1() {
+    void Test1()
+    {
         int v1 = 0;
         std::atomic<int> v2{ 0 };
 
@@ -184,7 +167,7 @@ namespace Atomic::Atomic_Boolean {
 
         auto reader_thread = [&]()->void {
             while (false == data_ready.load()) {
-                std::this_thread::sleep_for(std::chrono::seconds(1));
+                std::this_thread::sleep_for(std::chrono::seconds(1u));
             }
             THREAD_INFO << "The answer: " << data[0] << std::endl;
         };
@@ -220,11 +203,11 @@ namespace Atomic::Atomic_Boolean {
         auto task = std::async([&run]() {
             while (run) {
                 THREAD_INFO << "Running\n";
-                std::this_thread::sleep_for(std::chrono::milliseconds(250));
+                std::this_thread::sleep_for(std::chrono::milliseconds(250U));
             }
         });
 
-        std::this_thread::sleep_for(std::chrono::seconds(5));
+        std::this_thread::sleep_for(std::chrono::seconds(5U));
         run.store(false);
         THREAD_INFO << "Done\n";
     }
@@ -499,93 +482,6 @@ namespace Atomic::AtomicRef {
     }
 }
 
-namespace Atomic::Cpp_20_Features
-{
-
-    void Wait()
-    {
-        constexpr int INITIAL_VALUE{ 0 };
-        std::atomic<int> variable { INITIAL_VALUE };
-
-        auto waiter = std::async(std::launch::async, [&variable]() -> void {
-            THREAD_INFO << "Waiting until variable changes its value: value = " << variable << std::endl;
-            variable.wait(INITIAL_VALUE);
-            THREAD_INFO << "Waiting Done!!!: value = " << variable << std::endl;
-        });
-
-        auto task = std::async(std::launch::async, [&variable]() -> void {
-            THREAD_INFO << "Starting task" << std::endl;
-
-            std::this_thread::sleep_for(std::chrono::seconds(2));
-            variable.store(INITIAL_VALUE);
-            THREAD_INFO << "Task 1 completed: value = " << variable << std::endl;
-
-            variable.notify_all();
-
-            std::this_thread::sleep_for(std::chrono::seconds(2));
-            variable.store(INITIAL_VALUE  + 1);
-            THREAD_INFO << "Task 2 completed: value = " << variable << std::endl;
-
-            variable.notify_all();
-        });
-    }
-
-    void Notify_One()
-    {
-        constexpr int INTIAL_VALUE{ 0 };
-        std::atomic<int> value{ INTIAL_VALUE };
-
-        auto task = std::async([&value]() -> void {
-            THREAD_INFO << "Starting task" << std::endl;
-
-            std::this_thread::sleep_for(std::chrono::seconds(5));
-
-            value.store(INTIAL_VALUE + 1);
-            value.notify_one();
-
-            THREAD_INFO << "Task  completed: value = " << value << std::endl;
-        });
-
-        std::vector<std::future<void>> tasks;
-        for (int i = 0; i < 2; ++i) {
-            const std::string name { "Thread_" + std::to_string(i) };
-            tasks.emplace_back(std::async([&value, name]() -> void {
-                THREAD_INFO << "Waiting until value != 10 . . . " << std::endl;
-                value.wait(INTIAL_VALUE);
-                THREAD_INFO << name << " done" << std::endl;
-            }));
-        }
-    }
-
-
-    void Notify_All()
-    {
-        constexpr int INTIAL_VALUE{ 0 };
-        std::atomic<int> value{ INTIAL_VALUE };
-
-        auto task = std::async([&value]() -> void {
-            THREAD_INFO << "Starting task" << std::endl;
-
-            std::this_thread::sleep_for(std::chrono::seconds(5));
-
-            value.store(INTIAL_VALUE + 1);
-            value.notify_all();
-
-            THREAD_INFO << "Task  completed: value = " << value << std::endl;
-        });
-
-        std::vector<std::future<void>> tasks;
-        for (int i = 0; i < 2; ++i) {
-            const std::string name{ "Thread_" + std::to_string(i) };
-            tasks.emplace_back(std::async([&value, name]() -> void {
-                THREAD_INFO << "Waiting until value != 10 . . . " << std::endl;
-                value.wait(INTIAL_VALUE);
-                THREAD_INFO << name << " done" << std::endl;
-            }));
-        }
-    }
-}
-
 namespace Atomic::PingPongGame
 {
     struct Engine
@@ -744,9 +640,6 @@ void Atomic::TestAll()
     // AtomicRef::NoAtomicIncrement();
     // AtomicRef::AtomicIncrement();
 
-    // Cpp_20_Features::Wait();
-    // Cpp_20_Features::Notify_One();
-    // Cpp_20_Features::Notify_All();
 
     // ModificationOrder::Test_Default();
     // ModificationOrder::Test_Relaxed();

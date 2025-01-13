@@ -10,10 +10,35 @@ Description : Utilities.h
 #ifndef CPPPROJECTS_UTILITIES_H
 #define CPPPROJECTS_UTILITIES_H
 
+#include <iostream>
 #include <chrono>
+#include <thread>
+
+#define THREAD_INFO std::cout << Utilities::ThreadInfo()
 
 namespace Utilities
 {
+    [[nodiscard]]
+    std::string timeString(const std::chrono::time_point<std::chrono::system_clock>& timestamp =
+            std::chrono::system_clock::now());
+
+    [[nodiscard]]
+    std::string getCurrentTime(const std::chrono::time_point<std::chrono::system_clock>& timestamp =
+            std::chrono::system_clock::now());
+
+    [[nodiscard]]
+    std::string getCurrentTimeOld();
+
+    class ThreadInfo
+    {
+        std::thread::id thisThreadId;
+
+    public:
+        ThreadInfo();
+        friend std::ostream& operator<< (std::ostream& stream, const ThreadInfo& threadInfo);
+    };
+
+
     struct ScopedTimer
     {
         const std::string_view benchmarkName;

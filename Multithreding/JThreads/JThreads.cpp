@@ -7,8 +7,8 @@
 // Description : Threads src class
 //============================================================================
 
-#include "../ThreadHelperUtilities/ThreadHelperUtilities.h"
 
+#include <iostream>
 #include <condition_variable>
 #include <vector>
 #include <mutex>
@@ -26,7 +26,8 @@
 
 #include "JThreads.h"
 
-namespace {
+namespace
+{
     const std::thread::id mainThreadId = std::this_thread::get_id();
     std::mutex mtxPrint;
 

@@ -15,7 +15,7 @@
 #include <functional>
 #include <cmath>
 
-#include "../ThreadHelperUtilities/ThreadHelperUtilities.h"
+#include "../Utilities/Utilities.h"
 #include "PackagedTask.h"
 
 namespace PackagedTask {

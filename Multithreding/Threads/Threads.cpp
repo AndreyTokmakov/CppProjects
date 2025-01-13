@@ -7,8 +7,6 @@
 // Description : Threads src class
 //============================================================================
 
-#include "../ThreadHelperUtilities/ThreadHelperUtilities.h"
-
 #include <condition_variable>
 #include <mutex>
 #include <sstream>
@@ -23,6 +21,7 @@
 #include <type_traits>
 
 #include "Threads.h"
+#include "../Utilities/Utilities.h"
 
 namespace Threads
 {

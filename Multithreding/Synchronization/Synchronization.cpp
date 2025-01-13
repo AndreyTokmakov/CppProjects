@@ -33,7 +33,7 @@
 #include <syncstream>
 
 #include "Synchronization.h"
-#include "../ThreadHelperUtilities/ThreadHelperUtilities.h"
+#include "../Utilities/Utilities.h"
 
 namespace Synchronization
 {

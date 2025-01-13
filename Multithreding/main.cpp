@@ -23,6 +23,7 @@
 #include "ThreadPoolLimited/ThreadPoolLimited.h"
 #include "Atomic/Atomic.h"
 #include "Atomic/Atomic_Bool.h"
+#include "Atomic/Atomic_Wait.h"
 #include "Atomic/Atomic_MemoryOrder.h"
 #include "Atomic/AtomicFlag.h"
 #include "Atomic/Atomic_CompareExchange.h"
@@ -34,7 +35,6 @@
 #include "Threads/Threads.h"
 #include "ConditionVariable/ConditionVariable.h"
 #include "Synchronization/Synchronization.h"
-#include "ThreadHelperUtilities/ThreadHelperUtilities.h"
 #include "CallOnce/CallOnce.h"
 #include "Integer/Integer.h"
 #include "JThreads/JThreads.h"
@@ -67,6 +67,7 @@ int main([[maybe_unused]] int argc,
     // Atomic::TestAll();
     // AtomicFlag::TestAll();
     // Atomic_Bool::TestAll();
+    Atomic_Wait::TestAll();
     // Atomic_MemoryOrder::TestAll();
     // Atomic_CompareExchange::TestAll();
     // Atomic_IsLockFree::TestAll();
@@ -117,7 +118,7 @@ int main([[maybe_unused]] int argc,
     // Queue::TestAll();
     // BlockingQueue::TestAll();
     // LockFreeQueue::TEST_ALL()
-    RingBuffer::TestAll();
+    // RingBuffer::TestAll();
 
     return EXIT_SUCCESS;
 }

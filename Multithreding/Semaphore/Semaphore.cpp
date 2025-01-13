@@ -7,7 +7,7 @@ Copyright   : Your copyright notice
 Description : Semaphore
 ============================================================================**/
 
-#include "../ThreadHelperUtilities/ThreadHelperUtilities.h"
+#include "../Utilities/Utilities.h"
 #include "Semaphore.h"
 
 #include <iostream>

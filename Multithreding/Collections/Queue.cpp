@@ -19,10 +19,9 @@ Description : Queue.cpp
 #include <syncstream>
 #include <format>
 #include <chrono>
-#include "../ThreadHelperUtilities/ThreadHelperUtilities.h"
+
+#include "../Utilities/Utilities.h"
 #include "../Integer/Integer.h"
-
-
 
 namespace
 {
