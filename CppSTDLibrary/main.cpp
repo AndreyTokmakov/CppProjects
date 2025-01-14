@@ -85,6 +85,7 @@ Description : Cpp STD lib
 #include "Memory/Memory.h"
 #include "Templates/Templates.h"
 #include "Volatile/VolatileTests.h"
+#include "StaticAsserts/StaticAsserts.h"
 
 
 int main([[maybe_unused]] int argc,
@@ -142,7 +143,7 @@ int main([[maybe_unused]] int argc,
     // Optional::TestAll();
     // Overflow::TestAll();
     // PolymorphicMemoryResources::TestAll();
-    Print::TestAll();
+    // Print::TestAll();
     // Random::TestAll();
     // Ranges::TestAll();
     // ReferenceWrapper::TestAll();
@@ -168,6 +169,7 @@ int main([[maybe_unused]] int argc,
     // CompilerVersion::TestAll();
     // UniquePtr::TestAll();
     // WeakPtr::TestAll();
+    StaticAsserts::TestAll();
 
     return EXIT_SUCCESS;
 }

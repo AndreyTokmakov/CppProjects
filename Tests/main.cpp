@@ -1435,6 +1435,7 @@ int main([[maybe_unused]] int argc,
 
     // BitwiseOperations::test();
 
+
     /** * * * * *  Move to lib * * * * * **/
 
 
@@ -1464,7 +1465,7 @@ int main([[maybe_unused]] int argc,
     // CopyElision_RVO::TestAll();
     // ConstexprMap::TestAll();
     // DebugLogger::TestAll();
-    DesignPatterns::TestAll();
+    // DesignPatterns::TestAll();
     // Date_Time_Chrono::TestAll();
     // Heap::TestAll();
     // Iterators::TestAll();

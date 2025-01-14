@@ -101,6 +101,7 @@ add_executable(${PROJECT_NAME}
 		RVO_CopyElision/CopyElision.cpp
 		RVO_CopyElision/RVO_FailureCases.cpp
 		Overflow/Overflow.cpp
+		StaticAsserts/StaticAsserts.cpp
 )
 
 # Link libraries to the project/executable
