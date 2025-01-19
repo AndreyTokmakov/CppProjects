@@ -856,13 +856,14 @@ namespace Numeric
 
     //---------------------------------------------------------------------------//
 
-    void Kadane() {
+    void Kadane()
+    {
         {
             // Fill vector with maximum sums:
-            std::vector<int> Numeric = {1, -3, 2, 1, -1};
-            std::vector<int> max_sums(Numeric);
+            std::vector<int> values = {1, -3, 2, 1, -1};
+            std::vector<int> max_sums(values);
             for (size_t index = 1; index < max_sums.size(); index++)
-                max_sums[index] = std::max(max_sums[index - 1] + max_sums[index], max_sums[index]);
+                max_sums[index] = std::max(max_sums[index - 1] + values[index], values[index]);
             std::cout << max_sums << std::endl;
         }
 
@@ -3664,9 +3665,9 @@ namespace Numeric
     int best_time_buy_and_sell_stock(const std::vector<int>& prices)
     {
         int maxProfit = 0;
-        for (int minPrice = prices[0];const int currentPrice : prices) {
-            maxProfit = std::max(maxProfit, currentPrice - minPrice);
-            minPrice = std::min(minPrice, currentPrice);
+        for (int minPrice = prices[0]; const int currentStockPrice : prices) {
+            maxProfit = std::max(maxProfit, currentStockPrice - minPrice);
+            minPrice = std::min(minPrice, currentStockPrice);
         }
         return maxProfit;
     }
@@ -3676,6 +3677,7 @@ namespace Numeric
         for (const std::pair<std::vector<int>, int>& data: std::vector<std::pair<std::vector<int>, int>>{
                 {{7,1,5,3,6,4}, 5},
                 {{7,6,4,3,1}, 0},
+                {{7,8,1,5,3,6,4}, 5},
         }) {
             if (const auto actual = best_time_buy_and_sell_stock(data.first); actual != data.second)
             {
@@ -3804,7 +3806,7 @@ void Numeric::TestAll()
     // Numeric::CountAndSaySequence_Generate();
     // Numeric::CountAndSaySequence_Get_Kth_Token();
     // Numeric::CountOrderedPairs();
-    Numeric::ReverseNumber();
+    // Numeric::ReverseNumber();
     // Numeric::IsPalindrome();
     // Numeric::GetNumberOfDigit();
     // Numeric::RearangeArray();
@@ -3919,7 +3921,7 @@ void Numeric::TestAll()
 
     // Median_of_Two_Sorted_Arrays();
 
-    // Best_Time_Buy_and_Sell_Stock();
+    Best_Time_Buy_and_Sell_Stock();
 
     // Single_Number();
 

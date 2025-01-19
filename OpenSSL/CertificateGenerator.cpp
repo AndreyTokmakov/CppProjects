@@ -563,7 +563,8 @@ namespace CertificateGenerator
         bool result = false;
         X509_NAME* subjectName = X509_get_subject_name(cert);
         if (subjectName != nullptr) {
-            const int res = X509_NAME_add_entry_by_txt(subjectName, key, MBSTRING_ASC, (unsigned char*)value, -1, -1, 0);
+            const int res = X509_NAME_add_entry_by_txt(subjectName, key,
+                                                       MBSTRING_ASC, (unsigned char*)value, -1, -1, 0);
             result = res == 1;
         }
         return result;
@@ -619,7 +620,8 @@ namespace CertificateGenerator
         bool result = false;
         X509_NAME* issuerName = X509_get_issuer_name(cert);
         if (issuerName != nullptr) {
-            result = X509_NAME_add_entry_by_txt(issuerName, key, MBSTRING_ASC, (unsigned char*)value, -1, -1, 0) == 1;
+            result = X509_NAME_add_entry_by_txt(issuerName, key,
+                                                MBSTRING_ASC, (unsigned char*)value, -1, -1, 0) == 1;
         }
         return result;
     }
@@ -630,7 +632,8 @@ namespace CertificateGenerator
         X509V3_set_ctx_nodb(&ctx); // init context
         X509V3_set_ctx(&ctx, issuer, cert, nullptr, nullptr, 0); // set context
 
-        std::unique_ptr<X509_EXTENSION, decltype(&::X509_EXTENSION_free)> ex(X509V3_EXT_conf_nid(nullptr, &ctx, nid, value), ::X509_EXTENSION_free);
+        std::unique_ptr<X509_EXTENSION, decltype(&::X509_EXTENSION_free)> ex(
+                X509V3_EXT_conf_nid(nullptr, &ctx, nid, value), ::X509_EXTENSION_free);
         if (ex != nullptr) {
             return X509_add_ext(cert, ex.get(), -1) == 1;
         }
@@ -641,13 +644,15 @@ namespace CertificateGenerator
     {
         const int nid = OBJ_create(key, value, nullptr);
 
-        std::unique_ptr<ASN1_OCTET_STRING, decltype(&::ASN1_OCTET_STRING_free)> data(ASN1_OCTET_STRING_new(), ::ASN1_OCTET_STRING_free);
+        std::unique_ptr<ASN1_OCTET_STRING, decltype(&::ASN1_OCTET_STRING_free)> data(
+                ASN1_OCTET_STRING_new(), ::ASN1_OCTET_STRING_free);
         int ret = ASN1_OCTET_STRING_set(data.get(), reinterpret_cast<unsigned const char*>(value), strlen(value));
         if (ret != 1) {
             return false;
         }
 
-        std::unique_ptr<X509_EXTENSION, decltype(&::X509_EXTENSION_free)> ex(X509_EXTENSION_create_by_NID(nullptr, nid, critical, data.get()), ::X509_EXTENSION_free);
+        std::unique_ptr<X509_EXTENSION, decltype(&::X509_EXTENSION_free)> ex(
+                X509_EXTENSION_create_by_NID(nullptr, nid, critical, data.get()), ::X509_EXTENSION_free);
         return X509_add_ext(cert, ex.get(), -1) == 1;
     }
 

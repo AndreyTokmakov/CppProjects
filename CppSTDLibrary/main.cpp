@@ -104,7 +104,7 @@ int main([[maybe_unused]] int argc,
     // BitSet::TestAll();
     // BitwiseOperation::TestAll();
     // Byte::TestAll();
-    // Chrono::TestAll();
+    Chrono::TestAll();
     // Comparators::TestAll();
     // Concepts::TestAll();
     // ConsoleInOut::TestAll();
@@ -169,7 +169,7 @@ int main([[maybe_unused]] int argc,
     // CompilerVersion::TestAll();
     // UniquePtr::TestAll();
     // WeakPtr::TestAll();
-    StaticAsserts::TestAll();
+    // StaticAsserts::TestAll();
 
     return EXIT_SUCCESS;
 }

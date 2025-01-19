@@ -479,9 +479,10 @@ uint64_t format_date(std::string_view str)
 
 namespace Chrono::TimeToString
 {
-    std::string getCurrentTime() noexcept {
+    std::string getCurrentTime() noexcept
+    {
         const std::chrono::time_point now { std::chrono::system_clock::now() };
-        const time_t in_time_t { std::chrono::system_clock::to_time_t(std::chrono::system_clock::now()) };
+        const time_t in_time_t { std::chrono::system_clock::to_time_t(now) };
         const std::chrono::duration nowMs = std::chrono::duration_cast<std::chrono::microseconds>(
                 now.time_since_epoch()) % 1000000;
         std::stringstream ss;
@@ -1060,8 +1061,7 @@ namespace Chrono::Print_Time
 
 void Chrono::TestAll()
 {
-    TimeZones::TestAll();
-
+    // TimeZones::TestAll();
 
     // Time_To_String::Asctime();
     // Time_To_String::Localtime();
@@ -1088,7 +1088,7 @@ void Chrono::TestAll()
     // Years::Last_Sunday_of_Year();
     // Years::Thanksgiving_Days();
 
-    // TimeToString::Test();
+    TimeToString::Test();
     // StringFormat::StrfTime();
     // StringFormat::Asctime();
     // StringFormat::PutTime_To_String();
