@@ -467,8 +467,9 @@ void printVersionInfo()
 
 
 /// How to create a self-signed PEM file:
-/// openssl req -newkey rsa:2048 -new -nodes -x509 -days 3650 -keyout key.pem -out cert.pem
+/// >  openssl req -newkey rsa:2048 -new -nodes -x509 -days 3650 -keyout key.pem -out cert.pem
 ///
+/// https://zakird.com/2013/10/13/certificate-parsing-with-openssl
 
 int main([[maybe_unused]] int argc,
          [[maybe_unused]] char** argv)

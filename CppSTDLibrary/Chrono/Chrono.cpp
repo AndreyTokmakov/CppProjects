@@ -479,7 +479,10 @@ uint64_t format_date(std::string_view str)
 
 namespace Chrono::TimeToString
 {
-    std::string getCurrentTime() noexcept
+    constexpr std::string_view formatMSeconds { "%d-%02d-%02d %02d:%02d:%02d.%06ld" };
+
+    [[nodiscard]]
+    std::string getCurrentTimeOld() noexcept
     {
         const std::chrono::time_point now { std::chrono::system_clock::now() };
         const time_t in_time_t { std::chrono::system_clock::to_time_t(now) };
@@ -489,6 +492,24 @@ namespace Chrono::TimeToString
         ss << std::put_time(std::localtime(&in_time_t), "%a %b %d %Y %T")
            << '.' << std::setfill('0') << std::setw(6) << nowMs.count();
         return ss.str();
+    }
+
+    [[nodiscard]]
+    std::string getCurrentTime(const std::chrono::time_point<std::chrono::system_clock>& timestamp =
+                                    std::chrono::system_clock::now())
+    {
+        const time_t time { std::chrono::system_clock::to_time_t(timestamp) };
+        std::tm tm {};
+        ::localtime_r(&time, &tm);
+
+        std::string buffer(64, '\0');
+        const int32_t size = std::sprintf(buffer.data(), formatMSeconds.data(),
+            tm.tm_year + 1900, tm.tm_mon + 1, tm.tm_mday, tm.tm_hour, tm.tm_min, tm.tm_sec,
+            duration_cast<std::chrono::microseconds>(timestamp - time_point_cast<std::chrono::seconds>(timestamp)).count()
+        );
+        buffer.resize(size);
+        buffer.shrink_to_fit();
+        return buffer;
     }
 
     std::string getDaytimeString()
@@ -508,11 +529,27 @@ namespace Chrono::TimeToString
         return buffer;
     }
 
+
+    template<class DurationType = std::chrono::seconds>
+    std::string timeToString()
+    {
+        using namespace std::string_view_literals;
+        return std::format("{}"sv, std::chrono::time_point_cast<DurationType>(
+                std::chrono::system_clock::now())
+        );
+    }
+
+
+
     void Test()
     {
+        std::cout << std::quoted(getCurrentTimeOld()) << std::endl;
         std::cout << std::quoted(getCurrentTime()) << std::endl;
         std::cout << std::quoted(getDaytimeString()) << std::endl;
         std::cout << std::quoted(formatToString()) << std::endl;
+        std::cout << std::quoted(timeToString<std::chrono::milliseconds>()) << std::endl;
+        std::cout << std::quoted(timeToString<std::chrono::microseconds>()) << std::endl;
+        std::cout << std::quoted(timeToString<std::chrono::nanoseconds>()) << std::endl;
     }
 }
 
@@ -1088,7 +1125,9 @@ void Chrono::TestAll()
     // Years::Last_Sunday_of_Year();
     // Years::Thanksgiving_Days();
 
+    /** TIME --> STRING **/
     TimeToString::Test();
+
     // StringFormat::StrfTime();
     // StringFormat::Asctime();
     // StringFormat::PutTime_To_String();
