@@ -9,6 +9,10 @@ Description : CompileTimeProgramming.cpp
 
 #include "CompileTimeProgramming.h"
 
+#include <iostream>
+#include <algorithm>
+#include <string_view>
+
 namespace CompileTimeProgramming
 {
     template <int N>
@@ -49,7 +53,64 @@ namespace CompileTimeProgramming
 }
 
 
+namespace StringCompileTimeValidation
+{
+    constexpr bool is_valid(char c)
+    {
+        constexpr std::string_view valid = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
+        return valid.find(c) != std::string_view::npos;
+    }
+
+    template<size_t N>
+    struct Format
+    {
+        constexpr Format(const char (&str)[N]) {
+            std::copy_n(str, N, value);
+        }
+
+        [[nodiscard]]
+        constexpr bool isValid() const
+        {
+            if constexpr (N == 0){
+                return false;
+            }
+
+            for (char ch : value) {
+                if(ch != '\0' && !is_valid(ch)) {
+                    return false;
+                }
+            }
+
+            return true;
+        }
+
+        [[nodiscard]]
+        constexpr std::string_view format() const {
+            return value;
+        }
+
+        char value[N]{};
+    };
+
+    // Function template with a non-type template parameter
+    template <Format Fmt>
+    void processString()
+    {
+        static_assert(Fmt.isValid(), "String format is invalid!");
+        std::cout << "Processing string: " << Fmt.format() << std::endl;
+    }
+
+    void compileTimeValidation()
+    {
+        processString<"Valid123">();  // This compiles successfully
+        // processString<"Invalid@Char">();  // This would fail at compile-time
+    }
+}
+
+
 void CompileTimeProgramming::TestAll()
 {
     Factorial();
+
+    StringCompileTimeValidation::compileTimeValidation();
 }
