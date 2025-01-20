@@ -29,12 +29,12 @@ add_executable(${PROJECT_NAME}
         JThreads/JThreads.cpp
         Latch/Latch.cpp
         Collections/LockFreeQueue.cpp
-        Collections/Multithreading_Collections.cpp
         Collections/Queue.cpp
         Collections/BlockingQueue.cpp
         Collections/SingleConsumerProducerQueue.cpp
         Collections/Single_ConsumerProducerQueue_Two.cpp
         Collections/RingBuffer.cpp
+        Collections/ThreadSafeQueue_CV_vs_RingBuffer.cpp
         Multithreading_Communication/Multithreading_Communication.cpp
         Multithreading_Performance/Multithreading_Performance.cpp
         PackagedTask/PackagedTask.cpp

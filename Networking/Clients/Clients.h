@@ -10,8 +10,8 @@
 #ifndef CPPPROJECTS_CLIENTS_H
 #define CPPPROJECTS_CLIENTS_H
 
-namespace Clients {
-
+namespace Clients
+{
     void Tests();
 };
 

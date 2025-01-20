@@ -42,12 +42,12 @@
 #include "Exceptions_Handling/Exceptions_Handling.h"
 #include "ParallelExecutionAlgoritms/ParallelExecutionAlgoritms.h"
 #include "Multithreading_Communication/Multithreading_Communication.h"
-#include "Collections/Multithreading_Collections.h"
 #include "Collections/Queue.h"
 #include "Collections/BlockingQueue.h"
 #include "Collections/LockFreeQueue.h"
 #include "Collections/SingleConsumerProducerQueue.h"
 #include "Collections/Single_ConsumerProducerQueue_Two.h"
+#include "Collections/ThreadSafeQueue_CV_vs_RingBuffer.h"
 #include "Multithreading_Performance/Multithreading_Performance.h"
 #include "Barrier/Barrier.h"
 #include "FalseSharing/FalseSharingExperiments.h"
@@ -117,7 +117,8 @@ int main([[maybe_unused]] int argc,
     // Queue::TestAll();
     // BlockingQueue::TestAll();
     // LockFreeQueue::TEST_ALL()
-    RingBuffer::TestAll();
+    // RingBuffer::TestAll();
+    ThreadSafeQueue_CV_vs_RingBuffer::TestAll();
 
     /** Utilities **/
 

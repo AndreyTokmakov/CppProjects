@@ -7,20 +7,22 @@
 // Description : main
 //============================================================================
 
+
+#include <iostream>
+#include <string>
 #include <unistd.h>
-#include <stdlib.h>
+#include <cstdlib>
 #include <sys/socket.h>
 #include <sys/types.h>
 #include <arpa/inet.h>
 #include <netinet/in.h>
-#include <errno.h>
+#include <cerrno>
 #include <netdb.h>
-#include <string.h>
 
-#include <iostream>
-#include <string>
+#include "Clients.h"
 
-namespace {
+namespace
+{
     constexpr uint32_t RECV_BUFFER_SIZE { 2048 };
     constexpr int INVALID_SOCKET { -1 };
     constexpr int SOCKET_ERROR { -1 };
@@ -345,12 +347,9 @@ namespace Clients::ClickHouse
     }
 }
 
-namespace Clients
-{
-    void Tests() {
+void Clients::Tests() {
 
-        // ClickHouse::SendRequest();
-        // ClickHouse::ExecuteQuery();
-        // ClickHouse::ExecuteQuery_BadSize();
-    }
+    // ClickHouse::SendRequest();
+    // ClickHouse::ExecuteQuery();
+    // ClickHouse::ExecuteQuery_BadSize();
 }

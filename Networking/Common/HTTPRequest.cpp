@@ -10,37 +10,39 @@
 #include "HTTPRequest.h"
 #include <array>
 
-namespace Http {
+namespace Http
+{
+    using namespace std::string_view_literals;
 
-    // Some local HTTP specific constants:
-    namespace {
+    namespace
+    {
         /** HTTP headers delimiter **/
-        inline static const std::string DELIMITER = "\r\n";
+        constexpr std::string_view DELIMITER = "\r\n"sv;
 
         /** Separates http request method and path: **/
-        inline static const std::string PATH_SEPARATOR = " /";
+        constexpr std::string_view PATH_SEPARATOR = " /"sv;
 
         /** Separates http request method and path: **/
-        inline static const std::string HEADER_SEPARATOR = ": ";
+        constexpr std::string_view HEADER_SEPARATOR = ": "sv;
 
         /** Separates http request path and params parts: **/
-        inline static const std::string HEADER_PARAMS_SEPARATOR = "?";
+        constexpr std::string_view HEADER_PARAMS_SEPARATOR = "?"sv;
 
         /** Separates http request path and HTTP version: **/
-        inline static const std::string HTTP_VERION_SEPARATOR = R"( HTTP)";
+        constexpr std::string_view HTTP_VERION_SEPARATOR = R"( HTTP)"sv;
 
         using HttpMethodDef = std::pair<std::string_view, Method>;
-        static constexpr std::array<HttpMethodDef, 8> HTTP_METHODS_MAPPING{ {
-                                                                                    {std::string_view("GET"),     Method::GET},
-                                                                                    {std::string_view("POST"),    Method::POST},
-                                                                                    {std::string_view("HEAD"),    Method::HEAD},
-                                                                                    {std::string_view("PUT"),     Method::PUT},
-                                                                                    //{std::string_view("DELETE"),  Method::DELETE},
-                                                                                    {std::string_view("CONNECT"), Method::CONNECT},
-                                                                                    {std::string_view("OPTIONS"), Method::OPTIONS},
-                                                                                    {std::string_view("TRACE"),   Method::TRACE},
-                                                                                    {std::string_view("PATCH"),   Method::PATCH}
-                                                                            } };
+        constexpr std::array<HttpMethodDef, 8> HTTP_METHODS_MAPPING {{
+                { std::string_view("GET"sv),     Method::GET },
+                { std::string_view("POST"),    Method::POST },
+                { std::string_view("HEAD"),    Method::HEAD },
+                { std::string_view("PUT"),     Method::PUT },
+                //{std::string_view("DELETE"),  Method::DELETE},
+                { std::string_view("CONNECT"), Method::CONNECT },
+                { std::string_view("OPTIONS"), Method::OPTIONS },
+                { std::string_view("TRACE"),   Method::TRACE },
+                { std::string_view("PATCH"),   Method::PATCH }
+        }};
     }
 
     HTTPRequest::HTTPRequest(const std::string& http_request) {

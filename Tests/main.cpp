@@ -1409,6 +1409,24 @@ namespace CompileTime_Programming
     }
 }
 
+
+namespace CompileTest
+{
+    struct Order
+    {
+        int id { 0 };
+        int price { 0 };
+    };
+
+
+    void Demo()
+    {
+        std::unordered_map<std::string, Order> book;
+
+        const auto& [iter, ok] = book.try_emplace("dsdsd");
+    }
+}
+
 int main([[maybe_unused]] int argc,
          [[maybe_unused]] char** argv)
 {
@@ -1435,9 +1453,10 @@ int main([[maybe_unused]] int argc,
 
     // BitwiseOperations::test();
 
+    CompileTest::Demo();
+
 
     /** * * * * *  Move to lib * * * * * **/
-
 
     // Cpp23_Features::TestAll();
     // Execution::TestAll();
