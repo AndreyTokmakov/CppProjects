@@ -211,6 +211,7 @@ namespace Strings::UtilitiesTests
     }
 }
 
+
 void Strings::TestAll()
 {
     // GetStringLengthAsCompileTime();
