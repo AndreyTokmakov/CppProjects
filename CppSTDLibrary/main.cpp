@@ -59,6 +59,7 @@ Description : Cpp STD lib
 #include "NumericLimits/NumericLimits.h"
 #include "ObjectOrientedProgramming/ObjectOrientedProgramming.h"
 #include "ObjectOrientedProgramming/RefQualifierMemberFunctions.h"
+#include "ObjectOrientedProgramming/ConstexprVirtualFunctions.h"
 #include "Optional/Optional.h"
 #include "Random/Random.h"
 #include "Ranges/Ranges.h"
@@ -104,7 +105,7 @@ int main([[maybe_unused]] int argc,
     // BitSet::TestAll();
     // BitwiseOperation::TestAll();
     // Byte::TestAll();
-    Chrono::TestAll();
+    // Chrono::TestAll();
     // Comparators::TestAll();
     // Concepts::TestAll();
     // ConsoleInOut::TestAll();
@@ -140,6 +141,7 @@ int main([[maybe_unused]] int argc,
     // InlineNamespaces::TestAll();
     // NumericLimits::TestAll();
     // ObjectOrientedProgramming::TestAll();
+    ConstexprVirtualFunctions::TestAll();
     // Optional::TestAll();
     // Overflow::TestAll();
     // PolymorphicMemoryResources::TestAll();

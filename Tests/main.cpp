@@ -1087,6 +1087,7 @@ namespace Designated_Initialization
 
     void Test()
     {
+        [[maybe_unused]]
         Data data {.a = 10, .c = 13};
     }
 }
@@ -1370,44 +1371,7 @@ namespace BitwiseOperations
 
 
 
-namespace CompileTime_Programming
-{
-    template <int N>
-    struct factorial
-    {
-        static const int value = N * factorial<N - 1>::value;
-    };
 
-    template <>
-    struct factorial<0> {
-        static const int value = 1;
-    };
-
-
-    constexpr int factorialFunc(const int value)
-    {
-        int result = 1;
-        for (int i = 2; i <= value; i++)
-            result *= i;
-        return result;
-    };
-
-
-    void Factorial()
-    {
-        static_assert(1 == factorial<0>::value);
-        static_assert(1 == factorial<1>::value);
-        static_assert(2 == factorial<2>::value);
-        static_assert(6 == factorial<3>::value);
-        static_assert(24 == factorial<4>::value);
-
-        static_assert(1 == factorialFunc(0));
-        static_assert(1 == factorialFunc(1));
-        static_assert(2 == factorialFunc(2));
-        static_assert(6 == factorialFunc(3));
-        static_assert(24 == factorialFunc(4));
-    }
-}
 
 
 int main([[maybe_unused]] int argc,
@@ -1435,6 +1399,8 @@ int main([[maybe_unused]] int argc,
     // StringTest_SSO::Tests();
 
     // BitwiseOperations::test();
+
+    ConstexprVirtualFunctions::test();
 
     /** * * * * *  Move to lib * * * * * **/
 
@@ -1483,7 +1449,7 @@ int main([[maybe_unused]] int argc,
     // PointsAndLines::TestAll();           // Geometry
 
     // Iterators::TestAll();
-    Strings::TestAll();
+    // Strings::TestAll();
     // Performance::TestAll();
     // Templates::TestAll();
     // ExpressionTemplates::TestAll();
