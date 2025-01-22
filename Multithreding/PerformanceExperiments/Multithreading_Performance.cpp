@@ -21,107 +21,6 @@
 #include <future>
 #include <cassert>
 
-namespace Multithreading_Performance::Atomic_vs_Mutex
-{
-
-    class SynchStorage {
-    private:
-        std::atomic_flag flag = ATOMIC_FLAG_INIT ;
-        unsigned long counter{ 0 };
-
-    public:
-        void lock() {
-            while (flag.test_and_set(std::memory_order_acquire)) {
-                // THREAD_INFO << "Locked"  << std::endl;
-            }
-        }
-        void unlock() {
-            flag.clear(std::memory_order_release);
-        }
-
-        void increment() {
-            while (flag.test_and_set(std::memory_order_acquire)) {}
-            counter++;
-            flag.clear(std::memory_order_release);
-        }
-
-        unsigned long get_value() const noexcept {
-            return counter;
-        }
-    };
-
-    void Test_AtomicFlagSync() {
-        SynchStorage storage;
-
-        constexpr int thread_max = 50, iter_max = 1000000;
-        auto worker = [&]()->void {
-            for (int i = 0; i < iter_max; i++) {
-                storage.increment();
-            }
-        };
-
-        auto start = std::chrono::high_resolution_clock::now();
-
-        std::vector<std::future<void>> tasks;
-        for (auto i = 0; i < thread_max; ++i)
-            tasks.emplace_back(std::async(worker));
-        for (const auto& fut : tasks)
-            fut.wait();
-
-        auto end = std::chrono::high_resolution_clock::now();
-        auto duration = std::chrono::duration_cast<std::chrono::microseconds>(end - start).count();
-        std::cout << "Result: " << duration << " microseconds" << std::endl;
-
-        assert(thread_max * iter_max == storage.get_value());
-        THREAD_INFO << "Counter = " << storage.get_value() << std::endl;
-    }
-
-    //------------------------------------------------------------------------------------------------------//
-
-    class SynchStorage_Mutex {
-    private:
-        std::mutex mtx;
-        unsigned long counter{ 0 };
-
-    public:
-
-        void increment() {
-            std::lock_guard<std::mutex> lock(mtx);
-            counter++;
-        }
-
-        unsigned long get_value() const noexcept {
-            return counter;
-        }
-    };
-
-    void Test_Mutex() {
-        SynchStorage_Mutex storage;
-
-        constexpr int thread_max = 50, iter_max = 1000000;
-        auto worker = [&]()->void {
-            for (int i = 0; i < iter_max; i++) {
-                storage.increment();
-            }
-        };
-
-        auto start = std::chrono::high_resolution_clock::now();
-
-        std::vector<std::future<void>> tasks;
-        for (auto i = 0; i < thread_max; ++i)
-            tasks.emplace_back(std::async(worker));
-        for (const auto& fut : tasks)
-            fut.wait();
-
-        auto end = std::chrono::high_resolution_clock::now();
-        auto duration = std::chrono::duration_cast<std::chrono::microseconds>(end - start).count();
-        std::cout << "Result: " << duration << " microseconds" << std::endl;
-
-        assert(thread_max * iter_max == storage.get_value());
-        THREAD_INFO << "Counter = " << storage.get_value() << std::endl;
-    }
-};
-
 
 namespace Multithreading_Performance::SycnronizationTests {
 
@@ -619,9 +518,6 @@ namespace Multithreading_Performance::Atomics {
 
 void Multithreading_Performance::TEST_ALL()
 {
-    // Atomic_vs_Mutex::Test_AtomicFlagSync();
-    // Atomic_vs_Mutex::Test_Mutex();
-
     // SycnronizationTests::ConditionVariables();
     // SycnronizationTests::AtomicFlag();
     // SycnronizationTests::OneAtomicFlag();

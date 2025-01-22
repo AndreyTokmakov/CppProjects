@@ -36,7 +36,6 @@ add_executable(${PROJECT_NAME}
         Collections/RingBuffer.cpp
         Collections/ThreadSafeQueue_CV_vs_RingBuffer.cpp
         Multithreading_Communication/Multithreading_Communication.cpp
-        Multithreading_Performance/Multithreading_Performance.cpp
         PackagedTask/PackagedTask.cpp
         ParallelExecutionAlgoritms/ParallelExecutionAlgoritms.cpp
         Promise/Promise.cpp
@@ -48,12 +47,14 @@ add_executable(${PROJECT_NAME}
         FalseSharing/FalseSharingExperiments.cpp
         SynchStream_Custom/SynchStream_Custom.cpp
         SynchStream/SynchStream.cpp
-        PerformanceExperiments/PerformanceExperiments.cpp
         SpinLock/SpinLock.cpp
         Threads/StoppingThreads.cpp
         Utilities/Utilities.cpp
         Utilities/Utilities_Tests.cpp
+        PerformanceExperiments/Multithreading_Performance.cpp
+        PerformanceExperiments/PerformanceExperiments.cpp
         PerformanceExperiments/ConditionVariable_vs_Atomic.cpp
+        PerformanceExperiments/Mutex_vs_AtomicLock.cpp
         PerformanceExperiments/SpinLock.cpp
 )
 

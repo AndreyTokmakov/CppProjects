@@ -48,13 +48,15 @@
 #include "Collections/SingleConsumerProducerQueue.h"
 #include "Collections/Single_ConsumerProducerQueue_Two.h"
 #include "Collections/ThreadSafeQueue_CV_vs_RingBuffer.h"
-#include "Multithreading_Performance/Multithreading_Performance.h"
+#include "PerformanceExperiments/Mutex_vs_AtomicLock.h"
+#include "PerformanceExperiments/Multithreading_Performance.h"
+#include "PerformanceExperiments/PerformanceExperiments.h"
 #include "Barrier/Barrier.h"
 #include "FalseSharing/FalseSharingExperiments.h"
 #include "SynchStream_Custom/SynchStream_Custom.h"
 #include "SynchStream/SynchStream.h"
 #include "SpinLock/SpinLock.h"
-#include "PerformanceExperiments/PerformanceExperiments.h"
+
 #include "Utilities/Utilities.h"
 #include "Collections/RingBuffer.h"
 
@@ -81,7 +83,7 @@ int main([[maybe_unused]] int argc,
 
     // Latch::TEST_ALL();
 
-    // Multithreading_Performance::TEST_ALL();
+
     // Multithreading_Communication::TEST_ALL();
     // Promise::TEST_ALL();
     // PackagedTask::TEST_ALL();
@@ -105,8 +107,9 @@ int main([[maybe_unused]] int argc,
     // Threads::TEST_ALL();
     // JThreads::TEST_ALL();
 
+    // Multithreading_Performance::TEST_ALL();
     // FalseSharingExperiments::TEST_ALL();
-    // PerformanceExperiments::TestAll();
+    PerformanceExperiments::TestAll();
 
 
     /** ThreadSafeCollections **/
@@ -118,7 +121,7 @@ int main([[maybe_unused]] int argc,
     // BlockingQueue::TestAll();
     // LockFreeQueue::TEST_ALL()
     // RingBuffer::TestAll();
-    ThreadSafeQueue_CV_vs_RingBuffer::TestAll();
+    // ThreadSafeQueue_CV_vs_RingBuffer::TestAll();
 
     /** Utilities **/
 
