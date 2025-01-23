@@ -41,7 +41,7 @@ namespace Promise {
 
     void do_work(std::promise<void> barrier) {
         THREAD_INFO << "do_work() started" << std::endl;
-        std::this_thread::sleep_for(std::chrono::seconds(10));
+        std::this_thread::sleep_for(std::chrono::seconds(10U));
         barrier.set_value();
         THREAD_INFO << "do_work() done" << std::endl;
     }
@@ -52,18 +52,19 @@ namespace Promise {
     {
         std::promise<int> promise;
 
-        std::jthread T1([&promise]{
-            THREAD_INFO << "T1 started" << std::endl;
-            std::this_thread::sleep_for(std::chrono::seconds(1));
-            promise.set_value(123);
-            THREAD_INFO << "T1 done" << std::endl;
-        });
-
         std::jthread T2([&promise]{
             THREAD_INFO << "T2 started" << std::endl;
-            std::future fut = promise.get_future();
+            std::future<int> fut = promise.get_future();
+            THREAD_INFO << "T2 waiting" << std::endl;
             const int result = fut.get();
             THREAD_INFO << "T2 done. Result = " << result << std::endl;
+        });
+
+        std::jthread T1([&promise]{
+            THREAD_INFO << "T1 started" << std::endl;
+            std::this_thread::sleep_for(std::chrono::seconds(1U));
+            promise.set_value(123);
+            THREAD_INFO << "T1 done. Value -> 123" << std::endl;
         });
     }
 
@@ -73,7 +74,7 @@ namespace Promise {
         std::future<std::string> future = promise.get_future();
 
         std::jthread t1 = std::jthread([promise = std::move(promise)] mutable {
-            std::this_thread::sleep_for(std::chrono::milliseconds(1000));
+            std::this_thread::sleep_for(std::chrono::milliseconds(1000U));
             promise.set_value("Message from " + currentTime());
         });
 
@@ -90,7 +91,7 @@ namespace Promise {
         const auto print_int = [](std::future<int>& fut) {
             THREAD_INFO << "func started" << std::endl;
             int x = fut.get();
-            std::this_thread::sleep_for(std::chrono::seconds(3));
+            std::this_thread::sleep_for(std::chrono::seconds(3U));
             THREAD_INFO << "value: " << x << std::endl;
         };
 
@@ -110,10 +111,10 @@ namespace Promise {
 
         std::thread thread_b([&]() {
             THREAD_INFO << "Worer: Do some work 1 . . . ." << std::endl;
-            std::this_thread::sleep_for(std::chrono::seconds(3));
+            std::this_thread::sleep_for(std::chrono::seconds(3U));
             promise.set_value();
             THREAD_INFO << "Worer: Do some work 2 . . . ." << std::endl;
-            std::this_thread::sleep_for(std::chrono::seconds(3));
+            std::this_thread::sleep_for(std::chrono::seconds(3U));
             THREAD_INFO << "Worer: Done" << std::endl;
         });
 
@@ -131,14 +132,14 @@ namespace Promise {
 
         std::jthread task([promise = std::move(promise)]()mutable {
             THREAD_INFO << "Worker: Do some work 1 . . . ." << std::endl;
-            std::this_thread::sleep_for(std::chrono::seconds(3));
+            std::this_thread::sleep_for(std::chrono::seconds(3U));
             promise.set_value();
             THREAD_INFO << "Worker: Do some work 2 . . . ." << std::endl;
-            std::this_thread::sleep_for(std::chrono::seconds(3));
+            std::this_thread::sleep_for(std::chrono::seconds(3U));
             THREAD_INFO << "Worker: Done" << std::endl;
         });
 
-        std::this_thread::sleep_for(std::chrono::milliseconds (10));
+        std::this_thread::sleep_for(std::chrono::milliseconds (10U));
         THREAD_INFO << "Before wait()" << std::endl;
         future.wait();
         THREAD_INFO << "After wait()" << std::endl;
@@ -148,7 +149,7 @@ namespace Promise {
     {
         const auto initiazer = [](std::promise<int>* promObj) {
             THREAD_INFO << " Started." << std::endl;
-            std::this_thread::sleep_for(std::chrono::seconds(3));
+            std::this_thread::sleep_for(std::chrono::seconds(3U));
             promObj->set_value(35);
         };
 
@@ -195,7 +196,7 @@ namespace Promise {
         std::promise<int> promise;
         std::future<int> future = promise.get_future();
         std::thread([&promise] {
-            std::this_thread::sleep_for(std::chrono::seconds(1));
+            std::this_thread::sleep_for(std::chrono::seconds(1U));
             promise.set_value_at_thread_exit(9);
         }).detach();
 
@@ -219,7 +220,7 @@ namespace Promise {
                     THREAD_INFO << i << " == " << value << std::endl;
                     spPromise->set_value();
                 }
-                std::this_thread::sleep_for(std::chrono::milliseconds(100));
+                std::this_thread::sleep_for(std::chrono::milliseconds(100U));
             }
         };
 
@@ -299,7 +300,7 @@ namespace Promise {
 
         auto producer = std::thread([&promise] {
             THREAD_INFO << " Producer started." << std::endl;
-            std::this_thread::sleep_for(std::chrono::seconds(2));
+            std::this_thread::sleep_for(std::chrono::seconds(2U));
             promise.set_value("Hello World");
         });
 
@@ -324,12 +325,12 @@ namespace Promise
         std::future<void> will_timeout = slow.get_future();
         std::jthread job = std::jthread([promise = std::move(slow)] mutable {
             // Sleep, causing a timeout for the consumer
-            std::this_thread::sleep_for(std::chrono::seconds(2));
+            std::this_thread::sleep_for(std::chrono::seconds(2U));
             promise.set_value();
         });
 
         /** Wait for 500 ms (which will timeout) **/
-        if (will_timeout.wait_for(std::chrono::milliseconds(500)) == std::future_status::timeout) {
+        if (will_timeout.wait_for(std::chrono::milliseconds(500U)) == std::future_status::timeout) {
             std::cout << std::format("Future did not receive state within 500 ms, bailing out.") << std::endl;
         } else {
             // If we didn't timeout, calling get() will not block (in general could also be a deferred function)
@@ -342,14 +343,14 @@ namespace Promise
 void Promise::TEST_ALL()
 {
     // Simple_Test_0();
-    // Simple_Test_1();
+    Simple_Test_1();
     // Simple_Test_2();
     // Simple_Test_3();
     // Simple_Test_4();
     // Simple_Test_5();
 
 
-    Wait_Timeout();
+    // Wait_Timeout();
 
     // ComplexTest();
 

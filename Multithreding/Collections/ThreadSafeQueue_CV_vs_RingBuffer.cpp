@@ -19,6 +19,7 @@ Description : ThreadSafeQueue_CV_vs_RingBuffer.cpp
 #include <syncstream>
 #include <format>
 #include <chrono>
+#include <list>
 
 #include "../Utilities/Utilities.h"
 
@@ -113,6 +114,42 @@ namespace ThreadSafeQueue_CV_vs_RingBuffer
         }
     };
 
+    template<typename T>
+    class Queue_List_Atomic
+    {
+        using value_type = T;
+        static_assert(!std::is_same_v<value_type, void>, "ERROR: Value type can not be void");
+
+        mutable std::mutex mutex;
+        std::deque<value_type> storage;
+        std::atomic<uint32_t> counterAdded { 0 };
+        uint32_t counterReads { 0 };
+
+    public:
+        Queue_List_Atomic() = default;
+
+        void push(value_type new_value)
+        {
+            {
+                std::lock_guard<std::mutex> lock(mutex);
+                storage.push_back(std::move(new_value));
+            }
+            counterAdded.fetch_add(1, std::memory_order::relaxed);
+            counterAdded.notify_one();
+        }
+
+        void wait_and_pop(value_type& value)
+        {
+            counterAdded.wait(counterReads, std::memory_order::relaxed);
+            {
+                std::lock_guard<std::mutex> lock(mutex);
+                value = std::move(storage.front());
+                storage.pop_front();
+            }
+            ++counterReads;
+        }
+    };
+
 
     template<typename T>
     struct RingBufferQueue
@@ -193,12 +230,12 @@ namespace ThreadSafeQueue_CV_vs_RingBuffer::Dequeue_Tests
             while (count > 0) {
                 if (dQueue.wait_for_and_pop(result)) {
                     --count;
-                    std::cout << result << " -> " << count << std::endl;
+                    //std::cout << result << " -> " << count << std::endl;
                 }
             }
         };
 
-        int32_t eventMax { 100'000 };
+        int32_t eventMax { 1'000'000 };
         Utilities::ScopedTimer timer { "Dequeue_Tests" };
         {
             std::jthread producer{produce, eventMax };
@@ -211,12 +248,12 @@ namespace ThreadSafeQueue_CV_vs_RingBuffer::RFQueue_Tests
 {
     void benchmark()
     {
-        RingBufferQueue<int> rfQueue(10);
+        RingBufferQueue<int> rfQueue(1'000'000);
 
         auto produce = [&rfQueue](int32_t count) {
             for (int32_t n = 0; n < count; ++n) {
                 rfQueue.put(n);
-                std::this_thread::sleep_for(std::chrono::milliseconds(1U));
+                // std::this_thread::sleep_for(std::chrono::milliseconds(1U));
             }
         };
 
@@ -225,12 +262,12 @@ namespace ThreadSafeQueue_CV_vs_RingBuffer::RFQueue_Tests
             while (count > 0) {
                 if (rfQueue.get(result)) {
                     --count;
-                    std::osyncstream { std::cout } << result << " -> " << count << std::endl;
+                    // std::osyncstream { std::cout } << result << " -> " << count << std::endl;
                 }
             }
         };
 
-        int32_t eventMax { 100 };
+        int32_t eventMax { 1'000'000 };
         Utilities::ScopedTimer timer { "RFQueue_Tests" };
         {
             std::jthread consumer{consume, eventMax };
@@ -239,10 +276,44 @@ namespace ThreadSafeQueue_CV_vs_RingBuffer::RFQueue_Tests
     }
 }
 
+namespace ThreadSafeQueue_CV_vs_RingBuffer::Queue_List_Atomic_Tests
+{
+    void benchmark()
+    {
+        Queue_List_Atomic<int> atomicListQueue;
 
+        auto produce = [&atomicListQueue](int32_t count) {
+            for (int32_t n = 0; n < count; ++n) {
+                atomicListQueue.push(n);
+                //std::this_thread::sleep_for(std::chrono::milliseconds(1U));
+            }
+        };
+
+        auto consume = [&atomicListQueue](int32_t count)
+        {
+            int result { 0 };
+            while (count > 0)
+            {
+                atomicListQueue.wait_and_pop(result);
+                --count;
+                //std::osyncstream { std::cout } << result << " -> " << count << std::endl;
+            }
+        };
+
+
+        int32_t eventMax { 1'000'000 };
+        Utilities::ScopedTimer timer { "Queue_List_Atomic" };
+        {
+            std::jthread consumer { consume, eventMax };
+            std::jthread producer { produce, eventMax };
+        }
+    }
+}
 
 void ThreadSafeQueue_CV_vs_RingBuffer::TestAll()
 {
-    RFQueue_Tests::benchmark();
-    // Dequeue_Tests::benchmark();
+    // RFQueue_Tests::benchmark();
+
+    Dequeue_Tests::benchmark();
+    Queue_List_Atomic_Tests::benchmark();
 }

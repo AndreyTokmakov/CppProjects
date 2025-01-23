@@ -246,7 +246,7 @@ void PerformanceExperiments::TestAll()
 {
     // ConditionVariable_vs_Atomic::benchmarks();
     // SpinLock::benchmarks();
-    Mutex_vs_AtomicLock::benchmarks();
+    // Mutex_vs_AtomicLock::benchmarks();
 
     // AtomicCounter_vs_Mutex::RunBenchmark();
     // Atomic_vs_Volatile::RunBenchmark();

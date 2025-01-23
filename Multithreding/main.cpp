@@ -107,10 +107,11 @@ int main([[maybe_unused]] int argc,
     // Threads::TEST_ALL();
     // JThreads::TEST_ALL();
 
+    /** Performance **/
+
     // Multithreading_Performance::TEST_ALL();
     // FalseSharingExperiments::TEST_ALL();
-    PerformanceExperiments::TestAll();
-
+    // PerformanceExperiments::TestAll();
 
     /** ThreadSafeCollections **/
 
@@ -121,7 +122,7 @@ int main([[maybe_unused]] int argc,
     // BlockingQueue::TestAll();
     // LockFreeQueue::TEST_ALL()
     // RingBuffer::TestAll();
-    // ThreadSafeQueue_CV_vs_RingBuffer::TestAll();
+    ThreadSafeQueue_CV_vs_RingBuffer::TestAll();
 
     /** Utilities **/
 
