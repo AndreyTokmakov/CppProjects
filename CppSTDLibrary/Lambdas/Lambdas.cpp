@@ -1031,6 +1031,62 @@ namespace Lambdas::Constexpr_Constevel_Lambda {
 }
 
 
+namespace Lambdas_Inheritance
+{
+	template<class Lambda>
+	struct DerivedFromLambda : public Lambda
+	{
+		explicit DerivedFromLambda(Lambda lambda) : Lambda(std::move(lambda)) {
+		}
+		using Lambda::operator();
+	};
+
+	template<typename... Bases>
+	struct Mixin : private Bases...
+	{
+		using Bases::operator()...;
+	};
+
+	template<typename... Bases>
+	struct Mixin2 : private Bases...
+	{
+		explicit Mixin2(Bases...)  {}
+		using Bases::operator()...;
+	};
+
+	void LambdaAsBaseClass()
+	{
+		auto lambda = []{ return 42; };
+
+		const DerivedFromLambda child1 { lambda };
+		std::cout << child1() << std::endl;
+
+		DerivedFromLambda<decltype(lambda)> child2 { lambda };
+		std::cout << child2() << std::endl;
+	}
+
+	void MultipleInheritanceDemo()
+	{
+		auto intLambda = [](int i){ return "takes int"; };
+		auto doubleLambda = [](double d){ return "takes double"; };
+
+		const Mixin<decltype(intLambda), decltype(doubleLambda)> child;
+
+		std::cout << child(42) << std::endl;
+		std::cout << child(42.0) << std::endl;
+	}
+
+	void MultipleInheritanceDemoTwo()
+	{
+		const Mixin2 child(
+			[](int i){ return "takes int"; },
+			[](double d){ return "takes double"; }
+		);
+
+		std::cout << child(42) << std::endl;
+		std::cout << child(42.0) << std::endl;
+	}
+}
 
 void Lambdas::TestAll()
 {
@@ -1042,7 +1098,7 @@ void Lambdas::TestAll()
     // Capture::Capture_Variable_Copy();
 	// Capture::Capturing_Parameter_Packs();  // By REF, MOVE and COPY
     // Capture::Capture_This();
-    Capture::Capture_FunctionCallResult_Global();
+    // Capture::Capture_FunctionCallResult_Global();
 
 	// Lambdas::Lambda_With_Params_Initialization();
 	// Lambdas::Lambda_Struct();
@@ -1083,9 +1139,12 @@ void Lambdas::TestAll()
 	// Tests::VECTOR_OF_LAMBDAS();
 
 
-    Concepts::Using_Existing_STD_Concepts();
-    Concepts::Using_Required_Keyword();
+    // Concepts::Using_Existing_STD_Concepts();
+    // Concepts::Using_Required_Keyword();
 
+	// Lambdas_Inheritance::LambdaAsBaseClass();
+	// Lambdas_Inheritance::MultipleInheritanceDemo();
+	Lambdas_Inheritance::MultipleInheritanceDemoTwo();
 
 	// High_Order_Function::PredicateComposition_WhenAll();
 	// High_Order_Function::PredicateComposition_WhenAll_Concepts();

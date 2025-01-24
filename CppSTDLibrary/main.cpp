@@ -129,7 +129,7 @@ int main([[maybe_unused]] int argc,
     // Format::TestAll();
     // FunctionObjects::TestAll();
     // Hashing::TestAll();
-    // Lambdas::TestAll();
+    Lambdas::TestAll();
     // LifetimeExtension::TestAll();
     // Locale::TestAll();
     // Literals::TestAll();
@@ -141,7 +141,7 @@ int main([[maybe_unused]] int argc,
     // InlineNamespaces::TestAll();
     // NumericLimits::TestAll();
     // ObjectOrientedProgramming::TestAll();
-    ConstexprVirtualFunctions::TestAll();
+    // ConstexprVirtualFunctions::TestAll();
     // Optional::TestAll();
     // Overflow::TestAll();
     // PolymorphicMemoryResources::TestAll();
