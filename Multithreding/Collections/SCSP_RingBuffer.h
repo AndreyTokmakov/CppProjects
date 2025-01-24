@@ -1,5 +1,5 @@
 /**============================================================================
-Name        : Single_ConsumerProducerQueue_Two.h
+Name        : SCSP_RingBuffer.h
 Created on  : 12.09.2024
 Author      : Andrei Tokmakov
 Version     : 1.0
@@ -7,11 +7,11 @@ Copyright   : Your copyright notice
 Description : Single_ConsumerProducerQueue_Two.h
 ============================================================================**/
 
-#ifndef CPPPROJECTS_SINGLE_CONSUMERPRODUCERQUEUE_TWO_H
-#define CPPPROJECTS_SINGLE_CONSUMERPRODUCERQUEUE_TWO_H
+#ifndef CPPPROJECTS_SCSP_RINGBUFFER_H
+#define CPPPROJECTS_SCSP_RINGBUFFER_H
 
-namespace Single_ConsumerProducerQueue_Two {
+namespace SCSP_RingBuffer {
     void TestAll();
 };
 
-#endif //CPPPROJECTS_SINGLE_CONSUMERPRODUCERQUEUE_TWO_H
+#endif //CPPPROJECTS_SCSP_RINGBUFFER_H

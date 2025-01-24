@@ -26,7 +26,7 @@ Description : ThreadSafeQueue_CV_vs_RingBuffer.cpp
 namespace ThreadSafeQueue_CV_vs_RingBuffer
 {
     template<typename T>
-    class Queue_Deque
+    class BasicQueue
     {
         using value_type = T;
         static_assert(!std::is_same_v<value_type, void>, "ERROR: Value type can not be void");
@@ -36,7 +36,7 @@ namespace ThreadSafeQueue_CV_vs_RingBuffer
         std::condition_variable updated;
 
     public:
-        Queue_Deque() = default;
+        BasicQueue() = default;
 
         void push(value_type new_value)
         {
@@ -211,14 +211,61 @@ namespace ThreadSafeQueue_CV_vs_RingBuffer
             return true;
         }
     };
+
+    template<typename T>
+    struct RingBuffer_AtomicSize
+    {
+        using value_type = T;
+        using size_type = uint32_t;
+
+        const size_type capacity { 0 };
+        std::vector<value_type> buffer;
+        std::atomic<size_type> size { 0 };
+
+        alignas(std::hardware_destructive_interference_size)
+        size_type head { 0 };
+        alignas(std::hardware_destructive_interference_size)
+        size_type tail { 0 };
+
+        static_assert(!std::is_same_v<T, void>, "Type of the Queue can not be void");
+
+        explicit RingBuffer_AtomicSize(size_type capacity) :
+                capacity { capacity },
+                buffer (capacity) {
+        }
+
+        void put(const value_type &value)
+        {
+            if (size.load(std::memory_order_relaxed) >= capacity) {
+                size.wait(capacity, std::memory_order::relaxed);
+            }
+
+            tail = tail < capacity ? tail : 0;
+            buffer[tail++] = value;
+            size.fetch_add(1, std::memory_order_release);
+            size.notify_one();
+        }
+
+        void get(value_type &value)
+        {
+            if (size.load(std::memory_order_relaxed) == 0) {
+                size.wait(0, std::memory_order::relaxed);
+            }
+
+            head = head < capacity ? head : 0;
+            value = std::move(buffer[head++]);
+            size.fetch_sub(1, std::memory_order_release);
+            size.notify_one();
+        }
+    };
 }
 
 
-namespace ThreadSafeQueue_CV_vs_RingBuffer::Dequeue_Tests
+namespace ThreadSafeQueue_CV_vs_RingBuffer::BasicQueue_Test
 {
-    void benchmark()
+    void benchmark(int32_t eventMax)
     {
-        Queue_Deque<int> dQueue;
+        BasicQueue<int> dQueue;
 
         auto produce = [&dQueue](int32_t count) {
             for (int32_t n = 0; n < count; ++n)
@@ -235,7 +282,6 @@ namespace ThreadSafeQueue_CV_vs_RingBuffer::Dequeue_Tests
             }
         };
 
-        int32_t eventMax { 1'000'000 };
         Utilities::ScopedTimer timer { "Dequeue_Tests" };
         {
             std::jthread producer{produce, eventMax };
@@ -246,7 +292,7 @@ namespace ThreadSafeQueue_CV_vs_RingBuffer::Dequeue_Tests
 
 namespace ThreadSafeQueue_CV_vs_RingBuffer::RFQueue_Tests
 {
-    void benchmark()
+    void benchmark(int32_t eventMax)
     {
         RingBufferQueue<int> rfQueue(1'000'000);
 
@@ -267,7 +313,6 @@ namespace ThreadSafeQueue_CV_vs_RingBuffer::RFQueue_Tests
             }
         };
 
-        int32_t eventMax { 1'000'000 };
         Utilities::ScopedTimer timer { "RFQueue_Tests" };
         {
             std::jthread consumer{consume, eventMax };
@@ -278,7 +323,7 @@ namespace ThreadSafeQueue_CV_vs_RingBuffer::RFQueue_Tests
 
 namespace ThreadSafeQueue_CV_vs_RingBuffer::Queue_List_Atomic_Tests
 {
-    void benchmark()
+    void benchmark(int32_t eventMax)
     {
         Queue_List_Atomic<int> atomicListQueue;
 
@@ -301,8 +346,37 @@ namespace ThreadSafeQueue_CV_vs_RingBuffer::Queue_List_Atomic_Tests
         };
 
 
-        int32_t eventMax { 1'000'000 };
         Utilities::ScopedTimer timer { "Queue_List_Atomic" };
+        {
+            std::jthread consumer { consume, eventMax };
+            std::jthread producer { produce, eventMax };
+        }
+    }
+}
+
+
+namespace ThreadSafeQueue_CV_vs_RingBuffer::RingBuffer_AtomicSize_Test
+{
+    void benchmark(int32_t eventMax)
+    {
+        RingBuffer_AtomicSize<int> rfBuffer(10000);
+
+        auto produce = [&rfBuffer](int32_t count) {
+            for (int32_t n = 0; n < count; ++n) {
+                rfBuffer.put(n);
+            }
+        };
+
+        auto consume = [&rfBuffer](int32_t count)
+        {
+            int result { 0 };
+            while (count > 0) {
+                rfBuffer.get(result);
+                --count;
+            }
+        };
+
+        Utilities::ScopedTimer timer { "RingBuffer_AtomicSize" };
         {
             std::jthread consumer { consume, eventMax };
             std::jthread producer { produce, eventMax };
@@ -314,6 +388,7 @@ void ThreadSafeQueue_CV_vs_RingBuffer::TestAll()
 {
     // RFQueue_Tests::benchmark();
 
-    Dequeue_Tests::benchmark();
-    Queue_List_Atomic_Tests::benchmark();
+    BasicQueue_Test::benchmark(10'000'000);
+    Queue_List_Atomic_Tests::benchmark(10'000'000);
+    RingBuffer_AtomicSize_Test::benchmark(10'000'000);
 }

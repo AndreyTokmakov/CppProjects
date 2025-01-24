@@ -28,16 +28,17 @@ namespace RingBuffer
         std::atomic<size_type> idxRead { 0 };
         std::atomic<size_type> idxWrite { 0 };
         std::atomic<bool> overflow {false };
+        const size_type capacity { 0 };
         collection_type buffer {};
 
-        explicit RingBuffer(size_type size): idxRead { 0 }, idxWrite { 0 }, overflow { false } {
-            buffer.resize(size);
+        explicit RingBuffer(size_type size):
+            capacity { size }, buffer(capacity) {
         }
 
        void put(const value_type& value)
        {
            size_type writeIdx = idxWrite.load(std::memory_order::relaxed);
-           if (writeIdx == buffer.size()) {
+           if (writeIdx == capacity) {
                writeIdx = 0;
                overflow = true;
            }
@@ -45,7 +46,7 @@ namespace RingBuffer
            size_type readIdx = idxRead.load(std::memory_order::relaxed);
            if (overflow && writeIdx == readIdx)
            {
-               if (++readIdx >= buffer.size()) {
+               if (++readIdx >= capacity) {
                    readIdx = 0;
                    overflow = false;
                }
@@ -60,7 +61,7 @@ namespace RingBuffer
         void put(value_type&& value)
         {
             size_type writeIdx = idxWrite.load(std::memory_order::relaxed);
-            if (writeIdx == buffer.size()) {
+            if (writeIdx == capacity) {
                 writeIdx = 0;
                 overflow = true;
             }
@@ -68,7 +69,7 @@ namespace RingBuffer
             size_type readIdx = idxRead.load(std::memory_order::relaxed);
             if (overflow && writeIdx == readIdx)
             {
-                if (++readIdx >= buffer.size()) {
+                if (++readIdx >= capacity) {
                     readIdx = 0;
                     overflow = false;
                 }
@@ -87,7 +88,7 @@ namespace RingBuffer
                 return false;
             }
 
-            if (readIdx >= buffer.size()) {
+            if (readIdx >= capacity) {
                 readIdx = 0;
                 overflow = false;
             }
@@ -104,7 +105,7 @@ namespace RingBuffer
                 idxWrite.wait(readIdx);
             }
 
-            if (readIdx >= buffer.size()) {
+            if (readIdx >= capacity) {
                 readIdx = 0;
                 overflow = false;
             }
@@ -331,7 +332,7 @@ namespace RingBuffer::MultithreadedTests
 
         auto produce = [&buffer](const std::string& name) {
             std::osyncstream { std::cout } << name << " started" << std::endl;
-            std::this_thread::sleep_for(std::chrono::seconds(4u));
+            std::this_thread::sleep_for(std::chrono::milliseconds(100u));
             buffer.put(123);
             std::osyncstream { std::cout } << name << " done" << std::endl;
         };
@@ -340,17 +341,54 @@ namespace RingBuffer::MultithreadedTests
             std::osyncstream { std::cout } << name << " started" << std::endl;
             int v {0};
             buffer.get_wait(v);
-            std::osyncstream { std::cout } << name << " done" << std::endl;
+            std::osyncstream { std::cout } << name << " done. value = " << v << std::endl;
         };
 
         std::vector<std::jthread> tasks;
         tasks.emplace_back(produce, "Producer-1");
         tasks.emplace_back(consume, "Consumer-1");
         tasks.emplace_back(consume, "Consumer-2");
-
-
     }
 
+
+    void Producer_Consumer_Test()
+    {
+        RingBuffer<int> buffer(10);
+        std::vector<int> results;
+
+        auto produce = [&](int size) {
+            for (int i = 0; i < size; ++i) {
+                buffer.put(i);
+                std::osyncstream { std::cout } << i << " ==> pushed " << std::endl;
+                //std::this_thread::sleep_for(std::chrono::milliseconds(10u));
+            }
+            std::osyncstream { std::cout } << "producer done" << std::endl;
+        };
+
+        auto consume = [&](int size) {
+            int result { 0 };
+            for (int i = 0; i < size; ++i) {
+                buffer.get_wait(result);
+                results.push_back(i);
+                std::osyncstream { std::cout } << i << " <== popped " << std::endl;
+            }
+        };
+
+
+        constexpr int events { 30 };
+        std::vector<std::jthread> tasks;
+        tasks.emplace_back(consume, events);
+        tasks.emplace_back(produce, events);
+
+
+        /*
+        std::this_thread::sleep_for(std::chrono::seconds(1u));
+        std::cout << "Done. size = " << results.size() << std::endl;
+
+        for (int v: results)
+            std::cout << v << ' ';
+        std::cout << std::endl;*/
+    }
 }
 
 
@@ -372,7 +410,8 @@ void RingBuffer::TestAll()
     Tests::put_wat_and_get_no_overlapping_1();
 #endif
 
-    MultithreadedTests::simple_test();
+    // MultithreadedTests::simple_test();
+    MultithreadedTests::Producer_Consumer_Test();
 
     PRINT_RESULT;
 }

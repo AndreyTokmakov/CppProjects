@@ -1,13 +1,13 @@
 /**============================================================================
-Name        : Single_ConsumerProducerQueue_Two.cpp
+Name        : SCSP_RingBuffer.cpp
 Created on  : 12.09.2024
 Author      : Andrei Tokmakov
 Version     : 1.0
 Copyright   : Your copyright notice
-Description : Single_ConsumerProducerQueue_Two.cpp
+Description : SCSP_RingBuffer.cpp
 ============================================================================**/
 
-#include "Single_ConsumerProducerQueue_Two.h"
+#include "SCSP_RingBuffer.h"
 
 #include <iostream>
 #include <vector>
@@ -18,34 +18,35 @@ Description : Single_ConsumerProducerQueue_Two.cpp
 #include <chrono>
 #include <syncstream>
 
-namespace Single_ConsumerProducerQueue_Two
+namespace SCSP_RingBuffer
 {
-    template <typename T>
+    template<typename T>
     struct Queue
     {
         using value_type = T;
         using size_type = size_t;
-        using pointer = value_type*;
+        using pointer = value_type *;
+
+        const size_type capacity { 0 };
+        std::vector<value_type> buffer;
+        size_type front { 0 };
+        size_type back { 0 };
+        std::atomic<size_type> size { 0 };
 
         static_assert(!std::is_same_v<T, void>, "Type of the Queue can not be void");
-        // static_assert(0 != Capacity, "Please try a little bigger buffer");
+        // static_assert(0 != capacity, "Please try a little bigger buffer");
 
         explicit Queue(size_type capacity) :
                 capacity { capacity },
-                buffer { new value_type[capacity] } {
+                buffer (capacity) {
         }
 
-        ~Queue() {
-            delete[] buffer;
-        }
-
-        bool push(const value_type& v)
-        {
+        bool push(const value_type &v) {
             if (size.load(std::memory_order_relaxed) >= capacity)
                 return false;
 
             back = back < capacity ? back : 0;
-            new (buffer + back) value_type(v);
+            new(buffer.data() + back) value_type(v);
             ++back;
             size.fetch_add(1, std::memory_order_release);
             return true;
@@ -64,18 +65,12 @@ namespace Single_ConsumerProducerQueue_Two
 
             return res;
         }
-
-    public:
-
-        const size_type capacity { 0 };
-        pointer buffer { nullptr };
-        size_type front { 0 };
-        size_type back { 0 };
-        std::atomic<size_type> size { 0 };
     };
+}
 
 
-
+namespace SCSP_RingBuffer::Tests
+{
     template<typename T>
     void printQueue(const Queue<T>& queue)
     {
@@ -107,8 +102,10 @@ namespace Single_ConsumerProducerQueue_Two
     }
 };
 
-void Single_ConsumerProducerQueue_Two::TestAll()
+void SCSP_RingBuffer::TestAll()
 {
+    using namespace Tests;
+
     Queue<int> queue(3);
 
     printQueue(queue);
