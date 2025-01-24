@@ -258,6 +258,52 @@ namespace ThreadSafeQueue_CV_vs_RingBuffer
             size.notify_one();
         }
     };
+
+
+    template<typename T>
+    struct RingBuffer_AtomicSize_NoWait
+    {
+        using value_type = T;
+        using size_type = uint32_t;
+
+        const size_type capacity { 0 };
+        std::vector<value_type> buffer;
+        std::atomic<size_type> size { 0 };
+
+        alignas(std::hardware_destructive_interference_size)
+        size_type head { 0 };
+        alignas(std::hardware_destructive_interference_size)
+        size_type tail { 0 };
+
+        static_assert(!std::is_same_v<T, void>, "Type of the Queue can not be void");
+
+        explicit RingBuffer_AtomicSize_NoWait(size_type capacity) :
+                capacity { capacity },
+                buffer (capacity) {
+        }
+
+        bool put(const value_type &value)
+        {
+            if (size.load(std::memory_order_relaxed) >= capacity)
+                return false;
+
+            tail = tail < capacity ? tail : 0;
+            buffer[tail++] = value;
+            size.fetch_add(1, std::memory_order_release);
+            return true;
+        }
+
+        bool get(value_type &value)
+        {
+            if (size.load(std::memory_order_relaxed) == 0)
+                return false;
+
+            head = head < capacity ? head : 0;
+            value = std::move(buffer[head++]);
+            size.fetch_sub(1, std::memory_order_release);
+            return true;
+        }
+    };
 }
 
 
@@ -384,6 +430,36 @@ namespace ThreadSafeQueue_CV_vs_RingBuffer::RingBuffer_AtomicSize_Test
     }
 }
 
+
+namespace ThreadSafeQueue_CV_vs_RingBuffer::RingBuffer_AtomicSize_NoWait_Test
+{
+    void benchmark(int32_t eventMax)
+    {
+        RingBuffer_AtomicSize_NoWait<int> rfBuffer(10000);
+
+        auto produce = [&rfBuffer](int32_t count) {
+            for (int32_t n = 0; n < count; ++n) {
+                while (!rfBuffer.put(n)){}
+            }
+        };
+
+        auto consume = [&rfBuffer](int32_t count)
+        {
+            int result { 0 };
+            while (count > 0) {
+                while (!rfBuffer.get(result)){}
+                --count;
+            }
+        };
+
+        Utilities::ScopedTimer timer { "RingBuffer_AtomicSize" };
+        {
+            std::jthread consumer { consume, eventMax };
+            std::jthread producer { produce, eventMax };
+        }
+    }
+}
+
 void ThreadSafeQueue_CV_vs_RingBuffer::TestAll()
 {
     // RFQueue_Tests::benchmark();
@@ -391,4 +467,5 @@ void ThreadSafeQueue_CV_vs_RingBuffer::TestAll()
     BasicQueue_Test::benchmark(10'000'000);
     Queue_List_Atomic_Tests::benchmark(10'000'000);
     RingBuffer_AtomicSize_Test::benchmark(10'000'000);
+    RingBuffer_AtomicSize_NoWait_Test::benchmark(10'000'000);
 }
