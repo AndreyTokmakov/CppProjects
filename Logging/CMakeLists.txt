@@ -12,6 +12,11 @@ link_directories(${THIRD_PARTY_DIR}/quill/build/quill)
 
 include_directories(${THIRD_PARTY_DIR}/spdlog/include)
 
+include_directories(${THIRD_PARTY_DIR}/xtr/single_include)
+link_directories(${THIRD_PARTY_DIR}/xtr/build/g++-14.2-lto-release)
+include_directories(${THIRD_PARTY_DIR}/xtr/third_party/fmt/include)
+link_directories(${THIRD_PARTY_DIR}/xtr/third_party/fmt/build)
+
 include_directories(Quill)
 
 # find_package(quill REQUIRED)
@@ -19,8 +24,9 @@ include_directories(Quill)
 # include all components
 add_executable(${PROJECT_NAME}
         main.cpp
-        # Quill/Quill.h Quill/Quill.cpp
-        SPDLog/SPDLog.h SPDLog/SPDLog.cpp
+        # Quill/Quill.cpp
+        SPDLog/SPDLog.cpp
+        XTR/XTR.cpp
 )
 
 TARGET_LINK_LIBRARIES(${PROJECT_NAME} PRIVATE
@@ -28,4 +34,5 @@ TARGET_LINK_LIBRARIES(${PROJECT_NAME} PRIVATE
         ${EXTRA_LIBS}
         # libquill.a
         # quill::quill
+        fmt
 )

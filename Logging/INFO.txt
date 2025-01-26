@@ -2,3 +2,78 @@
 # Logging without Compromising Performance
 
 https://medium.com/software-architecture-foundations/logging-without-compromising-performance-3ab4d9ac3caa
+
+logging libraries:
+
+• spdlog (https://github.com/gabime/spdlog) is an interesting logging library that
+we can use with the {fmt} library. Also, the program can start logging messages and queuing
+them since startup, even before the log output file name is specified.
+• Quill (https://github.com/odygrd/quill) is an asynchronous low-latency C++ logging library.
+
+• NanoLog (https://github.com/PlatformLab/NanoLog) is a nanosecond scale logging system with printf-like APIs.
+
+• lwlog (https://github.com/ChristianPanov/lwlog) is an amazingly fast asynchronous C++17 logging library.
+
+• XTR (https://github.com/choll/xtr) is a fast and convenient C++ logging library for low-latency and real-time environments.
+
+• Reckless (https://github.com/mattiasflodin/reckless) is a low-latency and high-throughput logging library.
+
+• uberlog
+  (https://github.com/IMQS/uberlog) is a cross-platform and multi-process C++ logging system.
+
+• Easylogging++
+    (https://github.com/abumq/easyloggingpp) is a single-headerC++ logging library with the
+     ability to write our own sinks and track performance.
+
+• tracetool
+     (https://github.com/froglogic/tracetool) is a logging and tracing
+      shared library.
+
+
+• Logging: https://en.wikipedia.org/wiki/Logging_(computing)
+• Syslog: https://en.wikipedia.org/wiki/Syslog
+• Google Logging Library: https://github.com/google/glog
+• Apache Log4cxx: https://logging.apache.org/log4cxx
+• spdlog: https://github.com/gabime/spdlog
+• Quill: https://github.com/odygrd/quill
+• xtr: https://github.com/choll/xtr
+• lwlog: https://github.com/ChristianPanov/lwlog
+• uberlog: https://github.com/IMQS/uberlog
+• Easylogging++: https://github.com/abumq/easyloggingpp
+• NanoLog: https://github.com/PlatformLab/NanoLog
+
+
+
+======================================================================================================================
+                            XTR
+======================================================================================================================
+
+-----> get sources
+
+git clone git@github.com:choll/xtr.git
+cd xtr
+git submodule init
+git submodule update
+
+----> Build FMT
+
+cd third_party/fmt
+
+cmake -DCMAKE_BUILD_TYPE=Release -B./build
+cd build/
+make -j8
+
+
+----> build XRT with Makefile
+
+make PREFIX=build
+make install
+
+
+----> add CMAKE deps
+
+include_directories(${THIRD_PARTY_DIR}/xtr/single_include)
+link_directories(${THIRD_PARTY_DIR}/xtr/build/g++-14.2-lto-release)
+include_directories(${THIRD_PARTY_DIR}/xtr/third_party/fmt/include)
+link_directories(${THIRD_PARTY_DIR}/xtr/third_party/fmt/build)
+

@@ -13,6 +13,7 @@ Description : C++ Logging tests
 
 #include "Quill/Quill.h"
 #include "SPDLog/SPDLog.h"
+#include "XTR/XTR.h"
 
 
 int main([[maybe_unused]] int argc,
@@ -21,7 +22,8 @@ int main([[maybe_unused]] int argc,
     const std::vector<std::string_view> args(argv + 1, argv + argc);
 
     // Quill::TestAll();
-    SPDLog::TestAll();
+    XTR::TestAll();
+    // SPDLog::TestAll();
 
     return EXIT_SUCCESS;
 }
