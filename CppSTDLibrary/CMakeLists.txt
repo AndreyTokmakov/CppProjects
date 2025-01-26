@@ -15,6 +15,7 @@ add_executable(${PROJECT_NAME}
 		Asserts/Asserts.cpp
 		Atomic/Atomic.cpp
 		Attributes/Attributes.cpp
+		Attributes/Assume.cpp
 		Auto/Auto.cpp
 		BitSet/BitSet.cpp
 		BitwiseOperation/BitwiseOperation.cpp

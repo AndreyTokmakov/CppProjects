@@ -24,7 +24,8 @@
 #include <thread>
 #include <format>
 
-#include "../Attributes/Attributes.h"
+#include "Attributes.h"
+#include "Assume.h"
 #include "../Integer/Integer.h"
 
 namespace Attributes::Fallthrough {
@@ -436,5 +437,7 @@ void Attributes::TestAll()
 
     // NoUniqueAddress::Test();
     // NoUniqueAddress::Test2();
-    NoUniqueAddress::Demo();
+    // NoUniqueAddress::Demo();
+
+    Assume::TestAll();
 };
