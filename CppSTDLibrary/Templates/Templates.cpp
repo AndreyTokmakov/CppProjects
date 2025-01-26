@@ -27,6 +27,7 @@ Description : Templates src
 #include "FoldExpressions.h"
 #include "NTTP.h"
 #include "TemplateSpecialization.h"
+#include "PackIndexing.h"
 
 namespace
 {
@@ -1922,8 +1923,9 @@ namespace Templates::Templated_Templates
 void Templates::TestAll()
 {
     // FoldExpressions::TestAll();
-    NTTP::TestAll();
+    // NTTP::TestAll();
     // TemplateSpecialization::TestAll();
+    PackIndexing::TestAll();
 
     // Is_Base_Of__Test();
     // Is_Same();

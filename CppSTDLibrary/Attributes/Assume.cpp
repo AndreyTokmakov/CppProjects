@@ -13,6 +13,9 @@ Description : Assume.cpp
 
 namespace Assume
 {
+
+#if 0 // C++26 Only
+
     void simpleTests(int& x, int y)
     {
         void g(int);
@@ -47,6 +50,7 @@ namespace Assume
 
         g(x); // Compiler may replace this with g(5);
     }
+#endif
 }
 
 void Assume::TestAll()

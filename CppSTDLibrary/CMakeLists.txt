@@ -100,6 +100,7 @@ add_executable(${PROJECT_NAME}
 		Templates/ConditionalExplicit.cpp
 		Templates/FoldExpressions.cpp
 		Templates/NTTP.cpp
+		Templates/PackIndexing.cpp
 		Templates/TemplateSpecialization.cpp
 		RVO_CopyElision/CopyElision.cpp
 		RVO_CopyElision/RVO_FailureCases.cpp
