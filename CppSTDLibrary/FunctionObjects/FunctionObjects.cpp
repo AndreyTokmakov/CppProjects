@@ -28,6 +28,7 @@
 #include "FunctionObjects.h"
 #include "CallbackTests.h"
 #include "MemberFunctionPointer.h"
+#include "MoveOnlyFunction.h"
 
 
 namespace FunctionObjects {
@@ -669,7 +670,8 @@ void FunctionObjects::TestAll()
 	// Auto::Return_Type_Hint();
 
     // MemberFunctionPointer::TestAll();
-    CallbackTests::TestAll();
+    // CallbackTests::TestAll();
+    MoveOnlyFunction::TestAll();
 
 	// BindTests::FuncPtr_Tests();
 	// BindTests::Bind_Test_1();

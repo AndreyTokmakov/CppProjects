@@ -1,22 +1,17 @@
 /**============================================================================
-Name        : XTR.cpp
+Name        : MoveOnlyFunction.h
 Created on  : 26.01.2025
 Author      : Andrei Tokmakov
 Version     : 1.0
 Copyright   : Your copyright notice
-Description : XTR.cpp
+Description : MoveOnlyFunction.h
 ============================================================================**/
 
-#include "XTR.h"
-#include <xtr/logger.hpp>
+#ifndef CPPPROJECTS_MOVEONLYFUNCTION_H
+#define CPPPROJECTS_MOVEONLYFUNCTION_H
 
+namespace MoveOnlyFunction {
+    void TestAll();
+};
 
-void XTR::TestAll()
-{
-    xtr::logger log;
-    xtr::sink sink = log.get_sink("Test");
-
-    for (int i = 0; i < 1000; ++i) {
-        XTR_LOG(sink, "Hello world");
-    }
-}
+#endif //CPPPROJECTS_MOVEONLYFUNCTION_H

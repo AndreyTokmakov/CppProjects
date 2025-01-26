@@ -38,6 +38,7 @@ add_executable(${PROJECT_NAME}
 		FunctionObjects/FunctionObjects.cpp
 		FunctionObjects/MemberFunctionPointer.cpp
 		FunctionObjects/CallbackTests.cpp
+		FunctionObjects/MoveOnlyFunction.cpp
 		Initialization/Initialization.cpp
 		InitializerList/InitializerList.cpp
 		InlineVariables/InlineVariables.cpp

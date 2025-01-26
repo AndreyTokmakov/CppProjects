@@ -48,6 +48,15 @@ them since startup, even before the log output file name is specified.
                             XTR
 ======================================================================================================================
 
+export GCC_VERSION=14.2
+export UTILS_PATH=/home/andtokm/DiskS/Utils
+export GCC_PATH=${UTILS_PATH}/bin/gcc-$GCC_VERSION
+
+export LD_LIBRARY_PATH=${GCC_PATH}/lib64
+export CC=gcc-$GCC_VERSION CXX=g++-$GCC_VERSION
+
+export PATH=${GCC_PATH}/bin:${UTILS_PATH}/cmake/cmake-3.30/bin/:${PATH}
+
 -----> get sources
 
 git clone git@github.com:choll/xtr.git

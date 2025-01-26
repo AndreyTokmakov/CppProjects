@@ -1400,7 +1400,7 @@ int main([[maybe_unused]] int argc,
 
     // BitwiseOperations::test();
 
-    ConstexprVirtualFunctions::test();
+
 
     /** * * * * *  Move to lib * * * * * **/
 
