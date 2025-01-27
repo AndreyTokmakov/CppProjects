@@ -15,6 +15,7 @@ Description : Coroutines.cpp
 #include <semaphore>
 #include <chrono>
 #include <coroutine>
+#include <generator>
 #include <iostream>
 
 #include "../Utilities/Utilities.h"
@@ -197,11 +198,25 @@ namespace Coroutines::Waiting_Coroutine
                 std::cout << "unhandled_exception" << std::endl;
             }
 
+            // when the coroutine calls co_await, the compiler will generate code to call a function in the promise
+            // object called await_transform(), which has a parameter of the same type as the data the coroutine is waiting for.
+            //
+            // As its name implies, await_transform is a function that transforms any object (in our example, std::string)
+            // into an awaitable object.
+            //
+            // std::string is not awaitable, hence the previous compiler error. await_transform() must return an awaiter object.
+            // This is just a simple struct implementing a required interface for the awaiter to be usable by the compiler.
+
             auto await_transform(const std::string&) noexcept
             {
+                std::cout << "await_transform()" << std::endl;
+
                 struct awaiter
                 {
                     promise_type& promise;
+
+                    // await_ready(): This is called to check whether the coroutine is suspended. If that is the case,
+                    // it returns false. In our example, it always returns true to indicate the coroutine is not suspended.
 
                     [[nodiscard]]
                     bool await_ready() const noexcept {
@@ -209,16 +224,23 @@ namespace Coroutines::Waiting_Coroutine
                         return true;
                     }
 
+                    // await_resume(): This resumes the coroutine and generates the result of the co_await expression.
+
                     [[nodiscard]]
                     std::string await_resume() const noexcept {
                         std::cout << "await_resume()" << std::endl;
                         return std::move(promise.input_data);
                     }
 
+                    // await_suspend(): In our simple awaiter, this returns void, meaning the control is passed to the
+                    // caller and the coroutine is suspended. It’s also possible for await_suspend to return a Boolean.
+                    // Returning true in this case is like returning void. Returning false means the coroutine is resumed.
+
                     void await_suspend(std::coroutine_handle<promise_type>) const noexcept {
                         std::cout << "await_suspend" << std::endl;
                     }
                 };
+
                 return awaiter(*this);
             }
         };
@@ -261,9 +283,163 @@ namespace Coroutines::Waiting_Coroutine
     }
 }
 
+namespace Coroutines::Fibonacci_Sequence_Generator
+{
+    std::generator<int> fibonacci_generator()
+    {
+        int a { 0 }, b{  1 };
+        while (true) {
+            co_yield a;
+            int c = a + b;
+            a = b;
+            b = c;
+        }
+    }
+
+    std::generator<int> fibonacci_generator(int limit)
+    {
+        int a { 0 }, b{  1 };
+        while  (limit--) {
+            co_yield a;
+            int c = a + b;
+            a = b;
+            b = c;
+        }
+    }
+
+    void Test()
+    {
+        std::generator<int> fib = fibonacci_generator();
+
+        int i = 0;
+        for (auto f = fib.begin(); f != fib.end(); ++f) {
+            if (i == 10) {
+                break;
+            }
+            std::cout << *f << " ";
+            ++i;
+        }
+        std::cout << std::endl;
+
+        for (int f : fibonacci_generator(10)) {
+            std::cout << f << " ";
+        }
+    }
+}
+
+namespace Coroutines::Fibonacci_Sequence_Generator_Ex
+{
+    using namespace std::string_literals;
+
+    template <typename Out>
+    struct SequenceGenerator
+    {
+        struct promise_type
+        {
+            Out output_data { };
+
+            SequenceGenerator get_return_object() noexcept {
+                return SequenceGenerator{ *this };
+            }
+
+            void return_void() noexcept {
+            }
+
+            std::suspend_always initial_suspend() noexcept {
+                return {};
+            }
+
+            std::suspend_always final_suspend() noexcept {
+                return {};
+            }
+
+            void unhandled_exception() noexcept {
+            }
+
+            std::suspend_always yield_value(int64_t num) noexcept {
+                output_data = num;
+                return {};
+            }
+        };
+
+        std::coroutine_handle<promise_type> handle{};
+
+        explicit SequenceGenerator(promise_type& promise) :
+            handle { std::coroutine_handle<promise_type>::from_promise(promise) } {
+        }
+
+        ~SequenceGenerator() noexcept
+        {
+            if (handle) {
+                handle.destroy();
+            }
+        }
+
+        void next() {
+            if (!handle.done()) {
+                handle.resume();
+            }
+        }
+
+        int64_t value() {
+            return handle.promise().output_data;
+        }
+    };
+
+    SequenceGenerator<int64_t> fibonacci()
+    {
+        int64_t a{ 0 };
+        int64_t b{ 1 };
+        int64_t c{ 0 };
+
+        while (true) {
+            co_yield a;
+            c = a + b;
+            a = b;
+            b = c;
+        }
+    }
+
+
+    void Test()
+    {
+        SequenceGenerator<int64_t> fib = fibonacci();
+
+        std::cout << "Generate ten Fibonacci numbers\n"s;
+
+        for (int i = 0; i < 10; ++i) {
+            fib.next();
+            std::cout << fib.value() << " ";
+        }
+        std::cout << std::endl;
+
+        std::cout << "Generate ten more\n"s;
+
+        for (int i = 0; i < 10; ++i) {
+            fib.next();
+            std::cout << fib.value() << " ";
+        }
+        std::cout << std::endl;
+
+        std::cout << "Let's do five more\n"s;
+
+        for (int i = 0; i < 5; ++i) {
+            fib.next();
+            std::cout << fib.value() << " ";
+        }
+        std::cout << std::endl;
+
+    }
+}
+
+
+
 void Coroutines::TestAll()
 {
     // SimpleCoroutine::Test();
     // Yield_Coroutine::Test();
-    Waiting_Coroutine::Test();
+    // Waiting_Coroutine::Test();
+
+    // Fibonacci_Sequence_Generator::Test();
+    Fibonacci_Sequence_Generator_Ex::Test();
 }
