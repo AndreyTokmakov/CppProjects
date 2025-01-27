@@ -49,19 +49,6 @@ namespace Utilities
         buffer.shrink_to_fit();
         return buffer;
     }
-
-    [[nodiscard]]
-    std::string getCurrentTimeOld()
-    {
-        const time_point<system_clock> timeNow = std::chrono::system_clock::now();
-        const time_t time = std::chrono::system_clock::to_time_t(timeNow);
-        const auto nowMs = std::chrono::duration_cast<std::chrono::microseconds>(
-                timeNow.time_since_epoch()) % 1000000;
-        std::stringstream ss;
-        ss << std::put_time(std::localtime(&time), "%a %b %d %Y %T")
-           << '.' << std::setfill('0') << std::setw(6) << nowMs.count();
-        return ss.str();
-    }
 }
 
 
@@ -91,10 +78,10 @@ namespace Utilities
         std::lock_guard<std::mutex> lock(print_mutex);
         stream << "[" << getCurrentTime() << "] Thread [";
         if (mainThreadId == threadInfo.thisThreadId) {
-            stream << std::setiosflags(std::ios::left) << std::setw(9) << "Main";
+            stream << std::setiosflags(std::ios::left) << std::setw(15) << "Main";
         }
         else {
-            stream << "Id: " << std::setiosflags(std::ios::left) << std::setw(5) << threadInfo.thisThreadId;
+            stream << std::setiosflags(std::ios::left) << std::setw(5) << threadInfo.thisThreadId;
         }
         stream << "] ";
         stream.flush();;

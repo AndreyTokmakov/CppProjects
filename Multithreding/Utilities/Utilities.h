@@ -15,6 +15,7 @@ Description : Utilities.h
 #include <thread>
 
 #define THREAD_INFO std::cout << Utilities::ThreadInfo()
+#define SYNCH_COUT std::cout << Utilities::ThreadInfo()
 
 namespace Utilities
 {

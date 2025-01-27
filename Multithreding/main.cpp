@@ -65,7 +65,7 @@
 int main([[maybe_unused]] int argc,
          [[maybe_unused]] char** argv)
 {
-    // AsyncLaunch::TEST_ALL();
+    AsyncLaunch::TestAll();
 
     // Atomic::TestAll();
     // AtomicFlag::TestAll();
@@ -124,7 +124,7 @@ int main([[maybe_unused]] int argc,
     // RingBuffer::TestAll();
     // SCSP_RingBuffer_Blocking::TestAll();
     // SCSP_RingBuffer::TestAll();
-    ThreadSafeQueue_CV_vs_RingBuffer::TestAll();
+    // ThreadSafeQueue_CV_vs_RingBuffer::TestAll();
 
     /** Utilities **/
 

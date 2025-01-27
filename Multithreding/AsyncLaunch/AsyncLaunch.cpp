@@ -1,11 +1,11 @@
-//============================================================================
-// Name        : AsyncLaunch.cpp
-// Created on  : 11.07.2021
-// Author      : Tokmakov Andrey
-// Version     : 1.0
-// Copyright   : Your copyright notice
-// Description : std::async src
-//============================================================================
+/**============================================================================
+Name        : AsyncLaunch.h
+Created on  : 11.07.2021
+Author      : Andrei Tokmakov
+Version     : 1.0
+Copyright   : Your copyright notice
+Description :
+============================================================================**/
 
 #include "AsyncLaunch.h"
 
@@ -13,37 +13,35 @@
 #include <string>
 #include <string_view>
 #include <future>
+#include <semaphore>
 #include <chrono>
 #include "../Utilities/Utilities.h"
 
 
-namespace AsyncLaunch {
-
-
-    void Async_Default() {
-        THREAD_INFO << "Main thread: Thread id: " << std::this_thread::get_id() << std::endl;
-
+namespace AsyncLaunch
+{
+    void Async_Default()
+    {
         auto asyncDefault = std::async([]()-> void {
-            THREAD_INFO << "Second thread (id: " << std::this_thread::get_id() << "). Started." << std::endl;
+            SYNCH_COUT << "Started." << std::endl;
             std::this_thread::sleep_for(std::chrono::seconds(9u));
-            THREAD_INFO << "Second thread (id: " << std::this_thread::get_id() << "). Ended." << std::endl;
+            SYNCH_COUT << "Ended." << std::endl;
         });
 
 
-        THREAD_INFO << "Main thread: Before sleep." << std::endl;
+        SYNCH_COUT << "Before sleep." << std::endl;
         std::this_thread::sleep_for(std::chrono::seconds(5u));
-        THREAD_INFO << "Main thread: Sleep ended." << std::endl;
+        SYNCH_COUT << "Sleep ended." << std::endl;
 
-        THREAD_INFO << "Main thread: Waiting for the second Thread..." << std::endl;
+        SYNCH_COUT << "Waiting for the second Thread..." << std::endl;
         asyncDefault.get();
-        THREAD_INFO << "Main thread: Second done." << std::endl;
+        SYNCH_COUT << "Second done." << std::endl;
     }
 
 
-    //--------------------------------------------------------------------------------
-
-    void Simple_Asynch_Task() {
-        auto taskToSleep = [](int timeout)-> void {
+    void Simple_Asynch_Task()
+    {
+        auto taskToSleep = [](uint32_t timeout)-> void {
             THREAD_INFO << "Task started" << std::endl;
             std::this_thread::sleep_for(std::chrono::seconds(timeout));
             THREAD_INFO << "Task completed" << std::endl;
@@ -59,8 +57,6 @@ namespace AsyncLaunch {
         THREAD_INFO << "This will be shown " << timeout << " seconds later." << std::endl;
     }
 
-    //==================================================================================
-
     template<typename Func, typename... Ts>
     auto runAsync(Func&& f, Ts&&... params) {
         return std::async(std::launch::async,
@@ -68,8 +64,9 @@ namespace AsyncLaunch {
                           std::forward<Ts>(params)...);
     }
 
-    void Simple_Asynch_Task_Function() {
-        auto task = [](int timeout)-> void {
+    void Simple_Asynch_Task_Function()
+    {
+        auto task = [](uint32_t timeout)-> void {
             THREAD_INFO << "Task started. Sleeping for " << timeout << " seconds\n";
             std::this_thread::sleep_for(std::chrono::seconds(timeout));
             THREAD_INFO << "Task completed" << std::endl;
@@ -77,13 +74,13 @@ namespace AsyncLaunch {
 
         auto future = runAsync(task, 4);
 
-        std::this_thread::sleep_for(std::chrono::milliseconds(1));
+        std::this_thread::sleep_for(std::chrono::milliseconds(1u));
         THREAD_INFO << "Back to main." << std::endl;
     }
 
-    //==================================================================================
 
-    void print_ten(std::string text, std::chrono::milliseconds duration) {
+    void print_ten(std::string text, std::chrono::milliseconds duration)
+    {
         for (int i = 0; i < 10; ++i) {
             std::this_thread::sleep_for(duration);
             std::cout << text;
@@ -91,7 +88,8 @@ namespace AsyncLaunch {
         std::cout << "\n";
     }
 
-    void Asynch_vs_Defered() {
+    void Asynch_vs_Defered()
+    {
         auto some_task = [](unsigned long timeout)-> void {
             std::this_thread::sleep_for(std::chrono::milliseconds(50u));
             THREAD_INFO << "Task started. Sleeping for " << timeout << " seconds\n";
@@ -162,11 +160,81 @@ namespace AsyncLaunch {
         deferred_task.get();
         THREAD_INFO << "We've done." << std::endl;
     }
-
 }
 
-void AsyncLaunch::TEST_ALL() {
-    Async_Default();
+namespace AsyncLaunch::Limiting_Threads_Number
+{
+    void task(uint32_t id, std::counting_semaphore<>& sem)
+    {
+        sem.acquire();
+        SYNCH_COUT << "Running task " << id << "...\n";
+        std::this_thread::sleep_for(std::chrono::seconds(1U));
+        sem.release();
+    }
+
+
+    void RunTasks()
+    {
+        constexpr uint32_t total_tasks = 32;
+        const uint32_t max_concurrent_tasks = std::thread::hardware_concurrency() / 2;
+
+        SYNCH_COUT << "Allowing only " << max_concurrent_tasks
+                   << " concurrent tasks to run " << total_tasks << " tasks.\n";
+
+        std::counting_semaphore<> semaphore(max_concurrent_tasks);
+        std::vector<std::future<void>> tasks;
+        for (uint32_t i = 0; i < total_tasks; ++i) {
+            tasks.push_back( std::async(std::launch::async, task, i, std::ref(semaphore)));
+        }
+
+        for (auto& T : tasks) {
+            T.get();
+        }
+
+        SYNCH_COUT << "All tasks completed." << std::endl;
+    }
+}
+
+namespace AsyncLaunch::TasksChaining
+{
+    int stage1(int x)
+    {
+        SYNCH_COUT << __FUNCTION__ << " | " << x << " -> " << x + 1 << std::endl;
+        std::this_thread::sleep_for(std::chrono::milliseconds (250U));
+        return x + 1;
+    }
+
+    int stage2(int x) {
+        SYNCH_COUT << __FUNCTION__ << " | " << x << " -> " << x * 10 << std::endl;
+        std::this_thread::sleep_for(std::chrono::milliseconds (250U));
+        return x * 10;
+    }
+
+    std::string stage3(int x) {
+        SYNCH_COUT << __FUNCTION__ << std::endl;
+        std::this_thread::sleep_for(std::chrono::milliseconds (250U));
+        return std::string {"Hello world "}.append(std::to_string(x));
+    }
+
+    void RunDependentTasks()
+    {
+        constexpr int32_t initialValue = 5;
+        std::future<int> fut1 = std::async(std::launch::async, stage1, initialValue);
+        std::future<int> fut2 = std::async(std::launch::async,[&fut1]() {
+            return stage2(fut1.get());
+        });
+        std::future<std::string> fut3 = std::async(std::launch::async,[&fut2]() {
+            return stage3(fut2.get());
+        });
+
+        fut3.wait();
+        SYNCH_COUT << "Final result: " << fut3.get() << std::endl;
+    }
+}
+
+void AsyncLaunch::TestAll()
+{
+    // Async_Default();
 
     // Simple_Asynch_Task();
     // Simple_Asynch_Task_Function();
@@ -174,4 +242,8 @@ void AsyncLaunch::TEST_ALL() {
     // Asynch_vs_Defered();
     // Asynch_vs_Defered_2();
     // Asynch_vs_Defered_3();
+
+    // Limiting_Threads_Number::RunTasks();
+
+    TasksChaining::RunDependentTasks();
 }
