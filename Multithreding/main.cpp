@@ -1,23 +1,16 @@
-//============================================================================
-// Name        : main.cpp
-// Created on  : April 22, 2019
-// Author      : Tokmakov Andrey
-// Version     : 1.0
-// Copyright   : Your copyright notice
-// Description : Threads testing application
-//============================================================================
-
-#define _CRT_SECURE_NO_WARNINGS
-
-#include <iostream>
-#include <future>         // std::async, std::future
-#include <chrono>         // std::chrono::milliseconds
-#include <string>
-
+/**============================================================================
+Name        : main.cpp
+Created on  : 11.22.2019
+Author      : Andrei Tokmakov
+Version     : 1.0
+Copyright   : Your copyright notice
+Description : Multithreading tests main entry point
+============================================================================**/
 
 #include "Semaphore/Semaphore.h"
 #include "Latch/Latch.h"
 #include "ThreadPools/ThreadPools.h"
+#include "Threads/Threads.h"
 #include "Threads/StoppingThreads.h"
 #include "ThreadPoolBlocking/ThreadPoolBlocking.h"
 #include "ThreadPoolLimited/ThreadPoolLimited.h"
@@ -32,7 +25,6 @@
 #include "Promise/Promise.h"
 #include "Future/Future.h"
 #include "PackagedTask/PackagedTask.h"
-#include "Threads/Threads.h"
 #include "ConditionVariable/ConditionVariable.h"
 #include "Synchronization/Synchronization.h"
 #include "CallOnce/CallOnce.h"
@@ -49,6 +41,8 @@
 #include "Collections/SCSP_RingBuffer.h"
 #include "Collections/SCSP_RingBuffer_Blocking.h"
 #include "Collections/ThreadSafeQueue_CV_vs_RingBuffer.h"
+#include "Collections/RingBuffer.h"
+#include "Coroutines/Coroutines.h"
 #include "PerformanceExperiments/Mutex_vs_AtomicLock.h"
 #include "PerformanceExperiments/Multithreading_Performance.h"
 #include "PerformanceExperiments/PerformanceExperiments.h"
@@ -57,15 +51,13 @@
 #include "SynchStream_Custom/SynchStream_Custom.h"
 #include "SynchStream/SynchStream.h"
 #include "SpinLock/SpinLock.h"
-
 #include "Utilities/Utilities.h"
-#include "Collections/RingBuffer.h"
 
 
 int main([[maybe_unused]] int argc,
          [[maybe_unused]] char** argv)
 {
-    AsyncLaunch::TestAll();
+    // AsyncLaunch::TestAll();
 
     // Atomic::TestAll();
     // AtomicFlag::TestAll();
@@ -107,6 +99,10 @@ int main([[maybe_unused]] int argc,
 
     // Threads::TEST_ALL();
     // JThreads::TEST_ALL();
+
+    /** Coroutines **/
+
+    Coroutines::TestAll();
 
     /** Performance **/
 

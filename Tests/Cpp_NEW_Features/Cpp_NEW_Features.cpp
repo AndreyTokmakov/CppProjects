@@ -1,5 +1,5 @@
 /**============================================================================
-Name        : Cpp23_Features.cpp
+Name        : Cpp_NEW_Features.cpp
 Created on  : 26.07.2023
 Author      : Andrei Tokmakov
 Version     : 1.0
@@ -7,7 +7,7 @@ Copyright   : Your copyright notice
 Description : Cpp23_Features
 ============================================================================**/
 
-#include "Cpp23_Features.h"
+#include "Cpp_NEW_Features.h"
 
 #include <iostream>
 #include <string_view>
@@ -21,7 +21,7 @@ Description : Cpp23_Features
 #include <chrono>
 #include <cmath>
 
-
+// #include <inplace_vector>
 
 
 // C++ 23:
@@ -37,7 +37,7 @@ Description : Cpp23_Features
 // #include <experimental/net>
 
 
-namespace Cpp23_Features
+namespace Cpp_NEW_Features
 {
     template <class T>
     int foo() {
@@ -172,7 +172,7 @@ namespace Cpp23_Features
     }
 };
 
-namespace Cpp23_Features::Multidimensional_Operator
+namespace Cpp_NEW_Features::Multidimensional_Operator
 {
     void simpleTest()
     {
@@ -187,7 +187,7 @@ namespace Cpp23_Features::Multidimensional_Operator
     }
 }
 
-namespace Cpp23_Features::Expected
+namespace Cpp_NEW_Features::Expected
 {
     // Typical use case
     std::expected<std::string,std::error_code> fun(bool error = true) {
@@ -313,7 +313,7 @@ namespace Cpp23_Features::Format
     }
 }
 
-namespace Cpp23_Features::SizeT_Literals
+namespace Cpp_NEW_Features::SizeT_Literals
 {
     void Test()
     {
@@ -339,7 +339,7 @@ namespace ExplicitObjectParameters
     };
 }
 
-namespace Cpp23_Features::Enums
+namespace Cpp_NEW_Features::Enums
 {
     enum class Weekdays
     {
@@ -367,7 +367,7 @@ namespace Cpp23_Features::Enums
     }
 }
 
-namespace Cpp23_Features::Extend_Init_Statement
+namespace Cpp_NEW_Features::Extend_Init_Statement
 {
     void ForLoop_Alias_Declaration()
     {
@@ -379,7 +379,7 @@ namespace Cpp23_Features::Extend_Init_Statement
 }
 
 
-namespace Cpp23_Features::Assume
+namespace Cpp_NEW_Features::Assume
 {
     double process_positive(double x)
     {
@@ -395,7 +395,7 @@ namespace Cpp23_Features::Assume
 }
 
 
-namespace Cpp23_Features::New_Preprocessor_Directives
+namespace Cpp_NEW_Features::New_Preprocessor_Directives
 {
     void Conditions_Check()
     {
@@ -419,7 +419,7 @@ std::tuple<int, int> getTup()
 }
 
 
-void Cpp23_Features::TestAll()
+void Cpp_NEW_Features::TestAll()
 {
 
     Assume::negative_number_checks();

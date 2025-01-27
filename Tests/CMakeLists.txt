@@ -58,8 +58,8 @@ add_executable(${PROJECT_NAME}
         Optional/Optional.cpp
         Math/Math.cpp
         ObjectOrientedExperimetns/OOP_Experiments.cpp
-        Cpp23_Features/Cpp23_Features.cpp
-        Cpp23_Features/StackTrace.cpp
+        Cpp_NEW_Features/Cpp_NEW_Features.cpp
+        Cpp_NEW_Features/StackTrace.cpp
         Auto/AutoTests.cpp
         ObjectOrientedExperimetns/VirtualTables.cpp
         Heap/Heap.cpp
@@ -69,7 +69,7 @@ add_executable(${PROJECT_NAME}
         Memory/UsingCustomAllocator_List.cpp
         Memory/ObjectMemoryPool.cpp
         Logging/LowLatencyLogger.cpp
-        Cpp23_Features/Execution.cpp
+        Cpp_NEW_Features/Execution.cpp
 )
 
 message(STATUS "EXTRA_LIBS: ${EXTRA_LIBS}")

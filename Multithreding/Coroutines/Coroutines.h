@@ -1,17 +1,18 @@
 /**============================================================================
-Name        : Cpp23_Features.h
-Created on  : 26.07.2023
+Name        : Coroutines.h
+Created on  : 27.01.2025
 Author      : Andrei Tokmakov
 Version     : 1.0
 Copyright   : Your copyright notice
-Description : Cpp23_Features
+Description : Coroutines.h
 ============================================================================**/
 
-#ifndef CPPPROJECTS_CPP23_FEATURES_H
-#define CPPPROJECTS_CPP23_FEATURES_H
+#ifndef CPPPROJECTS_COROUTINES_H
+#define CPPPROJECTS_COROUTINES_H
 
-namespace Cpp23_Features {
+namespace Coroutines
+{
     void TestAll();
 };
 
-#endif //CPPPROJECTS_CPP23_FEATURES_H
+#endif //CPPPROJECTS_COROUTINES_H

@@ -89,9 +89,9 @@ Description : Tests C++ project
 #include "TestAssignments/TestAssignments.h"
 #include "TableFormatter/TableFormatter.h"
 #include "Coroutines/Coroutines.h"
-#include "Cpp23_Features/Cpp23_Features.h"
-#include "Cpp23_Features/StackTrace.h"
-#include "Cpp23_Features/Execution.h"
+#include "Cpp_NEW_Features/Cpp_NEW_Features.h"
+#include "Cpp_NEW_Features/StackTrace.h"
+#include "Cpp_NEW_Features/Execution.h"
 #include "Auto/AutoTests.h"
 #include "Heap/Heap.h"
 #include "FindMinMaxValues/FindMinMaxValues.h"
@@ -1401,7 +1401,7 @@ int main([[maybe_unused]] int argc,
 
     /** * * * * *  Move to lib * * * * * **/
 
-    // Cpp23_Features::TestAll();
+    Cpp_NEW_Features::TestAll();
     // Execution::TestAll();
     // StackTrace::TestAll();
 
