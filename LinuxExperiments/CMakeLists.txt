@@ -52,6 +52,8 @@ add_executable(${PROJECT_NAME}
         IO_Uring/IOUringExperiments.cpp
         InterprocessCommunication/SharedMemoryDataExchangeQueue.cpp
         WatchDirectoryChanges/WatchDirectoryChanges.cpp
+        UnixSockets/UnixSocketServer.cpp
+        UnixSockets/AsynchUnixSocketServer.cpp
 )
 
 # Link libraries to the project/executable

@@ -93,6 +93,9 @@
 #include "IO_Uring/IOUringExperiments.h"
 #include "WatchDirectoryChanges/WatchDirectoryChanges.h"
 
+#include "UnixSockets/AsynchUnixSocketServer.h"
+#include "UnixSockets/UnixSocketServer.h"
+
 
 void PollTest()
 {
@@ -185,12 +188,17 @@ int main([[maybe_unused]] int argc,
 
     /** IPC_Performance_Experiments **/
 
-    UnixDomainSockets::TestAll();
+    // UnixDomainSockets::TestAll();
     // UDPSockets::TestAll();
 
     // IOUringExperiments::TestAll();
 
     // WatchDirectoryChanges::TestAll();
+
+    /** Unix Domain Socket **/
+
+    AsynchUnixSocketServer::TestAll();
+    // UnixSocketServer::TestAll();
 
     return EXIT_SUCCESS;
 }

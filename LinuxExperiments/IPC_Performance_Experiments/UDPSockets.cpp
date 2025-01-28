@@ -58,14 +58,13 @@ namespace UDPSockets
             throw std::runtime_error("Failed to bind socket on port " + std::to_string(serverPort));
         }
 
-        std::chrono::high_resolution_clock::time_point start;
-
         std::array<uint8_t, receiveBufferSize> buffer {};
         std::string message {};
         ssize_t bytesReceived { -1 };
         uint32_t counter = 0;
         uint64_t bytesTotal {0};
 
+        std::chrono::high_resolution_clock::time_point start;
         while (1'000'000 > counter)
         {
             if (0 == counter) {
@@ -94,6 +93,8 @@ void UDPSockets::TestAll()
 {
     startServer();
 
-    // Messages received: 1000000, Bytes: 1024000000
-    // Result: 8386620 microseconds
+    // Result:
+    //      Messages received: 1000000, Bytes: 1024000000
+    //      Result: 8386620 microseconds
+    //  + Some message losses
 }
