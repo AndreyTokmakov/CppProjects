@@ -15,6 +15,7 @@ link_directories(${THIRD_PARTY_DIR}/liburing/install_dir/lib)
 add_executable(${PROJECT_NAME}
         main.cpp
         Files/Files.cpp
+        Files/AsynchFileReader.cpp
         Processes/Processes.cpp
         Logs/Logs.cpp
         ShellCommands/ShellCommands.cpp
@@ -31,10 +32,12 @@ add_executable(${PROJECT_NAME}
         InterprocessCommunication/SharedMemoryDataExchangeEx.cpp
         InterprocessCommunication/SharedMemoryDataExchangeQueue.cpp
         InterprocessCommunication/SharedMemoryWrapper.cpp
+        InterprocessCommunication/SharedMemory_PyExchange.cpp
         InterprocessCommunication/MultiprocessQueue.cpp
         InterprocessCommunication/SemMutex.cpp
         InterprocessCommunication/SharedMutex.cpp
         InterprocessCommunication/UnixSockets.cpp
+        IPC_Performance_Experiments/UnixDomainSockets.cpp
         Users/Users.cpp
         TimeAndDate/Time.cpp
         TimeAndDate/Timer.cpp
@@ -47,7 +50,7 @@ add_executable(${PROJECT_NAME}
         ModulesKernel/ModulesKernel.cpp
         IO_Uring/IOUringExperiments.cpp
         InterprocessCommunication/SharedMemoryDataExchangeQueue.cpp
-        InterprocessCommunication/SharedMemoryDataExchangeQueue.h
+        WatchDirectoryChanges/WatchDirectoryChanges.cpp
 )
 
 # Link libraries to the project/executable

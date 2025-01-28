@@ -44,9 +44,11 @@
 #include "common.h"
 
 #include <poll.h>
-#include <sys/inotify.h>
+
 
 #include "Files/Files.h"
+#include "Files/AsynchFileReader.h"
+
 #include "Logs/Logs.h"
 #include "ShellCommands/ShellCommands.h"
 #include "Environment/Environment.h"
@@ -72,11 +74,14 @@
 #include "InterprocessCommunication/SharedMemoryDataExchange.h"
 #include "InterprocessCommunication/SharedMemoryDataExchangeEx.h"
 #include "InterprocessCommunication/SharedMemoryDataExchangeQueue.h"
+#include "InterprocessCommunication/SharedMemory_PyExchange.h"
 #include "InterprocessCommunication/Pipes.h"
 #include "InterprocessCommunication/MultiprocessQueue.h"
 #include "InterprocessCommunication/SemMutex.h"
 #include "InterprocessCommunication/SharedMutex.h"
 #include "InterprocessCommunication/UnixSockets.h"
+
+#include "IPC_Performance_Experiments/UnixDomainSockets.h"
 
 #include "Users/Users.h"
 #include "TimeAndDate/Time.h"
@@ -86,6 +91,7 @@
 #include "OpenSSL/OpenSSL.h"
 
 #include "IO_Uring/IOUringExperiments.h"
+#include "WatchDirectoryChanges/WatchDirectoryChanges.h"
 
 
 void PollTest()
@@ -127,69 +133,6 @@ void PollTest()
     }
 }
 
-namespace {
-    /* Maximum number of events to process at a time: */
-    constexpr size_t maxEvents {1024};
-
-    /* We assume that the length of the file name does not exceed 16 characters */
-    constexpr size_t nameLength {16};
-
-    /* Size of the Event structure: */
-    constexpr size_t eventSize {sizeof(inotify_event)};
-
-    /* Size of the Event structure */
-    constexpr size_t bufferSize {maxEvents * (nameLength + eventSize)};
-}
-
-void NotifyTest()
-{
-    int monitor = inotify_init1(0);
-    if (-1 == monitor) {
-        std::cout << "Failed to init Monitor. Error = " << errno << std::endl;
-        return;
-    }
-
-    constexpr std::string_view path { R"(/home/andtokm/tmp/folder_for_testing)" };
-    int wd = inotify_add_watch(monitor, path.data(), IN_CLOSE | IN_MODIFY);
-    if (-1 == wd) {
-        std::cout << "Failed to create watcher. Error = " << errno << std::endl;
-        close(monitor);
-        return;
-    }
-
-    std::array<char, bufferSize> buffer {};
-    long i = 0, length = 0;
-    while (true) {
-        i = 0;
-        length = read(monitor, buffer.data(), bufferSize);
-        if (0 > length) {
-            std::cout << "read() failed. Error = " << errno << std::endl;
-            break;
-        }
-
-        while (length > i) {
-            const auto *event = reinterpret_cast<inotify_event*>(&buffer[i]);
-            if (event->len) {
-                if ( event->mask & IN_CLOSE) {
-                    if (event->mask & IN_ISDIR)
-                        std::cout << "The directory '" << event->name << "' was closed.\n";
-                    else
-                        std::cout << "The file '" << event->name << "' was closed with ID: " << event->wd << std::endl;
-                }
-                if ( event->mask & IN_MODIFY) {
-                    if (event->mask & IN_ISDIR)
-                        std::cout << "The directory '" << event->name << "' was modified.\n";
-                    else
-                        std::cout << "The file '" << event->name << "' was modified with ID: " << event->wd << std::endl;
-                }
-                i += bufferSize + event->len;
-            }
-        }
-    }
-    inotify_rm_watch(monitor, wd);
-    close(monitor);
-}
-
 
 int main([[maybe_unused]] int argc,
          [[maybe_unused]] char** argv)
@@ -197,6 +140,8 @@ int main([[maybe_unused]] int argc,
     const std::vector<std::string_view> params(argv + 1, argv + argc);
 
     // Files::TestAll();
+    // AsynchFileReader::TestAll();
+
     // Logs::TestAll();
     // ShellCommands::TestAll();
     // Environment::TestAll();
@@ -223,15 +168,14 @@ int main([[maybe_unused]] int argc,
     // TestAndExperiments::TestAll();
     // FindProcessForTCPConnection::TestAll();
 
-    // NotifyTest();
-
     // Semaphore::TestAll(params);
 
     // SharedMemory::TestAll(params);
     // SharedMemoryWrapper::TestAll();
     // SharedMemoryDataExchange::TestAll(params);
     // SharedMemoryDataExchangeEx::TestAll(params);
-    SharedMemoryDataExchangeQueue::TestAll(params);
+    // SharedMemoryDataExchangeQueue::TestAll(params);
+    // SharedMemory_PyExchange::TestAll(params);
     // SharedBlock_WithSemaphore::TestAll(params);
     // Pipes::TestAll(params);
     // SharedMemory_AtomicValue::TestAll();
@@ -239,7 +183,11 @@ int main([[maybe_unused]] int argc,
     // SemMutex::TestAll();
     // UnixSockets::TestAll();
 
+    UnixDomainSockets::TestAll();
+
     // IOUringExperiments::TestAll();
+
+    // WatchDirectoryChanges::TestAll();
 
     return EXIT_SUCCESS;
 }

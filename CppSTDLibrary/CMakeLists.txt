@@ -26,6 +26,7 @@ add_executable(${PROJECT_NAME}
 		CTAD/ClassTemplateArgumentDeduction.cpp
 		ConsoleInOut/ConsoleInOut.cpp
 		DateAndTime/DateAndTime.cpp
+		DeducingThis/DeducingThis.cpp
 		ConstConstexprMutable/ConstConstexprMutable.cpp
 		ConstConstexprMutable/CompileTimeProgramming.cpp
 		EnumTests/EnumTests.cpp

@@ -1369,6 +1369,51 @@ namespace BitwiseOperations
     }
 }
 
+namespace DeducingThis
+{
+    struct Test
+    {
+        template <typename Self>
+        void explicitCall(this Self&& self, const std::string& text)
+        {
+            std::cout << text << ": ";
+            std::forward<Self>(self).implicitCall();
+            std::cout << '\n';
+        }
+
+        void implicitCall() & {
+            std::cout << "non const lvalue";
+        }
+
+        void implicitCall() const& {
+            std::cout << "const lvalue";
+        }
+
+        void implicitCall() && {
+            std::cout << "non const rvalue";
+        }
+
+        void implicitCall() const&& {
+            std::cout << "const rvalue";
+        }
+    };
+
+
+    void test()
+    {
+        std::cout << '\n';
+
+        Test test;
+        const Test constTest;
+
+        test.explicitCall("test");                                  // (5)
+        constTest.explicitCall("constTest");                        // (6)
+        std::move(test).explicitCall("std::move(test)");            // (7)
+        std::move(constTest).explicitCall("std::move(consTest)");   // (8)
+    }
+}
+
+
 
 
 int main([[maybe_unused]] int argc,
@@ -1397,6 +1442,8 @@ int main([[maybe_unused]] int argc,
 
     // BitwiseOperations::test();
 
+
+    DeducingThis::test();
 
 
     /** * * * * *  Move to lib * * * * * **/

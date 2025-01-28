@@ -30,6 +30,7 @@ Description : Cpp STD lib
 #include "RVO_CopyElision/RVO_FailureCases.h"
 #include "Comparators/Comparators.h"
 #include "CTAD/ClassTemplateArgumentDeduction.h"
+#include "DeducingThis/DeducingThis.h"
 #include "Format/Format.h"
 #include "EnumTests/EnumTests.h"
 #include "Expected/Expected.h"
@@ -100,7 +101,7 @@ int main([[maybe_unused]] int argc,
     // Arrays::TestAll();
     // Asserts::TestAll();
     // Atomic::TestAll();
-    Attributes::TestAll();
+    // Attributes::TestAll();
     // Auto::TestAll();
     // BitSet::TestAll();
     // BitwiseOperation::TestAll();
@@ -112,6 +113,7 @@ int main([[maybe_unused]] int argc,
     // ConstConstexprMutable::TestAll();
     // CompileTimeProgramming::TestAll();
     // CopyElision::TestAll();
+    DeducingThis::TestAll();
     // RVO_FailureCases::TestAll();
     // ClassTemplateArgumentDeduction::TestAll();
     // DateAndTime::TestAll();
