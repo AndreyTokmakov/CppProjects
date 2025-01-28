@@ -7,12 +7,17 @@ Copyright   : Your copyright notice
 Description : UnixDomainSockets.h
 ============================================================================**/
 
-#ifndef CPPPROJECTS_UNIXDOMAINSOCKETS_H
-#define CPPPROJECTS_UNIXDOMAINSOCKETS_H
+#ifndef CPPPROJECTS_IPC_PERFORMANCE_EXPERIMENTS_H
+#define CPPPROJECTS_IPC_PERFORMANCE_EXPERIMENTS_H
 
 namespace UnixDomainSockets
 {
     void TestAll();
-};
+}
 
-#endif //CPPPROJECTS_UNIXDOMAINSOCKETS_H
+namespace UDPSockets
+{
+    void TestAll();
+}
+
+#endif //CPPPROJECTS_IPC_PERFORMANCE_EXPERIMENTS_H

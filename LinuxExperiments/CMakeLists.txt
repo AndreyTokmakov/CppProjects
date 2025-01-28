@@ -38,6 +38,7 @@ add_executable(${PROJECT_NAME}
         InterprocessCommunication/SharedMutex.cpp
         InterprocessCommunication/UnixSockets.cpp
         IPC_Performance_Experiments/UnixDomainSockets.cpp
+        IPC_Performance_Experiments/UDPSockets.cpp
         Users/Users.cpp
         TimeAndDate/Time.cpp
         TimeAndDate/Timer.cpp

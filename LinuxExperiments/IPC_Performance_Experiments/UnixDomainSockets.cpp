@@ -7,7 +7,7 @@ Copyright   : Your copyright notice
 Description : UnixDomainSockets.cpp
 ============================================================================**/
 
-#include "UnixDomainSockets.h"
+#include "IPC_Performance_Experiments.h"
 
 #include <unistd.h>
 #include <cerrno>
@@ -168,7 +168,6 @@ namespace UnixDomainSockets
         SocketGuard clientSocketGuard { clientSocket };
 
         std::chrono::high_resolution_clock::time_point start;
-        constexpr uint32_t maxMessages { 10'000 };
         uint32_t counter = 0;
         uint64_t bytesTotal {0};
         while (1'000'000 > counter)
@@ -202,4 +201,7 @@ void UnixDomainSockets::TestAll()
 {
     // startServer();
     startServer_Receiver_SameConnection();
+
+    // Messages received: 1000000, Bytes: 1024000000
+    // Result: 1401331 microseconds
 }

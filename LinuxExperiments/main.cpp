@@ -81,7 +81,7 @@
 #include "InterprocessCommunication/SharedMutex.h"
 #include "InterprocessCommunication/UnixSockets.h"
 
-#include "IPC_Performance_Experiments/UnixDomainSockets.h"
+#include "IPC_Performance_Experiments/IPC_Performance_Experiments.h"
 
 #include "Users/Users.h"
 #include "TimeAndDate/Time.h"
@@ -183,7 +183,10 @@ int main([[maybe_unused]] int argc,
     // SemMutex::TestAll();
     // UnixSockets::TestAll();
 
+    /** IPC_Performance_Experiments **/
+
     UnixDomainSockets::TestAll();
+    // UDPSockets::TestAll();
 
     // IOUringExperiments::TestAll();
 
