@@ -1370,6 +1370,41 @@ namespace BitwiseOperations
 }
 
 
+namespace Demo
+{
+    struct Event
+    {
+        int handle { 0 };
+        int events { 0 };
+    };
+
+    std::ostream& operator<<(std::ostream& stream, const Event& event)
+    {
+        stream << "Event { " << event.handle << ", " << event.events << "}";
+        return stream;
+    }
+
+
+    void Test()
+    {
+        uint32_t fdCount = 1;
+        std::array<Event, 6> data {
+            Event {123, 1}, Event {1, 1}, Event {2, 2},
+            Event {-1, 3}, Event {4, 4}, Event {-1, 5},
+        };
+
+        for (uint32_t idx = 1; idx < data.size(); ++idx ) {
+            if (data[idx].handle != -1)
+                std::swap(data[idx], data[fdCount++]);
+        }
+
+        for (int32_t idx = 0; const Event& evt: data )
+        {
+            std::cout << evt << std::endl;
+        }
+        std::cout << "fdCount = " << fdCount << std::endl;
+    }
+}
 
 
 int main([[maybe_unused]] int argc,
@@ -1398,14 +1433,7 @@ int main([[maybe_unused]] int argc,
 
     // BitwiseOperations::test();
 
-
-    std::array<int, 10> v {1000, 1, 2, 3, 4, -1, 6, 7, -1, 9};
-    std::cout << v << std::endl;
-
-    auto it = std::partition(v.begin() + 1, v.end(), [](int i) {return -1 != i; });
-    std::cout << v << std::endl;
-    std::cout << std::distance(v.begin(), it) << std::endl;
-
+    Demo::Test();
 
     /** * * * * *  Move to lib * * * * * **/
 

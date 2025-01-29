@@ -621,14 +621,13 @@ namespace AsynchUnixSocketServer_Poll::Debug
             return true;
         }
 
-        // TODO : Rename
-        // FIXME: Move char to the end algo
-        void compact()
+        void removeClosedHandles()
         {
-            auto it = std::partition(fds.begin() + 1, fds.end(), [](const auto& item) {
-                return -1 != item.fd;
-            });
-            nfds = std::distance(fds.begin(), it);
+            uint32_t fdCount = 1;
+            for (uint32_t idx = fdCount, size = fds.size(); idx < size; ++idx ) {
+                if (fds[idx].fd != -1)
+                    std::swap(fds[idx], fds[fdCount++]);
+            }
         }
 
         bool start()
@@ -659,7 +658,7 @@ namespace AsynchUnixSocketServer_Poll::Debug
                             ::close(hSocket);
                             fds[idx].fd = -1;
 
-                            compact();
+                            removeClosedHandles();
                             break;
                         }
                     }
@@ -712,8 +711,7 @@ namespace AsynchUnixSocketServer_Poll::Debug
                                 ::close(clientSocket);
                                 fds[idx].fd = -1;
 
-                                // FIXME
-                                compact();
+                                removeClosedHandles();
                                 break;
                             }
                             else
@@ -978,6 +976,8 @@ void AsynchUnixSocketServer_Poll::TestAll()
 {
     // WorkingExample::runServer();
     // Debug_OK::runServer();
-    // Debug::runServer();
-    Perf::runServer();
+
+    Debug::runServer();
+
+    // Perf::runServer();
 }
