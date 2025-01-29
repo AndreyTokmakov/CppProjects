@@ -715,7 +715,7 @@ namespace AsynchUnixSocketServer_Poll::Debug
                             else
                             {
                                 message.assign(buffer.data(), bytesRead);
-                                // std::cout << clientSocket << " | " <<  message << std::endl;
+                                std::cout  <<  message << std::endl;
                             }
                         }
                     }
@@ -970,7 +970,7 @@ void AsynchUnixSocketServer_Poll::TestAll()
     // WorkingExample::runServer();
     // Debug_OK::runServer();
 
-    // Debug::runServer();
+    Debug::runServer();
 
-    Perf::runServer();
+    // Perf::runServer();
 }
