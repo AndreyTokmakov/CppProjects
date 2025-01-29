@@ -553,10 +553,9 @@ namespace AsynchUnixSocketServer_Poll::Debug
         std::string filePath { SERVER_SOCK_PATH };
 
         std::array<char, BUFFER_SIZE> buffer {};
-        std::array<pollfd, MAX_DESCRIPTORS> fds {};
-
         // TODO: Rename
-        int32_t nfds { 0 };
+        std::array<pollfd, MAX_DESCRIPTORS> fds {};
+        uint32_t handlesCount { 0 };
 
         explicit UDSAsynchServer(std::string udmSockPath): filePath { std::move( udmSockPath ) }
         {
@@ -574,8 +573,7 @@ namespace AsynchUnixSocketServer_Poll::Debug
 
             fds[0].fd = serverSocket;
             fds[0].events = POLLIN;
-
-            nfds = 1;
+            handlesCount = 1;
         }
 
         ~UDSAsynchServer()
@@ -623,26 +621,34 @@ namespace AsynchUnixSocketServer_Poll::Debug
 
         void removeClosedHandles()
         {
-            uint32_t fdCount = 1;
-            for (uint32_t idx = fdCount, size = fds.size(); idx < size; ++idx ) {
+            uint32_t pos = 1;
+            for (uint32_t idx = pos; idx < handlesCount; ++idx ) {
                 if (fds[idx].fd != -1)
-                    std::swap(fds[idx], fds[fdCount++]);
+                    std::swap(fds[idx], fds[pos++]);
             }
+            handlesCount = pos;
+        }
+
+        void closeEvent(pollfd& pollEvent)
+        {
+            ::close(pollEvent.fd);
+            pollEvent.fd = -1;
+            removeClosedHandles();
         }
 
         bool start()
         {
             std::string message;
-            int32_t currentSize { 0 };
+            uint32_t currentSize { 0 };
             while (true)
             {
-                if (const int32_t result = ::poll(fds.data(), nfds, TIMEOUT); SOCKET_ERROR == result) {
+                if (const int32_t result = ::poll(fds.data(), handlesCount, TIMEOUT); SOCKET_ERROR == result) {
                     return error("poll() failed ");
                 } else if (0 == result) {
                     return error("poll() timeout ");
                 }
 
-                currentSize = nfds;
+                currentSize = handlesCount;
                 for (int32_t idx = 0; idx < currentSize; idx++)
                 {
                     if (0 == fds[idx].revents)
@@ -654,11 +660,7 @@ namespace AsynchUnixSocketServer_Poll::Debug
                         if (fds[idx].revents & POLLHUP)
                         {
                             std::cout << "Close (POLLHUP) connection for client = " << hSocket << std::endl;
-                            // FIXME
-                            ::close(hSocket);
-                            fds[idx].fd = -1;
-
-                            removeClosedHandles();
+                            closeEvent(fds[idx]);
                             break;
                         }
                     }
@@ -682,9 +684,9 @@ namespace AsynchUnixSocketServer_Poll::Debug
                                 std::cout << "New incoming connection. Client socket = " << clientSocket << std::endl;
                                 setSocketToNonBlock(clientSocket);
 
-                                fds[nfds].fd = clientSocket;
-                                fds[nfds].events = POLLIN | POLLHUP;
-                                nfds++;
+                                fds[handlesCount].fd = clientSocket;
+                                fds[handlesCount].events = POLLIN | POLLHUP;
+                                ++handlesCount;
                                 break;
                             }
                         }
@@ -707,11 +709,7 @@ namespace AsynchUnixSocketServer_Poll::Debug
                             else if (0 == bytesRead)
                             {
                                 std::cout << "Close connection for client = " << clientSocket << std::endl;
-                                // FIXME
-                                ::close(clientSocket);
-                                fds[idx].fd = -1;
-
-                                removeClosedHandles();
+                                closeEvent(fds[idx]);
                                 break;
                             }
                             else
@@ -770,8 +768,7 @@ namespace AsynchUnixSocketServer_Poll::Perf
         std::array<char, BUFFER_SIZE> buffer {};
         std::array<pollfd, MAX_DESCRIPTORS> fds {};
 
-        // TODO: Rename
-        int32_t nfds { 0 };
+        uint32_t handlesCount { 0 };
 
         explicit UDSAsynchServer(std::string udmSockPath): filePath { std::move( udmSockPath ) }
         {
@@ -789,8 +786,7 @@ namespace AsynchUnixSocketServer_Poll::Perf
 
             fds[0].fd = serverSocket;
             fds[0].events = POLLIN;
-
-            nfds = 1;
+            handlesCount = 1;
         }
 
         ~UDSAsynchServer()
@@ -836,14 +832,21 @@ namespace AsynchUnixSocketServer_Poll::Perf
             return true;
         }
 
-        // TODO : Rename
-        // FIXME: Move char to the end algo
-        void compact()
+        void removeClosedHandles()
         {
-            auto it = std::partition(fds.begin() + 1, fds.end(), [](const auto& item) {
-                return -1 != item.fd;
-            });
-            nfds = std::distance(fds.begin(), it);
+            uint32_t pos = 1;
+            for (uint32_t idx = pos; idx < handlesCount; ++idx ) {
+                if (fds[idx].fd != -1)
+                    std::swap(fds[idx], fds[pos++]);
+            }
+            handlesCount = pos;
+        }
+
+        void closeEvent(pollfd& pollEvent)
+        {
+            ::close(pollEvent.fd);
+            pollEvent.fd = -1;
+            removeClosedHandles();
         }
 
         bool start()
@@ -852,17 +855,17 @@ namespace AsynchUnixSocketServer_Poll::Perf
             size_t counter { 0 }, bytesTotal { 0 };
 
             std::string message;
-            int32_t currentSize { 0 };
+            uint32_t currentSize { 0 };
             while (true)
             {
-                if (const int32_t result = ::poll(fds.data(), nfds, TIMEOUT); SOCKET_ERROR == result) {
+                if (const int32_t result = ::poll(fds.data(), handlesCount, TIMEOUT); SOCKET_ERROR == result) {
                     return error("poll() failed ");
                 } else if (0 == result) {
                     return error("poll() timeout ");
                 }
 
-                currentSize = nfds;
-                for (int32_t idx = 0; idx < currentSize; idx++)
+                currentSize = handlesCount;
+                for (uint32_t idx = 0; idx < currentSize; idx++)
                 {
                     if (0 == fds[idx].revents)
                         continue;
@@ -871,12 +874,8 @@ namespace AsynchUnixSocketServer_Poll::Perf
                         const Socket hSocket = fds[idx].fd;
                         if (fds[idx].revents & POLLHUP)
                         {
-                            std::cout << "Close (POLLHUP) connection for client = " << hSocket << std::endl;
-                            // FIXME
-                            ::close(hSocket);
-                            fds[idx].fd = -1;
-
-                            compact();
+                            // std::cout << "Close (POLLHUP) connection for client = " << hSocket << std::endl;
+                            closeEvent(fds[idx]);
 
                             auto end = std::chrono::high_resolution_clock::now(); \
                             auto duration = std::chrono::duration_cast<std::chrono::microseconds>(end - start).count(); \
@@ -905,10 +904,9 @@ namespace AsynchUnixSocketServer_Poll::Perf
                             else
                             {
                                 setSocketToNonBlock(clientSocket);
-
-                                fds[nfds].fd = clientSocket;
-                                fds[nfds].events = POLLIN | POLLHUP;
-                                nfds++;
+                                fds[handlesCount].fd = clientSocket;
+                                fds[handlesCount].events = POLLIN | POLLHUP;
+                                ++handlesCount;
                                 break;
                             }
                         }
@@ -938,12 +936,7 @@ namespace AsynchUnixSocketServer_Poll::Perf
                             else if (0 == bytesRead)
                             {
                                 std::cout << "Close connection for client = " << clientSocket << std::endl;
-                                // FIXME
-                                ::close(clientSocket);
-                                fds[idx].fd = -1;
-
-                                // FIXME
-                                compact();
+                                closeEvent(fds[idx]);
                                 break;
                             }
                             else
@@ -967,8 +960,8 @@ namespace AsynchUnixSocketServer_Poll::Perf
         server.start();
 
         // Close (POLLHUP) connection for client = 4
-        // Messages received: 1060822, Bytes: 1024604677
-        // Result: 1297551 microseconds
+        // Messages received: 1065766, Bytes: 1024606547
+        // Result: 1273256 microseconds
     }
 }
 
@@ -977,7 +970,7 @@ void AsynchUnixSocketServer_Poll::TestAll()
     // WorkingExample::runServer();
     // Debug_OK::runServer();
 
-    Debug::runServer();
+    // Debug::runServer();
 
-    // Perf::runServer();
+    Perf::runServer();
 }
