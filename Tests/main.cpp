@@ -1369,50 +1369,6 @@ namespace BitwiseOperations
     }
 }
 
-namespace DeducingThis
-{
-    struct Test
-    {
-        template <typename Self>
-        void explicitCall(this Self&& self, const std::string& text)
-        {
-            std::cout << text << ": ";
-            std::forward<Self>(self).implicitCall();
-            std::cout << '\n';
-        }
-
-        void implicitCall() & {
-            std::cout << "non const lvalue";
-        }
-
-        void implicitCall() const& {
-            std::cout << "const lvalue";
-        }
-
-        void implicitCall() && {
-            std::cout << "non const rvalue";
-        }
-
-        void implicitCall() const&& {
-            std::cout << "const rvalue";
-        }
-    };
-
-
-    void test()
-    {
-        std::cout << '\n';
-
-        Test test;
-        const Test constTest;
-
-        test.explicitCall("test");                                  // (5)
-        constTest.explicitCall("constTest");                        // (6)
-        std::move(test).explicitCall("std::move(test)");            // (7)
-        std::move(constTest).explicitCall("std::move(consTest)");   // (8)
-    }
-}
-
 
 
 
@@ -1443,12 +1399,17 @@ int main([[maybe_unused]] int argc,
     // BitwiseOperations::test();
 
 
-    DeducingThis::test();
+    std::array<int, 10> v {1000, 1, 2, 3, 4, -1, 6, 7, -1, 9};
+    std::cout << v << std::endl;
+
+    auto it = std::partition(v.begin() + 1, v.end(), [](int i) {return -1 != i; });
+    std::cout << v << std::endl;
+    std::cout << std::distance(v.begin(), it) << std::endl;
 
 
     /** * * * * *  Move to lib * * * * * **/
 
-    Cpp_NEW_Features::TestAll();
+    // Cpp_NEW_Features::TestAll();
     // Execution::TestAll();
     // StackTrace::TestAll();
 

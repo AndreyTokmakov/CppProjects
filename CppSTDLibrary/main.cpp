@@ -96,7 +96,7 @@ int main([[maybe_unused]] int argc,
     const std::vector<std::string_view> args(argv + 1, argv + argc);
 
     // AggregateInitialization::TestAll();
-    // Algorithms::TestAll();
+    Algorithms::TestAll();
     // Any::TestAll();
     // Arrays::TestAll();
     // Asserts::TestAll();
@@ -113,7 +113,7 @@ int main([[maybe_unused]] int argc,
     // ConstConstexprMutable::TestAll();
     // CompileTimeProgramming::TestAll();
     // CopyElision::TestAll();
-    DeducingThis::TestAll();
+    // DeducingThis::TestAll();
     // RVO_FailureCases::TestAll();
     // ClassTemplateArgumentDeduction::TestAll();
     // DateAndTime::TestAll();

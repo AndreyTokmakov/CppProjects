@@ -53,7 +53,8 @@ add_executable(${PROJECT_NAME}
         InterprocessCommunication/SharedMemoryDataExchangeQueue.cpp
         WatchDirectoryChanges/WatchDirectoryChanges.cpp
         UnixSockets/UnixSocketServer.cpp
-        UnixSockets/AsynchUnixSocketServer.cpp
+        UnixSockets/AsynchUnixSocketServer_Select.cpp
+        UnixSockets/AsynchUnixSocketServer_Poll.cpp
 )
 
 # Link libraries to the project/executable

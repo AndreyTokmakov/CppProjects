@@ -1685,7 +1685,7 @@ void Algorithms::TestAll()
     // ModifyingSequenceOperations::Remove_SharedPtr();
     // ModifyingSequenceOperations::Remove_If();
     // ModifyingSequenceOperations::Remove_Copy();
-    ModifyingSequenceOperations::Remove_Copy_If();
+    // ModifyingSequenceOperations::Remove_Copy_If();
     // ModifyingSequenceOperations::Erase();
     // ModifyingSequenceOperations::Erase_IF();
     // ModifyingSequenceOperations::Rotate();
@@ -1751,5 +1751,5 @@ void Algorithms::TestAll()
 
     // Next_Permutation();
 
-    // Partition();
+    Partition();
 };

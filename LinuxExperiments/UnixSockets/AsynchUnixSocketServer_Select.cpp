@@ -1,13 +1,13 @@
 /**============================================================================
-Name        : AsynchUnixSocketServer.cpp
+Name        : AsynchUnixSocketServer_Select.cpp
 Created on  : 28.01.2025
 Author      : Andrei Tokmakov
 Version     : 1.0
 Copyright   : Your copyright notice
-Description : AsynchUnixSocketServer.cpp
+Description : AsynchUnixSocketServer_Select.cpp
 ============================================================================**/
 
-#include "AsynchUnixSocketServer.h"
+#include "AsynchUnixSocketServer_Select.h"
 #include <unistd.h>
 #include <cerrno>
 #include <sys/socket.h>
@@ -63,7 +63,7 @@ namespace
 }
 
 
-namespace AsynchUnixSocketServer
+namespace AsynchUnixSocketServer_Select
 {
     struct UDSAsynchServer
     {
@@ -222,7 +222,7 @@ namespace AsynchUnixSocketServer
     };
 }
 
-void AsynchUnixSocketServer::TestAll()
+void AsynchUnixSocketServer_Select::TestAll()
 {
     UDSAsynchServer server;
     if (!server.setListenerOptions()) {
