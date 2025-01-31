@@ -45,7 +45,8 @@ add_executable(${PROJECT_NAME}
 		InitializerList/InitializerList.cpp
 		InlineVariables/InlineVariables.cpp
 		Integer/Integer.cpp
-		IteratorTests/IteratorTests.cpp
+		Iterators/Iterators.cpp
+		Iterators/Custom_Iterators.cpp
 		Lambdas/Lambdas.cpp
 		LifetimeExtension/LifetimeExtension.cpp
 		Literals/Literals.cpp

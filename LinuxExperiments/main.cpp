@@ -95,6 +95,7 @@
 
 #include "UnixSockets/AsynchUnixSocketServer_Select.h"
 #include "UnixSockets/AsynchUnixSocketServer_Poll.h"
+#include "UnixSockets/AsynchUnixSocketServer_Poll_Debug.h"
 #include "UnixSockets/UnixSocketServer.h"
 
 
@@ -200,7 +201,8 @@ int main([[maybe_unused]] int argc,
 
     // UnixSocketServer::TestAll();
     // AsynchUnixSocketServer_Select::TestAll();
-    AsynchUnixSocketServer_Poll::TestAll();
+    // AsynchUnixSocketServer_Poll::TestAll();
+    AsynchUnixSocketServer_Poll_Debug::TestAll();
 
 
     return EXIT_SUCCESS;

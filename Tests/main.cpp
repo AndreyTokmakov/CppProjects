@@ -1433,7 +1433,7 @@ int main([[maybe_unused]] int argc,
 
     // BitwiseOperations::test();
 
-    Demo::Test();
+    // Demo::Test();
 
     /** * * * * *  Move to lib * * * * * **/
 

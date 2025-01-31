@@ -45,7 +45,7 @@ Description : Cpp STD lib
 #include "FilesStreams/FilesStreams.h"
 #include "Filesystem/Filesystem.h"
 #include "FunctionObjects/FunctionObjects.h"
-#include "IteratorTests/IteratorTests.h"
+#include "Iterators/Iterators.h"
 #include "Lambdas/Lambdas.h"
 #include "LifetimeExtension/LifetimeExtension.h"
 #include "Locale/Locale.h"
@@ -96,7 +96,7 @@ int main([[maybe_unused]] int argc,
     const std::vector<std::string_view> args(argv + 1, argv + argc);
 
     // AggregateInitialization::TestAll();
-    Algorithms::TestAll();
+    // Algorithms::TestAll();
     // Any::TestAll();
     // Arrays::TestAll();
     // Asserts::TestAll();
@@ -125,7 +125,7 @@ int main([[maybe_unused]] int argc,
     // InitializerList::TestAll();
     // InlineVariables::TestAll();
     // Initialization::TestAll();
-    // IteratorTests::TestAll();
+    Iterators::TestAll();
     // FilesStreams::TestAll();
     // Filesystem::TestAll();
     // Format::TestAll();

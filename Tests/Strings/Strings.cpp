@@ -212,6 +212,71 @@ namespace Strings::UtilitiesTests
 }
 
 
+
+namespace Strings::Size_and_Capacity_after_Move
+{
+    void sink(std::string&& str)
+    {
+        std::string tmp = std::move(str);
+        tmp.clear();
+    }
+
+    void info(const std::string& str)
+    {
+        std::cout << "size: " << str.size() << ", capacity: " << str.capacity() << std::endl;
+    }
+
+    void Test()
+    {
+
+        std::string buffer { "11111111111111111111111111111111111"};
+
+        sink(std::move(buffer));
+        info(buffer);
+
+        buffer.append("1111111111111111111111111111111111111111");
+        buffer.append("1111111111111111111111111111111111111111");
+
+        info(buffer);
+        sink(std::move(buffer));
+        info(buffer);
+    }
+}
+
+
+namespace Parse_ConnectorType
+{
+
+    std::string_view extractType(const std::string_view message)
+    {
+        using namespace std::string_view_literals;
+        size_t pos = message.find(R"("connector")"sv);
+        if (std::string::npos == pos)
+            return {};
+
+        const size_t start = message.find('\"', pos + 11);
+        if (std::string::npos == start)
+            return {};
+
+        pos = message.find('\"', start + 1);
+        if (std::string::npos == pos)
+            return {};
+
+        return message.substr(start + 1, pos - start - 1);
+    }
+
+
+    void ParseMessage()
+    {
+        const std::string message { R"({"connector": "Binance", "type": 2, "data": []})" };
+        std::cout << message << std::endl;
+        std::cout << extractType(message) << std::endl;
+    }
+}
+
+
+
+
 void Strings::TestAll()
 {
     // GetStringLengthAsCompileTime();
@@ -224,20 +289,5 @@ void Strings::TestAll()
     // UtilitiesTests::Update_string_test();
     // UtilitiesTests::Random_String();
 
-
-    std::string order { R"({"type": "notification", "status": "NEW"})" };
-
-    order.replace(order.find(R"("NEW")"),5, R"("N1EW")");
-
-    std::cout <<order << std::endl;
-
-
-    /*
-    auto getStr = [](const std::string& str) {
-        //
-    };
-
-    std::string_view sv { "1232323"};
-    getStr(sv);
-    */
+    Parse_ConnectorType::ParseMessage();
 };
