@@ -54,6 +54,7 @@ add_executable(${PROJECT_NAME}
 		Overflow/Overflow.cpp
 		Math/Math.cpp
 		Memory/Memory.cpp
+		Memory/MemoryPool.cpp
 		Memory/MemoryUsageMonitor.cpp
 		Memory/Alignment.cpp
 		Memory/AlignedStackAllocator.cpp
@@ -102,6 +103,7 @@ add_executable(${PROJECT_NAME}
 		Templates/ConditionalExplicit.cpp
 		Templates/FoldExpressions.cpp
 		Templates/NTTP.cpp
+		Templates/SFINAE.cpp
 		Templates/PackIndexing.cpp
 		Templates/TemplateSpecialization.cpp
 		RVO_CopyElision/CopyElision.cpp

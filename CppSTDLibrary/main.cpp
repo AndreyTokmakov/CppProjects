@@ -125,7 +125,7 @@ int main([[maybe_unused]] int argc,
     // InitializerList::TestAll();
     // InlineVariables::TestAll();
     // Initialization::TestAll();
-    Iterators::TestAll();
+    // Iterators::TestAll();
     // FilesStreams::TestAll();
     // Filesystem::TestAll();
     // Format::TestAll();
@@ -168,7 +168,7 @@ int main([[maybe_unused]] int argc,
     // Tuple::TestAll();
     // TypeCast::TestAll();
     // Int::TestAll();
-    // Templates::TestAll();
+    Templates::TestAll();
     // Utilities::TestAll();
     // CompilerVersion::TestAll();
     // UniquePtr::TestAll();

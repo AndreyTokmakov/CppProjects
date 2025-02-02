@@ -13,6 +13,7 @@
 #include "AlignedStackAllocator.h"
 #include "CustomStackAllocator.h"
 #include "MemoryUsageMonitor.h"
+#include "MemoryPool.h"
 
 #include "Memory.h"
 #include <memory>
@@ -1713,7 +1714,8 @@ void Memory::TestAll()
     // Alignment::TestAll();
     // AlignedStackAllocator::TestAll();
     // CustomStackAllocator::TestAll();
-    MemoryUsageMonitor::TestAll();
+    // MemoryUsageMonitor::TestAll();
+    MemoryPool::TestAll();
 
 
 	// Delete_Array();
@@ -1798,7 +1800,7 @@ void Memory::TestAll()
 	// PolymorphicMemoryResources::NotAllocatingMemoryContainers();
 	// PolymorphicMemoryResources::NotAllocatingMemoryAtAll();
 	// PolymorphicMemoryResources::ReusingMemoryPools();
-	PolymorphicMemoryResources::_TESTS_();
+	// PolymorphicMemoryResources::_TESTS_();
 
 	// Alligned_New_Delete::Simple_OverAlligned_New();
 	// Alligned_New_Delete::Custom_Alligned_New();
