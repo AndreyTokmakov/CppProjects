@@ -82,7 +82,7 @@ int main([[maybe_unused]] int argc,
     // PackagedTask::TEST_ALL();
     // ParallelExecutionAlgoritms::TEST_ALL();
 
-    // Semaphore::TestAll();
+    Semaphore::TestAll();
 
     // Synchronization::TEST_ALL();
     // SynchStream::TEST_ALL();
@@ -102,7 +102,7 @@ int main([[maybe_unused]] int argc,
 
     /** Coroutines **/
 
-    Coroutines::TestAll();
+    // Coroutines::TestAll();
 
     /** Performance **/
 

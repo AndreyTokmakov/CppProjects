@@ -25,6 +25,28 @@ using namespace std::literals;
 
 namespace Semaphore::BinarySemaphore
 {
+    void Release_Acquire_SimpleExample()
+    {
+        int sharedData { 0 };
+        std::binary_semaphore sem {0};
+
+        std::jthread consumer([&] {
+            sem.acquire(); /**  Will block until producer call sem.release() **/
+            SYNCH_COUT << sharedData << std::endl;
+        });
+
+        std::jthread producer([&] {
+            sharedData = 123;
+            std::this_thread::sleep_for(std::chrono::milliseconds (250u));
+            sem.release();
+        });
+
+        // Will print 123
+    }
+}
+
+namespace Semaphore::BinarySemaphore
+{
 
     std::binary_semaphore semaphoreOne {0};
     std::binary_semaphore semaphoreTwo {0};
@@ -42,26 +64,26 @@ namespace Semaphore::BinarySemaphore
         semaphoreTwo.release();
     }
 
-    void Release_Acquire_BasicTest() {
-        THREAD_INFO << "Starting main thread\n";
+    void Release_Acquire_BasicTest()
+    {
+        SYNCH_COUT << "Starting main thread\n";
         std::thread thrWorker(thread_proc, 3);
 
         std::this_thread::sleep_for(1s);
-        THREAD_INFO << "Send the signal\n";
+        SYNCH_COUT << "Send the signal\n";
 
         // signal the worker thread to start working by increasing the semaphore's count
         semaphoreOne.release();
 
         // wait until the worker thread is done doing the work by attempting to decrement the semaphore's count
-        THREAD_INFO << "Before acquire()...\n";
+        SYNCH_COUT << "Before acquire()...\n";
         semaphoreTwo.acquire();
-        THREAD_INFO << "After acquire()...\n";
+        SYNCH_COUT << "After acquire()...\n";
 
         thrWorker.join();
-        THREAD_INFO << "Done\n";
+        SYNCH_COUT << "Done\n";
     }
 
-    //=====================================================================//
 
     void Release_TRY_Acquire__BasicTest() {
         THREAD_INFO << "Starting main thread\n";
@@ -379,6 +401,8 @@ namespace Semaphore::Consumer_Producer
 
 void Semaphore::TestAll()
 {
+    BinarySemaphore::Release_Acquire_SimpleExample();
+
     // BinarySemaphore::Release_Acquire_BasicTest();
     // BinarySemaphore::Release_TRY_Acquire__BasicTest();
     // BinarySemaphore::Release_TRY_Acquire_FOR__BasicTest();
@@ -390,6 +414,6 @@ void Semaphore::TestAll()
     // CountingSemaphore::Producer_Consumer();
     // CountingSemaphore::WorkQueue_Demo();
 
-    Consumer_Producer::runDemo();
+    // Consumer_Producer::runDemo();
 };
 

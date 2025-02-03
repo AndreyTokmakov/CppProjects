@@ -2832,7 +2832,8 @@ namespace Numeric
         return std::all_of(v2.cbegin(), v2.cend(), [&temp](auto v) { return (temp[v]--) > 0; });
     }
 
-    void IsPermutation() {
+    void IsPermutation()
+    {
         // std::cout << __FUNCTION__ << std::endl;
 
         std::vector<int> v1 = {1, 2, 3, 4, 5}, v2 = {3, 4, 1, 2, 5}, v3 = {5, 5, 5, 5, 5};
@@ -3788,6 +3789,112 @@ namespace Numeric
     }
 }
 
+namespace Numeric::Backtracking
+{
+    void backtrack(size_t start,
+                   std::vector<int> subset,
+                   const std::vector<int>& input,
+                   std::vector<std::vector<int>>& result)
+    {
+        result.push_back(subset);
+        for (size_t idx = start; idx < input.size(); idx++)
+        {
+            if (idx != start && input[idx] == input[idx - 1])
+                continue;
+            subset.push_back(input[idx]);
+            backtrack(idx + 1, subset, input, result);
+            subset.pop_back();
+        }
+    }
+
+    std::vector<std::vector<int>> subsets(std::vector<int>& input)
+    {
+        std::vector<std::vector<int>> result;
+        std::sort(input.begin(), input.end());
+        backtrack(0, {}, input,  result);
+        return result;
+    }
+
+
+
+    /** Given an integer array nums of unique elements, return all possible subsets
+        The solution set must not contain duplicate subsets. Return the solution in any order.
+        Input: nums = [1,2,3] Output: [[],[1],[2],[1,2],[3],[1,3],[2,3],[1,2,3]]
+        Input: nums = [0]     Output: [[],[0]
+    **/
+    void List_Of_Unique_Subsets()
+    {
+        std::vector<int> input {1, 2 ,3};
+        const std::vector<std::vector<int>> result = subsets(input);
+
+        for (const auto& sub_set: result) {
+            std::cout << "[" << sub_set << " ]\n";
+        }
+    }
+}
+
+
+namespace Numeric::Backtracking
+{
+    std::vector<std::vector<int>> permuteUnique(std::vector<int>& input)
+    {
+        int n = input.size();
+        if (n <= 1)
+            return { input };
+        std::set<std::vector<int>> permuted, sret;
+        for (int i = 0; i < n; ++i)
+        {
+            int cur = input[i];
+            std::swap(input[i], input[n - 1]);
+            input.pop_back();
+            if (permuted.count(input) > 0) {
+                input.push_back(cur);
+                std::swap(input[i], input[n - 1]);
+                continue;
+            }
+            permuted.insert(input);
+            std::vector<std::vector<int>> sub = permuteUnique(input);
+            for (auto& s : sub) {
+                --    OPENSSL_SSL_LIBRARY: /usr/lib/x86_64-linux-gnu/libssl.so
+                        --    OPENSSL_SSL_LIBRARIES: /usr/lib/x86_64-linux-gnu/libssl.so
+                        --    OPENSSL_LIBRARIES: /usr/lib/x86_64-linux-gnu/libssl.so;/usr/lib/x86_64-linux-gnu/libcrypto.so
+                        --    OPENSSL_VERSION: 1.1.1f
+                    --    OPENSSL_APPLINK_SOURCE:
+                -- BOOST VERSION:
+                -- EXTRA_LIBS: tbb
+                -- Configuring done (8.4s)
+                        -- Generating done (0.2s)
+                -- Build files have been written to: /home/andtokm/DiskS/ProjectsUbuntu/CppProjects/cmake-build-release
+
+                [Previous CMake output restored: 2/2/25 6:45 AM]
+
+                s.push_back(cur);
+                sret.insert(s);
+            }
+            input.push_back(cur);
+            std::swap(input[i], input[n - 1]);
+        }
+        std::vector<std::vector<int>> ret(sret.begin(), sret.end());
+        return ret;
+    }
+
+
+    /** Given a collection of numbers that might contain duplicates, return all possible unique permutations.
+        Input: [1,1,2]  Output: [1,1,2], [1,2,1], [2,1,1]
+    **/
+    void Permutations()
+    {
+        std::vector<int> input {1, 1 ,2};
+        const std::vector<std::vector<int>> result = permuteUnique(input);
+
+
+        for (const auto& sub_set: result) {
+            std::cout << "[" << sub_set << " ]\n";
+        }
+    }
+}
+
+
 void Numeric::TestAll()
 {
     // Numeric::ReverseBits();
@@ -3871,6 +3978,8 @@ void Numeric::TestAll()
 
     // Numeric::Find_The_Majority_Element();
 
+    // Backtracking::List_Of_Unique_Subsets();
+    Backtracking::Permutations();
 
 
     // Numeric::FindCommonElements_3_SortedArrays();
@@ -3921,7 +4030,7 @@ void Numeric::TestAll()
 
     // Median_of_Two_Sorted_Arrays();
 
-    Best_Time_Buy_and_Sell_Stock();
+    // Best_Time_Buy_and_Sell_Stock();
 
     // Single_Number();
 
