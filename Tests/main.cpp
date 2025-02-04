@@ -1370,39 +1370,37 @@ namespace BitwiseOperations
 }
 
 
-namespace Demo
+namespace LockFreeQueueTest
 {
-    struct Event
+    template<typename T>
+    class LockFreeStackPush
     {
-        int handle { 0 };
-        int events { 0 };
+        struct Node
+        {
+            T data;
+            Node* next;
+            explicit Node(T d): data(d), next(nullptr) {}
+        };
+
+        std::atomic<Node*> head;
+
+    public:
+
+        LockFreeStackPush() = default;
+        LockFreeStackPush(const LockFreeStackPush&) = delete;
+        LockFreeStackPush& operator= (const LockFreeStackPush&) = delete;
+
+        void push(T val)
+        {
+            Node* const newNode = new Node(val);
+            newNode->next = head.load();
+            while( !head.compare_exchange_strong(newNode->next, newNode) );
+        }
     };
-
-    std::ostream& operator<<(std::ostream& stream, const Event& event)
-    {
-        stream << "Event { " << event.handle << ", " << event.events << "}";
-        return stream;
-    }
-
 
     void Test()
     {
-        uint32_t fdCount = 1;
-        std::array<Event, 6> data {
-            Event {123, 1}, Event {1, 1}, Event {2, 2},
-            Event {-1, 3}, Event {4, 4}, Event {-1, 5},
-        };
-
-        for (uint32_t idx = 1; idx < data.size(); ++idx ) {
-            if (data[idx].handle != -1)
-                std::swap(data[idx], data[fdCount++]);
-        }
-
-        for (int32_t idx = 0; const Event& evt: data )
-        {
-            std::cout << evt << std::endl;
-        }
-        std::cout << "fdCount = " << fdCount << std::endl;
+        LockFreeStackPush<int> stack;
     }
 }
 
@@ -1436,7 +1434,7 @@ int main([[maybe_unused]] int argc,
 
     // BitwiseOperations::test();
 
-    // Demo::Test();
+    LockFreeQueueTest::Test();
 
     /** * * * * *  Move to lib * * * * * **/
 
