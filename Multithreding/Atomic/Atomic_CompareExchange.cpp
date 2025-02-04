@@ -25,54 +25,66 @@ namespace Atomic_CompareExchange
 {
     void CompareExchangeWeak()
     {
-        std::atomic<int> atomicVar { 35 };
-        int expected = 30;
-        constexpr int newValue = 40;
+        std::atomic<int> atomicVar { 10 };
+        constexpr int expected = 20, newValue = 30;
 
-        auto exchange = [&]
+        std::jthread producer([&] {
+            std::this_thread::sleep_for(std::chrono::seconds (2u));
+            atomicVar.store(expected, std::memory_order::relaxed);
+        });
+
+        int expectedTmp { expected };
+        bool result { false };
+        while (true)
         {
-            std::cout << "Before: "
-                      << "value = " << atomicVar.load(std::memory_order::relaxed)
-                      << ", expected = " << expected << ", newValue = " << newValue << std::endl;
+            const int oldValueForDebug = atomicVar.load(std::memory_order::relaxed);
+            expectedTmp = expected;
 
-            auto exchanged = atomicVar.compare_exchange_weak(expected, newValue);
+            result = atomicVar.compare_exchange_weak(expectedTmp, newValue);
 
-            std::cout << "After : "
-                      << "value = " << atomicVar.load(std::memory_order::relaxed)
-                      << ", expected = " << expected << ", newValue = " << newValue
-                      << " | Exchange result --> " << std::boolalpha << exchanged
-                      << std::endl;
-        };
-
-        exchange();
-        expected = atomicVar.load(std::memory_order::relaxed);
-        exchange();
+            if (!result) {
+                std::cout << "Result: False | expected: " << expected << " -> " << expectedTmp
+                         << " | newValue: " << newValue << " | atomicVar = " << atomicVar << std::endl;
+            }
+            else {
+                std::cout << "Result: True  | expected: " << expected << " == " << expectedTmp
+                         << " | newValue: " << newValue << " | atomicVar : " << oldValueForDebug << " => " << atomicVar << std::endl;
+                break;
+            }
+            std::this_thread::sleep_for(std::chrono::milliseconds(500u));
+        }
     }
 
     void CompareExchangeStrong()
     {
-        std::atomic<int> atomicVar { 35 };
-        int expected = 30;
-        constexpr int newValue = 40;
+        std::atomic<int> atomicVar { 10 };
+        constexpr int expected = 20, newValue = 30;
 
-        auto exchange = [&]
+        std::jthread producer([&] {
+            std::this_thread::sleep_for(std::chrono::seconds (2u));
+            atomicVar.store(expected, std::memory_order::relaxed);
+        });
+
+        int expectedTmp { expected };
+        bool result { false };
+        while (true)
         {
-            std::cout << "Before: "
-                      << "value = " << atomicVar.load(std::memory_order::relaxed)
-                      << ", expected = " << expected << ", newValue = " << newValue << std::endl;
+            const int oldValueForDebug = atomicVar.load(std::memory_order::relaxed);
+            expectedTmp = expected;
 
-            auto exchanged = atomicVar.compare_exchange_strong(expected, newValue);
+            result = atomicVar.compare_exchange_strong(expectedTmp, newValue);
 
-            std::cout << "After : "
-                      << "value = " << atomicVar.load(std::memory_order::relaxed)
-                      << ", expected = " << expected << ", newValue = " << newValue
-                      << " | Exchange result --> " << std::boolalpha << exchanged
-                      << std::endl;
-        };
-
-        exchange();
-        expected = atomicVar.load(std::memory_order::relaxed);
-        exchange();
+            if (!result) {
+                std::cout << "Result: False | expected: " << expected << " -> " << expectedTmp
+                          << " | newValue: " << newValue << " | atomicVar = " << atomicVar << std::endl;
+            }
+            else {
+                std::cout << "Result: True  | expected: " << expected << " == " << expectedTmp
+                          << " | newValue: " << newValue << " | atomicVar : " << oldValueForDebug << " => " << atomicVar << std::endl;
+                break;
+            }
+            std::this_thread::sleep_for(std::chrono::milliseconds(500u));
+        }
     }
 }
 
