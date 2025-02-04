@@ -59,40 +59,40 @@ namespace Span
         print({ data, 4 });
     }
 
-    ///////////////////////////////////////////////////////////////
 
-    void Create() {
+    void Create()
+    {
         std::vector<int> numbers{ 1,2,3,4,5};
-        const std::vector<int> cnumbers{ 1,2,3,4,5};
+        const std::vector<int> numSpan{ 1,2,3,4,5};
         constexpr int array[]{ 0, 1, 2, 3, 4, 5};
 
         std::cout << "------------------------------- 1 ---------------------------------------\n";
         {
-            std::span<int> sp(numbers);
+            const std::span<int> sp(numbers);
             std::cout << sp << std::endl;
         }
 
         std::cout << "------------------------------- 2 ---------------------------------------\n";
         {
-            std::span<const int> sp(cnumbers);
+            const std::span<const int> sp(numSpan);
             std::cout << sp << std::endl;
         }
 
         std::cout << "------------------------------- 3 ---------------------------------------\n";
         {
-            std::span<const int> sp(numbers.data(), 3);
+            const std::span<const int> sp(numbers.data(), 3);
             std::cout << sp << std::endl;
         }
 
         std::cout << "------------------------------- 4 ---------------------------------------\n";
         {
-            std::span<const int> sp(array);
+            const std::span<const int> sp(array);
             std::cout << sp << std::endl;
         }
 
         std::cout << "------------------------------- 5 ---------------------------------------\n";
         {
-            std::span<const int> sp(array, std::size(array)/2);
+            const std::span<const int> sp(array, std::size(array)/2);
             std::cout << sp << std::endl;
         }
     }
@@ -120,7 +120,7 @@ namespace Span
 
     void First_Substring() {
         constexpr int data[]{ 1, 2, 3, 4, 5, 6 };
-        std::span<const int> sp(data);
+        const std::span<const int> sp(data);
         std::cout << "Source collection: " << sp << "\n\n";
 
         for (auto i : data) {
@@ -137,17 +137,17 @@ namespace Span
 
     void Last() {
         constexpr int data[]{ 1, 2, 3, 4, 5, 6 };
-        std::span<const int> sp(data);
+        const std::span<const int> sp(data);
         std::cout << "Source collection: " << sp << "\n\n";
 
-        for (auto i : data) {
+        for (const int i : data) {
             auto s = sp.last(i);
             std::cout << "last (" << i << ") = " << s << std::endl;
         }
 
         std::cout << "-------------------  dynamic_extent  --------------------------" << std::endl;
 
-        for (auto i : data) {
+        for (const auto i : data) {
             std::span<const int, std::dynamic_extent> s = sp.last(i);
             std::cout << "last (" << i << ") = " << s << std::endl;
         }
@@ -160,14 +160,15 @@ namespace Span
         std::span<const int> data_span(data);
 
         {
-            auto sub = data_span.subspan(2, 2);
+            const auto sub = data_span.subspan(2, 2);
             std::cout << "subspan(2, 2) = " << sub << std::endl;
         }
     }
 
-    void Size() {
+    void Size()
+    {
         std::array<int, 5> data{ 1,2,3,4,5 };
-        std::span<int> data_span(data);
+        const std::span<int> data_span(data);
 
         std::cout << data_span << std::endl;
         std::cout << "size = " << data_span.size() << std::endl;
@@ -272,10 +273,32 @@ namespace Span::StaticSize
     }
 }
 
+namespace Span::SizeOf_Span
+{
+    void SizeOf_Creation()
+    {
+        int arr[] = {1, 2, 3, 4, 5};
+        std::vector<int> vec = {1, 2, 3, 4, 5};
+        std::span<int, 5> arr_span {arr};
+        std::span<int> other_span {arr};
+        std::span<int> vec_span{vec};
+
+        std::cout << std::format("sizeof arr_span: {}\n", sizeof(arr_span));
+        std::cout << std::format("sizeof other_span: {}\n", sizeof(other_span));
+        std::cout << std::format("sizeof vec_span: {}\n", sizeof(vec_span));
+
+        /** sizeof arr_span: 8
+            sizeof other_span: 16
+            sizeof vec_span: 16
+        **/
+    }
+}
+
+
 void Span::TestAll()
 {
     // Subspan_Test();
-    Subspan();
+    // Subspan();
 
     // Create();
     // Create_Not();
@@ -285,8 +308,9 @@ void Span::TestAll()
     // First_Substring();
 
     // Back();
-    Last();
+    // Last();
 
+    SizeOf_Span::SizeOf_Creation();
     // Size();
 
     // Pass_Collection_As_Span();
