@@ -342,6 +342,50 @@ namespace Atomic_MemoryOrder::Relaxed_Ordering_Missmatch_Tests
 }
 
 
+namespace Atomic_MemoryOrder::Fences
+{
+    void Demo_Release_Release()
+    {
+        std::atomic<int> x { 1 }, y { 2 };
+        x.store( 2, std::memory_order_release );
+        y.store( 1, std::memory_order_release );
+
+        /**
+         mov    DWORD PTR [rsp-0x8],0x1
+         xor    eax,eax
+         mov    DWORD PTR [rsp-0x4],0x2
+         mov    DWORD PTR [rsp-0x8],0x2
+         mov    DWORD PTR [rsp-0x4],0x1
+         ret                               **/
+    }
+
+    void Demo_Relaxed_Release()
+    {
+        std::atomic<int> x { 1 }, y { 2 };
+        x.store( 2, std::memory_order_relaxed );
+        y.store( 1, std::memory_order_release );
+
+        /** mov    DWORD PTR [rsp-0x4],0x2
+            xor    eax,eax
+            mov    DWORD PTR [rsp-0x8],0x2
+            mov    DWORD PTR [rsp-0x4],0x1
+            ret                               */
+    }
+
+
+    void Demo_Relaxed_Relaxed__Fence()
+    {
+        std::atomic<int> x { 1 }, y { 2 };
+        x.store( 2, std::memory_order_relaxed );
+        y.store( 1, std::memory_order_relaxed );
+        std::atomic_thread_fence( std::memory_order_release );
+
+        /** mov    DWORD PTR [rsp-0x8],0x2
+            xor    eax,eax
+            mov    DWORD PTR [rsp-0x4],0x1  */
+    }
+}
+
 void Atomic_MemoryOrder::TestAll()
 {
     // AtomicThreadFence::test();
@@ -356,6 +400,10 @@ void Atomic_MemoryOrder::TestAll()
 
     // FailureCases::SetMultipleVariables();
 
-    Relaxed_Ordering_Missmatch_Tests::benchmark();
+    // Relaxed_Ordering_Missmatch_Tests::benchmark();
+
+    Atomic_MemoryOrder::Fences::Demo_Release_Release();
+    Atomic_MemoryOrder::Fences::Demo_Relaxed_Release();
+    Atomic_MemoryOrder::Fences::Demo_Relaxed_Relaxed__Fence();
 
 }
