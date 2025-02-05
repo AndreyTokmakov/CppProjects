@@ -3855,19 +3855,6 @@ namespace Numeric::Backtracking
             permuted.insert(input);
             std::vector<std::vector<int>> sub = permuteUnique(input);
             for (auto& s : sub) {
-                --    OPENSSL_SSL_LIBRARY: /usr/lib/x86_64-linux-gnu/libssl.so
-                        --    OPENSSL_SSL_LIBRARIES: /usr/lib/x86_64-linux-gnu/libssl.so
-                        --    OPENSSL_LIBRARIES: /usr/lib/x86_64-linux-gnu/libssl.so;/usr/lib/x86_64-linux-gnu/libcrypto.so
-                        --    OPENSSL_VERSION: 1.1.1f
-                    --    OPENSSL_APPLINK_SOURCE:
-                -- BOOST VERSION:
-                -- EXTRA_LIBS: tbb
-                -- Configuring done (8.4s)
-                        -- Generating done (0.2s)
-                -- Build files have been written to: /home/andtokm/DiskS/ProjectsUbuntu/CppProjects/cmake-build-release
-
-                [Previous CMake output restored: 2/2/25 6:45 AM]
-
                 s.push_back(cur);
                 sret.insert(s);
             }
