@@ -56,6 +56,10 @@ namespace BitUtils
         return value >> 1 ;
     }
 
+    constexpr int mid_point(const int a, const int b) noexcept {
+        return (a + b) >> 1 ;
+    }
+
     constexpr int multiply_by_2(const int value) {
         return value << 1 ;
     }
@@ -236,6 +240,15 @@ namespace BitwiseOperation
         for (const int v: {1, 2, 4, 6, 8, 10})
         {
             std::cout << v << " = " << BitUtils::divide_by_2(v) << std::endl;
+        }
+    }
+
+    void Mid_Point_Test()
+    {
+        for (const auto [a, b]: std::vector<std::pair<int, int>>{
+            {1, 2}, {2, 3}, {4,8}
+        }) {
+            std::cout << a << " + " << b <<  " = " << BitUtils::mid_point(a, b) << std::endl;
         }
     }
 
@@ -472,7 +485,8 @@ void BitwiseOperation::TestAll()
     // Swap_Two_Numbers();
 
     // Divide_By_2_Test();
-    Multiplying_By_2();
+    Mid_Point_Test();
+    // Multiplying_By_2();
     // Check_Two_Numbers_Are_Equal();
 
 

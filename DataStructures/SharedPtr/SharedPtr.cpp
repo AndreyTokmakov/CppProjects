@@ -281,24 +281,21 @@ namespace Memory::SharedPtr::Tests
 }
 
 
-namespace Memory {
 
+void Memory::Shared_Ptr_Tests()
+{
+	// SharedPtr::Tests::Create_and_Destroy_Ptr();
+	// SharedPtr::Tests::Create_and_Destroy();
 
-	void Shared_Ptr_Tests()
-	{
-		// SharedPtr::Tests::Create_and_Destroy_Ptr();
-		// SharedPtr::Tests::Create_and_Destroy();
-		
-		// SharedPtr::Tests::Make_Shared_Test();
+	// SharedPtr::Tests::Make_Shared_Test();
 
-		// SharedPtr::Tests::CopyConstructor_Test();
-		SharedPtr::Tests::CopyAssignment_Test();
+	// SharedPtr::Tests::CopyConstructor_Test();
+	SharedPtr::Tests::CopyAssignment_Test();
 
-        // SharedPtr::Tests::MoveTest();
+	// SharedPtr::Tests::MoveTest();
 
-		// SharedPtr::Tests::DefaultDeleter_Test();
+	// SharedPtr::Tests::DefaultDeleter_Test();
 
-		// SharedPtr::Tests::CustomDeleter_Test();
-	}
+	// SharedPtr::Tests::CustomDeleter_Test();
 }
 
