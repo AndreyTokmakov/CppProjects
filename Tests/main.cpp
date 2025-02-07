@@ -1413,6 +1413,8 @@ int main([[maybe_unused]] int argc,
     const std::vector<std::string_view> args(argv + 1, argv + argc);
 
 
+
+
     // WrapperTests::Test();
     // StaticCounter::Test();
     // LookUpTests::Unexpected_Method_Call_Resolution();
@@ -1458,7 +1460,7 @@ int main([[maybe_unused]] int argc,
     // ReturnClass_MemberRef_CopyCTor::tests();
 
 
-    // Algorithms::TestAll();
+    Algorithms::TestAll();
     // AutoTests::TestAll();
     // BinManipulation::TestAll();
     // BinaryAnalyzer::TestAll();

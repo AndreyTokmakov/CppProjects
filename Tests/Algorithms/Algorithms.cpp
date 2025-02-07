@@ -2082,8 +2082,61 @@ namespace Algorithms::Strings
 }
 
 
+namespace PairSum
+{
+    std::pair<int, int> twoSum(const std::vector<int>& numbers, int target)
+    {
+        for (int l = 0, r = numbers.size() - 1; l < r;)
+        {
+            if (numbers[l] + numbers[r] == target) {
+                return {l, r};
+            }
+            if (numbers[l] + numbers[r] < target) {
+                ++l;
+            } else {
+                --r;
+            }
+        }
+        return {-1, -1};
+    }
+
+    std::pair<int32_t, int32_t> twoSum_Values(const std::vector<int32_t>& values, const int32_t K)
+    {
+        for (int32_t idxLeft = 0, idxRight = values.size() - 1; idxLeft < idxRight;) {
+            if (values[idxLeft] + values[idxRight] == K) {
+                return { values[idxLeft], values[idxRight] };
+            }
+            if (values[idxLeft] + values[idxRight] < K) {
+                ++idxLeft;
+            } else {
+                --idxRight;
+            }
+        }
+        return {-1 , -1};
+    }
+
+    void TestTwoSum()
+    {
+        {
+            const std::vector<int> values = { 2, 4, 5, 6, 7, 8, 9, 11 };
+            const std::pair<int, int> result = twoSum(values, 9);
+            std::cout << values[result.first] << ", " <<  values[result.second] << std::endl;
+        }
+
+        {
+            const std::vector<int> values = { 2, 4, 5, 6, 7, 8, 9, 11 };
+            const std::pair<int, int> result = twoSum_Values(values, 9);
+            std::cout << result.first << ", " << result.second << std::endl;
+        }
+    }
+}
+
+
 void Algorithms::TestAll()
 {
+    PairSum::TestTwoSum();
+
+
     // Algorithms::Devide_SubArray();
     // Algorithms::BinarySearch();
     // Algorithms::PrintAllSubArraysTest();
@@ -2104,7 +2157,7 @@ void Algorithms::TestAll()
     // Numbers::Divide_Numbers();
     // Numbers::MajorityElement();              // INFO --> To Algorithms
     // Numbers::CanPartition();                 // INFO --> To Algorithms
-    Numbers::Unique();
+    // Numbers::Unique();
 
     // Strings::FindCommon_PrefixAndPostfix();
     // Strings::FindLastNotOf__Benchmark();

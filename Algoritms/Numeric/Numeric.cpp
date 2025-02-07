@@ -42,6 +42,9 @@ namespace
     template<typename T>
     using VectorPair = std::pair<std::vector<T>, std::vector<T>>;
 
+    template<typename T1, typename T2>
+    using VectorOfPairs = std::vector< std::pair<T1, T2> >;
+
     using IntPair = std::pair<int, int>;
 
     void FillVecor(std::vector<int> &vecor,
@@ -2067,32 +2070,44 @@ namespace Numeric
             Find_DifferentPairs_SumK_2(data.first, data.second);
         }
     }
+}
 
-    //--------------------------------------------------------------------------------------//
 
-    void Find_Pair_SumX_Sorted() {
-        const std::vector<int> Numeric = {2, 4, 5, 6, 7, 8, 9, 11};
-        size_t start = 0, end = Numeric.size() - 1;
-        int X = 12;
+namespace Numeric
+{
 
-        int result;
-        while (end != start) {
-            result = Numeric[start] + Numeric[end];
-            if (X == result) {
-                std::cout << "OK: " << Numeric[start] << " " << Numeric[end] << std::endl;
-                return;
-            } else if (result > X)
-                end--;
-            else
-                start++;
+    std::pair<int32_t, int32_t> pair_sum(const std::vector<int32_t>& values, const int32_t K)
+    {
+        for (int32_t idxLeft = 0, idxRight = values.size() - 1; idxLeft < idxRight;) {
+            if (values[idxLeft] + values[idxRight] == K) {
+                return { values[idxLeft], values[idxRight] };
+            }
+            if (values[idxLeft] + values[idxRight] < K) {
+                ++idxLeft;
+            } else {
+                --idxRight;
+            }
         }
-        std::cout << "Not found" << std::endl;
+        return {-1 , -1};
     }
 
+    void Find_Pair_SumX_Sorted()
+    {
+        for (const auto& [values, K]: VectorOfPairs<std::vector<int32_t>, int32_t>{
+            { {2,7,11,15}, 9 },
+            {{ 2, 4, 5, 6, 7, 8, 9, 11 }, 12}
 
-    //--------------------------------------------------------------------------------------//
+        }) {
+            const auto [first, second] = pair_sum(values, K);
+            std::cout << '[' << values << " ] = { " << first << ", " << second << " }\n";
+        }
+    }
+}
 
-    void Find_3_Elements_SumX_Sorted() {
+namespace Numeric
+{
+    void Find_3_Elements_SumX_Sorted()
+    {
         const std::vector<int> Numeric = {1, 4, 45, 6, 10, 8};
         int sum = 22;
 
@@ -3949,8 +3964,7 @@ namespace Numeric::BinarySearchAlgorithms
 
 void Numeric::TestAll()
 {
-    BinarySearchAlgorithms::Fixed_Point__SmallestIndex_ValueEqualIndex();
-
+    // BinarySearchAlgorithms::Fixed_Point__SmallestIndex_ValueEqualIndex();
 
     // Numeric::ReverseBits();
 
@@ -4021,7 +4035,7 @@ void Numeric::TestAll()
     // Numeric::Find_Sum_All_Numeric();
     // Numeric::Find_Multiplier_Pair();
     // Numeric::Find_Multiplier_Pair2();
-    // Numeric::Find_Pair_SumX_Sorted();
+    Numeric::Find_Pair_SumX_Sorted();
     // Numeric::Find_3_Elements_SumX_Unsorted();
     // Numeric::Find_DifferentPairs_SumK();
     // Numeric::Find_3_Elements_SumX_Sorted();
