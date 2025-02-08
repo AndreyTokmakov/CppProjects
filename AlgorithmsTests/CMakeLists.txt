@@ -8,6 +8,7 @@ add_compile_options(-c -Wall -Wextra -O3 -std=c++26)
 
 add_executable(${PROJECT_NAME}
     	main.cpp
+    	Strings/Strings.cpp
 		Utilities/Utilities.cpp
 		Utilities/StringUtilities.cpp
 )
