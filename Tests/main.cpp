@@ -53,7 +53,6 @@ Description : Tests C++ project
 #include <experimental/socket>
 #include <experimental/scope>
 
-#include "Algorithms/Algorithms.h"
 #include "BitFlags/BitFlags.h"
 #include "BinManipulation/BinManipulation.h"
 #include "Geometry/PointsAndLines.h"
@@ -1405,14 +1404,10 @@ namespace LockFreeQueueTest
 }
 
 
-
-
 int main([[maybe_unused]] int argc,
          [[maybe_unused]] char** argv)
 {
     const std::vector<std::string_view> args(argv + 1, argv + argc);
-
-
 
 
     // WrapperTests::Test();
@@ -1437,7 +1432,7 @@ int main([[maybe_unused]] int argc,
     // BitwiseOperations::test();
 
 
-    LockFreeQueueTest::Test();
+    // LockFreeQueueTest::Test();
 
 
 
@@ -1460,7 +1455,6 @@ int main([[maybe_unused]] int argc,
     // ReturnClass_MemberRef_CopyCTor::tests();
 
 
-    Algorithms::TestAll();
     // AutoTests::TestAll();
     // BinManipulation::TestAll();
     // BinaryAnalyzer::TestAll();
