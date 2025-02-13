@@ -62,6 +62,7 @@ namespace ObjectOrientedExperiments::VirtualTables
     }
 };
 
+// g++-14.2 -fdump-class-hierarchy VirtualTables.cpp    - should print out
 
 void ObjectOrientedExperiments::VirtualTables::TestAll()
 {

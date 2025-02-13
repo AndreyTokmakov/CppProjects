@@ -1404,11 +1404,73 @@ namespace LockFreeQueueTest
 }
 
 
+namespace Algorithms
+{
+    void removeDuplicates(std::string& str)
+    {
+        for (int idx = 0; idx < str.size();)
+        {
+            for (idx = 1; idx < str.size(); ++idx)
+            {
+                if (str[idx -1] == str[idx]) {
+                    str.erase(idx - 1, 2);
+                    break;
+                }
+            }
+        }
+    }
+}
+
+
+namespace VirtualFunctionTests
+{
+    struct Base
+    {
+        virtual void info()
+        {
+            std::cout << "Base::Base::info" << "\n";
+        }
+
+        virtual ~Base() = default;
+    };
+
+    struct Derived: Base
+    {
+        void info() override
+        {
+            std::cout << "Base::Base::info" << "\n";
+        }
+    };
+
+    void demo()
+    {
+        Base* b = new Base();
+        Derived* d = new Derived();
+        Derived* d1 = new Derived();
+        Base* bd = d;
+
+        const uint64_t ***mVtableB = reinterpret_cast<const uint64_t***>(&b);
+        const uint64_t ***mVtableD = reinterpret_cast<const uint64_t***>(&d);
+        const uint64_t ***mVtableD1 = reinterpret_cast<const uint64_t***>(&d1);
+        const uint64_t ***mVtableBD = reinterpret_cast<const uint64_t***>(&bd);
+
+        std::cout << **mVtableB << std::endl;
+        std::cout << **mVtableD << std::endl;
+        std::cout << **mVtableD1 << std::endl;
+        std::cout << **mVtableBD << std::endl;
+
+    }
+}
+
+
+
+
 int main([[maybe_unused]] int argc,
          [[maybe_unused]] char** argv)
 {
     const std::vector<std::string_view> args(argv + 1, argv + argc);
 
+    VirtualFunctionTests::demo();
 
     // WrapperTests::Test();
     // StaticCounter::Test();
@@ -1433,9 +1495,6 @@ int main([[maybe_unused]] int argc,
 
 
     // LockFreeQueueTest::Test();
-
-
-
 
 
     /** * * * * *  Move to lib * * * * * **/

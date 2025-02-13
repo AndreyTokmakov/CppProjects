@@ -42,7 +42,8 @@ namespace {
 						   std::cout << "Result: " << duration << " microseconds" << std::endl;}
 }
 
-namespace Graphs::Tests {
+namespace Graphs::Tests
+{
 
 	class Graph {
 	private:

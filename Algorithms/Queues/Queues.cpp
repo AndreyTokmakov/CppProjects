@@ -210,7 +210,8 @@ namespace Queues::Algoritms {
 	}
 }
 
-void Queues::TEST_ALL() {
+void Queues::TEST_ALL()
+{
 	Queue_Using_Stacks::Test();
 	// Queue_Using_Stacks::Test1();
 

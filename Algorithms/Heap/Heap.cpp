@@ -740,7 +740,8 @@ namespace Heap_Algoritms {
 	}
 }
 
-void Heap_Algoritms::TEST_ALL() {
+void Heap_Algoritms::TEST_ALL()
+{
 	// MinHeapTest_FirstKelements::Test();
 
 	// BinaryHeap::Tests();
