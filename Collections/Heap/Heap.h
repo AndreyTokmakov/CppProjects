@@ -11,7 +11,7 @@
 #define HEAP_CONTAINER_TESTS__H_
 
 namespace Heap {
-	void TEST_ALL();
+	void TestAll();
 };
 
 #endif /* HEAP_CONTAINER_TESTS__H_ */

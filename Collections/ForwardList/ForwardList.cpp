@@ -287,7 +287,7 @@ namespace ForwardList {
 
 }
 
-void ForwardList::TEST_ALL() {
+void ForwardList::TestAll() {
 	// Constructors();
 	// MaxSize();
 

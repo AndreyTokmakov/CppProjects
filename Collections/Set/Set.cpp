@@ -437,7 +437,7 @@ namespace Set::TypeComparators {
 };
 
 
-void Set::TEST_ALL()
+void Set::TestAll()
 {
 	// Erase_Odd_Numbers();
 

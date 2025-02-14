@@ -72,7 +72,8 @@ namespace Custom_Vector {
 	};
 }
 
-void Custom_Vector::TEST_ALL() {
+void Custom_Vector::TestAll()
+{
 	Vector<int> vect;
 	vect.reserve(10);
 

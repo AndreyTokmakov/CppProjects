@@ -152,22 +152,23 @@ namespace Array {
             std::cout << "std::array<" << typeid(data.front()).name() << ", " << data.size() << ">\n";
         }
     }
+}
 
-	void TEST_ALL()
-	{
-		// MultidimentionalArrays();
 
-		// Array::Tests();
+void Array::TestAll()
+{
+	// MultidimentionalArrays();
 
-		// Array::AT_Test();
-		// Array::AT_Test_Error();
+	// Array::Tests();
 
-		// Array::Operator_OutOfBounds();
+	// Array::AT_Test();
+	// Array::AT_Test_Error();
 
-		// Array::Sort();
+	// Array::Operator_OutOfBounds();
 
-		// Array::Compare();
+	// Array::Sort();
 
-        ToArray();
-	}
+	// Array::Compare();
+
+	ToArray();
 }

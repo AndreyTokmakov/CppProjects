@@ -11,7 +11,7 @@
 #define CUSTOM_VECTOR_CONTAINER_TESTS__H_
 
 namespace Custom_Vector {
-	void TEST_ALL();
+	void TestAll();
 };
 
 #endif /* CUSTOM_VECTOR_CONTAINER_TESTS__H_ */

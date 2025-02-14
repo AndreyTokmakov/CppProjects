@@ -11,7 +11,7 @@
 #define STACK_CONTAINER_TESTS__H_
 
 namespace Stack {
-	void TEST_ALL();
+	void TestAll();
 };
 
 #endif /* STACK_CONTAINER_TESTS__H_ */

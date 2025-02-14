@@ -202,7 +202,7 @@ namespace Queue {
 	}
 }
 
-void Queue::TEST_ALL() {
+void Queue::TestAll() {
 	// Construct();
 
 	// Empty();

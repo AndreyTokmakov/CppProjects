@@ -11,7 +11,7 @@
 #define QUEUE_CONTAINER_TESTS__H_
 
 namespace Queue {
-	void TEST_ALL();
+	void TestAll();
 };
 
 #endif /* QUEUE_CONTAINER_TESTS__H_ */

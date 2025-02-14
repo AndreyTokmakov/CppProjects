@@ -11,7 +11,7 @@
 #define UNORDERED_SET_CONTAINER_TESTS__H_
 
 namespace UnorderedSet {
-	void TEST_ALL();
+	void TestAll();
 };
 
 #endif /* UNORDERED_SET_CONTAINER_TESTS__H_ */

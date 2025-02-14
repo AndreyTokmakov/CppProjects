@@ -536,7 +536,7 @@ namespace UnorderedSet::HeterogeneousLookup_Hashing_Integer
     }
 }
 
-void UnorderedSet::TEST_ALL()
+void UnorderedSet::TestAll()
 {
 	// Constructors();
 

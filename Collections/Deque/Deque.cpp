@@ -1,11 +1,11 @@
-//============================================================================
-// Name        : Deque.h
-// Created on  : 05.05.2020
-// Author      : Tokmakov Andrey
-// Version     : 1.0
-// Copyright   : Your copyright notice
-// Description : C++ Deque container testing
-//============================================================================
+/**============================================================================
+Name        : Deque.cpp
+Created on  : 12.08.2019
+Author      : Andrei Tokmakov
+Version     : 1.0
+Copyright   : Your copyright notice
+Description : Deque
+============================================================================**/
 
 #include <iostream>
 #include <sstream>
@@ -231,7 +231,16 @@ namespace Deque::Applications {
 	}
 }
 
-void Deque::TEST_ALL() {
+namespace Deque::Iterators
+{
+	void Invalidation_Test()
+	{
+
+	}
+}
+
+void Deque::TestAll()
+{
 	// Construct();
 
 	// PushBack();
@@ -241,7 +250,7 @@ void Deque::TEST_ALL() {
 
 	// Emplace();
 
-    Erase();
+    // Erase();
 
 	// EmplaceBack();
 

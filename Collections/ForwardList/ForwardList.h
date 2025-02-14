@@ -11,7 +11,7 @@
 #define FORWARD_LIST_CONTAINER_TESTS__H_
 
 namespace ForwardList {
-	void TEST_ALL();
+	void TestAll();
 };
 
 #endif /* FORWARD_LIST_CONTAINER_TESTS__H_ */

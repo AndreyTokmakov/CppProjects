@@ -923,13 +923,22 @@ namespace Vector::Allocators {
 	}
 }
 
+namespace Vector::Iterators
+{
+	void Invalidation_Test()
+	{
+
+	}
+}
+
+
 void Vector::TestAll()
 {
     // Constructors_Tests();
 
 	// Resize_Capacity_Tests();
 	// Resize_Capacity_Tests_2();
-	Clear_Capacity_Tests();
+	// Clear_Capacity_Tests();
 	// Allocate_Memory_Tests();
 
 	// Create_and_Print();
@@ -981,4 +990,7 @@ void Vector::TestAll()
 	// Allocators::Emplace_CustomType_1();
 	// Allocators::Emplace_CustomType_2();
 	// Allocators::Emplace_CustomType_Allocator();
+
+
+	Iterators::Invalidation_Test();
 }

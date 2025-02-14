@@ -12,7 +12,7 @@
 
 namespace Set
 {
-	void TEST_ALL();
+	void TestAll();
 };
 
 #endif /* SET_CONTAINER_TESTS__H_ */

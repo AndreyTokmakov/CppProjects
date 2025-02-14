@@ -123,17 +123,15 @@ namespace Stack {
 	}
 }
 
-namespace Stack {
-	void TEST_ALL()
-	{
-		// Constructors();
-		// Empty();
-		// Top();
-		// Emplace();
-		// LIFO_Test();
+void Stack::TestAll()
+{
+	// Constructors();
+	// Empty();
+	// Top();
+	// Emplace();
+	// LIFO_Test();
 
-		Swap();
+	Swap();
 
-		// __TEST__();
-	}
+	// __TEST__();
 }

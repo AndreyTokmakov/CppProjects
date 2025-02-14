@@ -138,19 +138,17 @@ namespace Heap {
 
 }
 
-namespace Heap {
-	void TEST_ALL() {
+void Heap::TestAll()
+{
+	// Sort_Heap();
+	// IsHeap();
 
-		// Sort_Heap();
-		// IsHeap();
+	// MakeHeap();
+	// MakeHeap_Min();
+	// MakeHeap_Min_Lambda();
 
-		// MakeHeap();
-		// MakeHeap_Min();
-		// MakeHeap_Min_Lambda();
+	// Push_Heap();
+	// Pop_Heap();
 
-		// Push_Heap();
-		// Pop_Heap();
-
-		 Tests();
-	}
-};
+	Tests();
+}

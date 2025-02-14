@@ -16,7 +16,7 @@ namespace Array {
 	void AT_Test_Error();
 	void Sort();
 
-	void TEST_ALL();
+	void TestAll();
 };
 
 #endif /* ARRAY_CONTAINER_TESTS__H_ */

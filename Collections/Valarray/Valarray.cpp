@@ -167,7 +167,7 @@ namespace Valarray
 	}
 }
 
-void Valarray::TEST_ALL() 
+void Valarray::TestAll()
 {
 	// SimpleTest();
 

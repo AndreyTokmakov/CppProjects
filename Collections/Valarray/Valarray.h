@@ -11,7 +11,7 @@
 #define VALARRAY_CONTAINER_TESTS__H_
 
 namespace Valarray {
-	void TEST_ALL();
+	void TestAll();
 };
 
 #endif /* VALARRAY_CONTAINER_TESTS__H_ */

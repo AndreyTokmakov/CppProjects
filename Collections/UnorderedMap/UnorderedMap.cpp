@@ -905,7 +905,7 @@ namespace UnorderedMap::HeterogeneousLookup2
     }
 }
 
-void UnorderedMap::TEST_ALL()
+void UnorderedMap::TestAll()
 {
 	// Constructors_Tests();
 	// Reserve();

@@ -11,7 +11,7 @@
 #define UNORDERED_MAP_CONTAINER_TESTS__H_
 
 namespace UnorderedMap {
-	void TEST_ALL();
+	void TestAll();
 };
 
 #endif /* UNORDERED_MAP_CONTAINER_TESTS__H_ */

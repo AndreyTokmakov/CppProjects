@@ -1449,16 +1449,23 @@ namespace VirtualFunctionTests
         Derived* d1 = new Derived();
         Base* bd = d;
 
-        const uint64_t ***mVtableB = reinterpret_cast<const uint64_t***>(&b);
+        using lPtr = uint64_t*;
+
+        const uint64_t*** mVtableB = reinterpret_cast<const uint64_t***>(&b);
         const uint64_t ***mVtableD = reinterpret_cast<const uint64_t***>(&d);
         const uint64_t ***mVtableD1 = reinterpret_cast<const uint64_t***>(&d1);
         const uint64_t ***mVtableBD = reinterpret_cast<const uint64_t***>(&bd);
 
-        std::cout << **mVtableB << std::endl;
+        //std::cout << **mVtableB << std::endl;
         std::cout << **mVtableD << std::endl;
-        std::cout << **mVtableD1 << std::endl;
-        std::cout << **mVtableBD << std::endl;
+        //std::cout << **mVtableD1 << std::endl;
+        //std::cout << **mVtableBD << std::endl;
 
+        std::cout << (void*) mVtableD[0][0][0] << std::endl;
+        std::cout << (void*) mVtableD[0][0][1] << std::endl;
+        std::cout << (void*) mVtableD[0][0][2] << std::endl;
+        std::cout << (void*) mVtableD[0][0][3] << std::endl;
+        std::cout << (void*) d << std::endl;
     }
 }
 
@@ -1470,7 +1477,15 @@ int main([[maybe_unused]] int argc,
 {
     const std::vector<std::string_view> args(argv + 1, argv + argc);
 
-    VirtualFunctionTests::demo();
+    // VirtualFunctionTests::demo();
+
+
+    std::cout
+        << (int)('a') << " " << (int)('z')<< " " << (int)('A')<< " " << (int)('Z') << " "
+        << (int)('1') << " " << (int)('0')
+     << std::endl;
+
+    std::cout << ((int)('z') - (int)('0')) << std::endl;
 
     // WrapperTests::Test();
     // StaticCounter::Test();

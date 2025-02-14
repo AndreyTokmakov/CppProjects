@@ -26,25 +26,24 @@ Description : CollectionsTests
 #include "PriorityQueue/PriorityQueue.h"
 #include "ForwardList/ForwardList.h"
 
-#define TEST(nspace) nspace::TEST_ALL();
 
 int main([[maybe_unused]] int argc,
          [[maybe_unused]] char** argv)
 {
-	// TEST(Array);
+	// Array::TestAll();
 	// List::TestAll();
-	// TEST(ForwardList);
-	// TEST(Deque);
-	// TEST(Stack);
-	// TEST(Heap);
-	// Vector::TestAll();
-	// TEST(Valarray);
-	Map::TestAll();
+	// ForwardList::TestAll();
+	// Deque::TestAll();
+	// Stack::TestAll();
+	// Heap::TestAll();
+	Vector::TestAll();
+	// Valarray::TestAll();
+	// Map::TestAll();
 	// MultiMap::TestAll();
-    // TEST(UnorderedMap);
-    // TEST(Set);
-    // TEST(UnorderedSet);
-	// TEST(Queue);
+    // UnorderedMap::TestAll();
+    // Set::TestAll();
+    // UnorderedSet::TestAll();
+	// Queue::TestAll();
 	// PriorityQueue::TestAll();
-	// TEST(Custom_Vector);
+	// Custom_Vector::TestAll();
 }
