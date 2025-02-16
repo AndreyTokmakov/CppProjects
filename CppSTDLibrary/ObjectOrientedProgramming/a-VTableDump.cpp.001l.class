@@ -1,0 +1,32 @@
+Vtable for Base
+Base::_ZTV4Base: 6 entries
+0     (int (*)(...))0
+8     (int (*)(...))(& _ZTI4Base)
+16    (int (*)(...))Base::getVersion
+24    (int (*)(...))Base::getInfo
+32    (int (*)(...))Base::~Base
+40    (int (*)(...))Base::~Base
+
+Class Base
+   size=8 align=8
+   base size=8 base align=8
+Base (0x0x7f5534d39420) 0 nearly-empty
+    vptr=((& Base::_ZTV4Base) + 16)
+
+Vtable for Derived
+Derived::_ZTV7Derived: 6 entries
+0     (int (*)(...))0
+8     (int (*)(...))(& _ZTI7Derived)
+16    (int (*)(...))Derived::getVersion
+24    (int (*)(...))Base::getInfo
+32    (int (*)(...))Derived::~Derived
+40    (int (*)(...))Derived::~Derived
+
+Class Derived
+   size=8 align=8
+   base size=8 base align=8
+Derived (0x0x7f5534b8b4e0) 0 nearly-empty
+    vptr=((& Derived::_ZTV7Derived) + 16)
+Base (0x0x7f5534d39600) 0 nearly-empty
+      primary-for Derived (0x0x7f5534b8b4e0)
+

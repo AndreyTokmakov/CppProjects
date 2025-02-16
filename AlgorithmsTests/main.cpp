@@ -1365,13 +1365,13 @@ namespace Algorithms::Experiments
 }
 
 
-
 int main([[maybe_unused]] int argc,
 		 [[maybe_unused]] char** argv)
 {
     using namespace Algorithms;
     // Strings::TestAll();
 
+    /*
     Algorithms::Divide_SubArray();
     Algorithms::BinarySearch();
     Algorithms::Sqrt();
@@ -1394,6 +1394,8 @@ int main([[maybe_unused]] int argc,
     Numbers::CanPartition();                 // INFO --> To Algorithms
 
     Experiments::CalcParentheses_3_BRacket();
+     */
+
 
 	return EXIT_SUCCESS;
 }

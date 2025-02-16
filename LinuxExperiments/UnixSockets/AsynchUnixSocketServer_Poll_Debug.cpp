@@ -35,6 +35,8 @@ Description : AsynchUnixSocketServer_Poll_Debug.cpp
 #define SOCKET_ERROR     (-1)
 #define SERVER_SOCK_PATH "/tmp/unix_socket"
 
+#include <syscall.h>
+
 namespace
 {
     using namespace std::string_literals;

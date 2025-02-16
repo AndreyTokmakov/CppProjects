@@ -104,7 +104,7 @@ int main([[maybe_unused]] int argc,
     // Attributes::TestAll();
     // Auto::TestAll();
     // BitSet::TestAll();
-    BitwiseOperation::TestAll();
+    // BitwiseOperation::TestAll();
     // Byte::TestAll();
     // Chrono::TestAll();
     // Comparators::TestAll();
@@ -134,7 +134,7 @@ int main([[maybe_unused]] int argc,
     // Lambdas::TestAll();
     // LifetimeExtension::TestAll();
     // Locale::TestAll();
-    // Literals::TestAll();
+    Literals::TestAll();
     // MoveSemantics_RuleOfFive::TestAll();
     // Numbers::TestAll();
     // Math::TestAll();
