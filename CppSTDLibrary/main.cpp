@@ -134,7 +134,7 @@ int main([[maybe_unused]] int argc,
     // Lambdas::TestAll();
     // LifetimeExtension::TestAll();
     // Locale::TestAll();
-    // Literals::TestAll();
+    Literals::TestAll();
     // MoveSemantics_RuleOfFive::TestAll();
     // Numbers::TestAll();
     // Math::TestAll();

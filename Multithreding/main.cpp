@@ -63,7 +63,7 @@ int main([[maybe_unused]] int argc,
     // AtomicFlag::TestAll();
     // Atomic_Bool::TestAll();
     // Atomic_Wait::TestAll();
-    Atomic_MemoryOrder::TestAll();
+    // Atomic_MemoryOrder::TestAll();
     // Atomic_CompareExchange::TestAll();
     // Atomic_IsLockFree::TestAll();
     // AtomicPerformanceTests::TestAll();
@@ -82,7 +82,7 @@ int main([[maybe_unused]] int argc,
     // PackagedTask::TEST_ALL();
     // ParallelExecutionAlgoritms::TEST_ALL();
 
-    // Semaphore::TestAll();
+    Semaphore::TestAll();
 
     // Synchronization::TEST_ALL();
     // SynchStream::TEST_ALL();

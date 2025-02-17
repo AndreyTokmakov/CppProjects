@@ -1470,6 +1470,30 @@ namespace VirtualFunctionTests
 }
 
 
+namespace Check_Parentheses
+{
+    consteval std::array<char, 256> getMapping()
+    {
+        std::array<char, 256> mapping { };
+        mapping['['] = ']'; mapping[']'] = '[';
+        mapping['('] = ')'; mapping[')'] = '(';
+        mapping['{'] = '}'; mapping['}'] = '{';
+        return mapping;
+    }
+
+    bool check_parentheses(const std::string& str)
+    {
+        constexpr std::array<char, 256> mapping = getMapping();
+        std::vector<char> brackets;
+        for (const char c : str) {
+
+        }
+
+        return false;
+    }
+}
+
+
 
 
 int main([[maybe_unused]] int argc,
@@ -1479,13 +1503,9 @@ int main([[maybe_unused]] int argc,
 
     // VirtualFunctionTests::demo();
 
+    Check_Parentheses::check_parentheses("");
 
-    std::cout
-        << (int)('a') << " " << (int)('z')<< " " << (int)('A')<< " " << (int)('Z') << " "
-        << (int)('1') << " " << (int)('0')
-     << std::endl;
 
-    std::cout << ((int)('z') - (int)('0')) << std::endl;
 
     // WrapperTests::Test();
     // StaticCounter::Test();

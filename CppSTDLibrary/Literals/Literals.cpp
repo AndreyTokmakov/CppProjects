@@ -14,6 +14,7 @@
 #include <complex>
 #include <bitset>
 #include <cstring>
+#include <expected>
 #include "Literals.h"
 
 namespace Literals::Custom_Literals_Tests
@@ -484,6 +485,52 @@ namespace Literals::Kilometers
     }
 }
 
+namespace Literals::MAC_Address_CompileTime
+{
+    struct MACAddr {
+        std::array<unsigned char, 6> data;
+    };
+
+    constexpr std::expected<MACAddr, std::errc>
+    macFromString(std::span<const char> addr)
+    {
+        if (addr.size() < 17) {
+            return std::unexpected(std::errc::message_size);
+        }
+
+        MACAddr res{};
+        for(int i = 0; auto& val : res.data)
+        {
+            if ((i < 5) and (addr[2] != ':')) {
+                return std::unexpected(std::errc::message_size);
+            }
+
+            if (std::from_chars(addr.data(), addr.data() + 2, val, 16).ec != std::errc()) {
+                return std::unexpected(std::errc::message_size);
+            }
+            addr = addr.subspan((addr.size() >= 3) ? 3 : addr.size());
+            ++i;
+        }
+
+        return res;
+    }
+
+    consteval MACAddr operator""_macaddr(const char* str, size_t length)
+    {
+        return macFromString({str, length}).value();
+    }
+
+    void parse_MAC()
+    {
+        const std::array<char, 18> data { std::to_array("12:34:56:78:90:AB") };
+        const std::expected<MACAddr, std::errc> mac = macFromString(data);
+
+        MACAddr compileTimeMAC = "12:34:56:78:90:AB"_macaddr;
+
+       // std::cout << (mac == compileTimeMAC) << std::endl;
+    }
+}
+
 void Literals::TestAll()
 {
     // SimpleExample::Test();
@@ -508,5 +555,8 @@ void Literals::TestAll()
 
 	// Complex_Literals::Test();
 
-    Kilometers::CompareTest();
+    // Kilometers::CompareTest();
+
+
+    MAC_Address_CompileTime::parse_MAC();
 };

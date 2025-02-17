@@ -136,7 +136,7 @@ namespace Semaphore::BinarySemaphore
             semaphore.acquire();
             THREAD_INFO << "Semaphore captured...\n";
 
-            std::this_thread::sleep_for(std::chrono::seconds(2));
+            std::this_thread::sleep_for(std::chrono::seconds(2u));
 
             THREAD_INFO << "Semaphore released...\n";
             semaphore.release();
@@ -223,6 +223,7 @@ namespace Semaphore::CountingSemaphore
             std::osyncstream(std::cout) << time() << "Consumer: trying to acquire semaphore" << '\n';
             // Try to atomically decrease the counter in the semaphore. If the counter is already 0, blocks.
             semaphore.acquire();
+            semaphore
             std::osyncstream(std::cout) << time() << "Consumer: Done" << '\n';
         };
 
@@ -401,7 +402,7 @@ namespace Semaphore::Consumer_Producer
 
 void Semaphore::TestAll()
 {
-    BinarySemaphore::Release_Acquire_SimpleExample();
+    // BinarySemaphore::Release_Acquire_SimpleExample();
 
     // BinarySemaphore::Release_Acquire_BasicTest();
     // BinarySemaphore::Release_TRY_Acquire__BasicTest();
@@ -410,7 +411,7 @@ void Semaphore::TestAll()
     // BinarySemaphore::Simple_Acquire_Release();
     // BinarySemaphore::Semaphore_VS_ConditionalVariable();
 
-    // CountingSemaphore::BasicTest();
+    CountingSemaphore::BasicTest();
     // CountingSemaphore::Producer_Consumer();
     // CountingSemaphore::WorkQueue_Demo();
 
