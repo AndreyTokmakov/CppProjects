@@ -235,7 +235,22 @@ namespace Deque::Iterators
 {
 	void Invalidation_Test()
 	{
+		std::deque<int> values {1, 2, 3};
+		const int& head = values.front();
+		for (int i = 0; i < 10; ++i)
+			values.push_back(1);
 
+		std::cout << head << std::endl;
+	}
+
+	void Invalidation_Test_Vector()
+	{
+		std::vector<int> values {1, 2, 3};
+		const int& head = values.front();
+		for (int i = 0; i < 10; ++i)
+			values.push_back(1);
+
+		std::cout << head << std::endl;
 	}
 }
 
@@ -261,4 +276,7 @@ void Deque::TestAll()
 	// Applications::Pop_Element_Performance();
 	// Applications::Move_Pop_FromDeque();
 	// Applications::Move_Pop_FromDeque_Lambdas();
+
+	Iterators::Invalidation_Test();
+	Iterators::Invalidation_Test_Vector();
 };

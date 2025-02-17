@@ -928,6 +928,16 @@ namespace Vector::Iterators
 	void Invalidation_Test()
 	{
 
+		std::vector<int> vec {1, 2, 3};
+
+		int& head = vec.front();
+
+		vec.reserve(123);
+
+		//for (int i = 0; i < 10; ++i)
+		//	vec.push_back(1);
+
+		std::cout << head << std::endl;
 	}
 }
 

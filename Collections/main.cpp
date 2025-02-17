@@ -33,10 +33,10 @@ int main([[maybe_unused]] int argc,
 	// Array::TestAll();
 	// List::TestAll();
 	// ForwardList::TestAll();
-	// Deque::TestAll();
+	Deque::TestAll();
 	// Stack::TestAll();
 	// Heap::TestAll();
-	Vector::TestAll();
+	// Vector::TestAll();
 	// Valarray::TestAll();
 	// Map::TestAll();
 	// MultiMap::TestAll();
