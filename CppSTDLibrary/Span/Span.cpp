@@ -163,11 +163,9 @@ namespace Span
             const auto sub = data_span.subspan(2, 2);
             std::cout << "subspan(2, 2) = " << sub << std::endl;
         }
-
         {
             std::vector<int> values (std::begin(data), std::end(data));
             values.erase(values.begin() + 2);
-
             std::cout << values << std::endl;
         }
     }
