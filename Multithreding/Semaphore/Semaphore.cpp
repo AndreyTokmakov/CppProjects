@@ -223,7 +223,7 @@ namespace Semaphore::CountingSemaphore
             std::osyncstream(std::cout) << time() << "Consumer: trying to acquire semaphore" << '\n';
             // Try to atomically decrease the counter in the semaphore. If the counter is already 0, blocks.
             semaphore.acquire();
-            semaphore
+            //semaphore
             std::osyncstream(std::cout) << time() << "Consumer: Done" << '\n';
         };
 

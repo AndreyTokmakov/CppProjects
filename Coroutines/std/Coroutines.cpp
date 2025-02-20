@@ -18,7 +18,6 @@ Description : Coroutines.cpp
 #include <generator>
 #include <utility>
 
-#include "../Utilities/Utilities.h"
 
 namespace Coroutines::SimpleCoroutine
 {
@@ -614,13 +613,80 @@ namespace Coroutines::String_to_Integer_Parser
 }
 
 
-// https://medium.com/@AlexanderObregon/understanding-c-coroutine-implementation-8e6e5a2c3edd
+namespace Coroutines::UseCases
+{
+    struct Task
+    {
+        struct promise_type
+        {
+            Task get_return_object() noexcept
+            {
+                std::cout << "get_return_object" << std::endl;
+                return Task { *this };
+            }
 
+            void return_void() noexcept
+            {
+                std::cout << "return_void" << std::endl;
+            }
+
+            std::suspend_always initial_suspend() noexcept
+            {
+                std::cout << "initial_suspend" << std::endl;
+                return {};
+            }
+
+            std::suspend_always final_suspend() noexcept
+            {
+                std::cout << "final_suspend" << std::endl;
+                return {};
+            }
+
+            void unhandled_exception() noexcept
+            {
+                std::cout << "unhandled_exception" << std::endl;
+            }
+        };
+
+        explicit Task(promise_type&) {
+            std::cout << "Task()" << std::endl;
+        }
+
+        ~Task() noexcept {
+            std::cout << "~Task()" << std::endl;
+        }
+    };
+
+
+    std::vector<int> data = {1, 2, 3, 4, 5};
+
+    Task perform_heavy_computation()
+    {
+        std::cout << "perform_heavy_computation()" << std::endl;
+        for (int i : data) {
+            // Perform heavy computation on data[i] asynchronously
+            std::cout << "Processing " << i << std::endl;
+            co_await std::suspend_always {};
+            std::cout << "Processed " << i << std::endl;
+        }
+    }
+
+    void Task_Based_Parallelism()
+    {
+        std::cout << "Task_Based_Parallelism()" << std::endl;
+        Task task = perform_heavy_computation();
+    }
+}
+
+
+// https://medium.com/@AlexanderObregon/understanding-c-coroutine-implementation-8e6e5a2c3edd
 // https://www.youtube.com/watch?v=V6UAO6niuYM
+
+// https://habr.com/ru/articles/519464/
 
 void Coroutines::TestAll()
 {
-    SimpleCoroutine::Test();
+    // SimpleCoroutine::Test();
     // Yield_Coroutine::Test();
     // Waiting_Coroutine::Test();
 
@@ -628,4 +694,6 @@ void Coroutines::TestAll()
     // Fibonacci_Sequence_Generator_Ex::Test();
 
     // String_to_Integer_Parser::Test();
+
+    UseCases::Task_Based_Parallelism();
 }
