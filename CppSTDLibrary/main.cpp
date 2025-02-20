@@ -23,6 +23,7 @@ Description : Cpp STD lib
 #include "Chrono/Chrono.h"
 #include "DateAndTime/DateAndTime.h"
 #include "Concepts/Concepts.h"
+#include "ContextControl/ContextControl.h"
 #include "ConsoleInOut/ConsoleInOut.h"
 #include "ConstConstexprMutable/ConstConstexprMutable.h"
 #include "ConstConstexprMutable/CompileTimeProgramming.h"
@@ -107,6 +108,7 @@ int main([[maybe_unused]] int argc,
     // BitwiseOperation::TestAll();
     // Byte::TestAll();
     // Chrono::TestAll();
+    ContextControl::TestAll();
     // Comparators::TestAll();
     // Concepts::TestAll();
     // ConsoleInOut::TestAll();
@@ -134,7 +136,7 @@ int main([[maybe_unused]] int argc,
     // Lambdas::TestAll();
     // LifetimeExtension::TestAll();
     // Locale::TestAll();
-    Literals::TestAll();
+    // Literals::TestAll();
     // MoveSemantics_RuleOfFive::TestAll();
     // Numbers::TestAll();
     // Math::TestAll();
@@ -158,7 +160,7 @@ int main([[maybe_unused]] int argc,
     // StringView::TestAll();
     // StructuredBinding::TestAll();
     // StrongTypes::TestAll();
-    Span::TestAll();
+    // Span::TestAll();
     // SourceLocation::TestAll();
     // SharedPtr_Tests::TestAll();
     // Variant::TestAll();
