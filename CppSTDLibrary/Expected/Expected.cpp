@@ -12,8 +12,45 @@ Description : Expected C++23 Library tests
 #include <expected>
 #include <vector>
 #include <chrono>
+#include <fstream>
+#include <print>
 
 #include "Expected.h"
+
+namespace
+{
+    [[nodiscard]]
+    std::string readFileToString(std::string_view path) noexcept
+    {
+        std::string data {};
+        if (std::fstream file(path.data(), std::ios::in | std::ios::binary); file.is_open() && file.good())
+        {
+            file.seekg(0, std::ios_base::end);
+            const auto bytesLength{ file.tellg() };
+            file.seekg(0, std::ios_base::beg);
+
+            data.resize(bytesLength);
+            file.read(data.data(), bytesLength);
+        }
+        return data;
+    }
+
+    [[nodiscard]]
+    std::string readFileToString(std::ifstream& file) noexcept
+    {
+        std::string data {};
+        if (file.is_open() && file.good())
+        {
+            file.seekg(0, std::ios_base::end);
+            const auto bytesLength{ file.tellg() };
+            file.seekg(0, std::ios_base::beg);
+
+            data.resize(bytesLength);
+            file.read(data.data(), bytesLength);
+        }
+        return data;
+    }
+}
 
 namespace Expected
 {
@@ -390,7 +427,114 @@ namespace Expected::MonadicOperations::Transform_OrElse
     }
 }
 
+namespace Expected::ReadFileExample
+{
+    constexpr std::string_view primaryFile { R"(../../CppSTDLibrary/test_data/primary.json)" };
+    constexpr std::string_view secondaryFile { R"(../../CppSTDLibrary/test_data/secondary.json)" };
 
+    constexpr std::string_view badFileMissing { R"(../../CppSTDLibrary/test_data/bad.json)" };
+    constexpr std::string_view dataFileMissing { R"(../../CppSTDLibrary/test_data/wrong_name.json)" };
+
+    std::expected<std::string,std::string> readFile(std::ifstream&& fStream)
+    {
+        return readFileToString(fStream);
+    }
+
+    std::expected<std::ifstream, std::string> open_file(const std::string& filename)
+    {
+        std::println("Trying to open file {}",filename);
+        std::ifstream file{ filename };
+        if (!file.is_open()) {
+            return std::unexpected{ std::format("Failed to open file: {}", filename) };
+        }
+        return std::move(file);
+    }
+
+    void HandleFileOpenError()
+    {
+        auto result = open_file(dataFileMissing.data())
+             .or_else([](const std::string& error) {
+                 std::println("Error occurred: {} opening fallback file: {}", error, primaryFile);
+                 return open_file(primaryFile.data());
+        });
+    }
+
+    void HandleFileOpenError_Default()
+    {
+        auto result = open_file(dataFileMissing.data())
+            .transform_error([](const std::string& error){
+             return std::string{"ERROR"};
+        });
+
+        std::cout << "Error: " << result.error() << std::endl;
+    }
+
+    void HandleFileOpenError_MultipleFallback()
+    {
+        const std::expected<std::string, std::string> result = open_file(badFileMissing.data())
+        .or_else([](const std::string& error) {
+             return open_file(dataFileMissing.data());
+        })
+        .or_else([](const std::string& error) {
+            return open_file(primaryFile.data());
+        }).and_then(readFile);
+
+        if (result.has_value()) {
+            std::cout << "File contents: " << result.value() << '\n';
+        }
+    }
+}
+
+namespace Expected::ReadFile_AndParse_Example
+{
+    constexpr std::string_view secondaryFile { R"(../../CppSTDLibrary/test_data/secondary.json)" };
+    constexpr std::string_view badFile { R"(../../CppSTDLibrary/test_data/bad.json)" };
+
+    struct Config
+    {
+        std::string apiKey {};
+    };
+
+    std::expected<std::ifstream, std::string> open_file(const std::string& filename)
+    {
+        std::println("Trying to open file {}",filename);
+        std::ifstream file{ filename };
+        if (!file.is_open()) {
+            return std::unexpected{ std::format("Failed to open file: {}", filename) };
+        }
+        return std::move(file);
+    }
+
+    std::expected<Config, std::string> parse(std::ifstream&& file)
+    {
+        if (const std::string content { readFileToString(file) }; !content.empty()) {
+            /** Some parsing logic here**/
+            return Config {.apiKey = "SECRET_KEY"};
+        }
+        file.close();
+        return std::unexpected{ "Parse error" };
+    }
+
+    void Read_and_Parse()
+    {
+        const std::expected<std::string, std::string> api_key_expected = open_file(badFile.data())
+            .or_else([](const std::string& error){
+                std::println("Error occurred: {} opening fallback file: {}", error, secondaryFile);
+                return open_file(secondaryFile.data());
+            })
+            .and_then(parse).transform([](const Config& config) {
+                return config.apiKey;
+            })
+            .transform_error([](const std::string& error) {
+                return std::format("[ERROR] {}", error);
+            });
+
+        if (api_key_expected.has_value())
+            std::println("API key = {}", api_key_expected.value());
+        else
+            std::print(std::cerr, "{}", api_key_expected.error());
+    }
+}
 
 
 void Expected::TestAll()
@@ -409,6 +553,13 @@ void Expected::TestAll()
     // MonadicOperations::Transform::Test();
     // MonadicOperations::Transform_OrElse::Test();
     // MonadicOperations::Transform_AndThen()::Test();
-    MonadicOperations::TransformError::Test();
+    // MonadicOperations::TransformError::Test();
+
+    // ReadFileExample::HandleFileOpenError();
+    // ReadFileExample::HandleFileOpenError_Default();
+    // ReadFileExample::HandleFileOpenError_MultipleFallback();
+
+
+    ReadFile_AndParse_Example::Read_and_Parse();
 };
 
