@@ -8,10 +8,14 @@ project(${PROJECT_NAME} VERSION ${PROJECT_VERSION} LANGUAGES CXX)
 # add_compile_options(-c -Wall -Wextra -O3 -std=c++26)
 add_compile_options(-c -Wall -O3 -std=c++26)
 
+include_directories(${THIRD_PARTY_DIR}/tinycoro/include)
+
+
 # include all components
 add_executable(${PROJECT_NAME}
         main.cpp
         std/Coroutines.cpp
+        TinyCoro/TinyCoro.cpp
 )
 
 TARGET_LINK_LIBRARIES(${PROJECT_NAME}

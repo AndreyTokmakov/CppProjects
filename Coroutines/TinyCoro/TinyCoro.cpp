@@ -1,11 +1,8 @@
-/**============================================================================
-Name        : main.cpp
-Created on  : 29.02.2024
-Author      : Andrei Tokmakov
-Version     : 1.0
-Copyright   : Your copyright notice
-Description : TinyCoro library tests
-============================================================================**/
+//
+// Created by andtokm on 2/21/25.
+//
+
+#include "TinyCoro.h"
 
 #include <string_view>
 #include <vector>
@@ -25,7 +22,7 @@ Description : TinyCoro library tests
 #include <tinycoro/tinycoro_all.h>
 
 
-namespace Examples
+namespace TinyCoro::Examples
 {
     void Sleep(auto& scheduler)
     {
@@ -60,18 +57,10 @@ namespace Examples
     }
 }
 
-
-
-int main([[maybe_unused]] int argc,
-         [[maybe_unused]] char** argv)
+void TinyCoro::TestAll()
 {
-    const std::vector<std::string_view> args(argv + 1, argv + argc);
-
     tinycoro::Scheduler scheduler {std::thread::hardware_concurrency()};
 
     // Examples::Sleep(scheduler);
     Examples::MultiTasks(scheduler);
-
-
-    return EXIT_SUCCESS;
 }

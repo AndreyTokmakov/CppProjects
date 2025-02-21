@@ -12,13 +12,15 @@ Description : Coroutines
 #include <string_view>
 
 #include "std/Coroutines.h"
+#include "TinyCoro/TinyCoro.h"
 
 int main([[maybe_unused]] int argc,
          [[maybe_unused]] char** argv)
 {
     const std::vector<std::string_view> args(argv + 1, argv + argc);
 
-    Coroutines::TestAll();
+    // Coroutines::TestAll();
+    TinyCoro::TestAll();
 
     return EXIT_SUCCESS;
 }
