@@ -17,13 +17,12 @@ add_executable(${PROJECT_NAME}
         std/Coroutines.cpp
         TinyCoro/TinyCoro.cpp
         std/Generators.cpp
-        std/Generators.h
         std/Experiments.cpp
-        std/Experiments.h
         std/Calculating_Average.cpp
-        std/Calculating_Average.h
         std/PinBall_Game.cpp
-        std/PinBall_Game.h
+        std/Yield_Coroutine.cpp
+        std/Simple_Coroutine.cpp
+        std/Waiting_Coroutine.cpp
 )
 
 TARGET_LINK_LIBRARIES(${PROJECT_NAME}

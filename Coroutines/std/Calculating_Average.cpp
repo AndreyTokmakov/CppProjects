@@ -7,17 +7,12 @@ Copyright   : Your copyright notice
 Description : Calculating average
 ============================================================================**/
 
-#include "Calculating_Average.h"
-
+#include "Coroutines.h"
 
 #include <iostream>
-#include <string_view>
-#include <future>
-#include <semaphore>
 #include <chrono>
 #include <coroutine>
 #include <generator>
-#include <utility>
 
 namespace
 {

@@ -10,9 +10,37 @@ Description : Coroutines.h
 #ifndef CPPPROJECTS_COROUTINES_H
 #define CPPPROJECTS_COROUTINES_H
 
-namespace Coroutines
-{
+namespace Coroutines {
     void TestAll();
 };
+
+namespace Coroutines::Yield_Coroutine {
+    void TestAll();
+};
+
+namespace Coroutines::Simple_Coroutine {
+    void TestAll();
+};
+
+namespace Coroutines::Waiting_Coroutine {
+    void TestAll();
+};
+
+namespace Coroutines::Generators {
+    void TestAll();
+};
+
+namespace Coroutines::Experiments {
+    void TestAll();
+};
+
+namespace Coroutines::Examples::PinBall_Game {
+    void TestAll();
+};
+
+namespace Coroutines::Examples::Calculating_Average {
+    void TestAll();
+};
+
 
 #endif //CPPPROJECTS_COROUTINES_H
