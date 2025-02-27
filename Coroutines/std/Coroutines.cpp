@@ -10,6 +10,8 @@ Description : Coroutines.cpp
 #include "Coroutines.h"
 #include "Generators.h"
 #include "Experiments.h"
+#include "Calculating_Average.h"
+#include "PinBall_Game.h"
 
 #include <iostream>
 #include <string_view>
@@ -544,7 +546,10 @@ namespace Coroutines::UseCases
 void Coroutines::TestAll()
 {
     // Generators::TestAll();
-    Experiments::TestAll();
+    // Experiments::TestAll();
+
+    // Examples::Calculating_Average::TestAll();
+    Examples::PinBall_Game::TestAll();
 
 
     // SimpleCoroutine::Test();

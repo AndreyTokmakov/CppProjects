@@ -20,6 +20,10 @@ add_executable(${PROJECT_NAME}
         std/Generators.h
         std/Experiments.cpp
         std/Experiments.h
+        std/Calculating_Average.cpp
+        std/Calculating_Average.h
+        std/PinBall_Game.cpp
+        std/PinBall_Game.h
 )
 
 TARGET_LINK_LIBRARIES(${PROJECT_NAME}
