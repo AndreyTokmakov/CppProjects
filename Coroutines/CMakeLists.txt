@@ -16,6 +16,10 @@ add_executable(${PROJECT_NAME}
         main.cpp
         std/Coroutines.cpp
         TinyCoro/TinyCoro.cpp
+        std/Generators.cpp
+        std/Generators.h
+        std/Experiments.cpp
+        std/Experiments.h
 )
 
 TARGET_LINK_LIBRARIES(${PROJECT_NAME}

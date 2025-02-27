@@ -1,0 +1,123 @@
+/**============================================================================
+Name        : Experiments.cpp
+Created on  : 27.02.2025
+Author      : Andrei Tokmakov
+Version     : 1.0
+Copyright   : Your copyright notice
+Description : Coroutines - Experiments
+============================================================================**/
+
+#include "Experiments.h"
+
+#include <iostream>
+#include <string_view>
+#include <future>
+#include <semaphore>
+#include <chrono>
+#include <coroutine>
+#include <generator>
+#include <utility>
+
+namespace Coroutines::Experiments::Game
+{
+    /**
+    Example: 2 – players – pinball
+     – The caller is 1 player (I)
+     – The co-routine is the other player (You)
+     – We each take turns, we collaboratively work on the shared pinball machine
+     – We want to win, so we will make the co-routine loose after N turns, aka the co-routine will be done
+
+    The interface/api:
+     – Resume method, let’s call it play()
+     – No need for a get value method, since it returns/yields nothing
+     – We configure N (turns) by specifying an integer to the co-routine invocation
+    **/
+
+    struct [[nodiscard]] Pinball
+    {
+        struct promise_type;
+        using CoroHandle = std::coroutine_handle<promise_type>;
+
+        explicit Pinball(const CoroHandle handle) : coroHandle { handle } {
+        }
+
+        ~Pinball()
+        {
+            if (coroHandle)
+            {
+                coroHandle.destroy();
+            }
+        }
+
+        Pinball(const Pinball&) = delete;
+        Pinball& operator=(const Pinball&) = delete;
+
+        [[nodiscard]]
+        bool play() const
+        {
+            if (!coroHandle || coroHandle.done()) {
+                return false; // we are done
+            }
+            coroHandle.resume();
+            return !coroHandle.done();
+        }
+
+    private:
+
+        CoroHandle coroHandle;
+    };
+
+    struct Pinball::promise_type
+    {
+        Pinball get_return_object()
+        {
+            return Pinball { CoroHandle::from_promise(*this) };
+        }
+
+        std::suspend_always initial_suspend()
+        {
+            return std::suspend_always{};
+        }
+
+        void unhandled_exception()
+        {
+            std::terminate();
+        }
+
+        void return_void()
+        {
+        }
+
+        std::suspend_always final_suspend() noexcept
+        {
+            return std::suspend_always{};
+        }
+    };
+
+    Pinball pinball(const int turns)
+    {
+        for (int i = 0; i < turns; ++i)
+        {
+            std::cout << "Coro’s turn to play. " << std::endl;
+            co_await std::suspend_always{};
+        }
+        std::cout << "Coro looses." << std::endl;
+    }
+
+    void play()
+    {
+        const Pinball pBall = pinball(4);
+        while (pBall.play())
+        {
+            std::cout << "My turn to play." << std::endl;
+        }
+    }
+}
+
+
+void Coroutines::Experiments:: TestAll()
+{
+    Game::play();
+}
+
+

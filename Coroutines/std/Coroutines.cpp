@@ -8,6 +8,8 @@ Description : Coroutines.cpp
 ============================================================================**/
 
 #include "Coroutines.h"
+#include "Generators.h"
+#include "Experiments.h"
 
 #include <iostream>
 #include <string_view>
@@ -282,153 +284,7 @@ namespace Coroutines::Waiting_Coroutine
     }
 }
 
-namespace Coroutines::Fibonacci_Sequence_Generator
-{
-    std::generator<int> fibonacci_generator()
-    {
-        int a { 0 }, b{  1 };
-        while (true) {
-            co_yield a;
-            int c = a + b;
-            a = b;
-            b = c;
-        }
-    }
 
-    std::generator<int> fibonacci_generator(int limit)
-    {
-        int a { 0 }, b{  1 };
-        while  (limit--) {
-            co_yield a;
-            int c = a + b;
-            a = b;
-            b = c;
-        }
-    }
-
-    void Test()
-    {
-        std::generator<int> fib = fibonacci_generator();
-
-        int i = 0;
-        for (auto f = fib.begin(); f != fib.end(); ++f) {
-            if (i == 10) {
-                break;
-            }
-            std::cout << *f << " ";
-            ++i;
-        }
-        std::cout << std::endl;
-
-        for (int f : fibonacci_generator(10)) {
-            std::cout << f << " ";
-        }
-    }
-}
-
-namespace Coroutines::Fibonacci_Sequence_Generator_Ex
-{
-    using namespace std::string_literals;
-
-    template <typename Out>
-    struct SequenceGenerator
-    {
-        struct promise_type
-        {
-            Out output_data { };
-
-            SequenceGenerator get_return_object() noexcept {
-                return SequenceGenerator { *this };
-            }
-
-            void return_void() noexcept {
-            }
-
-            std::suspend_always initial_suspend() noexcept {
-                return {};
-            }
-
-            std::suspend_always final_suspend() noexcept {
-                return {};
-            }
-
-            void unhandled_exception() noexcept {
-            }
-
-            std::suspend_always yield_value(int64_t num) noexcept {
-                output_data = num;
-                return {};
-            }
-        };
-
-        std::coroutine_handle<promise_type> handle{};
-
-        explicit SequenceGenerator(promise_type& promise) :
-            handle { std::coroutine_handle<promise_type>::from_promise(promise) } {
-        }
-
-        ~SequenceGenerator() noexcept
-        {
-            if (handle) {
-                handle.destroy();
-            }
-        }
-
-        void next() {
-            if (!handle.done()) {
-                handle.resume();
-            }
-        }
-
-        int64_t value() {
-            return handle.promise().output_data;
-        }
-    };
-
-    SequenceGenerator<int64_t> fibonacci()
-    {
-        int64_t a{ 0 };
-        int64_t b{ 1 };
-        int64_t c{ 0 };
-
-        while (true) {
-            co_yield a;
-            c = a + b;
-            a = b;
-            b = c;
-        }
-    }
-
-    void Test()
-    {
-        SequenceGenerator<int64_t> fib = fibonacci();
-
-        std::cout << "Generate ten Fibonacci numbers\n"s;
-
-        for (int i = 0; i < 10; ++i) {
-            fib.next();
-            std::cout << fib.value() << " ";
-        }
-        std::cout << std::endl;
-
-        std::cout << "Generate ten more\n"s;
-
-        for (int i = 0; i < 10; ++i) {
-            fib.next();
-            std::cout << fib.value() << " ";
-        }
-        std::cout << std::endl;
-
-        std::cout << "Let's do five more\n"s;
-
-        for (int i = 0; i < 5; ++i) {
-            fib.next();
-            std::cout << fib.value() << " ";
-        }
-        std::cout << std::endl;
-
-    }
-}
 
 namespace Coroutines::String_to_Integer_Parser
 {
@@ -679,6 +535,7 @@ namespace Coroutines::UseCases
 }
 
 
+
 // https://medium.com/@AlexanderObregon/understanding-c-coroutine-implementation-8e6e5a2c3edd
 // https://www.youtube.com/watch?v=V6UAO6niuYM
 
@@ -686,14 +543,18 @@ namespace Coroutines::UseCases
 
 void Coroutines::TestAll()
 {
+    // Generators::TestAll();
+    Experiments::TestAll();
+
+
     // SimpleCoroutine::Test();
     // Yield_Coroutine::Test();
     // Waiting_Coroutine::Test();
 
-    // Fibonacci_Sequence_Generator::Test();
     // Fibonacci_Sequence_Generator_Ex::Test();
 
     // String_to_Integer_Parser::Test();
 
-    UseCases::Task_Based_Parallelism();
+    // UseCases::Task_Based_Parallelism();
+
 }

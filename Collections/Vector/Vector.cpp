@@ -18,6 +18,9 @@ Description : C++ STL Vector container testing
 #include <future>
 #include <algorithm>
 #include <chrono>
+#include <unordered_set>
+#include <c++/11/unordered_map>
+
 #include "../Helpers/Integer.h"
 
 
@@ -941,6 +944,23 @@ namespace Vector::Iterators
 	}
 }
 
+namespace Vector::UnorderedCompare
+{
+	bool unordered_equal(const std::vector<int>& a, const std::vector<int>& b)
+	{
+		const std::unordered_set<int> aSet (a.begin(), a.end()), bSet (b.begin(), b.end());
+		return aSet == bSet;
+	}
+
+
+	void compare()
+	{
+		const std::vector<int> vec1 {-1, 0, 4 }, vec2 {4, 0, -1};
+
+		std::cout << std::boolalpha << (vec1 == vec2) << std::endl;
+		std::cout << std::boolalpha << unordered_equal(vec1 , vec2) << std::endl;
+	}
+}
 
 void Vector::TestAll()
 {
@@ -1001,6 +1021,7 @@ void Vector::TestAll()
 	// Allocators::Emplace_CustomType_2();
 	// Allocators::Emplace_CustomType_Allocator();
 
+	UnorderedCompare::compare();
 
-	Iterators::Invalidation_Test();
+	// Iterators::Invalidation_Test();
 }
