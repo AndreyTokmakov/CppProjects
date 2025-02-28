@@ -9,15 +9,8 @@ Description : Coroutines - Experiments
 
 #include "Coroutines.h"
 
-#include <iostream>
-#include <string_view>
-#include <future>
-#include <semaphore>
-#include <chrono>
 #include <coroutine>
-#include <generator>
-#include <utility>
-
+#include <print>
 
 void Coroutines::Experiments:: TestAll()
 {

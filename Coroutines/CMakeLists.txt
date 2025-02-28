@@ -23,6 +23,9 @@ add_executable(${PROJECT_NAME}
         std/Yield_Coroutine.cpp
         std/Simple_Coroutine.cpp
         std/Waiting_Coroutine.cpp
+        std/Simple_Coroutine_Lifecycle.cpp
+        std/Simple_Coroutine_ReturningValue.cpp
+        std/Simple_Coroutine_Waitable.cpp
 )
 
 TARGET_LINK_LIBRARIES(${PROJECT_NAME}

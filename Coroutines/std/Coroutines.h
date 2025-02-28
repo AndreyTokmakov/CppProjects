@@ -14,6 +14,18 @@ namespace Coroutines {
     void TestAll();
 };
 
+namespace Coroutines::CoroutineLifecycle {
+    void TestAll();
+}
+
+namespace Coroutines::Simple_Coroutine_ReturningValue {
+    void TestAll();
+}
+
+namespace Coroutines::Simple_Coroutine_Waitable {
+    void TestAll();
+}
+
 namespace Coroutines::Yield_Coroutine {
     void TestAll();
 };
@@ -40,7 +52,6 @@ namespace Coroutines::Examples::PinBall_Game {
 
 namespace Coroutines::Examples::Calculating_Average {
     void TestAll();
-};
-
+}
 
 #endif //CPPPROJECTS_COROUTINES_H

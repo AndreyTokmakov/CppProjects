@@ -270,12 +270,16 @@ namespace Coroutines::UseCases
 
 void Coroutines::TestAll()
 {
+    // CoroutineLifecycle::TestAll();
+    // Simple_Coroutine_ReturningValue::TestAll();
+    Simple_Coroutine_Waitable::TestAll();
+
     // Generators::TestAll();
     // Experiments::TestAll();
 
     // Simple_Coroutine::TestAll();
     // Yield_Coroutine::TestAll();
-    Waiting_Coroutine::TestAll();
+    // Waiting_Coroutine::TestAll();
 
     // Examples::Calculating_Average::TestAll();
     // Examples::PinBall_Game::TestAll();
