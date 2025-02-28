@@ -1481,16 +1481,6 @@ int main([[maybe_unused]] int argc,
     // VirtualFunctionTests::demo();
 
 
-    std::cout << (int)'a' << std::endl;
-    std::cout << (int)'A' << std::endl;
-    std::cout << (int)'Z' << std::endl;
-    std::cout << (int)'z' << std::endl;   // 122
-    std::cout << (int)'0' << std::endl;   // 48
-    std::cout << (int)'1' << std::endl;   // 49
-    std::cout << (int)'9' << std::endl;
-
-    std::cout << (int)('z' - '0' ) << std::endl;
-
 
     // WrapperTests::Test();
     // StaticCounter::Test();

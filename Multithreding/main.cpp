@@ -102,7 +102,7 @@ int main([[maybe_unused]] int argc,
 
     /** Coroutines **/
 
-    Coroutines::TestAll();
+    // Coroutines::TestAll();
 
     /** Performance **/
 
