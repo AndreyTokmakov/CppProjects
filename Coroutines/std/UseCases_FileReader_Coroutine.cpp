@@ -91,7 +91,7 @@ namespace
 
     FileReader processFiles()
     {
-        co_await "12345";
+        // co_await "12345";
 
         //co_await FileReader{}.readAsync(R"(/home/andtokm/DiskS/ProjectsUbuntu/CppProjects/Coroutines/data/file1.txt)");
         //co_await FileReader{}.readAsync(R"(/home/andtokm/DiskS/ProjectsUbuntu/CppProjects/Coroutines/data/file2.txt)");

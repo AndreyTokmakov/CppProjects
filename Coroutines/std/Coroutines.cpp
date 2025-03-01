@@ -268,6 +268,9 @@ namespace Coroutines::UseCases
 
 // https://habr.com/ru/articles/519464/
 
+// C++20 Coroutine: Under The Hood
+// https://dev.to/visheshpatel/c-20-coroutine-under-the-hood-3071?ysclid=m7qi746mr7506895977
+
 void Coroutines::TestAll()
 {
     // CoroutineLifecycle::TestAll();
@@ -276,10 +279,10 @@ void Coroutines::TestAll()
     // Simple_Coroutine_Waitable_2::TestAll();
     // Waitable_Coroutine_With_Mutex::TestAll();
 
-    UseCases_FileReader_Coroutine::TestAll();
+    // UseCases_FileReader_Coroutine::TestAll();
 
     // Generators::TestAll();
-    // Experiments::TestAll();
+    Experiments::TestAll();
 
     // Simple_Coroutine::TestAll();
     // Yield_Coroutine::TestAll();

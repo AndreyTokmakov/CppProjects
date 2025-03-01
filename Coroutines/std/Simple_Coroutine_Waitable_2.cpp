@@ -15,6 +15,45 @@ Description : Simple Coroutine Waitable
 #include <chrono>
 #include <thread>
 
+/**
+
+Coroutine Functions and Suspension Points
+A coroutine function is a special type of function in C++ that can be suspended and resumed at specific points
+during its execution.
+This is achieved using three key keywords: co_await, co_yield, and co_return.
+
+1. co_await:  This keyword is used to suspend the execution of the coroutine until a particular
+              condition is met or an asynchronous operation is completed.
+
+2. co_yield:  This keyword allows the coroutine to produce a value and suspend its execution.
+              It can be resumed later, continuing from the point after co_yield.
+
+3. co_return: This keyword is used to return a value from the coroutine and finalize its execution.
+
+Custom Awaitable Types
+
+In C++, there are two built-in types like
+-   std::suspend_always
+-   std::suspend_never.
+
+We create custom awaitable types that define specific suspension and resumption behavior:
+An awaitable type is any type that implements the following methods:
+
+1. await_ready()  : Determines if the coroutine should suspend or continue without suspension.
+
+2. await_suspend(): Defines what happens when the coroutine is suspended.
+                    This can involve storing the coroutine handle, initiating an asynchronous operation,
+                    or interacting with other coroutines.
+
+3. await_resume() : Defines what happens when the coroutine is resumed, often returning a value or performing
+                    some final action before execution continues.
+
+In this example, 'AwaiterTimer' is a custom awaitable type that suspends the coroutine for a specified duration.
+The coroutine resumes automatically after the specified time, allowing you to integrate time-based delays
+or other asynchronous tasks into your coroutine workflow.
+
+**/
+
 namespace {
     using Utilities::getCurrentTime;
 }

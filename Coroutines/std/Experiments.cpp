@@ -14,7 +14,52 @@ Description : Coroutines - Experiments
 #include <iostream>
 #include <thread>
 
+namespace
+{
+    struct HelloWorldCoro
+    {
+        struct promise_type
+        {
+            int m_val;
 
+            HelloWorldCoro get_return_object() {
+                return HelloWorldCoro { std::coroutine_handle<promise_type>::from_promise(*this) };
+            }
+
+            std::suspend_always initial_suspend() { return {}; }
+            std::suspend_always final_suspend() noexcept { return {}; }
+
+            std::suspend_always yield_value(int val) {
+                m_val = val;
+                return {};
+            }
+
+            void unhandled_exception()
+            {
+                std::terminate();
+            }
+        };
+
+        explicit HelloWorldCoro(const std::coroutine_handle<promise_type> handle) : coroHandle { handle }  {
+        }
+
+        ~HelloWorldCoro() {
+            coroHandle.destroy();
+        }
+
+        std::coroutine_handle<promise_type> coroHandle;
+    };
+
+    struct dummy { // Awaitable
+        std::suspend_always operator co_await(){ return {}; }
+    };
+
+    HelloWorldCoro print_hello_world() {
+        std::cout << "Hello ";
+        co_await dummy{};
+        std::cout << "World!" << std::endl;
+    }
+}
 
 
 void Coroutines::Experiments:: TestAll()
