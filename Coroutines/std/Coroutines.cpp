@@ -273,14 +273,17 @@ void Coroutines::TestAll()
     // CoroutineLifecycle::TestAll();
     // Simple_Coroutine_ReturningValue::TestAll();
     // Simple_Coroutine_Waitable::TestAll();
-    Simple_Coroutine_Waitable_2::TestAll();
+    // Simple_Coroutine_Waitable_2::TestAll();
     // Waitable_Coroutine_With_Mutex::TestAll();
+
+    UseCases_FileReader_Coroutine::TestAll();
 
     // Generators::TestAll();
     // Experiments::TestAll();
 
     // Simple_Coroutine::TestAll();
     // Yield_Coroutine::TestAll();
+    // Return_Value_Coroutine::TestAll();
     // Waiting_Coroutine::TestAll();
 
     // Examples::Calculating_Average::TestAll();

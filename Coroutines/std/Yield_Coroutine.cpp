@@ -77,7 +77,8 @@ namespace
             std::cout << "~return_type()" << std::endl;
         }
 
-        std::string getValue() noexcept
+        [[nodiscard]]
+        std::string getValue() const noexcept
         {
             std::cout << "get()" << std::endl;
             if (!handle.done()) {

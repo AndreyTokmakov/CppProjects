@@ -34,7 +34,19 @@ namespace Coroutines::Waitable_Coroutine_With_Mutex {
     void TestAll();
 }
 
+namespace Coroutines::UseCases_FileReader_Coroutine {
+    void TestAll();
+}
+
+namespace Coroutines::UseCases_TaskCoordination {
+    void TestAll();
+}
+
 namespace Coroutines::Yield_Coroutine {
+    void TestAll();
+}
+
+namespace Coroutines::Return_Value_Coroutine {
     void TestAll();
 };
 

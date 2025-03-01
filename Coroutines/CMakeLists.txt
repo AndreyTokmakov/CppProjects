@@ -22,6 +22,7 @@ add_executable(${PROJECT_NAME}
         std/Calculating_Average.cpp
         std/PinBall_Game.cpp
         std/Yield_Coroutine.cpp
+        std/Return_Value_Coroutine.cpp
         std/Simple_Coroutine.cpp
         std/Waiting_Coroutine.cpp
         std/Simple_Coroutine_Lifecycle.cpp
@@ -29,6 +30,8 @@ add_executable(${PROJECT_NAME}
         std/Simple_Coroutine_Waitable.cpp
         std/Simple_Coroutine_Waitable_2.cpp
         std/Waitable_Coroutine_With_Mutex.cpp
+        std/UseCases_FileReader_Coroutine.cpp
+        std/UseCases_TaskCoordination.cpp
 )
 
 TARGET_LINK_LIBRARIES(${PROJECT_NAME}

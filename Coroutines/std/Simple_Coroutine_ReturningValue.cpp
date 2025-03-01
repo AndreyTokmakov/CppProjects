@@ -14,63 +14,47 @@ Description : Simple Coroutine returning value
 
 namespace
 {
-    struct MyCoroutine
+    struct ReturnValue
     {
         struct promise_type
         {
-            int value;
+            int value { 0 };
 
-            MyCoroutine get_return_object()
-            {
-                std::println("\t0. get_return_object");
-                return MyCoroutine {this };
+            ReturnValue get_return_object() {
+                return ReturnValue { this };
             }
 
-            std::suspend_never initial_suspend()
-            {
-                std::println("\t1. initial_suspend");
+            std::suspend_never initial_suspend() {
                 return {};
             }
 
-            std::suspend_never final_suspend() noexcept
-            {
-                std::println("\t4. final_suspend");
+            std::suspend_never final_suspend() noexcept {
                 return {};
             }
 
-            void return_value(const int v)
-            {
-                std::println("\t3. return_value");
-                value = v;
+            void return_value(const int val) {
+                value = val;
             }
 
-            void unhandled_exception()
-            {
+            void unhandled_exception() {
                 std::terminate();
             }
         };
 
         promise_type* promise;
 
-        explicit MyCoroutine(promise_type* p) : promise(p) {
-            std::println("MyCoroutine()");
-        }
-
-        ~MyCoroutine() {
-            std::println("~MyCoroutine()");
+        explicit ReturnValue(promise_type* p) : promise(p) {
         }
 
         [[nodiscard]]
         int get() const {
-            std::println("MyCoroutine::get()");
             return promise->value;
         }
     };
 
-    MyCoroutine computeValue() {
+    ReturnValue computeValue() {
         co_return 42;
     }
-
 }
 
 /// In this example, the coroutine computeValue returns an integer value using co_return.
@@ -80,6 +64,6 @@ namespace
 void Coroutines::Simple_Coroutine_ReturningValue::TestAll()
 {
     std::println("Start of coroutine");
-    const MyCoroutine result = computeValue();
+    ReturnValue result = computeValue();
     std::println("Computed Value: {}\nDone", result.get() );
 }
