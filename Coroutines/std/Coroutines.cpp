@@ -272,7 +272,9 @@ void Coroutines::TestAll()
 {
     // CoroutineLifecycle::TestAll();
     // Simple_Coroutine_ReturningValue::TestAll();
-    Simple_Coroutine_Waitable::TestAll();
+    // Simple_Coroutine_Waitable::TestAll();
+    Simple_Coroutine_Waitable_2::TestAll();
+    // Waitable_Coroutine_With_Mutex::TestAll();
 
     // Generators::TestAll();
     // Experiments::TestAll();
@@ -284,15 +286,6 @@ void Coroutines::TestAll()
     // Examples::Calculating_Average::TestAll();
     // Examples::PinBall_Game::TestAll();
 
-
-    // SimpleCoroutine::Test();
-    // Yield_Coroutine::Test();
-    // Waiting_Coroutine::Test();
-
-    // Fibonacci_Sequence_Generator_Ex::Test();
-
     // String_to_Integer_Parser::Test();
-
     // UseCases::Task_Based_Parallelism();
-
 }

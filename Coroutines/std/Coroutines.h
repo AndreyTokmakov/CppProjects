@@ -26,6 +26,14 @@ namespace Coroutines::Simple_Coroutine_Waitable {
     void TestAll();
 }
 
+namespace Coroutines::Simple_Coroutine_Waitable_2 {
+    void TestAll();
+}
+
+namespace Coroutines::Waitable_Coroutine_With_Mutex {
+    void TestAll();
+}
+
 namespace Coroutines::Yield_Coroutine {
     void TestAll();
 };

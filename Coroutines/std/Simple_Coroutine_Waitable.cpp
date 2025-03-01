@@ -8,33 +8,15 @@ Description : Simple Coroutine Waitable
 ============================================================================**/
 
 #include "Coroutines.h"
+#include "Utilities.h"
 
 #include <coroutine>
 #include <print>
 #include <chrono>
 #include <thread>
 
-namespace
-{
-    constexpr std::string_view formatMSeconds { "%d-%02d-%02d %02d:%02d:%02d.%06ld" };
-
-    [[nodiscard]]
-    std::string getCurrentTime(const std::chrono::time_point<std::chrono::system_clock>& timestamp =
-                                std::chrono::system_clock::now())
-    {
-        const time_t time { std::chrono::system_clock::to_time_t(timestamp) };
-        std::tm tm {};
-        ::localtime_r(&time, &tm);
-
-        std::string buffer(64, '\0');
-        const int32_t size = std::sprintf(buffer.data(), formatMSeconds.data(),
-            tm.tm_year + 1900, tm.tm_mon + 1, tm.tm_mday, tm.tm_hour, tm.tm_min, tm.tm_sec,
-            duration_cast<std::chrono::microseconds>(timestamp - time_point_cast<std::chrono::seconds>(timestamp)).count()
-        );
-        buffer.resize(size);
-        buffer.shrink_to_fit();
-        return buffer;
-    }
+namespace {
+    using Utilities::getCurrentTime;
 }
 
 namespace
@@ -54,31 +36,48 @@ namespace
     3. await_resume() : Defines what happens when the coroutine is resumed, often returning a value or performing
                         some final action before execution continues.
     */
-    struct Timer
+    struct AwaiterTimer
     {
         std::chrono::milliseconds duration;
 
-        explicit Timer(const std::chrono::milliseconds d) : duration(d) {
-            std::println("[{}] Timer::Timer({})", getCurrentTime(), duration.count());
+        explicit AwaiterTimer(const std::chrono::milliseconds d) : duration(d) {
+            std::println("[{}] AwaiterTimer::AwaiterTimer({})", getCurrentTime(), duration.count());
         }
 
         [[nodiscard]]
-        bool await_ready() const
+        bool await_ready() noexcept
         {
-            std::println("[{}] Timer::await_ready()", getCurrentTime());
+            /** Called immediately before the coroutine is suspended
+             *  Allows as such, for some reason, to decide not to suspend after all
+             *  Returns true → coroutine is NOT suspended
+             *  Typically : return false;
+             *  Use case : suspension depends on some data availability
+            **/
+            std::println("[{}] AwaiterTimer::await_ready()", getCurrentTime());
             return false;
         }
 
-        void await_suspend(std::coroutine_handle<> h) const
+        void await_suspend(std::coroutine_handle<> handle) noexcept
         {
+            /** Called immediately after the coroutine is suspended
+             *  Will get called if await_ready() return False
+             *  Parameter: the handle of the coroutine that was suspended
+             *  In the body you can either return an other coroutine_handle type to change the call execution
+             *  Or you ca return nothing
+            **/
             std::println("[{}] Timer::await_suspend() entered", getCurrentTime());
-            std::thread([h, this]() {
+            std::thread([handle, this]() {
                 std::this_thread::sleep_for(duration);
-                h.resume();
+                handle.resume();
             }).detach();
         }
 
-        void await_resume() const {
+        void await_resume() const
+        {   /** Called when the coroutine is resumed (after a successful suspension)
+             *  It is the final result of expression 'co_await ...'
+             *  It could return a value or nothing
+             *  Can return a value : The value the co_await expression yields
+            **/
             std::println("[{}] Timer::await_resume()", getCurrentTime());
         }
     };
@@ -89,7 +88,7 @@ namespace
         {
             MyCoroutineTask get_return_object() {
                 std::println("[{}] get_return_object", getCurrentTime());
-                return {};
+                return MyCoroutineTask{};
             }
 
             std::suspend_never initial_suspend() {
@@ -114,7 +113,7 @@ namespace
         MyCoroutineTask run()
         {
             std::println("[{}] Starting timer... ", getCurrentTime());
-            co_await Timer{std::chrono::seconds(2)};
+            co_await AwaiterTimer { std::chrono::seconds(2u) };
             std::println("[{}] Starting timer...", getCurrentTime());
             std::println("[{}] Timer finished.", getCurrentTime());
         }
@@ -134,5 +133,5 @@ void Coroutines::Simple_Coroutine_Waitable::TestAll()
 {
     MyCoroutineTask task;
     task.run();
-    std::this_thread::sleep_for(std::chrono::seconds(3));
+    std::this_thread::sleep_for(std::chrono::seconds(3u));
 }
