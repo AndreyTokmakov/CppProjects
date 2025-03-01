@@ -23,10 +23,14 @@ namespace
 {
     /**
     Custom Awaitable Types
-    In C++, coroutines are not limited to working with built-in types like std::suspend_always or std::suspend_never.
-    You can create custom awaitable types that define specific suspension and resumption behavior.
 
+    In C++, there are two built-in types like
+    -   std::suspend_always
+    -   std::suspend_never.
+
+    We create custom awaitable types that define specific suspension and resumption behavior:
     An awaitable type is any type that implements the following methods:
+
     1. await_ready()  : Determines if the coroutine should suspend or continue without suspension.
 
     2. await_suspend(): Defines what happens when the coroutine is suspended.
@@ -35,7 +39,13 @@ namespace
 
     3. await_resume() : Defines what happens when the coroutine is resumed, often returning a value or performing
                         some final action before execution continues.
-    */
+
+    In this example, 'AwaiterTimer' is a custom awaitable type that suspends the coroutine for a specified duration.
+    The coroutine resumes automatically after the specified time, allowing you to integrate time-based delays
+    or other asynchronous tasks into your coroutine workflow.
+
+    **/
+
     struct AwaiterTimer
     {
         std::chrono::milliseconds duration;
