@@ -1,5 +1,5 @@
 /**============================================================================
-Name        : Simple_Coroutine_Waitable.cpp
+Name        : FileReader.cpp
 Created on  : 28.02.2025
 Author      : Andrei Tokmakov
 Version     : 1.0
@@ -12,8 +12,6 @@ Description : Simple Coroutine Waitable
 
 #include <coroutine>
 #include <print>
-#include <chrono>
-#include <thread>
 #include <fstream>
 
 namespace {
@@ -99,7 +97,7 @@ namespace
 }
 
 
-void Coroutines::UseCases_FileReader_Coroutine::TestAll()
+void Coroutines::UseCases::FileReader::TestAll()
 {
     processFiles();
 }

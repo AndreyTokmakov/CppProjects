@@ -14,64 +14,80 @@ namespace Coroutines {
     void TestAll();
 };
 
-namespace Coroutines::CoroutineLifecycle {
+/** =====================   Simple    ======================== **/
+
+namespace Coroutines::Simple::Coroutine_Lifecycle_CoAwait {
     void TestAll();
 }
 
-namespace Coroutines::Simple_Coroutine_ReturningValue {
-    void TestAll();
-}
-
-namespace Coroutines::Simple_Coroutine_Waitable {
-    void TestAll();
-}
-
-namespace Coroutines::Simple_Coroutine_Waitable_2 {
-    void TestAll();
-}
-
-namespace Coroutines::Waitable_Coroutine_With_Mutex {
-    void TestAll();
-}
-
-namespace Coroutines::UseCases_FileReader_Coroutine {
-    void TestAll();
-}
-
-namespace Coroutines::UseCases_TaskCoordination {
-    void TestAll();
-}
-
-namespace Coroutines::Yield_Coroutine {
-    void TestAll();
-}
-
-namespace Coroutines::Return_Value_Coroutine {
+namespace Coroutines::Simple::Coroutine_Lifecycle_CoReturn {
     void TestAll();
 };
 
-namespace Coroutines::Simple_Coroutine {
+namespace Coroutines::Simple::Returning_Coroutine {
     void TestAll();
 };
 
-namespace Coroutines::Waiting_Coroutine {
+namespace Coroutines::Simple::Returning_Coroutine_2 {
     void TestAll();
 };
 
-namespace Coroutines::Generators {
+namespace Coroutines::Simple::Waitable_Coroutine {
     void TestAll();
 };
+
+namespace Coroutines::Simple::Waitable_Coroutine_2 {
+    void TestAll();
+};
+
+namespace Coroutines::Simple::Multiple_Awaiters_Resolution {
+    void TestAll();
+};
+
+namespace Coroutines::Simple::Yield_Coroutine {
+    void TestAll();
+}
+
+/** ===================== Experiments ======================== **/
 
 namespace Coroutines::Experiments {
     void TestAll();
 };
 
-namespace Coroutines::Examples::PinBall_Game {
+namespace Coroutines::Experiments::PinBall_Game {
     void TestAll();
 };
 
-namespace Coroutines::Examples::Calculating_Average {
+namespace Coroutines::Experiments::Calculating_Average {
     void TestAll();
 }
+
+namespace Coroutines::Experiments::Waitable_Coroutine_With_Mutex {
+    void TestAll();
+}
+
+/** ===================== Generators  ======================== **/
+
+namespace Coroutines::Generators {
+    void TestAll();
+}
+
+/** =====================  UseCases   ======================== **/
+
+namespace Coroutines::UseCases::FileReader {
+    void TestAll();
+}
+
+namespace Coroutines::UseCases::TaskCoordination {
+    void TestAll();
+}
+
+/** =====================             ======================== **/
+
+
+namespace Coroutines::Waiting_Coroutine {
+    void TestAll();
+};
+
 
 #endif //CPPPROJECTS_COROUTINES_H

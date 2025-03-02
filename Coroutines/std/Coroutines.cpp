@@ -273,25 +273,27 @@ namespace Coroutines::UseCases
 
 void Coroutines::TestAll()
 {
-    // CoroutineLifecycle::TestAll();
-    // Simple_Coroutine_ReturningValue::TestAll();
-    // Simple_Coroutine_Waitable::TestAll();
-    // Simple_Coroutine_Waitable_2::TestAll();
-    // Waitable_Coroutine_With_Mutex::TestAll();
-
-    // UseCases_FileReader_Coroutine::TestAll();
+    // Simple::Coroutine_Lifecycle_CoAwait::TestAll();
+    // Simple::Coroutine_Lifecycle_CoReturn::TestAll();
+    // Simple::Returning_Coroutine::TestAll();
+    // Simple::Returning_Coroutine_2::TestAll();
+    // Simple::Waitable_Coroutine::TestAll();
+    // Simple::Waitable_Coroutine_2::TestAll();
+    // Simple::Yield_Coroutine::TestAll();
+    Simple::Multiple_Awaiters_Resolution::TestAll();
 
     // Generators::TestAll();
-    Experiments::TestAll();
 
-    // Simple_Coroutine::TestAll();
+    // Experiments::TestAll();
+    // Experiments::Waitable_Coroutine_With_Mutex::TestAll();
+    // Experiments::Calculating_Average::TestAll();
+    // Experiments::PinBall_Game::TestAll();
+
+    // UseCases::FileReader::TestAll();
+    // UseCases::TaskCoordination::TestAll();
+
     // Yield_Coroutine::TestAll();
-    // Return_Value_Coroutine::TestAll();
     // Waiting_Coroutine::TestAll();
 
-    // Examples::Calculating_Average::TestAll();
-    // Examples::PinBall_Game::TestAll();
-
     // String_to_Integer_Parser::Test();
-    // UseCases::Task_Based_Parallelism();
 }

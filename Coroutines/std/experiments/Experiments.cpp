@@ -62,7 +62,7 @@ namespace
 }
 
 
-void Coroutines::Experiments:: TestAll()
+void Coroutines::Experiments::TestAll()
 {
 }
 

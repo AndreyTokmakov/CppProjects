@@ -175,12 +175,97 @@ namespace Coroutines::Generators::Fibonacci_Sequence_Generator_Ex
     }
 }
 
+namespace Coroutines::Generators::Fibonacci_Sequence_Generator_2
+{
+
+    template <typename T>
+    struct Generator
+    {
+        struct promise_type
+        {
+            Generator get_return_object() {
+                return Generator { std::coroutine_handle<promise_type>::from_promise(*this) };
+            }
+
+            std::suspend_always initial_suspend() noexcept {
+                return {};
+            }
+
+            std::suspend_always final_suspend() noexcept {
+                return {};
+            }
+
+            void unhandled_exception() {
+            }
+
+            void return_value(T t) noexcept {
+                v = t;
+            }
+
+            std::suspend_always yield_value(T t) {
+                v = t;
+                return {};
+            }
+
+            T v {};
+        };
+
+        [[nodiscard]]
+        bool has_next() const {
+            return !handle.done();
+        }
+
+        [[nodiscard]]
+        size_t next() {
+            handle.resume();
+            return handle.promise().v;
+        }
+
+        std::coroutine_handle<promise_type> handle;
+    };
+
+    Generator<size_t> fib(size_t max_count)
+    {
+        co_yield 1;
+        size_t a = 0, b = 1, count = 0;
+        while (++count < max_count - 1) {
+            co_yield a + b;
+            b = a + b;
+            a = b - a;
+        }
+        co_return a + b;
+    }
+
+    void test()
+    {
+        size_t max_count = 10;
+        auto generator = fib(max_count);
+        size_t i = 0;
+        while (generator.has_next()) {
+            std::cout << "No." << ++i << ": " << generator.next() << std::endl;
+        }
+        /**
+        No.1: 1
+        No.2: 1
+        No.3: 2
+        No.4: 3
+        No.5: 5
+        No.6: 8
+        No.7: 13
+        No.8: 21
+        No.9: 34
+        No.10: 55
+        **/
+    }
+}
+
 
 void Coroutines::Generators::TestAll()
 {
     // SimpleExample::printLetters();
     // Fibonacci_Sequence_Generator::Test();
-    Fibonacci_Sequence_Generator_Ex::Test();
+    // Fibonacci_Sequence_Generator_Ex::Test();
+    // Fibonacci_Sequence_Generator_2::test();
 
 }
 

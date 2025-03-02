@@ -22,7 +22,7 @@ namespace
         {
             Average get_return_object()
             {
-                return Average { CoroHandle::from_promise(*this) };
+                return Average { std::coroutine_handle<promise_type>::from_promise(*this) };
             }
 
             std::suspend_always initial_suspend() {
@@ -33,7 +33,7 @@ namespace
                 std::terminate();
             }
 
-            void return_value(const int& valueIn) {
+            void return_value(auto valueIn) {
                 value = valueIn;
             }
 
@@ -45,9 +45,7 @@ namespace
         };
 
 
-        using CoroHandle = std::coroutine_handle<promise_type>;
-
-        explicit Average(const CoroHandle handle) : coroHandle { handle } {
+        explicit Average(const std::coroutine_handle<promise_type>& handle) : coroHandle { handle } {
         }
 
         ~Average()
@@ -77,7 +75,7 @@ namespace
 
     private:
 
-        CoroHandle coroHandle;
+        std::coroutine_handle<promise_type> coroHandle;
     };
 
     Average makeAverage(const std::vector<int>& numbers)
@@ -97,7 +95,7 @@ namespace
 }
 
 
-void Coroutines::Examples::Calculating_Average::TestAll()
+void Coroutines::Experiments::Calculating_Average::TestAll()
 {
     const std::vector<int> numbers {100, 200, 100, 200, 100, 200, 100, 200};
     const Average average = makeAverage(numbers);

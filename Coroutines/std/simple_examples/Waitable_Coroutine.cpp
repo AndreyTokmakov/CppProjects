@@ -1,5 +1,5 @@
 /**============================================================================
-Name        : Simple_Coroutine_Waitable.cpp
+Name        : Waitable_Coroutine.cpp
 Created on  : 28.02.2025
 Author      : Andrei Tokmakov
 Version     : 1.0
@@ -153,7 +153,7 @@ namespace
 }
 
 
-void Coroutines::Simple_Coroutine_Waitable::TestAll()
+void Coroutines::Simple::Waitable_Coroutine::TestAll()
 {
     MyCoroutineTask task;
     task.run();

@@ -16,13 +16,14 @@ include_directories(${THIRD_PARTY_DIR}/mysql-connector-cpp/build/include/mysqlx)
 link_directories(${THIRD_PARTY_DIR}/mysql-connector-cpp/build)
 message(STATUS "MySQL: ${THIRD_PARTY_DIR}/mysql-connector-cpp/build")
 
+#[[
 message(STATUS "[dependency] Fetching PostgreSQL library (libpqxx)")
 FetchContent_Declare(libpqxx
         GIT_REPOSITORY https://github.com/jtv/libpqxx.git
         GIT_TAG 7.9.2
 )
 FetchContent_MakeAvailable(libpqxx)
-
+#]]
 
 message(STATUS "SQLite: ${THIRD_PARTY_DIR}/sqlite")
 include_directories(${THIRD_PARTY_DIR}/sqlite)

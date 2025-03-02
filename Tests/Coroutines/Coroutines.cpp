@@ -668,9 +668,9 @@ void Coroutines::TestAll()
     // SimpleExample0::Test();
     // SimpleExample::Test();
     // SimpleExample2::Test();
-    SimpleExample3::Test();
+    // SimpleExample3::Test();
 
-    // Example4::test();
+    Example4::test();
 
 
     // DemoOne::test();

@@ -1511,7 +1511,7 @@ int main([[maybe_unused]] int argc,
     // Execution::TestAll();
     // StackTrace::TestAll();
 
-    // Coroutines::TestAll();
+    Coroutines::TestAll();
 
 
     // CompileTime_Programming::Factorial();

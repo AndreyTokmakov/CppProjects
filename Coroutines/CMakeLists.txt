@@ -9,6 +9,7 @@ project(${PROJECT_NAME} VERSION ${PROJECT_VERSION} LANGUAGES CXX)
 add_compile_options(-c -Wall -O3 -std=c++26)
 
 include_directories(${THIRD_PARTY_DIR}/tinycoro/include)
+include_directories(${PROJECT_SOURCE_DIR}/std)
 include_directories(${PROJECT_SOURCE_DIR}/utils)
 
 # include all components
@@ -17,21 +18,22 @@ add_executable(${PROJECT_NAME}
         utils/Utilities.cpp
         TinyCoro/TinyCoro.cpp
         std/Coroutines.cpp
-        std/Generators.cpp
-        std/Experiments.cpp
-        std/Calculating_Average.cpp
-        std/PinBall_Game.cpp
-        std/Yield_Coroutine.cpp
-        std/Return_Value_Coroutine.cpp
-        std/Simple_Coroutine.cpp
+        std/generators/Generators.cpp
+        std/experiments/Experiments.cpp
+        std/experiments/Calculating_Average.cpp
+        std/experiments/PinBall_Game.cpp
+        std/simple_examples/Coroutine_Lifecycle_CoReturn.cpp
+        std/simple_examples/Returning_Coroutine_2.cpp
+        std/simple_examples/Coroutine_Lifecycle_CoAwait.cpp
+        std/simple_examples/Returning_Coroutine.cpp
+        std/simple_examples/Waitable_Coroutine.cpp
+        std/simple_examples/Waitable_Coroutine_2.cpp
+        std/simple_examples/Multiple_Awaiters_Resolution.cpp
+        std/simple_examples/Yield_Coroutine.cpp
+        std/experiments/Waitable_Coroutine_With_Mutex.cpp
+        std/use_cases/FileReader.cpp
+        std/use_cases/TaskCoordination.cpp
         std/Waiting_Coroutine.cpp
-        std/Simple_Coroutine_Lifecycle.cpp
-        std/Simple_Coroutine_ReturningValue.cpp
-        std/Simple_Coroutine_Waitable.cpp
-        std/Simple_Coroutine_Waitable_2.cpp
-        std/Waitable_Coroutine_With_Mutex.cpp
-        std/UseCases_FileReader_Coroutine.cpp
-        std/UseCases_TaskCoordination.cpp
 )
 
 TARGET_LINK_LIBRARIES(${PROJECT_NAME}

@@ -160,7 +160,7 @@ namespace
 }
 
 
-void Coroutines::UseCases_TaskCoordination::TestAll()
+void Coroutines::UseCases::TaskCoordination::TestAll()
 {
 
 }

@@ -1,5 +1,5 @@
 /**============================================================================
-Name        : Simple_Coroutine_Lifecycle.cpp
+Name        : Coroutine_Lifecycle_CoAwait.cpp
 Created on  : 28.02.2025
 Author      : Andrei Tokmakov
 Version     : 1.0
@@ -26,7 +26,6 @@ This is achieved using three key keywords: co_await, co_yield, and co_return.
               It can be resumed later, continuing from the point after co_yield.
 
 3. co_return: This keyword is used to return a value from the coroutine and finalize its execution.
-
 
 **/
 
@@ -105,15 +104,25 @@ namespace
 
     MyCoroutine myCoroutineFunction()
     {
-        std::println("Start of coroutine");
+        std::println("--> About to suspend this coroutine");
         co_await std::suspend_always{};
-        std::println("Resume the coroutine");
+        std::println("--> this won't be printed until after we resume");
+        co_return;
     }
-
 }
 
 
-void Coroutines::CoroutineLifecycle:: TestAll()
+/**
+C++ provides two keywords you can use to suspend a coroutine:
+-  co_await   (co_await is the more basic one)
+-  co_yield.  (co_yield is defined in terms of it)
+
+The general idea is that, whatever operand you provide to the co_await keyword,
+the compiler has to convert it into an awaiter object that will tell it how to manage the suspension.
+
+*/
+
+void Coroutines::Simple::Coroutine_Lifecycle_CoAwait::TestAll()
 {
     MyCoroutine er = myCoroutineFunction();
 }

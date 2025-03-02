@@ -1,5 +1,5 @@
 /**============================================================================
-Name        : Return_Value_Coroutine.cpp
+Name        : Returning_Coroutine_2.cpp
 Created on  : 01.03.2025
 Author      : Andrei Tokmakov
 Version     : 1.0
@@ -75,7 +75,7 @@ namespace
 /// The promise type manages the returned value, and the get_return_object method returns a ReturnValue
 /// object that the caller can use to retrieve the result.
 
-void Coroutines::Return_Value_Coroutine::TestAll()
+void Coroutines::Simple::Returning_Coroutine_2::TestAll()
 {
     std::println("Start of coroutine");
     const ReturnValueCoroutine result = computeValue();

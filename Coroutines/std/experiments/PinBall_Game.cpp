@@ -8,10 +8,16 @@ Description :
 ============================================================================**/
 
 #include "Coroutines.h"
-#include <iostream>
-#include <chrono>
+#include "Utilities.h"
+
 #include <coroutine>
-#include <generator>
+#include <print>
+#include <chrono>
+#include <thread>
+
+namespace {
+    using Utilities::getCurrentTime;
+}
 
 namespace
 {
@@ -31,9 +37,8 @@ namespace
     struct [[nodiscard]] Pinball
     {
         struct promise_type;
-        using CoroHandle = std::coroutine_handle<promise_type>;
 
-        explicit Pinball(const CoroHandle handle) : coroHandle { handle } {
+        explicit Pinball(const std::coroutine_handle<promise_type> handle) : coroHandle { handle } {
         }
 
         ~Pinball()
@@ -59,14 +64,14 @@ namespace
 
     private:
 
-        CoroHandle coroHandle;
+        std::coroutine_handle<promise_type> coroHandle;
     };
 
     struct Pinball::promise_type
     {
         Pinball get_return_object()
         {
-            return Pinball { CoroHandle::from_promise(*this) };
+            return Pinball { std::coroutine_handle<promise_type>::from_promise(*this) };
         }
 
         std::suspend_always initial_suspend()
@@ -93,20 +98,19 @@ namespace
     {
         for (int i = 0; i < turns; ++i)
         {
-            std::cout << "Coro’s turn to play. " << std::endl;
+            std::println("[{}] Coroutine turn to play ({} attempt)", getCurrentTime(), i);
             co_await std::suspend_always{};
         }
-        std::cout << "Coro looses." << std::endl;
+        std::println("[{}] Done", getCurrentTime());
     }
-
 }
 
 
-void Coroutines::Examples::PinBall_Game::TestAll()
+void Coroutines::Experiments::PinBall_Game::TestAll()
 {
     const Pinball pinBall = makePinball(4);
     while (pinBall.play())
     {
-        std::cout << "My turn to play." << std::endl;
+        std::println("[{}] My turn to play", getCurrentTime());
     }
 }
