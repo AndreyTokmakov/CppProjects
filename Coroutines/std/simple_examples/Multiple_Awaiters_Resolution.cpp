@@ -166,11 +166,11 @@ namespace
                 std::terminate();
             }
 
-            auto await_transform(const std::chrono::milliseconds timeout) noexcept {
+            DurationAwaiter<TaskPromise> await_transform(const std::chrono::milliseconds timeout) noexcept {
                 return DurationAwaiter<TaskPromise>(*this, timeout);
             }
 
-            auto await_transform(const Event& event) noexcept {
+            EventAwaiter<TaskPromise> await_transform(const Event& event) noexcept {
                 return EventAwaiter<TaskPromise>(*this, event);
             }
         };

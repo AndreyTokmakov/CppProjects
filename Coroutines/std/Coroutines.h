@@ -66,6 +66,10 @@ namespace Coroutines::Experiments::Waitable_Coroutine_With_Mutex {
     void TestAll();
 }
 
+namespace Coroutines::Experiments::Generic_TaskBased_Coroutine {
+    void TestAll();
+}
+
 /** ===================== Generators  ======================== **/
 
 namespace Coroutines::Generators {

@@ -22,6 +22,7 @@ add_executable(${PROJECT_NAME}
         std/experiments/Experiments.cpp
         std/experiments/Calculating_Average.cpp
         std/experiments/PinBall_Game.cpp
+        std/experiments/Generic_TaskBased_Coroutine.cpp
         std/simple_examples/Coroutine_Lifecycle_CoReturn.cpp
         std/simple_examples/Returning_Coroutine_2.cpp
         std/simple_examples/Coroutine_Lifecycle_CoAwait.cpp
