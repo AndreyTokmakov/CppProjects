@@ -1709,13 +1709,39 @@ namespace VectorOfUniquePointers_KeepReference_StoredInVector
 
 }
 
+
+namespace Memory::Override_Global_Memory_Handler
+{
+	void handler()
+	{
+		std::cout << "Memory allocation failed, terminating\n";
+		std::set_new_handler(nullptr);
+	}
+
+	void test()
+	{
+		std::set_new_handler(handler);
+		try
+		{
+			while (true)
+			{
+				new int [1000'000'000ul] ();
+			}
+		}
+		catch (const std::bad_alloc& e)
+		{
+			std::cout << e.what() << '\n';
+		}
+	}
+}
+
 void Memory::TestAll()
 {
     // Alignment::TestAll();
     // AlignedStackAllocator::TestAll();
     // CustomStackAllocator::TestAll();
     // MemoryUsageMonitor::TestAll();
-    MemoryPool::TestAll();
+    // MemoryPool::TestAll();
 
 
 	// Delete_Array();
