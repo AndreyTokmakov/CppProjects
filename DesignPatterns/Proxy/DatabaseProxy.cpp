@@ -21,9 +21,8 @@ namespace Proxy::DatabaseProxy
         virtual float getPrice(const std::string& symbol) = 0;
     };
 
-    // Real Subject
-    class MySQLDatabase : public IStockData {
-    public:
+    struct MySQLDatabase final : public IStockData
+    {
         std::vector<std::string> getSymbols() override
         {
             // Query the database for the list of symbols here
@@ -41,31 +40,29 @@ namespace Proxy::DatabaseProxy
         }
     };
 
-    // Proxy
-    class StockDataProxy : public IStockData {
-    private:
-        IStockData* realSubject;
+    class StockDataProxy final : public IStockData
+    {
+        IStockData* storage;
         std::unordered_map<std::string, float> cache;
 
     public:
-        explicit StockDataProxy(IStockData* realSubject) : realSubject(realSubject) {
+        explicit StockDataProxy(IStockData* realSubject) : storage { realSubject } {
         }
 
         std::vector<std::string> getSymbols() override {
-            return realSubject->getSymbols();
+            return storage->getSymbols();
         }
 
         float getPrice(const std::string& symbol) override
         {
             // Check if the stock price is in the cache
-            auto it = cache.find(symbol);
-            if (it != cache.end()) {
+            if (const auto it = cache.find(symbol); it != cache.end()) {
                 std::cout << "Retrieving stock price for " << symbol << " from proxy cache" << std::endl;
                 return it->second;
             }
 
             // If the stock price is not in the cache, forward the request to the real subject
-            float price = realSubject->getPrice(symbol);
+            const float price = storage->getPrice(symbol);
             cache[symbol] = price;  // Update the proxy cache
             return price;
         }

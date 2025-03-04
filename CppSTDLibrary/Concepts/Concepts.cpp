@@ -2770,6 +2770,65 @@ namespace Concepts::Constraints_On_Member_Function
     }
 }
 
+namespace Concepts::Requires_Clause_vs_Expression
+{
+    template<typename T>
+    bool test_type() {
+        return requires (const T obj) { ++obj; };
+    }
+
+    constexpr bool test_can_increment() {
+        return requires (int i) { ++i; };
+    }
+
+    constexpr bool test_can_NOT_increment() {
+        // will not compile with CONST
+        // return requires (const int i) { ++i; };
+        return true;
+    }
+
+    constexpr bool test_can_increment_func() {
+        return test_type<int>();
+    }
+
+    void Requires_Expression()
+    {
+        test_can_increment();
+        test_can_NOT_increment();
+
+        test_can_increment_func();
+    }
+
+
+    template<typename T>
+    void func_ok(T v) requires true {};
+
+    template<typename T>
+    void func_not_ok(T v) requires false {};
+
+    template<bool Result>
+    constexpr bool get_bool() { return Result ;};
+
+    template<typename T>
+    void based_on_function_call_ok(T v) requires (get_bool<true>()) {};
+
+    template<typename T>
+    void based_on_function_call_not_ok(T v) requires (get_bool<false>()) {};
+
+
+    void Requires_Clause()
+    {
+        func_ok(1);
+        // func_not_ok(1);  /// ERROR
+
+        based_on_function_call_ok(1);
+        // based_on_function_call_not_ok(1); /// ERROR
+    }
+}
+
+
+
+
 // https://www.youtube.com/watch?v=jzwqTi7n-rg | Back to Basics: Concepts in C++ - Nicolai Josuttis - CppCon 2024
 
 void Concepts::TestAll()
@@ -2778,6 +2837,9 @@ void Concepts::TestAll()
     // Lambda_Concept_Tests();
     // STDConcepts::Copyable();
 
+
+    Requires_Clause_vs_Expression::Requires_Expression();
+    Requires_Clause_vs_Expression::Requires_Clause();
 
     // Custom_Concepts::SimpleTest();
     // Custom_Concepts::Addable_Test();
@@ -2810,7 +2872,7 @@ void Concepts::TestAll()
 
     // Requires_With_Constexpr::Vector_vs_Array();
     // Requires_With_Constexpr::Constexpr_Check_Method();
-    Requires_With_Constexpr::PushBackToSomeCollection_CheckPushback_vs_Insert();
+    // Requires_With_Constexpr::PushBackToSomeCollection_CheckPushback_vs_Insert();
 
     // RequiresSequence::Test1();
 
@@ -2837,9 +2899,9 @@ void Concepts::TestAll()
 
     // Concepts_With_Lambdas::Params_Concepts();
 
-    Constraints_On_Member_Function::Check_If_Function_Available();
+    // Constraints_On_Member_Function::Check_If_Function_Available();
 
-    CRPT_Replace::Concepts_Instead_CRTP();
+    // CRPT_Replace::Concepts_Instead_CRTP();
     // ConceptsAsInterface::passClassObjAsInterface();
     // NestedConcepts::CheckMethodReturnType();
     // SFINAE::ChooseOverloadedFunc_WithRequire();

@@ -62,7 +62,7 @@ int main([[maybe_unused]]  int argc,
     // AbstractFactory::TestAll();
     // Builder::TestAll();
     // FabricMethod::TestAll();
-    FactoryClasses::TestAll();
+    // FactoryClasses::TestAll();
     // Prototype::TestAll();
     // Singleton::TestAll();;
     // Monostate::TestAll();;
@@ -82,7 +82,7 @@ int main([[maybe_unused]]  int argc,
     // Proxy::CarTest();
     // Proxy::DocumentTest();
     // Proxy::SubjectTest();
-    // Proxy::DatabaseProxyTest();
+    Proxy::DatabaseProxyTest();
 
     /** Behaviour patterns **/
     // Strategy::Test();
