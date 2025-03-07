@@ -385,6 +385,8 @@ namespace Optional
 	void Construct_IN_PLACE()
 	{
 		std::optional<Point> opt1{ std::in_place, 0, 0 };
+
+		[[maybe_unused]]
 		std::optional<Point> opt = std::make_optional<Point>(0, 0);
 	}
 
@@ -584,6 +586,100 @@ namespace MonadicOperations
 }
 
 
+namespace Optional::MonadicOperations_2
+{
+	struct User
+	{
+		int id { -1 };
+		std::string name;
+		std::string email;
+	};
+
+	struct SuperUser
+	{
+		int id { -1 };
+		std::string name;
+		std::string email;
+	};
+
+	std::ostream& operator<<(std::ostream& stream, const User& user) {
+		return stream <<  "User { id: " << user.id << ", name: "
+			          << user.name << ", email: " << user.email << " }";
+	}
+
+
+	std::ostream& operator<<(std::ostream& stream, const SuperUser& superUser) {
+		return stream <<  "SuperUser { id: " << superUser.id << ", name: "
+					  << superUser.name << ", email: " << superUser.email << " }";
+	}
+
+	std::ostream& operator<<(std::ostream& stream, const std::optional<std::string>& strOpt) {
+		return stream << strOpt.value_or("None");
+	}
+
+	std::optional<User> createUser(std::string name, std::string email, const int id = - 1)
+	{
+		if (id == -1)
+			return std::nullopt;
+		return std::make_optional<User>(User {id, std::move(name), std::move(email)});
+	}
+
+	/*std::optional<SuperUser> createSuperUser(std::string name, std::string email, const int id = - 1)
+	{
+		if (id == -1)
+			return std::nullopt;
+		return std::make_optional<SuperUser>(SuperUser {id, std::move(name), std::move(email)});
+	}*/
+
+	void Transform_Optional_User_to_Optional_String()
+	{
+		const std::optional<User> user = createUser("admin", "admin@gmail.com", 1);
+
+		const std::optional<std::string> name = user.and_then([](const User& usr) {
+			std::cout << "Transforming " << usr << " --> std::optional<std::string>{" << usr.name << "}" << std::endl;
+			return std::make_optional<std::string>(usr.name);
+		});
+
+		std::cout << name << std::endl;
+	}
+
+	void Transform_Optional_User_to_Optional_String_NullOpt()
+	{
+		const std::optional<User> user = createUser("admin", "admin@gmail.com", -1);
+
+		const std::optional<std::string> name = user.and_then([](const User& usr) {
+			std::cout << "Transforming " << usr << " --> std::optional<std::string>{" << usr.name << "}" << std::endl;
+			return std::make_optional<std::string>();
+		});
+
+		std::cout << name << std::endl;
+	}
+
+
+	void Transform_Optional_User_to_String_and_to_SuperUser()
+	{
+		const std::optional<User> user = createUser("admin", "admin@gmail.com", 1);
+		std::cout << user.value() << std::endl;
+
+		const std::optional<std::string> name = user.and_then([](const User& usr) {
+			std::cout << "\tTransforming " << usr << " --> std::optional<std::string>{" << usr.name << "}" << std::endl;
+			return std::make_optional<std::string>(usr.name);
+		});
+
+		std::cout << name << std::endl;
+
+		const std::optional<SuperUser> optSuperUser = name.transform([](const std::string& userName)
+		{
+			std::cout << "\tCreating SuperUser {name: " << userName << "}" << std::endl;
+			return SuperUser { 0, userName, "" };
+		});
+
+		std::cout << optSuperUser.value() << std::endl;
+	}
+
+
+}
+
 void Optional::TestAll()
 {
 	// OptionalCreation();
@@ -613,6 +709,12 @@ void Optional::TestAll()
     // MonadicOperations::AndThen_Test();
     // MonadicOperations::Transform_Test();
     // MonadicOperations::OrElse_Transform();
-    MonadicOperations::Transform_UserInput();
+    // MonadicOperations::Transform_UserInput();
+
+
+
+	// MonadicOperations_2::Transform_Optional_User_to_Optional_String();
+	// MonadicOperations_2::Transform_Optional_User_to_Optional_String_NullOpt();
+	MonadicOperations_2::Transform_Optional_User_to_String_and_to_SuperUser();
 };
 

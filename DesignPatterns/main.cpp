@@ -82,10 +82,10 @@ int main([[maybe_unused]]  int argc,
     // Proxy::CarTest();
     // Proxy::DocumentTest();
     // Proxy::SubjectTest();
-    Proxy::DatabaseProxyTest();
+    // Proxy::DatabaseProxyTest();
 
     /** Behaviour patterns **/
-    // Strategy::Test();
+    Strategy::Test();
     // Policy::Test();
     // ChainOfResponsibility::TestAll();
     // Command::TestAll();

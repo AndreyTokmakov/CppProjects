@@ -1645,8 +1645,31 @@ namespace ObjectOrientedProgramming::Classes_Structs_Sizeof_Tests {
 
     }
 
+    struct Printer
+    {
+        int x { 1 };
 
-    void StructSizeTest() {
+        void print(const int v) const
+        {
+            std::cout << x << ' ' << v << std::endl;
+        }
+    };
+
+
+    template<Printer PrintStrategy>
+    struct Base
+    {
+        int value {2};
+
+        void print() const
+        {
+            PrintStrategy.print(value);
+        }
+    };
+
+
+    void StructSizeTest()
+    {
         std::cout << "Size string: " << sizeof(std::string) << std::endl;
 
 
@@ -1667,7 +1690,9 @@ namespace ObjectOrientedProgramming::Classes_Structs_Sizeof_Tests {
         std::cout << "Size ClassWithVirtDestructor: " << sizeof(ClassWithVirtDestructor) << std::endl;
         std::cout << "Size DerivedClassWitVirtInhereance: " << sizeof(DerivedClassWitVirtInhereance) << std::endl;
         std::cout << "Size DerivedClassWitVirtInhereanceAndFunc: " << sizeof(DerivedClassWitVirtInhereanceAndFunc) << std::endl;
-        std::cout << "Size C: " << sizeof(C) << std::endl;
+        std::cout << "Size C: " << sizeof(C) << std::endl<< std::endl;
+
+        std::cout << "Size Base<Printer{}>: " << sizeof(Base<Printer{}>) << std::endl; // --> 4
 
         Virtual_FuncDiffClass::VirtualMethodTests();
     }
