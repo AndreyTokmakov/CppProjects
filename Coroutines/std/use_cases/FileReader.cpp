@@ -12,21 +12,72 @@ Description : Simple Coroutine Waitable
 
 #include <coroutine>
 #include <print>
+#include <thread>
 #include <fstream>
 
-namespace {
-    using Utilities::getCurrentTime;
+namespace
+{
+    auto tid() { return std::this_thread::get_id();}
+    auto time() { return Utilities::getCurrentTime();}
 }
 
 namespace
 {
     struct FileReader
     {
+        struct promise_type;
+
+        struct FileReadAwaiter
+        {
+            std::ifstream file;
+            std::string filepath;
+            std::string line;
+
+            explicit FileReadAwaiter(const std::string& filename) : filepath { filename }
+            {
+                file.open(filepath);
+                std::println("[{}] [{}] FileReadAwaiter::FileReadAwaiter({})", tid(), time(), filename);
+            }
+
+            ~FileReadAwaiter()
+            {
+                std::println("[{}] [{}] FileReadAwaiter::~FileReadAwaiter({})", tid(), time(), filepath);
+            }
+
+            [[nodiscard]]
+            bool await_ready() noexcept
+            {
+                /** Called immediately before the coroutine is suspended
+                 *  Allows as such, for some reason, to decide not to suspend after all
+                 *  Returns true → coroutine is NOT suspended
+                 *  Typically : return false;
+                 *  Use case : suspension depends on some data availability
+                **/
+                std::println("[{}] [{}] FileReadAwaiter::await_ready({})", tid(), time(), filepath);
+                return false;
+            }
+
+            void await_suspend(const std::coroutine_handle<promise_type>& coroHandle)
+            {
+                while (std::getline(file, line)) {
+                    std::println("[{}] [{}] FileReadAwaiter::await_suspend(): {}", tid(), time(),line);
+                    std::this_thread::sleep_for(std::chrono::milliseconds(100u));
+                }
+                coroHandle.resume();
+                std::println("[{}] [{}] FileReadAwaiter::await_suspend() done", tid(), time());
+            }
+
+            void await_resume() {
+                std::println("[{}] [{}] FileReadAwaiter::await_resume({})", tid(), time(), filepath);
+            }
+        };
+
+
         struct promise_type
         {
             FileReader get_return_object()
             {
-                std::println("[{}] get_return_object", getCurrentTime());
+                std::println("[{}] [{}] promise_type::get_return_object()", tid(), time());
                 return FileReader{this};
             }
 
@@ -44,55 +95,20 @@ namespace
             void unhandled_exception() {
                 std::terminate();
             }
+
+            FileReadAwaiter await_transform(const std::string& filename) noexcept {
+                return FileReadAwaiter { filename };
+            }
         };
 
         promise_type* promise;
 
-
-        FileReader(promise_type* p) : promise(p) {
-            std::println("[{}] FileReader()", getCurrentTime());
-        }
-
-        ~FileReader() {
-            std::println("[{}] ~FileReader()", getCurrentTime());
-        }
-
-        struct Awaiter
-        {
-            std::ifstream file;
-            std::string line;
-
-            bool await_ready() {
-                return false;
-            }
-
-            void await_suspend(std::coroutine_handle<> h)
-            {
-                while (std::getline(file, line)) {
-                    std::println("[{}] Processing {}", getCurrentTime(), line);
-                    h.resume();
-                }
-                std::println("[{}] await_suspend done", getCurrentTime());
-            }
-
-            void await_resume() {
-            }
-        };
-
-        Awaiter readAsync(const std::string& filename)
-        {
-            Awaiter awaiter;
-            awaiter.file.open(filename);
-            return awaiter;
-        }
     };
 
     FileReader processFiles()
     {
-        // co_await "12345";
-
-        //co_await FileReader{}.readAsync(R"(/home/andtokm/DiskS/ProjectsUbuntu/CppProjects/Coroutines/data/file1.txt)");
-        //co_await FileReader{}.readAsync(R"(/home/andtokm/DiskS/ProjectsUbuntu/CppProjects/Coroutines/data/file2.txt)");
+        co_await R"(/home/andtokm/Projects/CppProjects/Coroutines/data/file1.txt)";
+        co_await R"(/home/andtokm/Projects/CppProjects/Coroutines/data/file2.txt)";
     }
 }
 

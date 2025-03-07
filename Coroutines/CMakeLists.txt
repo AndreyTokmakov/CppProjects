@@ -30,6 +30,7 @@ add_executable(${PROJECT_NAME}
         std/simple_examples/Waitable_Coroutine.cpp
         std/simple_examples/Waitable_Coroutine_2.cpp
         std/simple_examples/Multiple_Awaiters_Resolution.cpp
+        std/simple_examples/Multiple_Awaiters_Resolution_2.cpp
         std/simple_examples/Yield_Coroutine.cpp
         std/experiments/Waitable_Coroutine_With_Mutex.cpp
         std/use_cases/FileReader.cpp

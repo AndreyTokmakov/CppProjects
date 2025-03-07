@@ -44,6 +44,10 @@ namespace Coroutines::Simple::Multiple_Awaiters_Resolution {
     void TestAll();
 };
 
+namespace Coroutines::Simple::Multiple_Awaiters_Resolution_2 {
+    void TestAll();
+};
+
 namespace Coroutines::Simple::Yield_Coroutine {
     void TestAll();
 }
