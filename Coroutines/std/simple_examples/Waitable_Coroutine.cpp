@@ -22,7 +22,6 @@ namespace {
 namespace
 {
     /**
-
     Coroutine Functions and Suspension Points
     A coroutine function is a special type of function in C++ that can be suspended and resumed at specific points
     during its execution.
@@ -31,10 +30,20 @@ namespace
     1. co_await:  This keyword is used to suspend the execution of the coroutine until a particular
                   condition is met or an asynchronous operation is completed.
 
+                  Унарный оператор, позволяющий, в общем случае, приостановить выполнение сопрограммы и
+                  передать управление вызывающей стороне, пока не завершатся вычисления представленные операндом;
+
     2. co_yield:  This keyword allows the coroutine to produce a value and suspend its execution.
                   It can be resumed later, continuing from the point after co_yield.
 
+                  Унарный оператор, частный случай оператора co_await, позволяющий приостановить выполнение сопрограммы
+                  и передать управление и значение операнда вызывающей стороне;
+
     3. co_return: This keyword is used to return a value from the coroutine and finalize its execution.
+
+                  Оператор завершает работу сопрограммы, возвращая значение, после вызова сопрограмма
+                  больше не сможет возобновить свое выполнение.
+
 
     Custom Awaitable Types
 

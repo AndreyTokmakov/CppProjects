@@ -1,19 +1,23 @@
 /**============================================================================
-Name        : Yield_Coroutine.cpp
-Created on  : 27.02.2025
+Name        : Yield_Coroutine_Values_from_List.cpp
+Created on  : 09.03.2025
 Author      : Andrei Tokmakov
 Version     : 1.0
 Copyright   : Your copyright notice
-Description : Yield_Coroutine.h
+Description :
 ============================================================================**/
 
 #include "Coroutines.h"
 #include "Utilities.h"
 
-#include <coroutine>
-#include <print>
 #include <chrono>
 #include <thread>
+#include <random>
+#include <vector>
+
+#include <coroutine>
+#include <print>
+#include <source_location>
 
 /**
 Coroutine Functions and Suspension Points
@@ -65,108 +69,122 @@ or other asynchronous tasks into your coroutine workflow.
 
 namespace
 {
-    using Utilities::getCurrentTime;
+    auto tid() { return std::this_thread::get_id();}
+    auto time() { return Utilities::getCurrentTime();}
+
+    void log(const std::string_view message,
+             const std::source_location location = std::source_location::current())
+    {
+        std::println("File: {} [{}:{}] {} : {}",
+                     location.file_name(), location.line(), location.column(), location.function_name(),
+                     message);
+    }
+}
+
+namespace
+{
+    std::random_device randomDevice{};
+    std::mt19937 generator(randomDevice());
+
+    const std::vector<std::string> repository
+    {
+        "Value_1",
+        "Value_2",
+        "Value_3",
+        "Value_4",
+        "Value_5",
+        "Value_6",
+        "Value_7",
+        "Value_8",
+        "Value_9",
+        "Value_10"
+    };
 }
 
 namespace
 {
     using namespace std::string_literals;
 
-    struct MyCoroutineTask
+    struct CoroutineTask
     {
         struct promise_type
         {
-            std::string output_data { };
-
-            MyCoroutineTask get_return_object() noexcept {
-                std::println("[{}] \tpromise_type::get_return_object()", getCurrentTime());
-                return MyCoroutineTask {  *this };
+            CoroutineTask get_return_object() {
+                return CoroutineTask {std::coroutine_handle<promise_type>::from_promise(*this) };
             }
 
-            void return_void() noexcept {
-                std::println("[{}] \tpromise_type::return_void()", getCurrentTime());
-            }
-
-            /// Will be called from instruction 'co_yield "Hello from the coroutine\n"s;'
-            std::suspend_always yield_value(std::string msg) noexcept {
-                std::println("[{}] \tpromise_type::yield_value('{}') ==> std::suspend_always()", getCurrentTime(), msg);
-                output_data = std::move(msg);
-                return {};
-            }
-
-            std::suspend_always initial_suspend() noexcept {
-                std::println("[{}] \tpromise_type::initial_suspend() ==> std::suspend_always()", getCurrentTime());
+            std::suspend_always initial_suspend() {
                 return {};
             }
 
             std::suspend_always final_suspend() noexcept {
-                std::println("[{}] \tpromise_type::final_suspend() ==> std::suspend_always()", getCurrentTime());
                 return {};
             }
 
-            void unhandled_exception() noexcept {
-                std::println("[{}] \tpromise_type::unhandled_exception()", getCurrentTime());
+            void unhandled_exception() {
+                std::terminate();
             }
+
+            std::suspend_always yield_value(const std::string& valueIn)
+            {
+                value = valueIn;
+                return std::suspend_always{};
+            }
+
+            std::string value;
+            // uint32_t counter { 0 };
         };
 
-        std::coroutine_handle<promise_type> handle{};
-
-        explicit MyCoroutineTask(promise_type& promise) :
-                handle { std::coroutine_handle<promise_type>::from_promise(promise)}
-        {
-            std::println("[{}] ReturnType::ReturnType()", getCurrentTime());
+        explicit CoroutineTask(const std::coroutine_handle<promise_type>& handle) : coroHandle { handle } {
         }
 
-        ~MyCoroutineTask() noexcept
+        ~CoroutineTask()
         {
-            if (handle) {
-                handle.destroy();
+            if (coroHandle) {
+                coroHandle.destroy();
             }
-            std::println("[{}] ReturnType::~ReturnType()", getCurrentTime());
+        }
+
+        CoroutineTask(const CoroutineTask&) = delete;
+        CoroutineTask& operator=(const CoroutineTask&) = delete;
+
+        [[nodiscard]]
+        bool hasNext() const
+        {
+            if (!coroHandle || coroHandle.done()) {
+                return false; // we are done
+            }
+
+            coroHandle.resume();
+            return !coroHandle.done();
         }
 
         [[nodiscard]]
-        std::string getValue() const noexcept
+        std::string value() const
         {
-            std::println("[{}] ReturnType::getValue()", getCurrentTime());
-            if (!handle.done()) {
-                handle.resume();
-            }
-            return std::move(handle.promise().output_data);
+            return coroHandle.promise().value;
         }
+
+    private:
+        std::coroutine_handle<promise_type> coroHandle;
     };
 
-    MyCoroutineTask createCoroutine()
+    CoroutineTask createFetcher(int size)
     {
-        std::println("[{}] createCoroutine() entered", getCurrentTime());
-
-        co_yield "Hello from the coroutine"s;
-
-        std::println("[{}] createCoroutine() after co_yield ..", getCurrentTime());
-
-        co_return;
+        std::uniform_int_distribution<uint32_t> distribution(0, repository.size() - 1);
+        for (int i = 0; i < size; ++i)
+        {
+            co_yield repository[distribution(generator)];
+        }
     }
 
 };
 
 
-void Coroutines::Simple::Yield_Coroutine::TestAll()
+void Coroutines::Simple::Yield_Coroutine_Values_from_List::TestAll()
 {
-    MyCoroutineTask coro = createCoroutine();
-    std::println("[{}] main function()", getCurrentTime());
-    const std::string returnedValue = coro.getValue();
-
-    std::println("[{}] main returned value: {}", getCurrentTime(),returnedValue);
+    const CoroutineTask fetcher = createFetcher(7);
+    while (fetcher.hasNext()) {
+        std::println("value = {}", fetcher.value());
+    }
 }
-
-/**
-[2025-03-09 16:38:06.107840] 	promise_type::get_return_object()
-[2025-03-09 16:38:06.107899] ReturnType::ReturnType()
-[2025-03-09 16:38:06.107902] 	promise_type::initial_suspend() ==> std::suspend_always()
-[2025-03-09 16:38:06.107905] main function()
-[2025-03-09 16:38:06.107907] ReturnType::getValue()
-[2025-03-09 16:38:06.107908] createCoroutine() entered
-[2025-03-09 16:38:06.107910] 	promise_type::yield_value('Hello from the coroutine') ==> std::suspend_always()
-[2025-03-09 16:38:06.107913] main returned value: Hello from the coroutine
-[2025-03-09 16:38:06.107917] ReturnType::~ReturnType()
-*/

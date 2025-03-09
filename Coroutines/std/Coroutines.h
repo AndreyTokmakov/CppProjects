@@ -22,35 +22,44 @@ namespace Coroutines::Simple::Coroutine_Lifecycle_CoAwait {
 
 namespace Coroutines::Simple::Coroutine_Lifecycle_CoReturn {
     void TestAll();
-};
+}
 
 namespace Coroutines::Simple::Returning_Coroutine {
     void TestAll();
-};
+}
 
 namespace Coroutines::Simple::Returning_Coroutine_2 {
     void TestAll();
-};
+}
 
 namespace Coroutines::Simple::Waitable_Coroutine {
     void TestAll();
-};
+}
 
 namespace Coroutines::Simple::Waitable_Coroutine_2 {
     void TestAll();
-};
+}
+
+namespace Coroutines::Simple::Waitable_Coroutine_Update_Promise_State {
+    void TestAll();
+}
 
 namespace Coroutines::Simple::Multiple_Awaiters_Resolution {
     void TestAll();
-};
+}
 
 namespace Coroutines::Simple::Multiple_Awaiters_Resolution_2 {
     void TestAll();
-};
+}
 
 namespace Coroutines::Simple::Yield_Coroutine {
     void TestAll();
 }
+
+namespace Coroutines::Simple::Yield_Coroutine_Values_from_List {
+    void TestAll();
+}
+
 
 /** ===================== Experiments ======================== **/
 
@@ -82,11 +91,11 @@ namespace Coroutines::Generators {
 
 /** =====================  UseCases   ======================== **/
 
-namespace Coroutines::UseCases::FileReader {
+namespace Coroutines::Experiments::FileReader {
     void TestAll();
 }
 
-namespace Coroutines::UseCases::TaskCoordination {
+namespace Coroutines::Experiments::TaskCoordination {
     void TestAll();
 }
 

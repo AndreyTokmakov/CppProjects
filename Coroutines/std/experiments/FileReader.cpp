@@ -10,15 +10,25 @@ Description : Simple Coroutine Waitable
 #include "Coroutines.h"
 #include "Utilities.h"
 
-#include <coroutine>
-#include <print>
 #include <thread>
 #include <fstream>
+
+#include <coroutine>
+#include <print>
+#include <source_location>
 
 namespace
 {
     auto tid() { return std::this_thread::get_id();}
     auto time() { return Utilities::getCurrentTime();}
+
+    void log(const std::string_view message,
+             const std::source_location location = std::source_location::current())
+    {
+        std::println("File: {} [{}:{}] {} : {}",
+                     location.file_name(), location.line(), location.column(), location.function_name(),
+                     message);
+    }
 }
 
 namespace
@@ -36,6 +46,7 @@ namespace
             explicit FileReadAwaiter(const std::string& filename) : filepath { filename }
             {
                 file.open(filepath);
+                // log(filename);
                 std::println("[{}] [{}] FileReadAwaiter::FileReadAwaiter({})", tid(), time(), filename);
             }
 
@@ -78,7 +89,7 @@ namespace
             FileReader get_return_object()
             {
                 std::println("[{}] [{}] promise_type::get_return_object()", tid(), time());
-                return FileReader{this};
+                return FileReader { std::coroutine_handle<promise_type>::from_promise(*this) };
             }
 
             std::suspend_never initial_suspend() {
@@ -101,19 +112,18 @@ namespace
             }
         };
 
-        promise_type* promise;
-
+        std::coroutine_handle<promise_type> handle;
     };
 
     FileReader processFiles()
     {
-        co_await R"(/home/andtokm/Projects/CppProjects/Coroutines/data/file1.txt)";
-        co_await R"(/home/andtokm/Projects/CppProjects/Coroutines/data/file2.txt)";
+        co_await R"(../../Coroutines/data/file1.txt)";
+        co_await R"(../../Coroutines/data/file2.txt)";
     }
 }
 
 
-void Coroutines::UseCases::FileReader::TestAll()
+void Coroutines::Experiments::FileReader::TestAll()
 {
     processFiles();
 }

@@ -2251,7 +2251,8 @@ namespace Concepts::Iterators {
 }
 
 
-namespace Concepts::ClassMethods {
+namespace Concepts::ClassMethods
+{
 
     template<typename T, bool enable = true>
     class Sample
