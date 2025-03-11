@@ -266,6 +266,5 @@ void Coroutines::Generators::TestAll()
     // Fibonacci_Sequence_Generator::Test();
     // Fibonacci_Sequence_Generator_Ex::Test();
     // Fibonacci_Sequence_Generator_2::test();
-
 }
 

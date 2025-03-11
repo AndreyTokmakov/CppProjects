@@ -36,7 +36,6 @@ add_executable(${PROJECT_NAME}
         Collections/SCSP_RingBuffer_Blocking.cpp
         Collections/RingBuffer.cpp
         Collections/ThreadSafeQueue_CV_vs_RingBuffer.cpp
-        Coroutines/Coroutines.cpp
         Multithreading_Communication/Multithreading_Communication.cpp
         PackagedTask/PackagedTask.cpp
         ParallelExecutionAlgoritms/ParallelExecutionAlgoritms.cpp

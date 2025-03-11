@@ -42,7 +42,6 @@ Description : Multithreading tests main entry point
 #include "Collections/SCSP_RingBuffer_Blocking.h"
 #include "Collections/ThreadSafeQueue_CV_vs_RingBuffer.h"
 #include "Collections/RingBuffer.h"
-#include "Coroutines/Coroutines.h"
 #include "PerformanceExperiments/Mutex_vs_AtomicLock.h"
 #include "PerformanceExperiments/Multithreading_Performance.h"
 #include "PerformanceExperiments/PerformanceExperiments.h"
@@ -99,10 +98,6 @@ int main([[maybe_unused]] int argc,
 
     // Threads::TEST_ALL();
     // JThreads::TEST_ALL();
-
-    /** Coroutines **/
-
-    // Coroutines::TestAll();
 
     /** Performance **/
 
