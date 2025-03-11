@@ -53,6 +53,28 @@ An awaitable type is any type that implements the following methods:
 3. await_resume() : Defines what happens when the coroutine is resumed
                     Often returning a value or performing some final action before execution continues.
 
+
+struct Awaitable
+{
+   bool await_ready() noexcept {
+        return true;
+   }
+
+   void await_suspend(std::coroutine_handle<Task::promise_type> hCoro) noexcept {
+   }
+
+   void await_resume() {
+   }
+
+   ///  ----- OR ----- await_resume()  --> reuturn value
+
+   [[nodiscard]]
+   std::string await_resume() const noexcept
+   {
+
+   }
+}
+
 Например, мы хотим создать механизм отложенного выполнения, который позволит
 функции уснуть на некоторое время, вернет управление вызывающей стороне, после чего
 продолжить свое выполнение через заданное время.

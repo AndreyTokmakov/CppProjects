@@ -1469,40 +1469,25 @@ namespace VirtualFunctionTests
     }
 }
 
-struct Printer
-{
-    int x { 1 };
-
-    void print(const int v) const
-    {
-        std::cout << x << ' ' << v << std::endl;
+void variableArgFunc([[maybe_unused]] std::initializer_list<int> args) {}
+class VariableArgCtor {
+public:
+    VariableArgCtor(std::initializer_list<int> args) {
+        std::cout << __PRETTY_FUNCTION__ << std::endl;
+    }
+    VariableArgCtor(int a, int b, int c) {
+        std::cout << __PRETTY_FUNCTION__ << std::endl;
     }
 };
 
-
-template<Printer PrintStrategy>
-struct Base
-{
-    int value {2};
-
-    void print() const
-    {
-        PrintStrategy.print(value);
-    }
-};
 
 
 int main([[maybe_unused]] const int argc,
          [[maybe_unused]] char** argv)
 {
     const std::vector<std::string_view> args(argv + 1, argv + argc);
-
     // VirtualFunctionTests::demo();
 
-    constexpr Base<Printer{}> base;
-    base.print();
-
-    std::cout << sizeof(base) << std::endl;
 
 
     // WrapperTests::Test();
