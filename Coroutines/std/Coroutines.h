@@ -32,6 +32,10 @@ namespace Coroutines::Simple::Returning_Coroutine_2 {
     void TestAll();
 }
 
+namespace Coroutines::Simple::Resuming_Coroutine_1 {
+    void TestAll();
+}
+
 namespace Coroutines::Simple::Waitable_Coroutine {
     void TestAll();
 }

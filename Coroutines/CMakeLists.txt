@@ -28,16 +28,23 @@ add_executable(${PROJECT_NAME}
         std/experiments/TaskCoordination.cpp
 
         std/simple_examples/Coroutine_Lifecycle_CoReturn.cpp
-        std/simple_examples/Returning_Coroutine_2.cpp
         std/simple_examples/Coroutine_Lifecycle_CoAwait.cpp
+
+        std/simple_examples/Resuming_Coroutine_1.cpp
+
         std/simple_examples/Returning_Coroutine.cpp
+        std/simple_examples/Returning_Coroutine_2.cpp
+
         std/simple_examples/Waitable_Coroutine.cpp
         std/simple_examples/Waitable_Coroutine_2.cpp
         std/simple_examples/Waitable_Coroutine_Update_Promise_State.cpp
+
         std/simple_examples/Multiple_Awaiters_Resolution.cpp
         std/simple_examples/Multiple_Awaiters_Resolution_2.cpp
+
         std/simple_examples/Yield_Coroutine.cpp
         std/simple_examples/Yield_Coroutine_Values_from_List.cpp
+
         std/experiments/Waitable_Coroutine_With_Mutex.cpp
 )
 
