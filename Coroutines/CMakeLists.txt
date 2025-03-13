@@ -46,6 +46,7 @@ add_executable(${PROJECT_NAME}
         std/simple_examples/Yield_Coroutine_Values_from_List.cpp
 
         std/experiments/Waitable_Coroutine_With_Mutex.cpp
+        std/simple_examples/Awaiter_Lifecycle_Steps.cpp
 )
 
 TARGET_LINK_LIBRARIES(${PROJECT_NAME}

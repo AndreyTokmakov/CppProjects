@@ -1521,7 +1521,7 @@ int main([[maybe_unused]] const int argc,
     // Execution::TestAll();
     // StackTrace::TestAll();
 
-    // Coroutines::TestAll();
+    Coroutines::TestAll();
 
 
     // CompileTime_Programming::Factorial();

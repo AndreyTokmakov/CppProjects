@@ -277,10 +277,12 @@ void Coroutines::TestAll()
     // Simple::Coroutine_Lifecycle_CoAwait::TestAll();
     // Simple::Coroutine_Lifecycle_CoReturn::TestAll();
 
+    Simple::Awaiter_Lifecycle_Steps::TestAll();
+
     // Simple::Returning_Coroutine::TestAll();
     // Simple::Returning_Coroutine_2::TestAll();
 
-    Simple::Resuming_Coroutine_1::TestAll();
+    // Simple::Resuming_Coroutine_1::TestAll();
 
     // Simple::Waitable_Coroutine::TestAll();
     // Simple::Waitable_Coroutine_2::TestAll();

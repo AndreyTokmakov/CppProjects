@@ -63,14 +63,27 @@ namespace SimpleExample0
 {
     struct Task
     {
+        struct promise_type;
+        std::coroutine_handle<promise_type> handle;
+
         struct promise_type
         {
-            Task get_return_object() { return {}; }
-            std::suspend_always initial_suspend() { return {}; }
+            Task get_return_object()
+            {
+                return Task { std::coroutine_handle<promise_type>::from_promise(*this) };
+            }
+            std::suspend_never initial_suspend() { return {}; }
             std::suspend_always final_suspend() noexcept { return {}; }
             void return_void() {}
             void unhandled_exception() {}
         };
+
+        explicit Task(const std::coroutine_handle<promise_type>& handle) : handle { handle } {
+        }
+
+        void resume() const {
+            handle.resume();
+        }
     };
 
     Task create_task()
@@ -84,6 +97,7 @@ namespace SimpleExample0
     {
         Task r = create_task();
         std::cout << "Main function continues\n";
+        r.resume();
     }
 }
 
@@ -93,31 +107,24 @@ namespace SimpleExample
     {
         struct promise_type
         {
-            // the compiler looks for a type with the exact name promise_type inside the return type
-            std::suspend_never initial_suspend()
-            {
+            std::suspend_never initial_suspend() {
                 std::cout << "initial_suspend" << std::endl;
-                return std::suspend_never {};
+                return {};
             }
 
-            // gets executed before a coroutine starts execution
-            std::suspend_never final_suspend() noexcept
+            std::suspend_always final_suspend() noexcept
             {
                 std::cout << "final_suspend" << std::endl;
-                return std::suspend_never{};
+                return {};
             }
 
-            // gets executed when a coroutine finishes execution
             ReturnType get_return_object()
             {
                 std::cout << "get_return_object" << std::endl;
                 return ReturnType{};
             }
 
-            // this is the first method gets called when the coroutine is called for the first time
-            void unhandled_exception()
-            {
-
+            void unhandled_exception() {
             }
         };
     };
@@ -135,56 +142,6 @@ namespace SimpleExample
     }
 }
 
-namespace SimpleExample2
-{
-    struct ReturnType
-    {
-        struct promise_type
-        {
-            // the compiler looks for a type with the exact name promise_type inside the return type
-            std::suspend_never initial_suspend()
-            {
-                std::cout << "initial_suspend" << std::endl;
-                return std::suspend_never {};
-            }
-
-            // gets executed before a coroutine starts execution
-            std::suspend_never final_suspend() noexcept
-            {
-                std::cout << "final_suspend" << std::endl;
-                return std::suspend_never {};
-            }
-
-            // gets executed when a coroutine finishes execution
-            ReturnType get_return_object() {
-                return ReturnType(std::coroutine_handle<promise_type>::from_promise(*this));
-            }
-
-            // this is the first method gets called when the coroutine is called for the first time
-            void unhandled_exception()
-            {
-
-            }
-        };
-
-        explicit ReturnType(std::coroutine_handle<void> handle) : mHandle{handle} {
-        }
-        std::coroutine_handle<void> mHandle;
-    };
-
-    ReturnType foo()
-    {
-        std::cout << "1 foo\n";
-        co_await std::suspend_always(); // suspend
-        std::cout << "2 foo\n"; // will never execute since coroutine suspends in the above line
-    }
-
-    void Test()
-    {
-        ReturnType r = foo();
-        r.mHandle.resume(); // equivalent to r.mHandle();
-    }
-}
 
 namespace SimpleExample3
 {
@@ -252,9 +209,6 @@ namespace SimpleExample3
         std::jthread t1([]{ async_task(); }), t2([]{ async_task(); });
     }
 }
-
-
-
 
 namespace Coroutines::DemoOne
 {
@@ -510,7 +464,6 @@ namespace Coroutines::TTT
     };
 }
 
-
 namespace DemoFour
 {
     auto switch_to_new_thread(std::jthread& out)
@@ -565,113 +518,12 @@ namespace DemoFour
 }
 
 
-namespace Coroutines::Example4
-{
-    // https://www.alibabacloud.com/blog/a-comprehensive-discussion-on-c%2B%2B20-coroutines_600889
-
-
-    template <bool ReadyFlag>
-    struct Awaiter
-    {
-        bool await_ready() noexcept
-        {
-            std::cout << "await_ready: " << std::boolalpha << ReadyFlag << std::endl;
-            return ReadyFlag;
-        }
-        void await_resume() noexcept
-        {
-            std::cout << "await_resume" << std::endl;
-        }
-        void await_suspend(std::coroutine_handle<>) noexcept
-        {
-            std::cout << "await_suspend" << std::endl;
-        }
-    };
-
-    struct TaskPromise
-    {
-        struct promise_type
-         {
-            TaskPromise get_return_object()
-            {
-                std::cout << "get_return_object" << std::endl;
-                return TaskPromise{std::coroutine_handle<promise_type>::from_promise(*this)};
-            }
-
-            Awaiter<true> initial_suspend() noexcept
-            {
-                std::cout << "TaskPromise::promise_type::initial_suspend" << std::endl;
-                return {};
-            }
-
-            Awaiter<true> final_suspend() noexcept
-            {
-                std::cout << "final_suspend" << std::endl;
-                return {};
-            }
-
-            void unhandled_exception()
-            {
-                std::cout << "unhandled_exception" << std::endl;
-            }
-
-            void return_void() noexcept
-            {
-                std::cout << "return_void" << std::endl;
-            }
-        };
-
-        void resume()
-        {
-            std::cout << "resume" << std::endl;
-            handle.resume();
-        }
-
-        std::coroutine_handle<promise_type> handle;
-    };
-
-    TaskPromise task_func()
-    {
-        std::cout << "task first run" << std::endl;
-        co_await Awaiter<false>{};
-        std::cout << "task resume" << std::endl;
-    }
-
-    void test()
-    {
-        auto promise = task_func();
-        promise.resume();
-
-        /**  OUTPUT:
-        get_return_object
-        initial_suspend
-        await_ready: 1
-        await_resume
-        task first run
-        await_ready: 0
-        await_suspend
-        resume
-        await_resume
-        task resume
-        return_void
-        final_suspend
-        await_ready: 1
-        await_resume
-         */
-    }
-}
-
-
 
 void Coroutines::TestAll()
 {
     // SimpleExample0::Test();
     // SimpleExample::Test();
-    // SimpleExample2::Test();
-    // SimpleExample3::Test();
-
-    Example4::test();
-
+    // SimpleExample3::Test();   <<----------- neet to fix
 
     // DemoOne::test();
     // DemoTwo::test();
@@ -679,10 +531,6 @@ void Coroutines::TestAll()
     // DemoTwo::testFixed();
     // DemoThree::test();
     // DemoFour::Test();
-
     // Generators::TestGenerator();
-
-
-
 };
 
