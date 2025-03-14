@@ -1480,6 +1480,42 @@ public:
     }
 };
 
+class C
+{
+    std::function<void()> m_handler;
+
+public:
+
+    C()
+    {
+        std::printf("C()\n");
+    }
+
+    ~C()
+    {
+        std::printf("~C()\n");
+    }
+
+    template<typename F>
+    void set_handler(F&& f)
+    {
+        m_handler = std::forward<F>(f);
+    }
+
+    void doAction()
+    {
+        std::printf("doAction()\n");
+        if (m_handler)
+        {
+            m_handler();
+        }
+    }
+
+    void notify()
+    {
+        std::printf("notify()\n");
+    }
+};
 
 
 int main([[maybe_unused]] const int argc,
@@ -1488,6 +1524,13 @@ int main([[maybe_unused]] const int argc,
     const std::vector<std::string_view> args(argv + 1, argv + argc);
     // VirtualFunctionTests::demo();
 
+    std::shared_ptr<C> obj = std::make_shared<C>();
+    obj->set_handler([obj]()
+    {
+        obj->notify();
+    });
+
+    obj->doAction();
 
 
     // WrapperTests::Test();
@@ -1521,7 +1564,7 @@ int main([[maybe_unused]] const int argc,
     // Execution::TestAll();
     // StackTrace::TestAll();
 
-    Coroutines::TestAll();
+    // Coroutines::TestAll();
 
 
     // CompileTime_Programming::Factorial();
@@ -1555,7 +1598,7 @@ int main([[maybe_unused]] const int argc,
     // Math::TestAll();
     // UniquePtr_Size::SizeTest();
     // ObjectOrientedExperiments::RAIIWrapper::TestAll();
-    ObjectOrientedExperiments::OOP_Experiments::TestAll();
+    // ObjectOrientedExperiments::OOP_Experiments::TestAll();
     // ObjectOrientedExperiments::VirtualTables::TestAll();
     // Optional::TestAll();
     // PointsAndLines::TestAll();           // Geometry
