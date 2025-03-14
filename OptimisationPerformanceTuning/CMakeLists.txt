@@ -19,6 +19,8 @@ add_executable(${PROJECT_NAME}
         CacheLineAccessEffects/CacheLineAccessEffects.cpp CacheLineAccessEffects/CacheLineAccessEffects.h
         DoubleBuffering/DoubleBuffering.cpp DoubleBuffering/DoubleBuffering.h
         BranchLessCodeExamples/BranchLessCodeExamples.cpp BranchLessCodeExamples/BranchLessCodeExamples.h
+        Branches/Remove_Branches_Builtin_Unreachable.cpp
+        Branches/Remove_Branches_Builtin_Unreachable.h
 )
 
 TARGET_LINK_LIBRARIES(${PROJECT_NAME}

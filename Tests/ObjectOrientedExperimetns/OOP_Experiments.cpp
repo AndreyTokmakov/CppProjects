@@ -445,8 +445,52 @@ namespace ObjectOrientedExperiments::ShadowingMemberVariable
 }
 
 
+namespace ObjectOrientedExperiments::Virtutal_Equality_Compare
+{
+    struct Base
+    {
+        int a {0};
 
-void ObjectOrientedExperiments::OOP_Experiments::TestAll() {
+        explicit Base(const int a): a {a} {}
+
+        virtual ~Base() = default;
+        virtual bool operator==(const Base& other) const noexcept = default;
+    };
+
+    struct DerivedOne final : Base
+    {
+        int b { 0 };
+        explicit DerivedOne(const int a, const int b): Base{a}, b {b} {}
+
+        bool operator==(const DerivedOne& other) const noexcept = default;
+    };
+
+    struct DerivedTwo final : Base
+    {
+        int c { 0 };
+        explicit DerivedTwo(const int a, const int c): Base{a}, c {c} {}
+
+        bool operator==(const DerivedTwo& other) const noexcept = default;
+    };
+
+    void Compare_Two_Derived_Class_Objects()
+    {
+        const Base b1 {1}, b2 {2};
+        const DerivedOne d1_1 {1, 2}, d1_2 {1, 3};
+        const DerivedTwo d2_1 {1, 2}, d2_2 {1, 3};
+
+        std::cout << std::boolalpha << (d1_1 == d1_2) << std::endl;
+        std::cout << std::boolalpha << (d2_1 == d2_2) << std::endl;
+        // std::cout << std::boolalpha << (d1_1 == d2_2) << std::endl;
+        std::cout << std::boolalpha << (b1 == d2_2) << std::endl;
+        std::cout << std::boolalpha << (b2 == d2_2) << std::endl;
+
+    }
+
+}
+
+void ObjectOrientedExperiments::OOP_Experiments::TestAll()
+{
     // OOP_Experiments::FriendTests
 
     // OOP_Test::ExampleTwo::test();     // overrided method call
@@ -467,41 +511,6 @@ void ObjectOrientedExperiments::OOP_Experiments::TestAll() {
 
     // ShadowingMemberVariable::Test();
 
-
-    struct Object
-    {
-        Object() {
-            std::cout << __PRETTY_FUNCTION__  << std::endl;
-            throw std::runtime_error("Doing bad thing");
-        }
-        ~Object() {
-            std::cout << __PRETTY_FUNCTION__  << std::endl;
-            // throw std::runtime_error("Doing bad thing");
-        }
-    };
-
-    struct Base {
-        virtual ~Base() = default;
-    };
-
-    struct Derived: Base
-    {
-        Object obj;
-
-        Derived() try {
-            std::cout << __PRETTY_FUNCTION__  << std::endl;
-        } catch (const std::exception& exc) {
-            std::cout << __PRETTY_FUNCTION__ << " (Exception)"  << std::endl;
-        }
-
-        ~Derived() override try {
-            std::cout << __PRETTY_FUNCTION__  << std::endl;
-        } catch (const std::exception& exc) {
-            std::cout << __PRETTY_FUNCTION__ << " (Exception)"  << std::endl;
-        }
-    };
-
-    std::unique_ptr<Base> ptr { std::make_unique<Derived>()};
-
+    Virtutal_Equality_Compare::Compare_Two_Derived_Class_Objects();
 
 };

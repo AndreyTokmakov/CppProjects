@@ -1555,7 +1555,7 @@ int main([[maybe_unused]] const int argc,
     // Math::TestAll();
     // UniquePtr_Size::SizeTest();
     // ObjectOrientedExperiments::RAIIWrapper::TestAll();
-    // ObjectOrientedExperiments::OOP_Experiments::TestAll();
+    ObjectOrientedExperiments::OOP_Experiments::TestAll();
     // ObjectOrientedExperiments::VirtualTables::TestAll();
     // Optional::TestAll();
     // PointsAndLines::TestAll();           // Geometry
