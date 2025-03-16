@@ -199,15 +199,15 @@ namespace Coroutines::Generators::Fibonacci_Sequence_Generator_2
             }
 
             void return_value(T t) noexcept {
-                v = t;
+                value = t;
             }
 
             std::suspend_always yield_value(T t) {
-                v = t;
+                value = t;
                 return {};
             }
 
-            T v {};
+            T value {};
         };
 
         [[nodiscard]]
@@ -218,7 +218,7 @@ namespace Coroutines::Generators::Fibonacci_Sequence_Generator_2
         [[nodiscard]]
         size_t next() {
             handle.resume();
-            return handle.promise().v;
+            return handle.promise().value;
         }
 
         std::coroutine_handle<promise_type> handle;

@@ -1,0 +1,57 @@
+
+
+
+Often overlooked is that the “no effect if key is present” methods also tell you whether it did anything.
+This means that you can avoid double-probing the map.
+
+
+// inefficient version                      |       // more efficient alternative   (assuming v is easy to calculate)
+if (map.contains(k)) {                      |       if (map.try_emplace(k, v).second) {
+    already_present();                      |            newly_added();
+} else {                                    |       } else {
+    map[k] = v;                             |            already_present();
+    newly_added();                          |       }
+}                                           |
+
+
+
+Instead of checking whether the map contains a key before adding the element, just try to add it and deal with the collision.
+
+// inefficient version                      |       // more efficient alternative
+                                            |       do {
+do {                                        |            k = gen_random_key();
+    k = gen_random_key();                   |       } while (!map.try_emplace(k, v).second);
+} while (map.contains(k));                  |
+map[k] = v;                                 |
+
+
+Another mistake is code where each line makes sense on its own, but they perform duplicate work that could be combined.
+
+
+// inefficient version                      |       // more efficient alternative
+                                            |       
+if (m.find(k) != m.end()) {                 |       if (auto found = m.find(k); found != m.end()) {
+    m[k].SomeMethod();                      |           found->second.SomeMethod();
+}                                           |       }
+
+
+
+Code that doesn’t realize that the [] operator creates an empty entry if the key is not present. This manifests in two ways:
+
+
+                                    std::map<Key, std::vector<Value>> m;
+
+
+// problem 1: Creating unnecessary empty entries      |      // better version of 1: Use insert_or_assign
+m[k] = new_value;                                     |      m.insert_or_assign(k, new_value);
+                                                      | 
+// problem 2: Manually creating empty entries         |    // better version of 2: Create the empty entry on demand
+std::vector<Value> strings;                           |    m[k].push_back(new_value);
+if (auto found = m.find(k); found != m.end())         | 
+{                                                     | 
+    strings = found->second;                          | 
+}                                                     | 
+                                                      | 
+strings.push_back(new_value);                         | 
+m[k] = strings;                                       | 
+

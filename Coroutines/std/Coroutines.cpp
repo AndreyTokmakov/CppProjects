@@ -277,7 +277,7 @@ void Coroutines::TestAll()
     // Simple::Coroutine_Lifecycle_CoAwait::TestAll();
     // Simple::Coroutine_Lifecycle_CoReturn::TestAll();
 
-    Simple::Awaiter_Lifecycle_Steps::TestAll();
+    // Simple::Awaiter_Lifecycle_Steps::TestAll();
 
     // Simple::Returning_Coroutine::TestAll();
     // Simple::Returning_Coroutine_2::TestAll();
@@ -300,6 +300,7 @@ void Coroutines::TestAll()
     // Experiments::Waitable_Coroutine_With_Mutex::TestAll();
     // Experiments::Calculating_Average::TestAll();
     // Experiments::PinBall_Game::TestAll();
+    Experiments::Event_Processor::TestAll();
     // Experiments::Generic_TaskBased_Coroutine::TestAll();
     // Experiments::FileReader::TestAll();        // <------------- Not working
     // Experiments::TaskCoordination::TestAll();     // <------------- Not working

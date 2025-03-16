@@ -91,6 +91,10 @@ namespace Coroutines::Experiments::Generic_TaskBased_Coroutine {
     void TestAll();
 }
 
+namespace Coroutines::Experiments::Event_Processor {
+    void TestAll();
+}
+
 /** ===================== Generators  ======================== **/
 
 namespace Coroutines::Generators {

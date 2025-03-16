@@ -47,18 +47,18 @@ namespace
     {
         bool await_ready() noexcept
         {
-            info(std::format("  <--- await_ready({})", ReadyFlag));
+            info(std::format("  <--- Awaiter::await_ready({})", ReadyFlag));
             return ReadyFlag;
         }
 
         void await_resume() noexcept
         {
-            info("await_resume()");
+            info("Awaiter::await_resume()");
         }
 
         void await_suspend(std::coroutine_handle<>) noexcept
         {
-            info("await_suspend()");
+            info("Awaiter::await_suspend()");
         }
     };
 
@@ -106,6 +106,31 @@ namespace
         co_await Awaiter<false>{};
         info("---> Task resume");
     }
+
+    /* code after the compiler is expanded can be roughly imagined:
+    TaskPromise task_func()
+    {
+        // No parameters and local variables.
+        auto state = new __TaskPromise_state_(); // has TaskPromise::promise_type promise;
+
+        TaskPromise coro = state.promise.get_return_object();
+
+        try
+        {
+            co_await promise.initial_suspend();
+
+            std::cout << "task first run" << std::endl;
+
+            co_await Awaiter<false>{};
+
+            std::cout << "task resume" << std::endl;
+        } catch (...) {
+            state.promise.unhandled_exception();
+        }
+
+        co_await state.promise.final_suspend();
+    }
+    */
 }
 
 void Coroutines::Simple::Awaiter_Lifecycle_Steps::TestAll()
@@ -116,23 +141,22 @@ void Coroutines::Simple::Awaiter_Lifecycle_Steps::TestAll()
     info("---> back to main()");
 
     /**
-
     get_return_object()
     initial_suspend()
-      <--- await_ready(true)
-    await_resume()
+      <--- Awaiter::await_ready(true)
+    Awaiter::await_resume()
 
     ---> Task first run
-      <--- await_ready(false)
-    await_suspend()
+      <--- Awaiter::await_ready(false)
+    Awaiter::await_suspend()
     resume()
-    await_resume()
+    Awaiter::await_resume()
 
     ---> Task resume
     return_void()
     final_suspend()
-      <--- await_ready(true)
-    await_resume()
+      <--- Awaiter::await_ready(true)
+    Awaiter::await_resume()
 
     ---> back to main()
 

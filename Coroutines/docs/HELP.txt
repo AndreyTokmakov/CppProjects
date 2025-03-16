@@ -4,8 +4,10 @@ A coroutine function is a special type of function in C++ that can be suspended 
 during its execution.
 This is achieved using three key keywords: co_await, co_yield, and co_return.
 
-1. co_await:  This keyword is used to suspend the execution of the coroutine until a particular
-              condition is met or an asynchronous operation is completed.
+1. co_await:  This keyword is used to suspend the execution of the coroutine until a particular condition is met or an asynchronous operation is completed.
+              The idea of having two keywords is that ‘await’ is used to indicate a thing you want to wait for, whereas ‘yield’ is used to specify a value you want to deliver to someone else. 
+
+              The general idea is that, whatever operand you provide to the co_await keyword, the compiler has to convert it into an awaiter object that will tell it how to manage the suspension.
 
               Унарный оператор, позволяющий, в общем случае, приостановить выполнение сопрограммы и
               передать управление вызывающей стороне, пока не завершатся вычисления представленные операндом;
@@ -22,6 +24,39 @@ This is achieved using three key keywords: co_await, co_yield, and co_return.
               больше не сможет возобновить свое выполнение.
 
 
+
+===================================================================================================================
+                                   promise_type
+===================================================================================================================
+
+
+• initial_suspend() :  
+
+    Specify whether the coroutine should start suspended, or run immediately
+    Must return a type that functions as an awaiter. 
+
+    If return:
+
+        std::suspend_never{}   -> This causes the coroutine not to suspend itself on startup, which means that before control returns to main(), 
+                                  the coroutine code will actually start running
+
+        std::suspend_always{}  -> then the newly created coroutine would be suspended at the beginning of its function body.                 
+
+
+
+• void return_void() | return_type return_value()
+
+    Specify what to do when the coroutine returns normally
+
+    return_void()     :  if the coroutine doesn’t return a value at all
+                         return_void() which will be called when 'co_return' is executed without a value, or when code falls off the end of the coroutine.
+
+    return_value()    :  would have been called when the coroutine executed 'co_return'  ** WITH ** a return-value expression.         
+
+
+    Note : that you must implement exactly one of those two methods in a promise type! 
+    It’s an error not to implement either, and it’s an error to implement both. 
+    So you’re not allowed to write a coroutine that returns a value from some 'co_return' statements and no value from others.   
 
 ===================================================================================================================
                                    Awaitables

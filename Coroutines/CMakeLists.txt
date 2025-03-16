@@ -26,6 +26,7 @@ add_executable(${PROJECT_NAME}
         std/experiments/Generic_TaskBased_Coroutine.cpp
         std/experiments/FileReader.cpp
         std/experiments/TaskCoordination.cpp
+        std/experiments/Event_Processor.cpp
 
         std/simple_examples/Coroutine_Lifecycle_CoReturn.cpp
         std/simple_examples/Coroutine_Lifecycle_CoAwait.cpp
