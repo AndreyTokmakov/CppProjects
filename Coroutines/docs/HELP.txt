@@ -29,7 +29,6 @@ This is achieved using three key keywords: co_await, co_yield, and co_return.
                                    promise_type
 ===================================================================================================================
 
-
 • initial_suspend() :  
 
     Specify whether the coroutine should start suspended, or run immediately
@@ -41,7 +40,6 @@ This is achieved using three key keywords: co_await, co_yield, and co_return.
                                   the coroutine code will actually start running
 
         std::suspend_always{}  -> then the newly created coroutine would be suspended at the beginning of its function body.                 
-
 
 
 • void return_void() | return_type return_value()
