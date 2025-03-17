@@ -151,7 +151,7 @@ int main([[maybe_unused]] int argc,
     // PolymorphicMemoryResources::TestAll();
     // Print::TestAll();
     // Random::TestAll();
-    // Ranges::TestAll();
+    Ranges::TestAll();
     // ReferenceWrapper::TestAll();
     // StarshipOperator::TestAll();
     // Streams::TestAll();

@@ -35,6 +35,7 @@ Description :  C++ Ranges
 #include <list>
 #include <iomanip>
 #include <format>
+#include <print>
 
 namespace
 {
@@ -219,15 +220,59 @@ namespace Ranges
     }
 
 
-    void Join_View() {
+    void Join_View()
+    {
         std::vector<std::string> numbers{ "hello", " ", "ranges", " ", "world"  };
-        /*
         for (char c : std::ranges::join_view{ numbers }) {
+            std::cout << c <<  " ";
         }
-        */
+        std::cout << std::endl;
+    }
+
+    void Join()
+    {
+        std::vector<std::vector<int>> nested{{1, 2}, {3, 4, 5}, {6, 7}};
+        auto joined = std::views::join(nested);
+
+        for (int i : joined)
+            std::println("{}", i);
     }
 
 
+    std::string to_uppercase(std::string_view word)
+    {
+        std::string result(word);
+        for (char& c : result)
+            c = std::toupper(static_cast<unsigned char>(c));
+        return result;
+    }
+
+    void Join_With()
+    {
+        const std::vector<std::string_view> words {"The", "C++", "ranges", "library" };
+
+        std::ranges::transform_view words_up = words | std::views::transform(to_uppercase);
+        std::ranges::join_with_view joined = std::views::join_with(words_up, std::string_view(" "));
+
+        for (auto c : joined)
+            std::cout << c;
+    }
+
+    void Concat_1()
+    {
+        std::vector<std::string> v1{"world", "hi"}, v2 { "abc", "xyz" };
+        std::string arr[]{"one", "two", "three"};
+
+        /*
+        auto v1_rev = v1 | std::views::reverse;
+        auto concat = std::views::concat(v1_rev, v2, arr);
+
+        concat[0] = "hello"; // access and write
+
+        for (auto& elem : concat)
+            std::print("{} ", elem);
+        */
+    }
 
     void Split()
     {
@@ -825,12 +870,18 @@ void Ranges::TestAll()
     // Filter_View_Vector();
 
     // View_DropWhile();
+    // Join();
     // Join_View();
+    Join_With();
+
+    // Concat_1();
+
+
 
     // Views::Zip();
     // Views::Repeat();
     // Views::Elements();
-    Views::Enumerate();
+    // Views::Enumerate();
 
     // Algorithms::For_Each();
     // Algorithms::Find_IF();
