@@ -36,6 +36,10 @@ namespace Coroutines::Simple::Resuming_Coroutine_1 {
     void TestAll();
 }
 
+namespace Coroutines::Simple::Awaiter_and_Awaitable {
+    void TestAll();
+}
+
 namespace Coroutines::Simple::Awaiter_Lifecycle_Steps {
     void TestAll();
 }
