@@ -110,7 +110,7 @@ int main([[maybe_unused]] int argc,
     // Chrono::TestAll();
     // ContextControl::TestAll();
     // Comparators::TestAll();
-    Concepts::TestAll();
+    // Concepts::TestAll();
     // ConsoleInOut::TestAll();
     // ConstConstexprMutable::TestAll();
     // CompileTimeProgramming::TestAll();
@@ -151,7 +151,7 @@ int main([[maybe_unused]] int argc,
     // PolymorphicMemoryResources::TestAll();
     // Print::TestAll();
     // Random::TestAll();
-    Ranges::TestAll();
+    // Ranges::TestAll();
     // ReferenceWrapper::TestAll();
     // StarshipOperator::TestAll();
     // Streams::TestAll();
@@ -174,7 +174,7 @@ int main([[maybe_unused]] int argc,
     // Utilities::TestAll();
     // CompilerVersion::TestAll();
     // UniquePtr::TestAll();
-    // WeakPtr::TestAll();
+    WeakPtr::TestAll();
     // StaticAsserts::TestAll();
 
     return EXIT_SUCCESS;

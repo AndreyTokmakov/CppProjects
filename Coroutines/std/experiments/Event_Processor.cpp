@@ -74,21 +74,34 @@ namespace
         {
             EventQueue& queue;
 
+            explicit Awaiter(EventQueue& q): queue {q} {
+                //std::println("[{}] [{}] \t Awaiter created", tid(), time());
+            }
+
+            ~Awaiter() {
+                //std::println("[{}] [{}] \t Awaiter closed", tid(), time());
+            }
+
             [[nodiscard]]
-            bool await_ready() const {
+            bool await_ready() const
+            {
+                std::println("[{}] [{}] \t await_ready() --> {}", tid(), time(), !queue.events.empty());
                 return !queue.events.empty();
             }
 
             void await_suspend(const std::coroutine_handle<PromiseType>& hInputCoro) const
             {
+                /** Defines what happens when the coroutine is suspended. **/
                 while (queue.events.empty()) {
                     // std::cout << "waiting for event ..." << std::endl;
-                    std::this_thread::sleep_for(std::chrono::milliseconds(1u));
+                    std::this_thread::sleep_for(std::chrono::milliseconds(100u));
                 }
                 hInputCoro.resume();
             }
 
-            Event await_resume() {
+            Event await_resume()
+            {
+                /** Defines what happens when the coroutine is resumed **/
                 return queue.pop();
             }
         };

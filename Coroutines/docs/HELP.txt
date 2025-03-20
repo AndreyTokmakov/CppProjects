@@ -86,6 +86,17 @@ An awaitable type is any type that implements the following methods:
 3. await_resume() : Defines what happens when the coroutine is resumed
                     Often returning a value or performing some final action before execution continues.
 
+===================================================================================================================
+                                 Awaitables | Call --- Use Logic
+===================================================================================================================
+
+1. when await_ready() called and if it returns TRUE   ==>  await_resume()  function will called
+2. when await_ready() called and if it returns FALSE  ==>  await_suspend() function will called
+
+
+===================================================================================================================
+                                 Awaitables | Examples
+===================================================================================================================
 
         struct Awaiter
         {

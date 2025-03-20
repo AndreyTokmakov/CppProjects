@@ -284,7 +284,7 @@ void Coroutines::TestAll()
 
     // Simple::Resuming_Coroutine_1::TestAll();
 
-    Simple::Awaiter_and_Awaitable::TestAll();
+    // Simple::Awaiter_and_Awaitable::TestAll();
     // Simple::Waitable_Coroutine::TestAll();
     // Simple::Waitable_Coroutine_2::TestAll();
     // Simple::Waitable_Coroutine_Update_Promise_State::TestAll();
@@ -301,7 +301,7 @@ void Coroutines::TestAll()
     // Experiments::Waitable_Coroutine_With_Mutex::TestAll();
     // Experiments::Calculating_Average::TestAll();
     // Experiments::PinBall_Game::TestAll();
-    // Experiments::Event_Processor::TestAll();
+    Experiments::Event_Processor::TestAll();
     // Experiments::Generic_TaskBased_Coroutine::TestAll();
     // Experiments::FileReader::TestAll();        // <------------- Not working
     // Experiments::TaskCoordination::TestAll();     // <------------- Not working

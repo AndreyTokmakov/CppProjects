@@ -135,7 +135,8 @@ namespace WeakPtr {
 		}
 	}
 
-	void GetOwned_SharedPointer() {
+	void GetOwned_SharedPointer()
+    {
 		std::shared_ptr<Integer> integer = std::make_shared<Integer>(123);
 		std::weak_ptr<Integer> weak(integer);
 
@@ -168,7 +169,8 @@ namespace WeakPtr {
 	}
 };
 
-namespace WeakPtr::WeakFromThis {
+namespace WeakPtr::WeakFromThis
+{
 
 	class TestString : public std::enable_shared_from_this<TestString> {
 	private:
@@ -176,10 +178,10 @@ namespace WeakPtr::WeakFromThis {
 
 	public:
 		template<typename... T>
-		TestString(T&&... params) : value(std::forward<T>(params)...) {
+		explicit TestString(T&&... params) : value(std::forward<T>(params)...) {
 		}
 	
-		TestString(const TestString &obj) {
+		TestString(const TestString &obj)  : enable_shared_from_this(obj) {
 			std::cout << "SharedString::SharedString(" << this->value << "). Copy constructor" << std::endl;
 			this->value = obj.value;
 		}
@@ -197,8 +199,8 @@ namespace WeakPtr::WeakFromThis {
 		}
 	};
 
-	void EnableShareFromThis() {
-
+	void EnableShareFromThis()
+    {
 		const auto check = [](auto weak)-> void {
 			std::cout <<  "Expired = " << std::boolalpha << weak.expired() << std::endl;
 			if (auto observe = weak.lock()) {
@@ -224,10 +226,45 @@ namespace WeakPtr::WeakFromThis {
 		check(weak);
 		//std::cout << typeid(weak).name() << std::endl;
 	}
+}
+
+void Use_Count()
+{
+    std::shared_ptr<Integer> integer = std::make_shared<Integer>(123);
+
+    std::cout << "Use count = " << integer.use_count() << std::endl;
+
+    std::weak_ptr<Integer> wInt = integer;
+
+    std::cout << "Use count = " << integer.use_count() << std::endl;
+    if (auto ptr = wInt.lock(); true) {
+        std::cout << "Use count = " << integer.use_count() << std::endl;
+    }
+}
+
+void Use_Count_1()
+{
+
+    std::weak_ptr<Integer> wInt;
+
+    {
+        std::shared_ptr<Integer> integer = std::make_shared<Integer>(123);
+        wInt = integer;
+
+        std::cout << "Use count = " << wInt.use_count() << std::endl;
+    }
+
+    std::cout << "Use count = " << wInt.use_count() << std::endl;
+    auto ptr = wInt.lock();
+
+    if (!ptr) {
+        std::cout << "Null" << std::endl;
+    }
 
 }
 
-void WeakPtr::TestAll() {
+void WeakPtr::TestAll()
+{
 	// SimpleTest();
 
 	// GetControlledObject();
@@ -240,7 +277,10 @@ void WeakPtr::TestAll() {
 
 	// GetOwned_SharedPointer();
 
-	 WeakFromThis::EnableShareFromThis();
+    // WeakFromThis::EnableShareFromThis();
 
 	// Vector_of_WeakPtr();
+
+    // Use_Count();
+    Use_Count_1();
 }
