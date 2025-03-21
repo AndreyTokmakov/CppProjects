@@ -97,8 +97,6 @@ namespace
 
         test_AoS(aos);
         test_SoA(soa);
-
-
     }
 }
 
