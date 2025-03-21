@@ -16,6 +16,7 @@ Description : C++ Optimisation and Performance Tuning experiments
 #include "DoubleBuffering/DoubleBuffering.h"
 #include "BranchLessCodeExamples/BranchLessCodeExamples.h"
 #include "Branches/Remove_Branches_Builtin_Unreachable.h"
+#include "AoS_vs_SoA/AoS_vs_SoA.h"
 
 #include <iostream>
 #include <string_view>
@@ -68,8 +69,10 @@ int main([[maybe_unused]] int argc,
     // Numa::TestAll();
     // DoubleBuffering::TestAll();
 
-    Remove_Branches_Builtin_Unreachable::TestAll();
+    // Remove_Branches_Builtin_Unreachable::TestAll();
     // BranchLessCodeExamples::TestAll();
+
+    AoS_vs_SoA::TestAll();
 
     return EXIT_SUCCESS;
 }

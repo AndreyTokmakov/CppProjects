@@ -8,6 +8,7 @@ Description : Remove_Branches_Builtin_Unreachable.cpp
 ============================================================================**/
 
 #include <cstdint>
+#include <cstddef>
 #include <numeric>
 #include <array>
 

@@ -11,16 +11,16 @@ add_compile_options(-c -Wall -Wextra -O3 -std=c++23)
 add_executable(${PROJECT_NAME}
         main.cpp
         Inspection/CodeInspection.cpp
-        Utilities.h Utilities.cpp
-        Numa/Numa.h Numa/Numa.cpp
-        SpecificOptimizationTopics/OptimizationTricks.cpp SpecificOptimizationTopics/OptimizationTricks.h
-        FalseSharing/FalseSharingExperiments.cpp FalseSharing/FalseSharingExperiments.h
-        Valgrind/ValgrindExperiments.cpp Valgrind/ValgrindExperiments.h
-        CacheLineAccessEffects/CacheLineAccessEffects.cpp CacheLineAccessEffects/CacheLineAccessEffects.h
-        DoubleBuffering/DoubleBuffering.cpp DoubleBuffering/DoubleBuffering.h
-        BranchLessCodeExamples/BranchLessCodeExamples.cpp BranchLessCodeExamples/BranchLessCodeExamples.h
+        Utilities.cpp
+        Numa/Numa.cpp
+        SpecificOptimizationTopics/OptimizationTricks.cpp
+        FalseSharing/FalseSharingExperiments.cpp
+        Valgrind/ValgrindExperiments.cpp
+        CacheLineAccessEffects/CacheLineAccessEffects.cpp
+        DoubleBuffering/DoubleBuffering.cpp
+        BranchLessCodeExamples/BranchLessCodeExamples.cpp
         Branches/Remove_Branches_Builtin_Unreachable.cpp
-        Branches/Remove_Branches_Builtin_Unreachable.h
+        AoS_vs_SoA/AoS_vs_SoA.cpp
 )
 
 TARGET_LINK_LIBRARIES(${PROJECT_NAME}
