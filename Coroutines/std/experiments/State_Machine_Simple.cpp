@@ -137,7 +137,6 @@ namespace State_Stored_in_Coroutine
             }
         };
 
-
         struct promise_type
         {
             std::string state { "Some_state" };

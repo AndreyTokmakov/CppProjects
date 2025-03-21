@@ -17,6 +17,7 @@ Description : C++ data structures experiments
 #include "MinMaxStack.h"
 #include "RateLimiter.h"
 #include "RingBuffer.h"
+#include "Int2String_MappingTable/Int2String_MappingTable.h"
 
 #include <iostream>
 
@@ -24,7 +25,7 @@ int main([[maybe_unused]] int argc,
          [[maybe_unused]] char** argv)
 {
     // BitReader::TestAll();
-    CircularBuffer::TestAll();
+    // CircularBuffer::TestAll();
     // DVector::TestAll();
     // EventLoop::TestAll();
     // LRUCache::TestAll();
@@ -33,6 +34,7 @@ int main([[maybe_unused]] int argc,
     // MinMaxStack::TestAll();
     // RateLimiter::TestAll();
     // RingBuffer::TestAll();
+    Int2String_MappingTable::TestAll();
 
     return EXIT_SUCCESS;
 }

@@ -34,6 +34,7 @@ add_executable(${PROJECT_NAME}
 		RateLimiter/RateLimiter.h RateLimiter/RateLimiter.cpp
 		Utils/Wrapper.h
 		Utils/PertTools.h Utils/PertTools.cpp
+		Int2String_MappingTable/Int2String_MappingTable.cpp
 )
 
 # Link libraries to the project/executable
