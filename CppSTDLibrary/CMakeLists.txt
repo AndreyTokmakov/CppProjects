@@ -91,6 +91,7 @@ add_executable(${PROJECT_NAME}
 		Utilities/CompilerVersion.cpp
 		Variant/Variant.cpp
 		WeakPtr/WeakPtr.cpp
+		WeakPtr/WeakPtr_MakeShared.cpp
         Volatile/VolatileTests.cpp
 		Hashing/Hashing.cpp
 		Metaprogramming/Metaprogramming.cpp

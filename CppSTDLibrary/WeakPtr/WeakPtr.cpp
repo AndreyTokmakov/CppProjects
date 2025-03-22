@@ -17,6 +17,8 @@
 #include "../Integer/Integer.h"
 #include "WeakPtr.h"
 
+#include "WeakPtr_MakeShared.h"
+
 
 namespace WeakPtr {
 
@@ -265,6 +267,9 @@ void Use_Count_1()
 
 void WeakPtr::TestAll()
 {
+    WeakPtr_MakeShared::TestAll();
+
+
 	// SimpleTest();
 
 	// GetControlledObject();
@@ -282,5 +287,5 @@ void WeakPtr::TestAll()
 	// Vector_of_WeakPtr();
 
     // Use_Count();
-    Use_Count_1();
+    // Use_Count_1();
 }
