@@ -1480,43 +1480,59 @@ public:
     }
 };
 
-class C
+
+
+
+namespace MemoryLeak::Bad_SharedPtr_Usage
 {
-    std::function<void()> m_handler;
-
-public:
-
-    C()
+    class Wrapper
     {
-        std::printf("C()\n");
-    }
+        std::function<void()> m_handler;
 
-    ~C()
-    {
-        std::printf("~C()\n");
-    }
+    public:
 
-    template<typename F>
-    void set_handler(F&& f)
-    {
-        m_handler = std::forward<F>(f);
-    }
-
-    void doAction()
-    {
-        std::printf("doAction()\n");
-        if (m_handler)
-        {
-            m_handler();
+        Wrapper() {
+            std::printf("Wrapper()\n");
         }
-    }
 
-    void notify()
+        ~Wrapper() {
+            std::printf("~Wrapper()\n");
+        }
+
+        template<typename F>
+        void set_handler(F&& f)
+        {
+            m_handler = std::forward<F>(f);
+        }
+
+        void doAction() const
+        {
+            std::printf("doAction()\n");
+            if (m_handler) {
+                m_handler();
+            }
+        }
+
+        void notify() {
+            std::printf("notify()\n");
+        }
+    };
+
+
+    void demo()
     {
-        std::printf("notify()\n");
-    }
-};
+        std::shared_ptr<Wrapper> obj = std::make_shared<Wrapper>();
+        obj->set_handler([obj]() {
+            obj->notify();
+        });
 
+        obj->doAction();
+
+        // Wrapper()
+        // doAction()
+        // notify()
+    }
+}
 
 
 
@@ -1526,14 +1542,18 @@ int main([[maybe_unused]] const int argc,
 {
     const std::vector<std::string_view> args(argv + 1, argv + argc);
     // VirtualFunctionTests::demo();
+    // MemoryLeak::Bad_SharedPtr_Usage::demo();
 
-    std::shared_ptr<C> obj = std::make_shared<C>();
-    obj->set_handler([obj]()
-    {
-        obj->notify();
-    });
+    std::vector<int> values {5,4,1,3, 2};
+    std::vector<int> out {values};
 
-    obj->doAction();
+    const int minElement = *std::min_element(values.begin(), values.end());
+    for (int val: values) {
+        out[val - minElement] = val;
+    }
+
+    std::cout << out << std::endl;
+
 
 
     // WrapperTests::Test();
