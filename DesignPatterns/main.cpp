@@ -85,7 +85,7 @@ int main([[maybe_unused]]  int argc,
     // Proxy::DatabaseProxyTest();
 
     /** Behaviour patterns **/
-    Strategy::Test();
+    // Strategy::Test();
     // Policy::Test();
     // ChainOfResponsibility::TestAll();
     // Command::TestAll();
@@ -107,7 +107,7 @@ int main([[maybe_unused]]  int argc,
     // CopyAndSwap::TEST_ALL();   ---- TESTs
     // TagDispatching::Test();
     // VirtualConstructor::Test();
-    // TypeID::TestAll();
+    TypeID::TestAll();
 
 
     // AccessToken::TestAll();

@@ -192,7 +192,7 @@ namespace State_Stored_in_Coroutine
     }
 }
 
-void Coroutines::Experiments::State_Machine_Simple::TestAll()
+void Coroutines::Experiments::State_Machine_Simple::    TestAll()
 {
     // State_Stored_in_Awaitable::manageConnection();
     State_Stored_in_Coroutine::manageConnection();
