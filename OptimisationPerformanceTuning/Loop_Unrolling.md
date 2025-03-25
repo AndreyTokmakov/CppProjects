@@ -1,8 +1,8 @@
 
-#  Loop Unrolling and Vectorization
+###  Loop Unrolling and Vectorization
 
 Loop unrolling is a classic optimization where the loop body is repeated multiple times per iteration,
-reducing the loop overhead (index increment, branch/jump for loop) and sometimes enabling further optimizations.
+reducing the loop overhead (index increment, branch/jump for loop)<br> and sometimes enabling further optimizations.<br>
 It often goes hand-in-hand with vectorization and instruction-level parallelism.
 
 What is loop unrolling? It’s easier to show by example. Suppose we have a simple loop:
@@ -19,17 +19,17 @@ What is loop unrolling? It’s easier to show by example. Suppose we have a simp
                                                         sum += arr[i];
                                                     }
 
-Now the loop overhead (the check and increment) happens every 4 elements instead of every element.
-This can reduce the number of branches and improve throughput.
+Now the loop overhead (the check and increment) happens every 4 elements instead of every element.<br>
+This can reduce the number of branches and improve throughput.<br>
 Additionally, unrolling may expose more opportunities for the CPU to pipeline instructions or for the compiler
-to schedule instructions better (hiding latencies).
+to schedule instructions better (hiding latencies).<br>
 
-# Bnefits:
+### Bnefits:
 
 1. Fewer branch instructions (the loop counter check/jump) per amount of work, which means less branch prediction
    to worry about and less pipeline disruption.
 
-2. More straight-line code in the inner loop, which can be optimized better by the CPU’s instruction scheduler.
+2. More straight-line code in the inner loop, which can be optimized better by the CPU’s instruction scheduler.<br>
    It can also help with auto-vectorization because the compiler may more easily see how to use SIMD across
    the unrolled group of operations.
 
@@ -37,22 +37,22 @@ to schedule instructions better (hiding latencies).
    (unrolling an outer loop and intermixing operations from inner loops)
 
 
-# Drawbacks:
+### Drawbacks:
 
-1. Code size increase:
-   The unrolled loop is longer in terms of machine code.
+1. Code size increase:<br>
+   The unrolled loop is longer in terms of machine code.<br>
    This can bloat the instruction cache or even prevent the CPU’s loop buffer/micro-op cache from holding the
-   whole loop efficiently
+   whole loop efficiently<br>
    If the loop body is large or the unroll factor is big, you might end up hurting performance by causing more instruction
-   cache misses.
+   cache misses.<br>
    Agner Fog’s optimization guide notes that excessive unrolling can overload the code cache and even defeat
-   the loopback buffer on some CPU
+   the loopback buffer on some CPU<br>
 
 2. If N is not a multiple of the unroll factor, you need extra handling for the leftover iterations (as shown above),
    which adds a bit of complexity.
 
-3. Diminishing returns:
-   Unrolling beyond a certain point gives no benefit and can even hurt.
-   Often unrolling by 2x or 4x is enough.
+3. Diminishing returns:<br>
+   Unrolling beyond a certain point gives no benefit and can even hurt.<br>
+   Often unrolling by 2x or 4x is enough.<br>
    Compilers sometimes unroll small loops automatically at higher optimization levels, so manual unrolling might be redundant.
 

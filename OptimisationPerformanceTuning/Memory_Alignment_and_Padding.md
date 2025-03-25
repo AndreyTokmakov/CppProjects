@@ -1,4 +1,4 @@
-## Memory Alignment and Padding
+### Memory Alignment and Padding
 
 Memory alignment can affect performance at a low level.
 Alignment means that a data object’s address is a multiple of some power of two, typically the object’s size or the size of
@@ -11,7 +11,7 @@ Moreover, alignment can help avoid crossing cache line boundaries, and as we saw
 by aligning on cache line size.
 
 
-## Key points:
+### Key points:
 
 - Natural alignment: 
 
