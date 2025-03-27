@@ -113,6 +113,6 @@ void Auto::TestAll()
 {
     // Auto::SimpleTest();
 
-    // Test_GetReference();
+    Test_GetReference();
     Test_LoseReference_Copy();
 };

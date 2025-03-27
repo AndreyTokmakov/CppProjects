@@ -75,7 +75,6 @@ Description : Tests C++ project
 #include "ConstexprMap/ConstexprMap.h"
 #include "Multithreading/Multithreading.h"
 #include "DesignPatterns/DesignPatterns.h"
-#include "Iterators/Iterators.h"
 #include "Math/Math.h"
 #include "Files_Filesystem/Files.h"
 #include "Helpers/Helpers.h"
@@ -91,7 +90,6 @@ Description : Tests C++ project
 #include "Cpp_NEW_Features/Cpp_NEW_Features.h"
 #include "Cpp_NEW_Features/StackTrace.h"
 #include "Cpp_NEW_Features/Execution.h"
-#include "Auto/AutoTests.h"
 #include "Heap/Heap.h"
 #include "FindMinMaxValues/FindMinMaxValues.h"
 #include "FindMinMaxValues/FindMinMaxValues.h"
@@ -1536,6 +1534,35 @@ namespace MemoryLeak::Bad_SharedPtr_Usage
 
 
 
+namespace NonConstMap
+{
+    struct Value
+    {
+        // std::unique_ptr<int> intPtr { std::make_unique<int>(123)};
+        // int* value = new int(123);
+        int value = 0;
+
+        void setNewValue(int val) const
+        {
+            *value = val;
+            *value = val;
+        }
+    };
+
+    void update(const std::map<std::string, Value>& dict)
+    {
+        dict.at("Name").setNewValue(321);
+
+        // dict.try_emplace("");
+    }
+
+    void demo()
+    {
+        std::map<std::string, Value> dict;
+        update(dict);
+    }
+}
+
 
 int main([[maybe_unused]] const int argc,
          [[maybe_unused]] char** argv)
@@ -1544,15 +1571,6 @@ int main([[maybe_unused]] const int argc,
     // VirtualFunctionTests::demo();
     // MemoryLeak::Bad_SharedPtr_Usage::demo();
 
-    std::vector<int> values {5,4,1,3, 2};
-    std::vector<int> out {values};
-
-    const int minElement = *std::min_element(values.begin(), values.end());
-    for (int val: values) {
-        out[val - minElement] = val;
-    }
-
-    std::cout << out << std::endl;
 
 
 
@@ -1598,7 +1616,6 @@ int main([[maybe_unused]] const int argc,
     // ReturnClass_MemberRef_CopyCTor::tests();
 
 
-    // AutoTests::TestAll();
     // BinManipulation::TestAll();
     // BinaryAnalyzer::TestAll();
     // BitFlags::TestAll();
@@ -1611,7 +1628,6 @@ int main([[maybe_unused]] const int argc,
     // DesignPatterns::TestAll();
     // Date_Time_Chrono::TestAll();
     // Heap::TestAll();
-    // Iterators::TestAll();
     // Files::TestAll();
     // FunctionCall_LookUp::TestAll();
     // LowLatencyLogger::TestAll();
@@ -1626,7 +1642,6 @@ int main([[maybe_unused]] const int argc,
     // Optional::TestAll();
     // PointsAndLines::TestAll();           // Geometry
 
-    // Iterators::TestAll();
     // Strings::TestAll();
     // Performance::TestAll();
     // Templates::TestAll();

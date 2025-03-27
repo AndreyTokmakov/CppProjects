@@ -38,7 +38,6 @@ add_executable(${PROJECT_NAME}
         Multithreading/Multithreading.cpp
         Multithreading/Queue.cpp
         DesignPatterns/DesignPatterns.cpp
-        Iterators/Iterators.cpp
         Files_Filesystem/Files.cpp
         Files_Filesystem/FileUtilities.cpp
         Helpers/UnorderedPair.h
@@ -59,7 +58,6 @@ add_executable(${PROJECT_NAME}
         ObjectOrientedExperimetns/OOP_Experiments.cpp
         Cpp_NEW_Features/Cpp_NEW_Features.cpp
         Cpp_NEW_Features/StackTrace.cpp
-        Auto/AutoTests.cpp
         ObjectOrientedExperimetns/VirtualTables.cpp
         Heap/Heap.cpp
         FindMinMaxValues/FindMinMaxValues.cpp
