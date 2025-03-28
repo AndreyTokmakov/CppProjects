@@ -122,6 +122,31 @@ Math:
 
 • Feature testing  (since C++20) --> https://en.cppreference.com/w/cpp/feature_test#cpp_lib_freestanding_functional
 
+
+• 'Specifying a reason for deleting a function'
+
+   struct NonCopyable {
+	  NonCopyable(const NonCopyable&) = delete("Since this class manages unique resources, copy is not supported; use move instead.");
+   }
+
+• 'Structured binding declaration as a condition' | IF statement structured binding initialization
+
+	if(auto [position, length] = get_next_token(text, offset); position >= 0)      | 	for (auto [position, length] : tokenize(text, offset)) 
+	{                                                                              |	{
+  		std::println("pos {}, len {}", position, length);                          |		std::println("pos {}, len {}", position, length);
+	}                                                                              |  	}
+
+• 'user-generated static_assert messages'
+
+	static_assert(sizeof(int) == 4, std::format("Expected 4, actual {}", sizeof(int)));
+
+• 'Variadic friends'
+                                                             template<class... Ts>
+	template<class T>                               |		 struct VS {
+	struct C {                                      |			 template<class U>
+  		template<class U> struct Nested;            |			 friend class C<Ts>::Nested...; // OK
+	};                                              |        };
+
 ============================================================================================================================================================	
 				                           			           	      C++ Idioms  
 ============================================================================================================================================================
@@ -195,9 +220,10 @@ A typical memory map of a C program consists of the following sections:
 		Initialized read-only area: e.g.  // const float PI = 3.142;
 		Initialized read-write area : 	  // int num = 50;	
 
-• (.bss) | Uninitialized Data Segment 
+• (.bss) | 	BSS | Uninitialized Data Segment
 
 	'Uninitialized' data segment or bss segment, named after an ancient assembler operator that stood for 'Block Started by Symbol'
+	Contains global and static variables that are not explicitly initialized in the source code
 	This segment starts at the end of the '.data' segment and contains all global and static variables that 'do not have explicit initialization'. bss also end up in RAM. 
 
 • Stack
@@ -247,7 +273,15 @@ int main() {                     |
 3. сохраняем в ebp значение регистра esp (адрес вершины стека)
 
 - Все параметры требуемые для вызова функции push-атся на стек в 'обратом порядке' относительно того как они определены в сигратуре функции
-- После всех параметров на стек таже push-атся адрес возврата (instruction pointer)
+- После всех параметров на стек таже push-атся адрес возврата
+
+
+							     |	square:             ; x = edi, ret = eax		
+int square(int x) 			     |		imul edi, edi	     
+{		    					 |		mov  eax, edi
+    return x * x;		         |		ret
+}		  					     |
+
 
 
 ============================================================================================================================================================	
@@ -1139,6 +1173,30 @@ decltype(auto) x2 = x; /** const int **/  |  auto y2 = y1;           /** int  **
 		*** Deleter для std::unique_ptr<T> обязан задавать в compile-time ****
 
 	   
+============================================================================================================================================================
+							 𝗛𝗶𝗱𝗱𝗲𝗻 𝗠𝗲𝗺𝗼𝗿𝘆 𝗖𝗼𝘀𝘁𝘀 𝗶𝗻 𝗖++: 𝗨𝘀𝗶𝗻𝗴 𝘀𝘁𝗱::𝗺𝗮𝗸𝗲_𝘀𝗵𝗮𝗿𝗲𝗱 𝘄𝗶𝘁𝗵 𝘀𝘁𝗱::𝘄𝗲𝗮𝗸_𝗽𝘁𝗿:
+============================================================================================================================================================
+
+When you create a shared pointer using 𝘀𝘁𝗱::𝗺𝗮𝗸𝗲_𝘀𝗵𝗮𝗿𝗲𝗱, everything seems efficient - just one allocation for the object and its control block.
+But if you then store a 𝘀𝘁𝗱::𝘄𝗲𝗮𝗸_𝗽𝘁𝗿 pointing to this shared pointer, the control block has to remain in memory, even after all shared pointers are destroyed. Why?
+The weak counter inside the control block keeps it alive!
+Although the object itself gets destructed, 𝘀𝘁𝗱::𝗺𝗮𝗸𝗲_𝘀𝗵𝗮𝗿𝗲𝗱 makes one allocation, thus one deallocation is expected, leaving the memory which contains the object reserved.
+
+Example 1:
+
+	Using 𝘀𝘁𝗱::𝗺𝗮𝗸𝗲_𝘀𝗵𝗮𝗿𝗲𝗱 with 𝘀𝘁𝗱::𝘄𝗲𝗮𝗸_𝗽𝘁𝗿 leaves memory reserved because the single allocation includes space for the weak reference counter,
+	so the whole memory keeps being reserved until 𝘀𝘁𝗱::𝘄𝗲𝗮𝗸_𝗽𝘁𝗿-s get destructed. Watch how the memory usage continues to grow.
+
+Example 2:
+
+	Using 𝗻𝗲𝘄 with 𝘀𝘁𝗱::𝘀𝗵𝗮𝗿𝗲𝗱_𝗽𝘁𝗿 gives you more explicit control over when memory is deallocated,
+	which can improve memory management in cases where 𝘀𝘁𝗱::𝘄𝗲𝗮𝗸_𝗽𝘁𝗿 significantly outlives the 𝘀𝘁𝗱::𝘀𝗵𝗮𝗿𝗲𝗱_𝗽𝘁𝗿.
+
+Pro Tip:
+
+	If your application heavily uses 𝘀𝘁𝗱::𝘄𝗲𝗮𝗸_𝗽𝘁𝗿 which outlives 𝘀𝘁𝗱::𝘀𝗵𝗮𝗿𝗲𝗱_𝗽𝘁𝗿, consider the implications of using 𝘀𝘁𝗱::𝗺𝗮𝗸𝗲_𝘀𝗵𝗮𝗿𝗲𝗱 vs. 𝗻𝗲𝘄.
+	Understanding these subtleties can help prevent memory issues in performance-critical applications.
+
 ============================================================================================================================================================	
 								                                    Templates:
 ============================================================================================================================================================  
@@ -1567,7 +1625,10 @@ decltype(auto) x2 = x; /** const int **/  |  auto y2 = y1;           /** int  **
 Каждому классу, использующему виртуальные функции (или производному от класса, использующего виртуальные функции), предоставляется собственная виртуальная таблица. 
 Эта таблица представляет собой просто статический массив, который компилятор создает и заполняет во время компиляции.
 
+грубо говоря в каждом классе создаётся статическое поле --> указатель на таблицу виртуальных функций для данного класса (не объекта - а класса)
+
 Виртуальная таблица содержит по одной записи для каждой виртуальной функции, которая может быть вызвана объектами класса.
+Очередность следования функий в VTable (фиксировна на моменте комплияции -- часть ABI )
 
 Каждая запись в этой таблице – это просто указатель на функцию, указывающий на наиболее производную версию функции, доступную для данного класса.
 
@@ -1582,6 +1643,10 @@ decltype(auto) x2 = x; /** const int **/  |  auto y2 = y1;           /** int  **
 RunTime знает что адрес виртуальной функции 'function_0' находится со смещением 0, адрес виртуальной функции 'function_1'  со смещением 1 и т.д. 
 RunTime обращается к 'vptr', чтобы найти адрес виртуальной таблицы, добавляет смещение функции, которую она хочет вызвать, получает адрес функции, а затем выполняет виртуальный вызов.
 
+
+// Посмотреть как выглдяит таблица можно так:
+//> g++-14.2 -fdump-lang-class -g VTableDump.cpp
+//> nano a-VTableDump.cpp.001l.class
 
 			
 • What are VTABLE and VPTR?
@@ -2320,6 +2385,13 @@ However, this is the root of the false sharing problem.
      		Ответ: The volatile keyword informs the compiler that a variable may change without the compiler knowing it. 
 				   Variables that are declared as volatile will not be cached by the compiler, and will thus always be read from memory.
 
+  - volatile (Wrong Uses of volatile)
+		- Is not a synonym for either _Atomic (in C) or std::atomic<T> (in C++).
+		- Does not use memory barriers.
+		- Therefore, does not guarantee thread-safety.
+		- Limits only what optimizations the compiler may do.
+		- Does not limit what the hardware can do.
+
   - Что такое динамическая и статическая типизация?
      		Ответ: Статически типизированные языки – это языки, в которых проверка типа совершается во время компиляции, а в динамически типизированных – в рантайме. 
 					Поскольку C++ является статически типизированным языком, пользователь должен сообщить компилятору, с каким типом объекта он работает во время компиляции.
@@ -2685,19 +2757,23 @@ However, this is the root of the false sharing problem.
                 }
 				
   - What is the “Named Constructor Idiom”:
+	  class Point {
+		public:
+		   static Point rectangular(float x, float y);      // Rectangular coords
+		   static Point polar(float radius, float angle);   // Polar coordinates
 
-	  class Point {                                                                                                              |
-		public:                                                                                                                  |
-		   static Point rectangular(float x, float y);      // Rectangular coords                                                |
-		   static Point polar(float radius, float angle);   // Polar coordinates                                                 |
-                                                                                                                    		     |    int main()
-		private:                                                                                                                 |	  {
-		   Point(float x, float y);     // Rectangular coordinates                                                               |	   	  Point p1 = Point::rectangular(5.7, 1.2);   // Obviously rectangular
-		   float x_, y_;                                                                                                         |		  Point p2 = Point::polar(5.7, 1.2);         // Obviously polar
-		};                                                                                                                       |    }
-		inline Point::Point(float x, float y): x_(x), y_(y) { }                                                                  |
-		inline Point Point::rectangular(float x, float y) { return Point(x, y); }                                                |
-		inline Point Point::polar(float radius, float angle) { return Point(radius*std::cos(angle), radius*std::sin(angle)); }   |
+		private:
+		   Point(float x, float y);     // Rectangular coordinates
+		   float x_, y_;
+		};
+		inline Point::Point(float x, float y): x_(x), y_(y) { }
+		inline Point Point::rectangular(float x, float y) { return Point(x, y); }
+		inline Point Point::polar(float radius, float angle) { return Point(radius*std::cos(angle), radius*std::sin(angle)); }
+
+		int main() {
+		   Point p1 = Point::rectangular(5.7, 1.2);   // Obviously rectangular
+		   Point p2 = Point::polar(5.7, 1.2);         // Obviously polar
+		}
 
   - Прикольный Singleton:
 		class Printer {
@@ -2868,25 +2944,6 @@ However, this is the root of the false sharing problem.
 			do_somethig();
 		}
 		
-
-▪ Question: How to make it work?
-
-		int main()  #// Question: How to make it work?
-		{
-		    A a{0};
-		    B b = static_cast<B>(a); // <--- ERROR
-		}
-
-			ANSWER:
-
-		struct B {                   		 |			struct A {             					 |     struct B  {
-		    int m_a;		                 |				int m_a;              			   	 |	   		int m_a;
-		};                                   |				            		     			 |			
-			                     			 |			     explicit operator B() const {       |	   		explicit B(const A& aObj) : m_a(aObj.m_a) {
-		struct A {                           |					return B{m_a};             		 |		    }
-		    int m_a;                         |				}            		     			 |		};
-		};                               	 |			};            		     			     |
-
 ============================================================================================================================================================	
 								                    Effective and Performance Modern C++:
 ============================================================================================================================================================
@@ -3369,6 +3426,41 @@ However, this is the root of the false sharing problem.
 			unsigned int size = pList->size();             // variable on the stack
 		}
   
+ ▪ Logger
+
+ 		struct Logger
+ 		{
+
+        	std::jthread logProcessor;
+        	std::vector<std::shared_ptr<ILogHandler>> handlers;
+
+	        Logger() {
+				logHandler = std::jthread(&Logger::handleLogs, this, stopSource);
+	        }
+
+        	void handleLogs(const std::stop_source& source)
+        	{   ...
+        	    for (const auto& entry: logsLocal)
+                {
+                    for (const std::shared_ptr<ILogHandler>& handler: handlers) {
+                        handler->handleEntry(entry);
+                    }
+                }
+        	}
+ 		}
+
+
+ 	    // При вызове дестуктора класса Logger
+ 	    // Сначала будет вызван дестуктор для "std::vector<std::shared_ptr<ILogHandler>> handlers"
+ 	    // и потом дестуктор "std::jthread logProcessor"
+ 	    // В итогe в методе handleLogs() при попытке итерации по Logger::handlers все упадёт
+                                           struct Logger
+                                           {
+ 												 std::vector<std::shared_ptr<ILogHandler>> handlers;
+ 	    ---> Фикс поменять очередность на    	 std::jthread logProcessor;
+        	                               }
+
+
 ============================================================================================================================================================	
 								                    Secure coding | C++ Hardening | Sanitizing C++ | Безопастность
 ============================================================================================================================================================
@@ -3404,4 +3496,4 @@ void filterNegative(vector<int>& values)                  |         void filterN
     	if (values[i] < 0) values[j++] = values[i];		  |				 	values[j] = values[i];
   	values.resize(j);			                          |					j += values[i] < 0;   /// <--- No more conditional Jump here
 }				                                          |				 }
-														  |			}
+														  |
