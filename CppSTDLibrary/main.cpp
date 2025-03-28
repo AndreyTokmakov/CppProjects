@@ -155,8 +155,8 @@ int main([[maybe_unused]] int argc,
     // ReferenceWrapper::TestAll();
     // StarshipOperator::TestAll();
     // Streams::TestAll();
-    // String::TestAll();
     // StringStream::TestAll();
+    String::TestAll();
     // StringView::TestAll();
     // StructuredBinding::TestAll();
     // StrongTypes::TestAll();
@@ -174,7 +174,7 @@ int main([[maybe_unused]] int argc,
     // Utilities::TestAll();
     // CompilerVersion::TestAll();
     // UniquePtr::TestAll();
-    WeakPtr::TestAll();
+    // WeakPtr::TestAll();
     // StaticAsserts::TestAll();
 
     return EXIT_SUCCESS;

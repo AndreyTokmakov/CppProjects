@@ -1533,34 +1533,39 @@ namespace MemoryLeak::Bad_SharedPtr_Usage
 }
 
 
+/*
+struct Point {};
 
-namespace NonConstMap
+void foo(unsigned char* buf, size_t len)
 {
-    struct Value
-    {
-        // std::unique_ptr<int> intPtr { std::make_unique<int>(123)};
-        // int* value = new int(123);
-        int value = 0;
+    assert(len == sizeof(Point));
+    Point* p = std::start_lifetime_as<Point>(buf);
 
-        void setNewValue(int val) const
-        {
-            *value = val;
-            *value = val;
+}*/
+
+
+void str_Test()
+{
+    // 1. contains() example
+    std::string str = "Hello C++23 World";
+
+    std::println("{}", str.contains("C++23"));
+    std::println("{}", str.contains('X'));
+
+    // 2. resize_and_overwrite() example
+    std::string numbers {"xyz"};
+    numbers.resize_and_overwrite(5, [](char* buf, std::size_t n) {
+        for (std::size_t i = 1; i < n; ++i) {
+            buf[i] = '0' + i;
         }
-    };
+        return n;
+    });
+    std::println("Numbers: {}", numbers);
 
-    void update(const std::map<std::string, Value>& dict)
-    {
-        dict.at("Name").setNewValue(321);
-
-        // dict.try_emplace("");
-    }
-
-    void demo()
-    {
-        std::map<std::string, Value> dict;
-        update(dict);
-    }
+    // 3. string_view range constructor
+    std::vector<char> chars = {'H', 'e', 'l', 'l', 'o'};
+    std::string_view sv(chars.begin(), chars.end());
+    std::println("View: {}", sv);
 }
 
 

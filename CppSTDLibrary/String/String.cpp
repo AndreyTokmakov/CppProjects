@@ -1479,9 +1479,50 @@ namespace CompileTimeValidation
     }
 }
 
+namespace String::Resize_String
+{
+	void stringInto(const std::string& str)
+	{
+		std::cout << "content: " << str << " | size: " << str.size() << " | capacity: " << str.capacity() << std::endl;
+	}
+
+	void Resize()
+	{
+		std::string text {"abcdefghijkabcdefghijkabcdefghijk"};
+		stringInto(text);
+		text.resize(12);
+		stringInto(text);
+
+		/**
+		 * content: abcdefghijkabcdefghijkabcdefghijk | size: 33 | capacity: 33
+		 * content: abcdefghijka | size: 12 | capacity: 33
+		 **/
+	}
+
+	void Resize_and_Overwrite()
+	{
+		std::string text {"abcdefghijkabcdefghijkabcdefghijk"};
+		stringInto(text);
+
+		text.resize_and_overwrite(5, [](char* buf, std::size_t n) {
+			for (std::size_t i = 2; i < n; ++i) {
+				buf[i] = '0' + i;
+			}
+			return n;
+		});
+
+		stringInto(text);
+
+		/**
+		 * content: abcdefghijkabcdefghijkabcdefghijk | size: 33 | capacity: 33
+		 * content: ab234 | size: 5 | capacity: 33
+		 **/
+	}
+}
+
 void String::TestAll()
 {
-    CompileTimeValidation::compileTimeValidation();
+    // CompileTimeValidation::compileTimeValidation();
 
 
 	// Create_Test();
@@ -1496,6 +1537,9 @@ void String::TestAll()
 	// Append2();
 
 	// StartsWith();
+
+	// Resize_String::Resize();
+	Resize_String::Resize_and_Overwrite();
 
 	// Crbegin_Crend_Test();
 	// PushBack();
@@ -1523,7 +1567,7 @@ void String::TestAll()
 	// Assign__Substr_vs_Iterators();
 
 
-	Trim();
+	// Trim();
 	// Trim_Performance();
 
 	// Size_Storage();

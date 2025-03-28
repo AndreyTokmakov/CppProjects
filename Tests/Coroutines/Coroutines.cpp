@@ -121,12 +121,23 @@ namespace SimpleExample
             ReturnType get_return_object()
             {
                 std::cout << "get_return_object" << std::endl;
-                return ReturnType{};
+                return ReturnType{std::coroutine_handle<promise_type>::from_promise(*this)};
             }
 
             void unhandled_exception() {
             }
         };
+
+        explicit ReturnType(const std::coroutine_handle<promise_type>& handle) : handle { handle } {
+        }
+
+
+        void resume() const {
+            print("MyCoroutine::resume()");
+            handle.resume();
+        }
+
+        std::coroutine_handle<promise_type> handle;
     };
 
     ReturnType foo()
@@ -139,6 +150,7 @@ namespace SimpleExample
     void Test()
     {
         ReturnType r = foo();
+        r.resume();
     }
 }
 
@@ -269,7 +281,7 @@ namespace Coroutines::DemoTwo
             void unhandled_exception() {}
         };
 
-        explicit MyCoroutine(std::coroutine_handle<promise_type> handle) : handle { handle } {
+        explicit MyCoroutine(const std::coroutine_handle<promise_type>& handle) : handle { handle } {
         }
 
         void destroy() const {
@@ -522,7 +534,7 @@ namespace DemoFour
 void Coroutines::TestAll()
 {
     // SimpleExample0::Test();
-    // SimpleExample::Test();
+    SimpleExample::Test();
     // SimpleExample3::Test();   <<----------- neet to fix
 
     // DemoOne::test();

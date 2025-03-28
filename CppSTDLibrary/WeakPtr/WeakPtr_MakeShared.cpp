@@ -14,7 +14,10 @@ Description : WeakPtr_MakeShared.cpp
 #include <string>
 #include <new>
 
+#define OVERLOAD_NEW_OPERATOR 0
 
+
+#if OVERLOAD_NEW_OPERATOR
 void* operator new(size_t count)
 {
     auto * ptr = malloc(count);
@@ -27,6 +30,8 @@ void operator delete(void* ptr) noexcept
     std::cout << "deallocating " << ptr << "\n";
     free(ptr);
 }
+#endif
+
 
 namespace
 {
@@ -85,6 +90,8 @@ namespace
 
 void WeakPtr_MakeShared::TestAll()
 {
+    // OVERLOAD_NEW_OPERATOR --> 1 for tests
+
     WeakPtr_OutLive_SharedPtr__NoLeak();
     // WeakPtr_OutLive_SharedPtr__MemLeak();
 }

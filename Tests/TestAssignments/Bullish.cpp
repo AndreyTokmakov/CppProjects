@@ -67,8 +67,8 @@ namespace TestAssignment
         explicit Database(const std::vector<account_balance>& acctBalances)
         {
             accounts.reserve(acctBalances.size());
-            for (const account_balance& accInfo: acctBalances) {
-                accounts[accInfo.account_id] = accInfo.balance;
+            for (const auto& [account_id, balance]: acctBalances) {
+                accounts[account_id] = balance;
             }
         }
 

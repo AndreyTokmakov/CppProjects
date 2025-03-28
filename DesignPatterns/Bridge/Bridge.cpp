@@ -41,7 +41,7 @@ namespace Bridge::Clock
     };
 
 
-    class LockupAlarmClock : public AlarmClock
+    class LockupAlarmClock final : public AlarmClock
     {
         int hourAlarm;
         int minutesAlarm;
@@ -91,8 +91,8 @@ namespace Bridge::Clock
 
     };
 
-    class ShellMP3AlarmClock : public AlarmClockImpl {
-    private:
+    class ShellMP3AlarmClock final : public AlarmClockImpl
+    {
         std::string cmdplay;
 
     public:
