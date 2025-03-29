@@ -1,7 +1,13 @@
-============================================================================================================================================================	
-					                           			           	      C++ 17                                                                            
-============================================================================================================================================================
+### [C++ 17](https://en.cppreference.com/w/cpp/17)
+_Libraries:_
+- std::any
+- std::string_view
+- std::variant
+- [std::pmr::memory_resource](https://en.cppreference.com/w/cpp/memory/memory_resource)
+- std::optional
+- std::filesystem
 
+_Features:_
 - Structured binding declaration 
 - compile-time if constexpr
 - Fold-expressions
@@ -13,94 +19,70 @@
 - Nested Namespaces
 - if constexpr
 - inline variables
-- new attributes: [[fallthrough]] [[maybe_unused]] [[nodiscard]]
-
+- new attributes: `[[fallthrough]]` `[[maybe_unused]]` `[[nodiscard]]`
 - Placement new
 
-- <any>
-- <string_view>
-- <variant>
-- <memory_resource>
-- <optional>
-- <filesystem>
+### [C++ 20](https://en.cppreference.com/w/cpp/20)
+_Libraries:_
+- [concepts](https://en.cppreference.com/w/cpp/concepts)
+- [std::format](https://en.cppreference.com/w/cpp/utility/format/format)
+- [std::source_location](https://en.cppreference.com/w/cpp/utility/source_location)
+- [std::span](https://en.cppreference.com/w/cpp/header/span)
+- [modules](https://en.cppreference.com/w/cpp/language/modules)
+- [ranges](https://en.cppreference.com/w/cpp/ranges)
+- [coroutines](https://en.cppreference.com/w/cpp/language/coroutines)
 
-============================================================================================================================================================    
-                                                                                 C++ 20                                                                            
-============================================================================================================================================================
- 
-- Concepts
-- Format (<format>)
-- Source Location (<source_location>)
-- Span
-
-- Modules
-- Ranges
-- Coroutines: <coroutine>
- 
+_Features:_
 - 3-way comparison
-- New attributes: [[no_unique_address]], [[likely]], [[unlikely]]
- 
+- New attributes: `[[no_unique_address]]`, `[[likely]]`, `[[unlikely]]`
 - std::ssize(v) --> signed size
- 
-Features: 
-    - Constexpr Improvements [constexpr Dynamic Memory Allocation, C++20]
-    - Template Syntax For Generic Lambdas
-    - Constrained Auto                           //  void foo(std::floating_point auto fp) { ... } 
-    - Template Syntax For Generic Lambdas        //  auto fn = []<typename T>(vector<T> const& vec) { .... }
-    - Range-based for loop with Initializer      //  for (init; decl : expr) { .... }
-    - Designated Initializers                    //  Type obj = { .designator = val, .designator { val2 }, ... };
-    - consteval, constinit
-    - 'using enum':  using enum long_enum_name;  //  control the visibility of enumerator names and thus make it simpler to write.
-    - NTTP : Class-types in non-type template parameters 
-    - Prefixes and suffixes for std::strings     //  starts_with() and .ends_with()
-    - Containers, checking for elements          //  contains() member function
- 
-Multithreading:
-    - std::stop_token
-    - std::semaphore
-    - std::latch
-    - std::barrier
-    - std::jthread 
+- Constexpr Improvements [constexpr Dynamic Memory Allocation, C++20]
+- Template Syntax For Generic Lambdas
+- Constrained Auto                           //  void foo(std::floating_point auto fp) { ... } 
+- Template Syntax For Generic Lambdas        //  auto fn = []<typename T>(vector<T> const& vec) { .... }
+- Range-based for loop with Initializer      //  for (init; decl : expr) { .... }
+- Designated Initializers                    //  Type obj = { .designator = val, .designator { val2 }, ... };
+- consteval, constinit
+- 'using enum':  using enum long_enum_name;  //  control the visibility of enumerator names and thus make it simpler to write.
+- NTTP : Class-types in non-type template parameters 
+- Prefixes and suffixes for std::strings     //  starts_with() and .ends_with()
+- Containers, checking for elements          //  contains() member function <br>
+
+_Multithreading:_
+- [std::stop_token](https://en.cppreference.com/w/cpp/thread/stop_token)
+- [std::semaphore](https://en.cppreference.com/w/cpp/thread/counting_semaphore)
+- [std::latch](https://en.cppreference.com/w/cpp/thread/latch)
+- [std::barrier](https://en.cppreference.com/w/cpp/thread/barrier)
+- [std::jthread ](https://en.cppreference.com/w/cpp/thread/jthread)
  
 Math:
 - midpoint and lerp
 - Math Constants [pi_v ...]
 
-
-============================================================================================================================================================	
-				                           			           	      C++ 23
-============================================================================================================================================================
-
-• really  (explicit const)                     [https://www.kdab.com/cpp23-will-be-really-awesome/]
-
-• static_assert (false) in templates           //  now cpmpiles!!!
-
-• std::flat_map
-• std::flat_set
-
-• std::expected
-
-• std::stacktrace
-
-• std::spanstream
-
-• std::print
-
-• Relaxing constexpr restrictions
+### [C++ 23](https://en.cppreference.com/w/cpp/23)
+- [really](https://www.kdab.com/cpp23-will-be-really-awesome)  (explicit const)
+- static_assert (false) in templates           //  now compiles!!!
+- std::flat_map
+- std::flat_set
+- [std::expected](https://en.cppreference.com/w/cpp/utility/expected)
+- [std::stacktrace](https://en.cppreference.com/w/cpp/header/stacktrace)
+- std::spanstream
+- std::print
+- Relaxing constexpr restrictions
 
 	[ allows using static constexpr variables in constexpr functions ]
 
 • Static operators
-																	   void some_test_func() 
+`																	   void some_test_func() 
     struct S {                                                             constexpr S s;
         static constexpr bool operator() (int x, int y) {              	   static_assert (s (1, 2)); 
             return x < y;                                                  
         }                                                                  constexpr bool result = S::operator()(1, 2);  // OK in C++23	 
     };																	   std::cout << std::boolalpha << result << std::endl; 		
-                                                                       }
+                                                                       }`
 • 'Extend init-statement to allow alias-declaration'
 	
-	for (using T = int; T e : v) {}
+`for (using T = int; T e : v) {}`
 
 • 'Attributes on Lambda-Expressions' [https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2021/p2173r1.pdf] 
 
@@ -112,16 +94,14 @@ Math:
 	Effort must be spent to migrate those casts to 'std::start_lifetime_as' case by case: not every 'reinterpret_cast' is meant to start lifetime.
 	Also 'start_lifetime_as' needs to be taught (even it’s easy to learn). The overall cost to the user base is not small.
 
-============================================================================================================================================================	
-													C++ 26    |    // https://en.cppreference.com/w/cpp/compiler_support/26
-============================================================================================================================================================
-
+### [C++ 26](https://en.cppreference.com/w/cpp/compiler_support/26)
 • Trivial relocatability for C++
 
 • std::hive (https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2024/p0447r28.html#introduction)
 
 • Feature testing  (since C++20) --> https://en.cppreference.com/w/cpp/feature_test#cpp_lib_freestanding_functional
 
+• [RCU](https://en.cppreference.com/w/cpp/header/rcu)
 
 • 'Specifying a reason for deleting a function'
 
