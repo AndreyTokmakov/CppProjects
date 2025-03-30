@@ -1448,7 +1448,8 @@ namespace Concepts::Tests
     }
 }
 
-namespace Concepts::Function_Constrains {
+namespace Concepts::Function_Constrains
+{
 
     template<typename Func>
     concept FuncReturnsInt = requires(Func f) {
@@ -1460,19 +1461,53 @@ namespace Concepts::Function_Constrains {
         return func();
     }
 
-    void Test_Function_Return_Int() {
-
+    void Test_Function_Return_Int()
+    {
         auto f1 = []()-> int { return 1; };
         auto f2 = []() -> std::string { return {}; };
 
         auto a1 = foo(f1);
         std::cout << typeid(a1).name() << " = " << a1 << std::endl;
-
 #if 0
         auto a2 = foo(f2);
 #endif
     }
 }
+
+
+namespace Concepts::Function_Constrains
+{
+    template<typename Type>
+    concept IsFunctor = requires (Type obj) {
+            { obj(0) } -> std::same_as<int>;
+    };
+
+    void client(const IsFunctor auto& obj)
+    {
+        std::cout << obj(10) << std::endl;
+    }
+
+    struct FunctorOne
+    {
+        int operator()(int x) const {
+            return x * 10;
+        }
+    };
+
+    struct FunctorTwo
+    {
+        int operator()() const {
+            return 10;
+        }
+    };
+
+    void CheckTypeIsFunctor()
+    {
+        client(FunctorOne{});
+        // client(FunctorTwo{});
+    }
+}
+
 
 namespace Concepts::Callables
 {
@@ -2900,13 +2935,15 @@ void Concepts::TestAll()
 
     // Concepts_With_Lambdas::Params_Concepts();
 
-    // Constraints_On_Member_Function::Check_If_Function_Available();
 
     // CRPT_Replace::Concepts_Instead_CRTP();
     // ConceptsAsInterface::passClassObjAsInterface();
     // NestedConcepts::CheckMethodReturnType();
     // SFINAE::ChooseOverloadedFunc_WithRequire();
+
     // Function_Constrains::Test_Function_Return_Int();
+    Function_Constrains::CheckTypeIsFunctor();
+    // Constraints_On_Member_Function::Check_If_Function_Available();
 
     // Conversations::String_Test();
     // Conversations::Convertible_To_Tests();
@@ -2935,7 +2972,7 @@ void Concepts::TestAll()
     CheckAllTypesAreSame::Check_with_Concepts();
     CheckAllTypesAreSame::Check_with_StaticAssert();
     CheckAllTypesAreSame::Check_ALL_Integral();
-    CheckTypes::CheckThatTypeSameAs();
+    CheckTypes::CheckThatTypeSameAs();   // <--- Allow construction using one of the base class only
     */
 
     // IntegerConcepts::IntegerSum();

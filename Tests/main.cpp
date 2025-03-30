@@ -7,48 +7,36 @@ Copyright   : Your copyright notice
 Description : Tests C++ project
 ============================================================================**/
 
-#include <optional>
+
 #include <iostream>
 #include <string>
 #include <string_view>
-#include <cstring>
-#include <fstream>
-#include <functional>
 #include <filesystem>
-#include <tuple>
-#include <ranges>
-#include <cassert>
-#include <condition_variable>
-#include <exception>
-#include <thread>
-#include <future>
-#include <mutex>
-#include <syncstream>
-#include <utility>
-#include <format>
-#include <numeric>
-#include <queue>
-#include <utility>
+
+
+#include <array>
 #include <vector>
-#include <any>
 #include <list>
 #include <forward_list>
 #include <deque>
+#include <queue>
 #include <map>
-#include <algorithm>
-#include <array>
-#include <version>
-#include <concepts>
 #include <span>
-#include <cmath>
 #include <stack>
-#include <variant>
+
+
+#include <algorithm>
 #include <chrono>
 #include <random>
-#include <format>
 #include <iomanip>
+
+#include <concepts>
+#include <version>
 #include <expected>
 #include <print>
+#include <format>
+#include <ostream>
+#include <stdfloat>
 
 #include <experimental/socket>
 #include <experimental/scope>
@@ -96,14 +84,6 @@ Description : Tests C++ project
 #include "FunctionCall_LookUp/FunctionCall_LookUp.h"
 
 #define PRINT_LINE   std::cout.width(128); std::cout.fill('='); std::cout << '\n';
-
-struct AnyBase
-{
-    virtual const std::type_info& type() = 0;
-    virtual void copy_to(std::any&) = 0;
-    virtual void move_to(std::any&) = 0;
-    virtual ~AnyBase() = default;
-};
 
 namespace
 {
@@ -1544,30 +1524,6 @@ void foo(unsigned char* buf, size_t len)
 }*/
 
 
-void str_Test()
-{
-    // 1. contains() example
-    std::string str = "Hello C++23 World";
-
-    std::println("{}", str.contains("C++23"));
-    std::println("{}", str.contains('X'));
-
-    // 2. resize_and_overwrite() example
-    std::string numbers {"xyz"};
-    numbers.resize_and_overwrite(5, [](char* buf, std::size_t n) {
-        for (std::size_t i = 1; i < n; ++i) {
-            buf[i] = '0' + i;
-        }
-        return n;
-    });
-    std::println("Numbers: {}", numbers);
-
-    // 3. string_view range constructor
-    std::vector<char> chars = {'H', 'e', 'l', 'l', 'o'};
-    std::string_view sv(chars.begin(), chars.end());
-    std::println("View: {}", sv);
-}
-
 
 int main([[maybe_unused]] const int argc,
          [[maybe_unused]] char** argv)
@@ -1575,6 +1531,7 @@ int main([[maybe_unused]] const int argc,
     const std::vector<std::string_view> args(argv + 1, argv + argc);
     // VirtualFunctionTests::demo();
     // MemoryLeak::Bad_SharedPtr_Usage::demo();
+
 
 
 
@@ -1624,7 +1581,7 @@ int main([[maybe_unused]] const int argc,
     // BinManipulation::TestAll();
     // BinaryAnalyzer::TestAll();
     // BitFlags::TestAll();
-    // Concepts::TestAll();
+    Concepts::TestAll();
     // Crow::TestAll();
     // CollectionsTests::TestAll();
     // CopyElision_RVO::TestAll();
