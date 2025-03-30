@@ -10,10 +10,11 @@ add_compile_options(-c -Wall -Wextra -O3 -std=c++2a)
 
 # include all components
 add_executable(${PROJECT_NAME}
-    main.cpp
-    Integer.h Integer.cpp
-    MemoryPool.h
-    Collections.h Collections.cpp
+        main.cpp
+        Integer.h Integer.cpp
+        MemoryPool.h
+        Collections/Collections.h Collections/Collections.cpp
+        VirtualCall_vs_TypeErasure/VirtualCall_vs_TypeErasure.h VirtualCall_vs_TypeErasure/VirtualCall_vs_TypeErasure.cpp
 )
 
 TARGET_LINK_LIBRARIES(${PROJECT_NAME}

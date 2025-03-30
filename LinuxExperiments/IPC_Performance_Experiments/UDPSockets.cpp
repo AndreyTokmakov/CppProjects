@@ -94,7 +94,8 @@ void UDPSockets::TestAll()
     startServer();
 
     // Result:
-    //      Messages received: 1000000, Bytes: 1024000000
-    //      Result: 8386620 microseconds
+    //      Messages received: 1'000'000, Bytes: 1024'000'000
+    //         Result: 6 675 522 microseconds
+    //         Result: 5 570 706 microseconds
     //  + Some message losses
 }

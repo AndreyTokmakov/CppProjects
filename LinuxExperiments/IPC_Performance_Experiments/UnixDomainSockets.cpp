@@ -203,6 +203,6 @@ void UnixDomainSockets::TestAll()
     startServer_Receiver_SameConnection();
 
     // Result:
-    //      Messages received: 1000000, Bytes: 1024000000
-    //      Result: 1401331 microseconds
+    //      Messages received: 1'000'000, Bytes: 1'024'000'000
+    //      Result: 1'401'331 microseconds
 }

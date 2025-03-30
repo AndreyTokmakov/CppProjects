@@ -16,8 +16,8 @@ Description : TypeErasure
 
 namespace TypeErasure::ExperimentFirst
 {
-    class Object {
-    public:
+    struct Object
+    {
         template<typename T>
         explicit Object(T&& obj):
             concept_(std::make_shared<struct ConcreteCommand<T>>(std::forward<T>(obj))) {
@@ -27,7 +27,9 @@ namespace TypeErasure::ExperimentFirst
         int get_id() const { return concept_->get_id(); }
 
     private:
-        struct ICommand {
+
+        struct ICommand
+        {
             virtual ~ICommand() = default;
 
             [[nodiscard]]
@@ -35,7 +37,8 @@ namespace TypeErasure::ExperimentFirst
         };
 
         template<typename T>
-        struct ConcreteCommand final : ICommand {
+        struct ConcreteCommand final : ICommand
+        {
             explicit ConcreteCommand(T&& obj) noexcept : object_(std::forward<T>(obj)) {
 
             }
@@ -70,7 +73,8 @@ namespace TypeErasure::ExperimentFirst
         // int get_id() const { return 2; }
     };
 
-    void Test() {
+    void Test()
+    {
         Object o1(Bar{});
         Object o2(Foo{});
         // Object o3(FooEx{});
@@ -237,11 +241,11 @@ void TypeErasure_CallOperator_Test();
 
 void TypeErasure::Test()
 {
-    // ExperimentFirst::Test();
+    ExperimentFirst::Test();
     // ExperimentSecond::Test();
 
     // TypeErasure_VoidType::test();
 
-    TypeErasure_CallOperator_Test();
+    // TypeErasure_CallOperator_Test();
 };
 

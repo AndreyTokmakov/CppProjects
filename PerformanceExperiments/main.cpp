@@ -49,7 +49,8 @@
 #include "Integer.h"
 #include "MemoryPool.h"
 
-#include "Collections.h"
+#include "Collections/Collections.h"
+#include "VirtualCall_vs_TypeErasure/VirtualCall_vs_TypeErasure.h"
 
 
 using Utilities::Integer;
@@ -3971,8 +3972,8 @@ int main([[maybe_unused]] int argc,
     const std::vector<std::string_view> args(argv + 1, argv + argc);
     using namespace PerformanceTests;
 
-
     // Collections::TestAll();
+    VirtualCall_vs_TypeErasure::benchmark();
 
 
     // Caching_Performance::Test();
@@ -4079,7 +4080,7 @@ int main([[maybe_unused]] int argc,
 
     // Exceptions::Tests();
 
-    DataLayout::benchmark();
+    // DataLayout::benchmark();
 
     return EXIT_SUCCESS;
 }

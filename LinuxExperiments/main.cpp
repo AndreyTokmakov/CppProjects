@@ -190,8 +190,10 @@ int main([[maybe_unused]] int argc,
 
     /** IPC_Performance_Experiments **/
 
-    // UnixDomainSockets::TestAll();
+    UnixDomainSockets::TestAll();
     // UDPSockets::TestAll();
+
+    /** IO_Ring **/
 
     // IOUringExperiments::TestAll();
 
@@ -202,7 +204,7 @@ int main([[maybe_unused]] int argc,
     // UnixSocketServer::TestAll();
     // AsynchUnixSocketServer_Select::TestAll();
     // AsynchUnixSocketServer_Poll::TestAll();
-    AsynchUnixSocketServer_Poll_Debug::TestAll();
+    // AsynchUnixSocketServer_Poll_Debug::TestAll();
 
 
     return EXIT_SUCCESS;

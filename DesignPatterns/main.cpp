@@ -102,12 +102,12 @@ int main([[maybe_unused]]  int argc,
     /** C++ IDIOMS: **/
     // CRTP::Test();
     // NVI_SimpleExample::TestAll();
-    // TypeErasure::Test();
+    TypeErasure::Test();
     // RAII::Test();
     // CopyAndSwap::TEST_ALL();   ---- TESTs
     // TagDispatching::Test();
     // VirtualConstructor::Test();
-    TypeID::TestAll();
+    // TypeID::TestAll();
 
 
     // AccessToken::TestAll();
