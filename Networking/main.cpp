@@ -50,6 +50,8 @@ Description : Tests C++ project
 #include "APIServer/APIServer.h"
 #include "SecureMessagingProxy/MessagingProxy.h"
 
+#include "UnixDomainSockets/UDSAsynchServer.h"
+
 
 #include "JRPC/JRPC.h"
 
@@ -102,7 +104,9 @@ int main([[maybe_unused]] int argc,
 
     // JRPC::TestAll();
 
-    MessagingProxy::TestAll();
+    // MessagingProxy::TestAll();
+
+    UDSAsynchServer::TestAll();
 
     return EXIT_SUCCESS;
 }

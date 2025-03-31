@@ -302,8 +302,8 @@ void Coroutines::TestAll()
     // Experiments::Calculating_Average::TestAll();
     // Experiments::PinBall_Game::TestAll();
     // Experiments::Event_Processor::TestAll();
-    Experiments::State_Machine_Simple::TestAll();
-    // Experiments::Generic_TaskBased_Coroutine::TestAll();
+    // Experiments::State_Machine_Simple::TestAll();
+    Experiments::Generic_TaskBased_Coroutine::TestAll();
     // Experiments::FileReader::TestAll();        // <------------- Not working
     // Experiments::TaskCoordination::TestAll();     // <------------- Not working
 

@@ -61,7 +61,7 @@ namespace
                 return false;
             }
 
-            void await_suspend(std::coroutine_handle<Task::promise_type> hCoro) noexcept
+            void await_suspend(const std::coroutine_handle<Task::promise_type>& hCoro) noexcept
             {
                 task.finally([hCoro]() {
                     hCoro.resume();
@@ -118,7 +118,7 @@ namespace
 
             void notify_callbacks()
             {
-                std::println("[{}] [{}] notify_callbacks.{}", tid(), time(), __LINE__);
+                std::println("[{}] [{}] notify_callbacks(). tasks count: {}", tid(), time(), callbacks.size());
                 for (auto &callback : callbacks) {
                     callback(data.value());
                 }
@@ -134,11 +134,12 @@ namespace
             return handle.promise().get();
         }
 
-        void then(std::function<void(T)> && callback)
+        Task& then(std::function<void(T)> && callback)
         {
             handle.promise().on_completed([callback](auto data) {
                 callback(data);
             });
+            return *this;
         }
 
         void finally(std::function<void()> &&callback)
@@ -181,7 +182,6 @@ namespace
 void Coroutines::Experiments::Generic_TaskBased_Coroutine::TestAll()
 {
     Task<int> task = callTasks();
-    task.then([](int data) {
-        std::println("[{}] [{}] main() - task2().callTasks data = {}", tid(), time(), data);
-    });
+    task.then([](int data) { std::println("[{}] [{}] Final callback 1 = {}", tid(), time(), data);})
+        .then([](int data) { std::println("[{}] [{}] Final callback 2 = {}", tid(), time(), data);});
 }

@@ -68,6 +68,7 @@ add_executable(${PROJECT_NAME}
         Servers/EPollTCPServerContext.cpp
         # JRPC/JRPC.cpp
         SecureMessagingProxy/MessagingProxy.cpp
+        UnixDomainSockets/UDSAsynchServer.cpp
 )
 
 TARGET_LINK_LIBRARIES(${PROJECT_NAME}

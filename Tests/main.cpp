@@ -1513,15 +1513,7 @@ namespace MemoryLeak::Bad_SharedPtr_Usage
 }
 
 
-/*
-struct Point {};
 
-void foo(unsigned char* buf, size_t len)
-{
-    assert(len == sizeof(Point));
-    Point* p = std::start_lifetime_as<Point>(buf);
-
-}*/
 
 
 
@@ -1581,7 +1573,7 @@ int main([[maybe_unused]] const int argc,
     // BinManipulation::TestAll();
     // BinaryAnalyzer::TestAll();
     // BitFlags::TestAll();
-    Concepts::TestAll();
+    // Concepts::TestAll();
     // Crow::TestAll();
     // CollectionsTests::TestAll();
     // CopyElision_RVO::TestAll();
