@@ -16,6 +16,7 @@
 #include <variant>
 
 #include "ObjectOrientedProgramming.h"
+#include "ConstexprVirtualFunctions.h"
 #include "RefQualifierMemberFunctions.h"
 #include "../Integer/Integer.h"
 
@@ -3111,9 +3112,10 @@ void ObjectOrientedProgramming::TestAll()
 {
     // UserDefindedConversation();
     // ExceptionInConstructor();
+    ConstexprVirtualFunctions::TestAll();
 
     // Operators::TestAll();
-    RefQualifierMemberFunctions::TestAll();
+    // RefQualifierMemberFunctions::TestAll();
 
 
     // ******************************** CONSTRUCTORS: *********************************//

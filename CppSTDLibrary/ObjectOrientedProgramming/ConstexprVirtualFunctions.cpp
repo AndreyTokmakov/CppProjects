@@ -13,7 +13,7 @@ Description : ConstexprVirtualFunctions.cpp
 #include <memory>
 
 
-namespace ConstexprVirtualFunctions
+namespace ConstexprVirtualFunctions::Demo_One
 {
     struct IAircraft
     {
@@ -72,7 +72,45 @@ namespace ConstexprVirtualFunctions
     }
 }
 
+namespace ConstexprVirtualFunctions::Demo_Two
+{
+    struct Base
+    {
+        virtual constexpr ~Base() = default;
+        virtual constexpr int getValue() const = 0;
+    };
+
+    struct DerivedOne: Base
+    {
+        constexpr int getValue() const override { return 1; }
+    };
+
+    struct DerivedTwo: Base
+    {
+        constexpr int getValue() const override { return 2; }
+    };
+
+    constexpr int sumValues(auto objects)
+    {
+        int result = 0;
+        for (const auto& obj: objects)
+            result += obj->getValue();
+        return result;
+    }
+
+    void test()
+    {
+
+        constexpr DerivedOne d1;
+        constexpr DerivedTwo d2;
+
+        // constexpr std::array<const Base*, 2> objects {&d1, &d2};
+        // static_assert(3 == sumValues(objects));
+    }
+}
+
 void ConstexprVirtualFunctions::TestAll()
 {
-    test();
+    // Demo_One::test();
+    Demo_Two::test();
 }

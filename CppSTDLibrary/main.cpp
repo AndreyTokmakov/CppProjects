@@ -144,8 +144,7 @@ int main([[maybe_unused]] int argc,
     // Metaprogramming::TestAll();
     // InlineNamespaces::TestAll();
     // NumericLimits::TestAll();
-    // ObjectOrientedProgramming::TestAll();
-    // ConstexprVirtualFunctions::TestAll();
+    ObjectOrientedProgramming::TestAll();
     // Optional::TestAll();
     // Overflow::TestAll();
     // PolymorphicMemoryResources::TestAll();
@@ -156,7 +155,7 @@ int main([[maybe_unused]] int argc,
     // StarshipOperator::TestAll();
     // Streams::TestAll();
     // StringStream::TestAll();
-    String::TestAll();
+    // String::TestAll();
     // StringView::TestAll();
     // StructuredBinding::TestAll();
     // StrongTypes::TestAll();

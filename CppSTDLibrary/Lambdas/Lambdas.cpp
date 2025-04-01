@@ -1088,6 +1088,23 @@ namespace Lambdas_Inheritance
 	}
 }
 
+
+namespace Lambdas::Parameter_Pack_Expansion
+{
+
+    template<typename ... Types>
+    void aggregate(Types&& ... args)
+    {
+        const auto result = [&...vars = args]() { return (vars + ...); }();
+        std::cout << "Sum: " << result << std::endl;
+    }
+
+    void lambda_params_pack_expansion()
+    {
+        aggregate(1,2,3,4,5);
+    }
+}
+
 void Lambdas::TestAll()
 {
 	// Lambdas::FindIF_Lambda_Test();
@@ -1138,13 +1155,15 @@ void Lambdas::TestAll()
 	// Tests::TYPE_TEST_();
 	// Tests::VECTOR_OF_LAMBDAS();
 
+    Parameter_Pack_Expansion::lambda_params_pack_expansion();
+
 
     // Concepts::Using_Existing_STD_Concepts();
     // Concepts::Using_Required_Keyword();
 
 	// Lambdas_Inheritance::LambdaAsBaseClass();
 	// Lambdas_Inheritance::MultipleInheritanceDemo();
-	Lambdas_Inheritance::MultipleInheritanceDemoTwo();
+	// Lambdas_Inheritance::MultipleInheritanceDemoTwo();
 
 	// High_Order_Function::PredicateComposition_WhenAll();
 	// High_Order_Function::PredicateComposition_WhenAll_Concepts();

@@ -1525,7 +1525,7 @@ int main([[maybe_unused]] const int argc,
     // MemoryLeak::Bad_SharedPtr_Usage::demo();
 
 
-
+    std::pair<int, std::vector<char>*> block {};
 
 
     // WrapperTests::Test();
