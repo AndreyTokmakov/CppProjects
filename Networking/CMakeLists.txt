@@ -69,6 +69,8 @@ add_executable(${PROJECT_NAME}
         # JRPC/JRPC.cpp
         SecureMessagingProxy/MessagingProxy.cpp
         UnixDomainSockets/UDSAsynchServer.cpp
+        UnixDomainSockets/UDSAsynchServer_Base.cpp
+        UnixDomainSockets/UDSAsynchServer_BufferPerSession.cpp
 )
 
 TARGET_LINK_LIBRARIES(${PROJECT_NAME}

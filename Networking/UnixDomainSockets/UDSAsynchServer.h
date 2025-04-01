@@ -13,6 +13,9 @@ Description : UDSAsynchServer.h
 namespace UDSAsynchServer
 {
     void TestAll();
+
+    void runServer_Base();
+    void runServer_BufferPerSession();
 };
 
 #endif //CPPPROJECTS_UDSASYNCHSERVER_H
