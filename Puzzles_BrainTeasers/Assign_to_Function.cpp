@@ -58,19 +58,32 @@ namespace
 
 namespace
 {
-    void demo()
+    void demo1()
     {
-        const String name{"Bob"};
+        String name{"<--- Bob"};
         getName() = name;
+        std::cout << "Assigned to a function!\n";
+    }
+
+    void demo2()
+    {
+        String name{"<--- Bob"};
+        getName() = std::move(name);
         std::cout << "Assigned to a function!\n";
     }
 }
 
 void Puzzles::Assign_to_Function()
 {
-    demo();
+    demo1();
+    // demo2();
 }
 
 /**
+String::String(<--- Bob)
+String::String(Alice)
+String& operator=(const String& [<--- Bob])
+String::~String( <--- Bob)
 Assigned to a function!
+String::~String( <--- Bob)
 */
