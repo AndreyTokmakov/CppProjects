@@ -15,6 +15,8 @@ namespace
 {
     struct Degrees
     {
+        double degrees;
+
         Degrees() : degrees(0)
         {
             std::cout << "Default constructed\n" ;
@@ -24,14 +26,16 @@ namespace
         {
             std::cout << "Constructed with " << degrees << "\n" ;
         }
-        double degrees;
     };
 
     struct Position
     {
-        Position() : latitude_{1} { longitude_ =
-                                            Degrees{2}; }
-        Degrees latitude_;Degrees longitude_;
+        Degrees latitude;
+        Degrees longitude;
+
+        Position() : latitude{1} {
+            longitude = Degrees{2};
+        }
     };
 }
 
@@ -39,7 +43,7 @@ namespace
 {
     void demo()
     {
-
+        Position position;
     }
 }
 
@@ -49,5 +53,7 @@ void Puzzles::Class_Members_Creation_Order()
 }
 
 /**
-
+Constructed with 1
+Default constructed
+Constructed with 2
 **/

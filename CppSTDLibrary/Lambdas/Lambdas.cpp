@@ -576,10 +576,12 @@ namespace Lambdas {
 
     //---------------------------------------------------------------------------------------------------//
 
-    int fact_std_func(int n) {
-        std::function<int(int)> fact = [&](auto n) {
-            if (n == 1) return 1;
-            return n * fact(n-1);
+    int fact_std_func(const int n)
+	{
+        std::function<int(int)> fact = [&](auto val) {
+            if (val == 1)
+            	return 1;
+            return val * fact(val - 1);
         };
         return fact(n);
     }
@@ -1147,7 +1149,7 @@ void Lambdas::TestAll()
 	// Lambdas::Get_Lambda_Return_Type();
 
 	// Lambdas::Recursive_Lambda();
-	// Lambdas::Recursive_Lambda2();
+	Lambdas::Recursive_Lambda2();
 
 	// Lambdas::Get_Lambda_Type();
 
@@ -1155,7 +1157,7 @@ void Lambdas::TestAll()
 	// Tests::TYPE_TEST_();
 	// Tests::VECTOR_OF_LAMBDAS();
 
-    Parameter_Pack_Expansion::lambda_params_pack_expansion();
+    // Parameter_Pack_Expansion::lambda_params_pack_expansion();
 
 
     // Concepts::Using_Existing_STD_Concepts();

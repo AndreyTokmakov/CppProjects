@@ -15,6 +15,9 @@ add_executable(${PROJECT_NAME}
         main.cpp
         False_Start.cpp
         No_Memory_CleanUp.cpp
+        Class_Members_Creation_Order.cpp
+        Lifetime_Global_and_Static_Variables.cpp
+        Assign_to_Function.cpp
 )
 
 TARGET_LINK_LIBRARIES(${PROJECT_NAME}

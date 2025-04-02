@@ -18,7 +18,10 @@ int main([[maybe_unused]] int argc,
     const std::vector<std::string_view> args(argv + 1, argv + argc);
 
     // Puzzles::False_Start();
-    Puzzles::No_Memory_CleanUp();
+    // Puzzles::No_Memory_CleanUp();
+    // Puzzles::Class_Members_Creation_Order();
+    // Puzzles::Lifetime_Global_and_Static_Variables();
+    Puzzles::Assign_to_Function();
 
     return EXIT_SUCCESS;
 }
