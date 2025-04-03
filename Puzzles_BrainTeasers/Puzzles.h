@@ -16,7 +16,11 @@ namespace Puzzles
     void No_Memory_CleanUp();
     void Class_Members_Creation_Order();
     void Lifetime_Global_and_Static_Variables();
+    void Lifetime_Extension_Puzzle();
     void Assign_to_Function();
+    void FunctionCall_Resolution_Templates();
+    void Virtual_Func_in_Constructor();
+    void Bad_Move_Constructor();
 }
 
 #endif //CPPPROJECTS_PUZZLES_H
