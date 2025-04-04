@@ -1455,9 +1455,9 @@ namespace Templates::Templated_Templates
 }
 void Templates::TestAll()
 {
-    // FoldExpressions::TestAll();
+    FoldExpressions::TestAll();
     // NTTP::TestAll();
-    SFINAE::TestAll();
+    // SFINAE::TestAll();
     // TemplateSpecialization::TestAll();
     // PackIndexing::TestAll();
 

@@ -1107,6 +1107,33 @@ namespace Lambdas::Parameter_Pack_Expansion
     }
 }
 
+namespace Lambdas::Shared_Lambda_Wrapper
+{
+	template<typename Lambda>
+	class shared_lambda
+	{
+		std::shared_ptr<Lambda> lambda;
+
+	public:
+		explicit shared_lambda(Lambda&& lambda_) : lambda(std::make_shared<Lambda>(std::move(lambda_))) {
+		}
+
+		decltype(auto) operator()(auto&&... args) noexcept(std::is_nothrow_invocable_v<Lambda, decltype(args)...>)
+		{
+			return std::invoke(*lambda, std::forward<decltype(args)>(args)...);
+		}
+	};
+
+	void create_and_share_lambda()
+	{
+		shared_lambda lambda {[](const int a, const int b) { return a + b; } };
+
+		int a = lambda(1, 2);
+		std::cout << a << std::endl;
+	}
+}
+
+
 void Lambdas::TestAll()
 {
 	// Lambdas::FindIF_Lambda_Test();
@@ -1148,10 +1175,13 @@ void Lambdas::TestAll()
 
 	// Lambdas::Get_Lambda_Return_Type();
 
-	// Lambdas::Recursive_Lambda();
-	Lambdas::Recursive_Lambda2();
+	// Recursive_Lambda();
+	// Recursive_Lambda2();
 
 	// Lambdas::Get_Lambda_Type();
+
+
+	Shared_Lambda_Wrapper::create_and_share_lambda();
 
 	// Tests::_TEST_();
 	// Tests::TYPE_TEST_();

@@ -260,11 +260,97 @@ namespace Coroutines::Generators::Fibonacci_Sequence_Generator_2
 }
 
 
+namespace Coroutines::Generators::Fibonacci_Sequence_Generator_3
+{
+
+    template <typename T>
+    struct Generator
+    {
+        using value_type = T;
+
+        struct promise_type
+        {
+            Generator get_return_object() {
+                return Generator { *this };
+            }
+
+            std::suspend_always initial_suspend() noexcept {
+                return {};
+            }
+
+            std::suspend_always final_suspend() noexcept {
+                return {};
+            }
+
+            void unhandled_exception() {
+            }
+
+            void return_value(value_type t) noexcept {
+                value = t;
+            }
+
+            std::suspend_always yield_value(value_type&& val) {
+                value = std::move(val);
+                return {};
+            }
+
+            std::optional<value_type> value {};
+        };
+
+        [[nodiscard]]
+        bool has_next() const {
+            return !handle.done();
+        }
+
+        [[nodiscard]]
+        std::optional<value_type> next() {
+            handle.resume();
+            return handle.promise().value;
+        }
+
+        explicit Generator(promise_type& promise) :
+            handle { std::coroutine_handle<promise_type>::from_promise(promise) } {
+        }
+
+        ~Generator() noexcept {
+            if (handle) {
+                handle.destroy();
+            }
+        }
+
+        std::coroutine_handle<promise_type> handle;
+    };
+
+    Generator<int> fib(const int max_count)
+    {
+        co_yield 1;
+        int a = 0, b = 1;
+        for (int count = 0; count < max_count - 1; ++count) {
+            co_yield a + b;
+            b = a + b;
+            a = b - a;
+        }
+        co_return a + b;
+    }
+
+    void test()
+    {
+        constexpr int max_count = 10;
+        Generator<int> generator = fib(max_count);
+        for (int iter = 0; generator.has_next(); ++iter) {
+            std::cout << "iter: " << ++iter << ", value: " << generator.next().value() << std::endl;
+        }
+    }
+}
+
+
+
 void Coroutines::Generators::TestAll()
 {
     // SimpleExample::printLetters();
     // Fibonacci_Sequence_Generator::Test();
     // Fibonacci_Sequence_Generator_Ex::Test();
     // Fibonacci_Sequence_Generator_2::test();
+    Fibonacci_Sequence_Generator_3::test();
 }
 

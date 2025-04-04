@@ -133,7 +133,7 @@ int main([[maybe_unused]] int argc,
     // Format::TestAll();
     // FunctionObjects::TestAll();
     // Hashing::TestAll();
-    Lambdas::TestAll();
+    // Lambdas::TestAll();
     // LifetimeExtension::TestAll();
     // Locale::TestAll();
     // Literals::TestAll();
@@ -169,7 +169,7 @@ int main([[maybe_unused]] int argc,
     // Tuple::TestAll();
     // TypeCast::TestAll();
     // Int::TestAll();
-    // Templates::TestAll();
+    Templates::TestAll();
     // Utilities::TestAll();
     // CompilerVersion::TestAll();
     // UniquePtr::TestAll();

@@ -295,7 +295,7 @@ void Coroutines::TestAll()
     // Simple::Multiple_Awaiters_Resolution::TestAll();
     // Simple::Multiple_Awaiters_Resolution_2::TestAll();
 
-    // Generators::TestAll();
+    Generators::TestAll();
 
     // Experiments::TestAll();
     // Experiments::Waitable_Coroutine_With_Mutex::TestAll();
@@ -303,7 +303,7 @@ void Coroutines::TestAll()
     // Experiments::PinBall_Game::TestAll();
     // Experiments::Event_Processor::TestAll();
     // Experiments::State_Machine_Simple::TestAll();
-    Experiments::Generic_TaskBased_Coroutine::TestAll();
+    // Experiments::Generic_TaskBased_Coroutine::TestAll();
     // Experiments::FileReader::TestAll();        // <------------- Not working
     // Experiments::TaskCoordination::TestAll();     // <------------- Not working
 

@@ -608,6 +608,66 @@ namespace FoldExpressions
 }
 
 
+namespace FoldExpressions::Variadic_Friends
+{
+    template<class Derived, class Message>
+    struct Receiver
+    {
+        Receiver() {
+            std::cout << "Receiver::Receiver(): " << typeid(Message).name()  << std::endl;
+        }
+
+        Derived& self() noexcept {
+            return *static_cast<Derived*>(this);
+        }
+
+        void receive(Message msg)
+        {
+            std::cout << typeid(self()).name() << " ==> Handling: " << typeid(msg).name()  << std::endl;
+            self().counter += 1;
+        }
+    };
+
+    struct MsgOne {
+        // MsgOne() { std::cout << "MsgOne::MsgOne()" << std::endl; }
+    };
+
+    struct MsgTwo {
+        // MsgTwo() { std::cout << "MsgOne::MsgTwo()" << std::endl; }
+    };
+
+    template<class... Message>
+    struct Dispatcher : public Receiver<Dispatcher<Message...>, Message>...
+    {
+        using Receiver<Dispatcher, Message>::Receiver...;
+
+        /* Dispatcher() : Receiver<Dispatcher<Message...>, Message>()... {
+            std::cout << "Dispatcher::Dispatcher()" << std::endl;
+        } */
+
+        void receiveAll(Message... msg)
+        {
+            (..., Receiver<Dispatcher, Message>::Receiver::receive(msg));
+        }
+
+        friend Receiver<Dispatcher, MsgOne>;
+        friend Receiver<Dispatcher, MsgTwo>;
+
+        /** Error pre-C++26, accepted from C++26 **/
+        // friend Receiver<Dispatcher, Message>...;
+
+    private:
+        int counter { 0 };
+    };
+
+
+    void demo()
+    {
+        Dispatcher<MsgOne, MsgTwo>  dispatcher;
+        dispatcher.receiveAll(MsgOne{}, MsgTwo{});
+    }
+}
+
 void FoldExpressions::TestAll()
 {
 
@@ -633,11 +693,12 @@ void FoldExpressions::TestAll()
     // Classes::FoldClassMethod();
     // Classes::Call_All_Base_Class_Constructor();
 
-    Concatenate_Arrays();
+    // Concatenate_Arrays();
 
     // FoldedPathTraversals();
     // FoldedMultiClassConstructors();
 
+    Variadic_Friends::demo();
 
     // Average();
     // For_Each();

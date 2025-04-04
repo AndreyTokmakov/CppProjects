@@ -1514,53 +1514,6 @@ namespace MemoryLeak::Bad_SharedPtr_Usage
 
 
 
-
-#if 0
-struct Connection
-{
-    Connection(const std::string &name) : name_(name)
-    {
-        std::cout << "Created " << name_ << "\n";
-    }
-    ~Connection() {
-        std::cout << "Destroyed " << name_ << "\n";
-    }
-    std::string name_;
-};
-
-Connection global{"global"};
-
-Connection &get()
-{
-    static Connection localStatic{"local static"};
-    return localStatic;
-}
-    // Created global
-    // Created local
-    // Created local static
-    // Destroyed local
-    // Destroyed local static
-    // Destroyed global
-#endif
-
-#if 0
-std::string getName()
-{
-    return "Alice";
-}
-
-void test1()
-{
-    std::string name{"Bob"};
-    getName() = name;
-    std::cout << "Assigned to a function!\n";
-}
-
-    // Assigned to a function!
-
-#endif
-
-
 int main([[maybe_unused]] const int argc,
          [[maybe_unused]] char** argv)
 {
@@ -1568,6 +1521,12 @@ int main([[maybe_unused]] const int argc,
     // VirtualFunctionTests::demo();
     // MemoryLeak::Bad_SharedPtr_Usage::demo();
 
+
+    /*
+    int val = 125;
+    for (int i = (sizeof(val) * 8) - 1; i >= 0; i--)
+        std::cout << i << " = " << (val & (1u << i) ? '1' : '0')  << " = " << (val & (1u << i)) <<  std::endl;
+    */
 
 
     // WrapperTests::Test();
