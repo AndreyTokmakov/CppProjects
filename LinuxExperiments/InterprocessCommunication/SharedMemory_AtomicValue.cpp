@@ -46,8 +46,8 @@ namespace SharedMemoryUtilities
     struct SharedDataBlock
     {
         SharedDataHeader header { 0 };
-        // std::atomic<uint64_t> someTestCounter { 0 };
-        uint64_t someTestCounter { 0 };
+        //uint32_t someTestCounter { 0 };
+        std::atomic<uint32_t> someTestCounter { 0 };
     };
 
     struct SharedData
@@ -55,11 +55,11 @@ namespace SharedMemoryUtilities
         int32_t handle { INVALID_HANDLE };
         SharedDataBlock* sharedDataBlock { nullptr };
 
-        inline uint32_t incrementUseCount() noexcept {
+        uint32_t incrementUseCount() const noexcept {
             return ++(sharedDataBlock->header.useCount);
         }
 
-        inline uint32_t decrementUseCount() noexcept {
+        uint32_t decrementUseCount() const noexcept {
             return sharedDataBlock->header.useCount == 0 ? 0 : --(sharedDataBlock->header.useCount);
         }
 
@@ -125,124 +125,49 @@ namespace SharedMemoryUtilities
                             0);
         ASSERT_NOT(MAP_FAILED, area, "mmap");
 
-        sharedData.sharedDataBlock = reinterpret_cast<SharedDataBlock*>(area);
+        std::cout << area << " of size " << sizeof(SharedDataBlock) << std::endl;
+
+        sharedData.sharedDataBlock = static_cast<SharedDataBlock*>(area);
         sharedData.incrementUseCount();
 
-        ASSERT_NOT(nullptr, sharedData.sharedDataBlock, "reinterpret_cast<SharedDataBlock*>(area)");
+        ASSERT_NOT(nullptr, sharedData.sharedDataBlock, "static_cast<SharedDataBlock*>(area)");
         return sharedData;
     }
 }
-
-#if 0
-namespace SharedMemory_AtomicValue::Basic
-{
-    using ObjectType = int32_t;
-
-    void Create()
-    {
-        int sharedMemory = ::shm_open(sharedSegmentName.data(),
-                                      O_CREAT|O_RDWR|O_EXCL|O_TRUNC, S_IRWXU|S_IRWXG);
-        if (INVALID_HANDLE == sharedMemory)
-        {
-            if (EEXIST == errno)
-            {
-                /** Shared memory already exist. **/
-                sharedMemory = ::shm_open(sharedSegmentName.data(), O_EXCL|O_RDWR, S_IRWXU|S_IRWXG);
-                std::cout <<  "Main  Process: Open existing memory" << std::endl;
-            } else
-                error("Failure on shm_open");
-        }
-        else {
-            std::cout <<  "Main  Process: " << sharedSegmentName <<  "segment is created. Descriptor = "
-                      << sharedMemory << std::endl;
-        }
-
-        if (INVALID_HANDLE == ::ftruncate(sharedMemory, sizeof(ObjectType))) {
-            error("Error on ftruncate()");
-        }
-
-        ObjectType* value = (ObjectType*)::mmap(nullptr,
-                                                sizeof(ObjectType),
-                                                PROT_READ | PROT_WRITE, MAP_SHARED,
-                                                sharedMemory,
-                                                0);
-
-        *value = 1122;
-
-        std::this_thread::sleep_for(std::chrono::seconds (1));
-        CloseSharedSegment(sharedMemory);
-    }
-
-    void Read()
-    {
-        std::this_thread::sleep_for(std::chrono::milliseconds (250));
-        int sharedMemory = ::shm_open(sharedSegmentName.data(),
-                                      O_CREAT | O_RDWR, S_IRWXU | S_IRWXG);
-        if (INVALID_HANDLE == sharedMemory) {
-            return error("shm_open()");
-        } else {
-            std::cout <<  "Child Process: " << sharedSegmentName <<  "segment is opened.  Descriptor = "
-                      << sharedMemory << std::endl;
-        }
-
-        ObjectType* value = (ObjectType*)::mmap(nullptr,
-                                                sizeof(ObjectType),
-                                                PROT_READ | PROT_WRITE, MAP_SHARED,
-                                                sharedMemory,
-                                                0);
-
-       std::cout << "Child Process: Value = " << *value << std::endl;
-    }
-
-    void MultiProcessTest()
-    {
-        if (const pid_t pid = fork(); pid == 0) { /** Child **/
-            Read();
-        }
-        else if (pid > 0) { /** Parent **/
-            Create();
-        }
-        else {
-            std::cout << "Unable to create child process" << std::endl;
-        }
-    }
-};
-#endif
-
-
-uint64_t testsCount = 500'000'000;
 
 
 namespace SharedMemory_AtomicValue::Atomic
 {
     using namespace SharedMemoryUtilities;
+    uint32_t testsCount = 1'000'000'000;
 
+    void Create_Close_Test()
+    {
+        SharedData data = createSharedMapping();
+        std::this_thread::sleep_for(std::chrono::seconds (1));
+    }
+
+    __attribute__((optimize("O0")))
     void ProcParent()
     {
         SharedData data = createSharedMapping();
-        for (uint64_t i = 0; i < testsCount; ++i) {
-            ++data.sharedDataBlock->someTestCounter;
+        for (int n = 0; n < 1; ++n)
+        {
+            for (uint32_t i = 0; i < testsCount; ++i) {
+                //++data.sharedDataBlock->someTestCounter;
+                data.sharedDataBlock->someTestCounter.fetch_add(1, std::memory_order::relaxed);
+            }
         }
 
-        std::this_thread::sleep_for(std::chrono::seconds (1));
-        std::cout << data.sharedDataBlock->someTestCounter << std::endl;
+        std::cout << data.sharedDataBlock->someTestCounter.load(std::memory_order::relaxed) << std::endl;
     }
 
-    void ProcChild()
-    {
-        SharedData data = createSharedMapping();
-        for (uint64_t i = 0; i < testsCount; ++i) {
-            ++data.sharedDataBlock->someTestCounter;
-        }
 
-        std::this_thread::sleep_for(std::chrono::seconds (1));
-        std::cout << data.sharedDataBlock->someTestCounter << std::endl;
-    }
 
     void MultiProcessTest()
     {
         if (const pid_t pid = fork(); pid == 0) { /** Child **/
-            ProcChild();
+            ProcParent();
         }
         else if (pid > 0) { /** Parent **/
             ProcParent();
@@ -257,10 +182,11 @@ namespace SharedMemory_AtomicValue::Atomic
 
 void SharedMemory_AtomicValue::TestAll()
 {
-    // using namespace Basic;
     using namespace Atomic;
 
-    // Create();
-    // Read();
-    MultiProcessTest();
+    // Create_Close_Test();
+    // MultiProcessTest();
+
+    ProcParent();
+
 };
