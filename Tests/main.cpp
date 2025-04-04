@@ -1458,29 +1458,6 @@ public:
     }
 };
 
-namespace Lambda_Tuple
-{
-    auto printTuple = [](const auto& tuple) constexpr
-    {
-        auto impl = []<size_t idx>(this const auto& self, const auto& t) constexpr {
-            if constexpr (idx < std::tuple_size_v<std::decay_t<decltype(t)>>) {
-                std::cout << std::get<idx>(t) << " ";
-                self.template operator()<idx+1>(t); // Рекурсивный вызов
-            }
-        };
-        impl.template operator()<0>(tuple);
-    };
-
-
-    void PrintTuple()
-    {
-        std::tuple<int, double, std::string> tp{1, 2.0, "qwe"};
-        printTuple(tp);
-    }
-
-}
-
-
 
 
 
@@ -1490,8 +1467,6 @@ int main([[maybe_unused]] const int argc,
 {
     const std::vector<std::string_view> args(argv + 1, argv + argc);
     // VirtualFunctionTests::demo();
-
-    Lambda_Tuple::PrintTuple();
 
 
     // WrapperTests::Test();

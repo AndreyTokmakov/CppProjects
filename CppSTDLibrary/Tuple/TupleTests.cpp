@@ -380,6 +380,30 @@ namespace Tuple::Apply
 }
 
 
+namespace Tuple::Lambda_Tuple
+{
+    auto printTuple = [](const auto& tuple) constexpr
+    {
+        auto impl = []<size_t idx>(this const auto& self, const auto& t) constexpr {
+            if constexpr (idx < std::tuple_size_v<std::decay_t<decltype(t)>>) {
+                std::cout << std::get<idx>(t) << " ";
+                self.template operator()<idx+1>(t); // Рекурсивный вызов
+            }
+        };
+        impl.template operator()<0>(tuple);
+    };
+
+
+    void PrintTuple()
+    {
+        std::tuple<int, double, std::string> tp{1, 2.0, "qwe"};
+        printTuple(tp);
+    }
+
+}
+
+
+
 namespace Tuple::Reference_Wrapper
 {
     void Create_Tuple_with_Ref()
@@ -456,6 +480,7 @@ void Tuple::TestAll()
 
     // Apply::Sum_Tuple();
     Apply::PrintTuple();
+    Lambda_Tuple::PrintTuple();
 
     // Reference_Wrapper::Create_Tuple_with_Ref();
     // Reference_Wrapper::Create_Tuple_with_ConstRef();

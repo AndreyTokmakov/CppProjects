@@ -872,8 +872,34 @@ namespace Filesystem::SpaceInfo
         const auto dirs = { "/dev/null", "/tmp", "/home", "/null" };
         print_space_info(dirs);
     }
-
 }
+
+namespace Filesystem::Iterate_Files
+{
+#if 0
+    auto listFiles = [](const std::filesystem::path& dir) {
+        std::vector<std::string> files;
+        auto traverse = [&](this const auto& self, const auto& path) {
+            for (const auto& entry : std::filesystem::directory_iterator(path)) {
+                if (entry.is_directory()) {
+                    self(entry.path());
+                } else {
+                    files.push_back(entry.path().string());
+                }
+            }
+        };
+        traverse(dir);
+        return files;
+    };
+#endif
+
+
+    void List_Files_With_Lambda()
+    {
+
+    }
+}
+
 
 // INFO: https://www.cppstories.com/2024/common-filesystem-cpp20/#6-listing-directory-contents-recursively
 
@@ -911,6 +937,8 @@ void Filesystem::TestAll()
     Files::Last_Write_Time_UNIX_API();
     // Files::Last_Write_Time();
     // Files::Check_IsFile_Exists();
+
+    Iterate_Files::List_Files_With_Lambda(); // Requires: C++26
 
 
     // Permissions::Get_File_Permissions();
