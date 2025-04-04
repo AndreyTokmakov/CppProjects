@@ -163,7 +163,6 @@ namespace SharedMemory_AtomicValue::Atomic
     }
 
 
-
     void MultiProcessTest()
     {
         if (const pid_t pid = fork(); pid == 0) { /** Child **/
