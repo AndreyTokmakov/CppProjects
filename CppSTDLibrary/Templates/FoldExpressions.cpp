@@ -25,6 +25,57 @@ namespace
     }
 }
 
+namespace FoldExpressions::Basic_Operations
+{
+    template<typename... Args>
+    consteval size_t count(Args&&...) {
+        return sizeof...(Args);
+    }
+
+    void Count_Number_Entries()
+    {
+        std::cout << count() << std::endl;
+        std::cout << count(1) << std::endl;
+        std::cout << count(1,2,3,4,5) << std::endl;
+    }
+}
+
+namespace FoldExpressions::Basic_Operations
+{
+    template<typename Predicate, typename... Types>
+    consteval size_t count_if(Predicate&& predicate, Types&&... args) {
+        return (0 + ... + predicate(std::forward<Types>(args)));
+    }
+
+    void Count_If()
+    {
+        auto is_even = [](auto v){ return !(v & 1); };
+
+        std::cout << count_if(is_even, 2) << std::endl;
+        std::cout << count_if(is_even, 1,2,3,4,5) << std::endl;
+    }
+}
+
+namespace FoldExpressions::Basic_Operations
+{
+    template<template <typename T> typename Predicate, typename... Args>
+    consteval size_t count_if_types() {
+        return (0 + ... + Predicate<Args>{}());
+    }
+
+    template<typename T>
+    struct is_signed_type {
+        consteval bool operator ()() const {
+            return std::is_signed_v<T>;
+        }
+    };
+
+    void Count_If_Types()
+    {
+        std::cout << count_if_types<is_signed_type, int, unsigned int, double>() << std::endl;
+    }
+}
+
 namespace FoldExpressions
 {
     template<typename ...Args>
@@ -98,7 +149,8 @@ namespace FoldExpressions
         }
 
         template<typename ...Args>
-        static auto unary_right(Args ...args) {
+        static auto unary_right(Args ...args)
+        {
             //(std::cout << ... << std::forward<Args>(args));
             //std::cout << std::endl;
             return (args + ...);
@@ -123,9 +175,6 @@ namespace FoldExpressions
     bool containsZero(Args const& ... args) {
         return ((0 == args) || ...);
     }
-
-    ////////////////////////////////////////////
-
     template<typename ...Args>
     void printer_ex(Args&&... args) {
         std::cout << "[ ";
@@ -138,15 +187,15 @@ namespace FoldExpressions
     }
 
     template<typename ...Args>
-    void invoke2(Args&&... args) {
+    void invoke2(Args&&... args)
+    {
         printer_ex(std::forward<Args>(args) ...);
         // printer_two_params_only(std::forward<Args>(args) ...);
     }
 
 
-    ///////////////////////////////////////////////////////////////////////////////////////////////////
-
-    void Test() {
+    void Test()
+    {
         std::cout << sum(1, 2, 3, 4) << std::endl;
         std::cout << sum2(1, 2, 3, 4) << std::endl;
     }
@@ -670,6 +719,12 @@ namespace FoldExpressions::Variadic_Friends
 
 void FoldExpressions::TestAll()
 {
+    // Basic_Operations::Count_Number_Entries();
+    // Basic_Operations::Count_If();
+    Basic_Operations::Count_If_Types();
+
+
+
 
     // Test();
     // PrintTest();
@@ -698,7 +753,7 @@ void FoldExpressions::TestAll()
     // FoldedPathTraversals();
     // FoldedMultiClassConstructors();
 
-    Variadic_Friends::demo();
+    // Variadic_Friends::demo();
 
     // Average();
     // For_Each();
