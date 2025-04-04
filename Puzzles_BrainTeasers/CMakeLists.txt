@@ -22,6 +22,7 @@ add_executable(${PROJECT_NAME}
         FunctionCall_Resolution_Templates.cpp
         Virtual_Func_in_Constructor.cpp
         Bad_Move_Constructor.cpp
+        Shared_Ptr_Bad_Usage.cpp
 )
 
 TARGET_LINK_LIBRARIES(${PROJECT_NAME}

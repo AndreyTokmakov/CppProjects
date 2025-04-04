@@ -21,6 +21,7 @@ namespace Puzzles
     void FunctionCall_Resolution_Templates();
     void Virtual_Func_in_Constructor();
     void Bad_Move_Constructor();
+    void Shared_Ptr_Bad_Usage();
 }
 
 #endif //CPPPROJECTS_PUZZLES_H

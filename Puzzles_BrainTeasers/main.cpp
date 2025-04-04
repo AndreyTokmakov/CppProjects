@@ -28,7 +28,8 @@ int main([[maybe_unused]] int argc,
     // Puzzles::FunctionCall_Resolution_Templates();
     // Puzzles::Virtual_Func_in_Constructor();
     // Puzzles::Bad_Move_Constructor();
-    
+    Puzzles::Shared_Ptr_Bad_Usage();
+
     return EXIT_SUCCESS;
 }
 

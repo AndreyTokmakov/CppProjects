@@ -1460,57 +1460,29 @@ public:
 
 
 
-
+// TODO: MOVE
 namespace MemoryLeak::Bad_SharedPtr_Usage
 {
-    class Wrapper
-    {
-        std::function<void()> m_handler;
 
-    public:
-
-        Wrapper() {
-            std::printf("Wrapper()\n");
-        }
-
-        ~Wrapper() {
-            std::printf("~Wrapper()\n");
-        }
-
-        template<typename F>
-        void set_handler(F&& f)
-        {
-            m_handler = std::forward<F>(f);
-        }
-
-        void doAction() const
-        {
-            std::printf("doAction()\n");
-            if (m_handler) {
-                m_handler();
-            }
-        }
-
-        void notify() {
-            std::printf("notify()\n");
-        }
-    };
 
 
     void demo()
     {
-        std::shared_ptr<Wrapper> obj = std::make_shared<Wrapper>();
-        obj->set_handler([obj]() {
-            obj->notify();
-        });
 
-        obj->doAction();
-
-        // Wrapper()
-        // doAction()
-        // notify()
     }
 }
+
+
+auto printTuple = [](const auto& tuple) constexpr {
+    auto impl = []<size_t idx>(this const auto& self, const auto& t) constexpr {
+        if constexpr (idx < std::tuple_size_v<std::decay_t<decltype(t)>>) {
+            std::cout << std::get<idx>(t) << " ";
+            self.template operator()<idx+1>(t); // Рекурсивный вызов
+        }
+    };
+    impl.template operator()<0>(tuple);
+};
+
 
 
 
