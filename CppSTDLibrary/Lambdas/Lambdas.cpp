@@ -22,6 +22,7 @@
 
 #include "Lambdas.h"
 #include <cassert>
+#include <utility>
 #include <variant>
 #include <memory>
 
@@ -1124,12 +1125,48 @@ namespace Lambdas::Shared_Lambda_Wrapper
 		}
 	};
 
+	template<typename LambdaType>
+	void callLambda(shared_lambda<LambdaType> lambda)
+	{
+		lambda();
+	}
+
+	template<typename LambdaType>
+	struct Wrapper
+	{
+		LambdaType lambda;
+
+		explicit Wrapper(LambdaType lambda) : lambda { std::move(lambda) } {
+		}
+
+		auto invoke() {
+			return std::invoke(lambda);
+		}
+	};
+
+
 	void create_and_share_lambda()
 	{
-		shared_lambda lambda {[](const int a, const int b) { return a + b; } };
+		shared_lambda lambda { [counter = 0]  () mutable {
+			std::cout << ++counter << std::endl;
+		}};
 
-		int a = lambda(1, 2);
-		std::cout << a << std::endl;
+		lambda();
+		callLambda(lambda);
+		lambda();
+	}
+
+	void create_and_share_lambda_as_class_variable()
+	{
+		shared_lambda lambda { [counter = 0]  () mutable {
+			std::cout << ++counter << std::endl;
+		}};
+
+		Wrapper wrapper1 { lambda }, wrapper2 { lambda };
+
+		wrapper1.invoke();
+		wrapper2.invoke();
+		lambda();
 	}
 }
 
@@ -1181,7 +1218,9 @@ void Lambdas::TestAll()
 	// Lambdas::Get_Lambda_Type();
 
 
-	Shared_Lambda_Wrapper::create_and_share_lambda();
+	// Shared_Lambda_Wrapper::create_and_share_lambda();
+	Shared_Lambda_Wrapper::create_and_share_lambda_as_class_variable();
+
 
 	// Tests::_TEST_();
 	// Tests::TYPE_TEST_();
