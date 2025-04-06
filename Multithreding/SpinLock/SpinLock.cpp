@@ -453,6 +453,24 @@ namespace SpinLock::Compare_Diff_SpinLock_Implementations
         void unlock() { flag.store(0, std::memory_order_release); }
     };
 
+    struct SpinLock4_1
+    {
+        alignas(std::hardware_destructive_interference_size) std::atomic<uint32_t> flag {0 };
+        alignas(std::hardware_destructive_interference_size) timespec ns {0, 1};
+
+        void lock()
+        {
+
+            for (uint8_t n = 0;flag.load(std::memory_order_relaxed) || flag.exchange(1, std::memory_order_acquire); ++n)
+            {
+                ns.tv_nsec = static_cast<int>(n);
+                nanosleep(&ns, nullptr);
+            }
+        }
+
+        void unlock() { flag.store(0, std::memory_order_release); }
+    };
+
     class spin_mutex_M2
     {
     private:
@@ -491,7 +509,7 @@ namespace SpinLock::Compare_Diff_SpinLock_Implementations
     {
         constexpr int threadsMax { 16 };
         constexpr size_t iterCount { 1'000'000 };
-#if 1
+#if 0
         {
             std::mutex mtx;
             uint64_t counter = 0;
@@ -652,6 +670,26 @@ namespace SpinLock::Compare_Diff_SpinLock_Implementations
         }
 
         {
+            SpinLock4_1 spinLock;
+            uint64_t counter = 0;
+
+            auto task = [&] {
+                for (size_t idx  = 0; idx < iterCount; ++idx) {
+                    spinLock.lock();
+                    ++counter;
+                    spinLock.unlock();
+                }
+            };
+
+            {
+                ScopedTimer timer {"SpinLock4_1"};
+                std::vector<std::jthread> jobs;
+                for (int t = 0; t < threadsMax; ++t)
+                    jobs.emplace_back(task);
+            }
+        }
+
+        {
             spin_mutex_M2 spinLock;
             uint64_t counter = 0;
 
@@ -679,6 +717,52 @@ namespace SpinLock::Compare_Diff_SpinLock_Implementations
         /// SpinLock3          :  0.121038 seconds.
         /// SpinLock4          :  0.0963803 seconds.
     }
+
+    void RunBenchmark_Fastest()
+    {
+        constexpr int threadsMax { 16 };
+        constexpr size_t iterCount { 20'000'000 };
+
+        {
+            SpinLock4 spinLock;
+            uint64_t counter = 0;
+
+            auto task = [&] {
+                for (size_t idx  = 0; idx < iterCount; ++idx) {
+                    spinLock.lock();
+                    ++counter;
+                    spinLock.unlock();
+                }
+            };
+
+            {
+                ScopedTimer timer {"SpinLock4"};
+                std::vector<std::jthread> jobs;
+                for (int t = 0; t < threadsMax; ++t)
+                    jobs.emplace_back(task);
+            }
+        }
+
+        {
+            SpinLock4_1 spinLock;
+            uint64_t counter = 0;
+
+            auto task = [&] {
+                for (size_t idx  = 0; idx < iterCount; ++idx) {
+                    spinLock.lock();
+                    ++counter;
+                    spinLock.unlock();
+                }
+            };
+
+            {
+                ScopedTimer timer {"SpinLock4_1"};
+                std::vector<std::jthread> jobs;
+                for (int t = 0; t < threadsMax; ++t)
+                    jobs.emplace_back(task);
+            }
+        }
+    }
 }
 
 
@@ -689,5 +773,6 @@ void SpinLock::TestAll()
 
     // Impl::SpinLock_Tests();
 
-    Compare_Diff_SpinLock_Implementations::RunBenchmark();
+    // Compare_Diff_SpinLock_Implementations::RunBenchmark();
+    Compare_Diff_SpinLock_Implementations::RunBenchmark_Fastest();
 }

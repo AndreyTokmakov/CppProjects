@@ -1458,7 +1458,43 @@ public:
     }
 };
 
+namespace Int_to_UInt_Tests
+{
 
+    constexpr auto add_unsigned_numbers_auto(uint8_t a, uint8_t b) {
+        return a + b;
+    }
+
+    constexpr uint8_t add_unsigned_numbers_explicit(uint8_t a, uint8_t b) {
+        return a + b;
+    }
+
+
+    void Tests()
+    {
+        static_assert(256 == add_unsigned_numbers_auto(255, 1));
+        static_assert(0 == add_unsigned_numbers_explicit(255, 1));
+    }
+}
+
+
+namespace EnumBasedStrongTypes
+{
+    enum class Integer : int32_t {
+    };
+
+    void call(Integer val) {
+        std::cout << static_cast<std::underlying_type_t<Integer>>(val) << std::endl;
+
+    }
+
+    void Tests()
+    {
+        Integer value = Integer { 10 };
+        call(value);
+        call(123);
+    }
+}
 
 
 
@@ -1467,6 +1503,9 @@ int main([[maybe_unused]] const int argc,
 {
     const std::vector<std::string_view> args(argv + 1, argv + argc);
     // VirtualFunctionTests::demo();
+
+    // Int_to_UInt_Tests::Tests();
+    EnumBasedStrongTypes::Tests();
 
 
     // WrapperTests::Test();
