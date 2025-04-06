@@ -471,7 +471,8 @@ namespace FunctionObjects::CallBack_Tracker {
 	}
 }
 
-namespace FunctionObjects::HigherOrderFunctions {
+namespace FunctionObjects::HigherOrderFunctions
+{
 
 	template <typename ... Types>
 	void foo(auto callback, Types&& ... params) {
@@ -482,7 +483,8 @@ namespace FunctionObjects::HigherOrderFunctions {
 		std::cout << "{" << i << ", " << s << "}\n";
 	}
 
-	void Function_Accepting_Fucntion() {
+	void Function_Accepting_Function()
+    {
 		foo(bar, 1, "Str");
 	}
 
@@ -573,14 +575,11 @@ namespace FunctionObjects::Function {
 		std::cout << std::boolalpha << std::endl;
 	}
 
-    //--------------------------------------------------------------------------------
-
-    //--------------------------------------------------------------------------
-
 
     constexpr size_t TESTS_SIZE {100'000'000};
 
-    auto test_direct_lambda() {
+    auto test_direct_lambda()
+    {
         auto lbd = [](int v) {
             return v * 3;
         };
@@ -638,7 +637,7 @@ namespace FunctionObjects::Function {
 
 
 
-namespace FunctionObjects::PassTounction {
+namespace FunctionObjects::PassToFunction {
 
 
 	void call(std::function<void(void)> func)
@@ -665,13 +664,65 @@ namespace FunctionObjects::PassTounction {
 	}
 }
 
+namespace FunctionObjects::Callable_Interfaces
+{
+
+    template<typename Ret, typename... Types>
+    using callback_func_type = Ret (*)(Types &&...);
+
+    template<typename Ret, typename... Types>
+    using callback_func_type_const = Ret (*)(const Types &&...);
+
+    template <typename Ret, typename ObjType, typename... Types>
+    using callback_method_type = Ret (ObjType::*)(const Types&&...) const;
+
+
+    template<typename T, typename... Types>
+    auto invokeFunction(T callback, Types &&... args)
+    {
+        return std::invoke(callback, std::forward<Types>(args)...);
+    }
+
+    template<typename T, typename ObjType, typename... Types>
+    auto invokeMethod(T callback, ObjType& object, Types &&... args)
+    {
+        return std::invoke(callback, object, std::forward<Types>(args)...);
+    }
+
+
+    std::string sumStrings(const std::string& a, const std::string& b)
+    {
+        return a + b;
+    }
+
+    struct Utils {
+        [[nodiscard]]
+        std::string sumStrings(const std::string& a, const std::string& b) const {
+            return std::string{"["}.append(a).append(b).append(1, ']');
+        }
+    };
+
+    void invokeFunctionTest()
+    {
+        const auto result = invokeFunction(sumStrings, "Hello ", "world!");
+        std::cout << result << std::endl;
+    }
+
+    void invokeMethodTest()
+    {
+        Utils utils;
+        const auto result = invokeMethod(&Utils::sumStrings, utils, "Hello ", "world!");
+        std::cout << result << std::endl;
+    }
+}
+
 void FunctionObjects::TestAll()
 {
 	// Auto::Return_Type_Hint();
 
     // MemberFunctionPointer::TestAll();
     // CallbackTests::TestAll();
-    MoveOnlyFunction::TestAll();
+    // MoveOnlyFunction::TestAll();
 
 	// BindTests::FuncPtr_Tests();
 	// BindTests::Bind_Test_1();
@@ -700,8 +751,12 @@ void FunctionObjects::TestAll()
 
 	// CallBack_Tracker::Test();
 
-	// HigherOrderFunctions::Function_Accepting_Fucntion();
+	// HigherOrderFunctions::Function_Accepting_Function();
 	// HigherOrderFunctions::Algoritms_Test1();
+
+
+    // Callable_Interfaces::invokeFunctionTest();
+    Callable_Interfaces::invokeMethodTest();
 
 	// Function::Vector_Of_Functions();
 	// Function::Swap();
@@ -709,6 +764,6 @@ void FunctionObjects::TestAll()
 	// Function::Lambda_To_Function();
 	// Function::Function_VS_Lambda_Performance();
 
-	// PassTounction::PassLambdaAsInput();
-	// PassTounction::PassObject();
+	// PassToFunction::PassLambdaAsInput();
+	// PassToFunction::PassObject();
 }

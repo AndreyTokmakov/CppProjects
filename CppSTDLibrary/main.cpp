@@ -131,9 +131,9 @@ int main([[maybe_unused]] int argc,
     // FilesStreams::TestAll();
     // Filesystem::TestAll();
     // Format::TestAll();
-    // FunctionObjects::TestAll();
+    FunctionObjects::TestAll();
     // Hashing::TestAll();
-    Lambdas::TestAll();
+    // Lambdas::TestAll();
     // LifetimeExtension::TestAll();
     // Locale::TestAll();
     // Literals::TestAll();
