@@ -64,12 +64,28 @@ namespace BitUtils
         return value << 1 ;
     }
 
+    /**
+     * Works in case if d is power of 2
+     **/
+    inline constexpr uint32_t modulo(const uint32_t n, const uint32_t d) noexcept {
+        return n & (d - 1);
+    };
 }
 
 
 namespace BitwiseOperation
 {
     using namespace BitUtils;
+
+
+    void Modulo_Tests()
+    {
+        static_assert(9 == modulo(9, 64));
+        static_assert(2 == modulo(66, 64));
+        static_assert(66 == modulo(66, 1024));
+        static_assert(26 == modulo(1050, 1024));
+        static_assert(66 == modulo(66, 1024));
+    }
 
 
     void ShowBitsTests()
@@ -465,6 +481,8 @@ void BitwiseOperation::TestAll()
 
     // InitVariable_BinaryForm();
 
+    Modulo_Tests();
+
     // ShowBitsTests();
     // BaseTests();
     // BaseTests1();
@@ -485,7 +503,7 @@ void BitwiseOperation::TestAll()
     // Swap_Two_Numbers();
 
     // Divide_By_2_Test();
-    Mid_Point_Test();
+    // Mid_Point_Test();
     // Multiplying_By_2();
     // Check_Two_Numbers_Are_Equal();
 

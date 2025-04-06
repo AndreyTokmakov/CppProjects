@@ -105,7 +105,7 @@ int main([[maybe_unused]] int argc,
     // Attributes::TestAll();
     // Auto::TestAll();
     // BitSet::TestAll();
-    // BitwiseOperation::TestAll();
+    BitwiseOperation::TestAll();
     // Byte::TestAll();
     // Chrono::TestAll();
     // ContextControl::TestAll();
@@ -131,7 +131,7 @@ int main([[maybe_unused]] int argc,
     // FilesStreams::TestAll();
     // Filesystem::TestAll();
     // Format::TestAll();
-    FunctionObjects::TestAll();
+    // FunctionObjects::TestAll();
     // Hashing::TestAll();
     // Lambdas::TestAll();
     // LifetimeExtension::TestAll();
