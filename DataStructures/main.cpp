@@ -26,6 +26,7 @@ Description : DataStructures
 #include "Optional/Optional.h"
 #include "Logger/Logger.h"
 #include "RingBuffer/RingBuffer.h"
+#include "RingBuffer/RingBufferEx.h"
 #include "RingBuffer/RingBuffer_SPSC.h"
 #include "MinHeap/MinHeap.h"
 #include "MinStack/MinStack.h"
@@ -67,6 +68,7 @@ int main([[maybe_unused]] int argc,
     // CategoryTree::TEST_ALL();
     // CircularBuffers::TEST_ALL();
     // RingBuffer::TestAll();
+    RingBufferEx::TestAll();
     // RingBuffer_SPSC::TestAll();
     // CustomVector::TestAll();
     // ExecutorAdapter::TestAll();

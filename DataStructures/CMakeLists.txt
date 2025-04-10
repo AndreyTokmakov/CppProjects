@@ -54,6 +54,7 @@ add_executable(${PROJECT_NAME}
 		Wrapper/Wrapper.h
 		ThreadPool/ThreadPool.cpp
 		RingBuffer/RingBuffer.cpp
+		RingBuffer/RingBufferEx.cpp
 		RingBuffer/RingBuffer_SPSC.cpp
 )
 
