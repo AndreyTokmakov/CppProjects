@@ -13,6 +13,7 @@ Description : RingBufferExAtomic.cpp
 #include <cstdint>
 #include <iostream>
 #include <atomic>
+#include <thread>
 
 namespace
 {
@@ -118,7 +119,30 @@ namespace Tests
 
     void MultithreadedTest()
     {
+        RingBuffer<int, 1024> buffer;
+        std::vector<int> readValues;
+        readValues.reserve(1024 * 1024);
 
+        auto produce = [&buffer] {
+            for (int i = 0; i < 1000; ++i)
+                buffer.put(decltype(i){i});
+        };
+
+        auto consume = [&buffer, &readValues] {
+            int result = 0;
+            for (int i = 0; i < 100; ++i) {
+                if (buffer.get(result)) {
+                    readValues.push_back(result);
+                }
+            }
+        };
+
+        {
+            std::jthread producer{produce};
+            std::jthread consumer{consume};
+        }
+
+        std::cout << readValues.size() << std::endl;
     }
 }
 
