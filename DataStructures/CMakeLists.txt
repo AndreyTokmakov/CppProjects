@@ -55,6 +55,7 @@ add_executable(${PROJECT_NAME}
 		ThreadPool/ThreadPool.cpp
 		RingBuffer/RingBuffer.cpp
 		RingBuffer/RingBufferEx.cpp
+		RingBuffer/RingBufferExAtomic.cpp
 		RingBuffer/RingBuffer_SPSC.cpp
 )
 

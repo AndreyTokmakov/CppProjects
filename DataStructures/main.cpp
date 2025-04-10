@@ -27,6 +27,7 @@ Description : DataStructures
 #include "Logger/Logger.h"
 #include "RingBuffer/RingBuffer.h"
 #include "RingBuffer/RingBufferEx.h"
+#include "RingBuffer/RingBufferExAtomic.h"
 #include "RingBuffer/RingBuffer_SPSC.h"
 #include "MinHeap/MinHeap.h"
 #include "MinStack/MinStack.h"
@@ -66,10 +67,6 @@ int main([[maybe_unused]] int argc,
     // BitSet::TEST_ALL();
     // BitFlags::TestAll();
     // CategoryTree::TEST_ALL();
-    // CircularBuffers::TEST_ALL();
-    // RingBuffer::TestAll();
-    RingBufferEx::TestAll();
-    // RingBuffer_SPSC::TestAll();
     // CustomVector::TestAll();
     // ExecutorAdapter::TestAll();
     // ExecutorAdapter2::TestAll();
@@ -90,6 +87,12 @@ int main([[maybe_unused]] int argc,
     // MinHeap::TestAll();
     // HeapWithComparator::TestAll();
     // CompressedPair::TestAll();
+
+    // CircularBuffers::TEST_ALL();
+    // RingBuffer::TestAll();
+    // RingBufferEx::TestAll();
+    RingBufferExAtomic::TestAll();
+    // RingBuffer_SPSC::TestAll();
 
     // GenericTableTemplate::TestAll();
 
