@@ -22,8 +22,9 @@ Description :
 #include "../Helpers/Helpers.h"
 #include "Optional.h"
 
-namespace {
-	using Helpers::Integer;
+namespace
+{
+	using Integer = Helpers::Wrapper<int, false>;
 }
 
 
@@ -684,8 +685,43 @@ namespace Optional::MonadicOperations_2
 
 namespace Optional::Move_Optional_Test
 {
-	void moveFromOptional()
+	std::optional<Integer> getInt(int v)
 	{
+		return std::make_optional<Integer>(v);
+	}
+
+	void firstHandler(Integer&& integer) {
+		auto res = std::move(integer);
+		std::cout << res << std::endl;
+	}
+
+	void secondHandler(Integer&& integer) {
+		auto res = std::move(integer);
+		std::cout << res << std::endl;
+	}
+
+	void moveFromOptional_BAD__Error()
+	{
+		std::optional<Integer> optInt = getInt(1);
+
+		if (optInt.has_value())                              // move the value to avoid copying
+			firstHandler(std::move(optInt.value()));   // from here onwards opt doesn't have a value
+
+		if (optInt.has_value())                              // true, unexpected!  <-----
+			secondHandler(std::move(optInt.value()));  // move again!  in reality f2 got an empty/garbage T
+
+		/** Output:
+		 * 1
+		 * 0
+		 */
+	}
+
+	void moveFromOptional_OK()
+	{
+		std::optional<Integer> optInt = getInt(1);
+
+		if (optInt.has_value())
+			firstHandler(std::move(optInt).value());
 
 	}
 }
@@ -722,7 +758,8 @@ void Optional::TestAll()
     // MonadicOperations::OrElse_Transform();
     // MonadicOperations::Transform_UserInput();
 
-	Move_Optional_Test::moveFromOptional();
+	// Move_Optional_Test::moveFromOptional_BAD__Error();
+	Move_Optional_Test::moveFromOptional_OK();
 
 	// MonadicOperations_2::Transform_Optional_User_to_Optional_String();
 	// MonadicOperations_2::Transform_Optional_User_to_Optional_String_NullOpt();
