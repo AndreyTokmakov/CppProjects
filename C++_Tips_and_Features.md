@@ -619,12 +619,18 @@ CPU когда читат к примеру 'char a' и 'int b' в случае 
 		func(std::move(str)); // без move не заведётся
 
  ▪  What does it do?
-	The first thing to note is that std::move() doesn't actually move anything. 
+
+	The first thing to note is that std::move() doesn-t actually move anything. 
 	It converts an expression from being an lvalue (such as a named variable) to being an xvalue. 
-	An xvalue tells the compiler: You can plunder me, move anything Im holding and use it elsewhere (since I'm going to be destroyed soon anyway)
+	An xvalue tells the compiler: You can plunder me, move anything Im holding and use it elsewhere (since I-m going to be destroyed soon anyway)
 	
 	in other words, when you use std::move(x), you are allowing the compiler to cannibalize x. 
 	Thus if x has, say, its own buffer in memory - after std::move()ing the compiler can have another object own it instead.
+
+	So it’s essentially just a glorified static_cast, but it allows the compiler to reuse the object’s 'internal resources' and avoid a copy.
+	std::move() is a way to tell the compiler, “I’m done with this object, so feel free to cannibalize its resources efficiently.” 
+	The object itself isn’t really ever “moved” at all; 
+	it remains at the same address and will soon be destroyed, but its resources can be efficiently reused by the new moved-to object.
 	
  ▪  What is the Universal references:
 	   T&& is either Rvalue reference or Lvalue reference: For example:

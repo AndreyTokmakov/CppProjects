@@ -7,7 +7,6 @@
 // Description : Memory src class
 //============================================================================
 
-#include "../Integer/Integer.h"
 
 #include "Alignment.h"
 #include "AlignedStackAllocator.h"
@@ -31,6 +30,12 @@
 #include <iomanip>
 #include <functional>
 #include <memory_resource>
+
+#include "../Helpers/Helpers.h"
+
+namespace {
+	using Helpers::Integer;
+}
 
 
 #define DEBUG_OUTPUT

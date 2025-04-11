@@ -24,7 +24,7 @@ Integer::Integer(const Integer &obj) {
 	this->value = obj.value;
 }
 
-Integer::Integer(Integer && obj) : value(std::exchange(obj.value, 0)) {
+Integer::Integer(Integer && obj) noexcept : value(std::exchange(obj.value, 0)) {
 	PrintInfo(__FUNCTION__, " [Move  contructor]. (", obj.value, ")");
 }
 

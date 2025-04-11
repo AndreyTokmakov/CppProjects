@@ -14,11 +14,16 @@
 #include <map>
 
 #include "Any.h"
-#include "../Integer/Integer.h"
-// #include "../TestSupport/TestSupport.h"
+#include "../Helpers/Helpers.h"
 
-namespace Any::TestSupport {
-    class FirstType {
+namespace {
+    using Helpers::Integer;
+}
+
+namespace Any::TestSupport
+{
+    class FirstType
+    {
     protected:
         std::string value;
 

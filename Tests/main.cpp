@@ -1498,37 +1498,7 @@ namespace EnumBasedStrongTypes
 
 
 
-namespace Final_CRTP
-{
-    template<typename Derived>
-    struct Base
-    {
-        Derived& self() {
-            return static_cast<Derived&>(*this);
-        }
 
-        void info(){
-            self().implInfo();
-        }
-
-        void implInfo(){
-            std::cout << "Base::implInfo()" << std::endl;
-        }
-    };
-
-    struct Wrapper final: Base<Wrapper>
-    {
-        void implInfo(){
-            std::cout << "Wrapper::implInfo()" << std::endl;
-        }
-    };
-
-
-    void test()
-    {
-        Wrapper{}.info();
-    }
-}
 
 int main([[maybe_unused]] const int argc,
          [[maybe_unused]] char** argv)
@@ -1539,7 +1509,8 @@ int main([[maybe_unused]] const int argc,
     // Int_to_UInt_Tests::Tests();
     // EnumBasedStrongTypes::Tests();
 
-    Final_CRTP::test();
+
+
 
 
     // WrapperTests::Test();

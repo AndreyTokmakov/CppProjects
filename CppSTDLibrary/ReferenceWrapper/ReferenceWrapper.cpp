@@ -17,9 +17,15 @@
 #include <random>
 #include <vector>
 
-#include "../Integer/Integer.h"
-#include "../TestSupport/TestSupport.h"
+#include "../Helpers/Helpers.h"
+#include "../Helpers/TestSupport.h"
 #include "ReferenceWrapper.h"
+
+
+namespace {
+	using Helpers::Integer;
+}
+
 
 namespace ReferenceWrapper {
 

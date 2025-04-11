@@ -10,7 +10,7 @@
 #include "PolymorphicMemoryResources.h"
 
 
-#include "../Integer/Integer.h"
+#include "../Helpers/Helpers.h"
 #include "../Memory/Memory.h"
 #include <memory>
 #include <new>

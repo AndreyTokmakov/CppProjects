@@ -27,7 +27,11 @@
 #include <unordered_set>
 #include <random>
 #include <execution>
-#include "../Integer/Integer.h"
+#include "../Helpers/Helpers.h"
+
+namespace {
+    using Helpers::Integer;
+}
 
 namespace {
 

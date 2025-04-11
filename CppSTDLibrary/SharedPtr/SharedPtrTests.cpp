@@ -22,7 +22,7 @@
 #include <vector>
 #include <memory>
 
-#include "../Integer/Integer.h"
+#include "../Helpers/Integer.h"
 #include "SharedPtrTests.h"
 
 

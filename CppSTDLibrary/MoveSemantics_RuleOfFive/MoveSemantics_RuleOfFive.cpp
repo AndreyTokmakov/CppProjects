@@ -8,7 +8,7 @@
 //============================================================================
 
 #include "MoveSemantics_RuleOfFive.h"
-#include "../Integer/Integer.h"
+#include "../Helpers/Helpers.h"
 #include <charconv>
 #include <array>
 #include <cassert>
@@ -20,6 +20,10 @@
 #include <variant>
 #include <filesystem>
 #include <fstream>
+
+namespace {
+	using Helpers::Integer;
+}
 
 namespace MoveSemantics_RuleOfFive {
 

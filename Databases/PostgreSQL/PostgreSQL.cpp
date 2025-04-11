@@ -18,6 +18,7 @@ Description :
 #include <format>
 #include <print>
 
+#if 0
 #include <pqxx/pqxx>
 
 namespace Tests
@@ -42,6 +43,7 @@ namespace Tests
         pgConnection.close();
     }
 }
+#endif
 
 
 void PostgreSQL::TestAll()

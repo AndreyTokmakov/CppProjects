@@ -15,13 +15,17 @@ Description :
 #include <utility>
 #include <vector>
 #include <optional>
-#include <utility>
 #include <functional>
 #include <algorithm>
 #include <format>
 
-#include "../Integer/Integer.h"
+#include "../Helpers/Helpers.h"
 #include "Optional.h"
+
+namespace {
+	using Helpers::Integer;
+}
+
 
 namespace Optional
 {
@@ -676,9 +680,16 @@ namespace Optional::MonadicOperations_2
 
 		std::cout << optSuperUser.value() << std::endl;
 	}
-
-
 }
+
+namespace Optional::Move_Optional_Test
+{
+	void moveFromOptional()
+	{
+
+	}
+}
+
 
 void Optional::TestAll()
 {
@@ -711,10 +722,10 @@ void Optional::TestAll()
     // MonadicOperations::OrElse_Transform();
     // MonadicOperations::Transform_UserInput();
 
-
+	Move_Optional_Test::moveFromOptional();
 
 	// MonadicOperations_2::Transform_Optional_User_to_Optional_String();
 	// MonadicOperations_2::Transform_Optional_User_to_Optional_String_NullOpt();
-	MonadicOperations_2::Transform_Optional_User_to_String_and_to_SuperUser();
+	// MonadicOperations_2::Transform_Optional_User_to_String_and_to_SuperUser();
 };
 

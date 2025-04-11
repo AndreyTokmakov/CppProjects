@@ -14,9 +14,13 @@
 #include <memory>
 #include <utility>
 
-#include "../Integer/Integer.h"
 #include "../Helpers/Helpers.h"
 #include "UniquePtr.h"
+
+namespace
+{
+	using Helpers::Integer;
+}
 
 namespace UniquePtr
 {

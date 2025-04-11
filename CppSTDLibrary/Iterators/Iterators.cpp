@@ -21,11 +21,14 @@ Description :
 #include <map>
 #include <list>
 #include <cassert>
-#include "../Integer/Integer.h"
-#include "../Helpers/Wrapper.h"
+#include "../Helpers/Helpers.h"
 
 #include "Iterators.h"
 #include "Custom_Iterators.h"
+
+namespace {
+	using Helpers::Integer;
+}
 
 namespace Iterators::ReverseIterators
 {

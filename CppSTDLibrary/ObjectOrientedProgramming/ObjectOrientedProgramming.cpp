@@ -18,11 +18,14 @@
 #include "ObjectOrientedProgramming.h"
 #include "ConstexprVirtualFunctions.h"
 #include "RefQualifierMemberFunctions.h"
-#include "../Integer/Integer.h"
+#include "../Helpers/Helpers.h"
 
 #include "Operators.h"
 #include "../Helpers/Wrapper.h"
 
+namespace {
+    using Helpers::Integer;
+}
 
 namespace ObjectOrientedProgramming::Constructors
 {
