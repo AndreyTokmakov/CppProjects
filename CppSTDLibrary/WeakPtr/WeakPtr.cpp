@@ -14,10 +14,13 @@
 #include <algorithm>
 #include <memory>
 
-#include "../Integer/Integer.h"
+#include "../Helpers/Helpers.h"
 #include "WeakPtr.h"
-
 #include "WeakPtr_MakeShared.h"
+
+namespace {
+	using Helpers::Integer;
+}
 
 
 namespace WeakPtr {

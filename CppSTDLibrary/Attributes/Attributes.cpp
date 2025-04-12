@@ -26,7 +26,7 @@
 
 #include "Attributes.h"
 #include "Assume.h"
-#include "../Integer/Integer.h"
+#include "../Helpers/Helpers.h"
 
 namespace Attributes::Fallthrough {
 

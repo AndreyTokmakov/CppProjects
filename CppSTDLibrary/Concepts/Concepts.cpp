@@ -25,7 +25,7 @@
 #include <functional>
 
 #include "Concepts.h"
-#include "../Integer/Integer.h"
+#include "../Helpers/Integer.h"
 
 
 namespace Concepts

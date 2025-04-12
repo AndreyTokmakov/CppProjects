@@ -20,11 +20,9 @@
 #include <algorithm>
 #include <functional>
 
-#include "../Integer/Integer.h"
+#include "../Helpers/Helpers.h"
 #include "StringStreamTests.h"
 
-using String = std::string;
-using CString = const String&;
 
 namespace StringStream
 {
@@ -214,14 +212,14 @@ namespace StringStream
 
 	void SplitStringTests() {
 		{
-			const String text = "1 22 333 4444 55555";
+			const std::string text = "1 22 333 4444 55555";
 			std::vector<std::string> parts;
 			split_string(text, parts);
 			std::for_each(parts.begin(), parts.end(), [](const std::string& s) { std::cout << s << std::endl; });
 		}
 		std::cout << "\n====================================================" << std::endl;
 		{
-			const String text = "1 22 333 4444 55555";
+			const std::string text = "1 22 333 4444 55555";
 			std::vector<std::string> parts;
 			split_string_2(text, parts);
 			std::for_each(parts.begin(), parts.end(), [](const std::string& s) { std::cout << s << std::endl; });

@@ -10,7 +10,6 @@ Description : Cpp STD lib
 #include "Types.h"
 #include "AggregateInitialization/AggregateInitialization.h"
 #include "Algorithms/Algorithms.h"
-#include "Integer/Integer.h"
 #include "Any/Any.h"
 #include "Arrays/Arrays.h"
 #include "Asserts/Asserts.h"
@@ -40,7 +39,6 @@ Description : Cpp STD lib
 #include "Hashing/Hashing.h"
 #include "InitializerList/InitializerList.h"
 #include "InlineVariables/InlineVariables.h"
-#include "Integer/Integer.h"
 #include "Types//Int.h"
 #include "Initialization/Initialization.h"
 #include "FilesStreams/FilesStreams.h"
@@ -105,7 +103,7 @@ int main([[maybe_unused]] int argc,
     // Attributes::TestAll();
     // Auto::TestAll();
     // BitSet::TestAll();
-    BitwiseOperation::TestAll();
+    // BitwiseOperation::TestAll();
     // Byte::TestAll();
     // Chrono::TestAll();
     // ContextControl::TestAll();
@@ -145,7 +143,7 @@ int main([[maybe_unused]] int argc,
     // InlineNamespaces::TestAll();
     // NumericLimits::TestAll();
     // ObjectOrientedProgramming::TestAll();
-    // Optional::TestAll();
+    Optional::TestAll();
     // Overflow::TestAll();
     // PolymorphicMemoryResources::TestAll();
     // Print::TestAll();

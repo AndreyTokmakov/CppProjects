@@ -24,7 +24,7 @@
 #include <memory>
 #include <cassert>
 
-#include "../Integer/Integer.h"
+#include "../Helpers/Helpers.h"
 #include "FunctionObjects.h"
 #include "CallbackTests.h"
 #include "MemberFunctionPointer.h"

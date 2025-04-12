@@ -95,6 +95,12 @@ namespace Helpers
             this->value *= right.value;
             return *this;
         }
+
+        void printInfo() const noexcept
+        {
+            std::cout << __PRETTY_FUNCTION__ << "(" << value << ")\n";
+        }
+
 #if 0
         /** Postfix increment: **/
         Wrapper operator++(value_type) {

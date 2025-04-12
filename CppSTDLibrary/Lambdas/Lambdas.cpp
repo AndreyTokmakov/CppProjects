@@ -15,23 +15,20 @@
 #include <iostream>
 #include <algorithm>
 #include <numeric>
-#include <functional>   // std::modulus, std::bind2nd
-#include <algorithm> 
 #include <array>
-#include <string_view> 
-
+#include <string_view>
 #include "Lambdas.h"
 #include <cassert>
 #include <utility>
-#include <variant>
 #include <memory>
 
 #include <type_traits>
-#include "../Integer/Integer.h"
+#include "../Helpers/Integer.h"
 
 
-using namespace std::string_literals;
-
+namespace {
+	using namespace std::string_literals;
+}
 
 namespace Lambdas::Capture
 {

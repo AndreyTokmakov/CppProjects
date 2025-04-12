@@ -52,11 +52,10 @@ namespace
         {
             size_type writeIdx = idxWrite.load(std::memory_order::relaxed);
             size_type readIdx = idxRead.load(std::memory_order::relaxed);
-            bool isFull = full.load(std::memory_order::relaxed);
 
             buffer[writeIdx] = std::move(value);
 
-            if (isFull) {
+            if (full.load(std::memory_order::relaxed)) {
                 readIdx = fast_modulo(readIdx + 1, Capacity);
                 idxRead.store(readIdx, std::memory_order::relaxed);
             }
@@ -124,16 +123,18 @@ namespace Tests
         readValues.reserve(1024 * 1024);
 
         auto produce = [&buffer] {
-            for (int i = 0; i < 1000; ++i)
+            for (int i = 0; i < 1024 * 2; ++i)
                 buffer.put(decltype(i){i});
+            std::cout << "Producer done: " << std::endl;
         };
 
         auto consume = [&buffer, &readValues] {
             int result = 0;
-            for (int i = 0; i < 100; ++i) {
+            for (int i = 0; i < 1024; ++i) {
                 if (buffer.get(result)) {
                     readValues.push_back(result);
                 }
+                //else --i;
             }
         };
 
@@ -143,6 +144,7 @@ namespace Tests
         }
 
         std::cout << readValues.size() << std::endl;
+        std::cout << readValues.back() << std::endl;
     }
 }
 

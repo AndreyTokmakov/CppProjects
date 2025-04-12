@@ -19,7 +19,7 @@
 #include <list>
 #include <vector>
 
-#include "../Integer/Integer.h"
+#include "../Helpers/Helpers.h"
 #include "TypeCast.h"
 
 using String = std::string;

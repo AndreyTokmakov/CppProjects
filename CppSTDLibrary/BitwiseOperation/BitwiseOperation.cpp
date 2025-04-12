@@ -15,7 +15,7 @@
 #include <bitset>
 #include <cstdint>
 
-#include "../Integer/Integer.h"
+#include "../Helpers/Helpers.h"
 #include "BitwiseOperation.h"
 
 

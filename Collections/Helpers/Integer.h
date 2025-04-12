@@ -34,7 +34,7 @@ public:
 	Integer();
 	Integer(int val);
 	Integer(const Integer &obj);
-	Integer(Integer &&obj);
+	Integer(Integer &&obj) noexcept;
 
 	virtual ~Integer();
 

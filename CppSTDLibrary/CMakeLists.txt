@@ -44,7 +44,7 @@ add_executable(${PROJECT_NAME}
 		Initialization/Initialization.cpp
 		InitializerList/InitializerList.cpp
 		InlineVariables/InlineVariables.cpp
-		Integer/Integer.cpp
+		Helpers/Integer.cpp
 		Iterators/Iterators.cpp
 		Iterators/Custom_Iterators.cpp
 		Lambdas/Lambdas.cpp
@@ -112,6 +112,8 @@ add_executable(${PROJECT_NAME}
 		Overflow/Overflow.cpp
 		StaticAsserts/StaticAsserts.cpp
 		ContextControl/ContextControl.cpp
+		Helpers/Integer.cpp
+		Helpers/Integer.h
 )
 
 # Link libraries to the project/executable

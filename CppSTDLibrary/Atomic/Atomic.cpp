@@ -8,10 +8,7 @@
 
 
 #include "Atomic.h"
-#include "../Integer/Integer.h"
-
-using String = std::string;
-using CString = const String&;
+#include "../Helpers/Helpers.h"
 
 
 namespace Atomic
