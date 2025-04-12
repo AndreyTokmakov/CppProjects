@@ -14,15 +14,19 @@ Description : C++ Utilities
 #include <list>
 #include <map>
 #include <iomanip>
+#include <thread>
 #include <fstream>
 #include <charconv>
 #include <optional>
+
+#include <x86intrin.h>
 
 #include "StringUtilities.h"
 #include "FileUtilities.h"
 #include "CSVReader/Tests.h"
 #include "Base64.h"
 #include "HexConverter.h"
+#include "PerfUtilities.h"
 
 namespace
 {
@@ -199,7 +203,32 @@ namespace Base64Tests
         std::cout << result << std::endl;
 
     }
+
 }
+
+namespace TimeMeasurement
+{
+    using namespace PerfUtilities;
+
+    void doSomething()
+    {
+        std::this_thread::sleep_for(std::chrono::milliseconds (150UL));
+    }
+
+    void testScopedTimer()
+    {
+        ScopedTimer timer { "Test1" };
+        doSomething();
+    }
+
+    void testScopedTimer_TSC()
+    {
+        TSCScopedTimer timer { "Test2" };
+        doSomething();
+    }
+
+}
+
 
 // TODO: BitUtils
 //      - check bit is set
@@ -231,7 +260,10 @@ int main([[maybe_unused]] int argc,
 
     // CSV_Reader_Tests::TestAll();
 
-    HexConverter::TestAll();
+    // HexConverter::TestAll();
+
+    TimeMeasurement::testScopedTimer();
+    TimeMeasurement::testScopedTimer_TSC();
 
     return EXIT_SUCCESS;
 }

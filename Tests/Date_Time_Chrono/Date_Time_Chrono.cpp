@@ -12,7 +12,12 @@ Description : Date_Time_Chrono
 #include <iostream>
 #include <chrono>
 #include <format>
+#include <print>
 #include <thread>
+
+
+#include <x86intrin.h>
+
 
 namespace Date_Time_Chrono
 {
@@ -160,6 +165,28 @@ namespace Date_Time_Chrono::Sleep
     }
 }
 
+
+namespace Date_Time_Chrono::MeasureTime_TSC
+{
+    void doSomething()
+    {
+        std::this_thread::sleep_for(std::chrono::milliseconds (150UL));
+    }
+
+
+    void timeWithTSC()
+    {
+        const uint64_t start = __rdtsc();
+        doSomething();
+        const uint64_t duration =  __rdtsc() - start;
+
+        std::cout << "duration = " << duration << std::endl;
+    }
+}
+
+
+
+
 void Date_Time_Chrono::TestAll()
 {
     // ChronoTests();
@@ -169,6 +196,8 @@ void Date_Time_Chrono::TestAll()
     // Experiments::test();
 
 
-    Sleep::Test();
+    // Sleep::Test();
+
+    MeasureTime_TSC::timeWithTSC();
 
 }
