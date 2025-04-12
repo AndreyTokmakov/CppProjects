@@ -226,7 +226,6 @@ namespace TimeMeasurement
         TSCScopedTimer timer { "Test2" };
         doSomething();
     }
-
 }
 
 
