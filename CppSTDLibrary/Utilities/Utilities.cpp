@@ -444,9 +444,72 @@ namespace Utilities::ForwardLike
     };
 #endif
 
-    void Test()
-    {
+    struct Wrapper {
+        int member;
+    };
 
+    void fun(const int&) { std::cout << __PRETTY_FUNCTION__ << std::endl; }
+    void fun(int&) { std::cout << __PRETTY_FUNCTION__ << std::endl; }
+    void fun(int&&) { std::cout << __PRETTY_FUNCTION__ << std::endl; }
+
+    /** Only calls fun(int&) or fun(const int&) **/
+    void extract1(auto&& wrapper)
+    {
+        fun(wrapper.member);
+    }
+
+    /** Correct, but cumbersome **/
+    void extract2(auto&& wrapper)
+    {
+        if constexpr (std::is_rvalue_reference_v<decltype(wrapper)>)
+        {
+            fun(std::move(wrapper.member));
+        }
+        else
+        {
+            fun(wrapper.member);
+        }
+    }
+
+    /** Using C++23 forward_like **/
+    void extract3(auto&& wrapper)
+    {
+        fun(std::forward_like<decltype(wrapper)>(wrapper.member));
+    }
+
+    struct MyType
+    {
+        auto&& get(this auto&& self)
+        {
+            // One getter variant covering all value categories
+            return std::forward_like<decltype(self)>(self.data);
+        }
+        int data;
+    };
+
+    void Old_Style_Forward()
+    {
+        Wrapper w;
+        extract1(w);                      // calls fun(int&)
+        extract1(std::as_const(w));  // calls fun(const int&)
+        extract1(Wrapper{});         // calls fun(int&)
+
+        extract2(w);                      // calls fun(int&)
+        extract2(std::as_const(w));  // calls fun(const int&)
+        extract2(Wrapper{});         // calls fun(int&&)
+    }
+
+    void Forward_Like()
+    {
+        Wrapper w;
+
+        extract3(w);                     // calls fun(int&)
+        extract3(std::as_const(w)); // calls fun(const int&)
+        extract3(Wrapper{});        // calls fun(int&&)
+
+        // void Utilities::ForwardLike::fun(int&)
+        // void Utilities::ForwardLike::fun(const int&)
+        // void Utilities::ForwardLike::fun(int&&)
     }
 }
 
@@ -483,7 +546,9 @@ void Utilities::TestAll()
 	Integer_Comparison_Functions::Tests();
     */
 
-    ForwardLike::Test();
+    ForwardLike::Old_Style_Forward();
+    ForwardLike::Forward_Like();
+
 
     // ToAddress::to_address_tests();
 
@@ -493,5 +558,5 @@ void Utilities::TestAll()
 
 
     // Quoted::Quoted_Tests();
-    Quoted::Quoted_SetQuote_Character();
+    // Quoted::Quoted_SetQuote_Character();
 };
