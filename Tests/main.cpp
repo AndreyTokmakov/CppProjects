@@ -1497,6 +1497,7 @@ namespace EnumBasedStrongTypes
 }
 
 
+
 int main([[maybe_unused]] const int argc,
          [[maybe_unused]] char** argv)
 {
@@ -1536,7 +1537,7 @@ int main([[maybe_unused]] const int argc,
 
     /** * * * * *  Move to lib * * * * * **/
 
-    // Cpp_NEW_Features::TestAll();
+    Cpp_NEW_Features::TestAll();
     // Execution::TestAll();
     // StackTrace::TestAll();
 

@@ -2723,13 +2723,14 @@ namespace Concepts::STD::Derived_From
 }
 
 
-namespace Concepts::CRPT_Replace
+namespace Concepts::CRPT
 {
     struct AnimalTag {};
 
     template<typename T>
-    concept Animal = requires(T animal) { animal.make_sound();} &&
-        std::derived_from<T, AnimalTag>;
+    concept Animal = requires(T animal) {
+        animal.make_sound();
+    } && std::derived_from<T, AnimalTag>;
 
     void print(const Animal auto& animal) {
         animal.make_sound();
@@ -2757,6 +2758,43 @@ namespace Concepts::CRPT_Replace
 
         constexpr Dog dog;
         print(dog);
+    }
+}
+
+namespace Concepts::CRPT
+{
+    struct Event {};
+
+    template<typename T>
+    concept Handler = requires(T obj, Event event) {
+        { obj.handle(event) } -> std::same_as<bool>;
+    };
+
+    template<typename T>
+    struct BaseHandler
+    {
+        void call(Event event) {
+            (static_cast<const T&>(*this)).handle(event);
+        }
+
+        bool handle(Event event) const {
+            std::cout << "BaseHandler::handle() - DEFAULT \n";
+            return true;
+        }
+    };
+
+    struct Processor: BaseHandler<Processor>
+    {
+        bool handle(Event event) const {
+            std::cout << "Processor::handle()\n";
+            return true;
+        }
+    };
+
+    void CRTP_Derive_using_Concepts()
+    {
+        BaseHandler<Processor> handler;
+        handler.call(Event{});
     }
 }
 
@@ -2874,8 +2912,8 @@ void Concepts::TestAll()
     // STDConcepts::Copyable();
 
 
-    Requires_Clause_vs_Expression::Requires_Expression();
-    Requires_Clause_vs_Expression::Requires_Clause();
+    // Requires_Clause_vs_Expression::Requires_Expression();
+    // Requires_Clause_vs_Expression::Requires_Clause();
 
     // Custom_Concepts::SimpleTest();
     // Custom_Concepts::Addable_Test();
@@ -2936,13 +2974,16 @@ void Concepts::TestAll()
     // Concepts_With_Lambdas::Params_Concepts();
 
 
-    // CRPT_Replace::Concepts_Instead_CRTP();
+    // CRPT::Concepts_Instead_CRTP();
+    CRPT::CRTP_Derive_using_Concepts();
+
+
     // ConceptsAsInterface::passClassObjAsInterface();
     // NestedConcepts::CheckMethodReturnType();
     // SFINAE::ChooseOverloadedFunc_WithRequire();
 
     // Function_Constrains::Test_Function_Return_Int();
-    Function_Constrains::CheckTypeIsFunctor();
+    // Function_Constrains::CheckTypeIsFunctor();
     // Constraints_On_Member_Function::Check_If_Function_Available();
 
     // Conversations::String_Test();

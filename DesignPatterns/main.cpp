@@ -80,7 +80,7 @@ int main([[maybe_unused]]  int argc,
     // Flyweight::Test();
     // ModelViewController::TestAll();
     // Proxy::CarTest();
-    Proxy::DocumentTest();
+    // Proxy::DocumentTest();
     // Proxy::SubjectTest();
     // Proxy::DatabaseProxyTest();
 
@@ -100,7 +100,7 @@ int main([[maybe_unused]]  int argc,
     /// NULL OBJECT
 
     /** C++ IDIOMS: **/
-    // CRTP::Test();
+    CRTP::Test();
     // NVI_SimpleExample::TestAll();
     // TypeErasure::Test();
     // RAII::Test();

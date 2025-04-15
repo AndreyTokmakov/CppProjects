@@ -12,19 +12,22 @@ Description : CRTP_InvokeMethods.cpp
 namespace CRTP_InvokeMethods
 {
     template <typename Derived>
-    struct Base {
+    struct Base
+    {
         void call() {
             static_cast<Derived *>(this)->test();
         }
     };
 
-    struct ItemOne : public Base<ItemOne> {
+    struct ItemOne : public Base<ItemOne>
+    {
         void test() {
             std::cout << "ItemOne::test()\n";
         }
     };
 
-    struct ItemTwo : public Base<ItemTwo> {
+    struct ItemTwo : public Base<ItemTwo>
+    {
         void test() {
             std::cout << "ItemTwo::test()\n";
         }

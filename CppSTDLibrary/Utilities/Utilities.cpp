@@ -14,6 +14,8 @@
 #include <memory>
 #include <cassert>
 #include <iomanip>
+#include <queue>
+#include <deque>
 #include "Utilities.h"
 
 
@@ -427,6 +429,28 @@ namespace Utilities::Quoted
     }
 }
 
+
+namespace Utilities::ForwardLike
+{
+#if 0
+    struct adapter
+    {
+        std::deque<std::string> container;
+
+        std::string operator[](this auto&& self, size_t i)
+        {
+            return std::forward_like<decltype(self)>(container[i]);
+        }
+    };
+#endif
+
+    void Test()
+    {
+
+    }
+}
+
+
 void Utilities::TestAll()
 {
     // Bind_Utilities();
@@ -458,6 +482,8 @@ void Utilities::TestAll()
 	Integer_Comparison_Functions::Compare_Greater_Perfect();
 	Integer_Comparison_Functions::Tests();
     */
+
+    ForwardLike::Test();
 
     // ToAddress::to_address_tests();
 
