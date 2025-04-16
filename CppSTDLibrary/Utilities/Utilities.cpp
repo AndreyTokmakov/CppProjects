@@ -514,6 +514,75 @@ namespace Utilities::ForwardLike
 }
 
 
+namespace Utilities::ForwardLike_Lambda
+{
+	struct Scheduler
+	{
+		std::string name;
+
+		void submit(const std::string& str) const {
+			std::cout << __PRETTY_FUNCTION__ << " | " << name << " : " <<  str << std::endl;
+		}
+
+		void submit(std::string&& str) const {
+			std::cout << __PRETTY_FUNCTION__ << " | " << name << " : " <<  str << std::endl;
+		}
+	};
+
+	[[nodiscard]]
+	std::string get_message()
+	{
+		return { "notification" };
+	}
+
+
+	void Move_and_Copy_OldStyle()
+	{
+		Scheduler scheduler { "Test_Scheduler" };
+
+
+		auto callback1 = [message=get_message(), &scheduler]() {
+			scheduler.submit(message);
+		};
+		auto callback2 = [message=get_message(), &scheduler]() mutable {
+			scheduler.submit(std::move(message));
+		};
+
+		/**
+		 So what if we want to submit a copy of the message to the scheduler in the first case to be able to repeat the call,
+		 and in the second case - move the message to the scheduler. That is, we would like to adjust the type of
+		 the class field based on the type of the object reference and pass the field to internal calls.
+		**/
+
+		callback1();
+		callback2();
+
+		// void Utilities::ForwardLike_Lambda::Scheduler::submit(const std::string&) const | Test_Scheduler : notification
+		// void Utilities::ForwardLike_Lambda::Scheduler::submit(std::string&&) const | Test_Scheduler : notification
+	}
+
+
+	void Move_and_Copy_DeducingThis()
+	{
+		Scheduler scheduler { "Test_Scheduler" };
+		auto callback = [message=get_message(), &scheduler](this auto &&self) {
+			return scheduler.submit(std::forward_like<decltype(self)>(message));
+		};
+
+		/**
+		 So what if we want to submit a copy of the message to the scheduler in the first case to be able to repeat the call,
+		 and in the second case - move the message to the scheduler. That is, we would like to adjust the type of
+		 the class field based on the type of the object reference and pass the field to internal calls.
+		**/
+
+		callback();
+		std::move(callback)();
+
+		// void Utilities::ForwardLike_Lambda::Scheduler::submit(const std::string&) const | Test_Scheduler : notification
+		// void Utilities::ForwardLike_Lambda::Scheduler::submit(std::string&&) const | Test_Scheduler : notification
+	}
+}
+
 void Utilities::TestAll()
 {
     // Bind_Utilities();
@@ -546,8 +615,11 @@ void Utilities::TestAll()
 	Integer_Comparison_Functions::Tests();
     */
 
-    ForwardLike::Old_Style_Forward();
-    ForwardLike::Forward_Like();
+    // ForwardLike::Old_Style_Forward();
+    // ForwardLike::Forward_Like();
+
+    ForwardLike_Lambda::Move_and_Copy_OldStyle();
+    ForwardLike_Lambda::Move_and_Copy_DeducingThis();
 
 
     // ToAddress::to_address_tests();
