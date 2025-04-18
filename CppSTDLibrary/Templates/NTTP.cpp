@@ -16,7 +16,7 @@ Description : NTTP.cpp
 #include <numeric>
 
 
-namespace NTTP
+namespace NTTP::One
 {
     template<std::array a> auto get_value() {
         return a[1];
@@ -40,7 +40,30 @@ namespace NTTP
     }
 }
 
+
+namespace NTTP::Two
+{
+    struct Config
+    {
+        int min;
+        int max;
+    };
+
+    template<Config CFG>
+    void Fun()
+    {
+        std::cout << "Min: " << CFG.min << ", max: " << CFG.max << std::endl;
+    }
+
+    void test()
+    {
+        Fun<{3, 9}>();
+        Fun<Config{1, 2}>();
+    }
+}
+
 void NTTP::TestAll()
 {
-    ArrayAsTemplateParam();
+    // One::ArrayAsTemplateParam();
+    Two::test();
 };

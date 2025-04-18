@@ -167,8 +167,8 @@ int main([[maybe_unused]] int argc,
     // Tuple::TestAll();
     // TypeCast::TestAll();
     // Int::TestAll();
-    // Templates::TestAll();
-    Utilities::TestAll();
+    Templates::TestAll();
+    // Utilities::TestAll();
     // CompilerVersion::TestAll();
     // UniquePtr::TestAll();
     // WeakPtr::TestAll();
