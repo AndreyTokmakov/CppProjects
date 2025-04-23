@@ -74,7 +74,7 @@ namespace Atomic_Wait::Basics
         for (int i = 0; i < 2; ++i) {
             const std::string name { "Thread_" + std::to_string(i) };
             tasks.emplace_back(std::async([&value, name]() -> void {
-                THREAD_INFO << "Waiting until value != 10 . . . " << std::endl;
+                THREAD_INFO << "Waiting until value != " << initialValue << " . . . " << std::endl;
                 value.wait(initialValue);
                 THREAD_INFO << name << " done" << std::endl;
             }));
