@@ -183,7 +183,7 @@ int main([[maybe_unused]] int argc,
     // SharedMemory_PyExchange::TestAll(params);
     // SharedBlock_WithSemaphore::TestAll(params);
     // Pipes::TestAll(params);
-    SharedMemory_AtomicValue::TestAll();
+    // SharedMemory_AtomicValue::TestAll();
     // SharedMutex::TestAll();
     // SemMutex::TestAll();
     // UnixSockets::TestAll();

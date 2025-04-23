@@ -36,6 +36,7 @@ Description : Tests C++ project
 #include <print>
 #include <format>
 #include <ostream>
+#include <queue>
 #include <stdfloat>
 
 #include <experimental/socket>
@@ -1497,6 +1498,82 @@ namespace EnumBasedStrongTypes
 }
 
 
+namespace OrderBook_TableDispatch
+{
+    using Ticker = std::string;
+
+    enum class Exchange
+    {
+        Binance,
+        ByBit,
+        Deribit,
+        GateIO,
+        OKX,
+    };
+
+    struct Event
+    {
+        // TODO: Ticker ??? INT ?? how to optimize
+        Ticker ticker;
+    };
+
+    std::ostream& operator<<(std::ostream& stream, const Event& event) {
+        stream << std::format("Event({})", event.ticker);
+        return stream;
+    }
+
+    struct OrderBook
+    {
+        Ticker ticker;
+
+        void processEvent(const Event& event) const
+        {
+            std::cout << "OrderBook '" << ticker << "' handling the event" << event << std::endl;
+        }
+    };
+
+    struct BookKeeper
+    {
+
+        std::map<Ticker, std::unique_ptr<OrderBook>> orderBooksByTicker;
+        // std::vector<std::unique_ptr<OrderBook>> orderBooksByTicker;
+
+        BookKeeper()
+        {
+            for (const auto& ticker: { "APPL", "TEST"}){
+                orderBooksByTicker.emplace(ticker, std::make_unique<OrderBook>(ticker));
+            }
+        }
+
+        void processEvent(const Event& event)
+        {
+            // TODO: Get TICKER here ??
+            const auto& book = orderBooksByTicker[event.ticker];
+            book->processEvent(event);
+        }
+    };
+
+    struct PricingEngine
+    {
+        BookKeeper binanceBookKeeper;
+        BookKeeper byBitBookKeeper;
+        std::array<BookKeeper*, 2> books { &binanceBookKeeper, &byBitBookKeeper };
+
+        void push(Exchange exchange, const Event& event) const
+        {
+            BookKeeper* book_keeper = books[static_cast<uint32_t>(exchange)];
+            book_keeper->processEvent(event);
+        }
+    };
+
+    void Tests()
+    {
+        PricingEngine engine;
+        engine.push(Exchange::Binance, Event { "APPL"});
+        engine.push(Exchange::Binance, Event { "TEST"});
+    }
+}
+
 
 int main([[maybe_unused]] const int argc,
          [[maybe_unused]] char** argv)
@@ -1507,7 +1584,7 @@ int main([[maybe_unused]] const int argc,
     // Int_to_UInt_Tests::Tests();
     // EnumBasedStrongTypes::Tests();
 
-
+    OrderBook_TableDispatch::Tests();
 
 
     // WrapperTests::Test();
@@ -1537,7 +1614,7 @@ int main([[maybe_unused]] const int argc,
 
     /** * * * * *  Move to lib * * * * * **/
 
-    Cpp_NEW_Features::TestAll();
+    // Cpp_NEW_Features::TestAll();
     // Execution::TestAll();
     // StackTrace::TestAll();
 
