@@ -109,6 +109,36 @@ namespace ConstexprVirtualFunctions::Demo_Two
     }
 }
 
+namespace ConstexprVirtualFunctions::Demo_Three
+{
+    struct VeryComplicatedCalculation
+    {
+        [[nodiscard]]
+        constexpr virtual int double_me(int n) const = 0;
+    };
+
+    struct Impl: VeryComplicatedCalculation
+    {
+        [[nodiscard]]
+        constexpr virtual int double_me(int n) const override
+        {
+            return 2 * n;
+        }
+    };
+
+    consteval void test()
+    {
+        /*
+        constexpr Impl impl = Impl{};
+        constexpr const VeryComplicatedCalculation& impl_ref = impl;
+
+        constexpr int a = impl_ref.double_me(4);
+        static_assert(a == 8); // true
+        */
+    }
+
+}
+
 void ConstexprVirtualFunctions::TestAll()
 {
     // Demo_One::test();

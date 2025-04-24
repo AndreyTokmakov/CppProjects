@@ -1498,6 +1498,51 @@ namespace EnumBasedStrongTypes
 }
 
 
+namespace EnumHack
+{
+    enum class Weekdays
+    {
+        Monday = 1,
+        Tuesday = 2,
+        Wednesday = 4,
+        Thursday = 8,
+        Friday = 0x10,
+        Saturday = 0x20,
+        Sunday = 0x40
+    };
+
+
+    constexpr bool isWorkingDay(const Weekdays day)
+    {
+        using enum Weekdays;
+        static_assert(std::is_same_v< std::underlying_type_t<Weekdays>, int>);
+
+        if (static_cast<int>(day) & (static_cast<int>(Monday) |
+                                     static_cast<int>(Tuesday) |
+                                     static_cast<int>(Wednesday) |
+                                     static_cast<int>(Thursday) |
+                                     static_cast<int>(Friday))) {
+            return true;
+        }
+        return false;
+    }
+
+    void Test()
+    {
+        static_assert(true  == isWorkingDay(Weekdays::Monday));
+        static_assert(true  == isWorkingDay(Weekdays::Tuesday));
+        static_assert(true  == isWorkingDay(Weekdays::Wednesday));
+        static_assert(true  == isWorkingDay(Weekdays::Thursday));
+        static_assert(true  == isWorkingDay(Weekdays::Friday));
+        static_assert(false == isWorkingDay(Weekdays::Saturday));
+        static_assert(false == isWorkingDay(Weekdays::Sunday));
+
+    }
+}
+
+
+
+
 namespace OrderBook_TableDispatch
 {
     using Ticker = std::string;
@@ -1574,6 +1619,46 @@ namespace OrderBook_TableDispatch
     }
 }
 
+namespace Store_Pointer_In_Collection
+{
+    using Helpers::Integer;
+    std::vector<Integer*> intPtrs;
+
+    struct Wrapper {
+        Integer* ptr;
+    };
+
+    void init()
+    {
+        intPtrs.push_back(new Integer(1));
+        intPtrs.push_back(new Integer(2));
+        intPtrs.push_back(new Integer(3));
+    }
+
+    void clean()
+    {
+        for (Integer* ptr: intPtrs)
+            delete ptr;
+    }
+
+    void set(Wrapper& data, uint32_t pos)
+    {
+        data.ptr = intPtrs[pos];
+    }
+
+    void demo()
+    {
+        init();
+        Wrapper wrapper{};
+
+        set(wrapper, 2);
+
+        std::cout << *wrapper.ptr << std::endl;
+
+        clean();
+    }
+}
+
 
 int main([[maybe_unused]] const int argc,
          [[maybe_unused]] char** argv)
@@ -1582,9 +1667,13 @@ int main([[maybe_unused]] const int argc,
     // VirtualFunctionTests::demo();
 
     // Int_to_UInt_Tests::Tests();
-    // EnumBasedStrongTypes::Tests();
 
-    OrderBook_TableDispatch::Tests();
+    // EnumBasedStrongTypes::Tests();
+    // EnumHack::Test();
+
+    // OrderBook_TableDispatch::Tests();
+
+    Store_Pointer_In_Collection::demo();
 
 
     // WrapperTests::Test();
