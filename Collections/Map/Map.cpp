@@ -12,10 +12,8 @@
 
 #include "../Helpers/Integer.h"
 
-namespace Map {
-
-    using String = std::string;
-    using CString = const String &;
+namespace Map
+{
 
     template<class T, typename KeyType, typename ValueType>
     //typename std::enable_if<std::is_base_of<std::map<KeyType, ValueType>, T>::value, T*>::type
@@ -163,11 +161,11 @@ namespace Map {
             std::cout << key << "  ==  " << value << std::endl;
         dictionary.clear();
 
-        std::cout << "\n\nTest using '()'. Copy construcors SHALL be called. (TEST1)\n" << std::endl;
+        std::cout << "\n\nTest using '()'. Copy constructors SHALL be called. (TEST1)\n" << std::endl;
 
-        dictionary.insert(std::make_pair<String, Integer>("Key1", Integer(10)));
-        dictionary.insert(std::make_pair<String, Integer>("Key2", Integer(20)));
-        dictionary.insert(std::make_pair<String, Integer>("Key3", Integer(30)));
+        dictionary.insert(std::make_pair<std::string, Integer>("Key1", Integer(10)));
+        dictionary.insert(std::make_pair<std::string, Integer>("Key2", Integer(20)));
+        dictionary.insert(std::make_pair<std::string, Integer>("Key3", Integer(30)));
 
         for (auto &[key, value]: dictionary)
             std::cout << key << "  ==  " << value << std::endl;
@@ -384,7 +382,26 @@ namespace Map {
         }
     }
 
-    void try_emplace_test() {
+    void Merge()
+    {
+        std::map<std::string, int> original_1 {
+            {"One", 1}, {"Two", 2}, {"Three", 3},
+        };
+
+        std::map<std::string, int> original_2 {
+            {"Four", 4 }, {"Five", 5 }, {"Six", 6 },
+        };
+
+        std::map<std::string, int> merged { original_1 };
+        merged.merge(original_2);  // merge steals from the parameter 'original_2'
+
+        std::cout << "original_1 (" << original_1.size() << "): \n" << original_1 << std::endl;
+        std::cout << "original_2 (" << original_2.size() << "): \n" << original_2 << std::endl;
+        std::cout << "merged (" << merged.size() << ")    : \n" << merged << std::endl;
+    }
+
+    void try_emplace_test()
+    {
         using namespace std::literals;
         std::map<std::string, std::string> dictionary;
 
@@ -403,7 +420,8 @@ namespace Map {
         print_map_info(dictionary, "\nAfter (dictionary.try_emplace(\"Key4\", \"Value3New\")):");
     }
 
-    void try_emplace_test_2() {
+    void try_emplace_test_2()
+    {
         std::map<std::string, Integer> intMap;
 
         intMap.try_emplace("Key1", 11);
@@ -1331,6 +1349,8 @@ void Map::TestAll()
 
 	// insert_or_assign();
     // insert_or_assign__missing_key();
+
+    Merge();
 
 	// try_emplace_test();
 	// try_emplace_test_2();
