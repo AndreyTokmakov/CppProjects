@@ -322,6 +322,7 @@ namespace Cpp_NEW_Features::SizeT_Literals
         for (auto i = 0uz, count = values.size(); i < values.size(); ++i)
         {
             // i --> size_t
+            (void )count;
             static_assert(std::is_same_v<decltype(i), size_t>);
         }
     }
@@ -413,18 +414,109 @@ namespace Cpp_NEW_Features::New_Preprocessor_Directives
 }
 
 
-std::tuple<int, int> getTup()
+#if 0
+namespace Pack_Indexing
 {
-    return {1,1};
+    std::tuple<int, int> getTup()
+    {
+        return {1,1};
+    }
+
+    template<typename... Types>
+    void print (Types... args)
+    {
+        std::cout << args...[0] << '\n';
+    }
+
+    void demo()
+    {
+        print ('a', "foo", 42);
+    }
+}
+
+
+
+namespace VariadicFriends
+{
+    template<typename... Ts>
+    struct Passkey
+    {
+        friend Ts...;
+        Passkey() = default;
+    };
+
+    class A;
+    class B;
+
+    struct Widget {
+        // Only callable from A and B.
+        void secret (Passkey<A, B>);
+    };
+
+    class A {
+        void doit (Widget& w) {
+            w.secret ({}); // OK
+        }
+    };
+
+    class B {
+        void doit (Widget& w) {
+            w.secret ({}); // OK
+        }
+    };
+
+    class D {
+        void doit (Widget& w) {
+            w.secret ({}); // won't compile!
+        }
+    };
+}
+
+
+#endif
+
+namespace Constexpr_Placement_New
+{
+    constexpr void use (int *) { }
+
+    constexpr int foo ()
+    {
+        auto *p = new int[]{1, 2, 3};
+        use (p);
+        delete[] p;
+        return 1;
+    }
+
+    constexpr int foo_placement ()
+    {
+        std::allocator<int> alloc;
+        auto p = alloc.allocate (16);
+        new (p) int(42);
+        alloc.deallocate (p, 16);
+        return 1;
+    }
+
+    void demo ()
+    {
+        constexpr int a = foo ();
+
+        // constexpr int b = foo_placement ();   /// Will not compile till C++26
+    }
 }
 
 
 void Cpp_NEW_Features::TestAll()
 {
+    //  Assume::negative_number_checks();
 
-    Assume::negative_number_checks();
+    //  New_Preprocessor_Directives::Conditions_Check();
 
-    New_Preprocessor_Directives::Conditions_Check();
+
+    // Pack_Indexing
+    // VariadicFriends
+    // Constexpr_Placement_New
+
+
 
 
     // Format::Format_to_N();

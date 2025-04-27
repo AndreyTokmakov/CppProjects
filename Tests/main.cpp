@@ -1673,7 +1673,7 @@ int main([[maybe_unused]] const int argc,
 
     // OrderBook_TableDispatch::Tests();
 
-    Store_Pointer_In_Collection::demo();
+    // Store_Pointer_In_Collection::demo();
 
 
     // WrapperTests::Test();
@@ -1703,7 +1703,7 @@ int main([[maybe_unused]] const int argc,
 
     /** * * * * *  Move to lib * * * * * **/
 
-    // Cpp_NEW_Features::TestAll();
+    Cpp_NEW_Features::TestAll();
     // Execution::TestAll();
     // StackTrace::TestAll();
 

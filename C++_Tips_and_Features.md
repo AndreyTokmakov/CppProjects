@@ -95,37 +95,62 @@ Math:
 	Also 'start_lifetime_as' needs to be taught (even it’s easy to learn). The overall cost to the user base is not small.
 
 ### [C++ 26](https://en.cppreference.com/w/cpp/compiler_support/26)
-• Trivial relocatability for C++
+• **_Trivial relocatability for C++_**
 
-• std::hive (https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2024/p0447r28.html#introduction)
+• **_std::hive_** (https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2024/p0447r28.html#introduction)
 
-• Feature testing  (since C++20) --> https://en.cppreference.com/w/cpp/feature_test#cpp_lib_freestanding_functional
+• **_Feature testing_**  (since C++20) --> https://en.cppreference.com/w/cpp/feature_test#cpp_lib_freestanding_functional
 
 • [RCU](https://en.cppreference.com/w/cpp/header/rcu)
 
-• 'Specifying a reason for deleting a function'
+• **_Specifying a reason for deleting a function_**
 
-   struct NonCopyable {
+	struct NonCopyable {
 	  NonCopyable(const NonCopyable&) = delete("Since this class manages unique resources, copy is not supported; use move instead.");
-   }
+	}
 
-• 'Structured binding declaration as a condition' | IF statement structured binding initialization
+• **_Structured binding declaration as a condition_** | IF statement structured binding initialization
 
 	if(auto [position, length] = get_next_token(text, offset); position >= 0)      | 	for (auto [position, length] : tokenize(text, offset)) 
 	{                                                                              |	{
   		std::println("pos {}, len {}", position, length);                          |		std::println("pos {}, len {}", position, length);
 	}                                                                              |  	}
 
-• 'user-generated static_assert messages'
+• **_user-generated static_assert messages_**
 
 	static_assert(sizeof(int) == 4, std::format("Expected 4, actual {}", sizeof(int)));
 
-• 'Variadic friends'
+• **_Variadic friends_**
+
                                                              template<class... Ts>
 	template<class T>                               |		 struct VS {
 	struct C {                                      |			 template<class U>
-  		template<class U> struct Nested;            |			 friend class C<Ts>::Nested...; // OK
+        template<class U> struct Nested;            |			 friend class C<Ts>::Nested...; // OK
 	};                                              |        };
+
+
+• **_Constexpr Placement new_**
+
+	constexpr void use (int *) { }            constexpr int  foo () {
+                                                  std::allocator<int> alloc;
+	int main ()                                   auto p = alloc.allocate (16);	
+	{                                             new (p) int(42);
+	  constexpr auto r = foo ();                  alloc.deallocate (p, 16);
+	}                                             return 1;
+                                               }   
+                                              
+
+• **_Fix for range-based for loops_**<br>
+
+   The issue was that the lifetime of the temporaries used in the initializer of a range-based for loops weren’t extended, causing undefined behavior.<br>
+   In C++23, the problem was corrected and now the lifetime of the temporaries is extended to cover the whole loop.
+
+• **_Compiler Flags_**<br>
+* 	[-Wdefaulted-function-deleted](https://gcc.gnu.org/onlinedocs/gcc/C_002b_002b-Dialect-Options.html#index-Wdefaulted-function-deleted)
+* 	[-Wself-move](https://gcc.gnu.org/onlinedocs/gcc/Warning-Options.html#index-Wself-move)
+* 	[-Wtemplate-body](https://gcc.gnu.org/onlinedocs/gcc/C_002b_002b-Dialect-Options.html#index-Wtemplate-body)
+* 	[-Wheader-guard ](https://gcc.gnu.org/onlinedocs/gcc/Warning-Options.html#index-Wheader-guard)    This new warning catches typos in header file guarding macros.
+* 	[-Wdangling-reference](https://gcc.gnu.org/onlinedocs/gcc/C_002b_002b-Dialect-Options.html#index-Wdangling-reference)
 
 ============================================================================================================================================================	
 				                           			           	      C++ Idioms  
