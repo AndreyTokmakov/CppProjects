@@ -93,6 +93,7 @@ add_executable(${PROJECT_NAME}
         TypeID/TypeID.cpp
 		AccessToken/AccessToken.cpp
 		FactoryClasses/FactoryClasses.cpp
+        TypeErasure/TypeErasure_Two.cpp
 )
 
 # Link libraries to the project/executable

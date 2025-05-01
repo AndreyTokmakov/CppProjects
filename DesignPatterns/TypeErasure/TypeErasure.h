@@ -14,4 +14,9 @@ namespace TypeErasure {
     void Test();
 };
 
+namespace TypeErasure_Two {
+    void Test();
+}
+
+
 #endif //! CPPPROJECTS_TYPEERASURE_H

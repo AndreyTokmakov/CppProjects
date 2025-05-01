@@ -241,8 +241,11 @@ void TypeErasure_CallOperator_Test();
 
 void TypeErasure::Test()
 {
-    ExperimentFirst::Test();
+    // ExperimentFirst::Test();
+    TypeErasure_Two::Test();
+
     // ExperimentSecond::Test();
+
 
     // TypeErasure_VoidType::test();
 
