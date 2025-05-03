@@ -12,18 +12,20 @@ Description : DrawingBridge src
 
 namespace Bridge
 {
-    struct DrawingAPI {
+    struct DrawingAPI
+    {
         virtual void drawCircle() = 0;
+        virtual ~DrawingAPI() = default;
     };
 
-    struct DrawingAPI_1 : DrawingAPI
+    struct DrawingAPI_1 final : DrawingAPI
     {
         void drawCircle() override {
             std::cout << "Drawn by API 1"<< std::endl;
         }
     };
 
-    struct DrawingAPI_2 : DrawingAPI
+    struct DrawingAPI_2 final : DrawingAPI
     {
         void drawCircle() override {
             std::cout << "Drawn by API 2"<< std::endl;
@@ -32,8 +34,8 @@ namespace Bridge
 
     struct Shape
     {
-        explicit Shape(DrawingAPI &drawingAPI) : drawApi { drawingAPI } {
-        }
+        explicit Shape(DrawingAPI &drawingAPI) : drawApi { drawingAPI } {}
+        virtual ~Shape() = default;
 
         virtual void draw() = 0;
 
@@ -42,7 +44,7 @@ namespace Bridge
         DrawingAPI& drawApi;
     };
 
-    struct Circle : Shape
+    struct Circle final : Shape
     {
         explicit Circle(DrawingAPI &drawingAPI) : Shape{drawingAPI} {
         }

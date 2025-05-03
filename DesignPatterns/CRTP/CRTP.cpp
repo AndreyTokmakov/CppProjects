@@ -190,7 +190,7 @@ void CRTP_InvokeMethods_Test();
 
 void CRTP::Test()
 {
-    SimpleExample_One::test();
+    // SimpleExample_One::test();
     // SimpleExample_Two::test();
     // SimpleExample_Three::test1();
 
@@ -198,5 +198,5 @@ void CRTP::Test()
 
     // CRTP_Cloneable::Test();
 
-    // CRTP_InvokeMethods_Test();
+    CRTP_InvokeMethods_Test();
 }

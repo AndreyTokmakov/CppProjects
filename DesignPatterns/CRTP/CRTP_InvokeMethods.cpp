@@ -8,6 +8,8 @@ Description : CRTP_InvokeMethods.cpp
 ============================================================================**/
 
 #include <iostream>
+#include <array>
+#include <variant>
 
 namespace CRTP_InvokeMethods
 {
@@ -34,16 +36,28 @@ namespace CRTP_InvokeMethods
     };
 
     template <typename... Args>
-    using Items = std::tuple<Base<Args>...>;
+    using ItemsTuple = std::tuple<Base<Args>...>;
 
-    void test()
+    using ItemsVariant = std::variant<ItemOne, ItemTwo>;
+
+    void test_with_tuple()
     {
-        Items<ItemOne, ItemTwo> items { ItemOne{}, ItemTwo{} };
-        std::apply([]<typename... T>(Base<T>... items) { (items.call(), ...); },items);
+        ItemsTuple<ItemOne, ItemTwo> itemsTuple { ItemOne{}, ItemTwo{} };
+        std::apply([]<typename... T>(Base<T>... items) { (items.call(), ...); },itemsTuple);
+    }
+
+    void test_with_variant()
+    {
+        std::array<ItemsVariant, 2> itemsVar = { ItemsVariant { ItemOne{} }, ItemsVariant { ItemTwo{} } };
+        for (auto& elem : itemsVar)
+        {
+            std::visit([]<typename T>(Base<T> item) { item.call(); }, elem);
+        }
     }
 }
 
 void CRTP_InvokeMethods_Test()
 {
-    CRTP_InvokeMethods::test();
+    // CRTP_InvokeMethods::test_with_tuple();
+    CRTP_InvokeMethods::test_with_variant();
 }
