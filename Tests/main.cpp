@@ -1660,6 +1660,70 @@ namespace Store_Pointer_In_Collection
 }
 
 
+namespace OOP_FoldExpr_Inheritance
+{
+    struct IWritable
+    {
+        virtual void write(const std::string& data) = 0;
+        virtual ~IWritable() = default;
+    };
+
+    struct IReadable
+    {
+        virtual std::string read() = 0;
+        virtual ~IReadable() = default;
+    };
+
+    template<typename ... Types>
+    struct Base: public Types ...
+    {
+        virtual ~Base() = default;
+
+    protected:
+
+        std::string resource;
+    };
+
+    struct Json: public Base<IReadable, IWritable>
+    {
+        void write(const std::string& data) override {
+            resource = R"({"data":")" + data + "\"}";
+        }
+
+        std::string read() override {
+            return resource;
+        }
+    };
+
+    struct Xml: public Base<IReadable, IWritable>
+    {
+        void write(const std::string& data) override {
+            resource = "<data>" + data + "</data>";
+        }
+
+        std::string read() override {
+            return resource;
+        }
+    };
+
+    void demo()
+    {
+        Json json;
+        Xml xml;
+
+        std::vector<IWritable*> toWrite { &json, &xml };
+        std::vector<IReadable*> toRead { &json, &xml };
+
+        for (IWritable* wr: toWrite) {
+            wr->write("Hello world");
+        }
+        for (IReadable* wr: toRead) {
+            std::cout << wr->read() << std::endl;
+        }
+    }
+}
+
+
 int main([[maybe_unused]] const int argc,
          [[maybe_unused]] char** argv)
 {
@@ -1674,6 +1738,8 @@ int main([[maybe_unused]] const int argc,
     // OrderBook_TableDispatch::Tests();
 
     // Store_Pointer_In_Collection::demo();
+
+    OOP_FoldExpr_Inheritance::demo();
 
 
     // WrapperTests::Test();
@@ -1703,7 +1769,7 @@ int main([[maybe_unused]] const int argc,
 
     /** * * * * *  Move to lib * * * * * **/
 
-    Cpp_NEW_Features::TestAll();
+    // Cpp_NEW_Features::TestAll();
     // Execution::TestAll();
     // StackTrace::TestAll();
 

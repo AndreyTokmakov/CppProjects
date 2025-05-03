@@ -24,7 +24,7 @@ public:
 
     template<class FunctionalObject>
     explicit function(FunctionalObject funcObj)
-            : callable { std::make_unique<CallableImpl<FunctionalObject>>(funcObj)} {
+        : callable { std::make_unique<CallableImpl<FunctionalObject>>(funcObj)} {
     }
 
     ReturnType operator()(Args ... params) {
@@ -34,7 +34,9 @@ public:
     // TODO: Add copy constructor
 
 private:
-    struct ICallable {
+
+    struct ICallable
+    {
         virtual ReturnType call(Args ...) = 0;
         virtual ~ICallable() = default;
 
@@ -43,7 +45,8 @@ private:
     };
 
     template<typename Callable>
-    struct CallableImpl: public ICallable {
+    struct CallableImpl: public ICallable
+    {
         explicit CallableImpl(Callable callable_): callable { std::move(callable_) } {
         }
 

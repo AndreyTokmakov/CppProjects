@@ -4,7 +4,7 @@ template <class NodeType>
 class Node {
 protected:
 	/** Node data. **/
-	NodeType _data;
+	NodeType data;
 
 protected:
 	/** Pointer to the left child element. **/
