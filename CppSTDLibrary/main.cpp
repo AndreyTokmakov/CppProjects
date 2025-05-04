@@ -142,7 +142,7 @@ int main([[maybe_unused]] int argc,
     // Metaprogramming::TestAll();
     // InlineNamespaces::TestAll();
     // NumericLimits::TestAll();
-    ObjectOrientedProgramming::TestAll();
+    // ObjectOrientedProgramming::TestAll();
     // Optional::TestAll();
     // Overflow::TestAll();
     // PolymorphicMemoryResources::TestAll();
@@ -158,7 +158,7 @@ int main([[maybe_unused]] int argc,
     // StructuredBinding::TestAll();
     // StrongTypes::TestAll();
     // Span::TestAll();
-    // SourceLocation::TestAll();
+    SourceLocation::TestAll();
     // SharedPtr_Tests::TestAll();
     // Variant::TestAll();
     // VolatileTests::TestAll();

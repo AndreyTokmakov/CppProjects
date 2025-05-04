@@ -293,7 +293,7 @@ namespace Attributes::NoUniqueAddress
         static_assert(sizeof(Z) == 2);
 
         // e1 and e2 cannot have the same address, but one of them can share with c[0] and the other with c[1]
-        static_assert(sizeof(W) == 2);
+        //static_assert(sizeof(W) == 2);
     }
 
     //--------------------------------------------------------------

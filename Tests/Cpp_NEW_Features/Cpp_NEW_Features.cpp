@@ -505,6 +505,35 @@ namespace Constexpr_Placement_New
 }
 
 
+
+namespace Non_Copy_Move_Test
+{
+    struct non_copyable
+    {
+        non_copyable() = default;
+        non_copyable(const non_copyable&) = delete("No copy");
+
+        non_copyable(non_copyable&&) {
+
+        }
+    };
+
+
+    struct A: non_copyable {
+
+    };
+
+    void Test()
+    {
+        A a;
+        A b = std::move(a);
+    }
+}
+
+
+
+
+
 void Cpp_NEW_Features::TestAll()
 {
     //  Assume::negative_number_checks();

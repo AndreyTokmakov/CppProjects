@@ -8,6 +8,8 @@
 //============================================================================
 
 #include <iostream>
+#include <print>
+#include <format>
 #include <source_location>
 #include "SourceLocation.h"
 
@@ -15,7 +17,7 @@ namespace SourceLocation
 {
 
     void log(const std::string_view message,
-        const std::source_location location = std::source_location::current())
+             const std::source_location location = std::source_location::current())
     {
         std::cout << "file: "
             << location.file_name() << "("
@@ -25,6 +27,12 @@ namespace SourceLocation
             << message << '\n';
     }
 
+    void debug(const std::string_view message = std::string_view {},
+               const std::source_location location = std::source_location::current())
+    {
+        std::cout << std::format("DEBUG [{}.{}] {}\n", location.function_name(), location.line(), message);
+    }
+
     template <typename T>
     void fun(T x)
     {
@@ -32,7 +40,8 @@ namespace SourceLocation
     }
 
 
-    void Test1() {
+    void Test1()
+    {
         log("Hello world!");
         fun("Hello C++20!");
     }
@@ -49,10 +58,17 @@ namespace SourceLocation
         std::cout << "column        : " << location.column() << std::endl;
 
     }
+
+    void Test3()
+    {
+        debug("Hello world!");
+    }
+
 };
 
 void SourceLocation::TestAll()
 {
     // Test1();
-    Test2();
+    // Test2();
+    Test3();
 };
