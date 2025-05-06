@@ -1724,6 +1724,37 @@ namespace OOP_FoldExpr_Inheritance
 }
 
 
+namespace TTT
+{
+    class  Obj
+    {
+        int* a;
+        int* b;
+
+        Obj() {
+            std::cout << "Obj::Obj()\n";
+        }
+
+    public:
+
+        Obj(int* aPtr, int* bPtr): a (aPtr), b (bPtr) {
+            std::cout << "Obj::Obj()\n";
+        }
+
+        ~Obj() {
+            std::cout << "Obj::~Obj("<< *a << ", " << *b <<")\n";
+        }
+    };
+
+    void demo()
+    {
+        Obj obj { new int(10), new int(20) };
+
+
+    }
+}
+
+
 int main([[maybe_unused]] const int argc,
          [[maybe_unused]] char** argv)
 {

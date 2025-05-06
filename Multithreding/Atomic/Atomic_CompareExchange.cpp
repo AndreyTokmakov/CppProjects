@@ -31,6 +31,7 @@ namespace Atomic_CompareExchange
         std::jthread producer([&] {
             std::this_thread::sleep_for(std::chrono::seconds (2u));
             atomicVar.store(expected, std::memory_order::relaxed);
+            std::cout << "atomicVar: 10 ==> 20\n";
         });
 
         int expectedTmp { expected };
@@ -91,6 +92,6 @@ namespace Atomic_CompareExchange
 
 void Atomic_CompareExchange::TestAll()
 {
-    // CompareExchangeWeak();
-    CompareExchangeStrong();
+    CompareExchangeWeak();
+    // CompareExchangeStrong();
 }
