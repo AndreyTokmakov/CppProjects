@@ -117,7 +117,7 @@ namespace ExecutorAdapter::Three
     class ExecuteAdapter final : public ExecuteInterface<Ret> {
     public:
         ExecuteAdapter(std::unique_ptr<Type> obj, Ret(Type::*m)()):
-                object { std::move(obj) }, method {m} {
+                object { std::move(obj) }, method { m } {
         }
 
         Ret execute() override {
@@ -130,26 +130,16 @@ namespace ExecutorAdapter::Three
         Ret (Type::*method)();
     };
 
-    class Foo {
-    public:
-        ~Foo() {
-            std::cout << "~Foo::Foo()" << std::endl;
-        }
-
-        void doSomething() {
-            std::cout << "Foo::doSomething()" << std::endl;
-        }
+    struct Foo
+    {
+        ~Foo() { std::cout << "~Foo::Foo()" << std::endl; }
+        void doSomething() { std::cout << "Foo::doSomething()" << std::endl; }
     };
 
-    class Bar {
-    public:
-        ~Bar() {
-            std::cout << "~Bar::Bar()" << std::endl;
-        }
-
-        std::string getValue() {
-            return {"qwerty"};
-        }
+    struct Bar
+    {
+        ~Bar() { std::cout << "~Bar::Bar()" << std::endl; }
+        std::string getValue() { return {"qwerty"}; }
     };
 
     void Test()
