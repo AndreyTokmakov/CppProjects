@@ -80,6 +80,7 @@ namespace std {
     template <>
     struct hash<Concepts::HashableClass> {
         inline size_t operator()(const Concepts::HashableClass& x) const {
+        inline size_t operator()(const Concepts::HashableClass& x) const {
             return  31;
         }
     };

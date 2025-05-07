@@ -114,7 +114,7 @@ namespace ExecutorAdapter::Three
     };
 
     template <typename Ret, class Type>
-    class ExecuteAdapter: public ExecuteInterface<Ret> {
+    class ExecuteAdapter final : public ExecuteInterface<Ret> {
     public:
         ExecuteAdapter(std::unique_ptr<Type> obj, Ret(Type::*m)()):
                 object { std::move(obj) }, method {m} {
@@ -154,10 +154,10 @@ namespace ExecutorAdapter::Three
 
     void Test()
     {
-        auto obj = std::make_unique<ExecuteAdapter<void, Foo>>(std::make_unique<Foo>(), &Foo::doSomething);
+        const auto obj = std::make_unique<ExecuteAdapter<void, Foo>>(std::make_unique<Foo>(), &Foo::doSomething);
         obj->execute();
 
-        auto obj2 = std::make_unique<ExecuteAdapter<std::string, Bar>>(std::make_unique<Bar>(), &Bar::getValue);
+        const auto obj2 = std::make_unique<ExecuteAdapter<std::string, Bar>>(std::make_unique<Bar>(), &Bar::getValue);
         std::cout << obj2->execute() << std::endl;
     }
 };

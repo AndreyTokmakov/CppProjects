@@ -14,16 +14,21 @@ Description : ExecutorAdapter2
 
 namespace ExecutorAdapter2
 {
+    template<typename Type>
+    concept HasExecMethod = requires (Type val) {
+        { val.execute() } noexcept;
+    };
+
     class ExecutorView
     {
     public:
-        template<class ClassType>
+        template<HasExecMethod ClassType>
         explicit ExecutorView(const ClassType& type):
                 object { &type },
                 func_impl {[](const void* obj) { return static_cast<const ClassType*>(obj)->execute();}
         } { /** Do something **/ }
 
-        void execute() {
+        void invoke() {
             func_impl(object);
         }
 
@@ -36,19 +41,19 @@ namespace ExecutorAdapter2
 namespace ExecutorAdapter2::Tests
 {
     struct ClassA {
-        void execute() const {
+        void execute() const noexcept {
             std::cout << "ClassA::execute()"  << std::endl;
         }
     };
 
     struct ClassB {
-        void execute() const {
+        void execute() const noexcept {
             std::cout << "ClassB::execute()"  << std::endl;
         }
     };
 
     void invoke(ExecutorView view) {
-        view.execute();
+        view.invoke();
     }
 
     void tests() {

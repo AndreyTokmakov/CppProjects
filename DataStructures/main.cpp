@@ -68,7 +68,7 @@ int main([[maybe_unused]] int argc,
     // BitFlags::TestAll();
     // CategoryTree::TEST_ALL();
     // CustomVector::TestAll();
-    // ExecutorAdapter::TestAll();
+    ExecutorAdapter::TestAll();
     // ExecutorAdapter2::TestAll();
     // Finalizers::TestAll();
     // Function::Test();
@@ -91,7 +91,7 @@ int main([[maybe_unused]] int argc,
     // CircularBuffers::TEST_ALL();
     // RingBuffer::TestAll();
     // RingBufferEx::TestAll();
-    RingBufferExAtomic::TestAll();
+    // RingBufferExAtomic::TestAll();
     // RingBuffer_SPSC::TestAll();
 
     // GenericTableTemplate::TestAll();
