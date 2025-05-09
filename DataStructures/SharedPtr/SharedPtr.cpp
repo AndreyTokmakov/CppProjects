@@ -110,7 +110,7 @@ namespace Memory::SharedPtr
             contr { new ControlBlock<T, Deleter>(objectPtr, std::move(deleter)) } {
 		}
 
-		SharedPtr(const SharedPtr<type>& obj): contr { obj.contr } {
+		explicit SharedPtr(const SharedPtr<type>& obj): contr { obj.contr } {
 			contr->increment_use_count();
 		}
 

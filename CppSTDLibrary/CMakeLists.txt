@@ -27,8 +27,9 @@ add_executable(${PROJECT_NAME}
 		ConsoleInOut/ConsoleInOut.cpp
 		DateAndTime/DateAndTime.cpp
 		DeducingThis/DeducingThis.cpp
-		ConstConstexprMutable/ConstConstexprMutable.cpp
-		ConstConstexprMutable/CompileTimeProgramming.cpp
+		CompileTime_Constexpr/ConstConstexprMutable.cpp
+		CompileTime_Constexpr/CompileTimeProgramming.cpp
+		CompileTime_Constexpr/Constexpr.cpp
 		EnumTests/EnumTests.cpp
 		Exceptions/Exceptions.cpp
 		Errors/Errors.cpp
@@ -114,6 +115,8 @@ add_executable(${PROJECT_NAME}
 		ContextControl/ContextControl.cpp
 		Helpers/Integer.cpp
 		Helpers/Integer.h
+		CompileTime_Constexpr/Constexpr.cpp
+		CompileTime_Constexpr/Constexpr.h
 )
 
 # Link libraries to the project/executable
