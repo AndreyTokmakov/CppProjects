@@ -33,6 +33,7 @@ Description : Software design patterns C++ test project
 #include "ExecutorAdapter/ExecutorAdapter.h"
 #include "Proxy/Proxy.h"
 #include "Singleton/Singleton.h"
+#include "Multiton/Multiton.h"
 #include "State/State.h"
 #include "Mediator/Mediator.h"
 #include "Memento/Memento.h"
@@ -65,6 +66,7 @@ int main([[maybe_unused]]  int argc,
     // FactoryClasses::TestAll();
     // Prototype::TestAll();
     // Singleton::TestAll();;
+    Multiton::TestAll();;
     // Monostate::TestAll();;
     // ObjectPools::TestAll();
     // DependencyInjection::TestAll();
@@ -103,7 +105,7 @@ int main([[maybe_unused]]  int argc,
 
     // CRTP::Test();
     // NVI_SimpleExample::TestAll();
-    TypeErasure::Test();
+    // TypeErasure::Test();
     // RAII::Test();
     // CopyAndSwap::TEST_ALL();   ---- TESTs
     // TagDispatching::Test();

@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.21)
 project(CppProjects)
 
-set(CMAKE_CXX_STANDARD 23)
+set(CMAKE_CXX_STANDARD 26)
 
 # 5.15 - My home Ubuntu-20.04
 if (CMAKE_SYSTEM_VERSION MATCHES "5.15")
