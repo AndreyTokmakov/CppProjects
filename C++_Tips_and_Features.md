@@ -325,16 +325,22 @@ CPU когда читат к примеру 'char a' и 'int b' в случае 
 • Существует два типа потоков: UserSpace и Kernel потоки
 
 • Critical section:
+
 	Объект синхронизации потоков, позволяющий предотвратить одновременное выполнение некоторого набора операций (обычно связанных с доступом к данным) несколькими потоками
 	Критическая секция выполняет те же задачи, что и мьютекс.
 					
-• Mutex:
+• std::mutex:
+
 	Класс mutex является примитивом синхронизации, который может использоваться для защиты разделяемых данных от одновременного доступа нескольких потоков.
 	mutex предлагает эксклюзивую, нерекурсивную семантику владения:
 	- Вызывающий поток владеет мьютексом со времени успешного вызова lock или try_lock, и до момента вызова unlock.
 	- Пока поток владеет мьютексом, все остальные потоки при попытке завладения им блокируются на вызове lock или получают значение false при вызове try_lock.
 	- Вызывающий поток не должен владеть мьютексом до вызова lock или try_lock.
 		
+• std::semaphore
+
+• std::condition_variable
+
 
 • std::lock_guard 
 
@@ -361,6 +367,7 @@ CPU когда читат к примеру 'char a' и 'int b' в случае 
 	There is no possibility to increase or reset the counter, which makes the latch a single-use barrier.
 
 • std::barrier
+
 	reusable thread barrier
 	The class template std::barrier provides a thread-coordination mechanism that blocks a group of threads of known size until all threads in that group have reached the barrier
 	Unlike std::latch, barriers are reusable: once a group of arriving threads are unblocked, the barrier can be reused. 

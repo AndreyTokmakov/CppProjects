@@ -1754,7 +1754,6 @@ namespace TTT
     }
 }
 
-
 int main([[maybe_unused]] const int argc,
          [[maybe_unused]] char** argv)
 {
@@ -1771,6 +1770,7 @@ int main([[maybe_unused]] const int argc,
     // Store_Pointer_In_Collection::demo();
 
     // OOP_FoldExpr_Inheritance::demo();
+
 
 
     // WrapperTests::Test();
@@ -1800,7 +1800,7 @@ int main([[maybe_unused]] const int argc,
 
     /** * * * * *  Move to lib * * * * * **/
 
-    Cpp_NEW_Features::TestAll();
+    // Cpp_NEW_Features::TestAll();
     // Execution::TestAll();
     // StackTrace::TestAll();
 
