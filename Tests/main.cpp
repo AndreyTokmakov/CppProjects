@@ -1771,6 +1771,20 @@ int main([[maybe_unused]] const int argc,
 
     // OOP_FoldExpr_Inheritance::demo();
 
+    struct IntDeleter {
+        void operator()(const int* ptr) {
+            delete ptr;
+        }
+    };
+
+    std::unique_ptr<int> intPtr1 { std::make_unique<int>(1) };
+    std::unique_ptr<int, IntDeleter> intPtr2 { new int(1), IntDeleter{} };
+    std::shared_ptr<int> intPtrShared { std::make_shared<int>(1) };
+
+    std::cout << sizeof(intPtr1) << std::endl;
+    std::cout << sizeof(intPtr2) << std::endl;
+    std::cout << sizeof(intPtrShared) << std::endl;
+
 
 
     // WrapperTests::Test();

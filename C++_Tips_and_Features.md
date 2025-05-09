@@ -94,6 +94,9 @@ Math:
 	Effort must be spent to migrate those casts to 'std::start_lifetime_as' case by case: not every 'reinterpret_cast' is meant to start lifetime.
 	Also 'start_lifetime_as' needs to be taught (even it’s easy to learn). The overall cost to the user base is not small.
 
+	char buf[]{ 0x00, 0x01, 0x02, 0x03 };
+	short* p = std::start_lifetime_as<short>(buf); // use *p as a short
+
 ### [C++ 26](https://en.cppreference.com/w/cpp/compiler_support/26)
 • **_Trivial relocatability for C++_**
 
