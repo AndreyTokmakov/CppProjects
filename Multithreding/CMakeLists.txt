@@ -43,6 +43,7 @@ add_executable(${PROJECT_NAME}
         Semaphore/Semaphore.cpp
         Synchronization/Synchronization.cpp
         ThreadPools/ThreadPools.cpp
+        ThreadPools/ThreadPoolsEx.cpp
         Threads/Threads.cpp
         ThreadPoolLimited/ThreadPoolLimited.cpp
         FalseSharing/FalseSharingExperiments.cpp

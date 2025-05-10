@@ -53,6 +53,7 @@ add_executable(${PROJECT_NAME}
 		Compressed_Pair/CompressedPair.cpp
 		Wrapper/Wrapper.h
 		ThreadPool/ThreadPool.cpp
+		ThreadPool/ThreadPoolEx.cpp
 		RingBuffer/RingBuffer.cpp
 		RingBuffer/RingBufferEx.cpp
 		RingBuffer/RingBufferExAtomic.cpp

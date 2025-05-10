@@ -10,6 +10,7 @@ Description : Multithreading tests main entry point
 #include "Semaphore/Semaphore.h"
 #include "Latch/Latch.h"
 #include "ThreadPools/ThreadPools.h"
+#include "ThreadPools/ThreadPoolsEx.h"
 #include "Threads/Threads.h"
 #include "Threads/StoppingThreads.h"
 #include "ThreadPoolBlocking/ThreadPoolBlocking.h"
@@ -63,7 +64,7 @@ int main([[maybe_unused]] int argc,
     // Atomic_Bool::TestAll();
     // Atomic_Wait::TestAll();
     // Atomic_MemoryOrder::TestAll();
-    Atomic_CompareExchange::TestAll();
+    // Atomic_CompareExchange::TestAll();
     // Atomic_IsLockFree::TestAll();
     // AtomicPerformanceTests::TestAll();
 
@@ -91,7 +92,8 @@ int main([[maybe_unused]] int argc,
 
     // StoppingThreads::TestAll();
 
-    // ThreadPools::TestAll();
+    ThreadPools::TestAll();
+    ThreadPoolsEx::TestAll();
 
     // ThreadPoolBlocking::TEST_ALL();
     // ThreadPoolLimited::TestAll();

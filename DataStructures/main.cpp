@@ -49,6 +49,7 @@ Description : DataStructures
 #include "ObjectNumberLimiter/ObjectNumberLimiter.h"
 #include "Compressed_Pair/CompressedPair.h"
 #include "ThreadPool/ThreadPool.h"
+#include "ThreadPool/ThreadPoolEx.h"
 #include "Trie/Trie.h"
 
 
@@ -86,7 +87,7 @@ int main([[maybe_unused]] int argc,
     // MinMaxStack::TestAll();
     // MinHeap::TestAll();
     // HeapWithComparator::TestAll();
-    CompressedPair::TestAll();
+    // CompressedPair::TestAll();
 
     // CircularBuffers::TEST_ALL();
     // RingBuffer::TestAll();
@@ -102,6 +103,7 @@ int main([[maybe_unused]] int argc,
     // Memory::Shared_Ptr_Tests();
 
     // ThreadPool::TestAll();
+    ThreadPoolEx::TestAll();
     // ThreadPoolOne::TEST_ALL();
     // ThreadPoolTwo::TEST_ALL();
     // ThreadPoolLimited::TestAll();

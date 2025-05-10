@@ -216,7 +216,8 @@ namespace Memory::SharedPtr::Tests
 	}
 
 
-	void CopyConstructor_Test() {
+	void CopyConstructor_Test()
+    {
 		SharedPtr<Integer> a1(new Integer(111));
 		SharedPtr<Integer> a2 = a1;
 

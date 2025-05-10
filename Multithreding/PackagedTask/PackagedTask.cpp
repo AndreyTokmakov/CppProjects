@@ -23,7 +23,7 @@ namespace PackagedTask {
     public:
         std::string operator()(const std::string& token) {
             THREAD_INFO << "Starting job..." << std::endl;
-            std::this_thread::sleep_for(std::chrono::seconds(3));
+            std::this_thread::sleep_for(std::chrono::seconds(3u));
             std::string data = "Data From " + token;
             THREAD_INFO << "Done" << std::endl;
             return data;
@@ -33,7 +33,7 @@ namespace PackagedTask {
     int countdown(int from, int to) {
         for (int i = from; i != to; --i) {
             std::cout << i << std::endl;
-            std::this_thread::sleep_for(std::chrono::seconds(1));
+            std::this_thread::sleep_for(std::chrono::seconds(1u));
         }
         return from - to;
     }
@@ -114,15 +114,14 @@ namespace PackagedTask {
         std::future<std::string> futureResult = task.get_future();
 
         THREAD_INFO << "Sleep for 0.5 seconds" << std::endl;
-        std::this_thread::sleep_for(std::chrono::milliseconds(500));
+        std::this_thread::sleep_for(std::chrono::milliseconds(500u));
 
         THREAD_INFO << "* * * * * Running task * * * * *\n";
-        std::thread threadHandle(std::move(task), 4);
+        std::jthread threadHandle(std::move(task), 4);
 
         THREAD_INFO << "* * * * * After task * * * * *\n";
         auto value = futureResult.get();
 
-        threadHandle.join();
         THREAD_INFO << value << " seconds." << std::endl;
     }
 
@@ -130,7 +129,7 @@ namespace PackagedTask {
     {
         std::packaged_task<double(int, int)> task([](int a, int b) {
             THREAD_INFO << "**** Executing task ******" << std::endl;
-            std::this_thread::sleep_for(std::chrono::seconds(3));
+            std::this_thread::sleep_for(std::chrono::seconds(3u));
             THREAD_INFO << "**** Task completed ******" << std::endl;
             return std::pow(a, b);
         });
@@ -147,7 +146,7 @@ namespace PackagedTask {
 
     void Bind_Task() {
         auto func = [](int x, int y) {
-            std::this_thread::sleep_for(std::chrono::seconds(2));
+            std::this_thread::sleep_for(std::chrono::seconds(2u));
             return std::pow(x, y);
         };
         // std::packaged_task<double()> task(std::bind(func, 2, 11));
@@ -163,7 +162,7 @@ namespace PackagedTask {
     void Run_Task_Test() {
         auto sleep = []() {
             THREAD_INFO << "Task started\n";
-            std::this_thread::sleep_for(std::chrono::seconds(3));
+            std::this_thread::sleep_for(std::chrono::seconds(3u));
             THREAD_INFO << "Task completed\n";
             return 1;
         };
@@ -206,7 +205,7 @@ namespace PackagedTask {
             my_task.make_ready_at_thread_exit(done); // execute task right away
             THREAD_INFO << "Worker: done = " << std::boolalpha << done << std::endl;
 
-            auto status = result.wait_for(std::chrono::seconds(0));
+            auto status = result.wait_for(std::chrono::seconds(0u));
             if (status == std::future_status::timeout)
                 THREAD_INFO << "Worker: result is not ready yet" << std::endl;
 
@@ -216,7 +215,7 @@ namespace PackagedTask {
         std::future<void> result;
         std::thread{ worker, std::ref(result) }.join();
 
-        auto status = result.wait_for(std::chrono::seconds(0));
+        auto status = result.wait_for(std::chrono::seconds(0u));
         if (status == std::future_status::ready)
             THREAD_INFO << "Main: result is ready" << std::endl;
     }
@@ -229,19 +228,19 @@ namespace PackagedTask {
 
         tasks.emplace_back([]() {
             THREAD_INFO << "Task 1 is started\n";
-            std::this_thread::sleep_for(std::chrono::seconds(2));
+            std::this_thread::sleep_for(std::chrono::seconds(2u));
             THREAD_INFO << "Task 1 is completed\n";
         });
 
         tasks.emplace_back([]() {
             THREAD_INFO << "Task 2 is started\n";
-            std::this_thread::sleep_for(std::chrono::seconds(2));
+            std::this_thread::sleep_for(std::chrono::seconds(2u));
             THREAD_INFO << "Task 2 is completed\n";
         });
 
         tasks.emplace_back([]() {
             THREAD_INFO << "Task 3 is started\n";
-            std::this_thread::sleep_for(std::chrono::seconds(2));
+            std::this_thread::sleep_for(std::chrono::seconds(2u));
             THREAD_INFO << "Task 3 is completed\n";
         });
 
@@ -256,7 +255,7 @@ namespace PackagedTask {
     {
         auto work = [](int id) {
             THREAD_INFO << "Task " << id << " is started\n";
-            std::this_thread::sleep_for(std::chrono::seconds(2));
+            std::this_thread::sleep_for(std::chrono::seconds(2u));
             THREAD_INFO << "Task " << id << " is completed\n";
         };
 
