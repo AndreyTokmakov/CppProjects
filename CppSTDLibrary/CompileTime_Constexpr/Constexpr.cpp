@@ -130,7 +130,7 @@ namespace Constexpr::ConstexprSwitch
 		{
 			const auto res = std::find_if(http_methods_mapping.begin(), http_methods_mapping.end(), [&key](const auto& v) {
 				return v.first == key;
-				});
+			});
 			if (http_methods_mapping.end() != res) {
 				return res->second;
 			}

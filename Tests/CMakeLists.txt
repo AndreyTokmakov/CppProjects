@@ -32,7 +32,6 @@ add_executable(${PROJECT_NAME}
         Templates/ExpressionTemplates.cpp
         DebugLogger/DebugLogger.cpp
         Collections/CollectionsTests.cpp
-        ObjectOrientedExperimetns/RAIIWrapper.cpp
         ConstexprMap/ConstexprMap.cpp
         Concepts/Concepts.cpp
         Multithreading/Multithreading.cpp

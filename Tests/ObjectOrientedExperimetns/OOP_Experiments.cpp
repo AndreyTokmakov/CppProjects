@@ -486,8 +486,58 @@ namespace ObjectOrientedExperiments::Virtutal_Equality_Compare
         std::cout << std::boolalpha << (b2 == d2_2) << std::endl;
 
     }
-
 }
+
+
+namespace CopyConstructorTests
+{
+    template<typename T>
+    struct Wrapper
+    {
+        T value {};
+
+        explicit Wrapper(const T& v): value {v} {
+            std::cout << "Wrapper(" << value << ")\n";
+        }
+
+        ~Wrapper() {
+            std::cout << "~Wrapper(" << value << ")\n";
+        }
+
+        Wrapper(const Wrapper<T>& rhs): value { rhs.value} {
+        }
+
+        Wrapper(Wrapper<T>&& rhs) noexcept: value { std::exchange(rhs.value, T {})} {
+        }
+
+        Wrapper& operator=(const Wrapper<T>& rhs) {
+            value = rhs.value;
+            return *this;
+        }
+
+        Wrapper& operator=(Wrapper<T>&& rhs) noexcept{
+            value = std::exchange(rhs.value, T {});
+            return *this;
+        }
+
+        template <typename U>
+        friend std::ostream& operator<<(std::ostream& os, const Wrapper<U>& obj)
+        {
+            return os << obj.value;
+        }
+    };
+
+
+    void Test()
+    {
+        Wrapper<int> var1 {1};
+        Wrapper<int> var2  = var1;
+
+        std::cout << var1 << std::endl;
+        std::cout << var2 << std::endl;
+    }
+}
+
 
 void ObjectOrientedExperiments::OOP_Experiments::TestAll()
 {
@@ -511,6 +561,7 @@ void ObjectOrientedExperiments::OOP_Experiments::TestAll()
 
     // ShadowingMemberVariable::Test();
 
-    Virtutal_Equality_Compare::Compare_Two_Derived_Class_Objects();
+    // Virtutal_Equality_Compare::Compare_Two_Derived_Class_Objects();
 
+    CopyConstructorTests::Test();
 };

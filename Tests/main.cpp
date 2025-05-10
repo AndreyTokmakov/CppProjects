@@ -57,7 +57,6 @@ Description : Tests C++ project
 #include "DebugLogger/DebugLogger.h"
 #include "Date_Time_Chrono/Date_Time_Chrono.h"
 #include "Collections/CollectionsTests.h"
-#include "ObjectOrientedExperimetns/RAIIWrapper.h"
 #include "ObjectOrientedExperimetns/OOP_Experiments.h"
 #include "ObjectOrientedExperimetns/VirtualTables.h"
 #include "Optional/Optional.h"
@@ -1749,10 +1748,10 @@ namespace TTT
     void demo()
     {
         Obj obj { new int(10), new int(20) };
-
-
     }
 }
+
+
 
 int main([[maybe_unused]] const int argc,
          [[maybe_unused]] char** argv)
@@ -1771,19 +1770,6 @@ int main([[maybe_unused]] const int argc,
 
     // OOP_FoldExpr_Inheritance::demo();
 
-    struct IntDeleter {
-        void operator()(const int* ptr) {
-            delete ptr;
-        }
-    };
-
-    std::unique_ptr<int> intPtr1 { std::make_unique<int>(1) };
-    std::unique_ptr<int, IntDeleter> intPtr2 { new int(1), IntDeleter{} };
-    std::shared_ptr<int> intPtrShared { std::make_shared<int>(1) };
-
-    std::cout << sizeof(intPtr1) << std::endl;
-    std::cout << sizeof(intPtr2) << std::endl;
-    std::cout << sizeof(intPtrShared) << std::endl;
 
 
 
@@ -1849,8 +1835,7 @@ int main([[maybe_unused]] const int argc,
     // MaxStack::TestAll();
     // Math::TestAll();
     // UniquePtr_Size::SizeTest();
-    // ObjectOrientedExperiments::RAIIWrapper::TestAll();
-    // ObjectOrientedExperiments::OOP_Experiments::TestAll();
+    ObjectOrientedExperiments::OOP_Experiments::TestAll();
     // ObjectOrientedExperiments::VirtualTables::TestAll();
     // Optional::TestAll();
     // PointsAndLines::TestAll();           // Geometry
