@@ -23,18 +23,13 @@ Description : Cpp23_Features
 
 // #include <inplace_vector>
 
-
-// C++ 23:
-#include <expected>
-
-// #include <experimental/reflect>
-
-
-// #include <flat_map>
-// #include <flat_set>
-
 // #include <experimental/executor>
 // #include <experimental/net>
+// #include <experimental/reflect>
+#include <flat_map>
+#include <flat_set>
+
+
 
 
 namespace Cpp_NEW_Features
@@ -533,19 +528,35 @@ namespace Non_Copy_Move_Test
 
 
 
+namespace FlatMap
+{
+
+    void test()
+    {
+        std::flat_map<int, std::string> map;
+
+        map.emplace (1, "I");
+        map.emplace (2, "II");
+        map.emplace (3, "III");
+
+        for (const auto& [k, v] : map) {
+            std::cout << k << " = " << v << std::endl;
+        }
+    }
+}
+
 
 void Cpp_NEW_Features::TestAll()
 {
     //  Assume::negative_number_checks();
-
     //  New_Preprocessor_Directives::Conditions_Check();
-
 
     // Pack_Indexing
     // VariadicFriends
     // Constexpr_Placement_New
 
 
+    FlatMap::test();
 
 
     // Format::Format_to_N();
