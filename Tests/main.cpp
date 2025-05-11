@@ -59,7 +59,6 @@ Description : Tests C++ project
 #include "Collections/CollectionsTests.h"
 #include "ObjectOrientedExperimetns/OOP_Experiments.h"
 #include "ObjectOrientedExperimetns/VirtualTables.h"
-#include "Optional/Optional.h"
 #include "ConstexprMap/ConstexprMap.h"
 #include "Multithreading/Multithreading.h"
 #include "DesignPatterns/DesignPatterns.h"
@@ -1837,7 +1836,6 @@ int main([[maybe_unused]] const int argc,
     // UniquePtr_Size::SizeTest();
     ObjectOrientedExperiments::OOP_Experiments::TestAll();
     // ObjectOrientedExperiments::VirtualTables::TestAll();
-    // Optional::TestAll();
     // PointsAndLines::TestAll();           // Geometry
 
     // Strings::TestAll();

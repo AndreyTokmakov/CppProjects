@@ -21,10 +21,15 @@ Description :
 
 #include "../Helpers/Helpers.h"
 #include "Optional.h"
+#include "Custom_Optional.h"
+
 
 namespace
 {
 	using Integer = Helpers::Wrapper<int, false>;
+
+    using namespace std::string_literals;
+    using namespace std::string_view_literals;
 }
 
 
@@ -542,19 +547,65 @@ namespace MonadicOperations
         }
     }
 
-    void Transform_Test()
+    /** Transform:
+     *
+     *      The transform operation is similar to and_then, but with a key difference:
+     *      the function provided to transform returns a plain value, not an std::optional.
+     *      This value is then wrapped in a new std::optional. If the original std::optional is empty,
+     *      the function isn’t invoked, and an empty std::optional is returned.
+     *
+     *  Input Type:
+     *
+     *      The callable should accept a single argument.
+     *      The type of this argument should match the type of the value contained within
+     *      the std::optional on which transform() is called.
+     *      Depending on the const-qualification and value category (lvalue/rvalue) of the std::optional,
+     *      the callable might need to accept the argument as a const reference, non-const reference, or rvalue reference.
+    */
+
+    void Transform_Tests()
     {
+        constexpr std::optional<int> optFive = 5;
+        constexpr std::optional<int> optEmptyInt = std::nullopt;
+        const std::optional<std::string> optString = std::make_optional<std::string>("qwerty"s);
+
         {
-	        constexpr std::optional<int> number = 5;
-            const std::optional<int> squared = number.transform([](int x) { return x * x; });
-            std::cout << number << " --> " << squared << std::endl;
+            const std::optional<int> squared = optFive.transform([](int x) { return x * x; });
+            std::cout << optFive << " --> " << squared << std::endl;
         }
 
         {
-            const std::optional<std::string> text = "qwerty";
-            const std::optional<std::string> upperCase = text.transform(toUpper);
-            std::cout << text << " --> " << upperCase << std::endl;
+            const std::optional<std::string> upperCase = optString.transform(toUpper);
+            std::cout << optString << " --> " << upperCase << std::endl;
         }
+
+        /** Transform from int --> int --> std::string **/
+        {
+            const std::optional<std::string> result = optFive
+                .transform([](int optVal) { return optVal * optVal; })
+                .transform([](int optVal) {
+                    return std::to_string(optVal);
+                });
+
+            std::cout << optFive << " --> " << optFive.value() * optFive.value() << " --> "
+                << std::quoted(result.value()) << std::endl;
+        }
+
+        /** Handle NULL_OPT values **/
+        {
+            const std::optional<int> result = optEmptyInt
+                .transform([](int optVal) {
+                    std::cout << "Will not be called" << std::endl;
+                    return optVal * optVal;
+                });
+
+            std::cout << optEmptyInt << " --> " << result << std::endl;
+        }
+
+
+        // 5 --> 25
+        // qwerty --> QWERTY
+        // 5 --> 25 --> "25"
     }
 
     void OrElse_Transform()
@@ -626,7 +677,11 @@ namespace Optional::MonadicOperations_2
 	{
 		if (id == -1)
 			return std::nullopt;
-		return std::make_optional<User>(User {id, std::move(name), std::move(email)});
+		return std::make_optional<User>(User {
+            .id    = id,
+            .name  = std::move(name),
+            .email = std::move(email)
+        });
 	}
 
 	/*std::optional<SuperUser> createSuperUser(std::string name, std::string email, const int id = - 1)
@@ -652,7 +707,9 @@ namespace Optional::MonadicOperations_2
 	{
 		const std::optional<User> user = createUser("admin", "admin@gmail.com", -1);
 
-		const std::optional<std::string> name = user.and_then([](const User& usr) {
+		const std::optional<std::string> name = user.and_then([](const User& usr)
+        {
+            /** Will not be called since 'user' == std::nullopt **/
 			std::cout << "Transforming " << usr << " --> std::optional<std::string>{" << usr.name << "}" << std::endl;
 			return std::make_optional<std::string>();
 		});
@@ -729,6 +786,8 @@ namespace Optional::Move_Optional_Test
 
 void Optional::TestAll()
 {
+    Custom_Optional::TestAll();
+
 	// OptionalCreation();
 	// OptionalCreation_Test2();
 	// Create_In_Place();
@@ -752,14 +811,15 @@ void Optional::TestAll()
 	// Applications::ReadEnvironment();
 
 
+
     // MonadicOperations::OrElse_Test();
     // MonadicOperations::AndThen_Test();
-    // MonadicOperations::Transform_Test();
+    // MonadicOperations::Transform_Tests();
     // MonadicOperations::OrElse_Transform();
     // MonadicOperations::Transform_UserInput();
 
 	// Move_Optional_Test::moveFromOptional_BAD__Error();
-	Move_Optional_Test::moveFromOptional_OK();
+	// Move_Optional_Test::moveFromOptional_OK();
 
 	// MonadicOperations_2::Transform_Optional_User_to_Optional_String();
 	// MonadicOperations_2::Transform_Optional_User_to_Optional_String_NullOpt();

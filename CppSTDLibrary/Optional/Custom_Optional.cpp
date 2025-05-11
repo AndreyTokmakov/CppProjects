@@ -1,29 +1,29 @@
 /**============================================================================
-Name        : Optional.cpp
-Created on  : 16.07.2022.
-Author      : Tokmakov Andrei
+Name        : Custom_Optional.cpp
+Created on  : 11.05.2025
+Author      : Andrei Tokmakov
 Version     : 1.0
 Copyright   : Your copyright notice
-Description : Optional
+Description : Custom_Optional.cpp
 ============================================================================**/
 
-#include "Optional.h"
+#include "Custom_Optional.h"
 
 #include <utility>
-#include <optional>
 #include <array>
 #include <algorithm>
-#include <unordered_map>
 #include <format>
+
 #include "../Helpers/Helpers.h"
 
-namespace Optional
+namespace Custom_Optional
 {
     template<typename _Ty>
-    struct MyOptional
+    struct Optional
     {
         using data_type = _Ty;
         using pointer   = data_type*;
+        using reference = data_type&;
 
     private:
         // using aligned_storage_t = std::aligned_storage_t<sizeof(data_type), alignof(data_type)>;
@@ -35,17 +35,22 @@ namespace Optional
 
 
     public:
-        MyOptional() noexcept = default;
+        Optional() noexcept = default;
 
         template<typename ... Types>
-        MyOptional(Types&& ... params) {
+        Optional(Types&& ... params) {
             ::new (storage.data()) data_type(std::forward<Types>(params)...);
             has_value = true;
         }
 
         [[nodiscard]]
-        pointer asPointer() noexcept {
+        pointer as_pointer() noexcept {
             return reinterpret_cast<pointer>(storage.data());
+        }
+
+        [[nodiscard]]
+        reference value()  {
+            return reinterpret_cast<reference>(storage);
         }
 
         inline explicit operator bool() const noexcept {
@@ -55,7 +60,7 @@ namespace Optional
         void destroy()
         {
             if (has_value) {
-                asPointer()->~data_type();
+                as_pointer()->~data_type();
             }
         }
 
@@ -74,32 +79,32 @@ namespace Optional
             has_value = true;
         }
 
-        ~MyOptional() {
+        ~Optional() {
             destroy();
         }
     };
 }
 
-
-std::optional<int> getAge(int v)
+namespace Custom_Optional
 {
-    if (100 > v)
-        return std::make_optional<int>(v);
-    return std::nullopt;
+
+    std::optional<int> getAge(int v)
+    {
+        if (100 > v)
+            return std::make_optional<int>(v);
+        return std::nullopt;
+    }
+
 }
 
-
-void Optional::TestAll()
+void Custom_Optional::TestAll()
 {
     using namespace Helpers;
 
-    /*
-    MyOptional<Long> opt;
-    opt.set(Long {2});
-    */
+    Optional<Long> opt(2);
+    //opt.set(Long {2});
 
-    int value = getAge(103)
-            .or_else([]() { return std::make_optional<int>(18); })
-            .transform([](int age) { return age + 1; }).value();
-    std::cout << value << std::endl;
+    Long& ref = opt.value();
+
+    std::cout << ref.value << std::endl;
 }

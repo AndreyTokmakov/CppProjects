@@ -93,7 +93,8 @@ namespace Memory::SharedPtr
 		ControlBlock<type, Deleter> * contr = nullptr;
 
 	public:
-		explicit SharedPtr(pointer objectPtr) {
+		explicit SharedPtr(pointer objectPtr)
+        {
 			// std::cout << __LINE__ << ":" << __FUNCTION__ << std::endl;
 			this->contr = new ControlBlock<type, Deleter>(objectPtr);
 		}
@@ -110,7 +111,7 @@ namespace Memory::SharedPtr
             contr { new ControlBlock<T, Deleter>(objectPtr, std::move(deleter)) } {
 		}
 
-		explicit SharedPtr(const SharedPtr<type>& obj): contr { obj.contr } {
+        SharedPtr(const SharedPtr<type>& obj): contr { obj.contr } {
 			contr->increment_use_count();
 		}
 
@@ -124,7 +125,7 @@ namespace Memory::SharedPtr
 			return *this;
 		}
 
-        explicit SharedPtr(SharedPtr<type>&& obj) noexcept:
+        SharedPtr(SharedPtr<type>&& obj) noexcept:
                 contr { std::exchange(obj.contr, nullptr) } {
         }
 

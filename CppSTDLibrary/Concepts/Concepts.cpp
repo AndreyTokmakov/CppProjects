@@ -162,7 +162,10 @@ namespace Concepts::Custom_Concepts
 
     void It_Not_Void_Test()
     {
+        [[maybe_unused]]
         auto foo = [] <IsNotDoubleType T>(T v) {};
+
+        [[maybe_unused]]
         double v = 1'23;
 
         // foo(v);    WILL NOT COMPIE
@@ -175,6 +178,7 @@ namespace Concepts::Custom_Concepts
             handleSignedValue(a);
         }
         {
+            [[maybe_unused]]
             unsigned int a{ 0 };
 
             // ERROR !!!!!!!
@@ -185,6 +189,7 @@ namespace Concepts::Custom_Concepts
     void Unsigned_Tests()
     {
         {
+            [[maybe_unused]]
             int a{ 0 };
 
             // ERROR HERE
@@ -719,7 +724,10 @@ namespace Concepts::NestedConcepts
 
     void CheckMethodReturnType()
     {
+        [[maybe_unused]]
         Clonable auto c = Droid{};
+
+        [[maybe_unused]]
         Clonable2 auto c2 = Droid{};
 
         // NOTE: nested requirement 'same_as<C, decltype (clonable.clone())>' is not satisfied
@@ -1029,7 +1037,9 @@ namespace Concepts::Requires {
     void CheckOperatorArgument_IsArithmetic()
     {
         Money val {13};
-        auto res = val * 10;
+
+        [[maybe_unused]]
+        Money res = val * 10;
     }
 }
 
@@ -1390,7 +1400,9 @@ namespace Concepts::Tests
         explicit(!std::is_convertible_v<T, int>) S(T) {}
     };
 
-    void f() {
+    void f()
+    {
+        [[maybe_unused]]
         S<char> sc = 'x';           // OK
 
 #if 0
@@ -1464,7 +1476,7 @@ namespace Concepts::Function_Constrains
     void Test_Function_Return_Int()
     {
         auto f1 = []()-> int { return 1; };
-        auto f2 = []() -> std::string { return {}; };
+        auto _ = []() -> std::string { return {}; };
 
         auto a1 = foo(f1);
         std::cout << typeid(a1).name() << " = " << a1 << std::endl;
@@ -1844,7 +1856,7 @@ namespace Concepts::Noexcept
 
     void Tests() {
         auto f1_noexcept = []() noexcept -> std::string { return { "string_noexcept" }; };
-        auto f2_throwing = []() -> std::string { return { "string_noexcept" }; };
+        auto _ = []() -> std::string { return { "string_noexcept" }; };
 
         auto a2 = invoke_noexcept_funcs_only(f1_noexcept);
 #if 0
@@ -1993,11 +2005,11 @@ namespace Concepts::FoldExpression
         return (... + params);
     }
 
-    void Test_All_Params_are_SameType() {
-        auto x = Add(1,2,3);
+    void Test_All_Params_are_SameType()
+    {
+        auto _ = Add(1,2,3);
 
-        // auto b = Add(1, 2, 3.4);
-
+        /// auto b = Add(1, 2, 3.4);   // Will NOT compile
     }
 
     //-----------------------------------------------------------------
@@ -2302,8 +2314,10 @@ namespace Concepts::ClassMethods
     void DisableClassMethods()
     {
 
+        [[maybe_unused]]
         Sample<int, false> s;
-        // auto x = s.DisableThisMethodOnRequest();
+
+        // auto x = s.DisableThisMethodOnRequest(); // <--- will NOT Compile
 
         Sample<int, true> s2;
         s2.DisableThisMethodOnRequest();
@@ -2327,12 +2341,16 @@ namespace Concepts::Static_Asserts
 
     void TestClassMethods()
     {
-        Fir fir;
+        [[maybe_unused]]
+        Fir a;
+
         static_assert(requires(Fir fir){ { fir.count() } -> std::convertible_to<int>; });     // OK
 
-        Sec sec;
+        [[maybe_unused]]
+        Sec b;
         // static_assert(requires(Sec sec){ { sec.count() } -> std::convertible_to<int>; });  // ERROR
 
+        [[maybe_unused]]
         int third;
         // static_assert(requires(int third){ { third.count() } -> std::convertible_to<int>; }); // ERROR
     }
@@ -2601,6 +2619,7 @@ namespace Concepts::CheckAllTypesAreSame
 
     void Check_with_Concepts()
     {
+        [[maybe_unused]]
         auto x = _add(1,2,3);
         // auto b = Add(1, 2, 3.4);
     }
@@ -2850,6 +2869,7 @@ namespace Concepts::Requires_Clause_vs_Expression
     bool test_type() {
         return requires (const T obj) { ++obj; };
     }
+
 
     constexpr bool test_can_increment() {
         return requires (int i) { ++i; };

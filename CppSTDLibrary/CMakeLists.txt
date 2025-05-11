@@ -68,6 +68,7 @@ add_executable(${PROJECT_NAME}
 		ObjectOrientedProgramming/RefQualifierMemberFunctions.cpp
 		ObjectOrientedProgramming/ConstexprVirtualFunctions.cpp
         Optional/Optional.cpp
+        Optional/Custom_Optional.cpp
 		PolymorphicMemoryResources/PolymorphicMemoryResources.cpp
 		Random/Random.cpp
 		Ranges/Ranges.cpp
