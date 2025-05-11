@@ -142,10 +142,53 @@ namespace CRTP_NewStyle
 }
 
 
+
+namespace DeducingThis::Policy_Based_Design
+{
+    struct Addition
+    {
+        template <typename T>
+        T operation(T a, T b) {
+            return a + b;
+        }
+    };
+
+    struct Multiplication
+    {
+        template <typename T>
+        T operation(T a, T b) {
+            return a * b;
+        }
+    };
+
+    struct Calculator
+    {
+        template <typename Self, typename T>
+        T calculate(this Self&& self, T a, T b) {
+            return self.operation(a, b);
+        }
+    };
+
+    struct Adder : Addition, Calculator  {};
+    struct Multiplier : Multiplication, Calculator  {};
+
+    void test()
+    {
+        Adder adder;
+        std::cout << "Addition: " << adder.calculate(3, 4) << std::endl;  // Outputs: Addition: 7
+
+        Multiplier multiplier;
+        std::cout << "Multiplication: " << multiplier.calculate(3, 4) << std::endl;  // Outputs: Multiplication: 12
+    }
+}
+
+
 void DeducingThis::TestAll()
 {
     // Deduplicating_Function_Overloading::test();
 
     // CRTP_OldStyle::demo();
     // CRTP_NewStyle::demo();
+
+    Policy_Based_Design::test();
 }
