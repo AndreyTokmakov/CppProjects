@@ -62,7 +62,6 @@ Description : Tests C++ project
 #include "ConstexprMap/ConstexprMap.h"
 #include "Multithreading/Multithreading.h"
 #include "DesignPatterns/DesignPatterns.h"
-#include "Math/Math.h"
 #include "Files_Filesystem/Files.h"
 #include "Helpers/Helpers.h"
 #include "Strings/Strings.h"
@@ -1832,7 +1831,6 @@ int main([[maybe_unused]] const int argc,
     // Multithreading::TestAll();
     // Memory::TestAll();
     // MaxStack::TestAll();
-    // Math::TestAll();
     // UniquePtr_Size::SizeTest();
     ObjectOrientedExperiments::OOP_Experiments::TestAll();
     // ObjectOrientedExperiments::VirtualTables::TestAll();
