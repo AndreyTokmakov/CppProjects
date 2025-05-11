@@ -21,6 +21,7 @@ add_executable(${PROJECT_NAME}
 		Composite/Composite.cpp Composite/Composite.h
 		CRTP/CRTP.cpp CRTP/CRTP.h CRTP/ObjectCounter.cpp CRTP/ObjectCounter.h
 		CRTP/CRTP_InvokeMethods.cpp
+		CRTP/Policy_Based_Design.cpp
 		Decorator/Decorator.cpp Decorator/Decorator.h
 		FabricMethod/FabricMethod.h FabricMethod/FabricMethod.cpp  FabricMethod/FabricMethod2.cpp
 		Facade/Facade.cpp Facade/Facade.h

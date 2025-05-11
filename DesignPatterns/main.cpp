@@ -66,7 +66,7 @@ int main([[maybe_unused]]  int argc,
     // FactoryClasses::TestAll();
     // Prototype::TestAll();
     // Singleton::TestAll();;
-    Multiton::TestAll();;
+    // Multiton::TestAll();;
     // Monostate::TestAll();;
     // ObjectPools::TestAll();
     // DependencyInjection::TestAll();
@@ -103,7 +103,7 @@ int main([[maybe_unused]]  int argc,
 
     /** C++ IDIOMS: **/
 
-    // CRTP::Test();
+    CRTP::Test();
     // NVI_SimpleExample::TestAll();
     // TypeErasure::Test();
     // RAII::Test();

@@ -14,7 +14,7 @@ Description : CRTP src
 #include "CRTP.h"
 #include "ObjectCounter.h"
 #include "CRTP_Cloneable.h"
-
+#include "Policy_Based_Design.h"
 
 namespace CRTP::SimpleExample_One
 {
@@ -198,5 +198,7 @@ void CRTP::Test()
 
     // CRTP_Cloneable::Test();
 
-    CRTP_InvokeMethods_Test();
+    // CRTP_InvokeMethods_Test();
+
+    Policy_Based_Design::TestAll();
 }
