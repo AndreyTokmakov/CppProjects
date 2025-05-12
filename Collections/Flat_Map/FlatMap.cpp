@@ -28,9 +28,27 @@ namespace FlatMap
         for (const auto& [k, v] : map) {
             std::cout << k << " = " << v << std::endl;
         }
+        std::cout << std::endl;
 
+        {
+            const std::vector<int>& keys = map.keys();
+            const std::vector<std::string>& values = map.values();
 
-        map.values()
+            for (uint32_t size = keys.size(), idx = 0; idx < size; ++idx) {
+                std::cout << keys[idx] << " = " << values[idx] << std::endl;
+            }
+            std::cout << std::endl;
+        }
+
+        {
+            uint32_t idx = 0;
+            for (const auto& [keys, values, size] =
+                std::make_tuple(map.keys(), map.values(), map.values().size()); idx < size; ++idx) {
+                std::cout << keys[idx] << " = " << values[idx] << std::endl;
+            }
+            std::cout << std::endl;
+        }
+
     }
 }
 
