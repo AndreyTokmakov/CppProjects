@@ -38,7 +38,7 @@ public:
 
 	virtual ~Integer();
 
-	virtual int getValue() const noexcept;
+	[[nodiscard]] virtual int getValue() const noexcept;
 	virtual void setValue(int val) noexcept;
 
 	virtual void printInfo() const noexcept;
@@ -46,41 +46,27 @@ public:
 
 
 public: /** Operators reload. **/
-	friend std::ostream& operator<<(std::ostream& stream,
-		const Integer& integer);
 
-	friend const Integer operator+(const Integer& left,
-		int int_value);
+	friend std::ostream& operator<<(std::ostream& stream, const Integer& integer);
 
-	friend const Integer operator+(const Integer& left,
-		const Integer& right);
+	friend Integer operator+(const Integer& left, int int_value);
+	friend Integer operator+(const Integer& left, const Integer& right);
+	friend Integer operator-(const Integer& left, int int_value);
+	friend Integer operator-(const Integer& left, const Integer& right);
+	friend Integer operator+=(Integer& left, const Integer& right);
+	friend Integer operator+(const Integer& integer);
+	friend Integer operator-(const Integer& integer);
+	friend Integer operator++(Integer& integer);
+	friend Integer operator++(Integer& integer, int);
+	friend Integer operator--(Integer& integer);
+	friend Integer operator--(Integer& integer, int);
 
-	friend const Integer operator-(const Integer& left,
-		int int_value);
-
-	friend const Integer operator-(const Integer& left,
-		const Integer& right);
-
-	friend Integer& operator+=(Integer& left,
-		const Integer& right);
-
-	friend bool operator==(const Integer& left,
-		const Integer& right);
-
-	friend bool operator<(const Integer& left,
-		const Integer& right);
-
-	friend bool operator<(const Integer& left,
-		const int right);
-
-	friend bool operator>(const Integer& left,
-		const Integer& right);
-
-	friend bool operator<=(const Integer& left,
-		const Integer& right);
-
-	friend bool operator>=(const Integer& left,
-		const Integer& right);
+	friend bool operator==(const Integer& left, const Integer& right);
+	friend bool operator<(const Integer& left,  const Integer& right);
+	friend bool operator<(const Integer& left,  int right);
+	friend bool operator>(const Integer& left,  const Integer& right);
+	friend bool operator<=(const Integer& left, const Integer& right);
+	friend bool operator>=(const Integer& left, const Integer& right);
 
 	Integer& operator=(const Integer& right) {
 		std::cout << "[Copy assignment operator from Integer -> Integer]" << std::endl;
@@ -103,12 +89,7 @@ public: /** Operators reload. **/
 		return *this;
 	}
 
-	friend const Integer& operator+(const Integer& integer);
-	friend const Integer operator-(const Integer& integer);
-	friend const Integer& operator++(Integer& integer);
-	friend const Integer operator++(Integer& integer, int);
-	friend const Integer& operator--(Integer& integer);
-	friend const Integer operator--(Integer& integer, int);
+
 };
 
 #endif // !INTEGER_INCLUDE_GUARD__H

@@ -23,12 +23,9 @@ Description : Cpp23_Features
 
 // #include <inplace_vector>
 
-// #include <experimental/executor>
-// #include <experimental/net>
+//#include <experimental/executor>
+#include <experimental/net>
 // #include <experimental/reflect>
-#include <flat_map>
-#include <flat_set>
-
 
 
 
@@ -528,23 +525,6 @@ namespace Non_Copy_Move_Test
 
 
 
-namespace FlatMap
-{
-
-    void test()
-    {
-        std::flat_map<int, std::string> map;
-
-        map.emplace (1, "I");
-        map.emplace (2, "II");
-        map.emplace (3, "III");
-
-        for (const auto& [k, v] : map) {
-            std::cout << k << " = " << v << std::endl;
-        }
-    }
-}
-
 
 void Cpp_NEW_Features::TestAll()
 {
@@ -554,10 +534,6 @@ void Cpp_NEW_Features::TestAll()
     // Pack_Indexing
     // VariadicFriends
     // Constexpr_Placement_New
-
-
-    FlatMap::test();
-
 
     // Format::Format_to_N();
     // Format::VFormatTest1();
@@ -570,7 +546,7 @@ void Cpp_NEW_Features::TestAll()
     /*
     auto now = std::chrono::system_clock::now();
     auto today = std::chrono::floor<std::chrono::days>(now);
-    std::cout << "Today is: " << today.time_since_epoch().count() << " days since epoch\n";
+    std::cout << "Today is: " << today.time_since_epoch().count() << " days since epoch\n";`
     `*/
 
 

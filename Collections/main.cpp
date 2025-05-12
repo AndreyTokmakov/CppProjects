@@ -21,6 +21,7 @@ Description : CollectionsTests
 #include "Vector/Vector.h"
 #include "Map/Map.h"
 #include "MultiMap/MultiMap.h"
+#include "Flat_Map/FlatMap.h"
 #include "UnorderedSet/UnorderedSet.h"
 #include "UnorderedMap/UnorderedMap.h"
 #include "PriorityQueue/PriorityQueue.h"
@@ -38,7 +39,8 @@ int main([[maybe_unused]] int argc,
 	// Heap::TestAll();
 	// Vector::TestAll();
 	// Valarray::TestAll();
-	Map::TestAll();
+	// Map::TestAll();
+	FlatMap::TestAll();
 	// MultiMap::TestAll();
     // UnorderedMap::TestAll();
     // Set::TestAll();
