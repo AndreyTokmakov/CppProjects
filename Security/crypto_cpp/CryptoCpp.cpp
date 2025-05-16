@@ -51,6 +51,37 @@ namespace CryptoCpp
         return cipher;
     }
 
+    std::string encrypt_test(const std::string& input,
+                             const std::vector<uint8_t>& key,
+                             const std::vector<uint8_t>& iv)
+    {
+        CryptoPP::AES::Encryption aes { CryptoPP::AES::Encryption(key.data(), key.size()) };
+        CryptoPP::CBC_Mode_ExternalCipher::Encryption aesCbc { CryptoPP::CBC_Mode_ExternalCipher::Encryption(aes, iv.data()) };
+
+        /* std::unique_ptr<CryptoPP::Base64Encoder> encoder {
+                std::make_unique<CryptoPP::Base64Encoder>(new CryptoPP::StringSink(cipher))
+        };
+
+        std::unique_ptr<CryptoPP::StreamTransformationFilter> transformFiler {
+                std::make_unique<CryptoPP::StreamTransformationFilter>(aes_cbc, encoder.get())
+        }; */
+
+        std::string cipher;
+        CryptoPP::StringSink* strSink = new CryptoPP::StringSink(cipher);
+
+        CryptoPP::Base64Encoder* encoder = new CryptoPP::Base64Encoder(strSink);
+        CryptoPP::StreamTransformationFilter* transformFiler = new CryptoPP::StreamTransformationFilter(aesCbc, encoder);
+        CryptoPP::StringSource ss(input, true, transformFiler);
+
+        // std::vector<uint8_t> data;
+        // CryptoPP::VectorSource vs(data, true, transformFiler);
+
+
+        std::cout << strSink->Cl << std::endl;
+
+        return cipher;
+    }
+
     std::string decrypt(const std::string& cipherText,
                         const std::vector<uint8_t>& key,
                         const std::vector<uint8_t>& iv)
@@ -96,7 +127,9 @@ namespace CryptoCpp
 
     void Tests()
     {
-        constexpr std::string_view input{"This is a secret message."};
+        const std::filesystem::path secretDataFile    { R"(../../Security/data/secret_text.txt)"};
+        const std::filesystem::path encryptedDataFile { R"(../../Security/data/encrypted_data.txt)"};
+
         const std::vector<uint8_t> key {
             0x8c, 0xd7, 0x6f, 0xf1, 0x32, 0xaa, 0x44, 0xb5, 0x44,0x71, 0x90, 0xf3, 0x4f, 0x52, 0xfd, 0x88,
             0x3c, 0x4a,0xe3, 0x0, 0x42, 0xd9, 0x93, 0x40, 0xf5, 0x96, 0xa2, 0x30, 0x70, 0xf3, 0x3c, 0x78
@@ -105,23 +138,27 @@ namespace CryptoCpp
             0x9d, 0x85, 0xc7, 0x69, 0x7a, 0xec, 0xd4, 0x93, 0xa3, 0x4b, 0x1, 0x87, 0xb3, 0xf0, 0x46, 0x88
         };
 
-        const std::string encryptedData = encrypt(input.data(), key, iv);
-        const std::filesystem::path dataFile { R"(../../Security/data/data.txt)"};
-        FileUtilities::WriteToFile(dataFile, encryptedData);
+        const std::string secretText = FileUtilities::ReadFile(secretDataFile);
+        const std::string encryptedData = encrypt_test(secretText, key, iv);
+        FileUtilities::WriteToFile(encryptedDataFile, encryptedData);
 
-        const std::string dataFromFile = FileUtilities::ReadFile(dataFile);
-        const std::string plain_text = decrypt(dataFromFile, key, iv);
+        const std::string dataFromFile = FileUtilities::ReadFile(encryptedDataFile);
+        const std::string decryptedText = decrypt(dataFromFile, key, iv);
 
-        std::cout << "cipher    : " << std::quoted(encryptedData) << std::endl;
-        std::cout << "plain_text: " << std::quoted(plain_text) << std::endl;
+        // std::cout << "original  : " << std::quoted(secretText) << std::endl;
+        // std::cout << "encrypted : " << std::quoted(encryptedData) << std::endl;
+        // std::cout << "decrypted : " << std::quoted(decryptedText) << std::endl;
 
-        if (plain_text != input) {
+        if (decryptedText != secretText) {
             std::cerr << "Error: plain text doesn't match the input" << std::endl;
+        } else {
+            std::cout << "OK" << std::endl;
         }
     }
 };
 
 void CryptoCpp::TestAll()
 {
-
+    // Tests_RandomPass();
+    Tests();
 }
