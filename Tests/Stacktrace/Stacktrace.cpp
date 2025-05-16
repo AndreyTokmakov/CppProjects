@@ -1,25 +1,19 @@
 /**============================================================================
-Name        : StackTrace.cpp
-Created on  : 17.08.2024
+Name        : Stacktrace.cpp
+Created on  : 16.05.2025
 Author      : Andrei Tokmakov
 Version     : 1.0
 Copyright   : Your copyright notice
-Description : StackTrace.cpp
+Description : C++Stacktrace
 ============================================================================**/
 
-#include "StackTrace.h"
-
+#include "Stacktrace.h"
 
 #include <iostream>
-#include <vector>
 #include <stacktrace>
-#include <format>
-#include <print>
 
-
-namespace StackTrace
+namespace Stacktrace
 {
-#if 0
     void testSimple()
     {
         auto stacktrace = std::stacktrace::current();
@@ -57,11 +51,11 @@ namespace StackTrace
         foo();
     }
 
-#endif
 }
 
-void StackTrace::TestAll()
+
+void Stacktrace::TestAll()
 {
     // testSimple();
-    // Test2();
+    Test2();
 }

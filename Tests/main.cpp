@@ -74,12 +74,14 @@ Description : Tests C++ project
 #include "TableFormatter/TableFormatter.h"
 #include "Coroutines/Coroutines.h"
 #include "Cpp_NEW_Features/Cpp_NEW_Features.h"
-#include "Cpp_NEW_Features/StackTrace.h"
 #include "Cpp_NEW_Features/Execution.h"
 #include "Heap/Heap.h"
+#include "Stacktrace/Stacktrace.h"
 #include "FindMinMaxValues/FindMinMaxValues.h"
 #include "FindMinMaxValues/FindMinMaxValues.h"
 #include "FunctionCall_LookUp/FunctionCall_LookUp.h"
+#include "Stacktrace/Stacktrace.h"
+#include "Stacktrace/Stacktrace.h"
 
 #define PRINT_LINE   std::cout.width(128); std::cout.fill('='); std::cout << '\n';
 
@@ -1750,68 +1752,74 @@ namespace TTT
 }
 
 
+namespace Demo
+{
+    struct Product
+    {
+        Product()  = default;
+        Product(Product&& other) noexcept { /* move resources */ }
+        Product& operator=(Product&& other) noexcept { /* move resources */ return *this; }
+    };
+
+    struct Factory
+    {
+        static Product createProduct()
+        {
+            Product product;
+            // Configure product
+            return std::move(product);
+        }
+    };
+
+    void demo()
+    {
+        Product product = Factory::createProduct();
+    }
+}
+
 
 int main([[maybe_unused]] const int argc,
          [[maybe_unused]] char** argv)
 {
     const std::vector<std::string_view> args(argv + 1, argv + argc);
+
+    /** * * * * *  Move to lib * * * * * **/
+    // Cpp_NEW_Features::TestAll();
+    // Execution::TestAll();
+    // Coroutines::TestAll();
+
+
+
     // VirtualFunctionTests::demo();
-
     // Int_to_UInt_Tests::Tests();
-
     // EnumBasedStrongTypes::Tests();
     // EnumHack::Test();
-
     // OrderBook_TableDispatch::Tests();
-
     // Store_Pointer_In_Collection::demo();
-
     // OOP_FoldExpr_Inheritance::demo();
-
-
-
     // WrapperTests::Test();
     // StaticCounter::Test();
     // LookUpTests::Unexpected_Method_Call_Resolution();
     // Types_Experiments::Test_Get_TypeID();
-
     // ADL_LookUp::Function_Templates::Template_vs_Int_Parameter();
     // ADL_LookUp::Implicit_Bool_From_SV::From_StringView();
-
     // MoveExperiments::MoveStringToArray_Segfault();
     // MoveExperiments::test_perfect_forwarding();
     // MoveExperiments::test_overload();
-
     // FindMinMaxValues::TestAll();
     // LockFreeQueue::Test();
     // ScopeExit::ScopeExit();
     // UBBook::Test();
     // PipelineOperator::SimplePipeTest();
     // StringTest_SSO::Tests();
-
     // BitwiseOperations::test();
-
-
     // LockFreeQueueTest::Test();
-
-
-    /** * * * * *  Move to lib * * * * * **/
-
-    Cpp_NEW_Features::TestAll();
-    // Execution::TestAll();
-    // StackTrace::TestAll();
-
-    // Coroutines::TestAll();
-
-
+    Stacktrace::TestAll();
     // CompileTime_Programming::Factorial();
-
     // OperatorCall_ExplicitTypeSpecialization::Test();
     // ReturnTypeCast::tests();
     // CallFunctionByName::Test();
     // ReturnClass_MemberRef_CopyCTor::tests();
-
-
     // BinManipulation::TestAll();
     // BinaryAnalyzer::TestAll();
     // BitFlags::TestAll();
@@ -1834,24 +1842,19 @@ int main([[maybe_unused]] const int argc,
     // ObjectOrientedExperiments::OOP_Experiments::TestAll();
     // ObjectOrientedExperiments::VirtualTables::TestAll();
     // PointsAndLines::TestAll();           // Geometry
-
     // Strings::TestAll();
     // Performance::TestAll();
     // Templates::TestAll();
     // ExpressionTemplates::TestAll();
     // TestAssignments::TestAll();
     // TableFormatter::TestAll();
-
     // Convertaion_UTF8_UTF32::TestAll();    // Encoding
     // Unicode::TestAll();                   // Encoding
     // StringUtils::TestAll();               // Encoding
-
     // InvokeTest::Test();
-
     // OrderBook::TestAll();
     // OrderBook2::TestAll();
     // MatchingOrderBook::TestAll();
     // MatchingOrderBookEx::TestAll();
-
     return EXIT_SUCCESS;
 }

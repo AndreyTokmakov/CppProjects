@@ -1,17 +1,17 @@
 /**============================================================================
-Name        : StackTrace.h
-Created on  : 17.08.2024
+Name        : Stacktrace.h
+Created on  : 16.05.2025
 Author      : Andrei Tokmakov
 Version     : 1.0
 Copyright   : Your copyright notice
-Description : StackTrace.h
+Description : C++Stacktrace
 ============================================================================**/
 
 #ifndef CPPPROJECTS_STACKTRACE_H
 #define CPPPROJECTS_STACKTRACE_H
 
-namespace StackTrace {
+namespace Stacktrace {
     void TestAll();
-};
+}
 
 #endif //CPPPROJECTS_STACKTRACE_H

@@ -54,7 +54,6 @@ add_executable(${PROJECT_NAME}
         Date_Time_Chrono/Date_Time_Chrono.cpp
         ObjectOrientedExperimetns/OOP_Experiments.cpp
         Cpp_NEW_Features/Cpp_NEW_Features.cpp
-        Cpp_NEW_Features/StackTrace.cpp
         ObjectOrientedExperimetns/VirtualTables.cpp
         Heap/Heap.cpp
         FindMinMaxValues/FindMinMaxValues.cpp
@@ -64,6 +63,7 @@ add_executable(${PROJECT_NAME}
         Memory/ObjectMemoryPool.cpp
         Logging/LowLatencyLogger.cpp
         Cpp_NEW_Features/Execution.cpp
+        Stacktrace/Stacktrace.cpp
 )
 
 message(STATUS "EXTRA_LIBS: ${EXTRA_LIBS}")

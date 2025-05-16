@@ -14,39 +14,6 @@ Description : SIMD
 
 namespace Vector_Addition
 {
-    /*
-    void _mm512_mul_to(float *a, float *b, float *c, int64_t n)
-    {
-        int epoch = n / 16;
-        int remain = n % 16;
-        for (int i = 0; i < epoch; i++)
-        {
-            __m512 v1 = _mm512_loadu_ps(a);
-            __m512 v2 = _mm512_loadu_ps(b);
-            __m512 v = _mm512_mul_ps(v1, v2);
-            _mm512_storeu_ps(c, v);
-            a += 16;
-            b += 16;
-            c += 16;
-        }
-        if (remain >= 8)
-        {
-            __m256 v1 = _mm256_loadu_ps(a);
-            __m256 v2 = _mm256_loadu_ps(b);
-            __m256 v = _mm256_mul_ps(v1, v2);
-            _mm256_storeu_ps(c, v);
-            a += 8;
-            b += 8;
-            c += 8;
-            remain -= 8;
-        }
-        for (int i = 0; i < remain; i++)
-        {
-            c[i] = a[i] * b[i];
-        }
-    }*/
-
-
     void add_vectors_simd(const std::vector<float>& a,
                           const std::vector<float>& b,
                           std::vector<float>& result)
@@ -85,12 +52,40 @@ namespace Vector_Addition
 
 }
 
+namespace Multiplication
+{
+    void process_with_simd(float* data, const size_t size)
+    {
+        const __m128 factor = _mm_set1_ps(2.0f); // Set all elements to 2.0
+
+        for (size_t i = 0; i < size; i += 4) {
+            __m128 values = _mm_loadu_ps(&data[i]);    // Load 4 floats
+            values = _mm_mul_ps(values, factor);    // Multiply by factor
+            _mm_storeu_ps(&data[i], values);           // Store result
+        }
+    }
+
+
+    void demo()
+    {
+        float data[8] = {1.0f, 2.0f, 3.0f, 4.0f, 5.0f, 6.0f, 7.0f, 8.0f};
+
+        // Process data using SIMD
+        process_with_simd(data, 8);
+
+        for (const float value : data) {
+            std::cout << value << " "; // Output: 2 4 6 8 10 12 14 16
+        }
+        std::cout << std::endl;
+    }
+}
 
 
 int main([[maybe_unused]] int argc,
          [[maybe_unused]] char** argv)
 {
-    Vector_Addition::demo();
+    // Vector_Addition::demo();
+    Multiplication::demo();
 
     return EXIT_SUCCESS;
 }
