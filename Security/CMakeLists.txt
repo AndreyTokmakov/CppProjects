@@ -19,6 +19,7 @@ add_executable(${PROJECT_NAME}
         crc/CRC.cpp
         sha/Sha1.cpp
         SecureFIleBlockStorage/SecureFIleBlockStorage.cpp
+        crypto_cpp/CryptoCpp.cpp
 )
 
 TARGET_LINK_LIBRARIES(${PROJECT_NAME}
