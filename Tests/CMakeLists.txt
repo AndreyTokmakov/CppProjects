@@ -63,7 +63,6 @@ add_executable(${PROJECT_NAME}
         Memory/ObjectMemoryPool.cpp
         Logging/LowLatencyLogger.cpp
         Cpp_NEW_Features/Execution.cpp
-        Stacktrace/Stacktrace.cpp
 )
 
 message(STATUS "EXTRA_LIBS: ${EXTRA_LIBS}")

@@ -76,12 +76,9 @@ Description : Tests C++ project
 #include "Cpp_NEW_Features/Cpp_NEW_Features.h"
 #include "Cpp_NEW_Features/Execution.h"
 #include "Heap/Heap.h"
-#include "Stacktrace/Stacktrace.h"
 #include "FindMinMaxValues/FindMinMaxValues.h"
 #include "FindMinMaxValues/FindMinMaxValues.h"
 #include "FunctionCall_LookUp/FunctionCall_LookUp.h"
-#include "Stacktrace/Stacktrace.h"
-#include "Stacktrace/Stacktrace.h"
 
 #define PRINT_LINE   std::cout.width(128); std::cout.fill('='); std::cout << '\n';
 
@@ -1814,7 +1811,6 @@ int main([[maybe_unused]] const int argc,
     // StringTest_SSO::Tests();
     // BitwiseOperations::test();
     // LockFreeQueueTest::Test();
-    Stacktrace::TestAll();
     // CompileTime_Programming::Factorial();
     // OperatorCall_ExplicitTypeSpecialization::Test();
     // ReturnTypeCast::tests();

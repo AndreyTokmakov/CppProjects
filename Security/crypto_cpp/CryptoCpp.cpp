@@ -77,8 +77,6 @@ namespace CryptoCpp
         // CryptoPP::VectorSource vs(data, true, transformFiler);
 
 
-        std::cout << strSink->Cl << std::endl;
-
         return cipher;
     }
 
@@ -127,8 +125,11 @@ namespace CryptoCpp
 
     void Tests()
     {
-        const std::filesystem::path secretDataFile    { R"(../../Security/data/secret_text.txt)"};
-        const std::filesystem::path encryptedDataFile { R"(../../Security/data/encrypted_data.txt)"};
+        // const std::filesystem::path secretDataFile    { R"(../../Security/data/secret_text.txt)"};
+        // const std::filesystem::path encryptedDataFile { R"(../../Security/data/encrypted_data.txt)"};
+
+        const std::filesystem::path secretDataFile    { R"(/home/andtokm/DiskS/Temp/Folder_For_Testing/test_txt.txt)"};
+        const std::filesystem::path encryptedDataFile { R"(/home/andtokm/DiskS/Temp/Folder_For_Testing/test_txt.dat)"};
 
         const std::vector<uint8_t> key {
             0x8c, 0xd7, 0x6f, 0xf1, 0x32, 0xaa, 0x44, 0xb5, 0x44,0x71, 0x90, 0xf3, 0x4f, 0x52, 0xfd, 0x88,

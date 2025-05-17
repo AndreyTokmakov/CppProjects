@@ -77,6 +77,7 @@ Description : Cpp STD lib
 #include "Variant/Variant.h"
 #include "WeakPtr/WeakPtr.h"
 #include "SharedPtr/SharedPtrTests.h"
+#include "Stacktrace/Stacktrace.h"
 #include "UniquePtr/UniquePtr.h"
 #include "TypeTraits/TypeTraits.h"
 #include "Utilities/Utilities.h"
@@ -115,7 +116,7 @@ int main([[maybe_unused]] int argc,
     // CompileTimeProgramming::TestAll();
     // Constexpr::TestAll();
     // CopyElision::TestAll();
-    DeducingThis::TestAll();
+    // DeducingThis::TestAll();
     // RVO_FailureCases::TestAll();
     // ClassTemplateArgumentDeduction::TestAll();
     // DateAndTime::TestAll();
@@ -160,6 +161,7 @@ int main([[maybe_unused]] int argc,
     // StructuredBinding::TestAll();
     // StrongTypes::TestAll();
     // Span::TestAll();
+    Stacktrace::TestAll();
     // SourceLocation::TestAll();
     // SharedPtr_Tests::TestAll();
     // Variant::TestAll();

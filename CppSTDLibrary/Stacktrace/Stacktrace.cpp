@@ -14,6 +14,25 @@ Description : C++Stacktrace
 #include <format>
 #include <print>
 
+
+namespace Stacktrace::Basics
+{
+    void current()
+    {
+        auto trace = std::stacktrace::current();
+        std::cout << std::to_string(trace) << '\n';
+    }
+
+    void Stacktrace_Entry()
+    {
+        auto st = std::stacktrace::current();
+        std::cout <<"Description of an empty stacktrace entry:\n" + std::to_string(std::stacktrace_entry{}) << '\n';
+        if (st.size() > 0) {
+            std::cout << "Description of a non-empty stacktrace entry:\n" + std::to_string(st[0]) << '\n';
+        }
+    }
+}
+
 namespace Stacktrace::experiments
 {
     void testSimple()
@@ -151,10 +170,13 @@ namespace Stacktrace::exceptions3
 
 void Stacktrace::TestAll()
 {
+    Basics::current();
+    // Basics::Stacktrace_Entry();
+
     // experiments::testSimple();
     // experiments::Test2();
 
     // exceptions::run_check();
     // exceptions2::run_check();
-    exceptions3::run_check(-1);
+    // exceptions3::run_check(-1);
 }

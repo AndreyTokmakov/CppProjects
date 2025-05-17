@@ -113,6 +113,7 @@ add_executable(${PROJECT_NAME}
 		RVO_CopyElision/RVO_FailureCases.cpp
 		Overflow/Overflow.cpp
 		StaticAsserts/StaticAsserts.cpp
+		Stacktrace/Stacktrace.cpp
 		ContextControl/ContextControl.cpp
 		Helpers/Integer.cpp
 		Helpers/Integer.h
