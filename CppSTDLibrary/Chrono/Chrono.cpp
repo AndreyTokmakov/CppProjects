@@ -24,6 +24,20 @@ Description : Chrono
 #include <functional>
 #include <print>
 
+namespace
+{
+    std::ostream& operator<<(std::ostream& stream,
+                             const std::chrono::year_month_day& ymd)
+    {
+        stream << static_cast<int>(ymd.year()) << " / "
+               << static_cast<unsigned>(ymd.month()) << " / "
+               << static_cast<unsigned>(ymd.day()) ;
+
+        return stream;
+    }
+
+}
+
 
 namespace Chrono
 {
@@ -123,6 +137,51 @@ namespace Chrono
         std::cout << "Current Year: " << static_cast<int>(ymd.year())
                   << ", Month: " << static_cast<unsigned>(ymd.month())
                   << ", Day: " << static_cast<unsigned>(ymd.day()) << '\n';
+
+        std::cout << ymd << std::endl;
+    }
+
+    void Year_Month_Day_1()
+    {
+        using namespace std::chrono;
+        using namespace std::chrono_literals;
+
+        std::chrono::year_month_day startDay = std::chrono::day {1} / 2 / 2023;
+        std::cout << startDay << std::endl;
+
+
+        std::chrono::year_month_day d2 { year {2023}, month {3}, day{14}};
+        std::cout << d2 << std::endl;
+
+        /*
+        for (auto d = startDay; d.month() == startDay.month(); d += std::chrono::months{1}) {
+            std::cout << d << '\n';
+        }*/
+    }
+
+    void Year_Month_Day_2()
+    {
+        using namespace std::chrono;
+        using namespace std::chrono_literals;
+
+        std::cout << "USA switching to summer time on " << year_month_day{2023y/March/Sunday[2]} << "\n";
+        std::cout << "Europe switching to summer time on " << year_month_day{2023y/March/Sunday[last]} << "\n\n";
+    }
+
+    void Year_Month_Day_3()
+    {
+        using namespace std::chrono;
+        using namespace std::chrono_literals;
+
+        const std::chrono::year_month_day day1 = std::chrono::April/7/2018;
+        std::cout << "'" << day1 << "' is " << std::format("{:%A}\n", std::chrono::weekday(day1));
+
+        const std::chrono::year_month_day day2 = 2018y/April/8;
+        std::cout << "'" << day2 << "' is " << std::format("{:%A}\n", std::chrono::weekday(day2));
+
+        const std::chrono::year_month_day bad_day = January/0/2024;
+        if (!bad_day.ok())
+            std::cout << "'" << bad_day << "' is not a valid day\n";
     }
 
     void Create_Day_Manually()
@@ -687,6 +746,7 @@ namespace Chrono::FunctionPerformance
             Helpers::ScopedTimer timer{"high_resolution_clock::now()"};
             for (int i = 0; i < iterCount; ++i)
             {
+                [[maybe_unused]]
                 auto start = std::chrono::high_resolution_clock::now();
             }
         }
@@ -738,9 +798,7 @@ namespace Chrono::Months
     {
         const std::chrono::year_month_day first = 2021y / 1 / 5;
         for (std::chrono::year_month_day d = first; d.year() == first.year(); d += std::chrono::months{1U}) {
-            std::cout << static_cast<int>(d.year()) << " / "
-                      << static_cast<unsigned>(d.month()) << " / "
-                      << static_cast<unsigned>(d.day()) << '\n';
+            std::cout << d << std::endl;
         }
     }
 
@@ -789,7 +847,8 @@ namespace Chrono::Years
     }
 
     void Last_Sunday_of_Year()
-    {   // Last weekday in a month
+    {
+        // Last weekday in a month
         const std::chrono::month_weekday_last last_sunday = December/Sunday[last];
 
         // Iterate over the last Sundays in 2024..2030
@@ -806,7 +865,8 @@ namespace Chrono::Years
     }
 
     void Thanksgiving_Days()
-    {   // nth weekday in a month US Thanksgiving date, 4th Thursday in November
+    {
+        // nth weekday in a month US Thanksgiving date, 4th Thursday in November
         const std::chrono::month_weekday thanksgiving = November/Thursday[4]; // ordinal, not index
 
         for (std::chrono::year year = 2024y; year <= 2030y; year++) {
@@ -1096,6 +1156,25 @@ namespace Chrono::Print_Time
     }
 }
 
+#include <x86intrin.h>
+
+namespace Chrono::MeasureTime::TSC
+{
+    void doSomething()
+    {
+        std::this_thread::sleep_for(std::chrono::milliseconds (150UL));
+    }
+
+    void timeWithTSC()
+    {
+        const uint64_t start = __rdtsc();
+        doSomething();
+        const uint64_t duration =  __rdtsc() - start;
+
+        std::cout << "duration = " << duration << std::endl;
+    }
+}
+
 void Chrono::TestAll()
 {
     // TimeZones::TestAll();
@@ -1126,7 +1205,7 @@ void Chrono::TestAll()
     // Years::Thanksgiving_Days();
 
     /** TIME --> STRING **/
-    TimeToString::Test();
+    // TimeToString::Test();
 
     // StringFormat::StrfTime();
     // StringFormat::Asctime();
@@ -1146,6 +1225,8 @@ void Chrono::TestAll()
 
     // TimeOut::CheckTimeoutFunction();
 
+    MeasureTime::TSC::timeWithTSC();
+
 
     // Cast_Conversation::TimePoint_to_Long_and_Back();
 
@@ -1163,6 +1244,9 @@ void Chrono::TestAll()
     // Time_T();
 
     // Year_Month_Day();
+    // Year_Month_Day_1();
+    // Year_Month_Day_2();
+    // Year_Month_Day_3();
     // Create_Day_Manually();
 
     // is_PM_AM();

@@ -55,7 +55,6 @@ Description : Tests C++ project
 #include "Logging/LowLatencyLogger.h"
 #include "Crow/Crow.h"
 #include "DebugLogger/DebugLogger.h"
-#include "Date_Time_Chrono/Date_Time_Chrono.h"
 #include "Collections/CollectionsTests.h"
 #include "ObjectOrientedExperimetns/OOP_Experiments.h"
 #include "ObjectOrientedExperimetns/VirtualTables.h"
@@ -1216,25 +1215,6 @@ namespace LockFreeQueueTest
     }
 }
 
-
-namespace Algorithms
-{
-    void removeDuplicates(std::string& str)
-    {
-        for (int idx = 0; idx < str.size();)
-        {
-            for (idx = 1; idx < str.size(); ++idx)
-            {
-                if (str[idx -1] == str[idx]) {
-                    str.erase(idx - 1, 2);
-                    break;
-                }
-            }
-        }
-    }
-}
-
-
 namespace VirtualFunctionTests
 {
     struct Base
@@ -1262,17 +1242,17 @@ namespace VirtualFunctionTests
         Derived* d1 = new Derived();
         Base* bd = d;
 
-        using lPtr = uint64_t*;
+        // using lPtr = uint64_t*;
 
-        const uint64_t*** mVtableB = reinterpret_cast<const uint64_t***>(&b);
-        const uint64_t ***mVtableD = reinterpret_cast<const uint64_t***>(&d);
-        const uint64_t ***mVtableD1 = reinterpret_cast<const uint64_t***>(&d1);
-        const uint64_t ***mVtableBD = reinterpret_cast<const uint64_t***>(&bd);
+        [[maybe_unused]] const uint64_t *** mVtableB = reinterpret_cast<const uint64_t***>(&b);
+        [[maybe_unused]] const uint64_t *** mVtableD = reinterpret_cast<const uint64_t***>(&d);
+        [[maybe_unused]] const uint64_t *** mVtableD1 = reinterpret_cast<const uint64_t***>(&d1);
+        [[maybe_unused]] const uint64_t *** mVtableBD = reinterpret_cast<const uint64_t***>(&bd);
 
-        //std::cout << **mVtableB << std::endl;
-        std::cout << **mVtableD << std::endl;
-        //std::cout << **mVtableD1 << std::endl;
-        //std::cout << **mVtableBD << std::endl;
+        // std::cout << **mVtableB << std::endl;
+        // std::cout << **mVtableD << std::endl;
+        // std::cout << **mVtableD1 << std::endl;
+        // std::cout << **mVtableBD << std::endl;
 
         std::cout << (void*) mVtableD[0][0][0] << std::endl;
         std::cout << (void*) mVtableD[0][0][1] << std::endl;
@@ -1638,7 +1618,6 @@ int main([[maybe_unused]] const int argc,
     // ConstexprMap::TestAll();
     // DebugLogger::TestAll();
     // DesignPatterns::TestAll();
-    // Date_Time_Chrono::TestAll();
     // Heap::TestAll();
     // Files::TestAll();
     // FunctionCall_LookUp::TestAll();

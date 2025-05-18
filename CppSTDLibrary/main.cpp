@@ -107,7 +107,7 @@ int main([[maybe_unused]] int argc,
     // BitSet::TestAll();
     // BitwiseOperation::TestAll();
     // Byte::TestAll();
-    // Chrono::TestAll();
+    Chrono::TestAll();
     // ContextControl::TestAll();
     // Comparators::TestAll();
     // Concepts::TestAll();
@@ -169,7 +169,7 @@ int main([[maybe_unused]] int argc,
     // TypeTraits::TestAll();
     // Types::Tests();
     // Tuple::TestAll();
-    TypeCast::TestAll();
+    // TypeCast::TestAll();
     // Int::TestAll();
     // Templates::TestAll();
     // Utilities::TestAll();

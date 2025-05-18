@@ -51,7 +51,6 @@ add_executable(${PROJECT_NAME}
         TestAssignments/Bullish.cpp
         TableFormatter/TableFormatter.cpp
         Coroutines/Coroutines.cpp
-        Date_Time_Chrono/Date_Time_Chrono.cpp
         ObjectOrientedExperimetns/OOP_Experiments.cpp
         Cpp_NEW_Features/Cpp_NEW_Features.cpp
         ObjectOrientedExperimetns/VirtualTables.cpp
