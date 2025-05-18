@@ -225,354 +225,335 @@ namespace Lambdas::Capture
 
 namespace Lambdas {
 
-	class SomeClass {
-	private:
-		int m_x = 0;
-
-	public:
-		void info() const {
-			std::cout << "Info. X = " << m_x << std::endl;
-		}
-		void increment() {
-			std::cout << "increment = " << m_x << std::endl;
-			this->m_x++;
-			std::cout << "increment = " << m_x << std::endl;
-		}
-
-		// C++14
-		void Func_C14_Style() {
-			// const copy of *this
-			auto lambda1 = [self = *this]() mutable {
-				self.info();
-			};
-			// non-copy of copy of *this
-			auto lambda2 = [self = *this]() mutable {
-				self.increment();
-			};
-
-			lambda1();
-			lambda2();
-			lambda1();
-		}
-
-		// C++17
-		void Func_C17_Style() {
-			// const copy of *this
-			auto lambda1 = [*this](){ info(); };
-			// non-const copy of *this
-			auto lambda2 = [*this]() mutable { increment(); };
-			lambda1();
-			lambda2();
-			lambda1();
-		}
-
-
-		void Func_Tests() {
-			info();
-			increment();
-			info();
-		}
-	};
-
-	void Pass_THIS_to_Lambda() {
-		SomeClass T;
-
-		T.Func_C14_Style();
-		// T.Func_C17_Style();
-		// T.Func_Tests();
-	}
-
-	//-------------------------------------------------------------------------------//
-
-	void FindIF_Lambda_Test()
-	{
-		std::vector<int> v = { 1, 2 ,3, 4 ,5 };
-
-		std::cout << "list items:" << std::endl;
-		auto print = [](int val) { std::cout << val << std::endl; };
-		std::for_each(std::begin(v), std::end(v), print);
-
-		auto is_odd = [](int n) {return n % 2 == 1; };
-		std::cout << "\nOdd items:" << std::endl;
-
-		auto oddIter = v.begin();
-		while (v.end() != (oddIter = std::find_if(oddIter, std::end(v), is_odd))) {
-			std::cout << *oddIter << std::endl;
-			oddIter++;
-		}
-	}
-
-	void Test1()
-	{
-		std::vector<int> vect = { 1, 2, 3, 4, 5 };
-		auto print = [](int val) { std::cout << val << std::endl; };
-		std::for_each(vect.begin(), vect.end(), print);
-	}
-
-
-
-
-	//////////////////////
-
-	struct {
-		template<typename T, typename U>
-		auto operator()(T x, U y) const { return x + y; }
-	} sum{};
-
-	void Lambda_Struct() {
-		auto result = sum(1, 2);
-		std::cout << result << std::endl;
-	}
-
-	/////////////////////////////////////////////////
-
-	// cant use 'const std::string& text' herer
-	const auto getFunction(const std::string text) {
-		return [text](const std::string& value) { return text + ": " + value;  };
-	}
+    class SomeClass {
+    private:
+        int m_x = 0;
+
+    public:
+        void info() const {
+            std::cout << "Info. X = " << m_x << std::endl;
+        }
+
+        void increment() {
+            std::cout << "increment = " << m_x << std::endl;
+            this->m_x++;
+            std::cout << "increment = " << m_x << std::endl;
+        }
+
+        // C++14
+        void Func_C14_Style() {
+            // const copy of *this
+            auto lambda1 = [self = *this]() mutable {
+                self.info();
+            };
+            // non-copy of copy of *this
+            auto lambda2 = [self = *this]() mutable {
+                self.increment();
+            };
+
+            lambda1();
+            lambda2();
+            lambda1();
+        }
+
+        // C++17
+        void Func_C17_Style() {
+            // const copy of *this
+            auto lambda1 = [*this]() { info(); };
+            // non-const copy of *this
+            auto lambda2 = [*this]() mutable { increment(); };
+            lambda1();
+            lambda2();
+            lambda1();
+        }
+
+
+        void Func_Tests() {
+            info();
+            increment();
+            info();
+        }
+    };
+
+    void Pass_THIS_to_Lambda() {
+        SomeClass T;
+
+        T.Func_C14_Style();
+        // T.Func_C17_Style();
+        // T.Func_Tests();
+    }
+
+    //-------------------------------------------------------------------------------//
+
+    void FindIF_Lambda_Test() {
+        std::vector<int> v = {1, 2, 3, 4, 5};
+
+        std::cout << "list items:" << std::endl;
+        auto print = [](int val) { std::cout << val << std::endl; };
+        std::for_each(std::begin(v), std::end(v), print);
+
+        auto is_odd = [](int n) { return n % 2 == 1; };
+        std::cout << "\nOdd items:" << std::endl;
+
+        auto oddIter = v.begin();
+        while (v.end() != (oddIter = std::find_if(oddIter, std::end(v), is_odd))) {
+            std::cout << *oddIter << std::endl;
+            oddIter++;
+        }
+    }
+
+    void Test1() {
+        std::vector<int> vect = {1, 2, 3, 4, 5};
+        auto print = [](int val) { std::cout << val << std::endl; };
+        std::for_each(vect.begin(), vect.end(), print);
+    }
+
+
+
+
+    //////////////////////
+
+    struct {
+        template<typename T, typename U>
+        auto operator()(T x, U y) const { return x + y; }
+    } sum{};
+
+    void Lambda_Struct() {
+        auto result = sum(1, 2);
+        std::cout << result << std::endl;
+    }
+
+    /////////////////////////////////////////////////
+
+    // cant use 'const std::string& text' herer
+    const auto getFunction(const std::string text) {
+        return [text](const std::string &value) { return text + ": " + value; };
+    }
 
-	void Function_ReturnLambda() {
-		auto handler = getFunction("Some text");
-		std::cout << handler("Value") << std::endl;
-	}
-
-	//----------------------------------------------------------------------------------------//
+    void Function_ReturnLambda() {
+        auto handler = getFunction("Some text");
+        std::cout << handler("Value") << std::endl;
+    }
+
+    //----------------------------------------------------------------------------------------//
+
+    template<typename ...Args>
+    void print(Args &&... args) {
+        (std::cout << ... << std::forward<Args>(args)) << std::endl;
+    }
 
-	template<typename ...Args>
-	void print(Args&&... args) {
-		(std::cout << ... << std::forward<Args>(args)) << std::endl;
-	}
+    template<typename ...Args>
+    auto Sum(Args ...args) {
+        return (args + ...);
+    }
+
+    template<typename ...Args>
+    auto Sum_RLal(Args &&... args) {
+        return (std::forward<Args>(args) + ...);
+    }
+
+    void Variadic_Lambdas() {
 
-	template<typename ...Args>
-	auto Sum(Args ...args) {
-		return (args + ...);
-	}
+        auto foo = [](auto... param) {
+            return Sum(param...);
+        };
 
-	template<typename ...Args>
-	auto Sum_RLal(Args&&... args) {
-		return (std::forward<Args>(args) + ...);
-	}
+        auto foo_foo = [](auto &&... param) {
+            return Sum_RLal(std::forward<decltype(param)>(param)...);
+        };
 
-	void Variadic_Lambdas() {
+        auto result1 = foo(1, 2, 3, 4, 5);
+        auto result2 = foo_foo(1, 2, 3, 4, 5);
 
-		auto foo = [](auto... param) {
-			return Sum(param...);
-		};
+        std::cout << result1 << std::endl;
+        std::cout << result2 << std::endl;
+    }
 
-		auto foo_foo = [](auto&&... param) {
-			return Sum_RLal(std::forward<decltype(param)>(param)...);
-		};
+    //---------------------------------------------------------------------------------------//
 
-		auto result1 = foo(1, 2, 3, 4, 5);
-		auto result2 = foo_foo(1, 2, 3, 4, 5);
+    void Pass_UniquePtr_2Lambda() {
+        std::cout << " ------------------Pass by REF test: ------------------" << std::endl;
+        {
+            auto integer = std::make_unique<Integer>(12);
+            auto printer = [&integer]() -> void { integer->printInfo(); };
 
-		std::cout << result1 << std::endl;
-		std::cout << result2 << std::endl;
-	}
+            printer();
+            integer->printInfo();
 
-	//---------------------------------------------------------------------------------------//
+            std::cout << "Done" << std::endl;
+        }
+        std::cout << "\n------------------ Pass by VALUE test: ------------------" << std::endl;
+        {
+            auto integer = std::make_unique<Integer>(12);
+            auto printer = [var = std::move(integer)] { var->printInfo(); };
 
-	void Pass_UniquePtr_2Lambda() {
-		std::cout << " ------------------Pass by REF test: ------------------" << std::endl;
-		{
-			auto integer = std::make_unique<Integer>(12);
-			auto printer = [&integer]()-> void { integer->printInfo(); };
+            printer();
+            // integer->printInfo(); // Crush HERE!
 
-			printer();
-			integer->printInfo();
+            std::cout << "Done" << std::endl;
+        }
+    }
 
-			std::cout << "Done" << std::endl;
-		}
-		std::cout << "\n------------------ Pass by VALUE test: ------------------" << std::endl;
-		{
-			auto integer = std::make_unique<Integer>(12);
-			auto printer = [var = std::move(integer)]{ var->printInfo(); };
+    //-------------------------------------------------------------------------------------------//
 
-			printer();
-			// integer->printInfo(); // Crush HERE!
+    void Statics_In_Lambda() {
+        {
+            auto counter = [] {
+                static int count = 0;
+                return ++count;
+            };
 
-			std::cout << "Done" << std::endl;
-		}
-	}
+            auto c1 = counter;
+            auto c2 = counter;
 
-	//-------------------------------------------------------------------------------------------//
+            std::cout << c1() << "  " << c1() << "  " << c1() << std::endl;
+            std::cout << c2() << "  " << c2() << "  " << c2() << std::endl;
+        }
 
-	void Statics_In_Lambda() {
-		{
-			auto counter = [] {
-				static int count = 0;
-				return ++count;
-			};
+        std::cout << " ================================== Test2 =============================\n";
 
-			auto c1 = counter;
-			auto c2 = counter;
+        {
+            auto counter = [](auto a) {
+                static int count = 0;
+                count += a;
+                return count;
+            };
 
-			std::cout << c1() << "  " << c1() << "  " << c1() << std::endl;
-			std::cout << c2() << "  " << c2() << "  " << c2() << std::endl;
-		}
+            auto c1 = counter;
+            auto c2 = counter;
 
-		std::cout << " ================================== Test2 =============================\n";
+            std::cout << c1(1) << "  " << c1(1) << "  " << c1(1) << std::endl;
+            std::cout << c2(1.0) << "  " << c2(1.0) << "  " << c2(1.0) << std::endl;
+        }
+    }
 
-		{
-			auto counter = [](auto a) {
-				static int count = 0;
-				count += a;
-				return count;
-			};
+    //-------------------------------------------------------------------------------------------//
 
-			auto c1 = counter;
-			auto c2 = counter;
+    void Statics_In_Lambda_2() {
+        auto lambda = [](auto x) {
+            static int y = 0;   // static local
+            return ++y + x;
+        };
 
-			std::cout << c1(1) << "  " << c1(1) << "  " << c1(1) << std::endl;
-			std::cout << c2(1.0) << "  " << c2(1.0) << "  " << c2(1.0) << std::endl;
-		}
-	}
+        std::cout << lambda(1) << " " << lambda(1.0) << " " << lambda(1) << std::endl;
+    }
 
-	//-------------------------------------------------------------------------------------------//
+    //----------------------------------------------------------------------------------------//
 
-	void Statics_In_Lambda_2() {
-		auto lambda = [](auto x) {
-			static int y = 0;   // static local
-			return ++y + x;
-		};
+    void Lambda_With_Params_Initialization() {
+        auto func = [ptr = std::make_unique<Integer>(0)]() -> void {
+            ptr->increment();
+            ptr->printInfo();
+        };
 
-		std::cout << lambda(1) << " " << lambda(1.0) << " " << lambda(1) << std::endl;
-	}
+        func();
+        func();
+        func();
+    }
 
-	//----------------------------------------------------------------------------------------//
+    //----------------------------------------------------------------------------------------//
 
-	void Lambda_With_Params_Initialization() {
-		auto func = [ptr = std::make_unique<Integer>(0)]()-> void {
-			ptr->increment();
-			ptr->printInfo();
-		};
+    void Determine_TypeOf_VectorParameter() {
+        auto func = [](const auto &vect) -> void {
+            std::cout << typeid(vect.back()).name() << std::endl;
 
-		func();
-		func();
-		func();
-	}
+            using T = decltype(vect.back());
+            T a{1};
 
-	//----------------------------------------------------------------------------------------//
+            std::cout << typeid(a).name() << std::endl;
+        };
 
-	void Determine_TypeOf_VectorParameter() {
-		auto func = [](const auto& vect)-> void {
-			std::cout << typeid(vect.back()).name() << std::endl;
 
-			using T = decltype(vect.back());
-			T a{ 1 };
+        auto func2 = [](const auto &vect) -> void {
+            using T = typename std::decay_t<decltype(vect)>::value_type;
 
-			std::cout << typeid(a).name() << std::endl;
-		};
+            T a{1};
 
+            std::cout << typeid(a).name() << std::endl;
+            std::cout << typeid(T).name() << std::endl;
+        };;
+        const std::vector<int> numbers;
 
-		auto func2 = [](const auto& vect)-> void {
-			using T = typename std::decay_t<decltype(vect)>::value_type;
+        func(numbers);
+        std::cout << "\n";
+        func2(numbers);
+    }
 
-			T a{ 1 };
 
-			std::cout << typeid(a).name() << std::endl;
-			std::cout << typeid(T).name() << std::endl;
-		};
-		;
-		const std::vector<int> numbers;
+    void Determine_TypeOf_VectorParameter_2_Constexpr() {
+        auto getType = [](const auto &vect) -> void {
+            using T = typename std::decay_t<decltype(vect)>::value_type;
 
-		func(numbers);
-		std::cout << "\n";
-		func2(numbers);
-	}
+            std::cout << typeid(vect).name() << std::endl;
 
+            T a{1};
+            std::cout << "Element type: " << typeid(T).name() << std::endl;
+        };
 
-	void Determine_TypeOf_VectorParameter_2_Constexpr() {
-		auto getType = [](const auto& vect)-> void {
-			using T = typename std::decay_t<decltype(vect)>::value_type;
 
-			std::cout << typeid(vect).name() << std::endl;
+        constexpr std::array<int, 5> numbers{1, 2, 3, 4, 5};
+        getType(numbers);
+    }
 
-			T a{ 1 };
-			std::cout << "Element type: " << typeid(T).name() << std::endl;
-		};
-		
+    //---------------------------------------------------------------------------------------//
 
-		constexpr std::array<int, 5> numbers {1,2,3,4,5};
-		getType(numbers);
-	}
+    int x = 123;
 
-	//---------------------------------------------------------------------------------------//
+    auto func1 = []() noexcept -> int { return x + 1; };
+    auto func2 = [x = x]() noexcept -> int { return x + 1; };
 
-	int x = 123;
+    void Handle_Global_Varibles() {
+        x = 10;
+        std::cout << "func1 = " << func1() << "   func2 = " << func2() << std::endl;
+    }
 
-	auto func1 = []() noexcept -> int { return x + 1; };
-	auto func2 = [x = x]() noexcept -> int { return x + 1; };
+    void Handle_Global_Varibles2() {
+        int x = 10;
+        std::cout << "func1 = " << func1() << "   func2 = " << func2() << std::endl;
+    }
 
-	void Handle_Global_Varibles() {
-		x = 10;
-		std::cout << "func1 = " << func1() << "   func2 = " << func2() << std::endl;
-	}
+    //------------------------------------------------------------------------------------------------------------------------//
 
-	void Handle_Global_Varibles2() {
-		int x = 10;
-		std::cout << "func1 = " << func1() << "   func2 = " << func2() << std::endl;
-	}
+    void Lambda_Collection() {
+        std::vector<std::function<std::string(const std::string &)>> handlers;
 
-	//------------------------------------------------------------------------------------------------------------------------//
+        handlers.emplace_back(getFunction("Handler 1"));
+        handlers.emplace_back(getFunction("Handler 2"));
+        handlers.emplace_back(getFunction("Handler 3"));
+        handlers.emplace_back(getFunction("Handler 4"));
+        handlers.emplace_back(getFunction("Handler 5"));
 
-	void Lambda_Collection() {
-		std::vector<std::function<std::string(const std::string&)>> handlers;
+        for (const auto &param: {"Value1", "Value2", "Value2"}) {
+            std::for_each(handlers.begin(), handlers.end(), [&param](const auto &func) {
+                std::cout << func(param) << std::endl;
+            });
+            std::cout << std::endl;
+        }
+    }
 
-		handlers.emplace_back(getFunction("Handler 1"));
-		handlers.emplace_back(getFunction("Handler 2"));
-		handlers.emplace_back(getFunction("Handler 3"));
-		handlers.emplace_back(getFunction("Handler 4"));
-		handlers.emplace_back(getFunction("Handler 5"));
 
-		for (const auto& param : { "Value1","Value2" ,"Value2" }) {
-			std::for_each(handlers.begin(), handlers.end(), [&param](const auto& func) {
-				std::cout << func(param) << std::endl;
-			});
-			std::cout << std::endl;
-		}
-	}
+    void Get_Lambda_Type() {
+        auto l = [](int value) -> int { return value * 10; };
+        using T = decltype(l);
 
+        T x10;
+        std::cout << x10(3) << std::endl;
+    }
 
-	void Get_Lambda_Type()
-	{
-		auto l = [](int value)-> int { return value * 10; };
-		using T = decltype(l);
+    //----------------------------------------------------------------------------------------------------------------------------//
 
-		T x10;
-		std::cout << x10(3) << std::endl;
-	}
+    constexpr int not_lambda_Fib(const int n) {
+        if (1 == n)
+            return 0;
+        else if (2 == n)
+            return 1;
+        else
+            return not_lambda_Fib(n - 1) + not_lambda_Fib(n - 2);
+    }
+}
 
-	//----------------------------------------------------------------------------------------------------------------------------//
-
-	constexpr int not_lambda_Fib(const int n)
-	{
-		if (1 == n)
-			return 0;
-		else if (2 == n)
-			return 1;
-		else
-			return not_lambda_Fib(n - 1) + not_lambda_Fib(n - 2);
-	}
-
-
-	void Recursive_Lambda() {
-
-		std::function<int(int const)> lambda_Fib = [&lambda_Fib](int const n) {
-			if (1 == n)
-				return 0;
-			else if (2 == n)
-				return 1;
-			else
-				return lambda_Fib(n - 1) + lambda_Fib(n - 2);
-		};
-
-		for (int i = 1; i < 20; i++) {
-			std::cout << i << " ==> " << not_lambda_Fib(i) << "  :  " << lambda_Fib(i) << std::endl;
-		}
-	}
-
-    //---------------------------------------------------------------------------------------------------//
+namespace Lambdas::RecursiveLambda
+{
 
     int fact_std_func(const int n)
 	{
@@ -584,7 +565,8 @@ namespace Lambdas {
         return fact(n);
     }
 
-    int fact_comb(int n) {
+    int fact_comb(int n)
+    {
         auto fact = [](auto n, auto self) -> int {
             if (n == 1) return 1;
             return n * self(n-1, self);
@@ -592,14 +574,62 @@ namespace Lambdas {
         return fact(n, fact);
     }
 
-    void Recursive_Lambda2()
+    void Recursive_Lambda_1()
+    {
+        std::function<int(int const)> lambda_Fib = [&lambda_Fib](int const n) {
+            if (1 == n)
+                return 0;
+            else if (2 == n)
+                return 1;
+            else
+                return lambda_Fib(n - 1) + lambda_Fib(n - 2);
+        };
+
+        for (int i = 1; i < 20; i++) {
+            std::cout << i << " ==> " << not_lambda_Fib(i) << "  :  " << lambda_Fib(i) << std::endl;
+        }
+    }
+
+    void Recursive_Lambda_2()
     {
         std::cout << fact_std_func(5) << std::endl;
         std::cout << fact_comb(5) << std::endl;
     }
 
-	//---------------------------------------------------------------------------------------------------//
 
+    template<class Function>
+    class combinator_result
+    {
+        Function func;
+
+    public:
+        template<class T>
+        explicit combinator_result(T &&fun): func(std::forward<T>(fun)) {
+        }
+
+        template<class ...Args>
+        decltype(auto) operator()(Args &&...args) const {
+            return func(std::ref(*this), std::forward<Args>(args)...);
+        }
+    };
+
+    template<class Function>
+    decltype(auto) combine(Function && func) {
+        return combinator_result<std::decay_t<Function>>(std::forward<Function>(func));
+    }
+
+
+    void Recursive_Lambda_Wrapper()
+    {
+        const combinator_result gcd = combine([](auto gcd, int a, int b) -> int {
+            return b == 0 ? a : gcd(b, a % b);
+        });
+        std::cout << gcd(20, 30) << std::endl;
+    }
+}
+
+namespace Lambdas
+{
 	void Lambda_Itialyzed_With_Another_Lambda() {
 		auto l = [
 			i = [] {
@@ -1209,14 +1239,15 @@ void Lambdas::TestAll()
 
 	// Lambdas::Get_Lambda_Return_Type();
 
-	// Recursive_Lambda();
-	// Recursive_Lambda2();
+	// RecursiveLambda::Recursive_Lambda();
+	// RecursiveLambda::Recursive_Lambda2();
+	RecursiveLambda::Recursive_Lambda_Wrapper();
 
 	// Lambdas::Get_Lambda_Type();
 
 
 	// Shared_Lambda_Wrapper::create_and_share_lambda();
-	Shared_Lambda_Wrapper::create_and_share_lambda_as_class_variable();
+	// Shared_Lambda_Wrapper::create_and_share_lambda_as_class_variable();
 
 
 	// Tests::_TEST_();

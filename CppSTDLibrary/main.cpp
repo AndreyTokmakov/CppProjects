@@ -161,7 +161,7 @@ int main([[maybe_unused]] int argc,
     // StructuredBinding::TestAll();
     // StrongTypes::TestAll();
     // Span::TestAll();
-    Stacktrace::TestAll();
+    // Stacktrace::TestAll();
     // SourceLocation::TestAll();
     // SharedPtr_Tests::TestAll();
     // Variant::TestAll();
@@ -169,7 +169,7 @@ int main([[maybe_unused]] int argc,
     // TypeTraits::TestAll();
     // Types::Tests();
     // Tuple::TestAll();
-    // TypeCast::TestAll();
+    TypeCast::TestAll();
     // Int::TestAll();
     // Templates::TestAll();
     // Utilities::TestAll();

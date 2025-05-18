@@ -402,6 +402,48 @@ namespace TypeCast::FromChars_Tests
     }
 };
 
+
+namespace TypeCast::ReturnTypeCast
+{
+    struct Value
+    {
+        std::string value{"123.456"};
+
+        operator short() {
+            std::cout << "Value::operator short()\n";
+            return 123;
+        }
+
+        operator unsigned int() {
+            std::cout << "Value::operator unsigned int()\n";
+            return 123;
+        }
+
+        explicit operator int() {
+            std::cout << "Value::operator int()\n";
+            return 123;
+        }
+
+        operator double() {
+            std::cout << "Value::operator double()\n";
+            return 123.456f;
+        }
+    };
+
+    void tests()
+    {
+        Value val;
+
+        short _ = val;
+        unsigned int _ = val;
+        int _ = val;
+        // float float_val = val;
+        double _ = val;
+    }
+}
+
+
+
 void TypeCast::TestAll()
 {
 	// DynamicCastTests_0();
@@ -409,6 +451,8 @@ void TypeCast::TestAll()
 	// DynamicCastTests2();
 	// DynamicCastTests3();
 	// DynamicCastTests4();
+
+    ReturnTypeCast::tests();
 
 	// PtrCasts();
 
@@ -424,5 +468,5 @@ void TypeCast::TestAll()
 	// As_Const();
 
     // FromChars_Tests::ConstExprTests();
-    FromChars_Tests::InvalidNumericString();
+    // FromChars_Tests::InvalidNumericString();
 }

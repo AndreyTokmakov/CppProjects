@@ -164,37 +164,7 @@ struct Path: std::vector<T> {
 
 
 
-namespace RecursiveLambda
-{
 
-    template<class Function>
-    class y_combinator_result {
-        Function func;
-
-    public:
-        template<class T>
-        explicit y_combinator_result(T &&fun): func(std::forward<T>(fun)) {
-        }
-
-        template<class ...Args>
-        decltype(auto) operator()(Args &&...args) {
-            return func(std::ref(*this), std::forward<Args>(args)...);
-        }
-    };
-
-    template<class Function>
-    decltype(auto) y_combinator(Function && func) {
-        return y_combinator_result<std::decay_t<Function>>(std::forward<Function>(func));
-    }
-
-
-    void DemoTest() {
-        auto gcd = y_combinator([](auto gcd, int a, int b) -> int {
-            return b == 0 ? a : gcd(b, a % b);
-        });
-        std::cout << gcd(20, 30) << std::endl;
-    }
-}
 
 #if 0
 
@@ -213,138 +183,6 @@ public:
 };
 
 #endif
-
-
-namespace InvokeTest
-{
-    template<typename F>
-    concept FunctionPointer = std::is_member_function_pointer_v<F>;
-
-    template<typename Derived>
-    struct BuilderBase
-    {
-        /*
-        template<typename... T>
-        auto &When(FunctionPointer auto func, T &&... params) {
-            auto &self = static_cast<This&>(*this);
-            std::invoke(func, self, std::forward<T>(params)...);
-            return actualThis;
-        }
-
-        auto &When(auto action) {
-            auto &self = static_cast<This &>(*this);
-            action(self);
-            return actualThis;
-        }
-        */
-
-        Derived& getSelf() noexcept
-        {
-            auto &self = static_cast<Derived&>(*this);
-            return self;
-        }
-
-    };
-
-
-    struct DataBuilder: BuilderBase<DataBuilder>
-    {
-        void getInfo(int) {
-            std::cout << "Data::getInfo()" << std::endl;
-        }
-
-        void invokeInfo() {
-
-            std::invoke(&DataBuilder::getInfo, this, 2);
-        }
-    };
-
-
-    /*
-    template <typename Derived>
-    struct Base {
-        void info() {
-            auto &self = static_cast<Derived&>(*this);
-            self.info_impl();
-        }
-
-    protected:
-        virtual void info_impl() = 0;
-    };
-
-    struct Triangle : public Base<Triangle> {
-        void info_impl() { std::cout << "Triangle::info_impl()\n"; }
-    };
-    */
-
-    void Test()
-    {
-        DataBuilder data;
-
-        [[maybe_unused]]
-        auto obj = data.getSelf();
-
-        // data.invokeInfo();
-        // BuilderBase<Data>{}.When(&Data::getInfo, 6);
-    }
-}
-
-
-namespace ReturnTypeCast
-{
-    struct Value
-    {
-        std::string value{"123.456"};
-
-        operator short() {
-            std::cout << "Value::operator short()\n";
-            return 123;
-        }
-
-        operator unsigned int() {
-            std::cout << "Value::operator unsigned int()\n";
-            return 123;
-        }
-
-        explicit operator int() {
-            std::cout << "Value::operator int()\n";
-            return 123;
-        }
-
-        operator double() {
-            std::cout << "Value::operator double()\n";
-            return 123.456f;
-        }
-    };
-
-
-    void tests()
-    {
-        Value val;
-
-
-        {
-            [[maybe_unused]] short v = val;
-            // std::cout << v << std::endl;
-        }
-        {
-            [[maybe_unused]] unsigned int v = val;
-            // std::cout << v << std::endl;
-        }
-        {
-            [[maybe_unused]] int v = val;
-            // std::cout << v << std::endl;
-        }
-        {
-            // [[maybe_unused]] float v = val;
-            // std::cout << v << std::endl;
-        }
-        {
-            [[maybe_unused]] double v = val;
-            // std::cout << v << std::endl;
-        }
-    }
-}
 
 
 namespace CallFunctionByName
@@ -1749,31 +1587,6 @@ namespace TTT
 }
 
 
-namespace Demo
-{
-    struct Product
-    {
-        Product()  = default;
-        Product(Product&& other) noexcept { /* move resources */ }
-        Product& operator=(Product&& other) noexcept { /* move resources */ return *this; }
-    };
-
-    struct Factory
-    {
-        static Product createProduct()
-        {
-            Product product;
-            // Configure product
-            return std::move(product);
-        }
-    };
-
-    void demo()
-    {
-        Product product = Factory::createProduct();
-    }
-}
-
 
 int main([[maybe_unused]] const int argc,
          [[maybe_unused]] char** argv)
@@ -1813,7 +1626,6 @@ int main([[maybe_unused]] const int argc,
     // LockFreeQueueTest::Test();
     // CompileTime_Programming::Factorial();
     // OperatorCall_ExplicitTypeSpecialization::Test();
-    // ReturnTypeCast::tests();
     // CallFunctionByName::Test();
     // ReturnClass_MemberRef_CopyCTor::tests();
     // BinManipulation::TestAll();
@@ -1847,7 +1659,6 @@ int main([[maybe_unused]] const int argc,
     // Convertaion_UTF8_UTF32::TestAll();    // Encoding
     // Unicode::TestAll();                   // Encoding
     // StringUtils::TestAll();               // Encoding
-    // InvokeTest::Test();
     // OrderBook::TestAll();
     // OrderBook2::TestAll();
     // MatchingOrderBook::TestAll();

@@ -50,6 +50,7 @@ add_executable(${PROJECT_NAME}
 		MinStack/MinStack.cpp
 		MinHeap/MinHeap.cpp
 		Heap_WithComparator/HeapWithComparator.cpp
+		Invoker_MethodClass/Invoker.cpp
 		Compressed_Pair/CompressedPair.cpp
 		Wrapper/Wrapper.h
 		ThreadPool/ThreadPool.cpp

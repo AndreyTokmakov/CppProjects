@@ -30,6 +30,7 @@ Description : DataStructures
 #include "RingBuffer/RingBufferExAtomic.h"
 #include "RingBuffer/RingBuffer_SPSC.h"
 #include "MinHeap/MinHeap.h"
+#include "Invoker_MethodClass/Invoker.h"
 #include "MinStack/MinStack.h"
 #include "MinMaxStack/MinMaxStack.h"
 #include "Memory/AlignedStackAllocator.h"
@@ -86,6 +87,7 @@ int main([[maybe_unused]] int argc,
     // MinStack::TestAll();
     // MinMaxStack::TestAll();
     // MinHeap::TestAll();
+    Invoker::TestAll();
     // HeapWithComparator::TestAll();
     // CompressedPair::TestAll();
 
@@ -103,7 +105,7 @@ int main([[maybe_unused]] int argc,
     // Memory::Shared_Ptr_Tests();
 
     // ThreadPool::TestAll();
-    ThreadPoolEx::TestAll();
+    // ThreadPoolEx::TestAll();
     // ThreadPoolOne::TEST_ALL();
     // ThreadPoolTwo::TEST_ALL();
     // ThreadPoolLimited::TestAll();
