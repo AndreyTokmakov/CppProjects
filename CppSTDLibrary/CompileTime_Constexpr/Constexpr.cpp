@@ -265,9 +265,28 @@ namespace Constexpr::Exceptions
     }
 #endif
 
+	constexpr int might_throw(bool should_throw) {
+    	if (should_throw) {
+    		throw std::runtime_error("Oops");
+    	}
+    	return 42;
+    }
 
     void Test()
     {
+    	/// Fail to compiler of CONSTEXPR
+    	// constexpr int x = might_throw(true);
+
+    	// but OK in runtime
+    	try {
+    		std::cout << might_throw(true);
+    	} catch (const std::exception& e) {
+    		std::cout << e.what(); // "Oops"
+    	}
+
+    	constexpr int y = might_throw(false); // Ок, y == 42
+
+
         // Compilation error
         // constexpr auto a = checked_divide(5, 0);
 
@@ -305,10 +324,10 @@ namespace Constexpr::Strings
 void Constexpr::TestAll()
 {
     // ConstexprArray::Test();
-	ConstexprMap::Test();
+	// ConstexprMap::Test();
 	// ConstexprSwitch::Test();
 	// ConstexprObjects::Test();
 
-    // Exceptions::Test();
+    Exceptions::Test();
     // Strings::Constexpr_Strings();
 }

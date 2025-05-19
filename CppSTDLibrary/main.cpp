@@ -107,14 +107,14 @@ int main([[maybe_unused]] int argc,
     // BitSet::TestAll();
     // BitwiseOperation::TestAll();
     // Byte::TestAll();
-    Chrono::TestAll();
+    // Chrono::TestAll();
     // ContextControl::TestAll();
     // Comparators::TestAll();
     // Concepts::TestAll();
     // ConsoleInOut::TestAll();
     // ConstConstexprMutable::TestAll();
     // CompileTimeProgramming::TestAll();
-    // Constexpr::TestAll();
+    Constexpr::TestAll();
     // CopyElision::TestAll();
     // DeducingThis::TestAll();
     // RVO_FailureCases::TestAll();
