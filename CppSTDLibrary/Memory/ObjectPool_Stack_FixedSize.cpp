@@ -36,11 +36,9 @@ namespace ObjectPool_Stack_FixedSize
         using object_type = T;
         using pointer = object_type*;
         using size_type = size_t;
-        using ObjectPtr = std::unique_ptr<object_type, struct Deleter>;
 
         static_assert(!std::is_same_v<object_type, void>,
                       "Type of the Objects in the pool can not be void");
-
 
         struct Deleter final
         {
@@ -55,52 +53,29 @@ namespace ObjectPool_Stack_FixedSize
 
         Pool()
         {
+            deleter.pool = this;
             available.resize(Capacity);
             std::iota(available.begin(), available.end(), ptrPool);
         }
 
         template<typename ... Args>
-        pointer acquireObject(Args ... params)
+        std::unique_ptr<object_type, Deleter> acquireObject(Args ... params)
         {
             if (available.empty()) {
-                // TODO: Fallback
+                // TODO: Fallback to system allocator
                 return nullptr;
             }
-        }
 
-        /*
-        template<typename... Args>
-		std::unique_ptr<object_type, Deleter> acquireObject(Args... args)
-		{
-			if (available.empty()) {
-				addChunk();
-			}
-
-            pointer obj = new (available.back()) object_type { std::forward<Args>(args)... };
-			available.pop_back();
-			++size;
+            pointer obj = new (available.back()) object_type { std::forward<Args>(params)... };
+            available.pop_back();
 
             return std::unique_ptr<object_type, Deleter> { obj, deleter };
         }
-		*/
-
 
         std::array<object_type, Capacity> buffer {};
         pointer ptrPool { reinterpret_cast<pointer>(buffer.data()) };
         std::vector<pointer> available;
         Deleter deleter;
-
-
-        void info()
-        {
-            for (auto& v: buffer)
-                std::cout << &v << ' ';
-            std::cout << std::endl;
-
-            for (auto v: available)
-                std::cout << v << ' ';
-            std::cout << std::endl;
-        }
     };
 }
 
@@ -109,5 +84,15 @@ namespace ObjectPool_Stack_FixedSize
 void ObjectPool_Stack_FixedSize::TestAll()
 {
     Pool<int, 10> pool;
-    pool.info();
+
+    std::cout << pool.available.size() << std::endl;
+
+    {
+        auto obj = pool.acquireObject(12345);
+        std::cout << *obj << std::endl;
+
+        std::cout << pool.available.size() << std::endl;
+    }
+
+    std::cout << pool.available.size() << std::endl;
 }
