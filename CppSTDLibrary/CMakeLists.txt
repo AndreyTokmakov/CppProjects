@@ -119,6 +119,8 @@ add_executable(${PROJECT_NAME}
 		Helpers/Integer.h
 		CompileTime_Constexpr/Constexpr.cpp
 		CompileTime_Constexpr/Constexpr.h
+		Memory/ObjectPool_Stack_FixedSize.cpp
+		Memory/ObjectPool_Stack_FixedSize.h
 )
 
 # Link libraries to the project/executable

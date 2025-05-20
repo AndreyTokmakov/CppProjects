@@ -13,6 +13,7 @@
 #include "CustomStackAllocator.h"
 #include "MemoryUsageMonitor.h"
 #include "MemoryPool.h"
+#include "ObjectPool_Stack_FixedSize.h"
 
 #include "Memory.h"
 #include <memory>
@@ -1747,6 +1748,8 @@ void Memory::TestAll()
     // CustomStackAllocator::TestAll();
     // MemoryUsageMonitor::TestAll();
     // MemoryPool::TestAll();
+
+	ObjectPool_Stack_FixedSize::TestAll();
 
 
 	// Delete_Array();
