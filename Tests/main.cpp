@@ -1623,7 +1623,7 @@ int main([[maybe_unused]] const int argc,
     // FunctionCall_LookUp::TestAll();
     // LowLatencyLogger::TestAll();
     // Multithreading::TestAll();
-    // Memory::TestAll();
+    Memory::TestAll();
     // MaxStack::TestAll();
     // UniquePtr_Size::SizeTest();
     // ObjectOrientedExperiments::OOP_Experiments::TestAll();

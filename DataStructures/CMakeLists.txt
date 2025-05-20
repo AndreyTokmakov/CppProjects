@@ -15,7 +15,8 @@ add_executable(${PROJECT_NAME}
 		CircularBuffers/CircularBuffers.cpp
 		Logger/Logger.cpp
 		LRUCache/LRUCache.cpp
-		ObjectPools/ObjectPools.cpp
+        ObjectPool/ObjectPool.cpp
+		ObjectPool_Growing/ObjectPool_Growing.cpp
 		LockFreeDataStructures/LockFreeQueue.cpp
 		Finalizers/Finalizers.cpp
 		Optional/Optional.cpp

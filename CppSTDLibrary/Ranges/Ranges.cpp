@@ -273,20 +273,6 @@ namespace Ranges
             std::print("{} ", elem);
         */
     }
-
-    void Split()
-    {
-        constexpr std::string_view words{"Hello^_^C++^_^20^_^!"sv};
-        constexpr std::string_view delim{"^_^"sv};
-
-        for (const auto word : std::views::split(words, delim))
-        {
-            // with string_view's C++23 range constructor:
-            std::cout << std::string_view(word) << std::endl;
-        }
-        std::cout << '\n';
-    }
-
 }
 
 namespace Ranges::Filters {
@@ -350,6 +336,108 @@ namespace Ranges::Filters {
     }
 }
 
+
+namespace Ranges::Split
+{
+    void Split_String_Simple()
+    {
+        {
+            constexpr std::string_view words {"Hello^_^C++^_^20^_^!"sv};
+            for (const std::ranges::subrange<const char*> part : std::views::split(words, "^_^"sv)) {
+                std::cout << std::string_view(part) << ' ';
+            }
+            std::cout << '\n';
+        }
+
+        {
+            constexpr  std::string_view  text = "C++breakisbreakpowerfulbreakandbreakelegant"sv;
+
+            for (const std::ranges::subrange<const char*> part : std::views::split(text, "break"sv))
+                std::print("'{} ' ", std::string_view(part));
+        }
+    }
+
+    void Split_Non_String()
+    {
+        using Point = std::pair<int, int>;
+        std::vector<Point> path = {
+            {0, 0}, {1, 1}, {-1, -1},
+            {2, 2}, {3, 3}, {-1, -1},
+            {4, 4}, {5, 5}
+        };
+
+        for (auto segment : std::views::split(path, Point{-1, -1}))
+            std::print("Segment: {}\n", segment);
+
+        // Segment: [(0, 0), (1, 1)]
+        // Segment: [(2, 2), (3, 3)]
+        // Segment: [(4, 4), (5, 5)]
+    }
+
+    void Chunk_Fixed_Size_Batches()
+    {
+        const std::vector<int> data {1, 2, 3, 4, 5, 6, 7, 8};
+        for (auto chunk : data | std::views::chunk(3))
+            std::print("{}\n", chunk);
+
+        // views::chunk splits the sequence into groups of three elements.
+        // If the number of elements isn’t divisible by 3, the last chunk will contain fewer elements.
+        // [1, 2, 3]
+        // [4, 5, 6]
+        // [7, 8]
+    }
+
+    void Chunk_Processing_Network_Packets()
+    {
+        std::istringstream stream {"AB CD EF 12 34 56 78 95 FF"};
+
+        auto bytes = std::ranges::istream_view<std::string>(stream);
+        for (auto packet : bytes | std::views::chunk(4))
+            std::print("Packet: {}\n", packet);
+
+        // This example simulates processing a byte stream in fixed 2-byte packets.
+        // Packet: ["AB", "CD", "EF", "12"]
+        // Packet: ["34", "56", "78", "95"]
+        // Packet: ["FF"]
+    }
+
+    void Chunk_By_Dynamic_Grouping()
+    {
+        const std::vector<int> values {1, 3, 5, 2, 4, 6, 7, 9, 8};
+
+        for (auto group : values | std::views::chunk_by([](const int a, const int b) {
+            return (a % 2) == (b % 2); // Same parity
+        })) {
+            std::print("size {}, {}\n", group.size(), group);
+        }
+
+        // size 3, [1, 3, 5]
+        // size 3, [2, 4, 6]
+        // size 2, [7, 9]
+        // size 1, [8]
+    }
+
+    void Chunk_By_Extracting_Sentences_from_Text()
+    {
+        constexpr std::string_view text = "C++ is powerful. Ranges are elegant. This is fun!"sv;
+
+        for (auto sentence : text | std::views::chunk_by([](char a, char b) {
+             // Group until a dot is found; start a new group after '.'
+             return a != '.' && b != '.';
+         })) {
+            // Remove leading spaces if any, and skip dots-only groups
+            auto view = std::string_view(&*sentence.begin(), std::ranges::distance(sentence));
+            view.remove_prefix(std::min(view.find_first_not_of(' '), view.size()));
+
+            if (!view.empty() && view != ".")
+                std::print("Sentence: [{}]\n", view);
+         }
+
+        // Sentence: [C++ is powerful]
+        // Sentence: [Ranges are elegant]
+        // Sentence: [This is fun!]
+    }
+}
 
 namespace Ranges::Take
 {
@@ -864,19 +952,22 @@ void Ranges::TestAll()
     // End();
     // Data();
 
-    // Split();
-
     // Filter_View();
     // Filter_View_Vector();
 
     // View_DropWhile();
     // Join();
     // Join_View();
-    Join_With();
+    // Join_With();
 
     // Concat_1();
 
-
+    // Split::Split_String_Simple();
+    // Split::Split_Non_String();
+    // Split::Chunk_Fixed_Size_Batches();
+    // Split::Chunk_Processing_Network_Packets();
+    // Split::Chunk_By_Dynamic_Grouping();
+    Split::Chunk_By_Extracting_Sentences_from_Text();
 
     // Views::Zip();
     // Views::Repeat();

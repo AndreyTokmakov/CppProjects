@@ -114,7 +114,7 @@ int main([[maybe_unused]] int argc,
     // ConsoleInOut::TestAll();
     // ConstConstexprMutable::TestAll();
     // CompileTimeProgramming::TestAll();
-    Constexpr::TestAll();
+    // Constexpr::TestAll();
     // CopyElision::TestAll();
     // DeducingThis::TestAll();
     // RVO_FailureCases::TestAll();
@@ -151,7 +151,7 @@ int main([[maybe_unused]] int argc,
     // PolymorphicMemoryResources::TestAll();
     // Print::TestAll();
     // Random::TestAll();
-    // Ranges::TestAll();
+    Ranges::TestAll();
     // ReferenceWrapper::TestAll();
     // StarshipOperator::TestAll();
     // Streams::TestAll();

@@ -830,10 +830,40 @@ namespace VectorOfUniquePointers_KeepReference_StoredInVector
 }
 
 
+namespace Memory::Unique_Ptr_Deleter_Experiments
+{
+    using Integer = Helpers::Integer;
+
+    struct Pool
+    {
+
+    };
+
+    struct Deleter
+    {
+        static inline std::array<char, 32> buffer {0};
+
+        void operator()(const Integer* ptr) const
+        {
+            std::cout << "Deleter(" << ptr->getValue() << ") deleted\n";
+            delete ptr;
+        }
+    };
+
+
+    void Deleter_With_Members()
+    {
+        // std::unique_ptr<Integer> intPtr { std::make_unique<Integer>(101) };
+        std::unique_ptr<Integer, Deleter> intPtr { std::unique_ptr<Integer, Deleter> { new Integer(101), Deleter{} } };
+
+        static_assert(8 == sizeof(intPtr));
+    }
+}
+
 
 void Memory::TestAll()
 {
-    ObjectMemoryPool::TestAll();
+    // ObjectMemoryPool::TestAll();
 
     // CleanUP_Exception_Test();
     // SharedPtrLeak();
@@ -852,6 +882,9 @@ void Memory::TestAll()
 
     // AllocateShared_And_Trace();
     // AllocateMakeShared_And_Trace();
+
+
+    Unique_Ptr_Deleter_Experiments::Deleter_With_Members();
 
     // PlacementNew::CreateObjects();
 
