@@ -55,7 +55,14 @@ namespace ObjectPool_Stack_FixedSize
         {
             deleter.pool = this;
             available.resize(Capacity);
+            pointer ptrPool { reinterpret_cast<pointer>(buffer.data()) };
             std::iota(available.begin(), available.end(), ptrPool);
+        }
+
+        ~Pool()
+        {
+            for (pointer object : available)
+                std::destroy_at(object);
         }
 
         template<typename ... Args>
@@ -73,7 +80,6 @@ namespace ObjectPool_Stack_FixedSize
         }
 
         std::array<object_type, Capacity> buffer {};
-        pointer ptrPool { reinterpret_cast<pointer>(buffer.data()) };
         std::vector<pointer> available;
         Deleter deleter;
     };
@@ -85,7 +91,6 @@ void ObjectPool_Stack_FixedSize::TestAll()
 {
     Pool<int, 10> pool;
 
-    std::cout << pool.available.size() << std::endl;
 
     {
         auto obj = pool.acquireObject(12345);
@@ -94,5 +99,4 @@ void ObjectPool_Stack_FixedSize::TestAll()
         std::cout << pool.available.size() << std::endl;
     }
 
-    std::cout << pool.available.size() << std::endl;
 }
