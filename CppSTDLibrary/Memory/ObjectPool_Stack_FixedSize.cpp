@@ -66,7 +66,7 @@ namespace ObjectPool_Stack_FixedSize
         }
 
         template<typename ... Args>
-        std::unique_ptr<object_type, Deleter> acquireObject(Args ... params)
+        std::unique_ptr<object_type, Deleter> acquireObject(Args&& ... params)
         {
             if (available.empty()) {
                 // TODO: Fallback to system allocator
