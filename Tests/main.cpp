@@ -1567,6 +1567,15 @@ namespace TTT
 }
 
 
+int64_t int32_to_64_garbage(int32_t i32)
+{
+    int64_t i64;
+    __asm__("" :        // do nothing
+            "=r"(i64) : // produces result in register
+            "0"(i32));  // from this input
+    return i64;
+}
+
 
 int main([[maybe_unused]] const int argc,
          [[maybe_unused]] char** argv)

@@ -67,6 +67,7 @@ add_executable(${PROJECT_NAME}
 		Bridge/DrawingBridgeTwo.cpp
 		Decorator/ShapeDecorator.cpp
 		LazyInitialization/LazyInitialization.cpp
+		Lazy_Computation/LazyComputation.cpp
 		ChainOfResponsibility/Example2.cpp
 		Command/Command_MethodPtr.cpp
 		Iterator/RangeIterator.cpp
