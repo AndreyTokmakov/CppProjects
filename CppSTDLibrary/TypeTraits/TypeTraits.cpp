@@ -1,11 +1,12 @@
-//============================================================================
-// Name        : TypeTraits.cpp
-// Created on  : 01.06.2020
-// Author      : Tokmakov Andrey
-// Version     : 1.0
-// Copyright   : Your copyright notice
-// Description : Test support classes and templates
-//============================================================================
+/**============================================================================
+Name        : TypeTraits.cpp
+Created on  : 01.06.2020
+Author      : Andrei Tokmakov
+Version     : 1.0
+Copyright   : Your copyright notice
+Description : ObjectPool Stack FixedSize
+============================================================================**/
+
 
 #include <iostream>
 #include <string>
@@ -15,13 +16,11 @@
 #include <utility>
 #include <cstdint>
 #include <typeindex>
-#include "../Helpers//TestSupport.h"
+#include "../Helpers/TestSupport.h"
 #include "../TypeTraits/TypeTraits.h"
 
-using String = std::string;
-using CString = const String&;
-
-namespace TypeTraits::IsClass {
+namespace TypeTraits::IsClass
+{
 	struct A {
 	};
 
@@ -367,9 +366,11 @@ namespace TypeTraits::Decltype_and_Declval
 		std::cout << "'i' variable type is: "<<  typeid(i).name() << std::endl;
 	}
 
-	void Test2() {
-
+	void Test2()
+	{
 		int some_int;
+
+		[[maybe_unused]]
 		decltype(some_int) other_integer_variable = 5;
 	}
 
@@ -682,10 +683,11 @@ namespace TypeTraits::TypeID
 
     struct A
     {
-        virtual void fun() {}
+	    virtual ~A() = default;
+	    virtual void fun() {}
     };
 
-    struct B : A {};
+    struct B final : A {};
 
     std::unordered_map<std::type_index, std::string> names;
 

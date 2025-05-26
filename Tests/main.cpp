@@ -42,6 +42,9 @@ Description : Tests C++ project
 #include <experimental/socket>
 #include <experimental/scope>
 
+//#include <experimental/contracts>
+
+
 #include "BitFlags/BitFlags.h"
 #include "BinManipulation/BinManipulation.h"
 #include "Geometry/PointsAndLines.h"
@@ -1567,11 +1570,38 @@ namespace TTT
 }
 
 
+namespace ExcDtor
+{
+    struct BadObject
+    {
+        ~BadObject() noexcept(false)
+        {
+            throw std::runtime_error("BadObject");
+        }
+    };
+
+    void demo()
+    {
+        try
+        {
+            BadObject bad;
+        }
+        catch (const std::exception& e)
+        {
+            std::cout << e.what() << std::endl;
+        }
+    }
+}
+
+
 
 int main([[maybe_unused]] const int argc,
          [[maybe_unused]] char** argv)
 {
     const std::vector<std::string_view> args(argv + 1, argv + argc);
+
+
+    ExcDtor::demo();
 
     /** * * * * *  Move to lib * * * * * **/
     // Cpp_NEW_Features::TestAll();
