@@ -122,7 +122,7 @@ int main([[maybe_unused]] int argc,
     // DateAndTime::TestAll();
     // EnumTests::TestAll();
     // Errors::TestAll();
-    // Exceptions::TestAll();
+    Exceptions::TestAll();
     // Expected::TestAll();
     // StrongTypes::TestAll();
     // InitializerList::TestAll();
@@ -141,7 +141,7 @@ int main([[maybe_unused]] int argc,
     // MoveSemantics_RuleOfFive::TestAll();
     // Numbers::TestAll();
     // Math::TestAll();
-    Memory::TestAll();
+    // Memory::TestAll();
     // Metaprogramming::TestAll();
     // InlineNamespaces::TestAll();
     // NumericLimits::TestAll();

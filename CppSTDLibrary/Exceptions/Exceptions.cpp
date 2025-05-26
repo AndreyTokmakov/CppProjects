@@ -1,11 +1,11 @@
-//============================================================================
-// Name        : Exceptions.h
-// Created on  : 07.06.2020
-// Author      : Tokmakov Andrey
-// Version     : 1.0
-// Copyright   : Your copyright notice
-// Description : Exceptions src
-//============================================================================
+/**============================================================================
+Name        : Exceptions.cpp
+Created on  : 07.06.2020
+Author      : Andrei Tokmakov
+Version     : 1.0
+Copyright   : Your copyright notice
+Description : Exceptions
+============================================================================**/
 
 #include "Exceptions.h"
 #include "../Helpers/Wrapper.h"

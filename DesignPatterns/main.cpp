@@ -50,6 +50,7 @@ Description : Software design patterns C++ test project
 #include "VirtualConstructor/VirtualConstructor.h"
 #include "TemplateMethod/TemplateMethod.h"
 #include "LazyInitialization/LazyInitialization.h"
+#include "Lazy_Computation/LazyComputation.h"
 #include "MVC/ModelViewController.h"
 #include "DependencyInjection/DependencyInjection.h"
 #include "TypeID/TypeID.h"
@@ -111,6 +112,8 @@ int main([[maybe_unused]]  int argc,
     // TagDispatching::Test();
     // VirtualConstructor::Test();
     // TypeID::TestAll();
+
+    LazyComputation::TestAll();
 
 
     // AccessToken::TestAll();

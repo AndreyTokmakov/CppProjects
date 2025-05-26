@@ -944,6 +944,34 @@ namespace Ranges::Ranges_To
     }
 }
 
+namespace Ranges::Containers_From_Ranges
+{
+    void CreateVectorFromRange()
+    {
+        const std::vector<int> numbers = { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 };
+         std::ranges::filter_view even_numbers_view = numbers
+                | std::views::filter([](int n) { return (n & 0x01) == 0; });
+
+        const std::vector<int> evenNumbers(std::from_range, even_numbers_view);
+        for (const int v: evenNumbers) {
+            std::cout << v << std::endl;
+        }
+    }
+
+    void CreateVectorFromRange_Inplace()
+    {
+        const std::vector<int> data {1,2,3,4,5,6,7,8,9};
+        const std::vector<int> result = std::vector<int>(std::from_range,data
+                | std::views::filter([](int n) -> bool { return (n & 0x01) == 0; })
+                | std::views::transform([](int n) -> int { return n * n; })
+        );
+
+        for (int x : result) {
+            std::cout << x << ' ';   // 4 16 36 64
+        }
+    }
+}
+
 void Ranges::TestAll()
 {
     // For_Each();
@@ -967,7 +995,7 @@ void Ranges::TestAll()
     // Split::Chunk_Fixed_Size_Batches();
     // Split::Chunk_Processing_Network_Packets();
     // Split::Chunk_By_Dynamic_Grouping();
-    Split::Chunk_By_Extracting_Sentences_from_Text();
+    // Split::Chunk_By_Extracting_Sentences_from_Text();
 
     // Views::Zip();
     // Views::Repeat();
@@ -1006,6 +1034,8 @@ void Ranges::TestAll()
 
     // Ranges_To::Get_Even_Numbers();
     // Ranges_To::Get_Even_Numbers_Mapping();
+    Containers_From_Ranges::CreateVectorFromRange();
+    Containers_From_Ranges::CreateVectorFromRange_Inplace();
 
     // Experiments();
 
