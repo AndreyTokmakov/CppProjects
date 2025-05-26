@@ -166,7 +166,7 @@ int main([[maybe_unused]] int argc,
     // SharedPtr_Tests::TestAll();
     // Variant::TestAll();
     // VolatileTests::TestAll();
-    TypeTraits::TestAll();
+    // TypeTraits::TestAll();
     // Types::Tests();
     // Tuple::TestAll();
     // TypeCast::TestAll();
