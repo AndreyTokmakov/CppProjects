@@ -54,7 +54,7 @@ Description : Cpp STD lib
 #include "Math/Math.h"
 #include "Print/Print.h"
 #include "PolymorphicMemoryResources/PolymorphicMemoryResources.h"
-#include "MoveSemantics_RuleOfFive/MoveSemantics_RuleOfFive.h"
+#include "MoveSemantics/MoveSemantics.h"
 #include "NameSpaces/InlineNamespaces.h"
 #include "Numbers/Numbers.h"
 #include "NumericLimits/NumericLimits.h"
@@ -122,7 +122,7 @@ int main([[maybe_unused]] int argc,
     // DateAndTime::TestAll();
     // EnumTests::TestAll();
     // Errors::TestAll();
-    Exceptions::TestAll();
+    // Exceptions::TestAll();
     // Expected::TestAll();
     // StrongTypes::TestAll();
     // InitializerList::TestAll();
@@ -138,7 +138,7 @@ int main([[maybe_unused]] int argc,
     // LifetimeExtension::TestAll();
     // Locale::TestAll();
     // Literals::TestAll();
-    // MoveSemantics_RuleOfFive::TestAll();
+    MoveSemantics::TestAll();
     // Numbers::TestAll();
     // Math::TestAll();
     // Memory::TestAll();

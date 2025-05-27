@@ -60,7 +60,7 @@ add_executable(${PROJECT_NAME}
 		Memory/Alignment.cpp
 		Memory/AlignedStackAllocator.cpp
 		Memory/CustomStackAllocator.cpp
-		MoveSemantics_RuleOfFive/MoveSemantics_RuleOfFive.cpp
+		MoveSemantics/MoveSemantics.cpp
 		Numbers/Numbers.cpp
 		NumericLimits/NumericLimits.cpp
 		ObjectOrientedProgramming/ObjectOrientedProgramming.cpp
