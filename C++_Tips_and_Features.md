@@ -534,6 +534,18 @@ CPU когда читат к примеру 'char a' и 'int b' в случае 
 			expected = false; // Restore 'expected' value to the one we expecting
 		}
 
+
+• convoying
+
+		It can happen with multiple locks or just one lock.
+		Convoying looks like this: say we have a computation that is protected by a lock. 
+		Thread A currently has the lock and is doing its work on the shared data; other threads are waiting to do their part of the work.
+		However, the work is not a one-shot deal: each thread has many tasks to do, and a part of each task requires exclusive access to the shared data.
+		Thread A finishes one task, releases the lock, then zips through the next task until it gets to the point where it needs the lock again.
+		The lock was released, any other thread can get it, but they are still waking up, whereas thread A is "hot" on the CPU. 
+		So, thread A gets the lock again simply because the competition is not ready for it.
+		The tasks of thread A rush through the execution like trucks in a convoy, while nothing gets done on other threads.
+
 =============================================================================================================================================================
 										Temporal locality | Spatial locality
 =============================================================================================================================================================	

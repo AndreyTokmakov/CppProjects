@@ -1594,13 +1594,36 @@ namespace ExcDtor
 }
 
 
-int64_t int32_to_64_garbage(int32_t i32)
+namespace ASM_Usage
 {
-    int64_t i64;
-    __asm__("" :        // do nothing
-            "=r"(i64) : // produces result in register
-            "0"(i32));  // from this input
-    return i64;
+    int64_t int32_to_64_garbage(int32_t i32)
+    {
+        int64_t i64;
+        __asm__("" :        // do nothing
+                "=r"(i64) : // produces result in register
+                "0"(i32));  // from this input
+        return i64;
+    }
+
+    /// Count the number of CPU cycles that passed during this period.
+    uint64_t get_tsc()
+    {
+        uint32_t l;
+        uint64_t h;
+        __asm__("rdtsc" : "=a"(l), "=d"(h));
+        return l | (h << 32);
+    }
+
+
+    void measureElapsedTime()
+    {
+        const auto start = get_tsc();
+
+        std::this_thread::sleep_for(std::chrono::seconds(1U));
+
+        const auto end = get_tsc();
+        std::cout << end - start << std::endl;
+    }
 }
 
 
@@ -1613,6 +1636,8 @@ int main([[maybe_unused]] const int argc,
     // Cpp_NEW_Features::TestAll();
     // Execution::TestAll();
     // Coroutines::TestAll();
+
+    ASM_Usage::measureElapsedTime();
 
 
 
@@ -1659,7 +1684,7 @@ int main([[maybe_unused]] const int argc,
     // FunctionCall_LookUp::TestAll();
     // LowLatencyLogger::TestAll();
     // Multithreading::TestAll();
-    Memory::TestAll();
+    // Memory::TestAll();
     // MaxStack::TestAll();
     // UniquePtr_Size::SizeTest();
     // ObjectOrientedExperiments::OOP_Experiments::TestAll();

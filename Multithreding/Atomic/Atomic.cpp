@@ -184,7 +184,8 @@ namespace Atomic::Atomic_Boolean {
         task2.wait();
     }
 
-    void SetValue() {
+    void SetValue()
+    {
         std::atomic<bool> b{false};
 
         bool x = b.load(std::memory_order_acquire);

@@ -59,7 +59,7 @@ int main([[maybe_unused]] int argc,
 {
     // AsyncLaunch::TestAll();
 
-    // Atomic::TestAll();
+    Atomic::TestAll();
     // AtomicFlag::TestAll();
     // Atomic_Bool::TestAll();
     // Atomic_Wait::TestAll();
