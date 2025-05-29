@@ -59,7 +59,7 @@ int main([[maybe_unused]] int argc,
 {
     // AsyncLaunch::TestAll();
 
-    Atomic::TestAll();
+    // Atomic::TestAll();
     // AtomicFlag::TestAll();
     // Atomic_Bool::TestAll();
     // Atomic_Wait::TestAll();
@@ -88,12 +88,12 @@ int main([[maybe_unused]] int argc,
     // SynchStream::TEST_ALL();
     // SynchStream_Custom::TEST_ALL();
 
-    // SpinLock::TestAll();
+    SpinLock::TestAll();
 
     // StoppingThreads::TestAll();
 
-    ThreadPools::TestAll();
-    ThreadPoolsEx::TestAll();
+    // ThreadPools::TestAll();
+    // ThreadPoolsEx::TestAll();
 
     // ThreadPoolBlocking::TEST_ALL();
     // ThreadPoolLimited::TestAll();

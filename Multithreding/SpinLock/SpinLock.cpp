@@ -397,7 +397,7 @@ namespace SpinLock::Compare_Diff_SpinLock_Implementations
                                                             std::memory_order_acq_rel,
                                                             std::memory_order_relaxed); ++i) {
                 expected = 0;
-                if (2 == i) /// to tune thread scheduler
+                if (4 == i) /// to tune thread scheduler
                 {
                     i = 0;
                     nanosleep(&ns, nullptr);
@@ -507,8 +507,8 @@ namespace SpinLock::Compare_Diff_SpinLock_Implementations
 
     void RunBenchmark()
     {
-        constexpr int threadsMax { 16 };
-        constexpr size_t iterCount { 1'000'000 };
+        constexpr int threadsMax { 32 };
+        constexpr size_t iterCount { 5'000'000 };
 #if 0
         {
             std::mutex mtx;
@@ -773,6 +773,6 @@ void SpinLock::TestAll()
 
     // Impl::SpinLock_Tests();
 
-    // Compare_Diff_SpinLock_Implementations::RunBenchmark();
-    Compare_Diff_SpinLock_Implementations::RunBenchmark_Fastest();
+    Compare_Diff_SpinLock_Implementations::RunBenchmark();
+    // Compare_Diff_SpinLock_Implementations::RunBenchmark_Fastest();
 }

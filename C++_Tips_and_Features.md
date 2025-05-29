@@ -534,7 +534,6 @@ CPU когда читат к примеру 'char a' и 'int b' в случае 
 			expected = false; // Restore 'expected' value to the one we expecting
 		}
 
-
 • convoying
 
 		It can happen with multiple locks or just one lock.
