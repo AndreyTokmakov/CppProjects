@@ -11,6 +11,8 @@ Description : Memory C++ project
 #include <string_view>
 #include <vector>
 
+#include <tcmalloc/tcmalloc.h>
+
 int main([[maybe_unused]] int argc,
          [[maybe_unused]] char** argv)
 {
@@ -19,3 +21,5 @@ int main([[maybe_unused]] int argc,
     return EXIT_SUCCESS;
 }
 
+// git clone https://github.com/google/tcmalloc.git
+// git clone https://github.com/abseil/abseil-cpp.git
