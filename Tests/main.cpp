@@ -43,6 +43,7 @@ Description : Tests C++ project
 #include <experimental/scope>
 
 //#include <experimental/contracts>
+//#include <ind>
 
 
 #include "BitFlags/BitFlags.h"
@@ -1641,6 +1642,7 @@ int main([[maybe_unused]] const int argc,
 
 
 
+
     // VirtualFunctionTests::demo();
     // Int_to_UInt_Tests::Tests();
     // EnumBasedStrongTypes::Tests();
@@ -1672,7 +1674,7 @@ int main([[maybe_unused]] const int argc,
     // BinManipulation::TestAll();
     // BinaryAnalyzer::TestAll();
     // BitFlags::TestAll();
-    // Concepts::TestAll();
+    Concepts::TestAll();
     // Crow::TestAll();
     // CollectionsTests::TestAll();
     // CopyElision_RVO::TestAll();

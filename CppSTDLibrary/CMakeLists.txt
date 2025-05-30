@@ -48,6 +48,7 @@ add_executable(${PROJECT_NAME}
 		Helpers/Integer.cpp
 		Iterators/Iterators.cpp
 		Iterators/Custom_Iterators.cpp
+		LookupTypes/LookupTypes.cpp
 		Lambdas/Lambdas.cpp
 		LifetimeExtension/LifetimeExtension.cpp
 		Literals/Literals.cpp

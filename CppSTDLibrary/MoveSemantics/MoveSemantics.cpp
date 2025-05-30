@@ -1703,7 +1703,7 @@ namespace MoveSemantics::RValue_vs_DeclType_Auto_Return
         return MyInteger(1);
     }
 
-#if 1
+#if 0
     auto&& get_class_auto() {
         // INFO: shall not even compile 'error: returning reference to temporary [-Wreturn-local-addr]'
         return MyInteger(2);

@@ -2921,6 +2921,61 @@ namespace Concepts::Requires_Clause_vs_Expression
 }
 
 
+namespace Concepts::Function_ADL_Lookup_UsingConcepts
+{
+    template <typename T>
+    concept Small = sizeof(T) <= sizeof(int);
+
+    template <typename T, typename U>
+    concept EquallySized = sizeof(T) == sizeof(U);
+
+    template <typename T, typename U>
+    requires Small<T>
+    constexpr int func(T t, U u) {
+        return 1;
+    }
+
+    template <typename T, typename U>
+    requires Small<T> && EquallySized<T, U>
+    constexpr int func(T t, U u) {
+        return 2;
+    }
+
+    void Call_Different_Funcs()
+    {
+        static_assert(1 == func(1, 1LL)); // selects (1)
+        static_assert(2 == func(1, 1));   // selects (2)
+    }
+}
+
+
+namespace Concepts::Using_Concepts_With_ReturnType_Spec
+{
+    template <typename T>
+    concept Small = sizeof(T) <= sizeof(int);
+
+    template <typename T, typename U>
+    concept EquallySized = sizeof(T) == sizeof(U);
+
+    int make_x() {
+        return  1;
+    }
+
+    int make_y() {
+        return 2;
+    }
+
+
+    void tests()
+    {
+        Small auto x = make_x();
+        EquallySized<int> decltype(auto) y = make_y();
+    }
+}
+
+
+
+
 
 
 // https://www.youtube.com/watch?v=jzwqTi7n-rg | Back to Basics: Concepts in C++ - Nicolai Josuttis - CppCon 2024
@@ -2987,6 +3042,9 @@ void Concepts::TestAll()
     // STD::Derived_From::SimpleExample();
     // STD::Derived_From::ComplexTest();
 
+    Function_ADL_Lookup_UsingConcepts::Call_Different_Funcs();
+
+    Using_Concepts_With_ReturnType_Spec::tests();
 
     // Concepts_With_Auto::Test();
     // Concepts_With_Auto::Print_Tests();
@@ -2995,7 +3053,7 @@ void Concepts::TestAll()
 
 
     // CRPT::Concepts_Instead_CRTP();
-    CRPT::CRTP_Derive_using_Concepts();
+    // CRPT::CRTP_Derive_using_Concepts();
 
 
     // ConceptsAsInterface::passClassObjAsInterface();

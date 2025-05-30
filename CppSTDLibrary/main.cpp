@@ -47,6 +47,7 @@ Description : Cpp STD lib
 #include "FunctionObjects/FunctionObjects.h"
 #include "Iterators/Iterators.h"
 #include "Lambdas/Lambdas.h"
+#include "LookupTypes/LookupTypes.h"
 #include "LifetimeExtension/LifetimeExtension.h"
 #include "Locale/Locale.h"
 #include "Overflow/Overflow.h"
@@ -134,11 +135,12 @@ int main([[maybe_unused]] int argc,
     // Format::TestAll();
     // FunctionObjects::TestAll();
     // Hashing::TestAll();
+    LookupTypes::TestAll();
     // Lambdas::TestAll();
     // LifetimeExtension::TestAll();
     // Locale::TestAll();
     // Literals::TestAll();
-    MoveSemantics::TestAll();
+    // MoveSemantics::TestAll();
     // Numbers::TestAll();
     // Math::TestAll();
     // Memory::TestAll();

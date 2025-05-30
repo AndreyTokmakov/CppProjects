@@ -90,11 +90,14 @@ namespace Concepts::TypeErasure
         Wrapper<ClassWithCallable> w1 {ClassWithCallable{}};
         w1.call();
     }
-
 }
+
+
+
 
 void Concepts::TestAll()
 {
     // DependencyInjection::MyFunc();
-    TypeErasure::Test();
+    // TypeErasure::Test();
+
 }
