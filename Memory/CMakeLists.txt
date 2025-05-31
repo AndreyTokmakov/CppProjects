@@ -12,11 +12,21 @@ include_directories(${THIRD_PARTY_DIR}/tcmalloc)
 include_directories(${THIRD_PARTY_DIR}/abseil-cpp)
 # link_directories(${THIRD_PARTY_DIR}/tcmalloc/)
 
+set(PROJECT_DIR ${CMAKE_SOURCE_DIR}/${PROJECT_NAME})
+set(COMMON ${PROJECT_DIR}/common)
+set(EXPERIMENTS ${PROJECT_DIR}/experiments)
+set(OBJECT_POOL ${PROJECT_DIR}/object_pool)
+
+include_directories(${COMMON})
+include_directories(${EXPERIMENTS})
+include_directories(${OBJECT_POOL})
+
+
 add_executable(${PROJECT_NAME}
-    main.cpp
-    ObjectPool/ObjectPool.h
-    Experiments/Experiments.cpp Experiments/Experiments.h
-    Common/Common.cpp Common/Common.h
+        main.cpp
+        ${OBJECT_POOL}/ObjectPool.h
+        ${EXPERIMENTS}/Experiments.cpp ${EXPERIMENTS}/Experiments.h
+        ${COMMON}/Common.cpp ${COMMON}/Common.h
 )
 
 target_include_directories(${PROJECT_NAME} PUBLIC "${CMAKE_SOURCE_DIR}/Utilities")

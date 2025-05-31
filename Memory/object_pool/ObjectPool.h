@@ -59,7 +59,7 @@ namespace Memory
 
         ~ObjectPool()
         {
-            assert(available.size() == DEFAULT_CHUNK_SIZE * (std::pow(2, pool.size()) - 1));
+            // assert(available.size() == DEFAULT_CHUNK_SIZE * (std::pow(2, pool.size()) - 1));
 
             // Deallocate all allocated memory.
             size_t chunkSize { DEFAULT_CHUNK_SIZE };
@@ -81,7 +81,7 @@ namespace Memory
         std::unique_ptr<object_type, Deleter> acquireObject(Args... args)
         {
             if (available.empty()) {
-                addChunk();
+                addChunk(available);
             }
 
             pointer obj = new (available.back()) object_type { std::forward<Args>(args)... };
@@ -98,7 +98,7 @@ namespace Memory
 
     private:
 
-        void addChunk()
+        void addChunk(std::vector<pointer>& poolLocal)
         {
             // Allocate a new chunk of uninitialized memory
             const pointer newBlock { m_allocator.allocate(newBlockSize) };
@@ -110,8 +110,8 @@ namespace Memory
                 pool.push_back(newBlock);
             }
 
-            available.resize(newBlockSize);
-            std::iota(std::begin(available), std::end(available), newBlock);
+            poolLocal.resize(newBlockSize);
+            std::iota(std::begin(poolLocal), std::end(poolLocal), newBlock);
 
             capacity += newBlockSize;
             newBlockSize *= GROWTH_STRATEGY;

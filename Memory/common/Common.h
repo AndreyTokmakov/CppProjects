@@ -11,6 +11,7 @@ Description : Common.h
 #define CPPPROJECTS_COMMON_H
 
 #include <chrono>
+#include <syncstream>
 
 namespace Common
 {

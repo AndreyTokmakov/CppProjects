@@ -135,7 +135,7 @@ int main([[maybe_unused]] int argc,
     // Format::TestAll();
     // FunctionObjects::TestAll();
     // Hashing::TestAll();
-    LookupTypes::TestAll();
+    // LookupTypes::TestAll();
     // Lambdas::TestAll();
     // LifetimeExtension::TestAll();
     // Locale::TestAll();
@@ -143,7 +143,7 @@ int main([[maybe_unused]] int argc,
     // MoveSemantics::TestAll();
     // Numbers::TestAll();
     // Math::TestAll();
-    // Memory::TestAll();
+    Memory::TestAll();
     // Metaprogramming::TestAll();
     // InlineNamespaces::TestAll();
     // NumericLimits::TestAll();

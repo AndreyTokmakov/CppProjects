@@ -79,8 +79,8 @@ int main([[maybe_unused]] int argc,
     // LinkedLists::TEST_ALL();
     // Logging::TEST_ALL();
 	// LRUCache::TEST_ALL();
-    // ObjectPool::TestAll();
-    ObjectPool_Growing::TestAll();
+    ObjectPool::TestAll();
+    // ObjectPool_Growing::TestAll();
     // Optional::TEST_ALL();
     // PriorityList::TEST_ALL();
     // RAII_CommitWrapper::Test();

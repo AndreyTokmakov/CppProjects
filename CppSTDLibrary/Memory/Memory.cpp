@@ -1749,7 +1749,7 @@ void Memory::TestAll()
     // MemoryUsageMonitor::TestAll();
     // MemoryPool::TestAll();
 
-	ObjectPool_Stack_FixedSize::TestAll();
+	// ObjectPool_Stack_FixedSize::TestAll();
 
 
 	// Delete_Array();

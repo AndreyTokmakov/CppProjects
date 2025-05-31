@@ -15,20 +15,82 @@ Description : Memory C++ project
 #include <chrono>
 #include <syncstream>
 
-#include "ObjectPool/ObjectPool.h"
-#include "Experiments/Experiments.h"
-#include "Common/Common.h"
+#include "ObjectPool.h"
+#include "Experiments.h"
+#include "Common.h"
 #include "PerfUtilities.h"
 #include <tcmalloc/tcmalloc.h>
 
 
+namespace Tests
+{
+    struct Data
+    {
+        int value { 0 };
+        char buff[1024];
+    };
 
-namespace Experimental
+    void benchmarkPool(const int32_t iterations,
+                       const int32_t allocations,
+                       const int32_t threadsCount = 8)
+    {
+        Memory::ObjectPool<Data> objectPool;
+        std::vector<std::jthread> workers;
+
+        PerfUtilities::ScopedTimer timer{"Pool"};
+        for (int32_t i = 0; i < threadsCount; ++i)
+        {
+            workers.emplace_back([&]{
+                std::vector<decltype(objectPool)::ObjectPtr> created;
+                created.reserve(allocations);
+                for (int32_t x = 0; x < iterations; ++x)
+                {
+                    for (int32_t n = 0; n < allocations; ++n) {
+                        auto ptr = objectPool.acquireObject(n);
+                        created.push_back(std::move(ptr));
+                    }
+                    created.clear();
+                }
+            });
+        }
+        workers.clear();
+    }
+
+    void benchmarkNoPool(const int32_t iterations,
+                         const int32_t allocations,
+                         const int32_t threadsCount = 8)
+    {
+        std::vector<std::jthread> workers;
+
+        PerfUtilities::ScopedTimer timer{"NoPool"};
+        for (int32_t i = 0; i < threadsCount; ++i)
+        {
+            workers.emplace_back([&]{
+                std::vector<std::unique_ptr<Data>> created;
+                created.reserve(allocations);
+                for (int32_t x = 0; x < iterations; ++x)
+                {
+                    for (int32_t n = 0; n < allocations; ++n) {
+                        auto ptr = std::make_unique<Data>(n);
+                        created.push_back(std::move(ptr));
+                    }
+                    created.clear();
+                }
+            });
+        }
+
+        workers.clear();
+    }
+}
+
+
+namespace Memory::GoodPools_Tests
 {
 
     template <typename Ty, typename Allocator = std::allocator<Ty>>
-    struct ObjectPool
+    class ObjectPool final
     {
+    private:
         using object_type = Ty;
         using pointer = object_type*;
         using size_type = typename std::vector<pointer>::size_type;
@@ -36,99 +98,189 @@ namespace Experimental
         static_assert(!std::is_same_v<object_type, void>,
                       "Type of the Objects in the pool can not be void");
 
+    private:
+        std::vector<pointer> pool;
+        std::vector<pointer> available;
+
+        static constexpr size_type DEFAULT_CHUNK_SIZE { 5 };
+        static constexpr size_type GROWTH_STRATEGY { 2 };
+        size_type _new_block_size { DEFAULT_CHUNK_SIZE };
+
+        void addChunk()
+        {
+            // Allocate a new chunk of uninitialized memory
+            pointer newBlock { m_allocator.allocate(_new_block_size) };
+
+            // Keep all allocated blocks in 'pool' to delete them later:
+            pool.push_back(newBlock);
+
+            available.resize(_new_block_size);
+            std::iota(std::begin(available), std::end(available), newBlock);
+            _new_block_size *= GROWTH_STRATEGY;
+        }
+
+        // The allocator to use for allocating and deallocating chunks.
+        Allocator m_allocator;
+
+    protected:
+
         struct Deleter final
         {
-            static inline ObjectPool* pool { nullptr };
+            ObjectPool* pool {nullptr};
 
             void operator()(pointer object) const noexcept
             {
                 std::destroy_at(object);
                 pool->available.push_back(object);
-                LOG << "Object at " << object << " returned back to  " << &(pool->available) << std::endl;
             }
         };
 
-        using wrapped_pointer = std::unique_ptr<object_type, Deleter>;
+    public:
+        using ObjectPtr = std::unique_ptr<object_type, Deleter>;
 
-        ObjectPool() {
-            deleter.pool = this;
+    public:
+        ObjectPool() = default;
+
+        explicit ObjectPool(const Allocator& allocator) : m_allocator{ allocator } {
+            // Trivial
         }
 
-        explicit ObjectPool(const Allocator& allocator) : m_allocator { allocator } {
-            deleter.pool = this;
-        }
-
-        template<typename... Args>
-        wrapped_pointer acquireObject(Args... args)
+        virtual ~ObjectPool()
         {
+            size_t chunkSize { DEFAULT_CHUNK_SIZE };
+            for (auto* chunk : pool) {
+                m_allocator.deallocate(chunk, chunkSize);
+                chunkSize *= GROWTH_STRATEGY;
+            }
+        }
+
+        // Allow move construction and move assignment.
+        ObjectPool(ObjectPool&& src) noexcept = default;
+        ObjectPool& operator=(ObjectPool&& rhs) noexcept = default;
+
+        // Prevent copy construction and copy assignment.
+        ObjectPool(const ObjectPool& src) = delete;
+        ObjectPool& operator=(const ObjectPool& rhs) = delete;
+
+        // Reserves and returns an object from the pool. Arguments can be
+        // provided which are perfectly forwarded to a constructor of T.
+        template<typename... Args>
+        std::unique_ptr<object_type, Deleter> acquireObject(Args... args)
+        {
+            // If there are no free objects, allocate a new chunk.
             if (available.empty()) {
-                addChunk(available);
+                addChunk();
             }
 
-            pointer obj = new (available.back()) object_type { std::forward<Args>(args)... };
+            // Get a free object.
+            const pointer objectPtr { available.back() };
+
+            // Initialize, i.e. construct, an instance of T in an uninitialized block of memory
+            // using placement new, and perfectly forward any provided arguments to the constructor.
+            pointer obj = new (objectPtr) object_type { std::forward<Args>(args)... };
+
+            // Remove the object from the list of free objects.
             available.pop_back();
 
-            LOG << "Object at " << obj << " taken from  " << &(available) << std::endl;
-
-            return wrapped_pointer { obj, deleter };
+            // Wrap the initialized object and return it.
+            return std::unique_ptr<object_type, Deleter> { objectPtr, Deleter{this}};
         }
-
-        void addChunk(std::vector<pointer>& poolLocal)
-        {
-            constexpr int newBlockSize = 10;
-            const pointer newBlock { m_allocator.allocate(newBlockSize) };
-            poolLocal.resize(newBlockSize);
-            std::iota(std::begin(poolLocal), std::end(poolLocal), newBlock);
-            LOG << "Local poll " << &(available) << " has been resized. size = " << poolLocal.size() << std::endl;
-        }
-
-    private:
-        Allocator m_allocator;
-        Deleter deleter;
-
-        // TODO: Rename
-        static inline thread_local std::vector<pointer> available;
     };
 
-
-    void test()
+    template<size_t N>
+    class Object
     {
-        ObjectPool<int> pool;
-        std::vector<std::jthread> workers;
-        for (int i = 0; i < 8; ++i) {
-            workers.emplace_back([&]{
-                std::vector<ObjectPool<int>::wrapped_pointer> created;
-                for (int n = 0; n < 5; ++n) {
-                    auto ptr = pool.acquireObject(i);
-                    created.push_back(std::move(ptr));
-                    std::this_thread::sleep_for(std::chrono::milliseconds (250u));
-                }
-            });
+        char buffer[N]{ 0 };
+
+    public:
+        Object() = default;
+
+        // Object(const Object& obj) {}
+        // Object& operator=(Object& right) {}
+
+        // Object(Object&& obj) noexcept {}
+        // Object& operator=(Object&& right) noexcept {}
+    };
+
+    void PerformanceTests()
+    {
+        using TypeTiny   = Object<sizeof(int)>;
+        using TypeSmall  = Object<128>;
+        using TypeMedium = Object<1024>;
+        using TypeLarge  = Object<1024 * 64>;
+        using TestType   = TypeMedium;
+
+        constexpr int32_t tests = 100;
+        constexpr int32_t allocations = 1024;
+
+
+        {
+            PerfUtilities::ScopedTimer timer {"NoPool"};
+
+            std::vector<std::unique_ptr<TestType>> store;
+            store.reserve(allocations);
+
+            for (int32_t t = 0; t < tests; ++t)
+            {
+                for (int32_t n = 0; n < allocations; ++n)
+                    store.push_back(std::make_unique<TestType>());
+                store.clear();
+            }
         }
 
-        for (auto& T: workers)
-            T.join();
+        {
+            ObjectPool<TestType> pool{};
+            PerfUtilities::ScopedTimer timer {"Pool 1"};
+
+            std::vector<decltype(pool)::ObjectPtr> store;
+            store.reserve(allocations);
+
+            for (int32_t t = 0; t < tests; ++t)
+            {
+                for (int32_t n = 0; n < allocations; ++n)
+                    store.push_back(pool.acquireObject());
+                store.clear();
+            }
+        }
+
+        {
+            Memory::ObjectPool<TestType> pool;
+            PerfUtilities::ScopedTimer timer {"Pool 2"};
+
+            std::vector<decltype(pool)::ObjectPtr> store;
+            store.reserve(allocations);
+
+            for (int32_t t = 0; t < tests; ++t)
+            {
+                for (int32_t n = 0; n < allocations; ++n)
+                    store.push_back(pool.acquireObject());
+                store.clear();
+            }
+        }
     }
 }
+
+
+
 
 int main([[maybe_unused]] int argc,
          [[maybe_unused]] char** argv)
 {
     const std::vector<std::string_view> args(argv + 1, argv + argc);
 
-    Experimental::test();
+    // Experiments::TestAll();
 
-    /*
-    {
-        PerfUtilities::ScopedTimer timer{"Test"};
-        std::this_thread::sleep_for(std::chrono::seconds(1u));
-    }*/
+    // Tests::benchmarkPool(1000, 100000, 1);
+    // Tests::benchmarkNoPool(1000, 100000, 1);
 
 
+    Memory::GoodPools_Tests::PerformanceTests();
 
 
     return EXIT_SUCCESS;
 }
+
+
 
 // bazel build --cxxopt='-std=c++17'
 

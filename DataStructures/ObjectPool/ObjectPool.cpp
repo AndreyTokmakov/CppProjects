@@ -802,8 +802,8 @@ void ObjectPool::TestAll()
 	// GoodPools_Basic::SimpleTest();
 	// GoodPools_Basic::PerformanceTests();
 
-	GoodPools_Tests::SimpleTest();
-	// GoodPools_Tests::PerformanceTests();
+	// GoodPools_Tests::SimpleTest();
+	GoodPools_Tests::PerformanceTests();
 
     // GoodPools_MultiThreaded::PerformanceTests();
 };
