@@ -11,17 +11,24 @@ add_compile_options(-c -Wall -Wextra -O3 -std=c++26)
 # include all components
 add_executable(${PROJECT_NAME}
 		main.cpp
-		AbstractFactory/AbstractFactory.cpp AbstractFactory/AbstractFactory.h AbstractFactory/ShapeFactory.cpp
-		Adapter/Adapter.cpp Adapter/Adapter.h Adapter/USBAdapter.cpp
-		Bridge/Bridge.cpp Bridge/Bridge.h
-		Builder/Builder.cpp Builder/Builder.h Builder/BlochBuilder.cpp
-		ChainOfResponsibility/ChainOfResponsibility.cpp ChainOfResponsibility/ChainOfResponsibility.h
+		AbstractFactory/AbstractFactory.cpp
+		AbstractFactory/ShapeFactory.cpp
+		Adapter/Adapter.cpp
+		Adapter/USBAdapter.cpp
+		Bridge/Bridge.cpp
+		Builder/Builder.cpp
+		Builder/BlochBuilder.cpp
+		ChainOfResponsibility/ChainOfResponsibility.cpp
 		ChainOfResponsibility/ChainOfHandlers.cpp
-		Command/Command.cpp Command/Command.h
-		Composite/Composite.cpp Composite/Composite.h
-		CRTP/CRTP.cpp CRTP/CRTP.h CRTP/ObjectCounter.cpp CRTP/ObjectCounter.h
+		Command/Command.cpp
+		Composite/Composite.cpp
+		CRTP/CRTP.cpp
+		CRTP/CRTP.h
+		CRTP/ObjectCounter.cpp
 		CRTP/CRTP_InvokeMethods.cpp
 		CRTP/Policy_Based_Design.cpp
+		CRTP/Simple_Comparable_Base.cpp
+		CRTP/CRTP_Cloneable.cpp
 		Decorator/Decorator.cpp Decorator/Decorator.h
 		FabricMethod/FabricMethod.h FabricMethod/FabricMethod.cpp  FabricMethod/FabricMethod2.cpp
 		Facade/Facade.cpp Facade/Facade.h
@@ -93,7 +100,6 @@ add_executable(${PROJECT_NAME}
 		Adapter/ChargingPhoneAdapter.cpp
 		Adapter/ChargingPhoneAdapter.cpp
 		Decorator/WindowDecorator.cpp
-		CRTP/CRTP_Cloneable.cpp
         TypeID/TypeID.cpp
 		AccessToken/AccessToken.cpp
 		FactoryClasses/FactoryClasses.cpp

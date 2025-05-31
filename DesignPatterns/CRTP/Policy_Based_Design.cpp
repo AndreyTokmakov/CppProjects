@@ -7,8 +7,7 @@ Copyright   : Your copyright notice
 Description : Policy_Based_Design.cpp
 ============================================================================**/
 
-#include "Policy_Based_Design.h"
-
+#include "CRTP.h"
 #include <iostream>
 
 namespace CRTP::Policy_Based_Design

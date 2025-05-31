@@ -13,7 +13,7 @@ namespace CheckingPolicy
 {
     struct Unchecked
     {
-        void operator() (size_t idx, size_t sizeMax) {}
+        void operator() ([[maybe_unused]] size_t idx, [[maybe_unused]] size_t sizeMax) {}
     };
 
     struct Checked

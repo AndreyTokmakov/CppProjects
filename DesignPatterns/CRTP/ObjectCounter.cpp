@@ -7,8 +7,7 @@ Copyright   : Your copyright notice
 Description : ObjectCounter src
 ============================================================================**/
 
-#include "ObjectCounter.h"
-
+#include "CRTP.h"
 #include <iostream>
 
 namespace CRTP::ObjectCounter

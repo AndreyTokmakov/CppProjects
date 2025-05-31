@@ -14,6 +14,22 @@ namespace CRTP {
 	void Test();
 }
 
+namespace CRTP::CRTP_Cloneable {
+    void Test();
+}
+
+namespace CRTP::ObjectCounter {
+    void Test();
+}
+
+namespace CRTP::Policy_Based_Design {
+    void TestAll();
+}
+
+namespace CRTP::Simple_Comparable_Base {
+    void TestAll();
+}
+
 #endif /* CRTP_DESIGN_PATTERN_TESTS__H_ */
 
 

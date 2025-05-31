@@ -7,7 +7,7 @@ Copyright   : Your copyright notice
 Description : CRTP Cloneable demo
 ============================================================================**/
 
-#include "CRTP_Cloneable.h"
+#include "CRTP.h"
 
 #include <iostream>
 #include <string_view>
