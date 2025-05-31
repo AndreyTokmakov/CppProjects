@@ -14,9 +14,17 @@ include_directories(${THIRD_PARTY_DIR}/abseil-cpp)
 
 add_executable(${PROJECT_NAME}
     main.cpp
+    ObjectPool/ObjectPool.h
+    Experiments/Experiments.cpp Experiments/Experiments.h
+    Common/Common.cpp Common/Common.h
 )
+
+target_include_directories(${PROJECT_NAME} PUBLIC "${CMAKE_SOURCE_DIR}/Utilities")
+target_link_directories(${PROJECT_NAME} PUBLIC "${CMAKE_BINARY_DIR}/Utilities")
+
 
 TARGET_LINK_LIBRARIES(${PROJECT_NAME}
         pthread
+        utils
         ${EXTRA_LIBS}
 )
