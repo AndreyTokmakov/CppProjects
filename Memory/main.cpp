@@ -46,8 +46,7 @@ namespace Tests
                 for (int32_t x = 0; x < iterations; ++x)
                 {
                     for (int32_t n = 0; n < allocations; ++n) {
-                        auto ptr = objectPool.acquireObject(n);
-                        created.push_back(std::move(ptr));
+                        created.push_back(objectPool.acquireObject(n));
                     }
                     created.clear();
                 }
@@ -270,11 +269,11 @@ int main([[maybe_unused]] int argc,
 
     // Experiments::TestAll();
 
-    // Tests::benchmarkPool(1000, 100000, 1);
-    // Tests::benchmarkNoPool(1000, 100000, 1);
+    Tests::benchmarkPool(1000, 10'000, 2);
+    Tests::benchmarkNoPool(1000, 10'000, 2);
 
 
-    Memory::GoodPools_Tests::PerformanceTests();
+    // Memory::GoodPools_Tests::PerformanceTests();
 
 
     return EXIT_SUCCESS;

@@ -29,8 +29,7 @@ namespace Memory
         static_assert(!std::is_same_v<object_type, void>,
                       "Type of the Objects in the pool can not be void");
 
-        static constexpr size_type DEFAULT_CHUNK_SIZE { 5 };
-        static constexpr size_type GROWTH_STRATEGY { 2 };
+        static constexpr size_type defaultBlockSize { 64 };
 
         struct Deleter final
         {
@@ -59,13 +58,9 @@ namespace Memory
 
         ~ObjectPool()
         {
-            // assert(available.size() == DEFAULT_CHUNK_SIZE * (std::pow(2, pool.size()) - 1));
-
             // Deallocate all allocated memory.
-            size_t chunkSize { DEFAULT_CHUNK_SIZE };
             for (pointer chunk : pool) {
-                m_allocator.deallocate(chunk, chunkSize);
-                chunkSize *= GROWTH_STRATEGY;
+                m_allocator.deallocate(chunk, defaultBlockSize);
             }
         }
 
@@ -101,7 +96,7 @@ namespace Memory
         void addChunk(std::vector<pointer>& poolLocal)
         {
             // Allocate a new chunk of uninitialized memory
-            const pointer newBlock { m_allocator.allocate(newBlockSize) };
+            const pointer newBlock { m_allocator.allocate(defaultBlockSize) };
 
             // Keep all allocated blocks in 'pool' to delete them later:
             {
@@ -110,11 +105,8 @@ namespace Memory
                 pool.push_back(newBlock);
             }
 
-            poolLocal.resize(newBlockSize);
+            poolLocal.resize(defaultBlockSize);
             std::iota(std::begin(poolLocal), std::end(poolLocal), newBlock);
-
-            capacity += newBlockSize;
-            newBlockSize *= GROWTH_STRATEGY;
         }
 
     private:
@@ -122,7 +114,6 @@ namespace Memory
         mutable std::mutex mutex;
         std::vector<pointer> pool;
 
-        size_type newBlockSize { DEFAULT_CHUNK_SIZE };
         size_type capacity { 0 };
 
         Deleter deleter;
