@@ -122,6 +122,8 @@ add_executable(${PROJECT_NAME}
 		CompileTime_Constexpr/Constexpr.h
 		Memory/ObjectPool_Stack_FixedSize.cpp
 		Memory/ObjectPool_Stack_FixedSize.h
+		Utilities/Invoke.cpp
+		Utilities/Invoke.h
 )
 
 # Link libraries to the project/executable

@@ -1630,52 +1630,7 @@ namespace ASM_Usage
 
 
 
-namespace Invoke_Objects_Methods_Manually
-{
-    struct Data
-    {
-        int memberFunction(int value) {
-            return value;
-        }
-        int field = 42;
-    };
 
-    void call()
-    {
-        auto methodPtr = &Data::memberFunction;
-        auto fieldPtr = &Data::field;
-
-        Data data;
-        auto obj_field = std::invoke(fieldPtr, data);
-        std::cout << std::invoke(methodPtr, data, obj_field) << std::endl;
-    }
-}
-
-
-namespace Callbacks
-{
-    template <typename Callback, typename... Args>
-    auto process_and_call(Callback&& callback, Args&&... args)
-    {
-        // some processing
-        return std::invoke(std::forward<Callback>(callback), std::forward<Args>(args)...);
-    }
-
-    struct S
-    {
-        int foo(int i) {
-            return i * 10;
-        }
-    };
-
-    void invoke_class_method()
-    {
-        S realObj;
-        auto result = process_and_call(&S::foo, realObj, 42);
-
-        std::cout << result << std::endl;
-    }
-}
 
 
 int main([[maybe_unused]] const int argc,
@@ -1689,13 +1644,6 @@ int main([[maybe_unused]] const int argc,
     // Coroutines::TestAll();
 
     //ASM_Usage::measureElapsedTime();
-
-
-
-
-    Callbacks::invoke_class_method();
-
-    // Invoke_Objects_Methods_Manually::call();
 
 
 

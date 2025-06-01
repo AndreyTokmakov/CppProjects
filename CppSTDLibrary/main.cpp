@@ -82,6 +82,7 @@ Description : Cpp STD lib
 #include "UniquePtr/UniquePtr.h"
 #include "TypeTraits/TypeTraits.h"
 #include "Utilities/Utilities.h"
+#include "Utilities/Invoke.h"
 #include "Utilities/CompillerVersion.h"
 #include "Tuple/TupleTests.h"
 #include "TypeCast/TypeCast.h"
@@ -143,7 +144,7 @@ int main([[maybe_unused]] int argc,
     // MoveSemantics::TestAll();
     // Numbers::TestAll();
     // Math::TestAll();
-    Memory::TestAll();
+    // Memory::TestAll();
     // Metaprogramming::TestAll();
     // InlineNamespaces::TestAll();
     // NumericLimits::TestAll();
@@ -174,7 +175,7 @@ int main([[maybe_unused]] int argc,
     // TypeCast::TestAll();
     // Int::TestAll();
     // Templates::TestAll();
-    // Utilities::TestAll();
+    Utilities::TestAll();
     // CompilerVersion::TestAll();
     // UniquePtr::TestAll();
     // WeakPtr::TestAll();

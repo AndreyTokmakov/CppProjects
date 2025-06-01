@@ -17,6 +17,7 @@
 #include <queue>
 #include <deque>
 #include "Utilities.h"
+#include "Invoke.h"
 
 
 namespace
@@ -56,129 +57,6 @@ namespace Utilities::ApplyTests {
 	}
 }
 
-namespace Utilities::Invoke
-{
-
-	struct Utilities
-    {
-		int value;
-
-		explicit Utilities(int val) : value(val) {
-		}
-
-		void add_and_print(const std::string& text) const {
-			std::cout << text << std::endl;
-		}
-
-		int getValue() const {
-			return this->value;
-		}
-
-		void printValue() const {
-			std::cout << "Value :" << this->value << std::endl;
-		}
-	};
-
-	struct Functor
-    {
-		void operator() (int a) {
-			std::cout << a << std::endl;
-		}
-	};
-
-
-	void Call_Class_Method()
-    {
-		const Utilities utils(314159);
-
-		utils.printValue();
-		std::invoke(&Utilities::add_and_print, utils, "Some_Text");
-		utils.printValue();
-	}
-
-	void Invoke_Functor()
-    {
-		const auto sum = [](int a, int b)-> int { return a + b; };
-
-		std::cout << "is_invocable<Functor(): "<< std::boolalpha << std::is_invocable<Functor()>::value << std::endl;
-		std::cout << std::invoke(sum, 10, 20) << std::endl;
-		std::invoke(Functor(), 42);
-		std::invoke([]() { std::cout << "hello" << std::endl;; });
-	}
-
-	void Access_Member()
-    {
-		const Utilities utils(12345);
-		// invoke (access) a data member
-		std::cout << "Value : " << std::invoke(&Utilities::value, utils) << std::endl;
-	}
-
-	void Is_Invocable() {
-		const auto sum = [](int a, int b)-> int { return a + b; };
-
-		std::cout << std::boolalpha << std::is_invocable<decltype(sum)>::value << std::endl;
-		std::cout << std::boolalpha << std::is_invocable<int>::value << std::endl;
-	}
-
-    // --------------------------------------------------------------------------
-
-
-    class SomeType
-    {
-        void putInfo(int value, std::string_view text)
-        {
-            std::cout << "PrivateInfo: Value = " << value << ", Text: " << text << std::endl;
-        }
-
-        template<typename Method, typename... Args>
-        void delegate(Method func, Args&&... params)
-        {
-            std::invoke(func, this, std::forward<Args>(params)...);
-        }
-
-    public:
-
-        void info()
-        {
-            std::invoke(&SomeType::putInfo, this, 101, "Text");
-        }
-
-        void invokeWithDelegate()
-        {
-            delegate(&SomeType::putInfo, 102, "Text2");
-        }
-
-    };
-
-    void Invoke_Class_Method_FromMethod()
-    {
-        SomeType{}.info();
-    }
-
-    void Invoke_Class_Method_FromMethod_Delegate()
-    {
-        SomeType{}.invokeWithDelegate();
-    }
-
-    void Call_Lambda()
-    {
-        auto printer = [] <typename ... Types>(Types&& ... args) {
-            auto add_space = []<typename T>(const T& arg) {
-                std::cout << ' ';
-                return arg;
-            };
-            (std::cout << ... << add_space(std::forward<Types>(args))) << std::endl;
-        };
-
-        // printer(1);
-        // printer(1, "Two");
-        // printer(1, "Two", "III");
-
-        std::invoke(printer, 1);
-        std::invoke(printer, 1, "Two");
-        std::invoke(printer, 1, "Two", "III");
-    }
-}
 
 namespace Utilities::InvokeR
 {
@@ -586,18 +464,11 @@ namespace Utilities::ForwardLike_Lambda
 void Utilities::TestAll()
 {
     // Bind_Utilities();
+    Invoke::TestAll();
 
 	// ApplyTests::Apply_Sum_Test();
 	// ApplyTests::Apply_Sum_Lambda_Test();
 	// ApplyTests::Apply_Sum_Tuple();
-
-	// Invoke::Access_Member();
-	// Invoke::Call_Class_Method();
-	// Invoke::Is_Invocable();
-	// Invoke::Invoke_Functor();
-	// Invoke::Invoke_Class_Method_FromMethod();
-	// Invoke::Invoke_Class_Method_FromMethod_Delegate();
-	// Invoke::Call_Lambda();
 
     //InvokeR::Deduce_Invocation_Return_Type();
 
@@ -618,8 +489,8 @@ void Utilities::TestAll()
     // ForwardLike::Old_Style_Forward();
     // ForwardLike::Forward_Like();
 
-    ForwardLike_Lambda::Move_and_Copy_OldStyle();
-    ForwardLike_Lambda::Move_and_Copy_DeducingThis();
+    // ForwardLike_Lambda::Move_and_Copy_OldStyle();
+    // ForwardLike_Lambda::Move_and_Copy_DeducingThis();
 
 
     // ToAddress::to_address_tests();
