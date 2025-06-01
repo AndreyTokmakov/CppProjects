@@ -1628,6 +1628,30 @@ namespace ASM_Usage
 }
 
 
+
+
+namespace Invoke_Objects_Methods_Manually
+{
+    struct Data
+    {
+        int memberFunction(int value) {
+            return value;
+        }
+        int field = 42;
+    };
+
+    void call()
+    {
+        auto methodPtr = &Data::memberFunction;
+        auto fieldPtr = &Data::field;
+
+        Data data;
+        auto obj_field = std::invoke(fieldPtr, data);
+        std::cout << std::invoke(methodPtr, data, obj_field) << std::endl;
+    }
+}
+
+
 int main([[maybe_unused]] const int argc,
          [[maybe_unused]] char** argv)
 {
@@ -1638,8 +1662,9 @@ int main([[maybe_unused]] const int argc,
     // Execution::TestAll();
     // Coroutines::TestAll();
 
-    ASM_Usage::measureElapsedTime();
+    //ASM_Usage::measureElapsedTime();
 
+    Invoke_Objects_Methods_Manually::call();
 
 
 

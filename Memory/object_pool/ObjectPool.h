@@ -29,7 +29,7 @@ namespace Memory
         static_assert(!std::is_same_v<object_type, void>,
                       "Type of the Objects in the pool can not be void");
 
-        static constexpr size_type defaultBlockSize { 64 };
+        static constexpr size_type defaultBlockSize { 1014 };
 
         struct Deleter final
         {
@@ -86,22 +86,14 @@ namespace Memory
             return std::unique_ptr<object_type, Deleter> { obj, deleter };
         }
 
-        [[nodiscard]]
-        size_type Capacity() const noexcept {
-            return capacity;
-        }
-
     private:
 
         void addChunk(std::vector<pointer>& poolLocal)
         {
-            // Allocate a new chunk of uninitialized memory
             const pointer newBlock { m_allocator.allocate(defaultBlockSize) };
 
-            // Keep all allocated blocks in 'pool' to delete them later:
             {
                 std::unique_lock<std::mutex> lock { mutex };
-                // Keep all allocated blocks in 'pool' to delete them later:
                 pool.push_back(newBlock);
             }
 
@@ -114,13 +106,10 @@ namespace Memory
         mutable std::mutex mutex;
         std::vector<pointer> pool;
 
-        size_type capacity { 0 };
-
         Deleter deleter;
 
         /** Objects allocated and available per thread. **/
         static inline thread_local std::vector<pointer> available;
-
     };
 }
 
