@@ -1652,6 +1652,32 @@ namespace Invoke_Objects_Methods_Manually
 }
 
 
+namespace Callbacks
+{
+    template <typename Callback, typename... Args>
+    auto process_and_call(Callback&& callback, Args&&... args)
+    {
+        // some processing
+        return std::invoke(std::forward<Callback>(callback), std::forward<Args>(args)...);
+    }
+
+    struct S
+    {
+        int foo(int i) {
+            return i * 10;
+        }
+    };
+
+    void invoke_class_method()
+    {
+        S realObj;
+        auto result = process_and_call(&S::foo, realObj, 42);
+
+        std::cout << result << std::endl;
+    }
+}
+
+
 int main([[maybe_unused]] const int argc,
          [[maybe_unused]] char** argv)
 {
@@ -1664,7 +1690,12 @@ int main([[maybe_unused]] const int argc,
 
     //ASM_Usage::measureElapsedTime();
 
-    Invoke_Objects_Methods_Manually::call();
+
+
+
+    Callbacks::invoke_class_method();
+
+    // Invoke_Objects_Methods_Manually::call();
 
 
 
