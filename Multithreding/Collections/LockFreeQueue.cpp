@@ -42,9 +42,9 @@
 #include <concepts>
 
 
-#include "LockFreeQueue.h"
+#include "Collections.h"
 
-namespace LockFreeQueue::One
+namespace Collections::LockFreeQueue::One
 {
     template<class T, size_t N>
     class LockFreeQueue {
@@ -109,7 +109,7 @@ namespace LockFreeQueue::One
     }
 }
 
-namespace LockFreeQueue::Two
+namespace Collections::LockFreeQueue::Two
 {
 
     template<typename T>
@@ -144,7 +144,7 @@ namespace LockFreeQueue::Two
     }
 }
 
-void LockFreeQueue::TEST_ALL()
+void Collections::LockFreeQueue::TestAll()
 {
     // One::test();
     Two::test();

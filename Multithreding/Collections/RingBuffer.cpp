@@ -7,7 +7,7 @@ Copyright   : Your copyright notice
 Description : RingBuffer.cpp
 ============================================================================**/
 
-#include "RingBuffer.h"
+#include "Collections.h"
 
 #include <iostream>
 #include <vector>
@@ -16,7 +16,7 @@ Description : RingBuffer.cpp
 #include <syncstream>
 
 
-namespace RingBuffer
+namespace Collections::RingBuffer
 {
     template<typename T>
     struct RingBuffer
@@ -116,7 +116,7 @@ namespace RingBuffer
     };
 }
 
-namespace RingBuffer::TestUtils
+namespace Collections::RingBuffer::TestUtils
 {
     size_t failuresCount { 0 };
 
@@ -189,7 +189,7 @@ namespace RingBuffer::TestUtils
     }
 }
 
-namespace RingBuffer::Tests
+namespace Collections::RingBuffer::Tests
 {
     using namespace TestUtils;
 
@@ -317,7 +317,7 @@ namespace RingBuffer::Tests
 }
 
 
-namespace RingBuffer::MultithreadedTests
+namespace Collections::RingBuffer::MultithreadedTests
 {
     using namespace TestUtils;
 
@@ -393,7 +393,7 @@ namespace RingBuffer::MultithreadedTests
 
 
 
-void RingBuffer::TestAll()
+void Collections::RingBuffer::TestAll()
 {
     using namespace Tests;
 

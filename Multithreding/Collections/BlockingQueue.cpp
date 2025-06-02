@@ -7,7 +7,7 @@ Copyright   : Your copyright notice
 Description : BlockingQueue.cpp
 ============================================================================**/
 
-#include "BlockingQueue.h"
+#include "Collections.h"
 
 #include <iostream>
 #include <vector>
@@ -17,10 +17,10 @@ Description : BlockingQueue.cpp
 #include "../Utilities/Utilities.h"
 
 
-namespace BlockingQueue::WithLock
+namespace Collections::BlockingQueue
 {
     template<typename T>
-    struct Queue
+    struct QueueWithLock
     {
         using value_type = T;
         using size_type = size_t;
@@ -34,7 +34,7 @@ namespace BlockingQueue::WithLock
 
         std::vector<value_type> buffer;
 
-        explicit Queue(size_type capacity = 1'000): capacity {capacity}
+        explicit QueueWithLock(size_type capacity = 1'000): capacity {capacity}
         {
             buffer.resize(capacity);
         }
@@ -69,13 +69,9 @@ namespace BlockingQueue::WithLock
             buffer[writePos++] = value;
         }
     };
-}
 
-
-namespace BlockingQueue::WithAtomics
-{
     template<typename T>
-    struct Queue
+    struct QueueWithAtomics
     {
         using value_type = T;
         using size_type = size_t;
@@ -88,7 +84,7 @@ namespace BlockingQueue::WithAtomics
 
         std::vector<value_type> buffer;
 
-        explicit Queue(size_type capacity = 1'000): capacity {capacity}
+        explicit QueueWithAtomics(size_type capacity = 1'000): capacity {capacity}
         {
             buffer.resize(capacity);
         }
@@ -126,13 +122,11 @@ namespace BlockingQueue::WithAtomics
 }
 
 
-void BlockingQueue::TestAll()
+void Collections::BlockingQueue::TestAll()
 {
-    // using namespace WithLock;
-    using namespace WithAtomics;
+    QueueWithLock<int> queue { 1000 };
+    // QueueWithAtomics<int> queue { 1000 };
 
-
-    Queue<int> queue {1000};
     constexpr int eventsCount {1'000'000};
 
     Utilities::ScopedTimer timer {"benchmark"};

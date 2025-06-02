@@ -10,7 +10,7 @@ Description : SingleConsumerProducerQueue.cpp
 #include "../Utilities/Wrapper.h"
 #include "../Utilities/Utilities.h"
 
-#include "SingleConsumerProducerQueue.h"
+#include "Collections.h"
 
 #include <iostream>
 #include <vector>
@@ -26,7 +26,7 @@ namespace
     using Integer = Helpers::Wrapper<int, false>;
 }
 
-namespace SingleConsumerProducerQueue
+namespace Collections::SingleConsumerProducerQueue
 {
     // TODO: Concepts ?
     //       trivial_destructible
@@ -159,8 +159,7 @@ namespace SingleConsumerProducerQueue
     };
 };
 
-
-namespace SingleConsumerProducerQueue::DemoTwo
+namespace Collections::SingleConsumerProducerQueue::DemoTwo
 {
     template<class T,
             size_t Capacity = 100>
@@ -212,7 +211,7 @@ namespace SingleConsumerProducerQueue::DemoTwo
     };
 }
 
-namespace SingleConsumerProducerQueue::AtomicBusyWaitReadLoop
+namespace Collections::SingleConsumerProducerQueue::AtomicBusyWaitReadLoop
 {
     // INFO: try_read_next() reading / waiting for the new element without any timeout -> busy wait ()
 
@@ -253,7 +252,7 @@ namespace SingleConsumerProducerQueue::AtomicBusyWaitReadLoop
     };
 }
 
-namespace SingleConsumerProducerQueue::AtomicBusyWaitReadLoop_NoMove
+namespace Collections::SingleConsumerProducerQueue::AtomicBusyWaitReadLoop_NoMove
 {
     template<class T,
             size_t Capacity = 100>
@@ -305,8 +304,7 @@ namespace SingleConsumerProducerQueue::AtomicBusyWaitReadLoop_NoMove
     };
 }
 
-
-namespace SingleConsumerProducerQueue::Tests
+namespace Collections::SingleConsumerProducerQueue::Tests
 {
     void debugTest()
     {
@@ -323,7 +321,7 @@ namespace SingleConsumerProducerQueue::Tests
                 } else
                 {
                     // std::cout << "Sleeping" << std::endl;
-                    std::this_thread::sleep_for(std::chrono::nanoseconds (10));
+                    std::this_thread::sleep_for(std::chrono::nanoseconds (10u));
                 }
             }
         };
@@ -333,7 +331,7 @@ namespace SingleConsumerProducerQueue::Tests
             while (true)
             {
                 buffer.emplace(i++);
-                std::this_thread::sleep_for(std::chrono::seconds(1));
+                std::this_thread::sleep_for(std::chrono::seconds(1u));
             }
         };
 
@@ -357,7 +355,7 @@ namespace SingleConsumerProducerQueue::Tests
                         break;
                     ++total;
                 } else {
-                    std::this_thread::sleep_for(std::chrono::nanoseconds (1));
+                    std::this_thread::sleep_for(std::chrono::nanoseconds (1u));
                 }
             }
             std::cout << "Consumer done\n";
@@ -401,7 +399,7 @@ namespace SingleConsumerProducerQueue::Tests
             for (int i = 100; i <= 110; ++i)
             {
                 buffer.emplace(i);
-                std::this_thread::sleep_for(std::chrono::microseconds (1));
+                std::this_thread::sleep_for(std::chrono::microseconds (1u));
             }
         };
 
@@ -430,7 +428,7 @@ namespace SingleConsumerProducerQueue::Tests
             {
                 buffer.emplace(static_cast<int>(i));
                 //std::osyncstream {std::cout} << "Store -> " << i << std::endl;
-                std::this_thread::sleep_for(std::chrono::microseconds (1));
+                std::this_thread::sleep_for(std::chrono::microseconds (1u));
             }
         };
 
@@ -532,7 +530,7 @@ namespace SingleConsumerProducerQueue::Tests
     }
 }
 
-void SingleConsumerProducerQueue::TestAll()
+void Collections::SingleConsumerProducerQueue::TestAll()
 {
     // Tests::debugTest();
     // Tests::benchmark();

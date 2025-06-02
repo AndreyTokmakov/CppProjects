@@ -7,7 +7,7 @@ Copyright   : Your copyright notice
 Description : Queue.cpp
 ============================================================================**/
 
-#include "Queue.h"
+#include "Collections.h"
 
 #include <iostream>
 #include <string_view>
@@ -306,7 +306,7 @@ namespace Tests
 
         std::future<void> producer = std::async(std::launch::async, [&]()-> void {
             THREAD_INFO << "Producer: started." << std::endl;
-            std::this_thread::sleep_for(std::chrono::seconds(1));
+            std::this_thread::sleep_for(std::chrono::seconds(1u));
             queue.emplace(1);
             THREAD_INFO << "Producer: done" << std::endl;
         });
@@ -315,7 +315,7 @@ namespace Tests
             THREAD_INFO << "Consumer: started" << std::endl;
             auto&& entry = queue.wait_and_pop();
             THREAD_INFO << "Consumer: We've got some" << std::endl;
-            std::this_thread::sleep_for(std::chrono::seconds(2));
+            std::this_thread::sleep_for(std::chrono::seconds(2u));
             entry.printInfo();
             THREAD_INFO << "Consumer: done" << std::endl;
         });
@@ -367,7 +367,7 @@ namespace Tests
         Queue queue;
 
         std::future<void> producer = std::async(std::launch::async, [&]()-> void {
-            std::this_thread::sleep_for(std::chrono::seconds(1));
+            std::this_thread::sleep_for(std::chrono::seconds(1u));
             queue.emplace(1);
             THREAD_INFO << "Producer: done" << std::endl;
         });
@@ -386,7 +386,7 @@ namespace Tests
 }
 
 
-void Queue::TestAll()
+void Collections::Queue::TestAll()
 {
     // print(1, 2, 3);
     // FoldPrintEx(1, 2, 3);

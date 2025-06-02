@@ -58,7 +58,7 @@ namespace
     };
 }
 
-namespace Invoke_Objects_Methods_Manually
+namespace Invoke::Invoke_Objects_Methods_Manually
 {
     struct Data
     {
@@ -82,7 +82,7 @@ namespace Invoke_Objects_Methods_Manually
 }
 
 
-namespace Callbacks
+namespace Invoke::Callbacks
 {
     template <typename Callback, typename... Args>
     auto process_and_call(Callback&& callback, Args&&... args)
@@ -209,15 +209,15 @@ namespace Utilities::Invoke
 
 void Invoke::TestAll()
 {
-    // Invoke::Access_Member();
-    // Invoke::Call_Class_Method();
-    // Invoke::Is_Invocable();
-    // Invoke::Invoke_Functor();
-    // Invoke::Invoke_Class_Method_FromMethod();
-    // Invoke::Invoke_Class_Method_FromMethod_Delegate();
-    // Invoke::Call_Lambda();
+    Access_Member();
+    // ::Call_Class_Method();
+    // ::Is_Invocable();
+    // ::Invoke_Functor();
+    // ::Invoke_Class_Method_FromMethod();
+    // ::Invoke_Class_Method_FromMethod_Delegate();
+    // ::Call_Lambda();
 
     // Callbacks::invoke_class_method();
 
-    Invoke_Objects_Methods_Manually::call();
+    // Invoke_Objects_Methods_Manually::call();
 }

@@ -7,7 +7,7 @@ Copyright   : Your copyright notice
 Description : ThreadSafeQueue_CV_vs_RingBuffer.cpp
 ============================================================================**/
 
-#include "ThreadSafeQueue_CV_vs_RingBuffer.h"
+#include "Collections.h"
 
 #include <iostream>
 #include <string_view>
@@ -23,7 +23,7 @@ Description : ThreadSafeQueue_CV_vs_RingBuffer.cpp
 
 #include "../Utilities/Utilities.h"
 
-namespace ThreadSafeQueue_CV_vs_RingBuffer
+namespace Collections::ThreadSafeQueue_CV_vs_RingBuffer
 {
     template<typename T>
     class BasicQueue
@@ -307,7 +307,7 @@ namespace ThreadSafeQueue_CV_vs_RingBuffer
 }
 
 
-namespace ThreadSafeQueue_CV_vs_RingBuffer::BasicQueue_Test
+namespace Collections::ThreadSafeQueue_CV_vs_RingBuffer::BasicQueue_Test
 {
     void benchmark(int32_t eventMax)
     {
@@ -336,7 +336,7 @@ namespace ThreadSafeQueue_CV_vs_RingBuffer::BasicQueue_Test
     }
 }
 
-namespace ThreadSafeQueue_CV_vs_RingBuffer::RFQueue_Tests
+namespace Collections::ThreadSafeQueue_CV_vs_RingBuffer::RFQueue_Tests
 {
     void benchmark(int32_t eventMax)
     {
@@ -367,7 +367,7 @@ namespace ThreadSafeQueue_CV_vs_RingBuffer::RFQueue_Tests
     }
 }
 
-namespace ThreadSafeQueue_CV_vs_RingBuffer::Queue_List_Atomic_Tests
+namespace Collections::ThreadSafeQueue_CV_vs_RingBuffer::Queue_List_Atomic_Tests
 {
     void benchmark(int32_t eventMax)
     {
@@ -401,7 +401,7 @@ namespace ThreadSafeQueue_CV_vs_RingBuffer::Queue_List_Atomic_Tests
 }
 
 
-namespace ThreadSafeQueue_CV_vs_RingBuffer::RingBuffer_AtomicSize_Test
+namespace Collections::ThreadSafeQueue_CV_vs_RingBuffer::RingBuffer_AtomicSize_Test
 {
     void benchmark(int32_t eventMax)
     {
@@ -431,7 +431,7 @@ namespace ThreadSafeQueue_CV_vs_RingBuffer::RingBuffer_AtomicSize_Test
 }
 
 
-namespace ThreadSafeQueue_CV_vs_RingBuffer::RingBuffer_AtomicSize_NoWait_Test
+namespace Collections::ThreadSafeQueue_CV_vs_RingBuffer::RingBuffer_AtomicSize_NoWait_Test
 {
     void benchmark(int32_t eventMax)
     {
@@ -460,7 +460,7 @@ namespace ThreadSafeQueue_CV_vs_RingBuffer::RingBuffer_AtomicSize_NoWait_Test
     }
 }
 
-void ThreadSafeQueue_CV_vs_RingBuffer::TestAll()
+void Collections::ThreadSafeQueue_CV_vs_RingBuffer::TestAll()
 {
     // RFQueue_Tests::benchmark();
 

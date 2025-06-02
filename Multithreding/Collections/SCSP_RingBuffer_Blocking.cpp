@@ -7,7 +7,7 @@ Copyright   : Your copyright notice
 Description : SCSP_RingBuffer_Blocking.cpp
 ============================================================================**/
 
-#include "SCSP_RingBuffer_Blocking.h"
+#include "Collections.h"
 #include "../Utilities/Utilities.h"
 
 #include <iostream>
@@ -16,7 +16,7 @@ Description : SCSP_RingBuffer_Blocking.cpp
 #include <thread>
 #include <syncstream>
 
-namespace SCSP_RingBuffer_Blocking
+namespace Collections::SCSP_RingBuffer_Blocking
 {
     template<typename T>
     struct BlockingRingBuffer
@@ -108,7 +108,7 @@ namespace SCSP_RingBuffer_Blocking
     };
 }
 
-namespace SCSP_RingBuffer_Blocking::Tests
+namespace Collections::SCSP_RingBuffer_Blocking::Tests
 {
     void Producer_Consumer_Blocking_Test()
     {
@@ -173,7 +173,7 @@ namespace SCSP_RingBuffer_Blocking::Tests
     }
 }
 
-void SCSP_RingBuffer_Blocking::TestAll()
+void Collections::SCSP_RingBuffer_Blocking::TestAll()
 {
     Tests::Producer_Consumer_Blocking_Test();
     Tests::Producer_Consumer_NonBlocking_Test();
