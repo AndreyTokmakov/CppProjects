@@ -61,6 +61,8 @@ namespace Utilities
 
     bool setThreadCore(const uint32_t coreId) noexcept;
 
+    int32_t getCpu() noexcept;
+
     void TestAll();
 };
 

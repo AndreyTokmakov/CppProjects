@@ -58,6 +58,7 @@ add_executable(${PROJECT_NAME}
         PerformanceExperiments/ConditionVariable_vs_Atomic.cpp
         PerformanceExperiments/Mutex_vs_AtomicLock.cpp
         PerformanceExperiments/SpinLock.cpp
+        Experiments/Experiments.cpp
 )
 
 # Link libraries to the project/executable

@@ -45,11 +45,14 @@ Description : Multithreading tests main entry point
 #include "SynchStream/SynchStream.h"
 #include "SpinLock/SpinLock.h"
 #include "Utilities/Utilities.h"
+#include "Experiments/Experiments.h"
 
 
 int main([[maybe_unused]] int argc,
          [[maybe_unused]] char** argv)
 {
+    Experiments::TestAll();
+
     // AsyncLaunch::TestAll();
 
     // Atomic::TestAll();
@@ -81,7 +84,7 @@ int main([[maybe_unused]] int argc,
     // SynchStream::TEST_ALL();
     // SynchStream_Custom::TEST_ALL();
 
-    SpinLock::TestAll();
+    // SpinLock::TestAll();
 
     // StoppingThreads::TestAll();
 
