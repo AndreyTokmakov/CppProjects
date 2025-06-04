@@ -36,24 +36,30 @@ namespace
     };
 
 
-    struct Worker
+    struct Person
     {
-        int value;
+        int age { 0 };
+        std::string name {};
 
-        explicit Worker(const int val) : value(val) {
+        explicit Person(const int a, std::string n) : age { a }, name{ std::move(n) } {
         }
 
-        void add_and_print(const std::string& text) const {
+        void info(const std::string& text) const {
             std::cout << text << std::endl;
         }
 
         [[nodiscard]]
-        int getValue() const {
-            return this->value;
+        int getAge() const {
+            return age;
         }
 
-        void printValue() const {
-            std::cout << "Value :" << this->value << std::endl;
+        [[nodiscard]]
+        std::string getName() const {
+            return name;
+        }
+
+        void print() const {
+            std::cout << "Person( age: " << age << ", name: " << name << ")\n";
         }
     };
 }
@@ -115,9 +121,11 @@ namespace Invoke
 
     void Access_Member()
     {
-        const Worker utils(12345);
+        const Person someone { 17, "Max"};
+
         // invoke (access) a data member
-        std::cout << "Value : " << std::invoke(&Worker::value, utils) << std::endl;
+        std::cout << "age  : " << std::invoke(&Person::age, someone) << std::endl;
+        std::cout << "name : " << std::invoke(&Person::name, someone) << std::endl;
     }
 }
 
@@ -130,11 +138,11 @@ namespace Utilities::Invoke
 
     void Call_Class_Method()
     {
-        const Worker utils(314159);
+        const Person someone { 17, "Max"};
 
-        utils.printValue();
-        std::invoke(&Worker::add_and_print, utils, "Some_Text");
-        utils.printValue();
+        someone.print();
+        std::invoke(&Person::info, someone, "Some_Text");
+        someone.print();
     }
 
 
