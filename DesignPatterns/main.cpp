@@ -96,7 +96,7 @@ int main([[maybe_unused]]  int argc,
     // Interpreter::Test();
     // Mediator::TestAll();
     // Memento::TestAll();
-    // Observer::TestAll();
+    Observer::TestAll();
     // State::TestAll();
     // TemplateMethod::TestAll();
     // Visitor::test();
@@ -104,7 +104,7 @@ int main([[maybe_unused]]  int argc,
 
     /** C++ IDIOMS: **/
 
-    CRTP::Test();
+    // CRTP::Test();
     // NVI_SimpleExample::TestAll();
     // TypeErasure::Test();
     // RAII::Test();

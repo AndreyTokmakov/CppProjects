@@ -10,7 +10,7 @@ Description : Observer-Mediator pattern test
 #ifndef OBSERVER_MEDIATOR_PATTERN_INCLUDE_GUARD_H
 #define OBSERVER_MEDIATOR_PATTERN_INCLUDE_GUARD_H
 
-#include <iostream>
+#include <print>
 #include <memory>
 #include <list>
 #include <utility>
@@ -42,10 +42,11 @@ namespace ObserverMediator
         std::list<IObserver<T>*> observers;
 
     protected:
+        /*
         [[nodiscard, maybe_unused]]
         inline constexpr T& underlying() noexcept {
             return static_cast<T&>(*this);
-        }
+        }*/
 
         [[nodiscard, maybe_unused]]
         inline constexpr const T& underlying() const noexcept {
@@ -72,7 +73,7 @@ namespace ObserverMediator
         std::string name;
 
         explicit Entry(std::string name): name { std::move(name) } {
-            std::cout << std::format("Entry({}) created.", name) << std::endl;
+            std::println("Entry({}) created.", name);
         }
 
         void setName(std::string n) noexcept {
@@ -89,7 +90,7 @@ namespace ObserverMediator
         {
             Repository& repo;
 
-            explicit UpdateEntryObserver(Repository& repository): repo {repository}{
+            explicit UpdateEntryObserver(Repository& repository): repo { repository } {
             }
 
             void update(const Entry& event) const override {
@@ -113,15 +114,15 @@ namespace ObserverMediator
         void print()
         {
             for (auto& [name, entry]: storage)
-                std::cout << std::format("Name {}, value: {}", name, entry->name) << std::endl;
+                std::println("Name {}, value: {}", name, entry->name);
         }
 
     private:
 
         void onEntryUpdate(const Entry& event)
         {
-            std::cout << "Repository::onEntryUpdate() called" << std::endl;
-            std::cout << "Event name: " << event.name << std::endl;
+            std::println("Repository::onEntryUpdate() called");
+            std::println("Event name: {}", event.name);
         }
     };
 }

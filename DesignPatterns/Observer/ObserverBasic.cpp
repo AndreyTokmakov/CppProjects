@@ -15,12 +15,14 @@ Description : ObserverBasic pattern test
 
 namespace Observer::Basic
 {
-    struct IObserver {
+    struct IObserver
+    {
         virtual void update(struct IObservable* subject) const = 0;
         virtual ~IObserver() = default;
     };
 
-    struct IObservable {
+    struct IObservable
+    {
         virtual IObserver* addObserver(IObserver* observer) = 0;
         virtual IObserver* removeObserver(IObserver* observer) = 0;
         virtual void notify() noexcept = 0;

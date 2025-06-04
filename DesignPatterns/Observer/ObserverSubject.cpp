@@ -9,19 +9,20 @@ Description : ObserverSubject pattern test
 
 #include "Observer.h"
 
-#include <iostream>
+#include <print>
 #include <algorithm>
 #include <list>
 
 namespace Observer::SubjectObserver
 {
-    struct IObserver {
+    struct IObserver
+    {
         virtual ~IObserver() = default;
         virtual void notify() const = 0;
     };
 
-    class Subject {
-    public:
+    struct Subject
+    {
         void registerObserver(IObserver* observer) {
             observers.push_back(observer);
         }
@@ -39,26 +40,26 @@ namespace Observer::SubjectObserver
         std::list<IObserver*> observers;
     };
 
-    class ConcreteObserverA : public IObserver {
-    public:
+    struct ConcreteObserverA : public IObserver
+    {
         explicit ConcreteObserverA(Subject& srcObject) : subject { srcObject } {
             subject.registerObserver(this);
         }
 
         void notify() const override {
-            std::cout << "ConcreteObserverA::notify\n";
+            std::println("ConcreteObserverA::notify");
         }
     private:
         Subject& subject;
     };
 
-    class ConcreteObserverB : public IObserver {
-    public:
+    struct ConcreteObserverB : public IObserver
+    {
         explicit ConcreteObserverB(Subject& srcObject) : subject { srcObject } {
             subject.registerObserver(this);
         }
         void notify() const override {
-            std::cout << "ConcreteObserverB::notify\n";
+            std::println("ConcreteObserverB::notify");
         }
     private:
         Subject& subject;
@@ -75,7 +76,7 @@ void SubjectObserver_Test()
     ConcreteObserverB observerB(subject);
 
     subject.notifyObservers();
-    std::cout <<  "    subject.unregisterObserver(observerA)\n";
+    std::println("    subject.unregisterObserver(observerA)");
     subject.unregisterObserver(&observerA);
     subject.notifyObservers();
 }

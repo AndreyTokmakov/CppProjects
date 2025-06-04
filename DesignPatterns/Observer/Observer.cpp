@@ -324,19 +324,15 @@ namespace Observer::Parsons
 void ObserverBasic_Test();    /// ObserverBasic.cpp
 void SubjectObserver_Test();  /// ObserverSubject.cpp
 void LambdaObserverTest();    /// LambdaObserverTest.cpp
-void ObserverMediator_Test();    /// LambdaObserverTest.cpp
+void ObserverMediator_Test(); /// LambdaObserverTest.cpp
 
 void Observer::TestAll()
 {
-    Test1::Test();
+    // Test1::Test();
     // Test2::Test();
     // Parsons::Test();
-
     // ObserverBasic_Test();
-
-    // SubjectObserver_Test();
-
+    SubjectObserver_Test();
     // LambdaObserverTest();
-
     // ObserverMediator_Test();
 }
