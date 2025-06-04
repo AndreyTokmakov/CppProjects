@@ -19,6 +19,7 @@
 #include <semaphore>
 #include <utility>
 #include <type_traits>
+#include <syncstream>
 
 #include "Threads.h"
 #include "../Utilities/Utilities.h"
@@ -228,6 +229,38 @@ namespace Threads
         thread.join();
         THREAD_INFO << "Completed" << std::endl;
     }
+
+
+    void CreateThread_LambdaWithState()
+    {
+        auto func = [counter = 0] mutable -> void {
+            ++counter;
+            std::osyncstream { std::cout } << counter << std::endl;
+        };
+
+        func();
+
+        std::jthread t1(func);
+        std::jthread t2(func);
+    }
+
+    struct Worker
+    {
+        std::atomic<int32_t> counter { 0 };
+
+        void doSomething() {
+            const int32_t prev = counter.fetch_add(1, std::memory_order::relaxed);
+            std::osyncstream { std::cout } << (1 + prev) << std::endl;
+        }
+    };
+
+    void CreateThread_ClassMethod_Callback()
+    {
+        Worker worker;
+
+        std::jthread t1(&Worker::doSomething, &worker);
+        std::jthread t2(&Worker::doSomething, &worker);
+    }
 }
 
 namespace Threads::ThreadLocalStorage
@@ -393,13 +426,14 @@ void Threads::TEST_ALL()
     // Thead_as_ClassMethod_1();
 
     // Create_Thread_Tuple_as_Params();
-    Create_Thread_Tuple_as_Params_2();
-
+    // Create_Thread_Tuple_as_Params_2();
     // Create_Simple_Thread();
     // Create_Simple_Thread_Lambda();
     // Create_Simple_Thread_Params();
     // Create_Simple_Thread_Params_By_Reference();
     // Create_Simple_Thread_FunctionObjects();
+    // CreateThread_LambdaWithState();
+    CreateThread_ClassMethod_Callback();
 
     // CreateThread_Function_accept_Function();
 

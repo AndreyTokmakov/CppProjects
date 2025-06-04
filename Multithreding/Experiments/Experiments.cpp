@@ -40,9 +40,43 @@ namespace Experiments
         workers.clear();
         std::osyncstream { std::cout } << counter << std::endl;
     }
+
+
+    void CreateThread_LambdaWithState()
+    {
+        auto func = [counter = 0] mutable -> void {
+            ++counter;
+            std::osyncstream { std::cout } << counter << std::endl;
+        };
+
+        func();
+
+        std::jthread t1(func);
+        std::jthread t2(func);
+    }
+
+    struct Worker
+    {
+        std::atomic<int32_t> counter { 0 };
+
+        void doSomething() {
+            const int32_t prev = counter.fetch_add(1, std::memory_order::relaxed);
+            std::osyncstream { std::cout } << (1 + prev) << std::endl;
+        }
+    };
+
+    void CreateThread_ClassMethod_Callback()
+    {
+        Worker worker;
+
+        std::jthread t1(&Worker::doSomething, &worker);
+        std::jthread t2(&Worker::doSomething, &worker);
+    }
 }
 
 void Experiments::TestAll()
 {
-    RaceCondition();
+    // RaceCondition();
+    // CreateThread_LambdaWithState();
+    CreateThread_ClassMethod_Callback();
 }
