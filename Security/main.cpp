@@ -66,32 +66,40 @@ namespace Sha256Tests
 
 namespace SecurityBug
 {
-    void f1()
+    void initPassword_C_Style()
     {
-        /*
-        std::array<char, 8> secret {'p','a','s','s','w','o','r','d'};
-        std::cout << std::string(secret.data(), secret.size()) << std::endl;
-        */
-
-        char secret[] = {'p','a','s','s','w','o','r','d'};
+        constexpr char secret[] = {'p','a','s','s','w','o','r','d'};
         std::cout << secret << std::endl;
     }
 
-    void f2()
+    void readPassword_C_Style()
     {
-        /*
-        std::array<char, 8> secret;
-        std::cout << std::string(secret.data(), secret.size()) << std::endl;
-        */
-
         char secret[8];
         std::cout << secret << std::endl;
     }
 
-    void test()
+    void initPassword_Cpp_Style()
     {
-        f1();
-        f2();
+        constexpr std::array<char, 8> secret {'p','a','s','s','w','o','r','d'};
+        std::cout << std::string_view(secret.data(), secret.size()) << std::endl;
+    }
+
+    void readPassword_Cpp_Style()
+    {
+        std::array<char, 8> secret;
+        std::cout << std::string_view(secret.data(), secret.size()) << std::endl;
+    }
+
+    void testC()
+    {
+        initPassword_C_Style();
+        readPassword_C_Style();
+    }
+
+    void testCpp()
+    {
+        initPassword_Cpp_Style();
+        readPassword_Cpp_Style();
     }
 }
 
@@ -108,14 +116,15 @@ int main([[maybe_unused]] int argc,
     // LibCryptoCpp::Tests();
     // CRC::TestAll();
     // Sha1::TestAll();
-    CryptoCpp::TestAll();
+    //CryptoCpp::TestAll();
 
     // SecureFIleBlockStorage::TestAll();
 
     /// AES-GCM ????
 
 
-    // SecurityBug::test();
+    // SecurityBug::testC();
+    SecurityBug::testCpp();
 
     return EXIT_SUCCESS;
 }
