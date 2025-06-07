@@ -18,26 +18,27 @@ namespace
         virtual ~IDrawingAPI() = default;
     };
 
-    struct IShape
+
+    struct DrawingAPI1 : public IDrawingAPI
     {
-        virtual ~IShape() = default;
-        virtual void draw() = 0;
-        virtual void resizeByPercentage(double pct) = 0;
-    };
-
-
-    class DrawingAPI1 : public IDrawingAPI {
-    public:
         void drawCircle(double x, double y, double radius) override {
             std::cout << "API1.circle at " << x << ':' << y << ' ' << radius << std::endl;
         }
     };
 
-    class DrawingAPI2 : public IDrawingAPI {
-    public:
+    struct DrawingAPI2 : public IDrawingAPI
+    {
         void drawCircle(double x, double y, double radius) override {
             std::cout << "API2.circle at " << x << ':' << y << ' ' <<  radius << std::endl;
         }
+    };
+
+
+    struct IShape
+    {
+        virtual ~IShape() = default;
+        virtual void draw() = 0;
+        virtual void resizeByPercentage(double pct) = 0;
     };
 
     class CircleShape : public IShape

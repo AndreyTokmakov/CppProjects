@@ -1628,6 +1628,25 @@ namespace ASM_Usage
 }
 
 
+namespace FibonacciSequence_Lambda
+{
+    void generate()
+    {
+        auto gen = [current = 0, next = 1]() mutable {
+            return current = std::exchange(next, current + next);
+        };
+
+        std::vector<int> fib(10);
+        std::generate(fib.begin(), fib.end(), gen);
+        for (int i : fib) {
+            std::cout << i << " ";
+        }
+        std::cout << std::endl;
+
+        // 1 1 2 3 5 8 13 21 34 55
+    }
+}
+
 
 
 
@@ -1644,6 +1663,8 @@ int main([[maybe_unused]] const int argc,
     // Coroutines::TestAll();
 
     //ASM_Usage::measureElapsedTime();
+
+    FibonacciSequence_Lambda::generate();
 
 
 

@@ -75,7 +75,7 @@ int main([[maybe_unused]]  int argc,
 
     /** Structural patterns: **/
     // Adapter::TestAll();
-    // Bridge::TestAll();
+    Bridge::TestAll();
     // PImpl::TestAll();
     // Composite::Test();
     // Facade::Test();
@@ -96,7 +96,7 @@ int main([[maybe_unused]]  int argc,
     // Interpreter::Test();
     // Mediator::TestAll();
     // Memento::TestAll();
-    Observer::TestAll();
+    // Observer::TestAll();
     // State::TestAll();
     // TemplateMethod::TestAll();
     // Visitor::test();

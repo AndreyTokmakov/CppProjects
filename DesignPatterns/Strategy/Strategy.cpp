@@ -52,14 +52,12 @@ namespace Strategy::SimpleStrategy
 
     public:
         virtual ~IContext() = default;
-
         virtual void useStrategy() = 0;
-
         virtual void setStrategy(std::unique_ptr<IStrategy>) = 0;
     };
 
-    class Client : public IContext {
-    public:
+    struct Client : public IContext
+    {
         void useStrategy() override {
             operation->use();
         }
@@ -105,8 +103,8 @@ namespace Strategy::Calculations
     };
 
 
-    class AddStrategy: public IStrategy {
-    public:
+    class AddStrategy: public IStrategy
+    {
         [[nodiscard]]
         std::string name() const noexcept override {
             return "add";
@@ -125,8 +123,8 @@ namespace Strategy::Calculations
     };
 
 
-    struct MultStrategy: public IStrategy {
-    public:
+    struct MultStrategy: public IStrategy
+    {
         [[nodiscard]]
         std::string name() const noexcept override {
             return "mult";
@@ -324,7 +322,7 @@ namespace Strategy::Strategy_Text
 
 void Strategy::Test()
 {
-    SimpleStrategy::Test();
-    // Calculations::Test();
+    // SimpleStrategy::Test();
+    Calculations::Test();
     // Strategy_Text::Test();
 }
