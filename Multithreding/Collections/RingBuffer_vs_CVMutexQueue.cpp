@@ -31,17 +31,27 @@ namespace Collections::RingBuffer_vs_CVMutexQueue
 
         std::atomic<size_type> idxWrite { 0 };
         size_type idxWriteCached { 0 };
+        size_type idxRead { 0 };
         collection_type buffer {};
 
         explicit RingBuffer(): buffer(Capacity + 1)  {
-            std::cout << "SIZE = " << buffer.size() << std::endl;
         }
 
         void put(const value_type& value)
         {
-            std::cout << idxWriteCached << std::endl;
             buffer[idxWriteCached] = value;
             idxWriteCached = idxWrite.fetch_add(1, std::memory_order::release) + 1;
+        }
+
+        [[nodiscard]]
+        bool try_read_next(value_type& result)
+        {
+            if (idxRead == idxWrite.load(std::memory_order::acquire)) {
+                return false;
+            }
+
+            result = std::move(buffer[idxRead++]);
+            return true;
         }
     };
 
@@ -50,10 +60,14 @@ namespace Collections::RingBuffer_vs_CVMutexQueue
 void Collections::RingBuffer_vs_CVMutexQueue::TestAll()
 {
     RingBuffer<int> buffer;
-    for (int i = 0; i < std::numeric_limits<uint16_t>::max() * 2; ++i) {
+    for (int i = 0; i < 10; ++i) {
         buffer.put(i);
     }
 
+    int result { 0 };
+    while (buffer.try_read_next(result)) {
+        std::cout << result << std::endl;
+    }
 
 
 }
