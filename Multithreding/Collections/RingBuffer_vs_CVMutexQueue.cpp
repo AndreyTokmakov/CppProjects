@@ -54,20 +54,44 @@ namespace Collections::RingBuffer_vs_CVMutexQueue
             return true;
         }
     };
+}
 
+namespace Collections::RingBuffer_vs_CVMutexQueue::Tests
+{
+    void simple_test()
+    {
+        RingBuffer<int> buffer;
+        for (int i = 0; i < 10; ++i) {
+            buffer.put(i);
+        }
+
+        int result { 0 };
+        while (buffer.try_read_next(result)) {
+            std::cout << result << std::endl;
+        }
+    }
+
+    void multithreaded_test()
+    {
+        RingBuffer<int> buffer;
+        std::jthread producer ([&buffer] {
+           for (int i = 0; i < 10'000; ++i)
+               buffer.put(i);
+        });
+
+        std::jthread consumer ([&buffer] {
+            int result { 0 };
+            while (buffer.try_read_next(result)) {
+                // std::cout << result << std::endl;
+            }
+        });
+    }
 }
 
 void Collections::RingBuffer_vs_CVMutexQueue::TestAll()
 {
-    RingBuffer<int> buffer;
-    for (int i = 0; i < 10; ++i) {
-        buffer.put(i);
-    }
-
-    int result { 0 };
-    while (buffer.try_read_next(result)) {
-        std::cout << result << std::endl;
-    }
+    // Tests::simple_test();
+    Tests::multithreaded_test();
 
 
 }
