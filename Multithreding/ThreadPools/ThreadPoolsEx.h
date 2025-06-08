@@ -7,12 +7,12 @@ Copyright   : Your copyright notice
 Description : ThreadPoolsEx.h
 ============================================================================**/
 
-#ifndef CPPPROJECTS_THREADPOOLEX_H
-#define CPPPROJECTS_THREADPOOLSEX_H
+#ifndef CPPPROJECTS_THREADPOOLEX_2_H
+#define CPPPROJECTS_THREADPOOLEX_2_H
 
 namespace ThreadPoolsEx
 {
     void TestAll();
 };
 
-#endif //CPPPROJECTS_THREADPOOLEX_H
+#endif //CPPPROJECTS_THREADPOOLEX_2_H

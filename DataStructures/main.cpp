@@ -79,7 +79,7 @@ int main([[maybe_unused]] int argc,
     // LinkedLists::TEST_ALL();
     // Logging::TEST_ALL();
 	// LRUCache::TEST_ALL();
-    ObjectPool::TestAll();
+    // ObjectPool::TestAll();
     // ObjectPool_Growing::TestAll();
     // Optional::TEST_ALL();
     // PriorityList::TEST_ALL();
@@ -95,7 +95,7 @@ int main([[maybe_unused]] int argc,
 
     // CircularBuffers::TEST_ALL();
     // RingBuffer::TestAll();
-    // RingBufferEx::TestAll();
+    RingBufferEx::TestAll();
     // RingBufferExAtomic::TestAll();
     // RingBuffer_SPSC::TestAll();
 

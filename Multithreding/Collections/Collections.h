@@ -18,5 +18,6 @@ namespace Collections::SCSP_RingBuffer { void TestAll(); }
 namespace Collections::SCSP_RingBuffer_Blocking { void TestAll(); }
 namespace Collections::SingleConsumerProducerQueue { void TestAll(); }
 namespace Collections::ThreadSafeQueue_CV_vs_RingBuffer { void TestAll(); }
+namespace Collections::RingBuffer_vs_CVMutexQueue { void TestAll(); };
 
 #endif //CPP_PROJECTS_MULTITHREADING_COLLECTIONS_H
