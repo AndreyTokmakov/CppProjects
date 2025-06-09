@@ -43,12 +43,13 @@ namespace Utilities
     struct ScopedTimer
     {
         const std::string_view benchmarkName;
-        const std::chrono::high_resolution_clock::time_point start {
-                std::chrono::high_resolution_clock::now()
-        };
+        const bool warmUp { false };
+        const std::chrono::high_resolution_clock::time_point start;
 
-        explicit ScopedTimer(std::string_view info) :
-                benchmarkName {info} {
+        explicit ScopedTimer(std::string_view info, bool warmUp = false) :
+                benchmarkName { info },
+                warmUp { warmUp },
+                start { std::chrono::high_resolution_clock::now() } {
         }
 
         ScopedTimer(const ScopedTimer&) = delete;
