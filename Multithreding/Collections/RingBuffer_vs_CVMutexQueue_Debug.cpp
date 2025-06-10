@@ -1,5 +1,5 @@
 /**============================================================================
-Name        : RingBuffer_vs_CVMutexQueue.cpp
+Name        : RingBuffer_vs_CVMutexQueue_Debug.cpp
 Created on  : 14.12.2024
 Author      : Andrei Tokmakov
 Version     : 1.0
@@ -22,16 +22,18 @@ Description :
 #include <syncstream>
 
 
-namespace Collections::RingBuffer_vs_CVMutexQueue
+namespace Collections::RingBuffer_vs_CVMutexQueue_Debug
 {
     template<typename T,
-             uint16_t Capacity = std::numeric_limits<uint16_t>::max()>
-    struct RingBuffer
+            uint16_t Capacity = std::numeric_limits<uint16_t>::max()>
+    struct RingBuffer final
     {
         using size_type  = uint16_t;
         using value_type = T;
         using collection_type = std::vector<value_type>;
 
+
+        // alignas(std::hardware_destructive_interference_size)
         std::atomic<size_type> idxWrite { 0 };
         size_type idxWriteCached { 0 };
         size_type idxRead { 0 };
@@ -49,7 +51,7 @@ namespace Collections::RingBuffer_vs_CVMutexQueue
         template<typename ... Types>
         void emplace(Types&& ... params)
         {
-            new (&buffer[idxWriteCached]) value_type { std::forward<Types>(params)... };
+            //new (&buffer[idxWriteCached]) value_type { std::forward<Types>(params)... };
             idxWriteCached = idxWrite.fetch_add(1, std::memory_order::release) + 1;
         }
 
@@ -60,13 +62,70 @@ namespace Collections::RingBuffer_vs_CVMutexQueue
                 return false;
             }
 
-            result = std::move(buffer[idxRead++]);
+            //result = std::move(buffer[idxRead++]);
             return true;
         }
     };
 }
 
-namespace Collections::RingBuffer_vs_CVMutexQueue
+namespace Collections::RingBuffer_vs_CVMutexQueue_Debug
+{
+    template<typename T>
+    struct LFQueue final
+    {
+        using size_type = size_t;
+
+        explicit LFQueue(size_type num_elems) : store(num_elems, T()) {
+        }
+
+        T* getNextToWriteTo() noexcept
+        {
+            return &store[next_write_index_];
+        }
+
+        void updateWriteIndex() noexcept
+        {
+            next_write_index_ = (next_write_index_ + 1) % store.size();
+            num_elements_++;
+        }
+
+        T* getNextToRead()  noexcept
+        {
+            return (size() ? &store[next_read_index_] : nullptr);
+        }
+
+        void updateReadIndex() noexcept
+        {
+            next_read_index_ = (next_read_index_ + 1) % store.size(); // wrap around at the end of container size.
+            num_elements_--;
+        }
+
+        [[nodiscard]]
+        size_type size() const noexcept {
+            return num_elements_.load();
+        }
+
+        /// Deleted default, copy & move constructors and assignment-operators.
+        LFQueue() = delete;
+
+        LFQueue(const LFQueue &) = delete;
+        LFQueue(const LFQueue &&) = delete;
+
+        LFQueue &operator=(const LFQueue &) = delete;
+        LFQueue &operator=(const LFQueue &&) = delete;
+
+    private:
+        /// Underlying container of data accessed in FIFO order.
+        std::vector<T> store;
+
+        /// Atomic trackers for next index to write new data to and read new data from.
+        std::atomic<size_type> next_write_index_ = {0};
+        std::atomic<size_type> next_read_index_ = {0};
+        std::atomic<size_type> num_elements_ = {0};
+    };
+}
+
+namespace Collections::RingBuffer_vs_CVMutexQueue_Debug
 {
     template<typename T>
     class BlockingQueue
@@ -120,7 +179,7 @@ namespace Collections::RingBuffer_vs_CVMutexQueue
     };
 }
 
-namespace Collections::RingBuffer_vs_CVMutexQueue::Tests
+namespace Collections::RingBuffer_vs_CVMutexQueue_Debug::Tests
 {
     constexpr int32_t evtCount = 10'000'000;
 
@@ -132,13 +191,31 @@ namespace Collections::RingBuffer_vs_CVMutexQueue::Tests
     };
 
     // using Type = int;
-    using Type = Data<int, 32>;
+    using Type = Data<int, 4>;
     // using Type = Data<int, 128>;
     // using Type = Data<int, 1024>;
     // using Type = Data<int, 1024 * 4>;
 
 
-    void simple_test()
+    void simple_test_lf_queue()
+    {
+        LFQueue<Type> buffer(1024);
+        Type* next_write = nullptr;
+        for (int i = 0; i < 10; ++i) {
+            next_write = buffer.getNextToWriteTo();
+            next_write->value = i;
+            buffer.updateWriteIndex();
+        }
+
+        Type* result;
+        while (buffer.size()) {
+            result = buffer.getNextToRead();
+            std::cout << result->value << std::endl;
+            buffer.updateReadIndex();
+        }
+    }
+
+    void simple_test_ring_buffer()
     {
         RingBuffer<Type> buffer;
         for (int i = 0; i < 10; ++i) {
@@ -151,15 +228,16 @@ namespace Collections::RingBuffer_vs_CVMutexQueue::Tests
         }
     }
 
+
     void multithreaded_buffer_test(bool warmUp = false)
     {
         RingBuffer<Type> buffer;
         Utilities::ScopedTimer timer { "multithreaded_buffer_test", warmUp};
         std::jthread producer ([&buffer] {
-           for (int i = 0; i < evtCount; ++i) {
-               // buffer.put(Type {i});
-               buffer.emplace(i);
-           }
+            for (int i = 0; i < evtCount; ++i) {
+                // buffer.put(Type {i});
+                buffer.emplace(i);
+            }
         });
 
         std::jthread consumer ([&buffer] {
@@ -169,6 +247,35 @@ namespace Collections::RingBuffer_vs_CVMutexQueue::Tests
                 count += buffer.try_read_next(result);
                 if (count >= evtCount) {
                     break;
+                }
+            }
+        });
+    }
+
+    void multithreaded_lf_queue_test(bool warmUp = false)
+    {
+        LFQueue<Type> buffer(256 * 256);
+        Utilities::ScopedTimer timer { "multithreaded_lf_queue_test", warmUp};
+        std::jthread producer ([&buffer] {
+            Type* next_write = nullptr;
+            for (int i = 0; i < evtCount; ++i) {
+                next_write = buffer.getNextToWriteTo();
+                next_write->value = i;
+                buffer.updateWriteIndex();
+            }
+        });
+
+        std::jthread consumer ([&buffer] {
+            int count { 0 };
+            Type* result;
+            while (true) {
+                if (buffer.size()) {
+                    result = buffer.getNextToRead();
+                    buffer.updateReadIndex();
+                    ++count;
+                    if (count >= evtCount) {
+                        break;
+                    }
                 }
             }
         });
@@ -199,13 +306,16 @@ namespace Collections::RingBuffer_vs_CVMutexQueue::Tests
     }
 }
 
-void Collections::RingBuffer_vs_CVMutexQueue::TestAll()
+void Collections::RingBuffer_vs_CVMutexQueue_Debug::TestAll()
 {
-    // Tests::simple_test();
+    // Tests::simple_test_lf_queue();
+    // Tests::simple_test_ring_buffer();
 
     // Tests::multithreaded_queue_test(true);
-    // Tests::multithreaded_buffer_test(true);
+    Tests::multithreaded_buffer_test(true);
+    Tests::multithreaded_lf_queue_test(true);
 
-    Tests::multithreaded_queue_test();
+    // Tests::multithreaded_queue_test();
     Tests::multithreaded_buffer_test();
+    Tests::multithreaded_lf_queue_test();
 }
