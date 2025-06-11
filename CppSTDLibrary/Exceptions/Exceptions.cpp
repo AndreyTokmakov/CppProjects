@@ -223,7 +223,8 @@ namespace Exceptions::Exceptions_In_Destructor
 			std::cout << "Base_WithException::Base_WithException()" << std::endl;
 			
 		}
-		virtual ~Base_WithDtorException() /*noexcept(false)*/ {
+
+        ~Base_WithDtorException() noexcept(false) {
 			std::cout << "~Base_WithException::Base_WithException()" << std::endl;
 			throw std::runtime_error("Exception from Base_WithException::Base_WithException()");
 		}
@@ -238,7 +239,7 @@ namespace Exceptions::Exceptions_In_Destructor
         }
 
         ~BadClass() {
-            throw std::runtime_error("it's actually impossible to catch");
+            throw std::runtime_error("it's actually impossible to catch .. without noexcept(false)");
             std::cout << "BadClass created\n";
         }
     };
@@ -502,6 +503,66 @@ namespace Exceptions::CurrentException {
 	}
 }
 
+namespace Exceptions::Exceptions_In_Destructor
+{
+    struct Boom: public std::runtime_error
+    {
+        explicit Boom(const std::string& text): std::runtime_error (text ) {
+        }
+    };
+
+    struct Bang: public std::runtime_error
+    {
+        explicit Bang(const std::string& text): std::runtime_error (text ) {
+        }
+    };
+
+    struct Evil final
+    {
+        Evil() {
+            std::cout << "Evil::Evil()\n";
+        }
+
+        ~Evil() noexcept(false) {
+            std::cout << "Evil::~Evil()\n";
+            throw Bang { "Oks"};
+        }
+    };
+
+    void bar()
+    {
+        throw Boom("Boom from bar()");
+    }
+
+    void foo()
+    {
+        std::cout << "A\n";
+        Evil e;
+        std::cout << "B\n";
+        bar();
+        std::cout << "C\n";
+    }
+
+    void bad_usage()
+    {
+        try {
+            foo();
+        } catch (const Boom&) {
+            std::cerr << "Handling Boom...\n";
+        } catch (const Bang&) {
+            std::cerr << "Bang...\n";
+        }
+
+        // A
+        // Evil::Evil()
+        // B
+        // Evil::~Evil()
+        // terminate called after throwing an instance of 'Throwing_From_Destructor::Bang'
+        //    what():  Oks
+    }
+}
+
+
 void Exceptions::TestAll()
 {
 	// Exceptions_In_Constructors::Test_Base();
@@ -515,6 +576,7 @@ void Exceptions::TestAll()
 
 	Exceptions_In_Destructor::Test1();
 	Exceptions_In_Destructor::Test_MemLeak();
+	Exceptions_In_Destructor::bad_usage();
 
 
 	// ExceptionsTypes::TimeoutException();

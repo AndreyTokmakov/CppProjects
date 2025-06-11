@@ -98,15 +98,15 @@ namespace
     struct Buffer
     {
         using data_type = unsigned char;
+        using size_type = int32_t;
 
-        // TODO: Rename
         std::vector<data_type> buffer;
-        size_t size;
+        size_type size;
 
-        explicit Buffer(const size_t size = 1024 * 2 ) : buffer(size), size { 0 } {
+        explicit Buffer(const size_type size = 1024 * 2 ) : buffer(size), size { 0 } {
         }
 
-        void validateAvailableSize(const size_t bytesRequired)
+        void validateAvailableSize(const size_type bytesRequired)
         {
             if (bytesRequired > (buffer.size() - size))
             {
@@ -118,6 +118,11 @@ namespace
         data_type* tail() noexcept
         {
             return buffer.data() + size;
+        }
+
+        [[nodiscard]]
+        inline std::string_view toStringView() const noexcept {
+            return  std::string_view(reinterpret_cast<const char *>(buffer.data()), size);
         }
     };
 }
@@ -324,9 +329,7 @@ namespace UDSAsynchServer_BufferPerSession
 
                         if (maxReceiveSize > bytesRead)
                         {
-                            std::cout << std::string_view(reinterpret_cast<const char *>(
-                                buffer.buffer.data()), buffer.size)<< std::endl;
-
+                            std::cout << buffer.toStringView() << std::endl;
                             buffer.size = 0;
                             break;
                         }

@@ -12,6 +12,6 @@ Description : UDSAsynchServer.cpp
 
 void UDSAsynchServer::TestAll()
 {
-    runServer_Base();
-    // runServer_BufferPerSession();
+    // runServer_Base();
+    runServer_BufferPerSession();
 }
