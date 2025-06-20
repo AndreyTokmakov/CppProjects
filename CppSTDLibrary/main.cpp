@@ -118,7 +118,7 @@ int main([[maybe_unused]] int argc,
     // CompileTimeProgramming::TestAll();
     // Constexpr::TestAll();
     // CopyElision::TestAll();
-    // DeducingThis::TestAll();
+    DeducingThis::TestAll();
     // RVO_FailureCases::TestAll();
     // ClassTemplateArgumentDeduction::TestAll();
     // DateAndTime::TestAll();
@@ -175,7 +175,7 @@ int main([[maybe_unused]] int argc,
     // TypeCast::TestAll();
     // Int::TestAll();
     // Templates::TestAll();
-    Utilities::TestAll();
+    // Utilities::TestAll();
     // CompilerVersion::TestAll();
     // UniquePtr::TestAll();
     // WeakPtr::TestAll();

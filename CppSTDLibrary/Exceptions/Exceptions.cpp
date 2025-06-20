@@ -563,6 +563,79 @@ namespace Exceptions::Exceptions_In_Destructor
 }
 
 
+namespace Exceptions::Default_Constructor_NoExcept_Status
+{
+    struct T1 {};
+
+    struct T2 {
+
+    public:
+        T2() {}
+    };
+
+    struct T3 {
+        T3() = default;
+    };
+
+    struct T4 {
+        T4() noexcept {}
+    };
+
+    void test()
+    {
+        static_assert(noexcept(T1()));
+        static_assert(not noexcept(T2()));  /// <------------------------
+        static_assert(noexcept(T3()));
+        static_assert(noexcept(T4()));
+    }
+}
+
+
+namespace Exceptions::Handling_Non_Caught_Exceptions
+{
+    struct Error : std::runtime_error {
+        explicit Error(const std::string& text): std::runtime_error(text) {
+        }
+    };
+
+    void foo() {
+        throw Error("Boom!");
+    }
+
+
+    void test()
+    {
+        // let's write the handler to the terminate_handler variable
+        auto terminate_handler = []() {
+            std::exception_ptr excPtr = std::current_exception();
+            if (excPtr) {
+                try {
+                    // Let's rethrow the exception:
+                    std::rethrow_exception(excPtr);
+                } catch (const Error& e) {
+                    std::cerr << "Uncaught exception of type Error: " << e.what() << std::endl;
+                }
+                catch (...) {
+                    std::cerr << "Uncaught exception of unknown type" << std::endl;
+                }
+            }
+            else {
+                std::cerr << "Unknown error" << std::endl;
+            }
+
+            // We'll finish the program anyway.
+
+            std::cout << "==> std::abort()\n";
+            std::abort();
+        };
+
+        // Let's set up a handler for the terminate function
+        std::set_terminate(terminate_handler);
+
+        foo();
+    }
+}
+
 void Exceptions::TestAll()
 {
 	// Exceptions_In_Constructors::Test_Base();
@@ -574,9 +647,11 @@ void Exceptions::TestAll()
 	// Exceptions_In_Constructors::Test_Exception_InitList();
 
 
-	Exceptions_In_Destructor::Test1();
-	Exceptions_In_Destructor::Test_MemLeak();
-	Exceptions_In_Destructor::bad_usage();
+	// Exceptions_In_Destructor::Test1();
+	// Exceptions_In_Destructor::Test_MemLeak();
+	// Exceptions_In_Destructor::bad_usage();
+
+    Handling_Non_Caught_Exceptions::test();
 
 
 	// ExceptionsTypes::TimeoutException();

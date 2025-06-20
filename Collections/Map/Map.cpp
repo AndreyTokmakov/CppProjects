@@ -1350,12 +1350,12 @@ void Map::TestAll()
 	// insert_or_assign();
     // insert_or_assign__missing_key();
 
-    Merge();
+    // Merge();
 
 	// try_emplace_test();
 	// try_emplace_test_2();
 	// try_emplace_test_3();
-    // Try_Emplace_Value_Pointer();
+    Try_Emplace_Value_Pointer();
 	// try_emplace_test_LAMBDA();
 	// Try_emplace_vs_Emplace();
     // TryEmplace_vs_Emplace();

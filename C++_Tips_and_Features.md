@@ -3493,6 +3493,16 @@ However, this is the root of the false sharing problem.
  	    ---> Фикс поменять очередность на    	 std::jthread logProcessor;
         	                               }
 
+ ▪ Неверный вывод типа в методе void foo(auto&& v) без использования std::move или std::forward
+
+
+		void bar(float&& x) { std::cout << "float " << x << "\n"; } 
+		void bar(int&& x) { std::cout << "int " << x << "\n"; }  
+
+
+		void foo(auto&& v) { bar(v); }   |   void foo(auto&& v) { bar(std::move(v)); }   |   void foo(auto&& v) { bar(std::forward<decltype(v)>(v));  }
+				float 1                  |                 int 1                         |                  int 1      
+				int 2                    |                 float 2                       |                  float 2    
 
 ============================================================================================================================================================	
 								                    Secure coding | C++ Hardening | Sanitizing C++ | Безопастность

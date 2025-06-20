@@ -1664,6 +1664,7 @@ int main([[maybe_unused]] const int argc,
     // FibonacciSequence_Lambda::generate();
 
 
+
     // VirtualFunctionTests::demo();
     // Int_to_UInt_Tests::Tests();
     // EnumBasedStrongTypes::Tests();
@@ -1695,7 +1696,7 @@ int main([[maybe_unused]] const int argc,
     // BinManipulation::TestAll();
     // BinaryAnalyzer::TestAll();
     // BitFlags::TestAll();
-    Concepts::TestAll();
+    // Concepts::TestAll();
     // Crow::TestAll();
     // CollectionsTests::TestAll();
     // CopyElision_RVO::TestAll();
