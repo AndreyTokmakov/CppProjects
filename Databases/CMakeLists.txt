@@ -16,6 +16,13 @@ include_directories(${THIRD_PARTY_DIR}/mysql-connector-cpp/build/include/mysqlx)
 link_directories(${THIRD_PARTY_DIR}/mysql-connector-cpp/build)
 message(STATUS "MySQL: ${THIRD_PARTY_DIR}/mysql-connector-cpp/build")
 
+message(STATUS "ClickHouse")
+include_directories(${THIRD_PARTY_DIR}/clickhouse-cpp)
+include_directories(${THIRD_PARTY_DIR}/clickhouse-cpp/contrib/absl)
+link_directories(${THIRD_PARTY_DIR}/clickhouse-cpp/build/clickhouse)
+link_directories(${THIRD_PARTY_DIR}/clickhouse-cpp/build/contrib/cityhash/cityhash)
+
+
 #[[
 message(STATUS "[dependency] Fetching PostgreSQL library (libpqxx)")
 FetchContent_Declare(libpqxx
@@ -36,6 +43,7 @@ add_executable(${PROJECT_NAME}
         PostgreSQL/PostgreSQL.cpp
         MySQL/MySqlX.cpp
         MySQL/SQLite.cpp
+        ClickHouse/ClickhouseClient.cpp
 )
 
 message(STATUS "EXTRA_LIBS: ${EXTRA_LIBS}")
@@ -44,7 +52,9 @@ TARGET_LINK_LIBRARIES(${PROJECT_NAME}
         pthread
         mysqlclient
         mysqlcppconn8
-        pqxx
+        # pqxx
         sqlite3
+        clickhouse-cpp-lib
+        cityhash
         ${EXTRA_LIBS}
 )

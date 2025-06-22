@@ -489,7 +489,7 @@ namespace Tests
     constexpr std::string_view host { "0.0.0.0" };
     constexpr std::string_view username { "admin" };
     constexpr std::string_view password { "qwerty12345" };
-    constexpr std::string_view database { "users" };
+    constexpr std::string_view database { "test_database" };
 
     void LegacyClientTests()
     {

@@ -26,6 +26,7 @@ cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_C_COMPILER=gcc-14.2 -DCMAKE_CXX_COMPILE
 
 sudo apt-get install build-essential cmake make libboost-all-dev libpcap-dev
 
+
 ====================================================================================
             Third-party
 ====================================================================================
@@ -45,3 +46,4 @@ git clone git@github.com:kovacsnador/tinycoro.git
 git clone https://gitlab.com/libeigen/eigen.git
 git clone https://github.com/gabime/spdlog.git
 git clone https://github.com/weidai11/cryptopp
+git clone https://github.com/ClickHouse/clickhouse-cpp.git

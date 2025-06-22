@@ -175,6 +175,7 @@ namespace FoldExpressions
     bool containsZero(Args const& ... args) {
         return ((0 == args) || ...);
     }
+
     template<typename ...Args>
     void printer_ex(Args&&... args) {
         std::cout << "[ ";
@@ -548,6 +549,30 @@ namespace FoldExpressions::Classes
     }
 }
 
+
+namespace FoldExpressions::Classes
+{
+
+    template<typename... Ts>
+    struct Visitor : Ts... {
+        using Ts::operator()...;
+    };
+
+
+
+    void Visitor_Demo()
+    {
+        Visitor v = Visitor{
+                [](int i){ std::cout << i << '\n'; },
+                [](float f){ std::cout << f << '\n'; },
+                [](const std::string& s){ std::cout << s << '\n'; }
+        };
+
+
+        v(42); // prints 42
+    }
+}
+
 namespace FoldExpressions
 {
 
@@ -746,6 +771,7 @@ void FoldExpressions::TestAll()
     // Init_Vector_Class();
 
     // Classes::FoldClassMethod();
+    // Classes::Visitor_Demo();
     // Classes::Call_All_Base_Class_Constructor();
 
     // Concatenate_Arrays();

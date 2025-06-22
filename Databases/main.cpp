@@ -14,18 +14,19 @@ Description : Databases
 #include "MySQL/MySQL.h"
 #include "MySQL/MySqlX.h"
 #include "MySQL/SQLite.h"
-
 #include "PostgreSQL/PostgreSQL.h"
+#include "ClickHouse/ClickhouseClient.h"
 
 int main([[maybe_unused]] int argc,
          [[maybe_unused]] char** argv)
 {
     const std::vector<std::string_view> args(argv + 1, argv + argc);
 
-    // MySQL::TestAll();
+    MySQL::TestAll();
     // MySqlX::TestAll();
     // SQLite::TestAll();
-    PostgreSQL::TestAll();
+    // PostgreSQL::TestAll();
+    // ClickhouseClient::TestAll();
 
     return EXIT_SUCCESS;
 }

@@ -185,10 +185,10 @@ namespace DeducingThis::Policy_Based_Design
 
 void DeducingThis::TestAll()
 {
-    // Deduplicating_Function_Overloading::test();
+    Deduplicating_Function_Overloading::test();
 
     // CRTP_OldStyle::demo();
     // CRTP_NewStyle::demo();
 
-    Policy_Based_Design::test();
+    // Policy_Based_Design::test();
 }
