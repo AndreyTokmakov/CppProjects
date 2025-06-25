@@ -53,6 +53,7 @@ add_executable(${PROJECT_NAME}
         SynchStream_Custom/SynchStream_Custom.cpp
         SynchStream/SynchStream.cpp
         SpinLock/SpinLock.cpp
+        SpinLock/FairSpinLock.cpp
         Threads/StoppingThreads.cpp
         Utilities/Utilities.cpp
         Utilities/Utilities_Tests.cpp

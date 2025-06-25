@@ -11,6 +11,7 @@ Description : C++ STL PriorityQueue container testing
 #include <queue>
 #include <list>
 #include <iomanip>
+#include <ostream>
 
 #include "PriorityQueue.h"
 
@@ -288,6 +289,44 @@ namespace PriorityQueue::CustomComparator
         std::cout << "\n";
     }
 }
+
+
+namespace PriorityQueue::Using_Custom_Types
+{
+    struct Node
+    {
+        using value_type = int;
+
+        value_type destNode { 0 };
+        value_type weight { 0 };
+
+        /*Node(value_type n, value_type w): destNode { n }, weight { w } {
+        }*/
+
+        friend auto operator<=>(const Node&, const Node&) = default;
+    };
+
+    std::ostream& operator<<(std::ostream& stream, const Node& node)
+    {
+        return stream << "Node {" << node.destNode << ", " << node.weight << "}";
+    }
+
+
+    void Add_and_Sort()
+    {
+        std::priority_queue<Node, std::vector<Node>, std::greater<>> pQueue;
+
+        pQueue.emplace(2,1);
+        pQueue.emplace(1,2);
+        pQueue.emplace(1,1);
+
+        while (!pQueue.empty()) {
+            std::cout << pQueue.top() << "\n";
+            pQueue.pop();
+        }
+        std::cout << "\n";
+    }
+}
 	
 void PriorityQueue::TestAll()
 {
@@ -301,6 +340,7 @@ void PriorityQueue::TestAll()
 
 	// CustomComparator::UpdateValue();
 	// CustomComparator::Custom_Comparator();
-	CustomComparator::CompareStringByLength();
+	// CustomComparator::CompareStringByLength();
 
+    Using_Custom_Types::Add_and_Sort();
 }

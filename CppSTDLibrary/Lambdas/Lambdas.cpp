@@ -21,7 +21,8 @@
 #include <cassert>
 #include <utility>
 #include <memory>
-
+#include <thread>
+#include <syncstream>
 #include <type_traits>
 #include "../Helpers/Integer.h"
 
@@ -1198,6 +1199,112 @@ namespace Lambdas::Shared_Lambda_Wrapper
 }
 
 
+namespace Lambdas::Capture_Pitfalls
+{
+    void Creation_Lifetime_Race()
+    {
+        std::shared_ptr<Integer> integer { std::make_shared<Integer>(100) };
+
+        std::jthread task {[&integer]
+        {
+            // std::this_thread::sleep_for(std::chrono::microseconds (200u)); // Will crush if uncommented
+            std::jthread subtask {[integer]{
+                std::osyncstream {std::cout} << "Sub task: " << integer->getValue() << std::endl;
+            }};
+        }};
+
+        std::this_thread::sleep_for(std::chrono::microseconds (100u));
+
+        integer.reset();
+        std::osyncstream {std::cout} << "integer has been reset " << std::endl;
+
+        /**
+        If std::jthread startup is delayed - the shared_ptr may be already be reset()-ed
+
+        **/
+    }
+
+    struct LargeObject
+    {
+        LargeObject() { std::cout << "LargeObject()\n"; }
+        ~LargeObject() { std::cout << "~LargeObject()\n"; }
+
+        LargeObject(const LargeObject&) { std::cout << "LargeObject(const LargeObject&)\n"; }
+        LargeObject(LargeObject&&) noexcept { std::cout << "LargeObject(LargeObject&&) noexcept\n"; }
+
+        LargeObject& operator=(const LargeObject&) { std::cout << "LargeObject(const LargeObject&)\n"; return *this; }
+        LargeObject& operator=(LargeObject&&) noexcept { std::cout << "LargeObject(LargeObject&&) noexcept\n"; return *this;  }
+
+        int32_t size() const noexcept {
+            return 123;
+        }
+    };
+
+    struct Keeper
+    {
+        LargeObject largeObject {};
+
+        void run_bad() {
+            std::jthread worker {[*this] {
+                std::osyncstream {std::cout} << "Large object: " << largeObject.size() << std::endl;
+            }};
+        }
+
+
+
+        void run_ok() {
+            std::jthread worker {[this] {
+                std::osyncstream {std::cout} << "Large object: " << largeObject.size() << std::endl;
+            }};
+        }
+    };
+
+
+    void CopyByValue_LargeObject()
+    {
+        Keeper keeper;
+        std::cout << std::string(128,'-') << std::endl;
+        keeper.run_bad();
+        std::cout << std::string(128,'-') << std::endl;
+        keeper.run_ok();
+        std::cout << std::string(128,'-') << std::endl;
+
+        /**---------------------------------------------------------------------------------------------
+        LargeObject(const LargeObject&)
+        LargeObject(LargeObject&&) noexcept
+        ~LargeObject()
+        Large object: 123
+        ~LargeObject()
+        ---------------------------------------------------------------------------------------------
+        Large object: 123
+        ---------------------------------------------------------------------------------------------**/
+    }
+
+
+    void DataRace_MutableLambda_Copy()
+    {
+        int counter { 0 };
+
+        std::jthread worker {[counter] mutable  {
+            for (int i = 0; i < 100; ++i) {
+                ++counter;
+            }
+            std::osyncstream {std::cout} << "Lambda: counter = " << counter << std::endl;
+        }};
+
+        counter = 50;
+        std::osyncstream {std::cout} << "Main: counter = " << counter << std::endl;
+
+        /**
+         * Here we have SILENT DATA RACE on 'counter' variable
+         * Read-Access: at 'std::jthread worker {[counter] mutable' line
+         * Write-Access: at 'counter = 50;' line
+         * ...... depending of order of execution
+         */
+    }
+}
+
+
 void Lambdas::TestAll()
 {
 	// Lambdas::FindIF_Lambda_Test();
@@ -1209,6 +1316,10 @@ void Lambdas::TestAll()
 	// Capture::Capturing_Parameter_Packs();  // By REF, MOVE and COPY
     // Capture::Capture_This();
     // Capture::Capture_FunctionCallResult_Global();
+
+    // Capture_Pitfalls::Creation_Lifetime_Race();
+    // Capture_Pitfalls::CopyByValue_LargeObject();
+    Capture_Pitfalls::DataRace_MutableLambda_Copy();
 
 	// Lambdas::Lambda_With_Params_Initialization();
 	// Lambdas::Lambda_Struct();
@@ -1241,7 +1352,7 @@ void Lambdas::TestAll()
 
 	// RecursiveLambda::Recursive_Lambda();
 	// RecursiveLambda::Recursive_Lambda2();
-	RecursiveLambda::Recursive_Lambda_Wrapper();
+	// RecursiveLambda::Recursive_Lambda_Wrapper();
 
 	// Lambdas::Get_Lambda_Type();
 

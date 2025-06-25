@@ -44,6 +44,7 @@ Description : Multithreading tests main entry point
 #include "SynchStream_Custom/SynchStream_Custom.h"
 #include "SynchStream/SynchStream.h"
 #include "SpinLock/SpinLock.h"
+#include "SpinLock/FairSpinLock.h"
 #include "Utilities/Utilities.h"
 #include "Experiments/Experiments.h"
 
@@ -85,6 +86,7 @@ int main([[maybe_unused]] int argc,
     // SynchStream_Custom::TEST_ALL();
 
     // SpinLock::TestAll();
+    FairSpinLock::TestAll();
 
     // StoppingThreads::TestAll();
 

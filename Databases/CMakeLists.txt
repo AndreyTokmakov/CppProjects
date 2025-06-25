@@ -11,17 +11,16 @@ include(FetchContent)
 # add_compile_options(-c -Wall -Wextra -O3 -std=c++26)
 add_compile_options(-c -Wall -O3 -std=c++26)
 
+message(STATUS "MySQL ---> ${THIRD_PARTY_DIR}/mysql-connector-cpp")
 include_directories(${THIRD_PARTY_DIR}/mysql-connector-cpp/include)
 include_directories(${THIRD_PARTY_DIR}/mysql-connector-cpp/build/include/mysqlx)
 link_directories(${THIRD_PARTY_DIR}/mysql-connector-cpp/build)
-message(STATUS "MySQL: ${THIRD_PARTY_DIR}/mysql-connector-cpp/build")
 
-message(STATUS "ClickHouse")
+message(STATUS "ClickHouse ---> ${THIRD_PARTY_DIR}/clickhouse-cpp")
 include_directories(${THIRD_PARTY_DIR}/clickhouse-cpp)
 include_directories(${THIRD_PARTY_DIR}/clickhouse-cpp/contrib/absl)
 link_directories(${THIRD_PARTY_DIR}/clickhouse-cpp/build/clickhouse)
 link_directories(${THIRD_PARTY_DIR}/clickhouse-cpp/build/contrib/cityhash/cityhash)
-
 
 #[[
 message(STATUS "[dependency] Fetching PostgreSQL library (libpqxx)")
@@ -32,7 +31,7 @@ FetchContent_Declare(libpqxx
 FetchContent_MakeAvailable(libpqxx)
 #]]
 
-message(STATUS "SQLite: ${THIRD_PARTY_DIR}/sqlite")
+message(STATUS "SQLite --->  ${THIRD_PARTY_DIR}/sqlite")
 include_directories(${THIRD_PARTY_DIR}/sqlite)
 link_directories(${THIRD_PARTY_DIR}/sqlite/.libs)
 
