@@ -95,8 +95,8 @@ int main([[maybe_unused]] int argc,
     // SynchStream_Custom::TEST_ALL();
 
     // SpinLock::TestAll();
-    // FairSpinLock::TestAll();
-    SpinLock_PerformanceTests::TestAll();
+    FairSpinLock::TestAll();
+    // SpinLock_PerformanceTests::TestAll();
 
     // StoppingThreads::TestAll();
 

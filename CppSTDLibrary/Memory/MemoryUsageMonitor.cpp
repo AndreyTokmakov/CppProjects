@@ -129,7 +129,7 @@ namespace MemoryUsageMonitor::Tests
         for (int i = 0; i < 200'000; i++)
         {
             counter++;
-            std::this_thread::sleep_for(std::chrono::nanoseconds(1));
+            std::this_thread::sleep_for(std::chrono::nanoseconds(1u));
             if (counter % 3 == 0 || counter % 123 == 1)
                 --counter;
         }

@@ -515,7 +515,8 @@ namespace Lambdas {
 
     //------------------------------------------------------------------------------------------------------------------------//
 
-    void Lambda_Collection() {
+    void Lambda_Collection()
+    {
         std::vector<std::function<std::string(const std::string &)>> handlers;
 
         handlers.emplace_back(getFunction("Handler 1"));
@@ -530,6 +531,17 @@ namespace Lambdas {
             });
             std::cout << std::endl;
         }
+    }
+
+
+    void Lambda_Collection_FuncPtr()
+    {
+        using fPtr = void (*)();
+        fPtr f1 = []() { std::cout << "hello "; };
+        fPtr f2 = []() { std::cout << "world!\n"; };
+
+        std::vector<fPtr> lambdas { f1, f2};
+        std::for_each(lambdas.cbegin(), lambdas.cend(), [](const auto& callback) { callback(); });
     }
 
 
@@ -1319,11 +1331,12 @@ void Lambdas::TestAll()
 
     // Capture_Pitfalls::Creation_Lifetime_Race();
     // Capture_Pitfalls::CopyByValue_LargeObject();
-    Capture_Pitfalls::DataRace_MutableLambda_Copy();
+    // Capture_Pitfalls::DataRace_MutableLambda_Copy();
 
 	// Lambdas::Lambda_With_Params_Initialization();
 	// Lambdas::Lambda_Struct();
 	// Lambdas::Lambda_Collection();
+	Lambdas::Lambda_Collection_FuncPtr();
 	// Lambdas::Function_ReturnLambda();
 	// Lambdas::Variadic_Lambdas();
 	// Lambdas::Pass_UniquePtr_2Lambda();
