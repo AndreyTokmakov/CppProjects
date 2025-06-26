@@ -11,10 +11,13 @@ Description : Multithreading tests main entry point
 #include "Latch/Latch.h"
 #include "ThreadPools/ThreadPools.h"
 #include "ThreadPools/ThreadPoolsEx.h"
+
 #include "Threads/Threads.h"
 #include "Threads/StoppingThreads.h"
+
 #include "ThreadPoolBlocking/ThreadPoolBlocking.h"
 #include "ThreadPoolLimited/ThreadPoolLimited.h"
+
 #include "Atomic/Atomic.h"
 #include "Atomic/Atomic_Bool.h"
 #include "Atomic/Atomic_Wait.h"
@@ -23,6 +26,7 @@ Description : Multithreading tests main entry point
 #include "Atomic/Atomic_CompareExchange.h"
 #include "Atomic/Atomic_IsLockFree.h"
 #include "Atomic/AtomicPerformanceTests.h"
+
 #include "Promise/Promise.h"
 #include "Future/Future.h"
 #include "PackagedTask/PackagedTask.h"
@@ -36,15 +40,20 @@ Description : Multithreading tests main entry point
 #include "ParallelExecutionAlgoritms/ParallelExecutionAlgoritms.h"
 #include "Multithreading_Communication/Multithreading_Communication.h"
 #include "Collections/Collections.h"
+
 #include "PerformanceExperiments/Mutex_vs_AtomicLock.h"
 #include "PerformanceExperiments/Multithreading_Performance.h"
 #include "PerformanceExperiments/PerformanceExperiments.h"
+
 #include "Barrier/Barrier.h"
 #include "FalseSharing/FalseSharingExperiments.h"
 #include "SynchStream_Custom/SynchStream_Custom.h"
 #include "SynchStream/SynchStream.h"
+
 #include "SpinLock/SpinLock.h"
 #include "SpinLock/FairSpinLock.h"
+#include "SpinLock/SpinLock_PerformanceTests.h"
+
 #include "Utilities/Utilities.h"
 #include "Experiments/Experiments.h"
 
@@ -86,7 +95,8 @@ int main([[maybe_unused]] int argc,
     // SynchStream_Custom::TEST_ALL();
 
     // SpinLock::TestAll();
-    FairSpinLock::TestAll();
+    // FairSpinLock::TestAll();
+    SpinLock_PerformanceTests::TestAll();
 
     // StoppingThreads::TestAll();
 
@@ -117,7 +127,7 @@ int main([[maybe_unused]] int argc,
     // SCSP_RingBuffer::TestAll();
     // Collections::RingBuffer_vs_CVMutexQueue::TestAll();
     // Collections::RingBuffer_vs_CVMutexQueue_2::TestAll();
-    Collections::RingBuffer_vs_CVMutexQueue_Debug::TestAll();
+    // Collections::RingBuffer_vs_CVMutexQueue_Debug::TestAll();
     // ThreadSafeQueue_CV_vs_RingBuffer::TestAll();
 
     /** Utilities **/
