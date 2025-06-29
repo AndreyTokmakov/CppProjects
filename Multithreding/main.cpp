@@ -52,6 +52,7 @@ Description : Multithreading tests main entry point
 
 #include "SpinLock/SpinLock.h"
 #include "SpinLock/FairSpinLock.h"
+#include "SpinLock/SpinLockFutex.h"
 #include "SpinLock/SpinLock_PerformanceTests.h"
 
 #include "Utilities/Utilities.h"
@@ -95,7 +96,8 @@ int main([[maybe_unused]] int argc,
     // SynchStream_Custom::TEST_ALL();
 
     // SpinLock::TestAll();
-    FairSpinLock::TestAll();
+    // FairSpinLock::TestAll();
+    SpinLockFutex::TestAll();
     // SpinLock_PerformanceTests::TestAll();
 
     // StoppingThreads::TestAll();

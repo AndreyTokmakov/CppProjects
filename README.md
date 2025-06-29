@@ -47,3 +47,33 @@ git clone https://gitlab.com/libeigen/eigen.git
 git clone https://github.com/gabime/spdlog.git
 git clone https://github.com/weidai11/cryptopp
 git clone https://github.com/ClickHouse/clickhouse-cpp.git
+
+
+====================================================================================
+                    Disable Optimisation - 1
+====================================================================================
+
+
+#pragma GCC push_options
+#pragma GCC optimize("O0")
+
+    void someTestFunction()
+    {
+        // SOME CODE TO TEST
+    }
+
+#pragma GCC pop_options
+
+
+====================================================================================
+                    Disable Optimisation - 2
+====================================================================================
+
+
+    __attribute__((optimize("O0")))
+    void someTestFunction()
+    {
+        // SOME CODE TO TEST
+    }
+
+====================================================================================

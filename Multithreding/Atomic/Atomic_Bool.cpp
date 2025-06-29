@@ -8,6 +8,7 @@ Description : Atomic_Bool.cpp
 ============================================================================**/
 
 #include "Atomic_Bool.h"
+#include "../Utilities/Utilities.h"
 
 #include <iostream>
 #include <atomic>
@@ -23,28 +24,25 @@ Description : Atomic_Bool.cpp
 #include <print>
 #include <format>
 
-namespace
-{
-    std::string timeString()
-    {
-        std::string buffer;
-        buffer.reserve(32);
-        std::format_to(std::back_inserter(buffer), "[{:%Y-%m-%d %H:%M:%OS}]", std::chrono::system_clock::now());
-        buffer.shrink_to_fit();
-        return buffer;
-    }
-}
 
-#define PRINT std::osyncstream {std::cout} << timeString() << " "
+#define PRINT std::osyncstream {std::cout} << Utilities::timeString() << " "
 
 namespace Atomic_Bool
 {
 
     void ExchangeTest()
     {
-        std::atomic<bool> flag {true };
-        std::cout << flag.exchange(true) << std::endl;
-        std::cout << flag.exchange(true) << std::endl;
+        {
+            std::atomic<bool> flag {false };
+            for (int i = 0; i < 2; ++i)
+                std::cout << std::boolalpha << flag.exchange(true) << std::endl;
+        }
+
+        {
+            std::atomic<bool> flag {true };
+            for (int i = 0; i < 2; ++i)
+                std::cout << std::boolalpha << flag.exchange(true) << std::endl;
+        }
     }
 
     void spin_lock_func(std::atomic<bool>& flag)
@@ -53,7 +51,7 @@ namespace Atomic_Bool
         }
 
         PRINT << "Spint lock is done" << std::endl;
-        std::this_thread::sleep_for(std::chrono::seconds(1));
+        std::this_thread::sleep_for(std::chrono::seconds(1u));
 
         PRINT << "Releasing " << std::endl;
         flag.store(false, std::memory_order::release);
@@ -65,7 +63,7 @@ namespace Atomic_Bool
 
         std::jthread workerOne([&] {
             PRINT << "workerOne started" << std::endl;
-            std::this_thread::sleep_for(std::chrono::seconds(1));
+            std::this_thread::sleep_for(std::chrono::seconds(1u));
 
             flag.store(false, std::memory_order::release);
             PRINT << "workerOne done" << std::endl;
@@ -126,7 +124,7 @@ namespace Atomic_Bool::SpinLock
         auto task = [&lockMtx](const std::string& name) {
             PRINT << std::format("task {} started", name) << std::endl;
             LockGuard lockGuard {lockMtx};
-            std::this_thread::sleep_for(std::chrono::seconds(1));
+            std::this_thread::sleep_for(std::chrono::seconds(1u));
             PRINT << std::format("task {} completed", name) << std::endl;
         };
 
@@ -140,8 +138,7 @@ namespace Atomic_Bool::SpinLock
 
 void Atomic_Bool::TestAll()
 {
-    // ExchangeTest();
+    ExchangeTest();
     // SpinLock_Function_Test();
-
-    SpinLock::Multiple_Threads_Test();
+    // SpinLock::Multiple_Threads_Test();
 }
