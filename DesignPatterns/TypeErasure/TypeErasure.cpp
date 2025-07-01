@@ -40,7 +40,6 @@ namespace TypeErasure::ExperimentFirst
         struct ConcreteCommand final : ICommand
         {
             explicit ConcreteCommand(T&& obj) noexcept : object_(std::forward<T>(obj)) {
-
             }
 
             [[nodiscard]]

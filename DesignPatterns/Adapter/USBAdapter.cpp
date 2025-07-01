@@ -12,20 +12,21 @@
 namespace Adapter::USBAdapter
 {
 
-    struct USBDevice {
+    struct USBDevice
+    {
         virtual void connectWithUsbCable() noexcept = 0;
         virtual ~USBDevice() = default;
     };
 
-    struct ICard {
+    struct ICard
+    {
         virtual void insert() = 0;
         virtual void copyData() = 0;
         virtual ~ICard() = default;
     };
 
-
-    class MemoryCard: public ICard {
-    public:
+    struct MemoryCard: public ICard
+    {
         void insert() override {
             std::cout << "Memory card inserted successfully!" << std::endl;
         }
@@ -34,9 +35,8 @@ namespace Adapter::USBAdapter
         }
     };
 
-
-    class CardReader : public USBDevice {
-    private:
+    class CardReader : public USBDevice
+    {
         std::unique_ptr<ICard> card;
 
     public:

@@ -17,8 +17,8 @@
 namespace Facade::Systems
 {
 
-    class System1 {
-    public:
+    struct System1
+    {
         [[nodiscard]]
         std::string Operation1() const noexcept {
             return "Subsystem1: Operation1!\n";
@@ -28,14 +28,10 @@ namespace Facade::Systems
         std::string OperationA() const noexcept {
             return "Subsystem1: OperationA\n";
         }
-
     };
 
-
-
-    class System2 {
-    public:
-
+    struct System2
+    {
         [[nodiscard]]
         std::string Operation1() const noexcept {
             return "Subsystem2: Operation1\n";
@@ -47,9 +43,8 @@ namespace Facade::Systems
         }
     };
 
-
-    class Facade {
-    protected:
+    struct Facade
+    {
         std::unique_ptr<System1> system1;
         std::unique_ptr<System2> system2;
 

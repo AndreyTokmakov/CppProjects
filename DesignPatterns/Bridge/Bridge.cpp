@@ -79,7 +79,7 @@ namespace Bridge::Clock
                 } else {
                     std::cout << "Dont need to Ring" << std::endl;
                 }
-                std::this_thread::sleep_for(std::chrono::seconds(1));
+                std::this_thread::sleep_for(std::chrono::seconds(1u));
             }
             toWake();
         }

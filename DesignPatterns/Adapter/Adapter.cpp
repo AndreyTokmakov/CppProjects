@@ -11,7 +11,8 @@
 
 #define interface struct
 
-namespace Adapter::Classic {
+namespace Adapter::Classic
+{
 	
 	// Existing environmental temperature sensor class
 	struct FahrenheitSensor final
@@ -115,14 +116,9 @@ void PhoneChargeAdapterTest();
 void Adapter::TestAll()
 {
     // Classic::Test();
-
     // USBAdapterTest();
-
 	// PrivateInheritance::Test();
-
     // BaseAdapterTest();
-
     GoodExample_Test();
-
     // PhoneChargeAdapterTest();
 }

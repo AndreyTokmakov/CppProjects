@@ -18,8 +18,8 @@
 
 namespace Flyweight::FlyweightCharacter
 {
-    class Character {
-    public:
+    struct Character
+    {
         char mSymbol {};
         int  mWidth {};
         int  mHeight {};
@@ -33,8 +33,8 @@ namespace Flyweight::FlyweightCharacter
     };
 
 
-    class ConcreteCharacter : public Character {
-    public:
+    class ConcreteCharacter : public Character
+    {
         ConcreteCharacter(char aSymbol, int aPointSize)
         {
             mSymbol = aSymbol;
@@ -53,8 +53,8 @@ namespace Flyweight::FlyweightCharacter
 
     /** Flyweight factory: **/
     template <const int POINT_SIZE>
-    class CharacterFactory {
-    private:
+    class CharacterFactory
+    {
         using Characters = std::unordered_map<char, std::unique_ptr<const Character>>;
         Characters mCharacters;
 
@@ -71,7 +71,8 @@ namespace Flyweight::FlyweightCharacter
     };
 
 
-	void Test() {
+	void Test()
+    {
 		std::string document = "AAZZBBZB";
 
 		CharacterFactory<12> characterFactory;

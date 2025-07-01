@@ -14,21 +14,22 @@ Description : ChargingPhoneAdapter
 namespace Adapter
 {
 
-    struct ILightningPhone {
+    struct ILightningPhone
+    {
         virtual void recharge() = 0;
         virtual void useLightning() = 0;
-
         virtual ~ILightningPhone() = default;
     };
 
-    struct IMicroUsbPhone {
+    struct IMicroUsbPhone
+    {
         virtual void recharge() = 0;
         virtual void useMicroUsb() = 0;
-
         virtual ~IMicroUsbPhone() = default;
     };
 
-    class Android: public IMicroUsbPhone {
+    class Android: public IMicroUsbPhone
+    {
         bool connector { false };
 
         void useMicroUsb() override
