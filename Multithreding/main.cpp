@@ -97,8 +97,8 @@ int main([[maybe_unused]] int argc,
 
     // SpinLock::TestAll();
     // FairSpinLock::TestAll();
-    SpinLockFutex::TestAll();
-    // SpinLock_PerformanceTests::TestAll();
+    // SpinLockFutex::TestAll();
+    SpinLock_PerformanceTests::TestAll();
 
     // StoppingThreads::TestAll();
 

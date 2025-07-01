@@ -211,14 +211,15 @@ namespace SpinLock_PerformanceTests::Impl
 
         void lock()
         {
-            for (uint8_t n = 0;flag.load(std::memory_order_relaxed) || flag.exchange(1, std::memory_order_acquire); ++n)
+            for (uint8_t timeout = 0;
+                 flag.load(std::memory_order_relaxed) || flag.exchange(1, std::memory_order_acquire);
+                 ns.tv_nsec = static_cast<int>(++timeout))
             {
-                ns.tv_nsec = static_cast<int>(n);
                 nanosleep(&ns, nullptr);
             }
         }
 
-        void unlock() {
+        inline void unlock() noexcept {
             flag.store(0, std::memory_order_release);
         }
 

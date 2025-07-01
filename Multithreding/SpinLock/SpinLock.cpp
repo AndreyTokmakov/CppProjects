@@ -19,6 +19,8 @@ Description : SpinLock.cpp
 #include <syncstream>
 
 
+#include <emmintrin.h> // _mm_pause()
+
 namespace SpinLock::Impl
 {
     class SpinLock_AtomicFlag
@@ -83,102 +85,85 @@ namespace SpinLock::Impl
         }
     };
 
-    void SpinLock_Tests()
+
+    struct FastSpinLock
     {
-        constexpr int threadsMax { 8 };
-        constexpr uint64_t iterCount { 10'000'000 };
+        alignas(std::hardware_destructive_interference_size) std::atomic<uint32_t> flag {0 };
+        alignas(std::hardware_destructive_interference_size) timespec ns {0, 1};
 
-        auto validate = [] (size_t actual, size_t expected){
-            std::cout << actual << " = " << expected << std::endl;
-            if (actual == expected) {
-                std::cout << "OK\n";
-            } else {
-                std::cout << "Wrong: " << actual << " != " << expected << std::endl;
+        void lock()
+        {
+            for (uint8_t n = 0;flag.load(std::memory_order_relaxed) || flag.exchange(1, std::memory_order_acquire); ++n)
+            {
+                ns.tv_nsec = static_cast<int>(n);
+                nanosleep(&ns, nullptr);
             }
-        };
-
-        auto test = [] (auto task){
-            std::vector<std::jthread> jobs;
-            for (int t = 0; t < threadsMax; ++t)
-                jobs.emplace_back(task);
-        };
-
-        {
-            uint64_t counter = 0;
-            auto task = [&counter] {
-                for (size_t idx  = 0; idx < iterCount; ++idx) {
-                    counter++;
-                }
-            };
-
-            test(task);
-            validate(counter, threadsMax * iterCount);
         }
 
-        {
-            std::mutex mtx;
-            uint64_t counter = 0;
-
-            auto task = [&] {
-                for (size_t idx  = 0; idx < iterCount; ++idx) {
-                    std::lock_guard<std::mutex> lock{mtx};
-                    ++counter;
-                }
-            };
-
-            test(task);
-            validate(counter, threadsMax * iterCount);
+        inline void unlock() noexcept {
+            flag.store(0, std::memory_order_release);
         }
 
+        ~FastSpinLock() {
+            unlock();
+        }
+    };
+
+    struct FastSpinLock2
+    {
+        alignas(std::hardware_destructive_interference_size) std::atomic<uint32_t> isLocked { 0 };
+
+        void lock()
         {
-            SpinLock_AtomicFlag spinLock{};
-            uint64_t counter = 0;
-
-            auto task = [&] {
-                for (size_t idx  = 0; idx < iterCount; ++idx) {
-                    spinLock.lock();
-                    ++counter;
-                    spinLock.unlock();
+            static const timespec ns {0, 1};
+            uint32_t expected = 0;
+            for (int i = 0; !isLocked.compare_exchange_weak(expected, 1, std::memory_order_acquire); ++i) {
+                expected = 0;
+                if (2 == i) /// to tune thread scheduler
+                {
+                    i = 0;
+                    nanosleep(&ns, nullptr);
                 }
-            };
-
-            test(task);
-            validate(counter, threadsMax * iterCount);
+            }
         }
 
-        {
-            SpinLock_Bool spinLock{};
-            uint64_t counter = 0;
-
-            auto task = [&] {
-                for (size_t idx  = 0; idx < iterCount; ++idx) {
-                    spinLock.lock();
-                    ++counter;
-                    spinLock.unlock();
-                }
-            };
-
-            test(task);
-            validate(counter, threadsMax * iterCount);
+        inline void unlock() noexcept {
+            isLocked.store(false, std::memory_order_release);
         }
 
-        /*
+        ~FastSpinLock2() {
+            unlock();
+        }
+    };
+
+    struct SpinLock_Experimental
+    {
+        std::atomic_flag isLocked {false };
+
+        void lock()
         {
-            SpinLock_AtomicFlag_Wait spinLock {};
-            uint64_t counter = 0;
-
-            auto task = [&] {
-                for (size_t idx  = 0; idx < iterCount; ++idx) {
-                    spinLock.lock();
-                    ++counter;
-                    spinLock.unlock();
+            int_fast32_t backOff { 0 };
+            while (isLocked.test_and_set(std::memory_order_acquire)) {
+                for (int_fast32_t i = 0; i < backOff; ++i) {
+                    _mm_pause();
                 }
-            };
 
-            test(task);
-            validate(counter, threadsMax * iterCount);
-        }*/
-    }
+                if (backOff < 1024) {
+                    backOff *= 2;
+                } else {
+                    std::this_thread::yield();
+                }
+            }
+        }
+
+        inline void unlock() noexcept {
+            isLocked.clear(std::memory_order_release);
+        }
+
+        ~SpinLock_Experimental() {
+            unlock();
+        }
+    };
 }
 
 
@@ -274,9 +259,56 @@ namespace SpinLock::SwitchingThreads_SpinLock
 
 
 
+namespace SpinLock::Tests
+{
+    struct NullSpinLock
+    {
+        void lock() {}
+        void unlock() {}
+    };
+
+
+// #pragma GCC push_options
+// #pragma GCC optimize("O0")
+
+    __attribute__((optimize("O0")))
+    void basicCorrectnessTest()
+    {
+        constexpr uint32_t threadsCount { 16 };
+        uint32_t counter = 0;
+
+        // NullSpinLock lock;
+        // Impl::SpinLock_Bool lock;
+        // Impl::SpinLock_AtomicFlag lock;
+        Impl::FastSpinLock lock;
+        // Impl::FastSpinLock2 lock;
+        // Impl::SpinLock_Experimental lock;
+
+        auto callback = [&]() {
+            for (int i = 0; i < 1'000'000; ++i) {
+                lock.lock();
+                ++counter;
+                lock.unlock();
+            }
+        };
+
+        std::vector<std::jthread> workers;
+        for (uint32_t idx = 0; idx < threadsCount; ++idx) {
+            workers.emplace_back(callback);
+        }
+        workers.clear();
+
+        std::osyncstream {std::cout} << " counter = " << counter << std::endl;
+    }
+
+// #pragma GCC pop_options
+}
+
 void SpinLock::TestAll()
 {
+    Tests::basicCorrectnessTest();
+
+
     // SwitchingThreads_SpinLock::singleThreadTest();
     // SwitchingThreads_SpinLock::multiThreadTest();
-    // Impl::SpinLock_Tests();
 }
