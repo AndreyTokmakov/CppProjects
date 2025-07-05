@@ -33,7 +33,7 @@ namespace Flyweight::FlyweightCharacter
     };
 
 
-    class ConcreteCharacter : public Character
+    struct ConcreteCharacter : public Character
     {
         ConcreteCharacter(char aSymbol, int aPointSize)
         {

@@ -15,6 +15,8 @@ add_library(utils
         Base64.cpp
         HexConverter.cpp
         PerfUtilities.cpp
+        ThreadUtilities.cpp
+        DateTimeUtilities.cpp
 )
 
 add_executable(${PROJECT_NAME}

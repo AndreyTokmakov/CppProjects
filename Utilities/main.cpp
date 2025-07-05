@@ -184,7 +184,7 @@ namespace FileUtilities_Tests
 
     void WriteToFile()
     {
-        int32_t bytesWriten = FileUtilities::WriteToFile(testFilePath, "12345");
+        int32_t _ = FileUtilities::WriteToFile(testFilePath, "12345");
     }
 
     void AppendToFile()
