@@ -98,7 +98,8 @@ namespace Impl_Two
         };
 
         template<typename F>
-        struct Model : ICallable {
+        struct Model : ICallable
+        {
             F func;
 
             explicit Model(F&& f) : func(std::forward<F>(f)) {}

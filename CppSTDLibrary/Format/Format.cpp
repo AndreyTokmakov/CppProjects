@@ -306,6 +306,23 @@ namespace Format::Fill_Formated_String
 }
 
 
+namespace Format
+{
+
+    void Print_Formated_Pointers()
+    {
+        std::unique_ptr<int> intPtr { std::make_unique<int>(123) };
+        int* ptr = intPtr.get();
+
+        std::cout << &ptr << '\n';
+
+        // std::cout << std::format("{:#018x}", ptr) << '\n'; // error in C++23
+
+        std::cout << std::format("{:#018x}", reinterpret_cast<uintptr_t>(ptr)) << '\n';
+        std::cout << std::format("{:#018X}", reinterpret_cast<uintptr_t>(ptr)) << '\n';
+    }
+}
+
 
 void Format::TestAll()
 {
@@ -340,5 +357,7 @@ void Format::TestAll()
     // Date_and_Time::FormatTime();
     // Date_and_Time::Format_TimePoint();
 
-    Fill_Formated_String::PrintString_WithSpaces();
+    // Fill_Formated_String::PrintString_WithSpaces();
+
+    Print_Formated_Pointers();
 }

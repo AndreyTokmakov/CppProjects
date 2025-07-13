@@ -133,11 +133,11 @@ int main([[maybe_unused]] int argc,
     // Iterators::TestAll();
     // FilesStreams::TestAll();
     // Filesystem::TestAll();
-    // Format::TestAll();
+    Format::TestAll();
     // FunctionObjects::TestAll();
     // Hashing::TestAll();
     // LookupTypes::TestAll();
-    Lambdas::TestAll();
+    // Lambdas::TestAll();
     // LifetimeExtension::TestAll();
     // Locale::TestAll();
     // Literals::TestAll();
