@@ -1649,11 +1649,6 @@ namespace FibonacciSequence_Lambda
 
 
 
-auto getInt()
-{
-    constexpr int v = 123;
-    return [] { return  v; };
-}
 
 
 int main([[maybe_unused]] const int argc,
@@ -1670,8 +1665,6 @@ int main([[maybe_unused]] const int argc,
 
     // FibonacciSequence_Lambda::generate();
 
-    auto v = getInt();
-    std::cout << v() << std::endl;
 
 
 

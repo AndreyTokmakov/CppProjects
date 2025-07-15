@@ -310,14 +310,22 @@ namespace Constexpr::Strings
     }
 
 
-    constexpr std::string buildString() {
+    constexpr std::string buildString()
+    {
         return "Some_String";
     }
 
-    /*
-    void Constexpr_Strings2() {
-        constexpr std::string str = buildString();
-    }*/
+    constexpr std::string create_greeting()
+    {
+        std::string s = "Hello, ";
+        s += "C++20!";
+        return s;
+    }
+
+    void Constexpr_Strings2()
+    {
+        static_assert(create_greeting() == "Hello, C++20!");
+    }
 }
 
 
@@ -328,6 +336,8 @@ void Constexpr::TestAll()
 	// ConstexprSwitch::Test();
 	// ConstexprObjects::Test();
 
-    Exceptions::Test();
+    // Exceptions::Test();
+
     // Strings::Constexpr_Strings();
+    Strings::Constexpr_Strings2();
 }

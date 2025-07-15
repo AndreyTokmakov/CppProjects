@@ -116,7 +116,7 @@ int main([[maybe_unused]] int argc,
     // ConsoleInOut::TestAll();
     // ConstConstexprMutable::TestAll();
     // CompileTimeProgramming::TestAll();
-    // Constexpr::TestAll();
+    Constexpr::TestAll();
     // CopyElision::TestAll();
     // DeducingThis::TestAll();
     // RVO_FailureCases::TestAll();
@@ -133,7 +133,7 @@ int main([[maybe_unused]] int argc,
     // Iterators::TestAll();
     // FilesStreams::TestAll();
     // Filesystem::TestAll();
-    Format::TestAll();
+    // Format::TestAll();
     // FunctionObjects::TestAll();
     // Hashing::TestAll();
     // LookupTypes::TestAll();
