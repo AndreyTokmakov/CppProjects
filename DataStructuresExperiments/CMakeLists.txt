@@ -32,6 +32,7 @@ add_executable(${PROJECT_NAME}
 		MinStack/MinStack.h MinStack/MinStack.cpp
 		RingBuffer/RingBuffer.h RingBuffer/RingBuffer.cpp
 		RateLimiter/RateLimiter.h RateLimiter/RateLimiter.cpp
+		RateLimiter/RateLimiterEx.h RateLimiter/RateLimiterEx.cpp
 		Utils/Wrapper.h
 		Utils/PertTools.h Utils/PertTools.cpp
 		Int2String_MappingTable/Int2String_MappingTable.cpp
