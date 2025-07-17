@@ -15,8 +15,11 @@ namespace RateLimiterEx
 {
     struct Limiter
     {
-        Limiter(uint32_t reqCount, uint64_t timeout)
-        {
+        uint32_t maxRequests { 0 };
+        uint64_t timeout { 0 };
+
+        Limiter(uint32_t reqCount, uint64_t timeout):
+            maxRequests { reqCount }, timeout { timeout } {
 
         }
     };
