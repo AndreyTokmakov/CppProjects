@@ -69,6 +69,7 @@ Description : Cpp STD lib
 #include "Streams/Streams.h"
 #include "String/String.h"
 #include "Span/Span.h"
+#include "Simd/Simd.h"
 #include "StarshipOperator/StarshipOperator.h"
 #include "StringStream/StringStreamTests.h"
 #include "StringView/StringViewTests.h"
@@ -116,7 +117,7 @@ int main([[maybe_unused]] int argc,
     // ConsoleInOut::TestAll();
     // ConstConstexprMutable::TestAll();
     // CompileTimeProgramming::TestAll();
-    Constexpr::TestAll();
+    // Constexpr::TestAll();
     // CopyElision::TestAll();
     // DeducingThis::TestAll();
     // RVO_FailureCases::TestAll();
@@ -164,6 +165,7 @@ int main([[maybe_unused]] int argc,
     // StructuredBinding::TestAll();
     // StrongTypes::TestAll();
     // Span::TestAll();
+    Simd::TestAll();
     // Stacktrace::TestAll();
     // SourceLocation::TestAll();
     // SharedPtr_Tests::TestAll();

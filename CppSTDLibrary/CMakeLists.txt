@@ -78,6 +78,7 @@ add_executable(${PROJECT_NAME}
 		SourceLocation/SourceLocation.cpp
 		Span/Span.cpp Span/Span.h
 		Print/Print.cpp Print/Print.h
+		Simd/Simd.cpp Simd/Simd.h
 		Streams/Streams.cpp Streams/Streams.h
 		String/String.cpp
 		String/StringUtilities.cpp

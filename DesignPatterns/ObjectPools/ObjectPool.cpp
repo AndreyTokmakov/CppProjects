@@ -71,7 +71,8 @@ namespace ObjectPools {
 			return instance;
 		}
 
-		std::shared_ptr<Resource> getResource() {
+		std::shared_ptr<Resource> getResource()
+        {
 			if (resources.empty()) {
 				std::cout << "Creating new." << std::endl;
 				return std::make_shared<Resource>();
