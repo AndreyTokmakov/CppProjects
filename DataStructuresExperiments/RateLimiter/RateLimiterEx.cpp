@@ -18,15 +18,20 @@ namespace RateLimiterEx
         uint32_t maxRequests { 0 };
         uint64_t timeout { 0 };
 
-        Limiter(uint32_t reqCount, uint64_t timeout):
-            maxRequests { reqCount }, timeout { timeout } {
+        Limiter(uint32_t reqMax, uint64_t tm):
+            maxRequests { reqMax }, timeout { tm } {
+        }
 
+        [[nodiscard]]
+        bool check(uint64_t now)
+        {
+            return true;
         }
     };
 }
 
 void RateLimiterEx::TestAll()
 {
-    std::cout << "RateLimiterEx\n";
 
+    std::cout << "RateLimiterEx\n";
 }
