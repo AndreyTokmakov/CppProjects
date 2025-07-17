@@ -19,7 +19,6 @@ Description : C++ STL Vector container testing
 #include <algorithm>
 #include <chrono>
 #include <unordered_set>
-#include <c++/11/unordered_map>
 
 #include "../Helpers/Integer.h"
 

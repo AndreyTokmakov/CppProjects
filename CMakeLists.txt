@@ -8,7 +8,7 @@ if (CMAKE_SYSTEM_VERSION MATCHES "5.15") # 5.15 - My home Ubuntu-20.04
     set(THIRD_PARTY_DIR /home/andtokm/DiskS/ProjectsUbuntu/third_party)
     list(APPEND EXTRA_LIBS tbb)
 else()
-    set(THIRD_PARTY_DIR /home/andtokm/Projects/third_party)
+    set(THIRD_PARTY_DIR /home/andrei/Projects/third_party)
 endif()
 
 # Gcc-15 Experimental library symbols: 'Stacktrace'
