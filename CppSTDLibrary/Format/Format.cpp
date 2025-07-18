@@ -9,15 +9,17 @@
 
 #include <iostream>
 #include <string>
-#include <format>
 #include <chrono>
 #include <iterator>
+
+#include <format>
+#include <print>
 
 #include "Format.h"
 #include "CustomTypesFormatters.h"
 
 
-namespace Format 
+namespace Format
 {
     void SimpleTest() {
         auto s = std::format("{} {}!", "Hello", "world", "something"); // OK, produces "Hello world!"
@@ -56,7 +58,7 @@ namespace Format
         std::cout << str << std::endl;
 
         std::string str2 = std::format("{:{}.{}}", 4.2f, 4, 5);
-        std::cout << str2 << std::endl; 
+        std::cout << str2 << std::endl;
 
         std::string str3 = std::format("AAAA_{}_BBBB_{}", 123, 456);
         std::cout << str2 << std::endl;
@@ -324,6 +326,19 @@ namespace Format
 }
 
 
+namespace Format::Runtime_Format_Checks
+{
+    void test()
+    {
+        const std::string FORMAT { "val = {}" };
+        const std::string result = std::format(std::runtime_format(FORMAT), 42);
+
+        std::cout << result << std::endl;
+    }
+
+}
+
+
 void Format::TestAll()
 {
     // CustomTypesFormatters::TestAll();
@@ -337,6 +352,8 @@ void Format::TestAll()
 
     // Format_to_N();
     // Format_to_N_2();
+
+    Runtime_Format_Checks::test();
 
     // Format::VFormatTest1();
     // Format::VFormatPrint();
@@ -359,5 +376,5 @@ void Format::TestAll()
 
     // Fill_Formated_String::PrintString_WithSpaces();
 
-    Print_Formated_Pointers();
+    // Print_Formated_Pointers();
 }

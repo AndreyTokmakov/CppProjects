@@ -5,6 +5,8 @@ set(CMAKE_C_FLAGS_RELEASE "${CMAKE_C_FLAGS_RELEASE} -pthread")
 set(PROJECT_VERSION 1.0.0.0)
 project(${PROJECT_NAME} VERSION ${PROJECT_VERSION} LANGUAGES CXX)
 
+
+#[[
 set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTORCC ON)
 set(CMAKE_AUTOUIC ON)
@@ -24,12 +26,17 @@ set(CMAKE_CXX_FLAGS "${Qt5Widgets_EXECUTABLE_COMPILE_FLAGS}")
 add_compile_options(-c -Wall -Wextra -O3 -std=c++23)
 
 qt5_generate_moc(ProcessManager.cpp ProcessManager.moc)
+#]]
 
 add_executable(${PROJECT_NAME}
         main.cpp
-        ProcessManager.cpp ProcessManager.h ProcessManager.moc
+        ProcessManager.cpp ProcessManager.h
+        # ProcessManager.moc
 )
 
-TARGET_LINK_LIBRARIES(${PROJECT_NAME} pthread ${Qt5Widgets_LIBRARIES})
+TARGET_LINK_LIBRARIES(${PROJECT_NAME}
+        pthread
+        #${Qt5Widgets_LIBRARIES}
+)
 
 
