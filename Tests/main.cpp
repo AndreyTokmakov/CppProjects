@@ -1649,6 +1649,12 @@ namespace FibonacciSequence_Lambda
 
 
 
+int32_t max(auto a, auto b)
+{
+    if (a > b)
+        return a;
+    return b;
+}
 
 
 int main([[maybe_unused]] const int argc,
@@ -1665,6 +1671,8 @@ int main([[maybe_unused]] const int argc,
 
     // FibonacciSequence_Lambda::generate();
 
+
+    std::cout << max(-10, 29) << std::endl;
 
 
 
