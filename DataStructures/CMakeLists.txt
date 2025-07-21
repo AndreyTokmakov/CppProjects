@@ -20,6 +20,7 @@ add_executable(${PROJECT_NAME}
 		LockFreeDataStructures/LockFreeQueue.cpp
 		Finalizers/Finalizers.cpp
 		Optional/Optional.cpp
+		Expected/Expected.cpp
 		SharedPtr/SharedPtr.cpp
 		ThreadsafeQueue/ThreadsafeQueue.cpp
 		TTLCache/TTLCache.cpp

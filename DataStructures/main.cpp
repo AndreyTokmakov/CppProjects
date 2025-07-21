@@ -25,6 +25,7 @@ Description : DataStructures
 #include "ObjectPool_Growing/ObjectPool_Growing.h"
 #include "GenericTableTemplate/GenericTableTemplate.h"
 #include "Optional/Optional.h"
+#include "Expected/Expected.h"
 #include "Logger/Logger.h"
 #include "RingBuffer/RingBuffer.h"
 #include "RingBuffer/RingBufferEx.h"
@@ -74,7 +75,7 @@ int main([[maybe_unused]] int argc,
     // ExecutorAdapter::TestAll();
     // ExecutorAdapter2::TestAll();
     // Finalizers::TestAll();
-    Function::Test();
+    // Function::Test();
     // HashTable::TestAll();
     // LinkedLists::TEST_ALL();
     // Logging::TEST_ALL();
@@ -82,6 +83,7 @@ int main([[maybe_unused]] int argc,
     // ObjectPool::TestAll();
     // ObjectPool_Growing::TestAll();
     // Optional::TEST_ALL();
+    Expected::TestAll();
     // PriorityList::TEST_ALL();
     // RAII_CommitWrapper::Test();
     // ReferenceWrapper::Test();
