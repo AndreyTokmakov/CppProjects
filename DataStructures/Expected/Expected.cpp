@@ -75,7 +75,7 @@ namespace Expected
         [[nodiscard]]
         constexpr Ts value_or(Ty&& default_value) const &
         {
-            if (std::holds_alternative<Ts>(*this)) {
+            if (has_value()) {
                 return std::get<Ts>(*this);
             }
             return static_cast<Ty>(std::forward<Ty>(default_value));
@@ -85,30 +85,38 @@ namespace Expected
         [[nodiscard]]
         constexpr Ts value_or(Ty&& default_value)  &&
         {
-            if (std::holds_alternative<Ts>(*this)) {
+            if (has_value()) {
                 return std::move(std::get<Ts>(*this));
             }
             return static_cast<Ty>(std::forward<Ty>(default_value));
         }
 
-        template<typename E = std::remove_cv_t<Err>>
+        template<typename Error = std::remove_cv_t<Err>>
         [[nodiscard]]
-        constexpr Err error_or(Err&& err) const &
+        constexpr Err error_or(Error&& err) const &
         {
-            if (std::holds_alternative<Err>(*this)) {
+            if (is_error()) {
                 return std::get<Err>(*this);
             }
-            return static_cast<E>(std::forward<E>(err));
+            return static_cast<Error>(std::forward<Error>(err));
         }
 
-        template<typename E = std::remove_cv_t<Err>>
+        template<typename Error = std::remove_cv_t<Err>>
         [[nodiscard]]
-        constexpr Err error_or(E&& err) &&
+        constexpr Err error_or(Error&& err) &&
         {
-            if (std::holds_alternative<Err>(*this)) {
+            if (is_error() ) {
                 return std::move(std::get<Err>(*this));
             }
-            return static_cast<E>(std::forward<E>(err));
+            return static_cast<Error>(std::forward<Error>(err));
+        }
+
+        template<typename Fn>
+        constexpr auto or_else(Fn&& callback) const & -> decltype(auto)
+        {
+            if (is_error()) {
+                std::__invoke(std::forward<Fn>(callback), error());
+            }
         }
     };
 }
@@ -136,7 +144,7 @@ namespace
 void Expected::TestAll()
 {
 
-    const Expected<std::string, int>  result;// = getData(143);
+    const Expected<std::string, int> result = getData(143);
     if (result) {
         std::cout << "value = " << result.value() << std::endl;
     } else {
@@ -148,5 +156,5 @@ void Expected::TestAll()
     std::cout << "value_or  = " << result.value_or("None") << std::endl;
     std::cout << "error_or  = " << result.error_or(0) << std::endl;
 
-
+    result.or_else([](int err) { std::cout << "Error = " << err << std::endl; });
 }
