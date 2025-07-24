@@ -230,13 +230,13 @@ namespace Filesystem
         }
     }
 
-    void Is_Dir_Exists() {
-        const std::filesystem::path dirPath(R"(S:\Temp\Folder_For_Testing\File_1.txt)");
+    void Is_Dir_Exists()
+    {
+        const std::filesystem::path dirPath(R"(/home/andrei/Temp/test_folder/12)");
 
-        // Check is dir exists:
-        if (std::filesystem::exists(dirPath)) {
-            std::cout << "Directory " << dirPath << " exists" << std::endl;
-        }
+        std::cout << dirPath << std::endl;
+        std::cout << "\t exists       : " << std::boolalpha << std::filesystem::exists(dirPath) << std::endl;
+        std::cout << "\t is_directory : " << std::boolalpha << std::filesystem::is_directory(dirPath) << std::endl;
     }
 
     void Is_Dir_Exists_ErrrCpde() {
@@ -920,7 +920,7 @@ void Filesystem::TestAll()
     // DeleteDirectoryTest();
     // CopyDirTest();
 
-    // Is_Dir_Exists();
+    Is_Dir_Exists();
     // Is_Dir_Exists_ErrrCpde();
 
     // CurrentPath();
@@ -934,11 +934,11 @@ void Filesystem::TestAll()
     // Files::CrateFile();
     // Files::CopyFile();
     // Files::MoveFile();
-    Files::Last_Write_Time_UNIX_API();
+    // Files::Last_Write_Time_UNIX_API();
     // Files::Last_Write_Time();
     // Files::Check_IsFile_Exists();
 
-    Iterate_Files::List_Files_With_Lambda(); // Requires: C++26
+    // Iterate_Files::List_Files_With_Lambda(); // Requires: C++26
 
 
     // Permissions::Get_File_Permissions();

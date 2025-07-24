@@ -1,17 +1,17 @@
 /**============================================================================
-Name        : PerformanceTests.h
-Created on  : 04.06.2024
+Name        : CustomType_ToAndFromJson.h
+Created on  : 24.07.2025
 Author      : Andrei Tokmakov
 Version     : 1.0
 Copyright   : Your copyright notice
-Description : PerformanceTests.h
+Description : Nlohmann.h
 ============================================================================**/
 
-#ifndef CPPPROJECTS_ATOMICPERFORMANCETESTS_H
-#define CPPPROJECTS_ATOMICPERFORMANCETESTS_H
+#ifndef CUSTOMTYPE_TOANDFROMJSON_H
+#define CUSTOMTYPE_TOANDFROMJSON_H
 
-namespace PerformanceTests {
+namespace CustomType_ToAndFromJson {
     void TestAll();
 };
 
-#endif //CPPPROJECTS_ATOMICPERFORMANCETESTS_H
+#endif //CUSTOMTYPE_TOANDFROMJSON_H

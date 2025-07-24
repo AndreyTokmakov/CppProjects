@@ -55,8 +55,6 @@ int main([[maybe_unused]] int argc,
     // RapidJson::TestAll();
     Nlohmann::TestAll();
     // JsonCpp::Test();
-
-
     // PerformanceTests::TestAll();
 
     return EXIT_SUCCESS;

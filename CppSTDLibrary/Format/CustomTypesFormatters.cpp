@@ -34,12 +34,12 @@ namespace BitFieldStructFormatter
 template<>
 struct std::formatter<BitFieldStructFormatter::Permissions>
 {
-    constexpr auto parse(std::format_parse_context& ctx) {
+    static constexpr auto parse(const std::format_parse_context& ctx) {
         return ctx.begin();
     }
 
-    auto format(const BitFieldStructFormatter::Permissions& permissions,
-                std::format_context& ctx) const
+    static auto format(const BitFieldStructFormatter::Permissions& permissions,
+                std::format_context& ctx)
     {
         return std::format_to(ctx.out(), "Permissions (\n\tRead: {}\n\tWrite: {}\n\tExecute: {}\n\tModify {}"
                                          "\n\tRemove: {}\n\tRename: {}\n\tCopy: {}\n\tShare: {}\n)",
@@ -80,7 +80,8 @@ namespace CustomTypes
 
 
 // Specialization for the formatter type:
-template <> struct std::formatter<CustomTypes::Object>
+template <>
+struct std::formatter<CustomTypes::Object>
 {   // We do not parse anything, but we still need to advance the iterator over the corresponding {} in the format.
     // This happens at compile-time.
     constexpr auto parse(std::format_parse_context& ctx)
@@ -119,6 +120,7 @@ template <> struct std::formatter<CustomTypes::Greeter>
     std::string_view object = "World";
 
     void unexpected_format_specification_for_greeter(){}
+
     constexpr auto parse(std::format_parse_context& ctx)
     {
         auto it = ctx.begin();
@@ -163,10 +165,47 @@ namespace CustomTypes
 }
 
 
+namespace CustomTypesFormatters::DemoTwo
+{
+    struct Parameters
+    {
+        int32_t version { 0 };
+        std::string name;
+        std::string description;
+    };
+}
+
+
+template <>
+struct std::formatter<CustomTypesFormatters::DemoTwo::Parameters>
+{
+    std::formatter<std::string> strFormatter;
+
+    constexpr auto parse(std::format_parse_context& parse_context) {
+        return strFormatter.parse(parse_context);
+    }
+
+    auto format(const CustomTypesFormatters::DemoTwo::Parameters& params,
+                std::format_context& format_context) const
+    {
+        const std::string output = std::format("{} {} {}", params.version, params.name, params.description);
+        return strFormatter.format(output, format_context);
+    }
+};
+
+namespace CustomTypesFormatters::DemoTwo
+{
+    void test()
+    {
+        Parameters cpp {20, "Name-1", "Description-1"};
+        std::cout << std::format("{}", cpp) << '\n';
+    }
+}
+
 
 void CustomTypesFormatters::TestAll()
 {
-    //BitFieldStructFormatter::Test();
-
-    CustomTypes::FormatTypes();
+    // BitFieldStructFormatter::Test();
+    // CustomTypes::FormatTypes();
+    DemoTwo::test();
 }

@@ -721,7 +721,7 @@ void FunctionObjects::TestAll()
 	// Auto::Return_Type_Hint();
 
     // MemberFunctionPointer::TestAll();
-    // CallbackTests::TestAll();
+    CallbackTests::TestAll();
     // MoveOnlyFunction::TestAll();
 
 	// BindTests::FuncPtr_Tests();
@@ -756,7 +756,7 @@ void FunctionObjects::TestAll()
 
 
     // Callable_Interfaces::invokeFunctionTest();
-    Callable_Interfaces::invokeMethodTest();
+    // Callable_Interfaces::invokeMethodTest();
 
 	// Function::Vector_Of_Functions();
 	// Function::Swap();

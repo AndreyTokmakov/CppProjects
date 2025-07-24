@@ -134,7 +134,7 @@ int main([[maybe_unused]] int argc,
     // Iterators::TestAll();
     // FilesStreams::TestAll();
     // Filesystem::TestAll();
-    // Format::TestAll();
+    Format::TestAll();
     // FunctionObjects::TestAll();
     // Hashing::TestAll();
     // LookupTypes::TestAll();
@@ -165,7 +165,7 @@ int main([[maybe_unused]] int argc,
     // StructuredBinding::TestAll();
     // StrongTypes::TestAll();
     // Span::TestAll();
-    Simd::TestAll();
+    // Simd::TestAll();
     // Stacktrace::TestAll();
     // SourceLocation::TestAll();
     // SharedPtr_Tests::TestAll();

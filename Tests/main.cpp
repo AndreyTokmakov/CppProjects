@@ -1671,8 +1671,12 @@ int main([[maybe_unused]] const int argc,
 
     // FibonacciSequence_Lambda::generate();
 
-
     std::cout << max(-10, 29) << std::endl;
+
+    int64_t var1 { 0 };
+    std::streamsize var2 { 0 };
+
+    std::filesystem::path path;
 
 
 

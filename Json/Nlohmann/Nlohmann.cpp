@@ -9,6 +9,7 @@ Description : Nlohmann.cpp
 
 #include "Nlohmann.h"
 #include "FileUtilities.h"
+#include "CustomType_ToAndFromJson.h"
 
 #include <nlohmann/json.hpp>
 #include <iostream>
@@ -114,11 +115,96 @@ namespace Nlohmann::Array
 }
 
 
+namespace Nlohmann::JsonParsing
+{
+    namespace sys
+    {
+        enum class SystemType: uint8_t
+        {
+            TypeOne,
+            TypeTwo
+        };
 
-// INFO: https://www.studyplan.dev/pro-cpp/json
+        struct SystemInformation
+        {
+            int32_t id { 0 };
+            std::string name;
+            SystemType type { SystemType::TypeOne };
+        };
+
+        void parser_sys_info(const nlohmann::json& json, SystemInformation& system_information)
+        {
+            json.at("id").get_to(system_information.id);
+            json.at("name").get_to(system_information.name);
+            json.at("sys_type").get_to(system_information.type);
+        }
+
+        NLOHMANN_JSON_SERIALIZE_ENUM(SystemType,
+        {
+            { SystemType::TypeOne, "TypeOne" },
+            { SystemType::TypeTwo, "TypeTwo" }
+        })
+    }
+}
+
+namespace nlohmann
+{
+    template <typename T>
+    struct adl_serializer<std::optional<T>> {
+        static void from_json(const json& json, std::optional<T>& opt) {
+            if (json.is_null()) {
+                opt = std::nullopt;
+            } else {
+                opt = json.get<T>();
+            }
+        }
+    };
+
+    template <>
+    struct adl_serializer<Nlohmann::JsonParsing::sys::SystemInformation> {
+        static void from_json(const json& json, Nlohmann::JsonParsing::sys::SystemInformation& system_information) {
+            parser_sys_info(json , system_information);
+        }
+    };
+}
+
+namespace Nlohmann::JsonParsing
+{
+    void test()
+    {
+        auto jsonString = R"({
+            "id": 101, "name": "Param1", "sys_type": "TypeTwo"
+        })";
+
+        const nlohmann::json jsonData = nlohmann::json::parse(jsonString);
+        sys::SystemInformation system_information = jsonData.get<sys::SystemInformation>();
+
+        std::cout << system_information.id << " "
+                  << system_information.name << " "
+                  << static_cast<int>(system_information.type) << "\n"
+                  << std::endl;
+
+        /*
+        json one = "TypeOne";
+        json two = "TypeTwo";
+
+        {
+            sys::SystemType type = one.get<sys::SystemType>();
+            std::cout <<  << std::endl;
+        }
+        {
+            sys::SystemType type = two.get<sys::SystemType>();
+            std::cout << static_cast<int>(type) << std::endl;
+        }*/
+    }
+}
+
+
 
 void Nlohmann::TestAll()
 {
+    CustomType_ToAndFromJson::TestAll();
+
     // checkIsValid();
     // ParseJson_StringStream();
 
@@ -126,7 +212,9 @@ void Nlohmann::TestAll()
     // ParseJson_File2();
 
     // Create_and_Parse_Json();
-    Create_and_Parse_Json_2();
+    // Create_and_Parse_Json_2();
 
     // Array::CreateArray();
+
+    // JsonParsing::test();
 }

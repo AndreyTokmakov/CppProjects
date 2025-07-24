@@ -341,7 +341,7 @@ namespace Format::Runtime_Format_Checks
 
 void Format::TestAll()
 {
-    // CustomTypesFormatters::TestAll();
+    CustomTypesFormatters::TestAll();
 
     // Format_Numbers();
 
@@ -353,7 +353,7 @@ void Format::TestAll()
     // Format_to_N();
     // Format_to_N_2();
 
-    Runtime_Format_Checks::test();
+    // Runtime_Format_Checks::test();
 
     // Format::VFormatTest1();
     // Format::VFormatPrint();

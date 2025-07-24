@@ -12,6 +12,7 @@ Description : CallbackTests.cpp
 #include <iostream>
 #include <string_view>
 #include <functional>
+#include <numeric>
 #include <utility>
 
 namespace CallbackTests
@@ -115,6 +116,58 @@ namespace CallbackTestsRef
     }
 }
 
+namespace CallbackTests::PassClassMethodAsCallback
+{
+
+    bool isEvenGlobal(const int x) {
+        return ! (x & 1);
+    }
+
+    struct Worker
+    {
+        std::vector<int> values;;
+
+        Worker(): values(10)
+        {
+            std::iota((values.begin()), values.end(), 0);
+        }
+
+        template<std::predicate<int> Func>
+        void printFiltered(Func func) const noexcept
+        {
+            for (int a : values) {
+                if (func(a)) {
+                    std::cout << a << " ";
+                }
+            }
+            std::cout << std::endl;
+        }
+
+        bool isEven (const int x) {
+            return ! (x & 1);
+        }
+
+
+        void test() const
+        {
+            auto isEvenLambda = [](const int x)-> int {
+                return ! (x & 1);
+            };
+
+            printFiltered(isEvenLambda);
+            printFiltered(isEvenGlobal);
+        }
+    };
+
+
+    void demo()
+    {
+        const Worker worker;
+        worker.test();
+    }
+}
+
+
 void CallbackTests::TestAll()
 {
     // CallbackTests::Tests();
@@ -124,5 +177,9 @@ void CallbackTests::TestAll()
     //    Linter:
     //       Reference member declared here CallbackTests. cpp:100:27:
     //       warning: binding reference member 'callback' to stack allocated parameter 'messageListener
-    CallbackTestsRef::Tests();
+
+    // CallbackTestsRef::Tests();
+
+    PassClassMethodAsCallback::demo();
+
 }

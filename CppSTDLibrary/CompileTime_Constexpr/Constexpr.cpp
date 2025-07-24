@@ -241,6 +241,26 @@ namespace Constexpr::Exceptions
 {
     // https://www.sandordargo.com/blog/2025/05/07/cpp26-constexpr-exceptions
 
+	struct hana_exception final : std::exception
+	{
+		[[nodiscard]]
+		constexpr const char * what() const noexcept override {
+			return "my custom error message";
+		}
+	};
+
+	constexpr bool unsafe() noexcept (false) {
+		throw hana_exception{};
+	};
+
+	constexpr bool test_with_check() {
+		try {
+			return unsafe();
+		} catch (const std::exception &) {
+			return true;
+		}
+	}
+
 #if 0
     constexpr unsigned int divide(const unsigned int a,
                                   const unsigned int b)
@@ -293,6 +313,14 @@ namespace Constexpr::Exceptions
         // Should compile
         // constexpr std::optional<unsigned int> result = checked_divide(5, 0);
     }
+
+	void Test2()
+    {
+    	// static_assert(test_with_check());
+
+    	// static_assert(test());  /// <--- WILL NOT COMPILE
+    }
+
 }
 
 namespace Constexpr::Strings
@@ -336,8 +364,9 @@ void Constexpr::TestAll()
 	// ConstexprSwitch::Test();
 	// ConstexprObjects::Test();
 
-    // Exceptions::Test();
+    Exceptions::Test();
+    Exceptions::Test2();
 
     // Strings::Constexpr_Strings();
-    Strings::Constexpr_Strings2();
+    // Strings::Constexpr_Strings2();
 }
