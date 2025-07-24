@@ -48,27 +48,70 @@ namespace BinManipulation
     }
 }
 
+
+namespace BitUtils
+{
+
+    template<typename T>
+    void show_bits(T x)
+    {
+        std::cout << x << "  ===>  ";
+        for (int i = (sizeof(T) * 8) - 1; i >= 0; i--)
+            std::cout << (x & (1u << i) ? '1' : '0');
+        std::cout << std::endl;
+    }
+
+    template<typename T>
+    void set_bit(T& num, uint32_t bit)
+    {
+        if (sizeof(T) * 8 > bit - 1 )
+        {
+            num |= (1 << (bit - 1));
+        }
+    }
+
+    constexpr bool is_odd(const int value) noexcept {
+        return value & 1;
+    }
+
+    constexpr bool is_even(const int value) noexcept {
+        return ! (value & 1);
+    }
+
+    constexpr bool is_pow_of_2(const int value) noexcept {
+        return (value && !(value & value - 1));
+    }
+
+    constexpr int divide_by_2(const int value) {
+        return value >> 1 ;
+    }
+
+    constexpr int mid_point(const int a, const int b) noexcept {
+        return (a + b) >> 1 ;
+    }
+
+    constexpr int multiply_by_2(const int value) {
+        return value << 1 ;
+    }
+
+    /**
+     * Works in case if d is power of 2
+     **/
+    inline constexpr uint32_t modulo(const uint32_t n, const uint32_t d) noexcept {
+        return n & (d - 1);
+    };
+}
+
+
 void BinManipulation::TestAll()
 {
     // Detect_If_Two_Integers_Have_Opposite_Signs();
     // ComputeAbsoluteValue();
 
-    /*
-    const unsigned int n = 9;
-    const unsigned int s = 7;
-    const unsigned int d = 1U << s;     // So, `d` is one of 1, 2, 4, 8, 16, 32, …
+    for (int i = 0;i < 255; ++i) {
+        BitUtils::show_bits(i);
+    }
 
-    unsigned int m =  n & ((1U << s) - 1);
-
-    std::cout << n << " % " <<  s << " = " << m << std::endl;
-    */
-
-    const unsigned int n = 9, s = 7;
-
-    const unsigned int d = 1U << s;     // So, `d` is one of 1, 2, 4, 8, 16, 32, …
-
-    unsigned int m  = n & (d - 1);
-
-    printf("%d %% %d = %d", n, d, m);
+    // 128  ===>  10000000
 
 }

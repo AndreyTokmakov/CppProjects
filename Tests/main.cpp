@@ -1649,12 +1649,7 @@ namespace FibonacciSequence_Lambda
 
 
 
-int32_t max(auto a, auto b)
-{
-    if (a > b)
-        return a;
-    return b;
-}
+
 
 
 int main([[maybe_unused]] const int argc,
@@ -1670,13 +1665,6 @@ int main([[maybe_unused]] const int argc,
     //ASM_Usage::measureElapsedTime();
 
     // FibonacciSequence_Lambda::generate();
-
-    std::cout << max(-10, 29) << std::endl;
-
-    int64_t var1 { 0 };
-    std::streamsize var2 { 0 };
-
-    std::filesystem::path path;
 
 
 
@@ -1702,16 +1690,18 @@ int main([[maybe_unused]] const int argc,
     // UBBook::Test();
     // PipelineOperator::SimplePipeTest();
     // StringTest_SSO::Tests();
+
     // BitwiseOperations::test();
+    // BinaryAnalyzer::TestAll();
+    // BitFlags::TestAll();
+    BinManipulation::TestAll();
+
+    // Concepts::TestAll();
     // LockFreeQueueTest::Test();
     // CompileTime_Programming::Factorial();
     // OperatorCall_ExplicitTypeSpecialization::Test();
     // CallFunctionByName::Test();
     // ReturnClass_MemberRef_CopyCTor::tests();
-    // BinManipulation::TestAll();
-    // BinaryAnalyzer::TestAll();
-    // BitFlags::TestAll();
-    // Concepts::TestAll();
     // Crow::TestAll();
     // CollectionsTests::TestAll();
     // CopyElision_RVO::TestAll();
