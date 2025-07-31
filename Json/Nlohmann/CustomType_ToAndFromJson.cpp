@@ -16,6 +16,7 @@ Description : Nlohmann.h
 #include <fstream>
 #include <filesystem>
 #include <vector>
+#include <cmath>
 
 #include <nlohmann/json.hpp>
 
@@ -34,17 +35,21 @@ namespace CustomType_ToAndFromJson::model
     struct Profile
     {
         std::optional<int32_t> id { std::nullopt };
+        std::optional<int32_t> seq { std::nullopt };
         std::string uuid;
         std::string name;
         std::string description;
+        double ratio { NAN };
     };
 
     std::ostream& operator<<(std::ostream& stream, const Profile& profile)
     {
         stream << "Profile {"
                << "\n\t id: " << profile.id.value_or(-1)
+               << "\n\t seq: " << profile.seq.value_or(-1)
                << "\n\t uuid: " << profile.uuid
                << "\n\t name: " << profile.name
+               << "\n\t ratio: " << profile.ratio
                << "\n\t description: " << profile.description
                << "\n}";
         return stream;
@@ -92,17 +97,21 @@ namespace CustomType_ToAndFromJson::details
         if (auto key = json.find("id"); key != json.end()) {
             profile.id = key->get<decltype(profile.id)>();
         }
+        json.at("seq").get_to(profile.seq);
         json.at("uuid").get_to(profile.uuid);
         json.at("name").get_to(profile.name);
         json.at("description").get_to(profile.description);
+        json.at("ratio").get_to(profile.ratio);
     }
 
     void json_from_profile(nlohmann::json& json, const model::Profile& profile)
     {
         json["id"] = profile.id.value_or(0);
+        json["seq"] = profile.seq.value_or(0);
         json["uuid"] = profile.uuid;
         json["name"] = profile.name;
         json["description"] = profile.description;
+        json["ratio"] = profile.ratio;
     }
 }
 
@@ -116,7 +125,7 @@ namespace CustomType_ToAndFromJson::Tests
         const nlohmann::basic_json data = nlohmann::json::parse(std::ifstream (filePath));
         for (const auto& jsonProfile: data.at("profiles"))
         {
-            // std::cout << jsonProfile << std::endl;
+            std::cout << jsonProfile << std::endl;
             jsonProfile.get_to(profiles.emplace_back());
         }
         return profiles;

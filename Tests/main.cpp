@@ -1649,9 +1649,6 @@ namespace FibonacciSequence_Lambda
 
 
 
-
-
-
 int main([[maybe_unused]] const int argc,
          [[maybe_unused]] char** argv)
 {
@@ -1662,11 +1659,18 @@ int main([[maybe_unused]] const int argc,
     // Execution::TestAll();
     // Coroutines::TestAll();
 
-    //ASM_Usage::measureElapsedTime();
+
+    using timestamp_t = std::chrono::time_point<std::chrono::steady_clock>;
+    std::atomic<timestamp_t> timestamp = std::chrono::steady_clock::now();
+
+    std::this_thread::sleep_for(std::chrono::seconds(1));
+
+    timestamp.store(std::chrono::steady_clock::now(), std::memory_order_relaxed);
+
+
+    // ASM_Usage::measureElapsedTime();
 
     // FibonacciSequence_Lambda::generate();
-
-
 
     // VirtualFunctionTests::demo();
     // Int_to_UInt_Tests::Tests();
@@ -1694,7 +1698,7 @@ int main([[maybe_unused]] const int argc,
     // BitwiseOperations::test();
     // BinaryAnalyzer::TestAll();
     // BitFlags::TestAll();
-    BinManipulation::TestAll();
+    // BinManipulation::TestAll();
 
     // Concepts::TestAll();
     // LockFreeQueueTest::Test();

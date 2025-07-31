@@ -190,6 +190,7 @@ namespace Format
         std::cout << min_buffer_size_3 << std::endl;
     }
 
+
     void Formatted_Size_2()
     {
         using namespace std::numbers;
@@ -263,44 +264,12 @@ namespace Format::Date_and_Time
     }
 }
 
-namespace CustomFormatters
-{
-    /*
-
-    struct Index {
-        unsigned int id_{ 0 };
-    };
-
-    template <>
-    struct std::formatter<Index> : std::formatter<int> {
-        auto format(const Index& id, std::format_context& ctx) const {
-            return std::formatter<int>::format(id.id_, ctx);
-        }
-    };
-
-    template <>
-    struct std::formatter<Index> {
-        // for debugging only
-        formatter() { std::cout << "formatter<Index>()\n"; }
-
-        constexpr auto parse(std::format_parse_context& ctx) {
-            return ctx.begin();
-        }
-
-        auto format(const Index& id, std::format_context& ctx) const {
-            return std::format_to(ctx.out(), "{}", id.id_);
-        }
-    };
-
-    */
-}
-
 namespace Format::Fill_Formated_String
 {
 
     void PrintString_WithSpaces()
     {
-        for (const std::string& lvl: {"INFO", "DEBUG", "WARNING", "ERROR", "CRITICAL"})
+        for (const std::string lvl: {"INFO", "DEBUG", "WARNING", "ERROR", "CRITICAL"})
         {
             std::cout << std::format("[{:8s}]", lvl) << std::endl;
         }
@@ -310,11 +279,133 @@ namespace Format::Fill_Formated_String
 
 namespace Format
 {
+    void Fill_Character_Alignment()
+    {
+        constexpr int32_t num = 2020;
+
+        std::cout << std::format("{:6}", num) << '\n';
+        std::cout << std::format("{:6}", 'x') << '\n';
+        std::cout << std::format("{:*<6}", 'x') << '\n';
+        std::cout << std::format("{:*>6}", 'x') << '\n';
+        std::cout << std::format("{:*^6}", 'x') << '\n';
+        std::cout << std::format("{:6d}", num) << '\n';
+        std::cout << std::format("{:6}", true) << '\n';
+
+        /**
+        2020
+        x
+        x*****
+        *****x
+        **x***
+          2020
+        true
+        **/
+    }
+
+    void Binary_Octal_Hex()
+    {
+        std::cout << std::format("{:#015}", 0x78) << '\n';
+        std::cout << std::format("{:#015b}", 0x78) << '\n';
+        std::cout << std::format("{:#015x}", 0x78) << "\n\n";
+        std::cout << std::format("{:g}", 120.0) << '\n';
+        std::cout << std::format("{:#g}", 120.0) << '\n';
+
+        // 000000000000120
+        // 0b0000001111000
+        // 0x0000000000078
+        //
+        // 120
+        // 120.000
+    }
+
+    void Width_and_Precision()
+    {
+        constexpr int i = 123456789;
+        constexpr double d = 123.456789;
+
+        std::cout << "[" << std::format("{}", i) << "]\n";
+        std::cout << "[" << std::format("{:15}", i) << "]\n"; // (w = 15)
+        std::cout << "[" << std::format("{:}", i) << "]\n"; // (w = 15)
+        std::cout << "[" << std::format("{}", d) << "]\n";
+        std::cout << "[" << std::format("{:15}", d) << "]\n"; // (w = 15)
+        std::cout << "[" << std::format("{:}", d) << "]\n\n"; // (w = 15)
+
+        constexpr std::string_view s= "Only a test";
+
+        std::cout << "[" << std::format("{:10.50}", d) << "]\n"; // (w = 10, p = 50)
+        std::cout << "[" << std::format("{:{}.{}}", d, 10, 50) << "]\n";  // (w = 10, p = 50)
+        std::cout << "[" << std::format("{:10.5}", d) << "]\n";  // (w = 10, p = 5)
+        std::cout << "[" << std::format("{:{}.{}}", d, 10, 5) << "]\n\n";  // (w = 10, p = 5)
+
+        std::cout << "[" << std::format("{:.500}", s) << "]\n";      // (p = 500)      // (4)
+        std::cout << "[" << std::format("{:.{}}", s, 500) << "]\n";  // (p = 500)      // (5)
+        std::cout << "[" << std::format("{:.5}", s) << "]\n";        // (p = 5)
+
+
+        // [123456789]
+        // [      123456789]
+        // [123456789]
+        // [123.456789]
+        // [     123.456789]
+        // [123.456789]
+        //
+        // [123.4567890000000005557012627832591533660888671875]
+        // [123.4567890000000005557012627832591533660888671875]
+        // [    123.46]
+        // [    123.46]
+        //
+        // [Only a test]
+        // [Only a test]
+        // [Only ]
+    }
+
+    void Width_and_Precision_Parametrized()
+    {
+        constexpr double ratio = 123.456789;
+
+        std::cout << std::format("{:}\n", ratio);
+
+        for (auto precision: {3, 5, 7, 9}) {
+            std::cout << std::format("{:.{}}\n", ratio, precision);
+        }
+
+        int width = 10;
+        for (auto precision: {3, 5, 7, 9}) {
+            std::cout << std::format("{:{}.{}}\n", ratio, width, precision);
+        }
+
+        // 123.456789
+        // 123
+        // 123.46
+        // 123.4568
+        // 123.456789
+        //        123
+        //     123.46
+        //   123.4568
+        // 123.456789
+    }
+
+    void Print_INT_Different_Number_System()
+    {
+        constexpr int num { 2020 };
+
+        std::cout << "default:     " << std::format("{:}", num) << '\n';
+        std::cout << "decimal:     " << std::format("{:d}", num) << '\n';
+        std::cout << "binary:      " << std::format("{:b}", num) << '\n';
+        std::cout << "octal:       " << std::format("{:o}", num) << '\n';
+        std::cout << "hexadecimal: " << std::format("{:x}", num) << '\n';
+
+        // default:     2020
+        // decimal:     2020
+        // binary:      11111100100
+        // octal:       3744
+        // hexadecimal: 7e4
+    }
 
     void Print_Formated_Pointers()
     {
-        std::unique_ptr<int> intPtr { std::make_unique<int>(123) };
-        int* ptr = intPtr.get();
+        std::unique_ptr<int> intPtr{std::make_unique<int>(123)};
+        int *ptr = intPtr.get();
 
         std::cout << &ptr << '\n';
 
@@ -350,6 +441,13 @@ void Format::TestAll()
     // Format_To_Vector_Str();
     // Format_To_STD_Cout();
 
+    // Fill_Character_Alignment();
+    // Binary_Octal_Hex();
+    // Print_Formated_Pointers();
+    // Width_and_Precision();
+    // Width_and_Precision_Parametrized();
+    // Print_INT_Different_Number_System();
+
     // Format_to_N();
     // Format_to_N_2();
 
@@ -375,6 +473,4 @@ void Format::TestAll()
     // Date_and_Time::Format_TimePoint();
 
     // Fill_Formated_String::PrintString_WithSpaces();
-
-    // Print_Formated_Pointers();
 }

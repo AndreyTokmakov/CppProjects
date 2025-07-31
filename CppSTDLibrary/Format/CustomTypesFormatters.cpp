@@ -203,9 +203,101 @@ namespace CustomTypesFormatters::DemoTwo
 }
 
 
+namespace CustomTypesFormatters::Version_Flags
+{
+    struct Version
+    {
+        std::string strVersion { " 1.2.3" };
+        int major { 0 };
+        std::optional<int> minor { std::nullopt };
+        std::optional<int> patch { std::nullopt };
+    };
+}
+
+template <>
+struct std::formatter<CustomTypesFormatters::Version_Flags::Version> {
+    std::string _attributes;
+    constexpr auto parse(std::format_parse_context& parse_context) {
+        auto it = std::ranges::find(parse_context, '}');
+        _attributes = std::string(parse_context.begin(), it);
+        return it;
+    }
+
+    auto format(const CustomTypesFormatters::Version_Flags::Version& version,
+                std::format_context& format_context) const
+    {
+        auto out = format_context.out();
+        if (_attributes.empty()) {
+            out = std::format_to(out, "{} {}", version.strVersion, version.major);
+            return out;
+        }
+
+        for (auto n = 0u; n < _attributes.size(); ++n)
+        {
+            if (_attributes[n] == '%') {
+                switch (_attributes[++n]) {
+                    case 'l':
+                        out = std::format_to(out, "{}", version.strVersion);
+                        break;
+                    case 'v':
+                        out = std::format_to(out, "{}", version.major);
+                        if (version.minor.has_value()) {
+                            out = std::format_to(out, ".{}", version.minor.value());
+                        }
+                        if (version.patch.has_value()) {
+                            out = std::format_to(out, ".{}", version.patch.value());
+                        }
+                        break;
+                    case 'm':
+                        out = std::format_to(out, "{}", version.major);
+                        break;
+                    case 'n':
+                        out = std::format_to(out, "{}", version.minor.value());
+                        break;
+                    case 'p':
+                        out = std::format_to(out, "{}", version.patch.value());
+                        break;
+                    case '%':
+                        out = std::format_to(out, "%");
+                        break;
+                    default:
+                        out = "ERROR";
+                        break;
+                }
+            } else {
+                out = std::format_to(out, "{}", _attributes[n]);
+            }
+        }
+        return out;
+    }
+};
+
+namespace CustomTypesFormatters::Version_Flags
+{
+    void format_and_print()
+    {
+        Version version {"11.22.33",  1, 2, 3 };
+
+
+        std::cout << std::format("{}", version) << std::endl;
+        std::cout << std::format("{:%l%m}", version) << std::endl;
+        std::cout << std::format("{:%l%v}", version) << std::endl;
+        std::cout << std::format("{:%l %v}", version) << std::endl;
+        std::cout << std::format("{:%l %m.%n.%p}", version) << std::endl;
+
+        // 11.22.33 1
+        // 11.22.331
+        // 11.22.331.2.3
+        // 11.22.33 1.2.3
+        // 11.22.33 1.2.3
+    }
+}
+
+
 void CustomTypesFormatters::TestAll()
 {
     // BitFieldStructFormatter::Test();
     // CustomTypes::FormatTypes();
-    DemoTwo::test();
+    // DemoTwo::test();
+    Version_Flags::format_and_print();
 }
