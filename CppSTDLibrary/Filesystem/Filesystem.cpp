@@ -906,7 +906,7 @@ namespace Filesystem::Iterate_Files
 void Filesystem::TestAll()
 {
 
-    // TempDirectoryPath();
+    TempDirectoryPath();
     // StandartMethods();
     // StandartMethods2();
 
@@ -920,7 +920,7 @@ void Filesystem::TestAll()
     // DeleteDirectoryTest();
     // CopyDirTest();
 
-    Is_Dir_Exists();
+    // Is_Dir_Exists();
     // Is_Dir_Exists_ErrrCpde();
 
     // CurrentPath();

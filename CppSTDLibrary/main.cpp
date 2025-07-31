@@ -134,7 +134,7 @@ int main([[maybe_unused]] int argc,
     // Iterators::TestAll();
     // FilesStreams::TestAll();
     // Filesystem::TestAll();
-    Format::TestAll();
+    // Format::TestAll();
     // FunctionObjects::TestAll();
     // Hashing::TestAll();
     // LookupTypes::TestAll();
@@ -155,7 +155,7 @@ int main([[maybe_unused]] int argc,
     // PolymorphicMemoryResources::TestAll();
     // Print::TestAll();
     // Random::TestAll();
-    // Ranges::TestAll();
+    Ranges::TestAll();
     // ReferenceWrapper::TestAll();
     // StarshipOperator::TestAll();
     // Streams::TestAll();

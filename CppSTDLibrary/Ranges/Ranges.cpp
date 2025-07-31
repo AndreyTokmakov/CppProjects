@@ -972,6 +972,93 @@ namespace Ranges::Containers_From_Ranges
     }
 }
 
+namespace Ranges::Demo
+{
+    struct File
+    {
+        std::string name;
+    };
+
+    struct Project
+    {
+        std::vector<File> files;
+    };
+
+    struct Diagnostics
+    {
+        std::string info;
+
+        explicit Diagnostics(const File& file, const std::string& info):
+            info { std::format("File: {}, Info: {}", file.name, info) } {
+
+        }
+    };
+
+    void print(const Diagnostics& diagnostics)
+    {
+        std::cout << diagnostics.info << std::endl;
+    }
+
+    std::vector<File> getProjectFiles(const Project& project)
+    {
+        return project.files;
+    }
+
+    std::vector<Diagnostics> inspect(const File& file)
+    {
+        std::vector<Diagnostics> diagnostics;
+        diagnostics.emplace_back(file, "Info#1");
+        diagnostics.emplace_back(file, "Info#2");
+
+        return diagnostics;
+    }
+
+    std::vector<Project> getProjects()
+    {
+        std::vector<Project> projects;
+
+        projects.emplace_back().files.emplace_back("P1-File_1");
+        projects.back().files.emplace_back("P1-File_2");
+        projects.back().files.emplace_back("P1-File_3");
+
+        projects.emplace_back().files.emplace_back("P2-File_1");
+        projects.back().files.emplace_back("P2-File_2");
+        projects.back().files.emplace_back("P2-File_3");
+
+        projects.emplace_back().files.emplace_back("P3-File_1");
+        projects.back().files.emplace_back("P3-File_2");
+        projects.back().files.emplace_back("P3-File_3");
+
+        return projects;
+    }
+
+    void oldStyle()
+    {
+        const std::vector<Project> projects = getProjects();
+        for (const auto& project: projects)
+        {
+            const std::vector<File> files = getProjectFiles(project);
+            for (const File& file: files)
+            {
+                const std::vector<Diagnostics> diagnostics = inspect(file);
+                for (const Diagnostics& d: diagnostics)
+                {
+                    print(d);
+                }
+            }
+        }
+    }
+
+    /** https://youtu.be/YUHbPDNtdiQ?t=1562 **/
+    void rangeJoinStyle()
+    {
+       auto diagnostics = getProjects() |
+               std::views::transform(getProjectFiles) | std::views::join |
+               std::views::transform(inspect) | std::views::join ;
+       std::ranges::for_each(diagnostics, print);
+    }
+}
+
 void Ranges::TestAll()
 {
     // For_Each();
@@ -1034,9 +1121,11 @@ void Ranges::TestAll()
 
     // Ranges_To::Get_Even_Numbers();
     // Ranges_To::Get_Even_Numbers_Mapping();
-    Containers_From_Ranges::CreateVectorFromRange();
-    Containers_From_Ranges::CreateVectorFromRange_Inplace();
+    // Containers_From_Ranges::CreateVectorFromRange();
+    // Containers_From_Ranges::CreateVectorFromRange_Inplace();
 
     // Experiments();
 
+    //Demo::oldStyle();
+    Demo::rangeJoinStyle();
 }
