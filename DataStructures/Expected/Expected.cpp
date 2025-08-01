@@ -11,6 +11,7 @@ Description : Expected.cpp
 
 #include <iostream>
 #include <variant>
+#include <expected>
 
 namespace Expected
 {
@@ -143,6 +144,7 @@ namespace
 
 void Expected::TestAll()
 {
+    // std::expected<std::string, int> res; // 40 Bytes
 
     const Expected<std::string, int> result = getData(143);
     if (result) {

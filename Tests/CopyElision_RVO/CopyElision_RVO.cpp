@@ -267,24 +267,27 @@ namespace CopyElision_RVO::NotDeclaredMoveConstructor
     class MyClass
     {
     public:
-        std::string name {};
+        std::string name{};
 
-        explicit MyClass(std::string n): name { std::move(n) }  {
+        explicit MyClass(std::string n) : name{std::move(n)}
+        {
             std::cout << std::format("Destroying MyClass::MyClass({})", name) << std::endl;
         }
 
-        ~MyClass()  {
+        ~MyClass()
+        {
             std::cout << std::format("Destroying MyClass::~MyClass({})", name) << std::endl;
         }
 
         // Not copyable and ot assignable.
-        MyClass(const MyClass&) = delete;
-        MyClass& operator=(const MyClass&) = delete;
+        MyClass(const MyClass &) = delete;
+
+        MyClass &operator=(const MyClass &) = delete;
 
         // Movable only for NRVO purposes (and RVO in C++11).
         // Never implemented.
 
-        MyClass(MyClass&& rhs);
+        MyClass(MyClass &&rhs);
 
         /*
         MyClass(MyClass&& rhs): name { std::move(rhs.name) } {
@@ -308,11 +311,12 @@ namespace CopyElision_RVO::NotDeclaredMoveConstructor
     //       even without IMPLEMENTATION
     MyClass test2()
     {
-        MyClass c {"NRVO Test"};
+        MyClass c{"NRVO Test"};
         return c;
     }
 
-    constexpr bool someSondition() {
+    constexpr bool someSondition()
+    {
         return true;
     }
 
@@ -347,11 +351,34 @@ namespace CopyElision_RVO::NotDeclaredMoveConstructor
     }
 }
 
+namespace CopyElision_RVO
+{
+    Integer makeInt(int v)
+    {
+        if (0 == v)
+        {
+            return  {};
+        }
+
+        Integer result { 100};
+
+
+        return result;
+    }
+
+    void demo()
+    {
+        Integer v =  makeInt(10);
+    }
+}
+
 void CopyElision_RVO::TestAll()
 {
+    demo();
+
     // SimpleExample::Test();
 
-    Tests::CreateTest();
+    // Tests::CreateTest();
 
     // Tests::UsingBuilder();
     // Tests::UsingBuilder2();

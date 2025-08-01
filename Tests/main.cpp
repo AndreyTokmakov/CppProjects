@@ -1660,13 +1660,6 @@ int main([[maybe_unused]] const int argc,
     // Coroutines::TestAll();
 
 
-    using timestamp_t = std::chrono::time_point<std::chrono::steady_clock>;
-    std::atomic<timestamp_t> timestamp = std::chrono::steady_clock::now();
-
-    std::this_thread::sleep_for(std::chrono::seconds(1));
-
-    timestamp.store(std::chrono::steady_clock::now(), std::memory_order_relaxed);
-
 
     // ASM_Usage::measureElapsedTime();
 
@@ -1708,7 +1701,7 @@ int main([[maybe_unused]] const int argc,
     // ReturnClass_MemberRef_CopyCTor::tests();
     // Crow::TestAll();
     // CollectionsTests::TestAll();
-    // CopyElision_RVO::TestAll();
+    CopyElision_RVO::TestAll();
     // ConstexprMap::TestAll();
     // DebugLogger::TestAll();
     // DesignPatterns::TestAll();

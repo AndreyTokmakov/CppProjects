@@ -74,7 +74,7 @@ const Integer operator-(const Integer& left, const Integer& right) {
 	return Integer(left.value - right.value);
 }
 
-Integer& operator+=(Integer& left, const Integer& right) {
+Integer operator+=(Integer& left, const Integer& right) {
 	left.value += right.value;
 	return left;
 }
@@ -113,32 +113,32 @@ bool operator>=(const Integer& left, const Integer& right) {
 	return left.value >= right.value;
 }
 
-const Integer& operator+(const Integer& integer) {
+Integer operator+(const Integer& integer) {
 	PrintInfo("[1] Utilities& operator+ (", integer.value, ")");
 	return Integer(+integer.value);
 }
 
-const Integer operator-(const Integer& integer) {
+Integer operator-(const Integer& integer) {
 	return Integer(-integer.value);
 }
 
-const Integer& operator++(Integer& integer) {
+Integer operator++(Integer& integer) {
 	integer.value++;
 	return integer;
 }
 
-const Integer operator++(Integer& integer, int) {
+Integer operator++(Integer& integer, int) {
 	Integer oldValue(integer.value);
 	integer.value++;
 	return oldValue;
 }
 
-const Integer& operator--(Integer& integer) {
+ Integer operator--(Integer& integer) {
 	integer.value--;
 	return integer;
 }
 
-const Integer operator--(Integer& integer, int) {
+Integer operator--(Integer& integer, int) {
 	Integer oldValue(integer.value);
 	integer.value--;
 	return oldValue;
