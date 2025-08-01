@@ -219,43 +219,12 @@ namespace Ranges
         std::cout << std::quoted(temp) << '\n';
     }
 
-
-    void Join_View()
-    {
-        std::vector<std::string> numbers{ "hello", " ", "ranges", " ", "world"  };
-        for (char c : std::ranges::join_view{ numbers }) {
-            std::cout << c <<  " ";
-        }
-        std::cout << std::endl;
-    }
-
-    void Join()
-    {
-        std::vector<std::vector<int>> nested{{1, 2}, {3, 4, 5}, {6, 7}};
-        auto joined = std::views::join(nested);
-
-        for (int i : joined)
-            std::println("{}", i);
-    }
-
-
     std::string to_uppercase(std::string_view word)
     {
         std::string result(word);
         for (char& c : result)
             c = std::toupper(static_cast<unsigned char>(c));
         return result;
-    }
-
-    void Join_With()
-    {
-        const std::vector<std::string_view> words {"The", "C++", "ranges", "library" };
-
-        std::ranges::transform_view words_up = words | std::views::transform(to_uppercase);
-        std::ranges::join_with_view joined = std::views::join_with(words_up, std::string_view(" "));
-
-        for (auto c : joined)
-            std::cout << c;
     }
 
     void Concat_1()
@@ -547,6 +516,7 @@ namespace Ranges::Transform
 
         std::cout << s << std::endl;
 
+        [[maybe_unused]]
         auto result = s | std::ranges::views::transform([](unsigned char c) -> unsigned char { 
             return std::tolower(c); }
         );
@@ -707,7 +677,10 @@ namespace Ranges::Algorithms
 
     void Find_IF()
     {
+        [[maybe_unused]]
         constexpr std::array<int, 6> data{ 6,5,4,3,2,1 };
+
+        [[maybe_unused]]
         constexpr auto is_six = [](int v) -> bool { return 6 == v; };
 
         /*
@@ -972,8 +945,86 @@ namespace Ranges::Containers_From_Ranges
     }
 }
 
-namespace Ranges::Demo
+namespace Ranges::Join
 {
+    struct Person
+    {
+        std::string name;
+        uint16_t age { 0 };
+    };
+
+    void Join_View()
+    {
+        const auto bits = {"https:"sv, "//"sv, "cppreference"sv, "."sv, "com"sv};
+        for (char const c : bits | std::views::join)
+            std::print("{}", c);
+        std::cout << '\n';
+
+        const std::vector<std::vector<int>> v{{1, 2}, {3, 4, 5}, {6}, {7, 8, 9}};
+        auto jv = std::ranges::join_view(v);
+        for (int const e : jv)
+            std::print("{} ", e);
+        std::cout << '\n';
+
+        // https://cppreference.com
+        // 1 2 3 4 5 6 7 8 9
+    }
+
+    void Join()
+    {
+        std::vector<std::vector<int>> nested{{1, 2}, {3, 4, 5}, {6, 7}};
+        auto joined = std::views::join(nested);
+
+        for (int i : joined)
+            std::print("{} ", i);
+
+        // 1 2 3 4 5 6 7
+    }
+
+    void Join_With_1()
+    {
+        const std::vector<std::string_view> parts {"This"sv, "is"sv, "a"sv, "test."sv};
+        const auto joined = parts | std::views::join_with(' ');
+
+        for (const auto c : joined)
+            std::cout << c;
+        std::cout << '\n';
+
+        // This is a test.
+    }
+
+    void Join_With_2()
+    {
+        const std::vector<std::string_view> words {"The", "C++", "ranges", "library" };
+
+        std::ranges::transform_view words_up = words | std::views::transform(to_uppercase);
+        std::ranges::join_with_view joined = std::views::join_with(words_up, std::string_view(" "));
+
+        for (const auto c : joined)
+            std::print("{}", c);
+        // THE C++ RANGES LIBRARY
+    }
+
+    void Join_Get_ClassParameters()
+    {
+        std::vector<Person> persons {
+            Person { "John Snow", 20 },
+            Person { "Aria Start", 15 }
+        };
+
+        const auto namesView = persons | std::views::transform([](const Person& p) { return p.name; })
+             | std::views::join;
+
+        /*
+        std::ranges::for_each(namesView, [](const auto& entry) {
+            //std::print("{} ", name);
+        });*/
+    }
+}
+
+namespace Ranges::Join
+{
+
     struct File
     {
         std::string name;
@@ -1071,9 +1122,14 @@ void Ranges::TestAll()
     // Filter_View_Vector();
 
     // View_DropWhile();
-    // Join();
-    // Join_View();
-    // Join_With();
+
+    // Join::Join();
+    // Join::Join_View();
+    // Join::Join_With_1();
+    // Join::Join_With_2();
+    // Join::oldStyle();
+    // Join::rangeJoinStyle();
+    Join::Join_Get_ClassParameters();
 
     // Concat_1();
 
@@ -1126,6 +1182,4 @@ void Ranges::TestAll()
 
     // Experiments();
 
-    //Demo::oldStyle();
-    Demo::rangeJoinStyle();
 }
