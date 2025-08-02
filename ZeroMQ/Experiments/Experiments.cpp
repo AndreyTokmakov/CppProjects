@@ -10,7 +10,18 @@ Description : Experiments.cpp
 #include "Experiments.hpp"
 
 #include <iostream>
+#include <print>
 #include <zmq_addon.hpp>
+
+namespace Experiments::Other
+{
+    void checkVersion()
+    {
+        int major { 0 }, minor { 0 }, patch { 0 };
+        zmq::version(&major, &minor, &patch);
+        std::println("ZeroMQ version: {}.{}.{}" , major, minor , patch);
+    }
+}
 
 namespace Experiments::Multipart_Messages
 {
@@ -79,6 +90,43 @@ namespace Experiments::Multipart_Messages
             std::cout << msg.to_string_view() << std::endl;
         }
     }
+
+    void demo_3()
+    {
+        zmq::context_t ctx;
+        zmq::socket_t sock1(ctx, zmq::socket_type::push);
+        zmq::socket_t sock2(ctx, zmq::socket_type::pull);
+        sock1.bind("tcp://127.0.0.1:*");
+
+        const std::string last_endpoint = sock1.get(zmq::sockopt::last_endpoint);
+        sock2.connect(last_endpoint);
+
+        zmq::multipart_t msgs;
+        constexpr std::array<std::string_view, 5> data {
+            "one"sv, "two"sv, "three"sv, "four"sv, "five"sv
+        };
+        for (const std::string_view& str: data) {
+            msgs.append(zmq::message_t {str});
+        }
+
+        if (!zmq::send_multipart(sock1, msgs))
+            return;
+
+        std::vector<zmq::message_t> messages;
+        const std::optional<uint64_t> ret = zmq::recv_multipart(sock2, std::back_inserter(messages));
+        if (!ret)
+            return;
+
+        for (const auto& msg: messages) {
+            std::cout << msg.to_string_view() << std::endl;
+        }
+
+        // one
+        // two
+        // three
+        // four
+        // five
+    }
 }
 
 namespace Experiments::Buffers
@@ -99,6 +147,9 @@ namespace Experiments::Buffers
 void Experiments::TestAll()
 {
     // Multipart_Messages::demo();
-    Multipart_Messages::demo_2();
+    // Multipart_Messages::demo_2();
+    // Multipart_Messages::demo_3();
+
+    Other::checkVersion();
 
 }
