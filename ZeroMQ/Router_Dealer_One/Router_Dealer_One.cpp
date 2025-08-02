@@ -22,11 +22,6 @@ namespace Router_Dealer_One
     constexpr uint16_t clientPort { 5555 };
     constexpr uint16_t serverPort { 5556 };
 
-    struct ExchangePollItem
-    {
-        zmq::pollitem_t iter;
-        zmq::socket_t& destSocket;
-    };
 
     void broker()
     {
