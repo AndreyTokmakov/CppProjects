@@ -7,7 +7,7 @@ Copyright   : Your copyright notice
 Description : Secure_Communication.h
 ============================================================================**/
 
-#include "Secure_Communication.h"
+#include "Secure_Communication.hpp"
 #include "DateTimeUtilities.h"
 
 #include <iostream>

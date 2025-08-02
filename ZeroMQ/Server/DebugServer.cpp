@@ -7,7 +7,7 @@ Copyright   : Your copyright notice
 Description : DebugServer.cpp
 ============================================================================**/
 
-#include "DebugServer.h"
+#include "DebugServer.hpp"
 #include "../Common/Logger.hpp"
 
 #include <iostream>

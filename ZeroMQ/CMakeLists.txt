@@ -23,6 +23,7 @@ find_path(CPPZMQ_INCLUDE_DIR zmq.hpp)
 add_executable(${PROJECT_NAME}
         main.cpp
         Common/Logger.cpp
+        Experiments/Experiments.cpp
         PubSub/Publisher_Subscriber.cpp
         Request_Response/Request_Response.cpp
         Secure_Communication/Secure_Communication.cpp
