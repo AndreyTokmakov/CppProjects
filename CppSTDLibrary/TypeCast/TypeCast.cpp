@@ -443,6 +443,37 @@ namespace TypeCast::ReturnTypeCast
 }
 
 
+namespace TypeCast::BitCast
+{
+    void Float_to_Integer()
+    {
+        const float value = 3.1415926f;
+        uint32_t raw = std::bit_cast<uint32_t>(value);
+
+        std::cout << "Bits: 0x" << std::hex << std::setw(8) << std::setfill('0') << raw << '\n';
+
+        const float restored = std::bit_cast<float>(raw);
+        std::cout << std::dec << "Restored: " << restored << '\n';
+
+        // Bits: 0x40490fda
+        // Restored: 3.14159
+    }
+
+    void Float_to_Integer_BUG()
+    {
+        const float value = 3.1415926f;
+        uint32_t raw = static_cast<uint32_t>(value); /** std::bit_cast required **/
+
+        std::cout << "Bits: 0x" << std::hex << std::setw(8) << std::setfill('0') << raw << '\n';
+
+        const float restored = std::bit_cast<float>(raw);
+        std::cout << std::dec << "Restored: " << restored << '\n';
+
+        //  Bits: 0x00000003
+        //    Restored: 4.2039e-45
+    }
+}
+
 
 void TypeCast::TestAll()
 {
@@ -452,7 +483,10 @@ void TypeCast::TestAll()
 	// DynamicCastTests3();
 	// DynamicCastTests4();
 
-    ReturnTypeCast::tests();
+    // ReturnTypeCast::tests();
+
+    BitCast::Float_to_Integer();
+    BitCast::Float_to_Integer_BUG();
 
 	// PtrCasts();
 

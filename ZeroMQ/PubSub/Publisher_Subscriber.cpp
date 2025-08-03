@@ -210,4 +210,6 @@ namespace PubSub_Topics
 
 void Publisher_Subscriber::TestAll()
 {
+    // PubSub_Simple::run();
+    PubSub_Topics::run();
 }

@@ -36,7 +36,7 @@ int main([[maybe_unused]] int argc,
 {
     const std::vector<std::string_view> args(argv + 1, argv + argc);
 
-    // Experiments::TestAll();
+    Experiments::TestAll();
 
     // Publisher_Subscriber::TestAll();
     // Request_Response::TestAll();
@@ -47,7 +47,7 @@ int main([[maybe_unused]] int argc,
     // Router_Dealer_Simple::TestAll(); /** <--- NOT WORKING YET **/
     // Router_Dealer_Poller_Timeout::TestAll();
 
-    ZeroMqProxy::TestAll();
+    // ZeroMqProxy::TestAll();
 
     // DebugServer::TestAll(args);
 

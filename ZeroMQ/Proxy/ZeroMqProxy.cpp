@@ -28,7 +28,7 @@ namespace Proxy_SimpleTest
 
     void proxy()
     {
-        zmq::context_t ctx{1};
+        zmq::context_t ctx { 1 };
 
         zmq::socket_t frontend(ctx, zmq::socket_type::router);
         frontend.bind(std::format("tcp://*:{}", routerPort));
