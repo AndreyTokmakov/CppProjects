@@ -32,7 +32,6 @@ namespace Router_Dealer_Poller_Timeout
         frontend.bind(std::format("tcp://*:{}", clientPort));
         backend.bind(std::format("tcp://*:{}", serverPort));
 
-        // zmq::p
 
         /*
         zmq::poller_t<> poller;

@@ -28,9 +28,11 @@ add_executable(${PROJECT_NAME}
         Request_Response/Request_Response.cpp
         Secure_Communication/Secure_Communication.cpp
         Router_Dealer/Router_Dealer.cpp
+        Router_Dealer_Simple/Router_Dealer_Simple.cpp
         Router_Dealer_One/Router_Dealer_One.cpp
         Router_Dealer_Poller_Timeout/Router_Dealer_Poller_Timeout.cpp
         Server/DebugServer.cpp
+        Proxy/ZeroMqProxy.cpp
 )
 
 # **** Utilities ****

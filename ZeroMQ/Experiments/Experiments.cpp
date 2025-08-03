@@ -10,7 +10,11 @@ Description : Experiments.cpp
 #include "Experiments.hpp"
 
 #include <iostream>
+#include <syncstream>
 #include <print>
+#include <format>
+#include <thread>
+
 #include <zmq_addon.hpp>
 
 namespace Experiments::Other
@@ -144,12 +148,13 @@ namespace Experiments::Buffers
 
 }
 
+
 void Experiments::TestAll()
 {
     // Multipart_Messages::demo();
     // Multipart_Messages::demo_2();
     // Multipart_Messages::demo_3();
 
-    Other::checkVersion();
+    // Other::checkVersion();
 
 }
