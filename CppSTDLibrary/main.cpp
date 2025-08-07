@@ -174,10 +174,10 @@ int main([[maybe_unused]] int argc,
     // TypeTraits::TestAll();
     // Types::Tests();
     // Tuple::TestAll();
-    TypeCast::TestAll();
+    // TypeCast::TestAll();
     // Int::TestAll();
     // Templates::TestAll();
-    // Utilities::TestAll();
+    Utilities::TestAll();
     // CompilerVersion::TestAll();
     // UniquePtr::TestAll();
     // WeakPtr::TestAll();

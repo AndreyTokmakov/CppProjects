@@ -11,7 +11,7 @@ Description : Bind.cpp
 #include <iostream>
 #include <memory>
 
-namespace Bind_Tests
+namespace Bind
 {
     struct Utilities
     {
@@ -48,7 +48,7 @@ namespace Bind_Tests
     }
 }
 
-namespace Bind_Tests
+namespace Bind
 {
     void Bind()
     {
@@ -93,9 +93,9 @@ namespace Bind_Tests
     }
 }
 
-void Bind_Utilities()
+void Bind_Tests()
 {
-    using namespace Bind_Tests;
+    using namespace Bind;
 
     // Bind();
     Bind_ObjectMethod();

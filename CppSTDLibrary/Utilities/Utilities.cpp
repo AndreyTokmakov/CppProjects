@@ -269,9 +269,6 @@ namespace TypeIdentity
     }
 }
 
-void Bind_Utilities();
-
-
 namespace Utilities::Quoted
 {
     void Quoted_Tests()
@@ -461,10 +458,16 @@ namespace Utilities::ForwardLike_Lambda
 	}
 }
 
+
+
+void Bind_Tests();
+void Decay_Tests();
+
 void Utilities::TestAll()
 {
-    // Bind_Utilities();
-    Invoke::TestAll();
+    // Bind_Tests();
+    Decay_Tests();
+    // Invoke::TestAll();
 
 	// ApplyTests::Apply_Sum_Test();
 	// ApplyTests::Apply_Sum_Lambda_Test();

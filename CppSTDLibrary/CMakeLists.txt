@@ -27,6 +27,7 @@ add_executable(${PROJECT_NAME}
 		ConsoleInOut/ConsoleInOut.cpp
 		DateAndTime/DateAndTime.cpp
 		DeducingThis/DeducingThis.cpp
+		Utilities/Decay.cpp
 		CompileTime_Constexpr/ConstConstexprMutable.cpp
 		CompileTime_Constexpr/CompileTimeProgramming.cpp
 		CompileTime_Constexpr/Constexpr.cpp
