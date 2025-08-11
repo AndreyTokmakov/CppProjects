@@ -8,6 +8,7 @@ Description : EPollTCPServerEx
 ============================================================================**/
 
 #include "EPollTCPServerEx.h"
+#include "../Utilities/Utilities.h"
 
 #include <arpa/inet.h>
 #include <cerrno>
@@ -34,28 +35,6 @@ namespace EPollTCPServerEx
     constexpr int32_t SOCKET_ERROR { -1 };
     constexpr uint32_t kEpollWaitTime { 10 }; // epoll wait timeout 10 ms
     constexpr uint32_t kMaxEvents { 100 };    // epoll wait return max size
-
-    void printStateFlags(uint32_t events)
-    {
-        std::cout << "================================== State ==================================\n";
-        if (events & EPOLLIN)        std::cout << "EPOLLIN ";
-        if (events & EPOLLPRI)       std::cout << "EPOLLPRI ";
-        if (events & EPOLLOUT)       std::cout << "EPOLLOUT ";
-        if (events & EPOLLRDNORM)    std::cout << "EPOLLRDNORM ";
-        if (events & EPOLLRDBAND)    std::cout << "EPOLLRDBAND ";
-        if (events & EPOLLWRNORM)    std::cout << "EPOLLWRNORM ";
-        if (events & EPOLLWRBAND)    std::cout << "EPOLLWRBAND ";
-        if (events & EPOLLMSG)       std::cout << "EPOLLMSG ";
-        if (events & EPOLLERR)       std::cout << "EPOLLERR ";
-        if (events & EPOLLHUP)       std::cout << "EPOLLHUP ";
-        if (events & EPOLLRDHUP)     std::cout << "EPOLLRDHUP ";
-        if (events & EPOLLEXCLUSIVE) std::cout << "EPOLLEXCLUSIVE ";
-        if (events & EPOLLWAKEUP)    std::cout << "EPOLLWAKEUP ";
-        if (events & EPOLLONESHOT)   std::cout << "EPOLLONESHOT ";
-        if (events & EPOLLET)        std::cout << "EPOLLET ";
-        //else                              std::cout << "Unknown!!!\n";
-        std::cout << "\n==========================================================================\n";
-    }
 
     template<typename T>
     auto addSpace(const T& arg) -> decltype(auto) {
@@ -172,7 +151,7 @@ namespace EPollTCPServerEx
                     const int32_t clientSock = epollEvents[i].data.fd;
                     const uint32_t events = epollEvents[i].events;
 
-                    printStateFlags(events);
+                    Utilities::printStateFlags(events);
 
                     if ((events & EPOLLERR) || (events & EPOLLHUP))
                     {   // TODO: handle EPOLL_CTL_DEL

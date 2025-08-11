@@ -268,3 +268,71 @@ namespace Utilities::Socket
         return (::setsockopt(fd, IPPROTO_IP, IP_ADD_MEMBERSHIP, &mreq, sizeof(mreq)) != -1);
     }
 }
+
+
+namespace Utilities
+{
+    void printStateFlags(const uint32_t events)
+    {
+        std::cout << "================================== State ==================================\n";
+        if (events & EPOLLIN)        std::cout << "EPOLLIN ";
+        if (events & EPOLLPRI)       std::cout << "EPOLLPRI ";
+        if (events & EPOLLOUT)       std::cout << "EPOLLOUT ";
+        if (events & EPOLLRDNORM)    std::cout << "EPOLLRDNORM ";
+        if (events & EPOLLRDBAND)    std::cout << "EPOLLRDBAND ";
+        if (events & EPOLLWRNORM)    std::cout << "EPOLLWRNORM ";
+        if (events & EPOLLWRBAND)    std::cout << "EPOLLWRBAND ";
+        if (events & EPOLLMSG)       std::cout << "EPOLLMSG ";
+        if (events & EPOLLERR)       std::cout << "EPOLLERR ";
+        if (events & EPOLLHUP)       std::cout << "EPOLLHUP ";
+        if (events & EPOLLRDHUP)     std::cout << "EPOLLRDHUP ";
+        if (events & EPOLLEXCLUSIVE) std::cout << "EPOLLEXCLUSIVE ";
+        if (events & EPOLLWAKEUP)    std::cout << "EPOLLWAKEUP ";
+        if (events & EPOLLONESHOT)   std::cout << "EPOLLONESHOT ";
+        if (events & EPOLLET)        std::cout << "EPOLLET ";
+        //else                              std::cout << "Unknown!!!\n";
+        std::cout << "\n==========================================================================\n";
+    }
+
+
+    std::string errCodeToStr(const int errCode)
+    {
+        switch (errCode)
+        {
+            case EPERM:   return "EPERM";
+            case ENOENT:  return "ENOENT";
+            case ESRCH:   return "ESRCH";
+            case EINTR:   return "EINTR";
+            case EIO:     return "EIO";
+            case ENXIO:   return "ENXIO";
+            case E2BIG:   return "E2BIG";
+            case ENOEXEC: return "ENOEXEC";
+            case EBADF:   return "EBADF";
+            case ECHILD:  return "ECHILD";
+            case EAGAIN:  return "EAGAIN";
+            case ENOMEM:  return "ENOMEM";
+            case EACCES:  return "EACCES";
+            case EFAULT:  return "EFAULT";
+            case ENOTBLK: return "ENOTBLK";
+            case EBUSY:   return "EBUSY";
+            case EEXIST:  return "EEXIST";
+            case EXDEV:   return "EXDEV";
+            case ENODEV:  return "ENODEV";
+            case ENOTDIR: return "ENOTDIR";
+            case EISDIR:  return "EISDIR";
+            case EINVAL:  return "EINVAL";
+            case ENFILE:  return "ENFILE";
+            case EMFILE:  return "EMFILE";
+            case ETXTBSY: return "ETXTBSY";
+            case EFBIG:   return "EFBIG";
+            case ENOSPC:  return "ENOSPC";
+            case ESPIPE:  return "ESPIPE";
+            case EROFS:   return "EROFS";
+            case EMLINK:  return "EMLINK";
+            case EPIPE:   return "EPIPE";
+            case EDOM:    return "EDOM";
+            case ERANGE:  return "ERANGE";
+            default:  return "Unknown error";
+        }
+    }
+}

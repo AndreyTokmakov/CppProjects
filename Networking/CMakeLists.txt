@@ -34,7 +34,6 @@ add_executable(${PROJECT_NAME}
         Common/HTTPRequest.cpp
         Common/HTTPResponse.cpp
         Common/URL.cpp
-        Common/Utilities.cpp
         Clients/Clients.cpp
         DNS/DNS_ResponseParser.cpp
         RawSockets/RawSocketsTests.cpp
@@ -55,6 +54,7 @@ add_executable(${PROJECT_NAME}
         Servers/EPollTCPServerMultithreaded.cpp
         Servers/EPollTCPServerContext.cpp
         Servers/EPollTCPServerContextEx.cpp
+        ServersTCP/AsynchTcpServerWithSessions.cpp
         RawSockets/CaptureTraffic.cpp
         PcapAnalyzer/PcapAnalyzer.cpp
         WiFi/WiFiExperiments.cpp

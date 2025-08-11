@@ -1,13 +1,13 @@
 /**============================================================================
-Name        : EPollTCPServerContext.h
-Created on  : 19.01.2024
+Name        : AsynchTcpServerWithSessions.cpp
+Created on  : 19.08.2025
 Author      : Andrei Tokmakov
 Version     : 1.0
 Copyright   : Your copyright notice
-Description : EPollTCPServerContext
+Description : Asynch (EPoll) TCP Server with Persistent sessions
 ============================================================================**/
 
-#include "EPollTCPServerContext.h"
+#include "AsynchTcpServerWithSessions.hpp"
 #include "../Utilities/Utilities.h"
 
 #include <arpa/inet.h>
@@ -28,10 +28,15 @@ Description : EPollTCPServerContext
 #include <utility>
 #include <thread>
 
-namespace EPollTCPServerContext
+
+namespace
 {
-    constexpr int32_t  INVALID_SOCKET { -1 };
-    constexpr int32_t  SOCKET_ERROR { -1 };
+    using Socket   = int32_t;
+    using PortType = uint16_t;
+    using SizeType = uint32_t;
+
+    constexpr Socket  INVALID_SOCKET { -1 };
+    constexpr Socket  SOCKET_ERROR { -1 };
 
     int32_t Error(const std::string_view text)
     {
@@ -54,7 +59,7 @@ namespace EPollTCPServerContext
     }
 }
 
-namespace EPollTCPServerContext
+namespace tcp_server
 {
     enum class State
     {
@@ -69,42 +74,44 @@ namespace EPollTCPServerContext
     struct Session
     {
         // TODO: Replace with std::vector<std::byte> ????
+        //       ---> Buffer class
         std::string buffer;
         State state { State::Closed };
 
-        explicit Session(State state = State::Open): state {state} {
+        explicit Session(const State state = State::Open): state {state} {
             std::cout << "Session created\n";
         }
     };
 
-    class TCPServer
+    struct TCPServer
     {
-        static inline constexpr uint32_t BACKLOG { 10 };
+
+        static constexpr SizeType BACKLOG { 10 };
 
         // TODO: BUFFER_SIZE --> MTU ???
-        static inline constexpr size_t BUFFER_SIZE { 1024 * 4 };
+        static constexpr size_t BUFFER_SIZE { 1024 * 4 };
 
-        // TODO: Choose different value?
-        static constexpr uint32_t kEpollWaitTime { 10 };  // epoll wait timeout 10 ms
+        // TODO: Choose different value -  epoll wait timeout 10 ms
+        static constexpr SizeType kEpollWaitTime { 10 };
 
-        // TODO: Refactor ?
-        static constexpr uint32_t kMaxEvents { 1024 };    // epoll wait return max size
+        // TODO: Refactor - epoll wait return max size
+        static constexpr SizeType kMaxEvents { 1024 };
 
         // TODO: Char --> std::byte ??
         inline static thread_local std::array<char, BUFFER_SIZE> buffer {};
 
-        std::unordered_map<int32_t, Session> sessions;
+        std::unordered_map<Socket, Session> sessions;
 
-        int32_t epollFd { INVALID_SOCKET };
-        int32_t serverSocket { INVALID_SOCKET };
+        Socket epollFd { INVALID_SOCKET };
+        Socket serverSocket { INVALID_SOCKET };
 
         std::string hostAddress;
-        uint16_t listenPort {};
+        PortType listenPort {};
 
         // FIXME: Remove -- its temporary
         const std::string reply = "PONG";
 
-        static int32_t setNonBlock(int32_t handle)
+        static int32_t setNonBlock(const Socket handle)
         {
             const int flags = ::fcntl(handle, F_GETFL, 0);
             if (flags < 0) {
@@ -118,7 +125,7 @@ namespace EPollTCPServerContext
         }
 
         // TODO: Rename to subscribe ?
-        static int32_t setEpollEvents(int efd, int op, int handle, uint32_t events)
+        static int32_t setEpollEvents(const int efd, const int op, const int handle, const SizeType events)
         {
             epoll_event event { events, {.fd = handle} };
             if (SOCKET_ERROR == epoll_ctl(efd, op, handle, &event)) {
@@ -127,9 +134,9 @@ namespace EPollTCPServerContext
             return 0;
         }
 
-        void closeClientSocket(int32_t socket,
-                               Session& session,
-                               State finalState = State::Closed)
+        static void closeClientSocket(const Socket socket,
+                                      Session& session,
+                                      const State finalState = State::Closed)
         {
             if (SOCKET_ERROR == ::close(socket)) {
                 Error("close() failed");
@@ -143,7 +150,7 @@ namespace EPollTCPServerContext
         {
             std::array<epoll_event, kMaxEvents>  epollEvents {};
             ssize_t bytes {0}, total {0};
-            auto [clientSock, events] = std::make_pair<int32_t, uint32_t>(0,0);
+            auto [clientSock, events] = std::make_pair<Socket, uint32_t>(0,0);
 
             while (true)
             {   // TODO: Check TimeOut for performance
@@ -207,8 +214,8 @@ namespace EPollTCPServerContext
 
     public:
 
-        TCPServer(std::string address, uint16_t port):
-                hostAddress { std::move(address) }, listenPort {port} {
+        TCPServer(std::string address, const PortType port):
+                hostAddress { std::move(address) }, listenPort { port } {
         }
 
         bool createSockets()
@@ -246,7 +253,7 @@ namespace EPollTCPServerContext
 
             sockaddr_in clientAddr{};
             socklen_t addLen { sizeof(clientAddr) };
-            int32_t clientSocket { INVALID_SOCKET };
+            Socket clientSocket { INVALID_SOCKET };
             while (true)
             {
                 debug("Waiting for next connection ....");
@@ -270,17 +277,12 @@ namespace EPollTCPServerContext
             }
         }
     };
-
-
-    void startSerer()
-    {
-        TCPServer server {"0.0.0.0", 52525};
-        if (server.createSockets())
-            server.runServer();
-    }
 }
 
-void EPollTCPServerContext::TestAll()
+void tcp_server::TestAll()
 {
-    startSerer();
+
 }
+
+
+

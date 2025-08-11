@@ -8,6 +8,7 @@ Description : EPollTCPServerContextEx.cpp
 ============================================================================**/
 
 #include "EPollTCPServerContextEx.h"
+#include "../Utilities/Utilities.h"
 
 #include <arpa/inet.h>
 #include <cerrno>
@@ -35,76 +36,14 @@ Description : EPollTCPServerContextEx.cpp
 namespace
 {
     using Socket = int32_t;
-
     constexpr Socket INVALID_SOCKET { -1 };
     constexpr Socket SOCKET_ERROR { -1 };
 
-    static std::string errCodeToStr(int errCode)
-    {
-        switch (errCode)
-        {
-            case EPERM:   return "EPERM";
-            case ENOENT:  return "ENOENT";
-            case ESRCH:   return "ESRCH";
-            case EINTR:   return "EINTR";
-            case EIO:     return "EIO";
-            case ENXIO:   return "ENXIO";
-            case E2BIG:   return "E2BIG";
-            case ENOEXEC: return "ENOEXEC";
-            case EBADF:   return "EBADF";
-            case ECHILD:  return "ECHILD";
-            case EAGAIN:  return "EAGAIN";
-            case ENOMEM:  return "ENOMEM";
-            case EACCES:  return "EACCES";
-            case EFAULT:  return "EFAULT";
-            case ENOTBLK: return "ENOTBLK";
-            case EBUSY:   return "EBUSY";
-            case EEXIST:  return "EEXIST";
-            case EXDEV:   return "EXDEV";
-            case ENODEV:  return "ENODEV";
-            case ENOTDIR: return "ENOTDIR";
-            case EISDIR:  return "EISDIR";
-            case EINVAL:  return "EINVAL";
-            case ENFILE:  return "ENFILE";
-            case EMFILE:  return "EMFILE";
-            case ETXTBSY: return "ETXTBSY";
-            case EFBIG:   return "EFBIG";
-            case ENOSPC:  return "ENOSPC";
-            case ESPIPE:  return "ESPIPE";
-            case EROFS:   return "EROFS";
-            case EMLINK:  return "EMLINK";
-            case EPIPE:   return "EPIPE";
-            case EDOM:    return "EDOM";
-            case ERANGE:  return "ERANGE";
-            default:  return "Unknown error";
-        }
-    }
 
-    void printStateFlags(uint32_t events)
+    template<typename Ty = Socket>
+    Ty Error(const std::string_view text, const Ty exitError = SOCKET_ERROR)
     {
-        std::cout << "================================== State ==================================\n";
-        if (events & EPOLLIN)        std::cout << "EPOLLIN ";
-        if (events & EPOLLPRI)       std::cout << "EPOLLPRI ";
-        if (events & EPOLLOUT)       std::cout << "EPOLLOUT ";
-        if (events & EPOLLRDNORM)    std::cout << "EPOLLRDNORM ";
-        if (events & EPOLLRDBAND)    std::cout << "EPOLLRDBAND ";
-        if (events & EPOLLWRNORM)    std::cout << "EPOLLWRNORM ";
-        if (events & EPOLLWRBAND)    std::cout << "EPOLLWRBAND ";
-        if (events & EPOLLMSG)       std::cout << "EPOLLMSG ";
-        if (events & EPOLLERR)       std::cout << "EPOLLERR ";
-        if (events & EPOLLHUP)       std::cout << "EPOLLHUP ";
-        if (events & EPOLLRDHUP)     std::cout << "EPOLLRDHUP ";
-        if (events & EPOLLEXCLUSIVE) std::cout << "EPOLLEXCLUSIVE ";
-        if (events & EPOLLWAKEUP)    std::cout << "EPOLLWAKEUP ";
-        if (events & EPOLLONESHOT)   std::cout << "EPOLLONESHOT ";
-        if (events & EPOLLET)        std::cout << "EPOLLET ";
-        std::cout << "\n==========================================================================\n";
-    }
-
-    template<typename _Ty = Socket>
-    _Ty Error(std::string_view text, const _Ty exitError = SOCKET_ERROR)
-    {
-        std::cerr << text << ". Error = " << errno << "(" << errCodeToStr(errno) << ")\n";
+        std::cerr << text << ". Error = " << errno << "(" << Utilities::errCodeToStr(errno) << ")\n";
         return exitError;
     }
 
@@ -183,7 +122,7 @@ namespace EPollTCPServerContextEx
 
         /** Maximum number of request handler workers: **/
         // static inline const size_t threadsCount { std::thread::hardware_concurrency() };
-        static inline const SizeType threadsCount { 8 };
+        static inline constexpr SizeType threadsCount { 8 };
 
         static inline const std::chrono::duration<int64_t, std::ratio<1, 1000>> QUEUE_TIMEOUT {
                 std::chrono::milliseconds(2000)

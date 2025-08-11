@@ -18,6 +18,13 @@ Description : Utilities
 
 namespace Utilities
 {
+    void printStateFlags(uint32_t events);
+    std::string errCodeToStr(int errCode);
+};
+
+
+namespace Utilities
+{
     [[nodiscard("Call may be expensive")]]
     uint16_t Checksum(uint16_t *ptr, uint16_t bytes) noexcept;
 
@@ -88,7 +95,6 @@ namespace Utilities
     private:
         static void closeSocket(int s);
     };
-
 };
 
 namespace Utilities::IP
