@@ -98,7 +98,7 @@ namespace tcp_server
         static constexpr SizeType kMaxEvents { 1024 };
 
         // TODO: Char --> std::byte ??
-        inline static thread_local std::array<char, BUFFER_SIZE> buffer {};
+        // inline static thread_local std::array<char, BUFFER_SIZE> buffer {};
 
         std::unordered_map<Socket, Session> sessions;
 
@@ -176,6 +176,7 @@ namespace tcp_server
                     if (events & EPOLLIN)
                     {
                         total = 0;
+                        // TODO: Read ---> to the Session Buffer
                         while ((bytes = ::read(clientSock, buffer.data(), buffer.size())) > 0) {
                             session.buffer.append(buffer.data(), bytes);
                             total += bytes;
@@ -277,11 +278,17 @@ namespace tcp_server
             }
         }
     };
+
+    void startSerer()
+    {
+        if (TCPServer server {"0.0.0.0", 52525}; server.createSockets())
+            server.runServer();
+    }
 }
 
 void tcp_server::TestAll()
 {
-
+    startSerer();
 }
 
 
