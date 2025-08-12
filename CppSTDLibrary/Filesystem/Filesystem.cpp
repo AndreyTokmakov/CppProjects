@@ -450,6 +450,19 @@ namespace Filesystem::Files
         std::filesystem::remove(tempFile);
     }
 
+    std::string to_string(const std::filesystem::file_time_type& ftime)
+    {
+//#if 0
+#if __cpp_lib_format
+        return std::format("{:%c}", ftime);
+#else
+        std::time_t cftime = std::chrono::system_clock::to_time_t(std::chrono::file_clock::to_sys(ftime));
+        std::string str = std::asctime(std::localtime(&cftime));
+        str.pop_back(); // rm the trailing '\n' put by `asctime`
+        return str;
+#endif
+    }
+
     void Last_Write_Time()
     {
         using namespace std::chrono_literals;
@@ -461,6 +474,7 @@ namespace Filesystem::Files
 
         std::filesystem::file_time_type fileTime = std::filesystem::last_write_time(tempFile);
         std::cout << std::format("File write time is {} (Original)", fileTime) << std::endl;
+        std::cout << to_string(fileTime) << std::endl;
 
         // move file write time 1 hour to the future
         std::filesystem::last_write_time(tempFile, fileTime + 1h);
@@ -468,6 +482,7 @@ namespace Filesystem::Files
         // read back from the filesystem
         fileTime = std::filesystem::last_write_time(tempFile);
         std::cout << std::format("File write time is {} (Updated)", fileTime) << std::endl;
+        std::cout << to_string(fileTime) << std::endl;
 
         std::filesystem::remove(tempFile);
     }
@@ -906,7 +921,7 @@ namespace Filesystem::Iterate_Files
 void Filesystem::TestAll()
 {
 
-    TempDirectoryPath();
+    // TempDirectoryPath();
     // StandartMethods();
     // StandartMethods2();
 
@@ -935,7 +950,7 @@ void Filesystem::TestAll()
     // Files::CopyFile();
     // Files::MoveFile();
     // Files::Last_Write_Time_UNIX_API();
-    // Files::Last_Write_Time();
+    Files::Last_Write_Time();
     // Files::Check_IsFile_Exists();
 
     // Iterate_Files::List_Files_With_Lambda(); // Requires: C++26

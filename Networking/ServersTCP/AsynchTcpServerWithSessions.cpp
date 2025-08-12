@@ -75,15 +75,11 @@ namespace tcp_server
     {
         static constexpr size_t initialBufferSize { 1024 * 4 };
 
-        std::string buffer {};
-        // std::vector<char> buffer {};
-
+        std::vector<char> buffer {};
         State state { State::Closed };
 
         explicit Session(const State state = State::Open):
-        // buffer(initialBufferSize),
-                state {state} {
-            buffer.resize(128);
+            buffer(initialBufferSize), state {state} {
         }
     };
 
@@ -97,8 +93,7 @@ namespace tcp_server
         // TODO: Refactor - epoll wait return max size
         static constexpr SizeType kMaxEvents { 32 };
 
-        // TODO: Char --> std::byte ??
-        inline static thread_local std::array<char, Session::initialBufferSize> buffer {};
+        std::unique_ptr<Session> statisSession { std::make_unique<Session>() };
 
         Socket epollFd { INVALID_SOCKET };
         Socket serverSocket { INVALID_SOCKET };
@@ -144,53 +139,43 @@ namespace tcp_server
         }
 
         // TODO: Store session data --> HashTable
-        [[noreturn]]
         void eventsPoller()
         {
             std::array<epoll_event, kMaxEvents> epollEvents {};
-            for (SizeType idx = 0; idx < kMaxEvents; ++idx)
-            {
+            for (SizeType idx = 0; idx < kMaxEvents; ++idx) {
                 epollEvents[idx].data.ptr = sessions[idx];
-
-                Session* session = reinterpret_cast<Session*>(epollEvents[idx].data.ptr);
-                std::cout << idx << " [" << session << "] = " <<  session->buffer.size() << std::endl;
+                std::cout << epollEvents[idx].data.ptr << std::endl;
             }
 
             ssize_t bytes {0}, total {0};
             auto [clientSock, events] = std::make_pair<Socket, uint32_t>(0,0);
 
-            Session* session {nullptr };
-
-            for (int i = 0; i < 32; ++i)
-            {
-                session = reinterpret_cast<Session*>(epollEvents[i].data.ptr);
-                std::cout << i << " [" << session << "] = " << std::endl;
-            }
-
-            std::cout << "==============================\n";
-
-#if 0
             while (true)
             {
                 // TODO: Check TimeOut for performance
                 // TODO: Check num != -1
-                const int num = epoll_wait(epollFd, epollEvents.data(), kMaxEvents, kEpollWaitTime);
+                const int num = epoll_wait(epollFd, epollEvents.data(), kMaxEvents, kEpollWaitTime * 1000);
                 for (int i = 0; i < num; ++i)
                 {
                     // TODO: Refactor
                     clientSock = epollEvents[i].data.fd;
                     events = epollEvents[i].events;
+                    Session* session = static_cast<Session*>(epollEvents[i].data.ptr);
 
-                    // printStateFlags(events);
-                    // const auto [iter, ok] = sessions.try_emplace(clientSock, State::Closed);
-                    // session = &(iter->second);
+                    std::cout << "--------1------------- clientSock = " << clientSock  << std::endl;
 
-                    session = reinterpret_cast<Session*>(epollEvents[i].data.ptr);
+                    if (!session) {
+                        session = statisSession.get();
+                        std::cout << "Session is NULL - Using statis session" << std::endl;
+                    }
+                    if (!session) {
+                        std::cout << "ERROR: Session still NULL" << std::endl;
+                        break;
+                    }
 
-                    std::cout << i << std::endl;
-                    std::cout << i << " [" << session << "] = " << std::endl;
-                    std::cout << session->buffer.size() << std::endl;
-                    std::cout << i << std::endl;
+                    std::cout << "Session OK = " << session << std::endl;
+
+                    std::cout << "--------2------------- clientSock = " << clientSock  << std::endl;
 
                     if (events & EPOLLERR)
                     {
@@ -204,8 +189,7 @@ namespace tcp_server
                     {
                         total = 0;
                         // TODO: Read ---> to the Session Buffer
-                        while ((bytes = ::read(clientSock, buffer.data(), buffer.size())) > 0) {
-                            session->buffer.append(buffer.data(), bytes);
+                        while ((bytes = ::read(clientSock, session->buffer.data(), session->buffer.size())) > 0) {
                             total += bytes;
                         }
 
@@ -238,7 +222,6 @@ namespace tcp_server
                     }
                 }
             }
-#endif
         }
 
     public:
@@ -289,34 +272,33 @@ namespace tcp_server
 
         void runServer()
         {
-
             // TODO: To class member ???
             std::jthread thread(&TCPServer::eventsPoller, this);
-            /*
-             sockaddr_in clientAddr{};
-             socklen_t addLen { sizeof(clientAddr) };
-             Socket clientSocket { INVALID_SOCKET };
-             while (true)
-             {
-                 debug("Waiting for next connection ....");
-                 clientSocket = ::accept(serverSocket, reinterpret_cast<sockaddr*>(&clientAddr), &addLen);
-                 if (INVALID_SOCKET == clientSocket) {
-                     Error("Failed to create client socket");
-                     break;
-                 }
 
-                 debug("Client connected", inet_ntoa(clientAddr.sin_addr), ':', htons(clientAddr.sin_port));
-                 if (SOCKET_ERROR == setNonBlock(clientSocket))
-                     break;
+            sockaddr_in clientAddr{};
+            socklen_t addLen { sizeof(clientAddr) };
+            Socket clientSocket { INVALID_SOCKET };
+            while (true)
+            {
+                debug("Waiting for next connection ....");
+                clientSocket = ::accept(serverSocket, reinterpret_cast<sockaddr*>(&clientAddr), &addLen);
+                if (INVALID_SOCKET == clientSocket) {
+                    Error("Failed to create client socket");
+                    break;
+                }
 
-                 // TODO: Need to use EPOLL_CTL_DEL on delete event
-                 if (SOCKET_ERROR == setEpollEvents(epollFd, EPOLL_CTL_ADD, clientSocket,
-                                                    EPOLLIN | EPOLLOUT | EPOLLRDHUP | EPOLLET)) {
-                     // if something goes wrong, close this new socket
-                     Error("epoll_ctl() failed");
-                     break;
-                 }
-             }*/
+                debug("Client connected", inet_ntoa(clientAddr.sin_addr), ':', htons(clientAddr.sin_port));
+                if (SOCKET_ERROR == setNonBlock(clientSocket))
+                    break;
+
+                // TODO: Need to use EPOLL_CTL_DEL on delete event
+                if (SOCKET_ERROR == setEpollEvents(epollFd, EPOLL_CTL_ADD, clientSocket,
+                                                   EPOLLIN | EPOLLOUT | EPOLLRDHUP | EPOLLET)) {
+                    // if something goes wrong, close this new socket
+                    Error("epoll_ctl() failed");
+                    break;
+                                                   }
+            }
         }
     };
 
