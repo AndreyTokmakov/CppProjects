@@ -83,6 +83,15 @@ namespace tcp_server
         {
             std::cout << "Session(" << socket << ") created\n";
         }
+
+        void Close(const State finalState = State::Closed)
+        {
+            if (SOCKET_ERROR == ::close(socket)) {
+                Error("close() failed");
+            }
+            state = finalState;
+            buffer.clear();
+        }
     };
 
     struct TCPServer
@@ -129,17 +138,6 @@ namespace tcp_server
             return 0;
         }
 
-        static void closeClientSocket(Session& session,
-                                      const State finalState = State::Closed)
-        {
-            if (SOCKET_ERROR == ::close(session.socket)) {
-                Error("close() failed");
-            }
-            std::cout << "Session(" << session.socket << ") closed (buffer: " << session.buffer.size() << ")\n";
-            session.state = finalState;
-            session.buffer.clear();
-        }
-
         // TODO: Store session data --> HashTable
         void eventsPoller()
         {
@@ -167,7 +165,7 @@ namespace tcp_server
                         if (SOCKET_ERROR == epoll_ctl(epollFd, EPOLL_CTL_DEL, session.socket, nullptr)) {
                             Error("epoll_ctl() failed. (EPOLL_CTL_DEL)");
                         }
-                        closeClientSocket(session, State::ClosedWithError);
+                        session.Close(State::ClosedWithError);
                         continue;
                     }
 
@@ -185,7 +183,7 @@ namespace tcp_server
                             session.state = State::Open;
                         }
                         else if (events & EPOLLHUP || events & EPOLLRDHUP) {
-                            closeClientSocket(session);
+                            session.Close();
                             continue;
                         }
                     }
@@ -207,7 +205,7 @@ namespace tcp_server
                         if (SOCKET_ERROR == epoll_ctl(epollFd, EPOLL_CTL_DEL, session.socket, nullptr)) {
                             Error("epoll_ctl() failed. (EPOLL_CTL_DEL)");
                         }
-                        closeClientSocket(session);
+                        session.Close();
                         continue;
                     }
                 }
@@ -277,7 +275,7 @@ namespace tcp_server
                     // if something goes wrong, close this new socket
                     Error("epoll_ctl() failed");
                     break;
-                                                   }
+                }
             }
         }
     };
