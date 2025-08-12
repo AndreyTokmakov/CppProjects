@@ -147,7 +147,7 @@ namespace Concepts::Custom_Concepts
     concept SignedIntegral = Integral<T> && std::is_signed<T>::value;
 
     template <class T>
-    concept UnsignedIntegral = Integral<T> && !SignedIntegral<T>;
+        concept UnsignedIntegral = Integral<T> && !SignedIntegral<T>;
 
     template <class T>
     concept IsNotDoubleType = !std::is_same_v<T, double>;

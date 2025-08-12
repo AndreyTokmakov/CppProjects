@@ -8,6 +8,7 @@ Description : Asynch (EPoll) TCP Server with Persistent sessions
 ============================================================================**/
 
 #include "AsynchTcpServerWithSessions.hpp"
+#include "Buffer.hpp"
 #include "../Utilities/Utilities.h"
 
 #include <arpa/inet.h>
@@ -73,32 +74,30 @@ namespace tcp_server
 
     struct Session
     {
-        static constexpr size_t initialBufferSize { 1024 * 4 };
-
-        std::vector<char> buffer {};
+        Socket socket { INVALID_SOCKET };
         State state { State::Closed };
+        common::Buffer buffer {};
 
-        explicit Session(const State state = State::Open):
-            buffer(initialBufferSize), state {state} {
+        explicit Session(const Socket socket, const State state = State::Open):
+            socket { socket }, state { state } {
         }
     };
 
     struct TCPServer
     {
         static constexpr SizeType BACKLOG { 10 };
+        static constexpr SizeType maxReadBlockSize { 1024 };
 
         // TODO: Choose different value -  epoll wait timeout 10 ms
         static constexpr SizeType kEpollWaitTime { 10 };
 
         // TODO: Refactor - epoll wait return max size
-        static constexpr SizeType kMaxEvents { 32 };
-
-        std::unique_ptr<Session> statisSession { std::make_unique<Session>() };
+        static constexpr SizeType kMaxEvents { 1024 };
 
         Socket epollFd { INVALID_SOCKET };
         Socket serverSocket { INVALID_SOCKET };
 
-        std::vector<Session*> sessions {};
+        std::unordered_map<Socket, Session> sessions;
         std::string hostAddress;
         PortType listenPort {};
 
@@ -128,24 +127,19 @@ namespace tcp_server
             return 0;
         }
 
-        static void closeClientSocket(const Socket socket,
-                                      Session* session,
+        static void closeClientSocket(Session& session,
                                       const State finalState = State::Closed)
         {
-            if (SOCKET_ERROR == ::close(socket)) {
+            if (SOCKET_ERROR == ::close(session.socket)) {
                 Error("close() failed");
             }
-            session->state = finalState;
+            session.state = finalState;
         }
 
         // TODO: Store session data --> HashTable
         void eventsPoller()
         {
             std::array<epoll_event, kMaxEvents> epollEvents {};
-            for (SizeType idx = 0; idx < kMaxEvents; ++idx) {
-                epollEvents[idx].data.ptr = sessions[idx];
-                std::cout << epollEvents[idx].data.ptr << std::endl;
-            }
 
             ssize_t bytes {0}, total {0};
             auto [clientSock, events] = std::make_pair<Socket, uint32_t>(0,0);
@@ -154,70 +148,62 @@ namespace tcp_server
             {
                 // TODO: Check TimeOut for performance
                 // TODO: Check num != -1
-                const int num = epoll_wait(epollFd, epollEvents.data(), kMaxEvents, kEpollWaitTime * 1000);
+                const int32_t num = epoll_wait(epollFd, epollEvents.data(), kMaxEvents, kEpollWaitTime * 1000);
                 for (int i = 0; i < num; ++i)
                 {
                     // TODO: Refactor
                     clientSock = epollEvents[i].data.fd;
                     events = epollEvents[i].events;
-                    Session* session = static_cast<Session*>(epollEvents[i].data.ptr);
 
-                    std::cout << "--------1------------- clientSock = " << clientSock  << std::endl;
-
-                    if (!session) {
-                        session = statisSession.get();
-                        std::cout << "Session is NULL - Using statis session" << std::endl;
-                    }
-                    if (!session) {
-                        std::cout << "ERROR: Session still NULL" << std::endl;
-                        break;
-                    }
-
-                    std::cout << "Session OK = " << session << std::endl;
-
-                    std::cout << "--------2------------- clientSock = " << clientSock  << std::endl;
+                    const auto [iter, ok] = sessions.try_emplace(clientSock, clientSock, State::Closed);
+                    Session& session = iter->second;
 
                     if (events & EPOLLERR)
                     {
-                        if (SOCKET_ERROR == epoll_ctl(epollFd, EPOLL_CTL_DEL, clientSock, nullptr))
+                        if (SOCKET_ERROR == epoll_ctl(epollFd, EPOLL_CTL_DEL, session.socket, nullptr)) {
                             Error("epoll_ctl() failed. (EPOLL_CTL_DEL)");
-                        closeClientSocket(clientSock, session, State::ClosedWithError);
+                        }
+                        closeClientSocket(session, State::ClosedWithError);
                         continue;
                     }
 
                     if (events & EPOLLIN)
                     {
                         total = 0;
-                        // TODO: Read ---> to the Session Buffer
-                        while ((bytes = ::read(clientSock, session->buffer.data(), session->buffer.size())) > 0) {
+                        do {
+                            session.buffer.validateCapacity(maxReadBlockSize);
+                            bytes = ::read(session.socket, session.buffer.head(), maxReadBlockSize);
+                            session.buffer.incrementLength(bytes);
                             total += bytes;
-                        }
+                        } while (bytes > 0);
 
-                        if (total)
-                            session->state = State::Open;
+                        if (total) {
+                            session.state = State::Open;
+                        }
                         else if (events & EPOLLHUP || events & EPOLLRDHUP) {
-                            closeClientSocket(clientSock, session);
+                            closeClientSocket(session);
                             continue;
                         }
                     }
 
                     if (events & EPOLLOUT)
                     {
-                        if (State::Open == session->state)
+                        if (State::Open == session.state)
                         {
-                            if (SOCKET_ERROR == ::send(clientSock, reply.data(), reply.length(), 0))
+                            if (SOCKET_ERROR == ::send(session.socket, reply.data(), reply.length(), 0)) {
                                 Error("send() failed");
-                            session->buffer.clear();
+                            }
+                            session.buffer.clear();
                         }
-
 
                     }
 
                     if (events & EPOLLHUP || events & EPOLLRDHUP)
                     {
-                        if (SOCKET_ERROR == epoll_ctl(epollFd, EPOLL_CTL_DEL, clientSock, nullptr))
+                        if (SOCKET_ERROR == epoll_ctl(epollFd, EPOLL_CTL_DEL, session.socket, nullptr)) {
                             Error("epoll_ctl() failed. (EPOLL_CTL_DEL)");
-                        closeClientSocket(clientSock, session);
+                        }
+                        closeClientSocket(session);
                         continue;
                     }
                 }
@@ -227,19 +213,9 @@ namespace tcp_server
     public:
 
         TCPServer(std::string address, const PortType port):
-                // sessions { kMaxEvents },
-                hostAddress { std::move(address) },
-                listenPort { port }
+                hostAddress { std::move(address) }, listenPort { port }
         {
             sessions.reserve(kMaxEvents);
-            for (int i = 0; i < kMaxEvents; ++i) {
-                sessions.push_back(new Session);
-            }
-
-            std::cout << "Server created: \n"
-                      << "\t Max Sessions: " << sessions.size() << ". Memory allocated: "
-                      << sessions.size() * sizeof(Session)
-                      << std::endl;
         }
 
         bool createSockets()
@@ -309,9 +285,55 @@ namespace tcp_server
     }
 }
 
+
+namespace BufferTests
+{
+    void testBuffer()
+    {
+        auto print = [](const common::Buffer& buffer) {
+            std::cout << buffer.size() << " | " <<
+                std::string_view(buffer.data<const char>(), buffer.size()) << std::endl;
+        };
+
+        auto write = [](common::Buffer& buffer, const std::string& str) {
+            buffer.validateCapacity(str.size());
+            std::copy_n(str.data(), str.size(), buffer.head());
+            buffer.incrementLength(str.size());
+        };
+
+
+        common::Buffer buffer;
+
+        {
+            std::string text(32, 'a') ;
+            write(buffer, text);
+            print(buffer);
+        }
+
+        {
+            std::string text(32, 'b') ;
+            write(buffer, text);
+            print(buffer);
+        }
+
+        {
+            std::string text(1100, 'c') ;
+            write(buffer, text);
+            print(buffer);
+        }
+
+        {
+            std::string text(11100, 'd') ;
+            write(buffer, text);
+            print(buffer);
+        }
+    }
+}
+
 void tcp_server::TestAll()
 {
     startSerer();
+    // BufferTests::testBuffer();
 }
 
 
