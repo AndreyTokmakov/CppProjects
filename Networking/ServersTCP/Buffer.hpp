@@ -71,6 +71,7 @@ namespace common
 
         void clear() noexcept {
             buffer.clear();
+            length = 0;
         }
 
         void incrementLength(const size_type size) noexcept {

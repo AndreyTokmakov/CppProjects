@@ -79,7 +79,9 @@ namespace tcp_server
         common::Buffer buffer {};
 
         explicit Session(const Socket socket, const State state = State::Open):
-            socket { socket }, state { state } {
+            socket { socket }, state { state }
+        {
+            std::cout << "Session(" << socket << ") created\n";
         }
     };
 
@@ -133,7 +135,9 @@ namespace tcp_server
             if (SOCKET_ERROR == ::close(session.socket)) {
                 Error("close() failed");
             }
+            std::cout << "Session(" << session.socket << ") closed (buffer: " << session.buffer.size() << ")\n";
             session.state = finalState;
+            session.buffer.clear();
         }
 
         // TODO: Store session data --> HashTable
