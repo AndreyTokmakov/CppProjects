@@ -60,9 +60,10 @@ namespace
     }
 }
 
-namespace tcp_server
+
+namespace networking
 {
-    enum class State
+    enum class State: uint8_t
     {
         Idle,
         Open,
@@ -71,6 +72,17 @@ namespace tcp_server
         Closed,
         ClosedWithError
     };
+
+    std::ostream& operator<<(std::ostream& stream, const State state)
+    {
+        switch (state) {
+            case State::Idle: return stream << "Idle";
+            case State::Open: return stream << "Open";
+            case State::Closed: return stream << "Closed";
+            case State::ClosedWithError: return stream << "ClosedWithError";
+        }
+        return stream << "Unknown state(" << static_cast<int>(state) << ")";
+    }
 
     struct Session
     {
@@ -94,9 +106,16 @@ namespace tcp_server
         }
     };
 
+}
+
+namespace tcp_server
+{
+
+    using namespace networking;
+
     struct TCPServer
     {
-        static constexpr SizeType BACKLOG { 10 };
+        static constexpr SizeType backLog { 10 };
         static constexpr SizeType maxReadBlockSize { 1024 };
 
         // TODO: Choose different value -  epoll wait timeout 10 ms
@@ -206,7 +225,6 @@ namespace tcp_server
                             Error("epoll_ctl() failed. (EPOLL_CTL_DEL)");
                         }
                         session.Close();
-                        continue;
                     }
                 }
             }
@@ -240,7 +258,7 @@ namespace tcp_server
                 return false;
             }
 
-            if (SOCKET_ERROR == ::listen(serverSocket, BACKLOG)) {
+            if (SOCKET_ERROR == ::listen(serverSocket, backLog)) {
                 Error("Failed to Listen the socket.");
                 return false;
             }
@@ -331,6 +349,8 @@ namespace BufferTests
         }
     }
 }
+
+
 
 void tcp_server::TestAll()
 {

@@ -18,7 +18,6 @@ add_executable(${PROJECT_NAME} MACOSX_BUNDLE
         Deque/Deque.cpp Deque/Deque.h
         ForwardList/ForwardList.cpp ForwardList/ForwardList.h
         Heap/Heap.cpp Heap/Heap.h
-
         List/List.cpp List/List.h
         Map/Map.cpp Map/Map.h
         PriorityQueue/PriorityQueue.cpp PriorityQueue/PriorityQueue.h
@@ -30,14 +29,18 @@ add_executable(${PROJECT_NAME} MACOSX_BUNDLE
         Valarray/Valarray.cpp Valarray/Valarray.h
         Vector/Vector.cpp Vector/Vector.h
         MultiMap/MultiMap.cpp MultiMap/MultiMap.h
-
         Helpers/Integer.cpp Helpers/Integer.h
         Helpers/Helpers.h Helpers/Wrapper.h
         Flat_Map/FlatMap.cpp
         Flat_Map/FlatMap.h
 )
 
-# include all components
+
+target_include_directories(${PROJECT_NAME} PUBLIC "${CMAKE_SOURCE_DIR}/Utilities")
+target_link_directories(${PROJECT_NAME} PUBLIC "${CMAKE_BINARY_DIR}/Utilities")
+
+
 TARGET_LINK_LIBRARIES(${PROJECT_NAME}
+        utils
         pthread
 )

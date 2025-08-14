@@ -10,17 +10,20 @@
 #include <algorithm>
 #include <iostream>
 #include <unordered_set>
+#include <unordered_map>
 #include <string>
 #include <string_view>
-#include <cassert>
 #include <vector>
+#include <random>
 
 #include "../Helpers/Integer.h"
 #include "../Helpers/Helpers.h"
+#include "PerfUtilities.h"
 
 #include "UnorderedSet.h"
 
-namespace UnorderedSet {
+namespace
+{
 	auto printer_coma = [](const auto& val) {
 		std::cout << val << ", ";
 	};
@@ -536,6 +539,113 @@ namespace UnorderedSet::HeterogeneousLookup_Hashing_Integer
     }
 }
 
+
+namespace UnorderedSet::MAP_vs_SET
+{
+	static std::random_device randomDevice{};
+	static std::mt19937 generator(randomDevice());
+
+	[[nodiscard]]
+	int randomIntegerInRange(const int from = 0, const int until = 1000) {
+		return std::uniform_int_distribution<int>{from, until}(generator);
+	}
+
+	[[nodiscard]]
+	int getRandomUniqueInt(const int start = 0, const int end = 1000)
+	{
+		static std::unordered_set<int> uniqueInts;
+		std::uniform_int_distribution intDistribution { std::uniform_int_distribution<>{ start, end } };
+
+		while (true) {
+			if (const int number = intDistribution(generator); uniqueInts.insert(number).second)
+				return number;
+		}
+	}
+
+	using Integer = Helpers::Wrapper<int, false>;
+
+	template <typename Hash>
+	struct KeyHashPair
+	{
+		Integer key;
+		std::size_t hash {};
+
+		explicit KeyHashPair(int k) :
+				key { k }, hash { Hash{}(key) } {
+		}
+	};
+
+	struct Hash
+	{
+		using is_transparent = void;
+
+		std::size_t operator()(const Integer& v) const noexcept {
+			return std::hash<int32_t>{}(v.value);
+		}
+
+		std::size_t operator()(const KeyHashPair<Hash>& pair) const noexcept {
+			return pair.hash;
+		}
+	};
+
+	struct Comparator
+	{
+		using is_transparent = void;
+
+		constexpr bool operator()(const Integer& lhs, const Integer& rhs) const noexcept {
+			return lhs == rhs;
+		}
+
+		template <typename Hash>
+		constexpr bool operator()(const KeyHashPair<Hash>& lhs, const Integer& rhs) const noexcept {
+			return lhs.key == rhs;
+		}
+	};
+
+	__attribute__((optimize("O0")))
+	void benchmark()
+	{
+		using Set = std::unordered_set<Integer, Hash, Comparator>;
+		using Map = std::unordered_map<int, Integer>;
+
+		constexpr int samplesCount { 10'000 }, iter { 100'000 };
+		const std::vector<int> samples = []() {
+			std::vector<int> tmp;
+			tmp.reserve(samplesCount);
+			for (int i = 0; i < samplesCount; ++i) {
+				tmp.push_back(getRandomUniqueInt(1, 10 * samplesCount));
+			}
+			return tmp;
+		}();
+
+		Set set;
+		Map map;
+		for (int entry: samples) {
+			set.emplace(entry);
+			map.emplace(entry, entry);
+		}
+
+		{
+			PerfUtilities::ScopedTimer timer { "SET" };
+			for (int i = 0; i < iter; ++i) {
+				for (int entry: samples) {
+					const auto _ = set.contains(entry);
+				}
+			}
+		}
+
+		{
+			PerfUtilities::ScopedTimer timer { "MAP" };
+			for (int i = 0; i < iter; ++i) {
+				for (int entry: samples) {
+					const auto _ = map.contains(entry);
+				}
+			}
+		}
+	}
+
+}
+
 void UnorderedSet::TestAll()
 {
 	// Constructors();
@@ -569,5 +679,8 @@ void UnorderedSet::TestAll()
     // HeterogeneousLookup::Test_OK();
 
     // HeterogeneousLookup_Hashing::Search();
-    HeterogeneousLookup_Hashing_Integer::Search();
+    // HeterogeneousLookup_Hashing_Integer::Search();
+
+
+	MAP_vs_SET::benchmark();
 }

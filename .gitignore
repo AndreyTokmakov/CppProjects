@@ -37,6 +37,7 @@
 
 /cmake-build-debug*
 /cmake-build-release*
+/build*
 /FinTechMarketProjects/data/*
 /FuzzingExperiments/fuzzer
 /FuzzingExperiments/crash*

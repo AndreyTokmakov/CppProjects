@@ -44,8 +44,8 @@ int main([[maybe_unused]] int argc,
 	// MultiMap::TestAll();
     // UnorderedMap::TestAll();
     // Set::TestAll();
-    // UnorderedSet::TestAll();
+    UnorderedSet::TestAll();
 	// Queue::TestAll();
-	PriorityQueue::TestAll();
+	// PriorityQueue::TestAll();
 	// Custom_Vector::TestAll();
 }
