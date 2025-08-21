@@ -20,6 +20,7 @@ Description : C++ Utilities
 #include <optional>
 
 #include <x86intrin.h>
+#include <cstring>
 
 #include "StringUtilities.hpp"
 #include "FileUtilities.hpp"
@@ -243,6 +244,45 @@ namespace StringUtilitiesTests
     }
 }
 
+namespace HexConverter_Tests
+{
+    using namespace HexConverter;
+
+    constexpr std::array<char, 16> table { '0','1','2','3','4','5','6','7','8','9','A','B','C','D','E','F'};
+
+    std::string intToHex(int value)
+    {
+        std::string result;
+        unsigned int num = static_cast<unsigned int>(value);
+
+        if (num == 0) {
+            result.push_back(table[0]);
+            return result;
+        }
+        while (num > 0) {
+            int remainder = num & 0xF;
+            result.push_back(table[remainder]);
+            num >>= 4;
+        }
+
+        std::reverse(result.begin(), result.end());
+        return result;
+    }
+
+    void Test()
+    {
+        const short val { 512 };
+        char bytes[sizeof(val)];
+        memcpy(bytes, &val, sizeof(val));
+
+        const std::string hexStr = bytesToHexStr(bytes, sizeof(val));
+
+        std::cout << hexStr << std::endl;
+        std::cout << intToHex(512) << std::endl;
+    }
+}
+
+
 // TODO: BitUtils
 //      - check bit is set
 //      - set bit
@@ -261,7 +301,7 @@ int main([[maybe_unused]] int argc,
     // StringUtilitiesTests::remove_chars_from_string_test();
     // StringUtilitiesTests::Update_string_test();
     // StringUtilitiesTests::Random_String();
-    StringUtilitiesTests::stringToChunks_Test();
+    // StringUtilitiesTests::stringToChunks_Test();
 
     // FileUtilities_Tests::ReadFile();
     // FileUtilities_Tests::ReadFile2String();
@@ -278,6 +318,8 @@ int main([[maybe_unused]] int argc,
 
     // TimeMeasurement::testScopedTimer();
     // TimeMeasurement::testScopedTimer_TSC();
+
+    HexConverter_Tests::Test();
 
 
     return EXIT_SUCCESS;

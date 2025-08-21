@@ -21,6 +21,9 @@ namespace HexConverter
 
     std::string bytesToHex(const std::string& bytesStr);
 
+    [[nodiscard]]
+    std::string intToHex(int value);
+
     std::vector<uint8_t> hex2Bytes(std::string_view hexString) noexcept;
 
     void TestAll();

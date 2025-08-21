@@ -91,6 +91,25 @@ namespace HexConverter
             bytesStr.push_back(static_cast<char>(hex2UChar(hexString.substr(i, 2))));
         return bytesStr;
     }
+
+    std::string intToHex(int value)
+    {
+        std::string result;
+        unsigned int num = static_cast<unsigned int>(value);
+
+        if (num == 0) {
+            result.push_back(table[0]);
+            return result;
+        }
+        while (num > 0) {
+            int remainder = num & 0xF;
+            result.push_back(table[remainder]);
+            num >>= 4;
+        }
+
+        std::reverse(result.begin(), result.end());
+        return result;
+    }
 };
 
 void HexConverter::TestAll()
