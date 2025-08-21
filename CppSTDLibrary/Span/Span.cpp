@@ -18,6 +18,8 @@ Description : C++ Span src
 #include <span>
 #include <list>
 #include <vector>
+#include <print>
+#include <cstring>
 
 namespace Span
 {
@@ -299,11 +301,127 @@ namespace Span::SizeOf_Span
     }
 }
 
+namespace Handle_Static_Dynamic_Content
+{
+    // Templated function to handle both dynamic and static extent spans
+    template<typename T, std::size_t Extent>
+    void printSpan(std::span<const T, Extent> numbers)
+    {
+        // Compile-time check to distinguish dynamic vs static extent
+        if constexpr (Extent == std::dynamic_extent) {
+            std::print("Dynamic extent with size {} | sizeof(span)={} \n", numbers.size(), sizeof(numbers));
+        } else {
+            std::print("Static extent={} | size={} | sizeof(span)={} \n", Extent, numbers.size(), sizeof(numbers));
+        }
+
+        // Create a subspan from index 1, length 3
+        std::span<const int> sub = numbers.subspan(1,3);
+        std::print("Subspan: {}\n", sub);
+
+        // Show first 2 elements of the subspan
+        std::print("First 2: {}\n", sub.first(2));
+
+        // Show last 2 elements of the subspan
+        std::print("Last 2: {}\n\n", sub.last(2));
+    }
+
+    void print()
+    {
+        const std::vector<int> vecInt { 1, 2, 3, 4, 5 };
+        const std::array<int,4> arrInt { 10, 20, 30, 40 };
+        const int rawInt[3] {100, 200, 300};
+
+        std::span<const int> vecSpan{vecInt};      // dynamic extent, const
+        std::span<const int> arrSpan{arrInt};       // dynamic extent, const
+        std::span<const int> rawSpan{rawInt};       // dynamic extent, const
+        std::span<const int,3> staticSpan{rawInt};  // static extent, const
+
+        printSpan(vecSpan);
+        printSpan(arrSpan);
+        printSpan(rawSpan);
+        printSpan(staticSpan);
+
+        // Dynamic extent with size 5 | sizeof(span)=16
+        // Subspan: [2, 3, 4]
+        // First 2: [2, 3]
+        // Last 2: [3, 4]
+        //
+        // Dynamic extent with size 4 | sizeof(span)=16
+        // Subspan: [20, 30, 40]
+        // First 2: [20, 30]
+        // Last 2: [30, 40]
+        //
+        // Dynamic extent with size 3 | sizeof(span)=16
+        // Subspan: [200, 300, 32765]
+        // First 2: [200, 300]
+        // Last 2: [300, 32765]
+        //
+        // Static extent=3 | size=3 | sizeof(span)=8
+        // Subspan: [200, 300, 32765]
+        // First 2: [200, 300]
+        // Last 2: [300, 32765]
+    }
+}
+
+namespace Parse_Network_Data
+{
+    struct ChunkHeader
+    {
+        uint8_t type;   // Chunk type identifier
+        uint8_t length; // Length of the data payload
+    };
+
+    // Parse a chunk and return how many bytes were consumed (header + payload)
+    size_t parse_chunk(std::span<const uint8_t> data)
+    {
+        if (data.size() < sizeof(ChunkHeader))
+            return 0; // Not enough data for header
+
+        // Ensure ChunkHeader is trivial before using memcpy
+        static_assert(std::is_trivial_v<ChunkHeader>, "ChunkHeader must be trivial");
+
+        // Safe copy to avoid strict aliasing issues
+        ChunkHeader header {};
+        std::memcpy(&header, data.data(), sizeof(ChunkHeader));
+
+        // Ensure payload fits within available data
+        if (data.size() < sizeof(ChunkHeader) + header.length) return 0;
+
+        // Create a subspan representing the payload
+        auto payload = data.subspan(sizeof(ChunkHeader), header.length);
+
+        // Print chunk info
+        std::print("Chunk type {} length {}: ", header.type, header.length);
+        for (auto b : payload)
+            std::print("{} ", b);
+        std::print("\n");
+
+        // Return total bytes consumed so the caller can advance the span
+        return sizeof(ChunkHeader) + header.length;
+    }
+
+    void parseTest()
+    {
+        // Example file data
+        std::vector<uint8_t> file = {1, 3, 10, 11, 12, 2, 2, 99, 100};
+        std::span<const uint8_t> file_span(file);
+
+        // Iterate over chunks using span, no raw pointer arithmetic needed
+        while (!file_span.empty())
+        {
+            size_t consumed = parse_chunk(file_span);
+            if (consumed == 0)
+                break; // Stop if not enough data left
+            file_span = file_span.subspan(consumed); // Advance span safely
+        }
+    }
+}
+
 
 void Span::TestAll()
 {
     // Subspan_Test();
-    Subspan();
+    // Subspan();
 
     // Create();
     // Create_Not();
@@ -322,5 +440,9 @@ void Span::TestAll()
 
     // _Tests_();
 
-   // StaticSize::Static_Sized_Array();
+    // StaticSize::Static_Sized_Array();
+
+    // Handle_Static_Dynamic_Content::print();
+
+    Parse_Network_Data::parseTest();
 }
