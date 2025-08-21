@@ -7,7 +7,7 @@ Copyright   : Your copyright notice
 Description : StringUtilities.h
 ============================================================================**/
 
-#ifndef CPPPROJECTS_STRINGUTILITIES_HPP
+#ifndef CPPPROJECTS_STRINGUTILITIES_H
 #define CPPPROJECTS_STRINGUTILITIES_H
 
 #include <vector>
@@ -47,4 +47,4 @@ namespace StringUtilities
 };
 
 
-#endif //CPPPROJECTS_STRINGUTILITIES_HPP
+#endif //CPPPROJECTS_STRINGUTILITIES_H

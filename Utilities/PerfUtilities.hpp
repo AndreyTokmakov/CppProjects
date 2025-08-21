@@ -7,8 +7,8 @@ Copyright   : Your copyright notice
 Description : Utilities.h
 ============================================================================**/
 
-#ifndef CPPPROJECTS_UTILITIES_H
-#define CPPPROJECTS_UTILITIES_H
+#ifndef CPPPROJECTS_UTILITIES_HPP
+#define CPPPROJECTS_UTILITIES_HPP
 
 #include <string_view>
 #include <chrono>
@@ -59,4 +59,4 @@ namespace PerfUtilities
     };
 }
 
-#endif //CPPPROJECTS_UTILITIES_H
+#endif //CPPPROJECTS_UTILITIES_HPP
