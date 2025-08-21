@@ -7,7 +7,7 @@ Copyright   : Your copyright notice
 Description : StringUtilities.cpp
 ============================================================================**/
 
-#include "StringUtilities.h"
+#include "StringUtilities.hpp"
 
 #include <array>
 #include <algorithm>

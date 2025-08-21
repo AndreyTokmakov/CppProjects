@@ -21,12 +21,12 @@ Description : C++ Utilities
 
 #include <x86intrin.h>
 
-#include "StringUtilities.h"
-#include "FileUtilities.h"
+#include "StringUtilities.hpp"
+#include "FileUtilities.hpp"
 #include "CSVReader/Tests.h"
-#include "Base64.h"
-#include "HexConverter.h"
-#include "PerfUtilities.h"
+#include "Base64.hpp"
+#include "HexConverter.hpp"
+#include "PerfUtilities.hpp"
 
 namespace
 {
@@ -229,6 +229,20 @@ namespace TimeMeasurement
 }
 
 
+namespace StringUtilitiesTests
+{
+
+    void stringToChunks_Test()
+    {
+        std::string str { "123456789"};
+        std::vector parts = stringToChunks(str, 2);
+        std::cout << parts.size() << std::endl;
+        for (const auto& s: parts) {
+            std::cout << s << std::endl;
+        }
+    }
+}
+
 // TODO: BitUtils
 //      - check bit is set
 //      - set bit
@@ -247,6 +261,7 @@ int main([[maybe_unused]] int argc,
     // StringUtilitiesTests::remove_chars_from_string_test();
     // StringUtilitiesTests::Update_string_test();
     // StringUtilitiesTests::Random_String();
+    StringUtilitiesTests::stringToChunks_Test();
 
     // FileUtilities_Tests::ReadFile();
     // FileUtilities_Tests::ReadFile2String();
@@ -261,8 +276,9 @@ int main([[maybe_unused]] int argc,
 
     // HexConverter::TestAll();
 
-    TimeMeasurement::testScopedTimer();
-    TimeMeasurement::testScopedTimer_TSC();
+    // TimeMeasurement::testScopedTimer();
+    // TimeMeasurement::testScopedTimer_TSC();
+
 
     return EXIT_SUCCESS;
 }

@@ -18,7 +18,7 @@ Description : Memory C++ project
 #include "ObjectPool.h"
 #include "Experiments.h"
 #include "Common.h"
-#include "PerfUtilities.h"
+#include "PerfUtilities.hpp"
 #include <tcmalloc/tcmalloc.h>
 
 namespace

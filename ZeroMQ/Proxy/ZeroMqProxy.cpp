@@ -17,7 +17,7 @@ Description : ZeroMqProxy.cpp
 
 #include <zmq_addon.hpp>
 
-#include "DateTimeUtilities.h"
+#include "DateTimeUtilities.hpp"
 
 #define LOG std::osyncstream { std::cout } << DateTimeUtilities::getCurrentTime() << ' '
 

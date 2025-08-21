@@ -94,7 +94,7 @@ int main([[maybe_unused]]  int argc,
     // Command::TestAll();
     // Iterator::Test();
     // Interpreter::Test();
-    // Mediator::TestAll();
+    Mediator::TestAll();
     // Memento::TestAll();
     // Observer::TestAll();
     // State::TestAll();
@@ -111,7 +111,7 @@ int main([[maybe_unused]]  int argc,
     // CopyAndSwap::TEST_ALL();   ---- TESTs
     // TagDispatching::Test();
     // VirtualConstructor::Test();
-    TypeID::TestAll();
+    // TypeID::TestAll();
 
     // LazyComputation::TestAll();
 

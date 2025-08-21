@@ -15,6 +15,7 @@ namespace InlineNamespaces
 {
     namespace Program
     {
+        // inline
         namespace Version1
         {
             void printVersion() {

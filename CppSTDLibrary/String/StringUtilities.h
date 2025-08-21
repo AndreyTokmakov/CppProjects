@@ -7,7 +7,7 @@ Copyright   : Your copyright notice
 Description : StringUtilities.h
 ============================================================================**/
 
-#ifndef CPPPROJECTS_STRINGUTILITIES_H
+#ifndef CPPPROJECTS_STRINGUTILITIES_HPP
 #define CPPPROJECTS_STRINGUTILITIES_H
 
 #include <vector>
@@ -43,4 +43,4 @@ namespace StringUtilities
     void slice_string(std::string &str, size_t from, size_t until);
 };
 
-#endif //CPPPROJECTS_STRINGUTILITIES_H
+#endif //CPPPROJECTS_STRINGUTILITIES_HPP

@@ -7,7 +7,7 @@ Copyright   : Your copyright notice
 Description : Base64
 ============================================================================**/
 
-#ifndef CPPPROJECTS_BASE64_H
+#ifndef CPPPROJECTS_BASE64_HPP
 #define CPPPROJECTS_BASE64_H
 
 #include <vector>
@@ -17,4 +17,4 @@ namespace Base64 {
     void TestAll(const std::vector<std::string_view>& params);
 };
 
-#endif //CPPPROJECTS_BASE64_H
+#endif //CPPPROJECTS_BASE64_HPP

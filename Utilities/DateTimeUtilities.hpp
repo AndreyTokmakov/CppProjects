@@ -7,8 +7,8 @@ Copyright   : Your copyright notice
 Description : DateTimeUtilities.h
 ============================================================================**/
 
-#ifndef CPPPROJECTS_DATETIMEUTILITIES_H
-#define CPPPROJECTS_DATETIMEUTILITIES_H
+#ifndef CPPPROJECTS_DATETIMEUTILITIES_HPP
+#define CPPPROJECTS_DATETIMEUTILITIES_HPP
 
 #include <chrono>
 
@@ -23,4 +23,4 @@ namespace DateTimeUtilities
             = std::chrono::system_clock::now());
 }
 
-#endif //CPPPROJECTS_DATETIMEUTILITIES_H
+#endif //CPPPROJECTS_DATETIMEUTILITIES_HPP

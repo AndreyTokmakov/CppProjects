@@ -133,7 +133,7 @@ int main([[maybe_unused]] int argc,
     // Initialization::TestAll();
     // Iterators::TestAll();
     // FilesStreams::TestAll();
-    Filesystem::TestAll();
+    // Filesystem::TestAll();
     // Format::TestAll();
     // FunctionObjects::TestAll();
     // Hashing::TestAll();
@@ -147,7 +147,7 @@ int main([[maybe_unused]] int argc,
     // Math::TestAll();
     // Memory::TestAll();
     // Metaprogramming::TestAll();
-    // InlineNamespaces::TestAll();
+    InlineNamespaces::TestAll();
     // NumericLimits::TestAll();
     // ObjectOrientedProgramming::TestAll();
     // Optional::TestAll();
@@ -177,7 +177,7 @@ int main([[maybe_unused]] int argc,
     // TypeCast::TestAll();
     // Int::TestAll();
     // Templates::TestAll();
-    Utilities::TestAll();
+    // Utilities::TestAll();
     // CompilerVersion::TestAll();
     // UniquePtr::TestAll();
     // WeakPtr::TestAll();

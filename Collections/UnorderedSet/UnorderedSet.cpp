@@ -18,7 +18,7 @@
 
 #include "../Helpers/Integer.h"
 #include "../Helpers/Helpers.h"
-#include "PerfUtilities.h"
+#include "PerfUtilities.hpp"
 
 #include "UnorderedSet.h"
 

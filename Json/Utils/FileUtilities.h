@@ -7,7 +7,7 @@ Copyright   : Your copyright notice
 Description : FileUtilities.h
 ============================================================================**/
 
-#ifndef CPPPROJECTS_FILEUTILITIES_H
+#ifndef CPPPROJECTS_FILEUTILITIES_HPP
 #define CPPPROJECTS_FILEUTILITIES_H
 
 #include <filesystem>
@@ -40,4 +40,4 @@ namespace FileUtilities
 
 
 
-#endif //CPPPROJECTS_FILEUTILITIES_H
+#endif //CPPPROJECTS_FILEUTILITIES_HPP

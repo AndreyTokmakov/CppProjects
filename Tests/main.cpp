@@ -1648,6 +1648,48 @@ namespace FibonacciSequence_Lambda
 }
 
 
+namespace Exception
+{
+    void func()
+    {
+        throw std::runtime_error("BOOM");
+    }
+
+    struct IStorage
+    {
+        virtual void store() = 0;
+        virtual ~IStorage()  = default;
+    };
+
+    struct Database: IStorage
+    {
+        void store() override
+        {
+            try {
+                func();
+            }
+            catch (const std::runtime_error& exc) {
+                std::cerr << exc.what() << std::endl;
+                throw;// std::runtime_error(std::string ("Error: ") + typeid(exc).name()+ ", Message: " + exc.what());
+            }
+        }
+
+        ~Database() override = default;
+    };
+
+    void test()
+    {
+        std::unique_ptr<IStorage> storage { std::make_unique<Database>() };
+        try {
+            storage->store();
+        }
+        catch (const std::exception& exc) {
+            std::cerr << exc.what() << std::endl;
+        }
+    }
+
+}
+
 
 int main([[maybe_unused]] const int argc,
          [[maybe_unused]] char** argv)
@@ -1659,6 +1701,7 @@ int main([[maybe_unused]] const int argc,
     // Execution::TestAll();
     // Coroutines::TestAll();
 
+    Exception::test();
 
 
     // ASM_Usage::measureElapsedTime();
@@ -1701,7 +1744,7 @@ int main([[maybe_unused]] const int argc,
     // ReturnClass_MemberRef_CopyCTor::tests();
     // Crow::TestAll();
     // CollectionsTests::TestAll();
-    CopyElision_RVO::TestAll();
+    // CopyElision_RVO::TestAll();
     // ConstexprMap::TestAll();
     // DebugLogger::TestAll();
     // DesignPatterns::TestAll();
