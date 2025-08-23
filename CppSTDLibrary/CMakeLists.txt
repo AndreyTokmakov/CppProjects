@@ -32,6 +32,7 @@ add_executable(${PROJECT_NAME}
 		CompileTime_Constexpr/CompileTimeProgramming.cpp
 		CompileTime_Constexpr/Constexpr.cpp
 		EnumTests/EnumTests.cpp
+		Embed/BinaryResourceInclusion.cpp
 		Exceptions/Exceptions.cpp
 		Errors/Errors.cpp
 		Helpers/UnorderedPair.h

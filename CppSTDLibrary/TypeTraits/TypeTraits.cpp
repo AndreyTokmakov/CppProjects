@@ -19,6 +19,50 @@ Description : ObjectPool Stack FixedSize
 #include "../Helpers/TestSupport.h"
 #include "../TypeTraits/TypeTraits.h"
 
+
+
+namespace TypeTraits::Common
+{
+	template< typename T >
+	struct is_void
+	{
+		static const bool value = false;
+	};
+
+	// Add to that a specialisation for void:
+	template<>
+	struct is_void< void >
+	{
+		static const bool value = true;
+	};
+
+	template <typename T>
+	struct is_pointer
+	{
+		static const bool value = false;
+	};
+
+	/** And a partial specialisation for all pointer types is added **/
+	template <typename T>
+	struct is_pointer<T*>
+	{
+		static const bool value = true;
+	};
+
+	template<typename T, typename... Args>
+	constexpr bool are_same_v = (std::is_same_v<T, Args> and ...);
+
+	template<typename T, typename...>
+	struct first_arg
+	{
+		using type = T;
+	};
+
+	template<typename... Args>
+	using first_arg_t = typename first_arg<Args...>::type;
+}
+
+
 namespace TypeTraits::IsClass
 {
 	struct A {
@@ -237,31 +281,8 @@ namespace TypeTraits::Is_Same{
 	}
 }
 
-namespace CustomTraits {
+namespace TypeTraits::CustomTraits {
 
-	template< typename T >
-	struct is_void {
-		static const bool value = false;
-	};
-	
-	// Add to that a specialisation for void:
-	template<>
-	struct is_void< void > {
-		static const bool value = true;
-	};
-
-
-
-	template <typename T>
-	struct is_pointer {
-		static const bool value = false;
-	};
-
-	// And a partial specialisation for all pointer types is added :
-	template <typename T>
-	struct is_pointer< T* > {
-		static const bool value = true;
-	};
 
 	//////////////////////////////////////////////////////
 
@@ -323,13 +344,13 @@ namespace CustomTraits {
 	//////////////////////////////////////////////////////////////////////////////
 
 	void Void_Test() {
-		std::cout << "is Void: " << std::boolalpha << is_void<int>::value << std::endl;
-		std::cout << "is Void: " << std::boolalpha << is_void<void>::value << std::endl;
+		std::cout << "is Void: " << std::boolalpha << Common::is_void<int>::value << std::endl;
+		std::cout << "is Void: " << std::boolalpha << Common::is_void<void>::value << std::endl;
 	}
 
 	void Is_Pointer() {
-		std::cout << "is Pointer: " << std::boolalpha << is_pointer<int>::value << std::endl;
-		std::cout << "is Pointer: " << std::boolalpha << is_pointer<int*>::value << std::endl;
+		std::cout << "is Pointer: " << std::boolalpha << Common::is_pointer<int>::value << std::endl;
+		std::cout << "is Pointer: " << std::boolalpha << Common::is_pointer<int*>::value << std::endl;
 	}
 
 	void Color_Test() {
@@ -805,6 +826,34 @@ namespace TypeTraits::TriviallyCopyable
     }
 }
 
+namespace TypeTraits::SameAs_GetFirst_ElementType
+{
+	using namespace Common;
+
+
+	template<typename... Args>
+		requires are_same_v<Args...>
+	first_arg_t<Args...> Add1(const Args&... args) noexcept
+	{
+		return (... + args);
+	}
+
+	void demo()
+	{
+		using namespace  std::string_literals;
+
+		{
+			const auto firstType = Add1("1"s, "2"s, "3"s);
+			std::cout << typeid(firstType).name() << std::endl;
+		}
+
+		{
+			const auto firstType = Add1(1,2,3,4);
+			std::cout << typeid(firstType).name() << std::endl;
+		}
+	}
+}
+
 void TypeTraits::TestAll()
 {
 	// IsClass::Test();
@@ -839,8 +888,8 @@ void TypeTraits::TestAll()
 	// CustomTraits::Is_Pointer_2();
 	// CustomTraits::Color_Test();
 
-	Decltype_and_Declval::BasicTests();
-	Decltype_and_Declval::Test();
+	// Decltype_and_Declval::BasicTests();
+	// Decltype_and_Declval::Test();
 	// Decltype_and_Declval::Test2();
 	// Decltype_and_Declval::Declval_Test();
 
@@ -854,7 +903,9 @@ void TypeTraits::TestAll()
 
 	// std::false_type ??????
 
-    TypeIdentity::Test();
+    // TypeIdentity::Test();
 
-    TriviallyCopyable::Examples();
+    // TriviallyCopyable::Examples();
+
+	SameAs_GetFirst_ElementType::demo();
 };

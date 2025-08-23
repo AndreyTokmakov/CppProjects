@@ -34,6 +34,7 @@ Description : Cpp STD lib
 #include "DeducingThis/DeducingThis.h"
 #include "Format/Format.h"
 #include "EnumTests/EnumTests.h"
+#include "Embed/BinaryResourceInclusion.hpp"
 #include "Expected/Expected.h"
 #include "Errors/Errors.h"
 #include "Exceptions/Exceptions.h"
@@ -125,6 +126,7 @@ int main([[maybe_unused]] int argc,
     // DateAndTime::TestAll();
     // EnumTests::TestAll();
     // Errors::TestAll();
+    Embed::TestAll();
     // Exceptions::TestAll();
     // Expected::TestAll();
     // StrongTypes::TestAll();
@@ -164,7 +166,7 @@ int main([[maybe_unused]] int argc,
     // StringView::TestAll();
     // StructuredBinding::TestAll();
     // StrongTypes::TestAll();
-    Span::TestAll();
+    // Span::TestAll();
     // Simd::TestAll();
     // Stacktrace::TestAll();
     // SourceLocation::TestAll();
