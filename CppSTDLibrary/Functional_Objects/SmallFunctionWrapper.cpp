@@ -20,16 +20,18 @@ namespace
     {
         small_function() = default;
 
-        template <typename F>
-        small_function(F f)
+        template <typename Func_t>
+        small_function(Func_t func)
         {
-            static_assert(sizeof(F) <= StorageSize, "Callable too big for buffer");
-            new (&storage) F(std::move(f));
+            static_assert(sizeof(Func_t) <= StorageSize, "Callable too big for buffer");
+
+            new (&storage) Func_t(std::move(func));
             invoker = [](void* s, Args... args) -> R {
-                return (*reinterpret_cast<F*>(s))(std::forward<Args>(args)...);
+                return (*reinterpret_cast<Func_t*>(s))(std::forward<Args>(args)...);
             };
             deleter = [](void* s) {
-                reinterpret_cast<F*>(s)->~F();
+                // reinterpret_cast<Func_t*>(s)->~Func_t();
+                std::destroy_at(reinterpret_cast<Func_t*>(s));
             };
         }
 
@@ -39,19 +41,19 @@ namespace
                 deleter(&storage);
         }
 
-        R operator()(Args... args) const {
+        R operator()(Args... args) const
+        {
+            // return std::invoke((void*)&storage, std::forward<Args>(args)...);
             return invoker((void*)&storage, std::forward<Args>(args)...);
         }
 
     private:
+
         alignas(std::max_align_t) char storage[StorageSize];
         R (*invoker)(void*, Args...) { nullptr };
         void (*deleter)(void*) { nullptr };
     };
-
 }
-
-
 
 void SmallFunctionWrapper::TestAll()
 {
