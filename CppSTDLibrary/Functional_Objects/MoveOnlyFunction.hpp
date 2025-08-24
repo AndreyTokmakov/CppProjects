@@ -1,17 +1,17 @@
 /**============================================================================
-Name        : CallbackTests.h
-Created on  : 24.07.2024
+Name        : MoveOnlyFunction.hpp
+Created on  : 26.01.2025
 Author      : Andrei Tokmakov
 Version     : 1.0
 Copyright   : Your copyright notice
-Description : CallbackTests.h
+Description : MoveOnlyFunction.h
 ============================================================================**/
 
-#ifndef M2PROJECTS_CALLBACKTESTS_H
-#define M2PROJECTS_CALLBACKTESTS_H
+#ifndef CPPPROJECTS_MOVEONLYFUNCTION_HPP
+#define CPPPROJECTS_MOVEONLYFUNCTION_HPP
 
-namespace CallbackTests {
+namespace MoveOnlyFunction {
     void TestAll();
 };
 
-#endif //M2PROJECTS_CALLBACKTESTS_H
+#endif //CPPPROJECTS_MOVEONLYFUNCTION_HPP

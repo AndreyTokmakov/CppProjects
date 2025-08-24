@@ -45,7 +45,7 @@ Description : Cpp STD lib
 #include "Initialization/Initialization.h"
 #include "FilesStreams/FilesStreams.h"
 #include "Filesystem/Filesystem.h"
-#include "FunctionObjects/FunctionObjects.h"
+#include "Functional_Objects/FunctionObjects.hpp"
 #include "Iterators/Iterators.h"
 #include "Lambdas/Lambdas.h"
 #include "LookupTypes/LookupTypes.h"
@@ -126,7 +126,7 @@ int main([[maybe_unused]] int argc,
     // DateAndTime::TestAll();
     // EnumTests::TestAll();
     // Errors::TestAll();
-    Embed::TestAll();
+    // Embed::TestAll();
     // Exceptions::TestAll();
     // Expected::TestAll();
     // StrongTypes::TestAll();
@@ -137,7 +137,7 @@ int main([[maybe_unused]] int argc,
     // FilesStreams::TestAll();
     // Filesystem::TestAll();
     // Format::TestAll();
-    // FunctionObjects::TestAll();
+    FunctionObjects::TestAll();
     // Hashing::TestAll();
     // LookupTypes::TestAll();
     // Lambdas::TestAll();

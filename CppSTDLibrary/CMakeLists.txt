@@ -40,10 +40,12 @@ add_executable(${PROJECT_NAME}
 		Filesystem/Filesystem.cpp
 		Format/Format.cpp
 		Format/CustomTypesFormatters.cpp
-		FunctionObjects/FunctionObjects.cpp
-		FunctionObjects/MemberFunctionPointer.cpp
-		FunctionObjects/CallbackTests.cpp
-		FunctionObjects/MoveOnlyFunction.cpp
+        Functional_Objects/FunctionObjects.cpp
+        Functional_Objects/MemberFunctionPointer.cpp
+        Functional_Objects/CallbackTests.cpp
+        Functional_Objects/MoveOnlyFunction.cpp
+        Functional_Objects/PassCallableToClass.cpp
+        Functional_Objects/SmallFunctionWrapper.cpp
 		Initialization/Initialization.cpp
 		InitializerList/InitializerList.cpp
 		InlineVariables/InlineVariables.cpp
