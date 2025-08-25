@@ -244,6 +244,43 @@ namespace StringUtilitiesTests
     }
 }
 
+namespace StringUtilitiesTests
+{
+    constexpr std::array<char, 256> toExclude = []() -> std::array<char, 256> {
+        std::array<char, 256> tmp{};
+        for (const char c: {'\t', '\n', '\r', '\n', ' '})
+            tmp[c] = 1;
+        return tmp;
+    }();
+
+    static_assert(toExclude.size() == 256);
+    static_assert(toExclude['\t'] == 1);
+    static_assert(toExclude['\n'] == 1);
+
+    void trim(std::string &str)
+    {
+        uint32_t idx = 0, left = 0, right = str.size() - 1;
+        for (; left <= right && 1 == toExclude[str[left]]; ++left) {}
+        for (; right >= left && 1 == toExclude[str[right]]; --right) {}
+        for (; left <= right; ++left, ++idx) {
+            str[idx] = str[left];
+        }
+
+        str.resize(idx);
+        str.shrink_to_fit();
+    }
+
+    void Trim_Test()
+    {
+        std::string str = "\t\n\r\n123456789  \r\n";
+
+        std::cout << std::quoted(str) << std::endl;
+        trim(str);
+        std::cout << std::quoted(str) << std::endl;
+    }
+}
+
+
 namespace HexConverter_Tests
 {
     using namespace HexConverter;
@@ -302,6 +339,7 @@ int main([[maybe_unused]] int argc,
     // StringUtilitiesTests::Update_string_test();
     // StringUtilitiesTests::Random_String();
     // StringUtilitiesTests::stringToChunks_Test();
+    StringUtilitiesTests::Trim_Test();
 
     // FileUtilities_Tests::ReadFile();
     // FileUtilities_Tests::ReadFile2String();
@@ -319,7 +357,7 @@ int main([[maybe_unused]] int argc,
     // TimeMeasurement::testScopedTimer();
     // TimeMeasurement::testScopedTimer_TSC();
 
-    HexConverter_Tests::Test();
+    // HexConverter_Tests::Test();
 
 
     return EXIT_SUCCESS;

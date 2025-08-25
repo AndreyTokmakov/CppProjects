@@ -57,6 +57,7 @@ namespace StringUtilities
     std::string_view trim(const std::string& str);
 
     void strip(std::string &str);
+    void strip_fast(std::string &str);
 
     void remove_chars_from_string(std::string& str);
 
