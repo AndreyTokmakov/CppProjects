@@ -39,6 +39,7 @@ Description : Tests C++ project
 #include "Servers/EPollTCPServerContextEx.h"
 #include "Servers/EPollTCPServerMultithreaded.h"
 #include "ServersTCP/AsynchTcpServerWithSessions.hpp"
+#include "ServerTcpAsynch/AsynchTcpService.hpp"
 
 #include "ssh/SshExperiments.h"
 #include "SSL/SSL_Experiments.h"
@@ -90,7 +91,8 @@ int main([[maybe_unused]] int argc,
     // EPollTCPServerContextEx::TestAll();
     // EPollTCPServerMultithreaded::Tests();
 
-    tcp_server::TestAll();
+    // tcp_server::TestAll();
+    AsynchTcpService::TestAll();
 
     // PcapAnalyzer::TestAll();
 

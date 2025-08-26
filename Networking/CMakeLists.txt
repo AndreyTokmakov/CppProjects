@@ -55,6 +55,11 @@ add_executable(${PROJECT_NAME}
         Servers/EPollTCPServerContext.cpp
         Servers/EPollTCPServerContextEx.cpp
         ServersTCP/AsynchTcpServerWithSessions.cpp
+
+        ServerTcpAsynch/AsynchTcpService.cpp
+        ServerTcpAsynch/Session.cpp
+        ServerTcpAsynch/TcpServer.cpp
+
         RawSockets/CaptureTraffic.cpp
         PcapAnalyzer/PcapAnalyzer.cpp
         WiFi/WiFiExperiments.cpp
