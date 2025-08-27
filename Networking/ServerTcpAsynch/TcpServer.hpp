@@ -89,7 +89,7 @@ namespace tcp_server_asynch
             Socket clientSocket { INVALID_SOCKET };
             while (true)
             {
-                // debug("Waiting for next connection ....");
+                // debug ("Waiting for next connection ....");
                 clientSocket = ::accept(serverSocket, reinterpret_cast<sockaddr *>(&clientAddr), &addLen);
                 if (INVALID_SOCKET == clientSocket) {
                     Error("Failed to create client socket");
@@ -111,7 +111,7 @@ namespace tcp_server_asynch
             }
         }
 
-        bool createSockets()
+        bool initialize()
         {
             epollFd = ::epoll_create1(0);
             if (INVALID_SOCKET == epollFd) {

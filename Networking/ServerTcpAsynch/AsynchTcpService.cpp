@@ -34,13 +34,10 @@ namespace
     };
 }
 
-
 void AsynchTcpService::TestAll()
 {
-
     Processor processor;
     tcp_server_asynch::TCPServer<Processor> server {"0.0.0.0", 52525, processor};
-    server.createSockets();
+    server.initialize();
     server.runServer();
-
 }
