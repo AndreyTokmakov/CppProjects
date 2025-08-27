@@ -78,7 +78,11 @@ add_executable(${PROJECT_NAME}
         UnixDomainSockets/UDSAsynchServer_BufferPerSession.cpp
 )
 
-TARGET_LINK_LIBRARIES(${PROJECT_NAME}
+target_include_directories(${PROJECT_NAME} PUBLIC "${CMAKE_SOURCE_DIR}/Utilities")
+target_link_directories(${PROJECT_NAME} PUBLIC "${CMAKE_BINARY_DIR}/Utilities")
+
+target_link_libraries(${PROJECT_NAME}
+        utils
         pthread
         ssh2
         rt

@@ -1649,6 +1649,11 @@ namespace FibonacciSequence_Lambda
 
 
 
+struct Obj
+{
+    int value { 0 };
+};
+
 
 
 int main([[maybe_unused]] const int argc,

@@ -13,6 +13,7 @@ Description : TcpServer.hpp
 
 #include "Session.hpp"
 #include "../Utilities/Utilities.h"
+#include "DateTimeUtilities.hpp"
 
 #include <arpa/inet.h>
 #include <cerrno>
@@ -35,7 +36,7 @@ namespace tcp_server_asynch
     using namespace common;
 
     // FIXME --> Remove
-    int32_t Error(const std::string_view text);
+    int32_t Error(std::string_view text);
 
     // FIXME --> Remove
     template<typename T>
@@ -49,21 +50,21 @@ namespace tcp_server_asynch
     template<typename ...Args>
     void debug(Args&&... args)
     {
-        std::cout << "DEBUG ";
+        std::cout << DateTimeUtilities::getCurrentTime() << " [DEBUG]";
         (std::cout << ... << addSpace(std::forward<Args>(args))) << std::endl;
     }
 
     template<common::RequestProcessor Processor>
     struct TCPServer
     {
-        static constexpr SizeType backLog{10};
-        static constexpr SizeType maxReadBlockSize{1024};
+        static constexpr SizeType backLog { 10 };
+        static constexpr SizeType maxReadBlockSize { 1024 };
 
         // TODO: Choose different value -  epoll wait timeout 10 ms
-        static constexpr SizeType kEpollWaitTime{10};
+        static constexpr SizeType kEpollWaitTime { 10 };
 
         // TODO: Refactor - epoll wait return max size
-        static constexpr SizeType kMaxEvents{1024};
+        static constexpr SizeType kMaxEvents { 1024 };
 
         Socket epollFd{INVALID_SOCKET};
         Socket serverSocket{INVALID_SOCKET};
@@ -73,7 +74,7 @@ namespace tcp_server_asynch
         PortType listenPort{};
 
         TCPServer(std::string address, const PortType port, Processor &processor) :
-                hostAddress{std::move(address)}, listenPort{port}, processor{processor}
+                hostAddress { std::move(address) }, listenPort { port }, processor { processor }
         {
             sessions.reserve(kMaxEvents);
         }
@@ -84,9 +85,10 @@ namespace tcp_server_asynch
             std::jthread thread(&TCPServer::eventsPoller, this);
 
             sockaddr_in clientAddr{};
-            socklen_t addLen{sizeof(clientAddr)};
-            Socket clientSocket{INVALID_SOCKET};
-            while (true) {
+            socklen_t addLen { sizeof(clientAddr) };
+            Socket clientSocket { INVALID_SOCKET };
+            while (true)
+            {
                 // debug("Waiting for next connection ....");
                 clientSocket = ::accept(serverSocket, reinterpret_cast<sockaddr *>(&clientAddr), &addLen);
                 if (INVALID_SOCKET == clientSocket) {
@@ -98,12 +100,14 @@ namespace tcp_server_asynch
                 if (SOCKET_ERROR == setNonBlock(clientSocket))
                     break;
 
-                if (SOCKET_ERROR == addEpollEvents(EPOLL_CTL_ADD, clientSocket,
-                                                   EPOLLIN | EPOLLOUT | EPOLLRDHUP | EPOLLET)) {
+                if (SOCKET_ERROR == addEpollEvents(clientSocket, EPOLLIN | EPOLLOUT | EPOLLRDHUP | EPOLLET)) {
                     // if something goes wrong, close this new socket
                     Error("epoll_ctl() failed");
                     break;
                 }
+
+                // TODO:
+                //  1. Create new session and add it to 'sessions'
             }
         }
 
@@ -135,10 +139,9 @@ namespace tcp_server_asynch
             return true;
         }
 
-
         static int32_t setNonBlock(const Socket handle)
         {
-            const int flags = ::fcntl(handle, F_GETFL, 0);
+            const int32_t flags = ::fcntl(handle, F_GETFL, 0);
             if (flags < 0) {
                 return Error("fcntl() failed. (F_GETFL)");
             }
@@ -162,10 +165,10 @@ namespace tcp_server_asynch
             return epollCtrl(EPOLL_CTL_DEL, session.socket, nullptr);
         }
 
-        int32_t addEpollEvents(const int32_t op, const int32_t handle, const uint32_t events)
+        int32_t addEpollEvents(const int32_t handle, const uint32_t events)
         {
             epoll_event event { events, {.fd = handle} };
-            return epollCtrl( op, handle, &event);
+            return epollCtrl( EPOLL_CTL_ADD, handle, &event);
         }
 
         [[noreturn]]
@@ -181,7 +184,7 @@ namespace tcp_server_asynch
                 // TODO: Check TimeOut for performance
                 // TODO: Check num != -1
                 const int32_t num = epoll_wait(epollFd, epollEvents.data(), kMaxEvents, kEpollWaitTime * 1000);
-                for (int i = 0; i < num; ++i)
+                for (int32_t i = 0; i < num; ++i)
                 {
                     // TODO: Refactor
                     clientSock = epollEvents[i].data.fd;
@@ -225,7 +228,7 @@ namespace tcp_server_asynch
                             if (SOCKET_ERROR == bytes) {
                                 Error("send() failed");
                             } else {
-                                std::cout << bytes << " bytes send\n";
+                                debug(bytes, "bytes send");
                             }
 
                             session.response.clear();
