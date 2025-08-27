@@ -1,4 +1,3 @@
 ### Best Practices
 
 - TODO
-
