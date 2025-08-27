@@ -66,8 +66,8 @@ namespace tcp_server_asynch
         // TODO: Refactor - epoll wait return max size
         static constexpr SizeType kMaxEvents { 1024 };
 
-        Socket epollFd{INVALID_SOCKET};
-        Socket serverSocket{INVALID_SOCKET};
+        Socket epollFd { INVALID_SOCKET };
+        Socket serverSocket { INVALID_SOCKET };
 
         std::unordered_map<Socket, Session> sessions;
         std::string hostAddress;
@@ -197,6 +197,7 @@ namespace tcp_server_asynch
                     {
                         removeEpollEvents(session);
                         session.Close(State::ClosedWithError);
+                        sessions.erase(iter);
                         continue;
                     }
 
@@ -213,10 +214,6 @@ namespace tcp_server_asynch
                         if (total) {
                             session.state = State::Open;
                             processor.process(session);
-                        }
-                        else if (events & EPOLLHUP || events & EPOLLRDHUP) {
-                            session.Close();
-                            continue;
                         }
                     }
 
@@ -240,6 +237,7 @@ namespace tcp_server_asynch
                     {
                         removeEpollEvents(session);
                         session.Close();
+                        sessions.erase(iter);
                     }
                 }
             }
