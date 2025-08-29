@@ -82,7 +82,7 @@ int main([[maybe_unused]] int argc,
 	// LRUCache::TEST_ALL();
     // ObjectPool::TestAll();
     // ObjectPool_Growing::TestAll();
-    Optional::TEST_ALL();
+    // Optional::TEST_ALL();
     // Expected::TestAll();
     // PriorityList::TEST_ALL();
     // RAII_CommitWrapper::Test();

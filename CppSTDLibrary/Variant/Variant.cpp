@@ -1143,6 +1143,75 @@ namespace Variant::Experiments_DNS_Response {
     }
 }
 
+
+namespace Variant::Heterogeneous_Message_Handler
+{
+	/** https://biowpn.github.io/bioweapon/2025/08/20/heterogeneous-message-handler.html **/
+
+	struct MessageA { /** **/ };
+	struct MessageB { /** **/ };
+	struct MessageC { /** **/ };
+	struct MessageD { /** **/ };
+	struct MessageE { /** **/ };
+	struct MessageEx { /** **/ };
+
+	class  Processor
+	{
+		template <class T>
+		void process(const T&) = delete("Unhandled message");
+
+	public:
+
+		using AnyMessage = std::variant<MessageA, MessageB, MessageC, MessageD, MessageE>;
+
+		void handle(const AnyMessage& any_msg);
+	};
+
+
+	template<>
+	void Processor::process(const MessageA&) {
+		std::cout << __PRETTY_FUNCTION__ << std::endl;
+	}
+
+	template<>
+	void Processor::process(const MessageB&) {
+		std::cout << __PRETTY_FUNCTION__ << std::endl;
+	}
+
+	template<>
+	void Processor::process(const MessageC&) {
+		std::cout << __PRETTY_FUNCTION__ << std::endl;
+	}
+
+	template<>
+	void Processor::process(const MessageD&) {
+		std::cout << __PRETTY_FUNCTION__ << std::endl;
+	}
+
+	template<>
+	void Processor::process(const MessageE&) {
+		std::cout << __PRETTY_FUNCTION__ << std::endl;
+	}
+
+	/// The specializations must be visible before they are used, otherwise they won’t be selected.
+	/// Member templates aren’t exception to this rule.
+
+	void Processor::handle(const AnyMessage& any_msg)
+	{
+		std::visit([this](const auto& msg) {
+			process(msg);
+		}, any_msg);
+	}
+
+	void Test()
+	{
+		Processor::AnyMessage msg;
+		Processor p;
+		p.handle(msg);
+	}
+}
+
+
 void Variant::TestAll()
 {
 	// Variant_Tests::VariantCreate_Tests();
@@ -1176,9 +1245,9 @@ void Variant::TestAll()
 	// ExceptionSafetyTest();
 	// ErrorHandlingTest();
 
+	Heterogeneous_Message_Handler::Test();
 
-
-	VisitTests::Simple_Visit_0();
+	// VisitTests::Simple_Visit_0();
 	// VisitTests::Simple_Visit();
 	// VisitTests::Polymorphism_Test();
 	// VisitTests::VizitTest();
