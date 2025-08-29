@@ -1,11 +1,11 @@
-//============================================================================
-// Name        : Optional.h
-// Created on  : 13.08.2020
-// Author      : Tokmakov Andrey
-// Version     : 1.0
-// Copyright   : Your copyright notice
-// Description : Optional (custom implementation) src
-//============================================================================
+/**============================================================================
+Name        : Optional.h
+Created on  : 13.08.2020
+Author      : Tokmakov Andrey
+Version     : 1.0
+Copyright   : Your copyright notice
+Description : Optional (custom implementation) src
+============================================================================**/
 
 #ifndef OPTIONAL_CUSTOM_TESTS__H_
 #define OPTIONAL_CUSTOM_TESTS__H_
@@ -64,7 +64,8 @@ namespace Optional {
 			has_value = true;
 		}
 
-		~Optional() {
+		~Optional()
+		{
 			if (!has_value) {
 				// Nothing to destroy.
 				return;
@@ -76,6 +77,7 @@ namespace Optional {
 			/* Call controlles object destructor. (Case 2)  */
 			auto ptr = std::launder(reinterpret_cast<pointer>(data));
 			std::destroy_at(ptr);
+			has_value = false;
 		}
 
 		inline explicit operator bool() const noexcept {
@@ -124,6 +126,7 @@ namespace Optional {
         {
             if (has_value) {
                 asPointer()->~data_type();
+            	has_value = false;
             }
         }
 

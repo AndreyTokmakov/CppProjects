@@ -1,16 +1,18 @@
-//============================================================================
-// Name        : Optional_Custom.cpp
-// Created on  : 13.08.2020
-// Author      : Tokmakov Andrey
-// Version     : 1.0
-// Copyright   : Your copyright notice
-// Description : Optinal custom src
-//============================================================================
+/**============================================================================
+Name        : Optional.cpp
+Created on  : 13.08.2020
+Author      : Andrei Tokmakov
+Version     : 1.0
+Copyright   : Your copyright notice
+Description : Optional (custom implementation) src
+============================================================================**/
 
 #include <optional>
 
 #include "../Utilities/Integer.h"
+
 #include "Optional.h"
+#include "OptionalEx.hpp"
 
 namespace Optional {
 
@@ -98,13 +100,31 @@ namespace Optional {
 	}
 };
 
+namespace OptionalEx_Tests
+{
+	void tests()
+	{
+		{
+			OptionalEx <int> opt {1};
+			std::cout << *opt << std::endl;
+		}
+		{
+			OptionalEx <int> opt;
+			opt.emplace(2);
+			std::cout << *opt << std::endl;
+		}
+	}
+}
+
 
 void Optional::TEST_ALL() {
 
 	// Create();
 	// Create_Null();
 
-	Bool_Operator();
+	// Bool_Operator();
 
 	// Assignment();
+
+	OptionalEx_Tests::tests();
 };

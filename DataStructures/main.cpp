@@ -82,7 +82,7 @@ int main([[maybe_unused]] int argc,
 	// LRUCache::TEST_ALL();
     // ObjectPool::TestAll();
     // ObjectPool_Growing::TestAll();
-    // Optional::TEST_ALL();
+    Optional::TEST_ALL();
     // Expected::TestAll();
     // PriorityList::TEST_ALL();
     // RAII_CommitWrapper::Test();
@@ -93,7 +93,7 @@ int main([[maybe_unused]] int argc,
     // MinHeap::TestAll();
     // Invoker::TestAll();
     // HeapWithComparator::TestAll();
-    CompressedPair::TestAll();
+    // CompressedPair::TestAll();
 
     // CircularBuffers::TEST_ALL();
     // RingBuffer::TestAll();
