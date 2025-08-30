@@ -34,6 +34,11 @@ namespace
     };
 }
 
+
+// TODO:
+//  1. Logger ?
+//  2. Keep some alive session in Table (avoid re-creation)
+
 void AsynchTcpService::TestAll()
 {
     Processor processor;

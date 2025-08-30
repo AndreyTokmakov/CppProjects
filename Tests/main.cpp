@@ -1720,8 +1720,10 @@ int main([[maybe_unused]] const int argc,
     // Memory::TestAll();
     // MaxStack::TestAll();
     // UniquePtr_Size::SizeTest();
-    // ObjectOrientedExperiments::OOP_Experiments::TestAll();
+
+    ObjectOrientedExperiments::OOP_Experiments::TestAll();
     // ObjectOrientedExperiments::VirtualTables::TestAll();
+
     // PointsAndLines::TestAll();           // Geometry
     // Strings::TestAll();
     // Performance::TestAll();

@@ -1416,6 +1416,8 @@ namespace ObjectOrientedProgramming::Override_Test {
 
     class Base {
     public:
+        virtual ~Base() = default;
+
         virtual void info_bad() const noexcept {
             std::cout << "Base::info_bad()\n";
         }
@@ -1425,13 +1427,13 @@ namespace ObjectOrientedProgramming::Override_Test {
         }
     };
 
-    class Derived: public Base {
+    class Derived final : public Base {
     public:
-        virtual void info_bad() noexcept {
+        void info_bad() noexcept {
             std::cout << "Derived::info_bad()\n";
         }
 
-        virtual void info_good() const noexcept override {
+        void info_good() const noexcept override {
             std::cout << "Derived::info_good()\n";
         }
     };
@@ -1454,12 +1456,12 @@ namespace ObjectOrientedProgramming::Classes_Structs_Sizeof_Tests {
     };
 
     class Foo {
-        int i;
+        int i = 0;
         char a;
     };
 
     class ClassWithStaticVariable {
-        int i;
+        int i = 0;
         static int stat;
     };
 
@@ -1476,15 +1478,15 @@ namespace ObjectOrientedProgramming::Classes_Structs_Sizeof_Tests {
 #pragma pack(push, 1)
     class Base_WithCharPrt {
     private:
-        int value;
-        char* prt;
+        int value = 0;
+        char*prt = nullptr;
     };
 #pragma pack(pop)
 
 #pragma pack(push, 1)
     class Base_WithFunc {
     private:
-        int value;
+        int value = 0;
     public:
         void Func() { std::cout << __FUNCTION__ << std::endl; }
     };
@@ -1493,7 +1495,7 @@ namespace ObjectOrientedProgramming::Classes_Structs_Sizeof_Tests {
 #pragma pack(push, 1)
     class Base_WithVirtFunc {
     private:
-        int value;
+        int value = 0;
     public:
         virtual void Func() { std::cout << __FUNCTION__ << std::endl; }
     };
@@ -1507,7 +1509,7 @@ namespace ObjectOrientedProgramming::Classes_Structs_Sizeof_Tests {
 #pragma pack(push, 1)
     class Base_WithVirtFunc2 {
     private:
-        int value;
+        int value = 0;
     public:
         virtual void Func1() { std::cout << __FUNCTION__ << std::endl; }
         virtual void Func2() { std::cout << __FUNCTION__ << std::endl; }
@@ -1519,7 +1521,7 @@ namespace ObjectOrientedProgramming::Classes_Structs_Sizeof_Tests {
 #pragma pack(push, 1)
     class DerivedClass : public FooAligned {
     private:
-        int value;
+        int value = 0;
     };
 #pragma pack(pop)
 
@@ -2824,7 +2826,7 @@ namespace ObjectOrientedProgramming::Covariant_Return_Type
             }
         };
 
-        struct DefaultWindow: public Window
+        struct DefaultWindow final : public Window
         {
             std::unique_ptr<BaseWindow> clone() override {
                 return std::make_unique<DefaultWindow>(*this);
@@ -2836,7 +2838,7 @@ namespace ObjectOrientedProgramming::Covariant_Return_Type
             }
         };
 
-        struct FancyWindow: public Window
+        struct FancyWindow final : public Window
         {
             std::unique_ptr<BaseWindow> clone() override {
                 return std::make_unique<FancyWindow>(*this);
@@ -2940,7 +2942,7 @@ namespace ObjectOrientedProgramming::Covariant_Return_Type
         virtual ~Base() = default;
     };
 
-    struct Derived : Base {
+    struct Derived final : Base {
         void info() const noexcept override {
             std::cout << "Derived::info()\n";
         }
@@ -2948,12 +2950,14 @@ namespace ObjectOrientedProgramming::Covariant_Return_Type
 
     struct Parent
     {
+        virtual ~Parent() = default;
+
         virtual std::unique_ptr<Base> make() {
             return std::make_unique<Base>();
         }
     };
 
-    struct Child : Parent
+    struct Child final : Parent
     {
         std::unique_ptr<Base> make() override {
             return std::make_unique<Derived>();
@@ -2972,32 +2976,31 @@ namespace ObjectOrientedProgramming::Covariant_Return_Type
 namespace ObjectOrientedProgramming::ConstructorInitializationLists
 {
 
-    class SomeClassBad {
-    private:
-        Integer value;
+    class SomeClassBad
+    {
+        Integer value { 0 };
 
     public:
-        SomeClassBad(int v) {
+        explicit SomeClassBad(const int v) {
             value = v;
         }
     };
 
-    class SomeClassGood {
-    private:
-        Integer value;
+    class SomeClassGood
+    {
+        Integer value { 0 };
 
     public:
-        SomeClassGood(int v): value{v} {
+        explicit SomeClassGood(const int v): value{v} {
         }
     };
 
 
     class SomeClassGood1 {
-    private:
-        Integer value;
+        Integer value { 0 };
 
     public:
-        SomeClassGood1(int v) : value(v) {
+        explicit SomeClassGood1(const int v) : value(v) {
         }
     };
 
@@ -3018,22 +3021,20 @@ namespace ObjectOrientedProgramming::ConstructorInitializationLists
 
     //----------------------------------------------------------------------------------//
 
-    class Base {
-    private:
-        int value;
+    class Base
+    {
         std::string name;
+        int value { 0 };
 
     public:
-        Base(): Base("", -1) {
-        }
-        Base(const std::string& n, int v) : name(n), value(v) {
-        }
+        Base(): Base("", -1) {}
+        Base(std::string  n, const int v) : name(std::move(n)), value(v) {}
         virtual ~Base() = default;
     };
 
 
-    class Derived : public Base {
-    private:
+    class Derived final : public Base
+    {
         const int const_value = 1;
         unsigned long& ref_value;
 

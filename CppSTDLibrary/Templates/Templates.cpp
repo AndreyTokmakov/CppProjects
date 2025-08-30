@@ -24,11 +24,7 @@ Description : Templates src
 #include "ConditionalExplicit.h"
 
 #include "Templates.h"
-#include "FoldExpressions.h"
 #include "NTTP.h"
-#include "TemplateSpecialization.h"
-#include "PackIndexing.h"
-#include "SFINAE.h"
 
 namespace
 {
@@ -1453,6 +1449,36 @@ namespace Templates::Templated_Templates
         with_list.push(6);
     }
 }
+
+
+
+namespace Templates::TemplateClass_StaticMethodCall
+{
+    template<typename T>
+    struct Other
+    {
+        template<typename U>
+        static void staticMethod() {
+            std::cout << "Other::staticMethod()" << std::endl;
+        }
+    };
+
+
+    template<typename T>
+    void Test()
+    {
+        Other<T>::template staticMethod<T>();
+    }
+
+    void StaticMethodTest()
+    {
+        Test<int>();
+        Test<std::string>();
+    }
+}
+
+
+
 void Templates::TestAll()
 {
     // FoldExpressions::TestAll();
@@ -1481,6 +1507,7 @@ void Templates::TestAll()
     // Conditional::SimpleTest();
     // Conditional::Condition_Ref_vs_NonRef();
 
+    TemplateClass_StaticMethodCall::StaticMethodTest();
 
     // Methods::SimpleTemplate();
     // Methods::SimpleTemplate_DefaultType();
