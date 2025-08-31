@@ -14,7 +14,7 @@ Description : GetClassName_CompileTime.cpp
 struct MyStruct
 {
     [[nodiscard]]
-    static constexpr std::string_view getClassName() noexcept
+    static consteval std::string_view getClassName() noexcept
     {
         constexpr std::string_view name { __PRETTY_FUNCTION__ };
         constexpr auto end = name.find_last_of(':');

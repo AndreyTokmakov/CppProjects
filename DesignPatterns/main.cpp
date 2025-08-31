@@ -55,6 +55,7 @@ Description : Software design patterns C++ test project
 #include "DependencyInjection/DependencyInjection.h"
 #include "TypeID/TypeID.h"
 #include "FactoryClasses/FactoryClasses.h"
+#include "FactoryMethod_TypeSequence/FactoryMethod_TypeSequence.hpp"
 
 
 int main([[maybe_unused]]  int argc,
@@ -65,6 +66,7 @@ int main([[maybe_unused]]  int argc,
     // Builder::TestAll();
     // FabricMethod::TestAll();
     // FactoryClasses::TestAll();
+    FactoryMethod_TypeSequence::TestAll();
     // Prototype::TestAll();
     // Singleton::TestAll();;
     // Multiton::TestAll();;
@@ -94,7 +96,7 @@ int main([[maybe_unused]]  int argc,
     // Command::TestAll();
     // Iterator::Test();
     // Interpreter::Test();
-    Mediator::TestAll();
+    // Mediator::TestAll();
     // Memento::TestAll();
     // Observer::TestAll();
     // State::TestAll();
