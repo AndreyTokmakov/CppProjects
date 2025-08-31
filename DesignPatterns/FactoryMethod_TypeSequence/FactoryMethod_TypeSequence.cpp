@@ -124,6 +124,8 @@ namespace
 }
 
 
+// https://biowpn.github.io/bioweapon/2023/10/05/type-sequence-factory-pattern.html
+
 void FactoryMethod_TypeSequence::TestAll()
 {
     constexpr std::string_view name = "Stegosaurus";
