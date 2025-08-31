@@ -24,12 +24,12 @@ Description : Cpp STD lib
 #include "Concepts/Concepts.h"
 #include "ContextControl/ContextControl.h"
 #include "ConsoleInOut/ConsoleInOut.h"
-#include "CompileTime_Constexpr/ConstConstexprMutable.h"
-#include "CompileTime_Constexpr/CompileTimeProgramming.h"
+#include "CompileTime_Constexpr/ConstConstexprMutable.hpp"
+#include "CompileTime_Constexpr/CompileTimeProgramming.hpp"
 #include "RVO_CopyElision/CopyElision.h"
 #include "RVO_CopyElision/RVO_FailureCases.h"
 #include "Comparators/Comparators.h"
-#include "CompileTime_Constexpr/Constexpr.h"
+#include "CompileTime_Constexpr/Constexpr.hpp"
 #include "CTAD/ClassTemplateArgumentDeduction.h"
 #include "DeducingThis/DeducingThis.h"
 #include "Format/Format.h"
@@ -117,7 +117,7 @@ int main([[maybe_unused]] int argc,
     // Concepts::TestAll();
     // ConsoleInOut::TestAll();
     // ConstConstexprMutable::TestAll();
-    // CompileTimeProgramming::TestAll();
+    CompileTimeProgramming::TestAll();
     // Constexpr::TestAll();
     // CopyElision::TestAll();
     // DeducingThis::TestAll();
@@ -171,7 +171,7 @@ int main([[maybe_unused]] int argc,
     // Stacktrace::TestAll();
     // SourceLocation::TestAll();
     // SharedPtr_Tests::TestAll();
-    Variant::TestAll();
+    // Variant::TestAll();
     // VolatileTests::TestAll();
     // TypeTraits::TestAll();
     // Types::Tests();

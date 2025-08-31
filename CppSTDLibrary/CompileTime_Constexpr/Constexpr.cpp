@@ -7,7 +7,7 @@ Copyright   : Your copyright notice
 Description : Constexpr.h
 ============================================================================**/
 
-#include "Constexpr.h"
+#include "Constexpr.hpp"
 
 #include <iostream>
 #include <string>
@@ -304,6 +304,7 @@ namespace Constexpr::Exceptions
     		std::cout << e.what(); // "Oops"
     	}
 
+    	[[maybe_unused]]
     	constexpr int y = might_throw(false); // Ок, y == 42
 
 

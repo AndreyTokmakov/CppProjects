@@ -30,7 +30,8 @@ add_executable(${PROJECT_NAME}
 		Utilities/Decay.cpp
 		CompileTime_Constexpr/ConstConstexprMutable.cpp
 		CompileTime_Constexpr/CompileTimeProgramming.cpp
-		CompileTime_Constexpr/Constexpr.cpp
+        CompileTime_Constexpr/Constexpr.cpp
+		CompileTime_Constexpr/GetClassName_CompileTime.cpp
 		EnumTests/EnumTests.cpp
 		Embed/BinaryResourceInclusion.cpp
 		Exceptions/Exceptions.cpp
@@ -123,8 +124,8 @@ add_executable(${PROJECT_NAME}
 		ContextControl/ContextControl.cpp
 		Helpers/Integer.cpp
 		Helpers/Integer.h
-		CompileTime_Constexpr/Constexpr.cpp
-		CompileTime_Constexpr/Constexpr.h
+        CompileTime_Constexpr/Constexpr.cpp
+		CompileTime_Constexpr/Constexpr.hpp
 		Memory/ObjectPool_Stack_FixedSize.cpp
 		Memory/ObjectPool_Stack_FixedSize.h
 		Utilities/Invoke.cpp

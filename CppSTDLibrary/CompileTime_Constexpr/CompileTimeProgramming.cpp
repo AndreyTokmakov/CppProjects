@@ -7,7 +7,8 @@ Copyright   : Your copyright notice
 Description : CompileTimeProgramming.cpp
 ============================================================================**/
 
-#include "CompileTimeProgramming.h"
+#include "CompileTimeProgramming.hpp"
+#include "GetClassName_CompileTime.hpp"
 
 #include <iostream>
 #include <algorithm>
@@ -110,7 +111,7 @@ namespace StringCompileTimeValidation
 
 void CompileTimeProgramming::TestAll()
 {
-    Factorial();
-
-    StringCompileTimeValidation::compileTimeValidation();
+    // Factorial();
+    // StringCompileTimeValidation::compileTimeValidation();
+    GetClassName_CompileTime::TestAll();
 }
