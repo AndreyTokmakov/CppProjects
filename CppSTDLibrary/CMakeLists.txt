@@ -99,6 +99,7 @@ add_executable(${PROJECT_NAME}
 		Utilities/Bind.cpp
 		Utilities/CompilerVersion.cpp
 		Variant/Variant.cpp
+		Variant/Matcher_Visitor.cpp
 		WeakPtr/WeakPtr.cpp
 		WeakPtr/WeakPtr_MakeShared.cpp
         Volatile/VolatileTests.cpp

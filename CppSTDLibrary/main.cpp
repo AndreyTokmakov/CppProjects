@@ -117,7 +117,7 @@ int main([[maybe_unused]] int argc,
     // Concepts::TestAll();
     // ConsoleInOut::TestAll();
     // ConstConstexprMutable::TestAll();
-    CompileTimeProgramming::TestAll();
+    // CompileTimeProgramming::TestAll();
     // Constexpr::TestAll();
     // CopyElision::TestAll();
     // DeducingThis::TestAll();
@@ -171,7 +171,7 @@ int main([[maybe_unused]] int argc,
     // Stacktrace::TestAll();
     // SourceLocation::TestAll();
     // SharedPtr_Tests::TestAll();
-    // Variant::TestAll();
+    Variant::TestAll();
     // VolatileTests::TestAll();
     // TypeTraits::TestAll();
     // Types::Tests();

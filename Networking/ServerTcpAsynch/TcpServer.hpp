@@ -225,7 +225,7 @@ namespace tcp_server_asynch
                             if (SOCKET_ERROR == bytes) {
                                 Error("send() failed");
                             } else {
-                                debug(bytes, "bytes send");
+                                // debug(bytes, "bytes send");
                             }
 
                             session.response.clear();

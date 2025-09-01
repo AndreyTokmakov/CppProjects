@@ -9,6 +9,7 @@
 #include <memory>
 
 #include "Variant.h"
+#include "Matcher_Visitor.hpp"
 #include "../Helpers/Helpers.h"
 
 namespace Variant {
@@ -1214,6 +1215,9 @@ namespace Variant::Heterogeneous_Message_Handler
 
 void Variant::TestAll()
 {
+	Matcher_Visitor::TestAll();
+
+
 	// Variant_Tests::VariantCreate_Tests();
 
 	// Variant_Vector();
@@ -1245,7 +1249,7 @@ void Variant::TestAll()
 	// ExceptionSafetyTest();
 	// ErrorHandlingTest();
 
-	Heterogeneous_Message_Handler::Test();
+	// Heterogeneous_Message_Handler::Test();
 
 	// VisitTests::Simple_Visit_0();
 	// VisitTests::Simple_Visit();

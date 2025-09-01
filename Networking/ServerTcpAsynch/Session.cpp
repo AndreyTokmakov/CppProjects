@@ -35,7 +35,7 @@ namespace common
     Session::Session(const Socket socket, const State state):
             socket { socket }, state { state }
     {
-        std::cout << "Session(" << socket << ") created\n";
+        // std::cout << "Session(" << socket << ") created\n";
     }
 
     void Session::Close(const State finalState)
