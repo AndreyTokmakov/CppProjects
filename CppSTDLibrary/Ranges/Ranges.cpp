@@ -1110,6 +1110,28 @@ namespace Ranges::Join
     }
 }
 
+namespace Ranges::Map_to_Vector_of_Values
+{
+    template<class KeyType, class ValueType>
+    std::vector<ValueType> getValues(const std::map<KeyType, ValueType>& map)
+    {
+        return map | std::views::values | std::ranges::to<std::vector>();
+    }
+
+    void collectValues()
+    {
+        const auto map = std::map<int, std::string>
+{
+            { 24, "Hello" },
+            { 42, "World" }
+        };
+
+        for (auto&& value : getValues(map))
+            std::println("{}", value);
+    }
+}
+
+
 void Ranges::TestAll()
 {
     // For_Each();
@@ -1123,13 +1145,15 @@ void Ranges::TestAll()
 
     // View_DropWhile();
 
+    Map_to_Vector_of_Values::collectValues();
+
     // Join::Join();
     // Join::Join_View();
     // Join::Join_With_1();
     // Join::Join_With_2();
     // Join::oldStyle();
     // Join::rangeJoinStyle();
-    Join::Join_Get_ClassParameters();
+    // Join::Join_Get_ClassParameters();
 
     // Concat_1();
 
