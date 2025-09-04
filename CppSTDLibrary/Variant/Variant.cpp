@@ -12,8 +12,8 @@
 #include "Matcher_Visitor.hpp"
 #include "../Helpers/Helpers.h"
 
-namespace Variant {
-
+namespace Variant
+{
 	struct SampleVisitor {
 		void operator()(int i) const {
 			std::cout << "int: " << i << "\n";
@@ -160,8 +160,8 @@ namespace Variant {
 		w = std::get<0>(v); // same effect as the previous line
 		w = v; // same effect as the previous line
 
-	//  std::get<double>(v); // error: no double in [int, float]
-	//  std::get<3>(v);      // error: valid index values are 0 and 1
+		//  std::get<double>(v); // error: no double in [int, float]
+		//  std::get<3>(v);      // error: valid index values are 0 and 1
 
 		try { // w contains int, not float: will throw
 			[[maybe_unused]]
@@ -446,18 +446,7 @@ namespace Variant {
 		int i;
 	};
 
-	void Monostate_Variant_Tests() {
 
-		// Without the monostate type this declaration will fail.
-		// This is because S is not default-constructible.
-		std::variant<std::monostate, S> var;
-
-		// var.index() is now 0 - the first element
-		// std::get<S> will throw! We need to assign a value
-		var = 12;
-
-		std::cout << std::get<S>(var).i << '\n';
-	}
 
 	void Variant_Test_Visit()
 	{
@@ -503,7 +492,65 @@ namespace Variant {
 		intFloatString = 10.0f;
 		std::visit(SampleVisitor{}, intFloatString);
 	}
+}
 
+namespace Variant::Monostate
+{
+	void Basic_Tests()
+	{
+		// Without the monostate type this declaration will fail.
+		// This is because S is not default-constructible.
+		std::variant<std::monostate, S> var;
+
+		// var.index() is now 0 - the first element
+		// std::get<S> will throw! We need to assign a value
+		var = 12;
+
+		std::cout << std::get<S>(var).i << '\n';
+	}
+
+	struct Expensive
+	{
+		Expensive() {
+			std::cout << "Constructor" << std::endl;
+		}
+
+		Expensive(Expensive&&) noexcept {
+			std::cout << "Move" << std::endl;
+		}
+
+		Expensive(const Expensive&) {
+			std::cout << "Copy" << std::endl;
+		}
+	};
+
+	void Emplace_into_Vector_Variants()
+	{
+		using Types = std::variant<std::monostate,Expensive>;
+
+		std::vector<Types> ts;
+		ts.reserve(2);
+
+		std::cout << std::string(100, '-') << std::endl;
+
+		ts.emplace_back(Expensive{});
+
+		std::cout << std::string(100, '-') << std::endl;
+
+		ts.emplace_back(std::monostate{});
+		ts.back().emplace<Expensive>();
+
+		// ----------------------------------------------------------------------------------------------------
+		// Constructor
+		// Move
+		// ----------------------------------------------------------------------------------------------------
+		// Constructor
+	}
+}
+
+
+namespace Variant
+{
 	void Variant_Test_Visit_1()
 	{
 		// a generic lambda:
@@ -1087,9 +1134,11 @@ namespace Variant::DynamicPolymorphism
     }
 }
 
-namespace Variant::Experiments {
+namespace Variant::Experiments
+{
 
-	void Map_Variant_Keys() {
+	void Map_Variant_Keys()
+	{
 		using Key = std::variant<int, std::string>;
 		using Value = std::string;
 
@@ -1215,7 +1264,7 @@ namespace Variant::Heterogeneous_Message_Handler
 
 void Variant::TestAll()
 {
-	Matcher_Visitor::TestAll();
+	// Matcher_Visitor::TestAll();
 
 
 	// Variant_Tests::VariantCreate_Tests();
@@ -1236,7 +1285,8 @@ void Variant::TestAll()
 	// VariantInit3();
 	// Creation_Monostate_Test();
 
-	// Monostate_Variant_Tests();
+	// Monostate::Basic_Tests();
+	Monostate::Emplace_into_Vector_Variants();
 
 	// ChangingValues();
 	 
