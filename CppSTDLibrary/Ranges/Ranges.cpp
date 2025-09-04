@@ -37,6 +37,9 @@ Description :  C++ Ranges
 #include <format>
 #include <print>
 
+#include "../../../third_party/cryptopp/integer.h"
+#include "../Helpers/Wrapper.h"
+
 namespace
 {
     /*
@@ -244,7 +247,8 @@ namespace Ranges
     }
 }
 
-namespace Ranges::Filters {
+namespace Ranges::Filters
+{
 
     template<typename T, size_t L>
     consteval std::array<T, L> build_array() {
@@ -265,11 +269,12 @@ namespace Ranges::Filters {
         std::ranges::for_each(rng, [](const auto& v) { std::cout << v << ' '; });
         std::cout << '\n';
     }
+}
 
-    //----------------------------------------------------------------------------//
-
-
-    void Filter_Numbers() {
+namespace Ranges::Filters
+{
+    void Filter_Numbers()
+    {
         constexpr std::array<int, 6> numbers { 0, 1, 2, 3, 4, 5 };
         auto even = [](int i) { return 0 == i % 2; };
 
@@ -279,7 +284,8 @@ namespace Ranges::Filters {
         std::cout << "\n";
     }
 
-    void Filter_Numbers_2() {
+    void Filter_Numbers_2()
+    {
         constexpr std::array<int, 10> numbers = build_array<int, 10>();
         auto evens = numbers | std::ranges::views::filter([](int v) -> bool { return 0 == v % 2; });
         std::ranges::for_each(evens, [](auto v) { std::cout << v << ' '; });
@@ -302,6 +308,40 @@ namespace Ranges::Filters {
 
         auto evens = numbers | std::ranges::views::filter([](int v) -> bool { return 0 == v % 2; });
         print_range(evens);
+    }
+}
+
+namespace Ranges::Filters
+{
+    template<typename T, typename Pred>
+    void process_range(std::ranges::filter_view<T, Pred> range)
+    {
+        std::cout << std::string(80, '-') << '\n';
+        std::ranges::for_each(range, [](const auto& v) {
+            std::cout << v << std::endl;
+        });
+        std::cout << std::string(80, '-') << '\n';
+    }
+
+    void Pass_Range_to_the_Function__Predicate()
+    {
+        using Helpers::Integer;
+
+        const std::vector<Integer> numbers = [] {
+            std::vector<Integer> tmp;
+            tmp.reserve(10);
+            for (int i = 0; i < 10; ++i)
+                tmp.emplace_back(i);
+            return tmp;
+        }();
+
+        auto is_even = [](const Integer& integer) -> bool {
+            std::cout << "calling is_even(" << integer.value << ")\n";
+            return false == (integer.value & 1);
+        };
+
+        std::ranges::filter_view evens = numbers | std::ranges::views::filter(is_even);
+        process_range(evens);
     }
 }
 
@@ -1145,7 +1185,7 @@ void Ranges::TestAll()
 
     // View_DropWhile();
 
-    Map_to_Vector_of_Values::collectValues();
+    // Map_to_Vector_of_Values::collectValues();
 
     // Join::Join();
     // Join::Join_View();
@@ -1185,6 +1225,7 @@ void Ranges::TestAll()
     // Filters::Filter_Numbers_2();
     // Filters::Filter_ForEach();
     // Filters::PrintRange();
+    Filters::Pass_Range_to_the_Function__Predicate();
 
     // Transform::Transform_Filter();
     // Transform::Transform_Filter_2();
