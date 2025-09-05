@@ -1649,10 +1649,6 @@ namespace FibonacciSequence_Lambda
 
 
 
-struct Obj
-{
-    int value { 0 };
-};
 
 
 
@@ -1665,6 +1661,7 @@ int main([[maybe_unused]] const int argc,
     // Cpp_NEW_Features::TestAll();
     // Execution::TestAll();
     // Coroutines::TestAll();
+
 
 
 
@@ -1721,7 +1718,7 @@ int main([[maybe_unused]] const int argc,
     // MaxStack::TestAll();
     // UniquePtr_Size::SizeTest();
 
-    ObjectOrientedExperiments::OOP_Experiments::TestAll();
+    // ObjectOrientedExperiments::OOP_Experiments::TestAll();
     // ObjectOrientedExperiments::VirtualTables::TestAll();
 
     // PointsAndLines::TestAll();           // Geometry

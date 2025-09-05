@@ -7,7 +7,7 @@ Copyright   : Your copyright notice
 Description : NTTP.cpp
 ============================================================================**/
 
-#include "NTTP.h"
+#include "NTTP.hpp"
 
 #include <iostream>
 #include <array>

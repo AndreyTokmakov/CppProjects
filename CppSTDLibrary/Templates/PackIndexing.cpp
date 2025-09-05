@@ -7,7 +7,7 @@ Copyright   : Your copyright notice
 Description : PackIndexing.cpp
 ============================================================================**/
 
-#include "PackIndexing.h"
+#include "PackIndexing.hpp"
 
 namespace PackIndexing
 {

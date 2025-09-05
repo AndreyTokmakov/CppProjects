@@ -46,6 +46,7 @@ add_executable(${PROJECT_NAME}
 		BinaryTree/BinaryTree.cpp
 		ThreadPoolLimited/ThreadPoolLimited.cpp
 		Trie/Trie.cpp
+		TypeListChecker/TypeListChecker.cpp
 		Utilities/Long.cpp
         TwoSidedVector/TwoSidedVector.cpp
 		MinMaxStack/MinMaxStack.cpp

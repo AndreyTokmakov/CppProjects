@@ -21,10 +21,12 @@ Description : Templates src
 // #include <format>
 
 #include "../Helpers/Integer.h"
-#include "ConditionalExplicit.h"
+#include "ConditionalExplicit.hpp"
 
-#include "Templates.h"
-#include "NTTP.h"
+#include "Templates.hpp"
+#include "TypeListChecker.hpp"
+#include "FoldExpressions.hpp"
+#include "NTTP.hpp"
 
 namespace
 {
@@ -1481,8 +1483,9 @@ namespace Templates::TemplateClass_StaticMethodCall
 
 void Templates::TestAll()
 {
+    TypeListChecker::TestAll();
     // FoldExpressions::TestAll();
-    NTTP::TestAll();
+    // NTTP::TestAll();
     // SFINAE::TestAll();
     // TemplateSpecialization::TestAll();
     // PackIndexing::TestAll();
@@ -1507,7 +1510,7 @@ void Templates::TestAll()
     // Conditional::SimpleTest();
     // Conditional::Condition_Ref_vs_NonRef();
 
-    TemplateClass_StaticMethodCall::StaticMethodTest();
+    // TemplateClass_StaticMethodCall::StaticMethodTest();
 
     // Methods::SimpleTemplate();
     // Methods::SimpleTemplate_DefaultType();

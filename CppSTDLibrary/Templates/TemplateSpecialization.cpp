@@ -7,7 +7,7 @@ Copyright   : Your copyright notice
 Description : PartialSpecialization.cpp
 ============================================================================**/
 
-#include "TemplateSpecialization.h"
+#include "TemplateSpecialization.hpp"
 
 #include <iostream>
 

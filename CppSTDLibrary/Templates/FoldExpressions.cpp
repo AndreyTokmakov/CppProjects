@@ -7,7 +7,7 @@ Copyright   : Your copyright notice
 Description : FoldExpressions
 ============================================================================**/
 
-#include "FoldExpressions.h"
+#include "FoldExpressions.hpp"
 
 #include <iostream>
 #include <vector>

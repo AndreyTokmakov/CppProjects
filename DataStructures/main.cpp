@@ -7,6 +7,7 @@ Copyright   : Your copyright notice
 Description : DataStructures
 ============================================================================**/
 
+#include "../CppSTDLibrary/Templates/TypeListChecker.hpp"
 #include "Array/Array.h"
 #include "BitFlags/BitFlags.h"
 #include "LRUCache/LRUCache.h"
@@ -54,6 +55,7 @@ Description : DataStructures
 #include "ThreadPool/ThreadPool.h"
 #include "ThreadPool/ThreadPoolEx.h"
 #include "Trie/Trie.h"
+#include "TypeListChecker/TypeListChecker.hpp"
 
 
 // TODO:
@@ -105,6 +107,8 @@ int main([[maybe_unused]] int argc,
 
     // Memory::AlignedStackAllocator::TestAll();
     // Memory::CustomStackAllocator::TestAll();
+
+	TypeListChecker::TestAll();
 
     // Memory::Shared_Ptr_Tests();
 

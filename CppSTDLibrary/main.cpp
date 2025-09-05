@@ -90,7 +90,7 @@ Description : Cpp STD lib
 #include "TypeCast/TypeCast.h"
 #include "Metaprogramming/Metaprogramming.h"
 #include "Memory/Memory.h"
-#include "Templates/Templates.h"
+#include "Templates/Templates.hpp"
 #include "Volatile/VolatileTests.h"
 #include "StaticAsserts/StaticAsserts.h"
 
@@ -171,14 +171,14 @@ int main([[maybe_unused]] int argc,
     // Stacktrace::TestAll();
     // SourceLocation::TestAll();
     // SharedPtr_Tests::TestAll();
-    Variant::TestAll();
+    // Variant::TestAll();
     // VolatileTests::TestAll();
     // TypeTraits::TestAll();
     // Types::Tests();
     // Tuple::TestAll();
     // TypeCast::TestAll();
     // Int::TestAll();
-    // Templates::TestAll();
+    Templates::TestAll();
     // Utilities::TestAll();
     // CompilerVersion::TestAll();
     // UniquePtr::TestAll();

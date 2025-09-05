@@ -110,13 +110,16 @@ add_executable(${PROJECT_NAME}
 		Types/Int.cpp
 		NameSpaces/InlineNamespaces.cpp
 		Comparators/Comparators.cpp
-		Templates/Templates.cpp Templates/Templates.h
+
+		Templates/Templates.cpp
 		Templates/ConditionalExplicit.cpp
 		Templates/FoldExpressions.cpp
 		Templates/NTTP.cpp
 		Templates/SFINAE.cpp
 		Templates/PackIndexing.cpp
 		Templates/TemplateSpecialization.cpp
+		Templates/TypeListChecker.cpp
+
 		RVO_CopyElision/CopyElision.cpp
 		RVO_CopyElision/RVO_FailureCases.cpp
 		Overflow/Overflow.cpp

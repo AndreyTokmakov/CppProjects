@@ -7,7 +7,7 @@ Copyright   : Your copyright notice
 Description : SFINAE.cpp
 ============================================================================**/
 
-#include "SFINAE.h"
+#include "SFINAE.hpp"
 
 #include <iostream>
 #include <type_traits>
