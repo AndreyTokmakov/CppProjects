@@ -71,6 +71,7 @@ Description : Cpp STD lib
 #include "String/String.h"
 #include "Span/Span.h"
 #include "Simd/Simd.h"
+#include "ScopeExit_Experimental/ScopeExit.hpp"
 #include "StarshipOperator/StarshipOperator.h"
 #include "StringStream/StringStreamTests.h"
 #include "StringView/StringViewTests.h"
@@ -168,6 +169,7 @@ int main([[maybe_unused]] int argc,
     // StrongTypes::TestAll();
     // Span::TestAll();
     // Simd::TestAll();
+    ScopeExit::TestAll();
     // Stacktrace::TestAll();
     // SourceLocation::TestAll();
     // SharedPtr_Tests::TestAll();
@@ -178,7 +180,7 @@ int main([[maybe_unused]] int argc,
     // Tuple::TestAll();
     // TypeCast::TestAll();
     // Int::TestAll();
-    Templates::TestAll();
+    // Templates::TestAll();
     // Utilities::TestAll();
     // CompilerVersion::TestAll();
     // UniquePtr::TestAll();

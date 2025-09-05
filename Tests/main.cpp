@@ -646,47 +646,6 @@ namespace Maga_Super_IF_Else_Switch_Hack
     }
 }
 
-namespace ScopeExit
-{
-    void delete_backup()
-    {
-         std::cout << "Deleting BackUp\n";
-    }
-
-    void restore_backup()
-    {
-        std::cout << "Deleting Restoring\n";
-    }
-
-    void modify(int value)
-    {
-        if (value < 0) {
-            std::cerr << "Value is negative\n";
-            throw std::runtime_error("Can not write negative value");
-        }
-
-        std::cout << "Success: New value is " << value << std::endl;
-    }
-
-    void updateDatabaseSafe(int value)
-    {
-        std::experimental::scope_exit ok ( [&](){ delete_backup(); } );
-        std::experimental::scope_fail failure ( [&](){ restore_backup(); } );
-
-        modify(value);
-
-        // failure.release();
-        ok.release();
-    }
-
-    void ScopeExit()
-    {
-        updateDatabaseSafe(10);
-        // updateDatabaseSafe(-10);
-    }
-}
-
-
 namespace PermissionsTest
 {
     enum class Permission : uint8_t {
@@ -1657,11 +1616,11 @@ int main([[maybe_unused]] const int argc,
 {
     const std::vector<std::string_view> args(argv + 1, argv + argc);
 
+
     /** * * * * *  Move to lib * * * * * **/
     // Cpp_NEW_Features::TestAll();
     // Execution::TestAll();
     // Coroutines::TestAll();
-
 
 
 
@@ -1687,7 +1646,6 @@ int main([[maybe_unused]] const int argc,
     // MoveExperiments::test_overload();
     // FindMinMaxValues::TestAll();
     // LockFreeQueue::Test();
-    // ScopeExit::ScopeExit();
     // UBBook::Test();
     // PipelineOperator::SimplePipeTest();
     // StringTest_SSO::Tests();

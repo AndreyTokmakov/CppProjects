@@ -111,6 +111,8 @@ add_executable(${PROJECT_NAME}
 		NameSpaces/InlineNamespaces.cpp
 		Comparators/Comparators.cpp
 
+		ScopeExit_Experimental/ScopeExit.cpp
+
 		Templates/Templates.cpp
 		Templates/ConditionalExplicit.cpp
 		Templates/FoldExpressions.cpp
