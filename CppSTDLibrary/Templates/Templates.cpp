@@ -1483,9 +1483,9 @@ namespace Templates::TemplateClass_StaticMethodCall
 
 void Templates::TestAll()
 {
-    TypeListChecker::TestAll();
+    // TypeListChecker::TestAll();
     // FoldExpressions::TestAll();
-    // NTTP::TestAll();
+    NTTP::TestAll();
     // SFINAE::TestAll();
     // TemplateSpecialization::TestAll();
     // PackIndexing::TestAll();

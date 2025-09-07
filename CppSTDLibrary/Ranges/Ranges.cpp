@@ -1158,16 +1158,28 @@ namespace Ranges::Map_to_Vector_of_Values
         return map | std::views::values | std::ranges::to<std::vector>();
     }
 
+    template<class KeyType, class ValueType>
+    std::vector<ValueType> getValues2(const std::map<KeyType, ValueType>& map)
+    {
+        return  std::views::values(map) | std::ranges::to<std::vector>();
+    }
+
     void collectValues()
     {
-        const auto map = std::map<int, std::string>
-{
+        const auto map = std::map<int, std::string> {
             { 24, "Hello" },
             { 42, "World" }
         };
 
-        for (auto&& value : getValues(map))
-            std::println("{}", value);
+        {
+            for (auto&& value : getValues(map))
+                std::println("{}", value);
+        }
+
+        {
+            for (auto&& value : getValues2(map))
+                std::println("{}", value);
+        }
     }
 }
 
@@ -1185,7 +1197,7 @@ void Ranges::TestAll()
 
     // View_DropWhile();
 
-    // Map_to_Vector_of_Values::collectValues();
+    Map_to_Vector_of_Values::collectValues();
 
     // Join::Join();
     // Join::Join_View();
@@ -1225,7 +1237,7 @@ void Ranges::TestAll()
     // Filters::Filter_Numbers_2();
     // Filters::Filter_ForEach();
     // Filters::PrintRange();
-    Filters::Pass_Range_to_the_Function__Predicate();
+    // Filters::Pass_Range_to_the_Function__Predicate();
 
     // Transform::Transform_Filter();
     // Transform::Transform_Filter_2();

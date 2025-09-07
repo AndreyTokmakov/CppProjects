@@ -1,7 +1,7 @@
 /**============================================================================
 Name        : main.cpp
 Created on  : 09.08.2024
-Author      : Tokmakov Andrey
+Author      : Andrei Tokmakov
 Version     : 1.0
 Copyright   : Your copyright notice
 Description : DataStructures
@@ -12,7 +12,7 @@ Description : DataStructures
 #include "BitFlags/BitFlags.h"
 #include "LRUCache/LRUCache.h"
 #include "TTLCache/TTLCache.h"
-#include "Function/Function.h"
+#include "Function/Function.hpp"
 #include "ExecutorAdapter/ExecutorAdapter.h"
 #include "ExecutorAdapter2/ExecutorAdapter2.h"
 #include "HashTable/HashTable.h"
@@ -77,7 +77,7 @@ int main([[maybe_unused]] int argc,
     // ExecutorAdapter::TestAll();
     // ExecutorAdapter2::TestAll();
     // Finalizers::TestAll();
-    // Function::Test();
+    Function::Test();
     // HashTable::TestAll();
     // LinkedLists::TEST_ALL();
     // Logging::TEST_ALL();
@@ -108,7 +108,7 @@ int main([[maybe_unused]] int argc,
     // Memory::AlignedStackAllocator::TestAll();
     // Memory::CustomStackAllocator::TestAll();
 
-	TypeListChecker::TestAll();
+	// TypeListChecker::TestAll();
 
     // Memory::Shared_Ptr_Tests();
 

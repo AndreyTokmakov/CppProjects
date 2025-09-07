@@ -1,13 +1,14 @@
-//============================================================================
-// Name        : Function.cpp
-// Created on  : 07.08.22.
-// Author      : Tokmakov Andrey
-// Version     : 1.0
-// Copyright   : Your copyright notice
-// Description : Function
-//============================================================================
+/**============================================================================
+Name        : Function.cpp
+Created on  : 09.08.2022
+Author      : Andrei Tokmakov
+Version     : 1.0
+Copyright   : Your copyright notice
+Description : Function
+============================================================================**/
 
-#include "Function.h"
+
+#include "Function.hpp"
 
 #include <iostream>
 #include <memory>
@@ -49,7 +50,7 @@ namespace Impl_One
         };
 
         template<typename Callable>
-        struct CallableImpl: public ICallable
+        struct CallableImpl final : public ICallable
         {
             explicit CallableImpl(Callable callable_): callable { std::move(callable_) } {
             }
@@ -93,18 +94,18 @@ namespace Impl_Two
         struct ICallable
         {
             virtual ~ICallable() = default;
-            virtual ReturnType invoke(Args... args) = 0;
+            virtual ReturnType invoke(Args&&... args) = 0;
             //virtual std::unique_ptr<ICallable> clone() const = 0;
         };
 
         template<typename F>
-        struct Model : ICallable
+        struct Model final : ICallable
         {
             F func;
 
             explicit Model(F&& f) : func(std::forward<F>(f)) {}
 
-            ReturnType invoke(Args... args) override {
+            ReturnType invoke(Args&&... args) override {
                 return func(std::forward<Args>(args)...);
             }
 
@@ -157,6 +158,78 @@ namespace Impl_Two
         f(42);
     }
 }
+
+
+#if 0
+namespace Impl_Two_SBO
+{
+    template<typename, size_t = 1024>
+    struct SimpleFunction;
+
+    template<typename R, typename... Args, size_t CAPACITY>
+    struct SimpleFunction<R(Args...), CAPACITY>
+    {
+        template<typename F>
+        SimpleFunction(F&& f)
+        {
+            using DecayedF = std::decay_t<F>;
+
+            // Check that our buffer can fit F at compile time
+            static_assert(sizeof(DecayedF) <= BUF_CAP, "Callable too large for in-place buffer");
+            static_assert(alignof(DecayedF) <= alignof(std::max_align_t), "Alignment mismatch");
+
+            // placement new into our buffer
+            ptr = new (buffer_) DecayedF(std::forward<F>(f));
+
+            deleter = [](void* ptr, Args&&... args) -> R {
+                return (*static_cast<DecayedF*>(ptr))(std::forward<Args>(args)...);
+            };
+
+            deleter = [](void* ptr) {
+                static_cast<DecayedF*>(ptr)->~DecayedF();
+            };
+        }
+
+        ~SimpleFunction() {
+            if (ptr && deleter) {
+                // call destructor
+                deleter(ptr);
+            }
+        }
+
+        // TODO: Implement copy and move operations
+
+        R operator()(Args... args) const {
+            if (!invoker) {
+                throw std::runtime_error("bad function call");
+            }
+            return invoker(ptr, std::forward<Args>(args)...);
+        }
+
+    private:
+        using InvokerFn = R(*)(void*, Args&&...);
+        using DeleterFn = void(*)(void*);
+
+        void* ptr = nullptr;
+        InvokerFn invoker = nullptr;
+        DeleterFn deleter = nullptr;
+
+        static constexpr size_t BUF_CAP = CAPACITY - sizeof(ptr) - sizeof(invoker) - sizeof(deleter);
+        // fixed-size inplace buffer
+        alignas(std::max_align_t) char buffer_[BUF_CAP];
+    };
+
+    void demo()
+    {
+        SimpleFunction<void(int), 100> f = [](const int x) {
+            std::cout << "Lambda: " << x << "\n";
+        };
+
+        f(42);
+    }
+}
+#endif
+
 
 void Function::Test()
 {

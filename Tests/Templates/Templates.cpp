@@ -126,84 +126,7 @@ namespace Templates::FoldExpressions
     }
 }
 
-namespace Templates::FoldExpressions
-{
-    template<typename ...Ts>
-    struct GetFirst{};
 
-    template<typename First, typename ...Rest>
-    struct GetFirst<First, Rest...>{
-        using Type = First;
-    };
-
-    template<typename... Ts>
-    auto make_vector(Ts&&... params) -> decltype(auto)
-    {
-        constexpr size_t size = sizeof...(params);
-        using _Ty = typename GetFirst<Ts...>::Type;
-        std::vector<_Ty> vec {};
-        vec.reserve(size);
-        (vec.emplace_back(std::forward<Ts>(params)), ...);
-        return vec;
-    }
-
-    void GetFirstElementType_CreateVector()
-    {
-        {
-            const auto collection = make_vector(1, 2, 3);
-            std::cout << collection << std::endl;
-        }
-        {
-            const auto collection = make_vector(
-                    std::string {"I"}, std::string {"II"}, std::string {"III"}
-                    );
-            std::cout << collection << std::endl;
-        }
-    }
-}
-
-
-
-namespace Templates::NTTP
-{
-    struct Config
-    {
-        int v{12};
-    };
-
-    template<Config config>
-    struct Task
-    {
-        void submit() {
-            std::cout << config.v << std::endl;
-        }
-    };
-
-    template<auto Func>
-    struct PersonalBudget {
-        double compute(std::uint32_t amt) {
-            return Func(amt);
-        }
-    };
-
-
-
-    void testConfig() {
-        Task<Config{}>().submit();
-    }
-
-    void testPersonalBudget ()
-    {
-        auto savings = [](int amt) -> decltype(auto) {
-            return static_cast<double>(0.75*amt);
-        };
-
-        PersonalBudget<savings> savingsBudget{};
-
-        auto saveResult = savingsBudget.compute(2300);
-        std::cout << "Estimated Savings: " << saveResult << std::endl;
-    }
-}
 
 
 namespace Templates
@@ -590,12 +513,8 @@ void Templates::TestAll()
     // FoldExpressions::PassingFunction_to_ClassTemplateArgument();
     // FoldExpressions::Recursive_Expansion();
     // FoldExpressions::Recursive_Expansion_Two();
-    // FoldExpressions::GetFirstElementType_CreateVector();
 
     FoldExpressions::Concatenate_Arrays();
-
-    // NTTP::testConfig();
-    // NTTP::testPersonalBudget();
 
     // Specialization::Test();
     // Specialization::PrintOperator_TemplateSpecialisation_Ostream();

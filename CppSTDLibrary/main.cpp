@@ -169,7 +169,7 @@ int main([[maybe_unused]] int argc,
     // StrongTypes::TestAll();
     // Span::TestAll();
     // Simd::TestAll();
-    ScopeExit::TestAll();
+    // ScopeExit::TestAll();
     // Stacktrace::TestAll();
     // SourceLocation::TestAll();
     // SharedPtr_Tests::TestAll();
@@ -180,7 +180,7 @@ int main([[maybe_unused]] int argc,
     // Tuple::TestAll();
     // TypeCast::TestAll();
     // Int::TestAll();
-    // Templates::TestAll();
+    Templates::TestAll();
     // Utilities::TestAll();
     // CompilerVersion::TestAll();
     // UniquePtr::TestAll();

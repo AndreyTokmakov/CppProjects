@@ -7,6 +7,7 @@ Copyright   : Your copyright notice
 Description : NTTP.cpp
 ============================================================================**/
 
+// ReSharper disable CppMemberFunctionMayBeStatic
 #include "NTTP.hpp"
 
 #include <iostream>
@@ -41,7 +42,7 @@ namespace NTTP::One
 }
 
 
-namespace NTTP::Two
+namespace NTTP::Function_With_Param
 {
     struct Config
     {
@@ -62,8 +63,59 @@ namespace NTTP::Two
     }
 }
 
+
+namespace NTTP::Type_With_Param
+{
+    struct Config
+    {
+        int min;
+        int max;
+    };
+
+    template<Config config>
+    struct Task
+    {
+        void submit() {
+            std::cout << config.min << " - " << config.max  << std::endl;
+        }
+    };
+
+    void test()
+    {
+        Task<{3, 9}>{}.submit();
+    }
+}
+
+namespace NTTP::Lambda_as_NTTP
+{
+    template<auto Func>
+    struct PersonalBudget {
+        double compute(std::uint32_t amt) {
+            return Func(amt);
+        }
+    };
+
+
+    void test ()
+    {
+        auto savings = [](int amt) -> decltype(auto) {
+            return static_cast<double>(0.75*amt);
+        };
+
+        PersonalBudget<savings> savingsBudget{};
+
+        auto saveResult = savingsBudget.compute(2300);
+        std::cout << "Estimated Savings: " << saveResult << std::endl;
+    }
+}
+
+
+
+
 void NTTP::TestAll()
 {
     // One::ArrayAsTemplateParam();
-    Two::test();
+    // Function_With_Param::test();
+    // Type_With_Param::test();
+    Lambda_as_NTTP::test();
 };
