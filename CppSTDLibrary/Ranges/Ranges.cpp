@@ -1184,6 +1184,40 @@ namespace Ranges::Map_to_Vector_of_Values
 }
 
 
+namespace Ranges::Slide
+{
+    auto print_subrange = [](const std::ranges::viewable_range auto& r)
+    {
+        std::cout << "[ ";
+        for (auto& v : r)
+            std::cout << v << ' ';
+        std::cout << "] ";
+    };
+
+    void Simple_Example()
+    {
+        const std::vector<int> numbers { 1, 2, 3, 4, 5 };
+
+        std::cout << "All sliding windows of width:\n";
+        for (const unsigned width : std::views::iota(1U, 1U + numbers.size()))
+        {
+            const std::ranges::slide_view window_views = numbers | std::views::slide(width);
+            std::cout << "W = " << width << ": ";
+            for (const auto& window : window_views) {
+                print_subrange(window);
+            }
+            std::cout << '\n';
+        }
+
+        // All sliding windows of width:
+        // W = 1: [ 1 ] [ 2 ] [ 3 ] [ 4 ] [ 5 ]
+        // W = 2: [ 1 2 ] [ 2 3 ] [ 3 4 ] [ 4 5 ]
+        // W = 3: [ 1 2 3 ] [ 2 3 4 ] [ 3 4 5 ]
+        // W = 4: [ 1 2 3 4 ] [ 2 3 4 5 ]
+        // W = 5: [ 1 2 3 4 5 ]
+    }
+}
+
 void Ranges::TestAll()
 {
     // For_Each();
@@ -1197,7 +1231,7 @@ void Ranges::TestAll()
 
     // View_DropWhile();
 
-    Map_to_Vector_of_Values::collectValues();
+    // Map_to_Vector_of_Values::collectValues();
 
     // Join::Join();
     // Join::Join_View();
@@ -1215,6 +1249,8 @@ void Ranges::TestAll()
     // Split::Chunk_Processing_Network_Packets();
     // Split::Chunk_By_Dynamic_Grouping();
     // Split::Chunk_By_Extracting_Sentences_from_Text();
+
+    Slide::Simple_Example();
 
     // Views::Zip();
     // Views::Repeat();
