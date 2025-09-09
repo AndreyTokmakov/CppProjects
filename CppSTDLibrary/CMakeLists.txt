@@ -3,7 +3,7 @@ project(CppSTDLibrary)
 
 set(CMAKE_CXX_STANDARD 26)
 # add_compile_options(-c -Wall -Wextra -O3 -std=c++26)
-add_compile_options(-c -Wall -O3 -std=c++26)
+add_compile_options(-c -std=c++26 -Wall -O3 -fcontracts)
 
 add_executable(${PROJECT_NAME}
         main.cpp
@@ -23,6 +23,7 @@ add_executable(${PROJECT_NAME}
 		Chrono/Chrono.cpp
 		Chrono/TimeZones.cpp
 		Concepts/Concepts.cpp
+		Contracts/Contracts.cpp
 		CTAD/ClassTemplateArgumentDeduction.cpp
 		ConsoleInOut/ConsoleInOut.cpp
 		DateAndTime/DateAndTime.cpp

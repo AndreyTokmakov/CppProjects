@@ -29,6 +29,7 @@ Description : Cpp STD lib
 #include "RVO_CopyElision/CopyElision.h"
 #include "RVO_CopyElision/RVO_FailureCases.h"
 #include "Comparators/Comparators.h"
+#include "Contracts/Contracts.hpp"
 #include "CompileTime_Constexpr/Constexpr.hpp"
 #include "CTAD/ClassTemplateArgumentDeduction.h"
 #include "DeducingThis/DeducingThis.h"
@@ -116,6 +117,7 @@ int main([[maybe_unused]] int argc,
     // ContextControl::TestAll();
     // Comparators::TestAll();
     // Concepts::TestAll();
+    Contracts::TestAll();
     // ConsoleInOut::TestAll();
     // ConstConstexprMutable::TestAll();
     // CompileTimeProgramming::TestAll();
@@ -158,7 +160,7 @@ int main([[maybe_unused]] int argc,
     // PolymorphicMemoryResources::TestAll();
     // Print::TestAll();
     // Random::TestAll();
-    Ranges::TestAll();
+    // Ranges::TestAll();
     // ReferenceWrapper::TestAll();
     // StarshipOperator::TestAll();
     // Streams::TestAll();
