@@ -16,6 +16,7 @@ Description : Contracts.cpp
 #include <vector>
 #include <string>
 #include <ranges>
+#include <atomic>
 
 namespace
 {
@@ -211,6 +212,7 @@ namespace Contracts::Class_Methods
     }
 }
 
+
 void Contracts::TestAll()
 {
     // Divide_Test();
@@ -218,5 +220,5 @@ void Contracts::TestAll()
 
     // Class_Methods::Test();
     // Class_Methods::Test2();
-    Class_Methods::Test3();
+    // Class_Methods::Test3();
 }
