@@ -29,6 +29,8 @@ Description : Tests C++ project
 #include <chrono>
 #include <random>
 #include <iomanip>
+#include <memory>
+
 
 #include <concepts>
 #include <version>
@@ -1607,6 +1609,37 @@ namespace FibonacciSequence_Lambda
 }
 
 
+namespace demo
+{
+    void test(int x)
+    {
+        [[assume(x > 0)]]; // Compiler may assume x is positive
+
+    }
+
+    struct Header
+    {
+        int version { 0 };
+        int protocol { 0 };
+    };
+
+    void start_lifetime_as_test()
+    {
+        const std::array<uint8_t, sizeof(Header)> bytes = [] {
+            std::array<uint8_t, sizeof(Header)> tmp {};
+            constexpr Header header { .version = 1, .protocol = 2 };
+            memcpy(tmp.data(), &header, sizeof(header));
+            return tmp;
+        } ();
+
+        // Header* header = std::start_lifetime_as<Header>(bytes.data());
+
+        const Header* header = reinterpret_cast<const Header*>(bytes.data());
+        std::cout << header->version << ", " << header->protocol << std::endl;
+    }
+}
+
+
 int main([[maybe_unused]] const int argc,
          [[maybe_unused]] char** argv)
 {
@@ -1617,6 +1650,9 @@ int main([[maybe_unused]] const int argc,
     // Cpp_NEW_Features::TestAll();
     // Execution::TestAll();
     // Coroutines::TestAll();
+
+
+    demo::start_lifetime_as_test();
 
 
 
@@ -1649,7 +1685,7 @@ int main([[maybe_unused]] const int argc,
     // BitwiseOperations::test();
     // BinaryAnalyzer::TestAll();
     // BitFlags::TestAll();
-    BinManipulation::TestAll();
+    // BinManipulation::TestAll();
 
     // Concepts::TestAll();
     // LockFreeQueueTest::Test();
