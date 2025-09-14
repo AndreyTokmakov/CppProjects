@@ -21,20 +21,21 @@
 
 namespace BitUtils
 {
+    constexpr u_int8_t CHAR_BIT { 8 };
 
     template<typename T>
     void show_bits(T x)
     {
         std::cout << x << "  ===>  ";
-        for (int i = (sizeof(T) * 8) - 1; i >= 0; i--)
+        for (int i = (sizeof(T) * CHAR_BIT) - 1; i >= 0; --i)
             std::cout << (x & (1u << i) ? '1' : '0');
         std::cout << std::endl;
     }
 
     template<typename T>
-    void set_bit(T& num, uint32_t bit)
+    void set_bit(T& num, const uint32_t bit)
     {
-        if (sizeof(T) * 8 > bit - 1 )
+        if (sizeof(T) * CHAR_BIT > bit - 1 )
         {
             num |= (1 << (bit - 1));
         }
@@ -67,9 +68,20 @@ namespace BitUtils
     /**
      * Works in case if d is power of 2
      **/
-    inline constexpr uint32_t modulo(const uint32_t n, const uint32_t d) noexcept {
+    constexpr uint32_t modulo(const uint32_t n, const uint32_t d) noexcept {
         return n & (d - 1);
     };
+
+    constexpr bool have_opposite_signs(const int x, const int y)
+    {
+        return  ((x ^ y) < 0);
+    }
+
+    uint32_t compute_absolute_value(const int v)
+    {
+        const int32_t mask = v >> (sizeof(int32_t) * CHAR_BIT - 1);
+        return (v + mask) ^ mask;
+    }
 }
 
 

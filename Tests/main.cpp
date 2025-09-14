@@ -1649,7 +1649,7 @@ int main([[maybe_unused]] const int argc,
     // BitwiseOperations::test();
     // BinaryAnalyzer::TestAll();
     // BitFlags::TestAll();
-    // BinManipulation::TestAll();
+    BinManipulation::TestAll();
 
     // Concepts::TestAll();
     // LockFreeQueueTest::Test();

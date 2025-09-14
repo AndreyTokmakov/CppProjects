@@ -67,6 +67,7 @@ Description : Cpp STD lib
 #include "Optional/Optional.h"
 #include "Random/Random.h"
 #include "Ranges/Ranges.h"
+#include "Reflection/Reflection.hpp"
 #include "ReferenceWrapper/ReferenceWrapper.h"
 #include "Streams/Streams.h"
 #include "String/String.h"
@@ -116,8 +117,7 @@ int main([[maybe_unused]] int argc,
     // Chrono::TestAll();
     // ContextControl::TestAll();
     // Comparators::TestAll();
-    // Concepts::TestAll();
-    Contracts::TestAll();
+    Concepts::TestAll();
     // ConsoleInOut::TestAll();
     // ConstConstexprMutable::TestAll();
     // CompileTimeProgramming::TestAll();
@@ -188,6 +188,11 @@ int main([[maybe_unused]] int argc,
     // UniquePtr::TestAll();
     // WeakPtr::TestAll();
     // StaticAsserts::TestAll();
+
+    /** C++26 **/
+
+    // Contracts::TestAll();
+    // Reflection::TestAll();
 
     return EXIT_SUCCESS;
 }

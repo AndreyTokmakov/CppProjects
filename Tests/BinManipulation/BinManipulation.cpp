@@ -105,12 +105,14 @@ namespace BitUtils
 
 void BinManipulation::TestAll()
 {
-    // Detect_If_Two_Integers_Have_Opposite_Signs();
+    Detect_If_Two_Integers_Have_Opposite_Signs();
     // ComputeAbsoluteValue();
 
+
+    /*
     for (int i = 0;i < 255; ++i) {
         BitUtils::show_bits(i);
-    }
+    }*/
 
     // 128  ===>  10000000
 

@@ -29,7 +29,7 @@ namespace Concepts::DependencyInjection
     inline auto InjectedInterface = DefaultImpl {};
 
     template<typename ... Args>
-    requires (sizeof...(Args) == 0)
+        requires (sizeof...(Args) == 0)
     void call_func()
     {
         Interface auto& iface = InjectedInterface<Args...>;
@@ -66,8 +66,18 @@ namespace Concepts::TypeErasure
         obj.call();
     }
 
-    struct ClassWithCallable {
+    struct Callable
+    {
         void call() {std::cout << "Functor::call()" << std::endl; }
+
+        Callable()  { std::cout << "Callable::Callable()\n"; }
+        ~Callable() { std::cout << "Callable::~Callable()\n"; }
+
+        Callable(const Callable&) { std::cout << "Callable(const Callable&)\n"; }
+        Callable& operator=(const Callable&) { std::cout << "Callable& operator=(const Callable&)\n"; return *this; }
+
+        Callable(Callable&&) noexcept { std::cout << "Callable(Callable&&) noexcept\n"; }
+        Callable& operator=(Callable&&) noexcept { std::cout << "Callable& operator=(Callable&&) noexcept\n"; return *this; }
     };
 
 
@@ -87,7 +97,7 @@ namespace Concepts::TypeErasure
 
     void Test()
     {
-        Wrapper<ClassWithCallable> w1 {ClassWithCallable{}};
+        Wrapper<Callable> w1 { Callable{} };
         w1.call();
     }
 }
@@ -98,6 +108,5 @@ namespace Concepts::TypeErasure
 void Concepts::TestAll()
 {
     // DependencyInjection::MyFunc();
-    // TypeErasure::Test();
-
+    TypeErasure::Test();
 }

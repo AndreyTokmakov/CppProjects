@@ -69,6 +69,7 @@ add_executable(${PROJECT_NAME}
 		Memory/CustomStackAllocator.cpp
 		MoveSemantics/MoveSemantics.cpp
 		Numbers/Numbers.cpp
+		Reflection/Reflection.cpp
 		NumericLimits/NumericLimits.cpp
 		ObjectOrientedProgramming/ObjectOrientedProgramming.cpp
 		ObjectOrientedProgramming/Operators.cpp
