@@ -1218,6 +1218,57 @@ namespace Ranges::Slide
     }
 }
 
+namespace Ranges::Ranges_Sort
+{
+    struct Time
+    {
+        int hours { 0 };
+        int minutes { 0 };
+        int seconds { 0 };
+
+        /*
+        bool operator<(const Time &other) const {
+            return std::tie(hours, minutes, seconds) < std::tie(other.hours, other.minutes, other.seconds);
+        }*/
+
+        // Spaceship operator (генерирует все 6 операторов сравнения)
+        auto operator<=>(const Time& other) const = default;
+    };
+
+    std::ostream& operator<<(std::ostream& stream, const Time& time)
+    {
+        stream << std::format("{}:{}:{}", time.hours, time.minutes, time.seconds);
+        return stream;
+    }
+
+    std::ostream& operator<<(std::ostream& stream, const std::vector<Time>& times)
+    {
+        for (const auto& time: times) {
+            stream << time << std::endl;
+        }
+        return stream;
+    }
+
+    void Sort_Custom_Type()
+    {
+        std::vector<Time> times = {
+            {14, 30, 15},
+            {9, 45, 0},
+            {14, 30, 0},
+            {23, 59, 59},
+            {0, 0, 0}
+        };
+
+        // По умолчанию в сортировке рэнджей используется компаратор std::ranges::less, а в обычной сортировке - std::less.
+        // И в их разнице и зарыта собака: std::ranges::less требует определения всех шести операторов
+        // сравнения или одного spaceship'а и все заработает:
+
+        std::ranges::sort(times);
+
+        std::cout << times << std::endl;
+    }
+}
+
 void Ranges::TestAll()
 {
     // For_Each();
@@ -1250,7 +1301,7 @@ void Ranges::TestAll()
     // Split::Chunk_By_Dynamic_Grouping();
     // Split::Chunk_By_Extracting_Sentences_from_Text();
 
-    Slide::Simple_Example();
+    // Slide::Simple_Example();
 
     // Views::Zip();
     // Views::Repeat();
@@ -1260,10 +1311,12 @@ void Ranges::TestAll()
     // Algorithms::For_Each();
     // Algorithms::Find_IF();
     // Algorithms::Find_byName();
+    // Algorithms::Unique();
     // Algorithms::Sort();
     // Algorithms::Sort_ByID();
-    // Algorithms::Unique();
     // Algorithms::Sort_BackWards();
+
+    Ranges_Sort::Sort_Custom_Type();
 
     // Algorithms::Reverse();
     // Algorithms::Reverse_Views();
