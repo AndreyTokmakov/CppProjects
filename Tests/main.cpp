@@ -563,7 +563,7 @@ namespace LockFreeQueue
         {
             std::shared_ptr<T> data;
             std::atomic<node*> next;
-            node() : next(nullptr) {}  //  initialise the node
+            node() : next(nullptr) {}  //  initialize the node
         };
 
         std::atomic<node*> head;
@@ -1640,6 +1640,24 @@ namespace demo
 }
 
 
+
+namespace apply_tests
+{
+    void f(int, int) {
+        std::cout << __PRETTY_FUNCTION__ << std::endl;
+    }
+
+    void f(char*, char*) {
+        std::cout << __PRETTY_FUNCTION__ << std::endl;
+    }
+
+    void test(std::tuple<int, int> t)
+    {
+        std::apply(f, t); // error
+    }
+}
+
+
 int main([[maybe_unused]] const int argc,
          [[maybe_unused]] char** argv)
 {
@@ -1652,8 +1670,7 @@ int main([[maybe_unused]] const int argc,
     // Coroutines::TestAll();
 
 
-    demo::start_lifetime_as_test();
-
+    // demo::start_lifetime_as_test();
 
 
     // ASM_Usage::measureElapsedTime();

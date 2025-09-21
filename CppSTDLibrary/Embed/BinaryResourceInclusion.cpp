@@ -14,13 +14,13 @@ Description : BinaryResourceInclusion.cpp
 namespace Embed
 {
     static constexpr unsigned char data[] = {
-#embed "/home/andtokm/DiskS/ProjectsUbuntu/CppProjects/CppSTDLibrary/data/test_file.txt"
-            ,'\0' // null terminator
+#embed "../../CppSTDLibrary/data/test_file.txt"
+        ,'\0' // null terminator
     };
 
     static constexpr unsigned char message[] =
     {
-#embed "/home/andtokm/DiskS/ProjectsUbuntu/CppProjects/CppSTDLibrary/data/message.txt" if_empty('M', 'i', 's', 's', 'i', 'n', 'g', '\n')
+#embed "../../CppSTDLibrary/data/message.txt" if_empty('M', 'i', 's', 's', 'i', 'n', 'g', '\n')
                     ,'\0' // null terminator
     };
 

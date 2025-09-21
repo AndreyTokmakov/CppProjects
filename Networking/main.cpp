@@ -62,7 +62,7 @@ int main([[maybe_unused]] int argc,
 {
     const std::vector<std::string_view> args(argv + 1, argv + argc);
 
-    // Clients::Tests();
+    Clients::Tests();
     // UDPClient::TestAll();
 
     // DNS_ResponseParser::TestAll();
@@ -92,7 +92,7 @@ int main([[maybe_unused]] int argc,
     // EPollTCPServerMultithreaded::Tests();
 
     // tcp_server::TestAll();
-    AsynchTcpService::TestAll();
+    // AsynchTcpService::TestAll();
 
     // PcapAnalyzer::TestAll();
 
