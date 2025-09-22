@@ -151,7 +151,7 @@ int main([[maybe_unused]] int argc,
     // MoveSemantics::TestAll();
     // Numbers::TestAll();
     // Math::TestAll();
-    Memory::TestAll();
+    // Memory::TestAll();
     // Metaprogramming::TestAll();
     // InlineNamespaces::TestAll();
     // NumericLimits::TestAll();
@@ -180,7 +180,7 @@ int main([[maybe_unused]] int argc,
     // VolatileTests::TestAll();
     // TypeTraits::TestAll();
     // Types::Tests();
-    // Tuple::TestAll();
+    Tuple::TestAll();
     // TypeCast::TestAll();
     // Int::TestAll();
     // Templates::TestAll();

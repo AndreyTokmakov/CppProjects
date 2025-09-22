@@ -379,6 +379,27 @@ namespace Tuple::Apply
     }
 }
 
+namespace Tuple::Apply_ForEach
+{
+	template <typename TupleT, typename Fn>
+	void for_each(TupleT&& tp, Fn&& fn)
+	{
+		std::apply([&fn]<typename ...T>(T&& ...args){
+				(fn(std::forward<T>(args)), ...);
+		}, std::forward<TupleT>(tp));
+	}
+
+	void test()
+	{
+		std::tuple<int, std::string, std::string> t = std::make_tuple(1, "Two", "III");
+		for_each(t, [](auto x){
+			std::cout << x << " ";
+		});
+
+		// 1 Two III
+	}
+}
+
 
 namespace Tuple::Lambda_Tuple
 {
@@ -479,8 +500,9 @@ void Tuple::TestAll()
 	// IterateValues2::IterateTest();
 
     // Apply::Sum_Tuple();
-    Apply::PrintTuple();
-    Lambda_Tuple::PrintTuple();
+    // Apply::PrintTuple();
+    Apply_ForEach::test();
+    // Lambda_Tuple::PrintTuple();
 
     // Reference_Wrapper::Create_Tuple_with_Ref();
     // Reference_Wrapper::Create_Tuple_with_ConstRef();
