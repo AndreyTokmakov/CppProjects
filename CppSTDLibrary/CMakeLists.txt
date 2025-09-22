@@ -65,6 +65,7 @@ add_executable(${PROJECT_NAME}
 		Memory/MemoryPool.cpp
 		Memory/MemoryUsageMonitor.cpp
 		Memory/Alignment.cpp
+		Memory/Launder.cpp
 		Memory/AlignedStackAllocator.cpp
 		Memory/CustomStackAllocator.cpp
 		MoveSemantics/MoveSemantics.cpp

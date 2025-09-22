@@ -93,6 +93,7 @@ Description : Cpp STD lib
 #include "TypeCast/TypeCast.h"
 #include "Metaprogramming/Metaprogramming.h"
 #include "Memory/Memory.h"
+#include "Memory/Launder.hpp"
 #include "Templates/Templates.hpp"
 #include "Volatile/VolatileTests.h"
 #include "StaticAsserts/StaticAsserts.h"
@@ -129,7 +130,7 @@ int main([[maybe_unused]] int argc,
     // DateAndTime::TestAll();
     // EnumTests::TestAll();
     // Errors::TestAll();
-    Embed::TestAll();
+    // Embed::TestAll();
     // Exceptions::TestAll();
     // Expected::TestAll();
     // StrongTypes::TestAll();
@@ -150,7 +151,7 @@ int main([[maybe_unused]] int argc,
     // MoveSemantics::TestAll();
     // Numbers::TestAll();
     // Math::TestAll();
-    // Memory::TestAll();
+    Memory::TestAll();
     // Metaprogramming::TestAll();
     // InlineNamespaces::TestAll();
     // NumericLimits::TestAll();

@@ -13,6 +13,7 @@
 #include "CustomStackAllocator.h"
 #include "MemoryUsageMonitor.h"
 #include "MemoryPool.h"
+#include "Launder.hpp"
 #include "ObjectPool_Stack_FixedSize.h"
 
 #include "Memory.h"
@@ -1743,6 +1744,7 @@ namespace Memory::Override_Global_Memory_Handler
 
 void Memory::TestAll()
 {
+    Launder::TestAll();
     // Alignment::TestAll();
     // AlignedStackAllocator::TestAll();
     // CustomStackAllocator::TestAll();
