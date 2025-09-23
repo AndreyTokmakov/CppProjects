@@ -35,4 +35,5 @@ TARGET_LINK_LIBRARIES(${PROJECT_NAME} PRIVATE
         # libquill.a
         # quill::quill
         fmt
+        systemd
 )

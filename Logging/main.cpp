@@ -22,8 +22,8 @@ int main([[maybe_unused]] int argc,
     const std::vector<std::string_view> args(argv + 1, argv + argc);
 
     // Quill::TestAll();
-    XTR::TestAll();
-    // SPDLog::TestAll();
+    // XTR::TestAll();
+    SPDLog::TestAll();
 
     return EXIT_SUCCESS;
 }
