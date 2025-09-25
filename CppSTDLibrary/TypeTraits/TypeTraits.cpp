@@ -597,10 +597,10 @@ namespace TypeTraits::Common_Type {
 	class TestClass2 : public Derived {};
 	class DerivedTestClass2 : public TestClass2 {};
 
-	void Test() {
-
-		// std::common_type_t< TestClass1, TestClass1>;
-		// std::cout << typeid(T).name() << std::endl;
+	void Test()
+	{
+		std::common_type_t< TestClass1, TestClass1> result;
+		std::cout << typeid(result).name() << std::endl;
 	}
 }
 
