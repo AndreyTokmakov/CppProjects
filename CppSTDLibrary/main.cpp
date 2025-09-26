@@ -132,7 +132,7 @@ int main([[maybe_unused]] int argc,
     // Errors::TestAll();
     // Embed::TestAll();
     // Exceptions::TestAll();
-    // Expected::TestAll();
+    Expected::TestAll();
     // StrongTypes::TestAll();
     // InitializerList::TestAll();
     // InlineVariables::TestAll();
@@ -180,7 +180,7 @@ int main([[maybe_unused]] int argc,
     // VolatileTests::TestAll();
     // TypeTraits::TestAll();
     // Types::Tests();
-    Tuple::TestAll();
+    // Tuple::TestAll();
     // TypeCast::TestAll();
     // Int::TestAll();
     // Templates::TestAll();

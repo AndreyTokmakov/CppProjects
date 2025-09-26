@@ -537,6 +537,80 @@ namespace Expected::ReadFile_AndParse_Example
 }
 
 
+namespace Expected::Creation_Objects_Copying
+{
+    struct Object
+    {
+        int value1 { 0 };
+        int value2 { 0 };
+
+        Object(const int v1, const int v2): value1 {v1}, value2{v2} {
+            std::println("Object({} {})", value1, value2);
+        }
+
+        ~Object() {
+            std::cout << "~Object()" << '\n';
+        }
+
+        Object(const Object &other) {
+            std::cout << "Object(const Object &other)" << std::endl;
+        }
+
+        Object(Object &&other) noexcept {
+            std::cout << "Object(Object &&other)" << std::endl;
+        }
+
+        Object & operator=(const Object &other)
+        {
+            std::cout << "Object & operator=(const Object &other)" << std::endl;
+            return *this;
+        }
+
+        Object & operator=(Object &&other) noexcept
+        {
+            std::cout << "Object & operator=(Object &&other)" << std::endl;
+            return *this;
+        }
+    };
+
+    enum class Error
+    {
+        Type1,
+        Type2,
+        Type3
+    };
+
+    std::expected<Object, Error> fooBad()
+    {
+        return Object{1,2};
+    }
+
+    std::expected<Object, Error> fooInPlace()
+    {
+        return std::expected<Object, Error> { std::in_place, 1, 2 };
+    }
+
+
+    void returnExpected()
+    {
+        {
+            const std::expected<Object, Error> result = fooBad();
+        }
+        std::cout << std::string(120, '-') << std::endl;
+        {
+            const std::expected<Object, Error> result = fooInPlace();
+        }
+
+        // Object(1 2)
+        // Object(Object &&other)
+        // ~Object()
+        // ~Object()
+        // ---------------------------------------------------------------------------------------------
+        // Object(1 2)
+        // ~Object()
+    }
+}
+
 void Expected::TestAll()
 {
     // BasicFunctions();
@@ -545,7 +619,6 @@ void Expected::TestAll()
     // Test_Error_2();
     // Emplace();
     // Expected::Transform();
-
 
     // MonadicOperations::AndThen::Test();
     // MonadicOperations::AndThen_Chaining::Test();
@@ -559,7 +632,8 @@ void Expected::TestAll()
     // ReadFileExample::HandleFileOpenError_Default();
     // ReadFileExample::HandleFileOpenError_MultipleFallback();
 
+    // ReadFile_AndParse_Example::Read_and_Parse();
 
-    ReadFile_AndParse_Example::Read_and_Parse();
+    Creation_Objects_Copying::returnExpected();
 };
 
