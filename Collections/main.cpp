@@ -39,12 +39,12 @@ int main([[maybe_unused]] int argc,
 	// Heap::TestAll();
 	// Vector::TestAll();
 	// Valarray::TestAll();
-	// Map::TestAll();
+	Map::TestAll();
 	// FlatMap::TestAll();
 	// MultiMap::TestAll();
     // UnorderedMap::TestAll();
     // Set::TestAll();
-    UnorderedSet::TestAll();
+    // UnorderedSet::TestAll();
 	// Queue::TestAll();
 	// PriorityQueue::TestAll();
 	// Custom_Vector::TestAll();

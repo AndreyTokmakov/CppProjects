@@ -9,8 +9,47 @@
 #include <string_view>
 #include <cassert>
 #include <ranges>
+#include <print>
 
 #include "../Helpers/Integer.h"
+
+namespace
+{
+	struct Pair
+	{
+		int first { 0 };
+		int second { 0 };
+
+		Pair(const int f, const int s): first { f }, second { s } {
+			std::println("Pair(first: {}, second: {})", first, second);
+		}
+
+		~Pair() {
+			std::println("~Pair(first: {}, second: {})", first, second);
+		}
+
+		Pair([[maybe_unused]] const Pair & other) {
+			std::println("Pair(const Pair &other)");
+		}
+
+		Pair([[maybe_unused]] Pair && other) noexcept {
+			std::println("air(Pair &&other)");
+		}
+
+		Pair & operator=([[maybe_unused]] const Pair & other) {
+			std::println("Pair & operator=(const Pair&)");
+			return *this;
+		}
+
+		Pair & operator=([[maybe_unused]] Pair && other) noexcept {
+			std::println("Pair & operator=(Pair&&) noexcept)");
+			return *this;
+		}
+
+		std::strong_ordering operator<=>(const Pair & other) const noexcept = default;
+	};
+}
+
 
 namespace Map
 {
@@ -52,7 +91,8 @@ namespace Map
         print_map(dictionary);
     }
 
-    void emplace_duplicate_entry() {
+    void emplace_duplicate_entry()
+	{
         std::map<std::string, std::string> dict{
                 {"One",   "I"},
                 {"Two",   "II"},
@@ -70,7 +110,8 @@ namespace Map
         std::cout << dict << std::endl;
     }
 
-    void try_emplace_duplicate_entry() {
+    void try_emplace_duplicate_entry()
+	{
         std::map<std::string, std::string> dict{
                 {"One",   "I"},
                 {"Two",   "II"},
@@ -87,7 +128,6 @@ namespace Map
 
         std::cout << dict << std::endl;
     }
-
 
     void emplace_test()
     {
@@ -131,7 +171,8 @@ namespace Map
         metrics.emplace(1, std::make_pair(1.0f, 1.0f));
     }
 
-    void emplace_return() {
+    void emplace_return()
+	{
         std::map<std::string, std::string> dict;
 
         dict.emplace("key1", "value1");
@@ -148,7 +189,8 @@ namespace Map
             std::cout << entry.first << " = " << entry.second << std::endl;
     }
 
-    void emplace_vs_insert() {
+    void emplace_vs_insert()
+	{
         std::map<std::string, Integer> dictionary;
 
         std::cout << "Test using 'emplace()'. No copy construcors shall be called.\n" << std::endl;
@@ -182,7 +224,39 @@ namespace Map
         dictionary.clear();
     }
 
-    void try_emplace_vs_emplace() {
+	void emplace_efficient_multiple_arguments()
+    {
+	    {
+		    std::map<Pair, Pair> map;
+	    	map.emplace(Pair {1,2}, Pair{3,4});
+	    }
+    	std::println("{}", std::string(160, '-'));
+	    {
+	    	std::map<Pair, Pair> map;
+	    	map.emplace(std::piecewise_construct,
+	    	std::forward_as_tuple(1, 2), std::forward_as_tuple(3, 4)
+	    	);
+	    }
+
+    	/**
+    	Pair(first: 3, second: 4)
+		Pair(first: 1, second: 2)
+		air(Pair &&other)
+		air(Pair &&other)
+		~Pair(first: 1, second: 2)
+		~Pair(first: 3, second: 4)
+		~Pair(first: 0, second: 0)
+		~Pair(first: 0, second: 0)
+		-----------------------------------------------------------------------------------------------------------
+		Pair(first: 1, second: 2)
+		Pair(first: 3, second: 4)
+		~Pair(first: 3, second: 4)
+		~Pair(first: 1, second: 2)
+    	**/
+    }
+
+    void try_emplace_vs_emplace()
+	{
         std::map<std::string, Integer> dictionary;
         std::cout << "************************ emplace() test ***********************\n" << std::endl;
 
@@ -209,8 +283,9 @@ namespace Map
     }
 
 
-    void emplace_test_2_ReferenceWrapper() {
-        std::cout << "Test using 'emplace()'. No copy construcors shall be called.\n" << std::endl;
+    void emplace_test_2_ReferenceWrapper()
+	{
+        std::cout << "Test using 'emplace()'. No copy constructors shall be called.\n" << std::endl;
         std::map<std::string, Integer> dictionary;
 
         dictionary.emplace("Key1", 10);
@@ -687,7 +762,7 @@ namespace Map
 		dict.insert(std::pair("key2", "value3"));
 		dict.insert(std::pair("key3", "value3"));
 
-		std::cout << "For 1:" << std::endl;
+		std::cout << "VERY BAD LOOP ---> Unnsesesay Copies :" << std::endl;
 		for (const std::pair<std::string, std::string>& entry : dict) {
 			std::cout << entry.first << "  ==  " << entry.second << std::endl;
 		}
@@ -1246,12 +1321,12 @@ namespace Map::Test {
 namespace Map::MoveFromMap
 {
 
-    void sink(Integer&& v)
+    void sink([[maybe_unused]] Integer&& v)
     {
 
     }
 
-    void sink(Integer& v)
+    void sink([[maybe_unused]] Integer& v)
     {
 
     }
@@ -1331,8 +1406,9 @@ void Map::TestAll()
 	// emplace_test1();
 	// emplace_return();
 	// emplace_vs_insert();
+	emplace_efficient_multiple_arguments();
 	// try_emplace_vs_emplace();
-	// mplace_test_2_ReferenceWrapper();
+	// emplace_test_2_ReferenceWrapper();
 
 	// Sorted_Map();
 	// Sorted_Map_2();
@@ -1355,7 +1431,7 @@ void Map::TestAll()
 	// try_emplace_test();
 	// try_emplace_test_2();
 	// try_emplace_test_3();
-    Try_Emplace_Value_Pointer();
+    // Try_Emplace_Value_Pointer();
 	// try_emplace_test_LAMBDA();
 	// Try_emplace_vs_Emplace();
     // TryEmplace_vs_Emplace();
@@ -1378,7 +1454,7 @@ void Map::TestAll()
     // Extract_ByITer_And_UpdateKey();
 
 	// LowerBound();
-    LowerBound_GreaterSorted();
+    // LowerBound_GreaterSorted();
 	// UpperBound();
 
 	// Modify_Value();
