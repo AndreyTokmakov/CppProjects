@@ -19,6 +19,7 @@ Description : Expected C++23 Library tests
 
 namespace
 {
+    [[maybe_unused]]
     [[nodiscard]]
     std::string readFileToString(std::string_view path) noexcept
     {
@@ -273,7 +274,7 @@ namespace Expected::MonadicOperations::AndThen_Chaining
 
     void Test()
     {
-        for (std::string&& input: {"10", "abc", "null", "-1", "1"})
+        for (std::string input: {"10", "abc", "null", "-1", "1"})
         {
             const std::expected<int, std::string> result = convertToInt(input)
                     .and_then(multiplyByTwo)
@@ -351,7 +352,7 @@ namespace Expected::MonadicOperations::TransformError
 
     void Test()
     {
-        for (std::string && input: {"10", "abc", "null", "-1", "1"})
+        for (std::string input: {"10", "abc", "null", "-1", "1"})
         {
             const std::expected<std::string, std::string> result = convertToInt(input)
                     .transform(backToString)
@@ -573,6 +574,38 @@ namespace Expected::Creation_Objects_Copying
         }
     };
 
+    struct HeavyError
+    {
+        int value1 { 0 };
+        int value2 { 0 };
+
+        HeavyError(const int v1, const int v2): value1 {v1}, value2{v2} {
+            std::println("HeavyError({} {})", value1, value2);
+        }
+
+        ~HeavyError() {
+            std::cout << "~HeavyError()" << '\n';
+        }
+
+        HeavyError(const HeavyError &) {
+            std::cout << "HeavyError(const HeavyError &)" << std::endl;
+        }
+
+        HeavyError(HeavyError &&) noexcept {
+            std::cout << "HeavyError(HeavyError &&)" << std::endl;
+        }
+
+        HeavyError & operator=(const HeavyError &) {
+            std::cout << "HeavyError & operator=(const HeavyError &)" << std::endl;
+            return *this;
+        }
+
+        HeavyError & operator=(HeavyError &&) noexcept {
+            std::cout << "HeavyError & operator=(HeavyError &&)" << std::endl;
+            return *this;
+        }
+    };
+
     enum class Error
     {
         Type1,
@@ -580,34 +613,77 @@ namespace Expected::Creation_Objects_Copying
         Type3
     };
 
-    std::expected<Object, Error> fooBad()
-    {
+    std::expected<Object, Error> makeObject_Bad() {
         return Object{1,2};
     }
 
-    std::expected<Object, Error> fooInPlace()
-    {
+    std::expected<Object, Error> makeObject_InPlace() {
         return std::expected<Object, Error> { std::in_place, 1, 2 };
     }
 
+    std::expected<Object, HeavyError> unexpected_Bad() {
+        return std::unexpected<HeavyError>{ HeavyError {1, 2}};
+    }
+
+    std::expected<Object, HeavyError> unexpected_InPlace() {
+        return std::unexpected<HeavyError>{ std::in_place, 1, 2 };
+    }
+
+    std::expected<Object, HeavyError> unexpected_UnExpect_Good() {
+        return std::expected<Object, HeavyError> { std::unexpect, 1, 2 };
+    }
 
     void returnExpected()
     {
         {
-            const std::expected<Object, Error> result = fooBad();
+            const std::expected<Object, Error> result = makeObject_Bad();
         }
         std::cout << std::string(120, '-') << std::endl;
         {
-            const std::expected<Object, Error> result = fooInPlace();
+            const std::expected<Object, Error> result = makeObject_InPlace();
         }
 
-        // Object(1 2)
-        // Object(Object &&other)
-        // ~Object()
-        // ~Object()
-        // ---------------------------------------------------------------------------------------------
-        // Object(1 2)
-        // ~Object()
+        /**
+        Object(1 2)
+        Object(Object &&other)
+        ~Object()
+        ~Object()
+        ---------------------------------------------------------------------------------------------
+        Object(1 2)
+        ~Object()
+        **/
+    }
+
+    void returnUneExpected()
+    {
+        {
+            const std::expected<Object, HeavyError> result = unexpected_Bad();
+        }
+        std::cout << std::string(120, '-') << std::endl;
+        {
+            const std::expected<Object, HeavyError> result = unexpected_InPlace();
+        }
+        std::cout << std::string(120, '-') << std::endl;
+        {
+            const std::expected<Object, HeavyError> result = unexpected_UnExpect_Good();
+        }
+
+        /**
+        *HeavyError(1 2)
+        HeavyError(HeavyError &&)
+        HeavyError(HeavyError &&)
+        ~HeavyError()
+        ~HeavyError()
+        ~HeavyError()
+        ---------------------------------------------------------------------------------------------
+        HeavyError(1 2)
+        HeavyError(HeavyError &&)
+        ~HeavyError()
+        ~HeavyError()
+        ---------------------------------------------------------------------------------------------
+        HeavyError(1 2)
+        ~HeavyError()
+        **/
     }
 }
 
@@ -634,6 +710,7 @@ void Expected::TestAll()
 
     // ReadFile_AndParse_Example::Read_and_Parse();
 
-    Creation_Objects_Copying::returnExpected();
+    // Creation_Objects_Copying::returnExpected();
+    Creation_Objects_Copying::returnUneExpected();
 };
 
