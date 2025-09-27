@@ -62,6 +62,8 @@ add_executable(${PROJECT_NAME}
 		Builder/HtmlBuilder.cpp
 		TypeErasure/TypeErasure.cpp
 		TypeErasure/TypeErasure_CallOperator.cpp
+		TypeErasure/TypeErasure_Simple.cpp
+		TypeErasure/TypeErasure_Two.cpp
 		CopyAndSwap/CopyAndSwap.cpp
 		TagDispatching/TagDispatching.cpp
 		TagDispatching/TagDispatching_RegisterIO.cpp
@@ -107,7 +109,6 @@ add_executable(${PROJECT_NAME}
         TypeID/TypeID.cpp
 		AccessToken/AccessToken.cpp
 		FactoryClasses/FactoryClasses.cpp
-        TypeErasure/TypeErasure_Two.cpp
 )
 
 # Link libraries to the project/executable

@@ -21,7 +21,7 @@ struct ReaderWriterLock
 
 struct SomeComplexDataType
 {
-    bool check_invariants() {}
+    bool check_invariants() { return false; }
 };
 
 

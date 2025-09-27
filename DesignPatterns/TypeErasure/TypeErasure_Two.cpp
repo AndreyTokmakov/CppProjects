@@ -7,7 +7,7 @@ Copyright   : Your copyright notice
 Description : TypeErasure_Two
 ============================================================================**/
 
-#include "TypeErasure.h"
+#include "TypeErasure.hpp"
 
 #include <iostream>
 #include <array>

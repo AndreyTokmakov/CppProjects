@@ -7,7 +7,7 @@ Copyright   : Your copyright notice
 Description : TypeErasure
 ============================================================================**/
 
-#include "TypeErasure.h"
+#include "TypeErasure.hpp"
 
 #include <iostream>
 #include <vector>
@@ -241,7 +241,8 @@ void TypeErasure_CallOperator_Test();
 void TypeErasure::Test()
 {
     // ExperimentFirst::Test();
-    TypeErasure_Two::Test();
+    // TypeErasure_Two::Test();
+    TypeErasure_Simple::Test();
 
     // ExperimentSecond::Test();
 

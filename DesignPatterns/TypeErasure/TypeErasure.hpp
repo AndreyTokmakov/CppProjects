@@ -10,13 +10,8 @@ Description : TypeErasure
 #ifndef CPPPROJECTS_TYPEERASURE_H
 #define CPPPROJECTS_TYPEERASURE_H
 
-namespace TypeErasure {
-    void Test();
-};
-
-namespace TypeErasure_Two {
-    void Test();
-}
-
+namespace TypeErasure { void Test(); };
+namespace TypeErasure_Two { void Test(); }
+namespace TypeErasure_Simple { void Test();}
 
 #endif //! CPPPROJECTS_TYPEERASURE_H

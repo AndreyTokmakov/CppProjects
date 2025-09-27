@@ -42,7 +42,7 @@ Description : Software design patterns C++ test project
 #include "Visitor/Visitor.h"
 #include "Named_Parameter_Idiom/NamedParameter.h"
 #include "CRTP/CRTP.h"
-#include "TypeErasure/TypeErasure.h"
+#include "TypeErasure/TypeErasure.hpp"
 #include "TagDispatching/TagDispatching.h"
 #include "Policy/Policy.h"
 #include "RAII/RAII.h"
@@ -66,7 +66,7 @@ int main([[maybe_unused]]  int argc,
     // Builder::TestAll();
     // FabricMethod::TestAll();
     // FactoryClasses::TestAll();
-    FactoryMethod_TypeSequence::TestAll();
+    // FactoryMethod_TypeSequence::TestAll();
     // Prototype::TestAll();
     // Singleton::TestAll();;
     // Multiton::TestAll();;
@@ -108,7 +108,7 @@ int main([[maybe_unused]]  int argc,
 
     // CRTP::Test();
     // NVI_SimpleExample::TestAll();
-    // TypeErasure::Test();
+    TypeErasure::Test();
     // RAII::Test();
     // CopyAndSwap::TEST_ALL();   ---- TESTs
     // TagDispatching::Test();
