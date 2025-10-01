@@ -12,13 +12,106 @@ Description : Reflection.cpp
 #include <iostream>
 #include <optional>
 
+// https://godbolt.org/z/6Prs3fT1b
+
+#if 0
+namespace demo1
+{
+    #include <experimental/reflect>
+    using namespace std::experimental::reflect;
+
+    enum Color {
+        Red,
+        Green,
+        Blue
+    };
+
+    using MetaT = reflexpr(Color);
+
+    int main() {
+        constexpr std::string_view name = get_name_v<get_element_t<0, get_enumerators_t<MetaT>>>;
+        std::cout << "The name of the first value is \"" << name << "\"" << std::endl;
+    }
+}
+#endif
+
+#if 0
+
+// compiler : clang x86-64 Reflectin-TS
+// flags  : -std=c++2b -O2 -pedantic-errors
+
+namespace demo2
+{
+
+#include <experimental/reflect>
+#include <string_view>
+
+    enum class weekdays {
+        monday,
+        tuesday,
+        wednesday,
+        thursday,
+        friday,
+        saturday,
+        sunday
+    };
+
+    namespace meta = std::experimental::reflect;
+
+    template <typename... MEC>
+    struct enum_to_string_helper
+    {
+        template <typename E>
+        static std::string_view find(E e) {
+            return _do_find(e, MEC{}...);
+        }
+
+        template <typename E, typename ME1, typename... MEs>
+        static std::string_view _do_find(E e, ME1, MEs... mes)
+        {
+            if (meta::get_constant_v<ME1> == e) {
+                return {meta::get_name_v<ME1>};
+            }
+            return _do_find(e, mes...);
+        }
+
+        template <typename E>
+        static std::string_view _do_find(E) {
+            return {};
+        }
+    };
+
+    template <typename E>
+    std::string_view enum_to_string(E e) {
+        return meta::unpack_sequence_t<enum_to_string_helper, meta::get_enumerators_t<reflexpr(E)>>::find(e);
+    }
+
+    void test()
+    {
+        std::cout << enum_to_string(weekdays::monday) << std::endl;
+        std::cout << enum_to_string(weekdays::tuesday) << std::endl;
+        std::cout << enum_to_string(weekdays::wednesday) << std::endl;
+        std::cout << enum_to_string(weekdays::thursday) << std::endl;
+        std::cout << enum_to_string(weekdays::friday) << std::endl;
+        std::cout << enum_to_string(weekdays::saturday) << std::endl;
+        std::cout << enum_to_string(weekdays::sunday) << std::endl;
+    }
+
+    // monday
+    // tuesday
+    // wednesday
+    // thursday
+    // friday
+    // saturday
+    // sunday
+}
+#endif
+
 //  Still not supported bt GCC
 #if 0
 
-
-namespace demo1
+namespace demo3
 {
-
     #include <experimental/meta>
     #include <experimental/compiler>
     using namespace std::experimental;
