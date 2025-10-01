@@ -9,15 +9,79 @@ Description : Reflection.cpp
 
 #include "Reflection.hpp"
 
-#include <algorithm>
-#include <complex>
 #include <iostream>
-#include <utility>
-#include <vector>
-#include <string>
-#include <ranges>
-#include <atomic>
-#include <concepts>
+#include <optional>
+
+//  Still not supported bt GCC
+#if 0
+
+
+namespace demo1
+{
+
+    #include <experimental/meta>
+    #include <experimental/compiler>
+    using namespace std::experimental;
+
+    namespace enum_util
+    {
+        template<typename T>
+        requires std::is_enum_v<T>
+        constexpr std::string_view to_string(T value)
+        {
+            template for (constexpr meta::info e : meta::members_of(^T)) {
+                if ([:e:] == value) {
+                    return meta::name_of(e);
+                }
+            }
+            throw std::runtime_error("Unknown enum value");
+        }
+
+        template<typename T>
+        requires std::is_enum_v<T>
+        constexpr std::optional<T> from_string(std::string_view value)
+        {
+            template for (constexpr meta::info e : meta::members_of(^T)) {
+                if (meta::name_of(e) == value) {
+                    return [:e:];
+                }
+            }
+            return {};
+        }
+
+    } // namespace enum_util
+
+    enum LightColor
+    {
+        Red,Green, Blue
+    };
+
+    void print_name(const LightColor color)
+    {
+        const std::string_view str = enum_util::to_string(color);
+        std::cout << "The color name is " << str << std::endl;
+    }
+
+    void test()
+    {
+        print_name(Red);
+        print_name(Green);
+        print_name(Blue);
+        try {
+            print_name(static_cast<LightColor>(1337));
+        } catch (const std::runtime_error& e) {
+            std::cout << "exception is: " << e.what() << std::endl;
+        }
+
+        static_assert(enum_util::from_string<LightColor>("Red").value() == Red);
+        static_assert(enum_util::from_string<LightColor>("Green").value() == Green);
+        static_assert(enum_util::from_string<LightColor>("Blue").value() == Blue);
+        static_assert(not enum_util::from_string<LightColor>("Magenta").has_value());
+
+    }
+}
+
+#endif
 
 
 void Reflection::TestAll()

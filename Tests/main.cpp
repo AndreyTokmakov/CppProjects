@@ -44,6 +44,9 @@ Description : Tests C++ project
 #include <experimental/socket>
 #include <experimental/scope>
 
+// #include <experimental/meta>
+// #include <experimental/compiler>
+
 //#include <experimental/contracts>
 //#include <ind>
 
@@ -1647,6 +1650,10 @@ int main([[maybe_unused]] const int argc,
          [[maybe_unused]] char** argv)
 {
     const std::vector<std::string_view> args(argv + 1, argv + argc);
+
+
+    demo::start_lifetime_as_test();
+
 
 
     /** * * * * *  Move to lib * * * * * **/
