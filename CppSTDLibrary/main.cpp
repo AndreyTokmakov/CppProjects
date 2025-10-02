@@ -132,7 +132,7 @@ int main([[maybe_unused]] int argc,
     // Errors::TestAll();
     // Embed::TestAll();
     // Exceptions::TestAll();
-    Expected::TestAll();
+    // Expected::TestAll();
     // StrongTypes::TestAll();
     // InitializerList::TestAll();
     // InlineVariables::TestAll();
@@ -156,7 +156,7 @@ int main([[maybe_unused]] int argc,
     // InlineNamespaces::TestAll();
     // NumericLimits::TestAll();
     // ObjectOrientedProgramming::TestAll();
-    // Optional::TestAll();
+    Optional::TestAll();
     // Overflow::TestAll();
     // PolymorphicMemoryResources::TestAll();
     // Print::TestAll();

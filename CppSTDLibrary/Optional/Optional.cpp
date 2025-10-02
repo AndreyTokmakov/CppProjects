@@ -783,10 +783,27 @@ namespace Optional::Move_Optional_Test
 	}
 }
 
+namespace Optional::Optional_of_Reference
+{
+	struct  Cat
+	{
+
+	};
+
+	void create_and_assign()
+	{
+		// Not supported by compiler
+#if 0
+		Cat fynn, loki;
+		std::optional<Cat&> maybeCat {fynn};
+		maybeCat = fynn;
+#endif
+	}
+}
 
 void Optional::TestAll()
 {
-    Custom_Optional::TestAll();
+    // Custom_Optional::TestAll();
 
 	// OptionalCreation();
 	// OptionalCreation_Test2();
@@ -810,6 +827,7 @@ void Optional::TestAll()
 
 	// Applications::ReadEnvironment();
 
+	Optional_of_Reference::create_and_assign();
 
 
     // MonadicOperations::OrElse_Test();
