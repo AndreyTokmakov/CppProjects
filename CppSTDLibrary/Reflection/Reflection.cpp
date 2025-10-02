@@ -14,6 +14,17 @@ Description : Reflection.cpp
 
 // https://godbolt.org/z/6Prs3fT1b
 
+
+#if 0
+
+constexpr auto r = ^^int;
+typename[:r:] x = 42;       // Same as: int x = 42;
+typename[:^^char:] c = '*';  // Same as: char c = '*';
+
+#endif
+
+
+
 #if 0
 namespace demo1
 {
@@ -34,6 +45,8 @@ namespace demo1
     }
 }
 #endif
+
+
 
 #if 0
 
