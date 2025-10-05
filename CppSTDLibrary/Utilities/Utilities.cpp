@@ -16,8 +16,7 @@
 #include <iomanip>
 #include <queue>
 #include <deque>
-#include "Utilities.h"
-#include "Invoke.h"
+#include "Utilities.hpp"
 
 
 namespace
@@ -478,7 +477,9 @@ void Utilities::TestAll()
     // Bind_Tests();
     // Decay_Tests();
     // Invoke::TestAll();
-	NullPtr_T::TestAll();
+	// NullPtr_T::TestAll();
+	// CompilerVersion::TestAll();
+	ScopeExit::TestAll();
 
 	// Extent::getArraySize();
 

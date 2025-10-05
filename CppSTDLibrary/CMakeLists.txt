@@ -135,12 +135,12 @@ add_executable(${PROJECT_NAME}
 		Memory/ObjectPool_Stack_FixedSize.h
 
 		Utilities/Invoke.cpp
-		Utilities/Invoke.h
 		Utilities/Utilities.cpp
 		Utilities/Bind.cpp
 		Utilities/Decay.cpp
 		Utilities/CompilerVersion.cpp
 		Utilities/NullPtr_T.cpp
+		Utilities/ScopeExit.cpp
 )
 
 # Link libraries to the project/executable

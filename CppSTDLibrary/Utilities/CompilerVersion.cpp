@@ -7,11 +7,11 @@ Copyright   : Your copyright notice
 Description : CompilerVersion.cpp
 ============================================================================**/
 
-#include "CompillerVersion.h"
+#include "Utilities.hpp"
 
 #include <iostream>
 
-void CompilerVersion::TestAll()
+void Utilities::CompilerVersion::TestAll()
 {
     std::cout << __cplusplus << std::endl;
 

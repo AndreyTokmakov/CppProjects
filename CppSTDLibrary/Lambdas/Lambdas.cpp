@@ -481,13 +481,14 @@ namespace Lambdas {
     }
 
 
-    void Determine_TypeOf_VectorParameter_2_Constexpr() {
+    void Determine_TypeOf_VectorParameter_2_Constexpr()
+	{
         auto getType = [](const auto &vect) -> void {
             using T = typename std::decay_t<decltype(vect)>::value_type;
 
             std::cout << typeid(vect).name() << std::endl;
 
-            T a{1};
+            [[maybe_unused]] T a{1};
             std::cout << "Element type: " << typeid(T).name() << std::endl;
         };
 
@@ -508,8 +509,9 @@ namespace Lambdas {
         std::cout << "func1 = " << func1() << "   func2 = " << func2() << std::endl;
     }
 
-    void Handle_Global_Varibles2() {
-        int x = 10;
+    void Handle_Global_Varibles2()
+	{
+        [[maybe_unused]] int x = 10;
         std::cout << "func1 = " << func1() << "   func2 = " << func2() << std::endl;
     }
 
@@ -639,6 +641,28 @@ namespace Lambdas::RecursiveLambda
         });
         std::cout << gcd(20, 30) << std::endl;
     }
+}
+
+
+namespace Lambdas::RecursiveLambda
+{
+	void Deducing_This_Factorial()
+	{
+		constexpr auto factorial = [](this auto self, int n) -> decltype(n) {
+			return n == 0 ? 1 : n * self(n - 1);
+		};
+
+		static_assert(factorial(5) == 120);
+	}
+
+	void Deducing_This_Fibonacci()
+	{
+		constexpr auto fibonacci = [](this auto self, int n) -> decltype(n) {
+			return 1 >= n ? n : self(n -1) + self(n - 2);
+		};
+
+		static_assert(fibonacci(10) == 55);
+	}
 }
 
 namespace Lambdas
@@ -906,8 +930,13 @@ namespace Lambdas::High_Order_Function {
 
 	void PredicateComposition_WhenAll_Concepts() 
 	{
+		[[maybe_unused]]
 		auto is_positive = [](int x)-> bool { return x > 0; };
+
+		[[maybe_unused]]
 		auto is_even = [](int x)-> bool { return 0 == x % 2; };
+
+		[[maybe_unused]]
 		auto some_lambda = [](int x)-> std::string { return {}; };
 
         /*
@@ -951,17 +980,16 @@ namespace Lambdas::High_Order_Function {
 	}
 }
 
-namespace Lambdas::Tests {
-
-
-
-	void _TEST_() {
+namespace Lambdas::Tests
+{
+	void _TEST_()
+	{
 		{
 			[n = 10, text = std::string("Some string")] () {
 				std::cout << text << ' ' << n << std::endl;
 			} ();
 
-
+			[[maybe_unused]]
 			auto lambdaVectorIntegral = []<std::integral T>(const std::vector<T>&vec) {
 				return vec.size();
 			};
@@ -1044,6 +1072,48 @@ namespace Lambdas::Concepts
         // std::cout << sum(1, 2.1) << std::endl;
     }
 }
+
+
+namespace Lambdas::Concepts
+{
+	struct Int
+	{
+		int value { 0 };
+		auto operator<=>(const Int &) const = default;
+	};
+
+	struct IntEx
+	{
+		int value { 0 };
+		auto operator<=>(const IntEx &) const = default;
+
+		bool operator==(const IntEx &) const = delete;
+	};
+
+	void Constrain_Lambda_with_Concepts()
+	{
+		auto my_max = []<typename T> (const T& a, const T& b) constexpr
+			requires requires (const T& a, const T& b)
+		{
+			{ a > b }  -> std::same_as<bool>;
+			{ a < b }  -> std::same_as<bool>;
+			{ a == b } -> std::same_as<bool>;
+			{ a != b } -> std::same_as<bool>;
+		} {
+			return a > b ? a : b;
+		};
+
+		static_assert(10 == my_max(1, 10));
+		static_assert(1 != my_max(1, 10));
+		static_assert(std::string{"b"} == my_max(std::string{"a"}, std::string{"b"}));
+
+		static_assert(Int {11} == my_max(Int {11}, Int {11}));
+
+		// Will no compile
+		// static_assert(IntEx {11} == my_max(IntEx {11}, IntEx {11}));
+	}
+}
+
 
 namespace Lambdas::Constexpr_Constevel_Lambda {
 
@@ -1336,7 +1406,7 @@ void Lambdas::TestAll()
 	// Lambdas::Lambda_With_Params_Initialization();
 	// Lambdas::Lambda_Struct();
 	// Lambdas::Lambda_Collection();
-	Lambdas::Lambda_Collection_FuncPtr();
+	// Lambdas::Lambda_Collection_FuncPtr();
 	// Lambdas::Function_ReturnLambda();
 	// Lambdas::Variadic_Lambdas();
 	// Lambdas::Pass_UniquePtr_2Lambda();
@@ -1366,6 +1436,8 @@ void Lambdas::TestAll()
 	// RecursiveLambda::Recursive_Lambda();
 	// RecursiveLambda::Recursive_Lambda2();
 	// RecursiveLambda::Recursive_Lambda_Wrapper();
+	// RecursiveLambda::Deducing_This_Factorial();
+	// RecursiveLambda::Deducing_This_Fibonacci();
 
 	// Lambdas::Get_Lambda_Type();
 
@@ -1383,6 +1455,7 @@ void Lambdas::TestAll()
 
     // Concepts::Using_Existing_STD_Concepts();
     // Concepts::Using_Required_Keyword();
+    // Concepts::Constrain_Lambda_with_Concepts();
 
 	// Lambdas_Inheritance::LambdaAsBaseClass();
 	// Lambdas_Inheritance::MultipleInheritanceDemo();
