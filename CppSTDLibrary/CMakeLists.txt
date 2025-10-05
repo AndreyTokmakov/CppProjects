@@ -28,7 +28,6 @@ add_executable(${PROJECT_NAME}
 		ConsoleInOut/ConsoleInOut.cpp
 		DateAndTime/DateAndTime.cpp
 		DeducingThis/DeducingThis.cpp
-		Utilities/Decay.cpp
 		CompileTime_Constexpr/ConstConstexprMutable.cpp
 		CompileTime_Constexpr/CompileTimeProgramming.cpp
         CompileTime_Constexpr/Constexpr.cpp
@@ -98,9 +97,6 @@ add_executable(${PROJECT_NAME}
 		TypeCast/TypeCast.cpp
 		TypeTraits/TypeTraits.cpp
 		UniquePtr/UniquePtr.cpp
-		Utilities/Utilities.cpp
-		Utilities/Bind.cpp
-		Utilities/CompilerVersion.cpp
 		Variant/Variant.cpp
 		Variant/Matcher_Visitor.cpp
 		WeakPtr/WeakPtr.cpp
@@ -137,8 +133,14 @@ add_executable(${PROJECT_NAME}
 		CompileTime_Constexpr/Constexpr.hpp
 		Memory/ObjectPool_Stack_FixedSize.cpp
 		Memory/ObjectPool_Stack_FixedSize.h
+
 		Utilities/Invoke.cpp
 		Utilities/Invoke.h
+		Utilities/Utilities.cpp
+		Utilities/Bind.cpp
+		Utilities/Decay.cpp
+		Utilities/CompilerVersion.cpp
+		Utilities/NullPtr_T.cpp
 )
 
 # Link libraries to the project/executable

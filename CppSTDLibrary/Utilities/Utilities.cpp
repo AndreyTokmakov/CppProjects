@@ -478,8 +478,9 @@ void Utilities::TestAll()
     // Bind_Tests();
     // Decay_Tests();
     // Invoke::TestAll();
+	NullPtr_T::TestAll();
 
-	Extent::getArraySize();
+	// Extent::getArraySize();
 
 	// ApplyTests::Apply_Sum_Test();
 	// ApplyTests::Apply_Sum_Lambda_Test();

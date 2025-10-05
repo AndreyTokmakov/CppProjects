@@ -13,6 +13,7 @@
 namespace Utilities
 {
 	void TestAll();
+	namespace NullPtr_T { void TestAll(); }
 };
 
 #endif /* UTILITIES_INCLUDE_GUARD__H */
