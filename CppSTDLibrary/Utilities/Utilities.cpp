@@ -458,6 +458,16 @@ namespace Utilities::ForwardLike_Lambda
 	}
 }
 
+namespace Extent
+{
+	void getArraySize()
+	{
+		const int values[]{1, 2, 3, 4};
+		static_assert(std::extent_v<decltype(values)> == 4);
+
+
+	}
+}
 
 
 void Bind_Tests();
@@ -466,8 +476,10 @@ void Decay_Tests();
 void Utilities::TestAll()
 {
     // Bind_Tests();
-    Decay_Tests();
+    // Decay_Tests();
     // Invoke::TestAll();
+
+	Extent::getArraySize();
 
 	// ApplyTests::Apply_Sum_Test();
 	// ApplyTests::Apply_Sum_Lambda_Test();

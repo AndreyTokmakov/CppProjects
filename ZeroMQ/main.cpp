@@ -19,6 +19,7 @@ Description : C++ Utilities
 #include "Router_Dealer_One/Router_Dealer_One.hpp"
 #include "Router_Dealer_Poller_Timeout/Router_Dealer_Poller_Timeout.hpp"
 #include "Router_Dealer/Router_Dealer.hpp"
+#include "Router_Dealer_Asynch/RouterDealerAsynch.hpp"
 #include "Server/DebugServer.hpp"
 #include "Experiments/Experiments.hpp"
 #include "Proxy/ZeroMqProxy.hpp"
@@ -36,7 +37,7 @@ int main([[maybe_unused]] int argc,
 {
     const std::vector<std::string_view> args(argv + 1, argv + argc);
 
-    Experiments::TestAll();
+    // Experiments::TestAll();
 
     // Publisher_Subscriber::TestAll();
     // Request_Response::TestAll();
@@ -46,6 +47,7 @@ int main([[maybe_unused]] int argc,
     // Router_Dealer_One::TestAll();
     // Router_Dealer_Simple::TestAll(); /** <--- NOT WORKING YET **/
     // Router_Dealer_Poller_Timeout::TestAll();
+    RouterDealerAsynch::TestAll();
 
     // ZeroMqProxy::TestAll();
 

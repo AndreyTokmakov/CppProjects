@@ -156,7 +156,7 @@ int main([[maybe_unused]] int argc,
     // InlineNamespaces::TestAll();
     // NumericLimits::TestAll();
     // ObjectOrientedProgramming::TestAll();
-    Optional::TestAll();
+    // Optional::TestAll();
     // Overflow::TestAll();
     // PolymorphicMemoryResources::TestAll();
     // Print::TestAll();
@@ -184,7 +184,7 @@ int main([[maybe_unused]] int argc,
     // TypeCast::TestAll();
     // Int::TestAll();
     // Templates::TestAll();
-    // Utilities::TestAll();
+    Utilities::TestAll();
     // CompilerVersion::TestAll();
     // UniquePtr::TestAll();
     // WeakPtr::TestAll();
