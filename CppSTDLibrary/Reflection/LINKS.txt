@@ -4,3 +4,8 @@ https://open-std.org/jtc1/sc22/wg21/docs/papers/2025/p2996r13.html
 
 
 https://habr.com/ru/articles/598981/?ysclid=mg6w41shdz729773103
+
+
+# Using Reflection to Generate C++ Python Bindings - Callum Piper - ACCU 2025
+
+https://www.youtube.com/watch?v=SJ0NFLpR9vE
