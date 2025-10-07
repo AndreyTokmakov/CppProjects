@@ -1642,14 +1642,14 @@ namespace Concepts::Callables
         };
 
         {
-            const Worker1 w1 (validator);
-            std::cout << std::boolalpha <<  w1.validate("bad") << std::endl;
-            std::cout << std::boolalpha <<  w1.validate("OK") << std::endl;
+            const Worker1 w (validator);
+            std::cout << std::boolalpha <<  w.validate("bad") << std::endl;
+            std::cout << std::boolalpha <<  w.validate("OK") << std::endl;
         }
         {
-            const Worker2 w1 (validator);
-            std::cout << std::boolalpha <<  w1.validate("bad") << std::endl;
-            std::cout << std::boolalpha <<  w1.validate("OK") << std::endl;
+            const Worker2 w (validator);
+            std::cout << std::boolalpha <<  w.validate("bad") << std::endl;
+            std::cout << std::boolalpha <<  w.validate("OK") << std::endl;
         }
 
         // false
