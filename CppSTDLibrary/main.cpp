@@ -23,7 +23,7 @@ Description : Cpp STD lib
 #include "DateAndTime/DateAndTime.h"
 #include "Concepts/Concepts.h"
 #include "ContextControl/ContextControl.h"
-#include "ConsoleInOut/ConsoleInOut.h"
+#include "ConsoleInOut/ConsoleInOut.hpp"
 #include "CompileTime_Constexpr/ConstConstexprMutable.hpp"
 #include "CompileTime_Constexpr/CompileTimeProgramming.hpp"
 #include "RVO_CopyElision/CopyElision.h"
@@ -116,7 +116,7 @@ int main([[maybe_unused]] int argc,
     // Chrono::TestAll();
     // ContextControl::TestAll();
     // Comparators::TestAll();
-    // Concepts::TestAll();
+    Concepts::TestAll();
     // ConsoleInOut::TestAll();
     // ConstConstexprMutable::TestAll();
     // CompileTimeProgramming::TestAll();
@@ -182,7 +182,7 @@ int main([[maybe_unused]] int argc,
     // TypeCast::TestAll();
     // Int::TestAll();
     // Templates::TestAll();
-    Utilities::TestAll();
+    // Utilities::TestAll();
     // UniquePtr::TestAll();
     // WeakPtr::TestAll();
     // StaticAsserts::TestAll();

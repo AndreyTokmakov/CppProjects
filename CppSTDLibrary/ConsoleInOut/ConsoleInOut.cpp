@@ -23,7 +23,7 @@
 #include <ranges>
 // #include <format>
 
-#include "ConsoleInOut.h"
+#include "ConsoleInOut.hpp"
 
 namespace Color {
 	enum Code {
@@ -468,6 +468,23 @@ namespace ConsoleInOut::Table
     }
 }
 
+namespace ConsoleInOut
+{
+	using namespace std::string_view_literals;
+
+	constexpr std::string_view red    = "\033[31m"sv;
+	constexpr std::string_view green  = "\033[32m"sv;
+	constexpr std::string_view yellow = "\033[33m"sv;
+	constexpr std::string_view reset  = "\033[0m"sv;
+
+	void coloredOutput()
+	{
+		std::cout << green  << "✔️ Всё прошло успешно" << reset << '\n';
+		std::cout << yellow << "…  Загружаем данные"   << reset << '\n';
+		std::cerr << red    << "✖️ Ошибка подключения" << reset << '\n';
+	}
+}
+
 
 /** TEST **/
 void ConsoleInOut::TestAll()
@@ -509,6 +526,8 @@ void ConsoleInOut::TestAll()
 
     // Experiments::ReadInputTestData();
 
-    Table::print();
+    // Table::print();
+
+	ConsoleInOut::coloredOutput();
 };
 

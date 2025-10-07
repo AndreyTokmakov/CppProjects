@@ -1585,7 +1585,8 @@ namespace Concepts::Callables
         func();
     }
 
-    void Test_Predicate() {
+    void Test_Predicate()
+    {
         auto F = []()-> bool {
             std::cout << "Ok" << std::endl;
             return true;
@@ -1600,7 +1601,62 @@ namespace Concepts::Callables
         F();
     }
 
-    //----------------------------------------------------------------------------
+    template<std::predicate<std::string> Func>
+    struct Worker1
+    {
+        explicit Worker1(Func f): func { std::forward<Func>(func) } {
+        }
+
+        explicit Worker1(Func&& f): func { std::forward<Func>(func) } {
+        }
+
+        bool validate(const std::string& text) const {
+            return func(text);
+        }
+
+    private:
+        Func func;
+    };
+
+    template<std::invocable<std::string> Func>
+    struct Worker2
+    {
+        explicit Worker2(Func f): func { std::forward<Func>(func) } {
+        }
+
+        explicit Worker2(Func&& f): func { std::forward<Func>(func) } {
+        }
+
+        bool validate(const std::string& text) const {
+            return func(text);
+        }
+
+    private:
+        Func func;
+    };
+
+    void Test_Predicate_and_Invocable_as_ClassParameter()
+    {
+        auto validator = [](const std::string& text) -> bool {
+            return text.contains("OK");
+        };
+
+        {
+            const Worker1 w1 (validator);
+            std::cout << std::boolalpha <<  w1.validate("bad") << std::endl;
+            std::cout << std::boolalpha <<  w1.validate("OK") << std::endl;
+        }
+        {
+            const Worker2 w1 (validator);
+            std::cout << std::boolalpha <<  w1.validate("bad") << std::endl;
+            std::cout << std::boolalpha <<  w1.validate("OK") << std::endl;
+        }
+
+        // false
+        // true
+        // false
+        // true
+    }
 
     template<std::predicate<int> Func>
     void check_with_params_1(Func func, int param)
@@ -1610,7 +1666,7 @@ namespace Concepts::Callables
 
     template<typename Func>
     void check_with_params_2(Func func, int param) requires std::predicate<Func, int>
-            {
+    {
         func(param);
     }
 
@@ -2975,9 +3031,6 @@ namespace Concepts::Using_Concepts_With_ReturnType_Spec
 
 
 
-
-
-
 // https://www.youtube.com/watch?v=jzwqTi7n-rg | Back to Basics: Concepts in C++ - Nicolai Josuttis - CppCon 2024
 
 void Concepts::TestAll()
@@ -3028,6 +3081,7 @@ void Concepts::TestAll()
     // Callables::Test_Invocable();
     // Callables::Test_Invocable_Regular();
     // Callables::Test_Predicate();
+    Callables::Test_Predicate_and_Invocable_as_ClassParameter();
     // Callables::Test_Predicate_WithParams();
     // Callables::Test_Predicate_WithParams_Variadic();
     // Callables::Test_Predicate_PrintVector();
@@ -3042,9 +3096,9 @@ void Concepts::TestAll()
     // STD::Derived_From::SimpleExample();
     // STD::Derived_From::ComplexTest();
 
-    Function_ADL_Lookup_UsingConcepts::Call_Different_Funcs();
+    // Function_ADL_Lookup_UsingConcepts::Call_Different_Funcs();
 
-    Using_Concepts_With_ReturnType_Spec::tests();
+    // Using_Concepts_With_ReturnType_Spec::tests();
 
     // Concepts_With_Auto::Test();
     // Concepts_With_Auto::Print_Tests();
