@@ -11,6 +11,7 @@ Description : C++ Span src
 
 #include <iostream>
 #include <string>
+#include <iomanip>
 #include <string_view>
 #include <algorithm>
 
@@ -418,6 +419,44 @@ namespace Parse_Network_Data
 }
 
 
+namespace Span::To_Bytes
+{
+    void print(float const x, std::span<const std::byte> const bytes)
+    {
+        std::cout << std::setprecision(6) << std::setw(8) << x << " = { "
+                  << std::hex << std::uppercase << std::setfill('0');
+        for (auto const b : bytes)
+            std::cout << std::setw(2) << std::to_integer<int>(b) << ' ';
+        std::cout << std::dec << "}\n";
+    }
+
+    void As_Bytes()
+    {
+        std::vector<int> data { 1, 2, 3, 4, 5 };
+        std::span<const std::byte> bytes = std::as_bytes(std::span(data));
+        std::span<std::byte> wrBytes = std::as_writable_bytes(std::span(data));
+    }
+
+    void As_Bytes_Print()
+    {
+        float data[1] { 3.141592f };
+        const std::span<const std::byte, 4> bytes  = std::as_bytes(std::span{data});
+
+        print(data[0], bytes);
+
+        std::span<std::byte, 4> const writable_bytes = std::as_writable_bytes(std::span{data});
+
+        // Change the sign bit that is the MSB (IEEE 754 Floating-Point Standard).
+        writable_bytes[3] |= std::byte{0B1000'0000};
+
+        print(data[0], bytes);
+
+        //  3.14159 = { D8 0F 49 40 }
+        // -3.14159 = { D8 0F 49 C0 }
+    }
+
+}
+
 void Span::TestAll()
 {
     // Subspan_Test();
@@ -444,5 +483,8 @@ void Span::TestAll()
 
     // Handle_Static_Dynamic_Content::print();
 
-    Parse_Network_Data::parseTest();
+    // Parse_Network_Data::parseTest();
+
+    // To_Bytes::As_Bytes();
+    To_Bytes::As_Bytes_Print();
 }

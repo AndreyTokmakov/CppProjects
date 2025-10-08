@@ -116,7 +116,7 @@ int main([[maybe_unused]] int argc,
     // Chrono::TestAll();
     // ContextControl::TestAll();
     // Comparators::TestAll();
-    Concepts::TestAll();
+    // Concepts::TestAll();
     // ConsoleInOut::TestAll();
     // ConstConstexprMutable::TestAll();
     // CompileTimeProgramming::TestAll();
@@ -168,7 +168,7 @@ int main([[maybe_unused]] int argc,
     // StringView::TestAll();
     // StructuredBinding::TestAll();
     // StrongTypes::TestAll();
-    // Span::TestAll();
+    Span::TestAll();
     // Simd::TestAll();
     // ScopeExit::TestAll();
     // Stacktrace::TestAll();
