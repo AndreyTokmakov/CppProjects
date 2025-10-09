@@ -3514,6 +3514,22 @@ However, this is the root of the false sharing problem.
 			return b;
 		}
 
+ ▪ template<typename Map, typename Key>
+   const typename Map::mapped_type& getOrDefault(const Map& map,
+   	                                             const Key& key,
+   	                                             const typename Map::mapped_type& defaultValue)
+   {
+   		auto iter = map.find(key);
+   		return (map.end() != iter ? iter-> second : defaultValue);
+   }
+
+   defaultValue --> может вернуть 'dangling reference' к примеру
+
+   auto result = getOrDefault(map, "key", "default");
+
+
+
+
 ============================================================================================================================================================	
 								                    Secure coding | C++ Hardening | Sanitizing C++ | Безопастность
 ============================================================================================================================================================
