@@ -3458,8 +3458,31 @@ However, this is the root of the false sharing problem.
                                                            // right to 'theCrashyFunction' and as the result 'sprintf' could overwrite the memory of 'pList'
 			unsigned int size = pList->size();             // variable on the stack
 		}
-  
- ▪ Logger
+
+▪ Logger [Ошибка очередности создания членов класса]
+
+ 		struct Logger
+ 		{
+
+        	std::jthread workerThread;
+        	std::stop_source stopSource;
+
+	        Logger() : workerThread { std::jthread(&Logger::handleLogs, this, stopSource.get_token()) } {
+	        }
+
+        	void handleLogs(const std::stop_token &token)
+        	{  
+				while (!token.stop_requested()) {
+                	std::this_thread::sleep_for(std::chrono::milliseconds(100));
+            	}
+        	}
+ 		}
+
+ 		// Когда workerThread создаётся с использованием 'this'
+ 		// - объект класса еще сконстуирован
+ 		// - stopSource тоже еще не инициалоирован
+
+▪ Logger [Ошибка очередности разрущения членов класса]
 
  		struct Logger
  		{
@@ -3493,7 +3516,7 @@ However, this is the root of the false sharing problem.
  	    ---> Фикс поменять очередность на    	 std::jthread logProcessor;
         	                               }
 
- ▪ Неверный вывод типа в методе void foo(auto&& v) без использования std::move или std::forward
+▪ Неверный вывод типа в методе void foo(auto&& v) без использования std::move или std::forward
 
 
 		void bar(float&& x) { std::cout << "float " << x << "\n"; } 
