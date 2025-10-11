@@ -34,6 +34,7 @@ add_executable(${PROJECT_NAME}
         Router_Dealer_Asynch/RouterDealerAsynch.cpp
         Servers/DebugServer.cpp
         Servers/Servers.cpp
+        Servers/ReqRepServer.cpp
         Proxy/ZeroMqProxy.cpp
 )
 

@@ -17,6 +17,7 @@ namespace Servers
 {
     void TestAll(const std::vector<std::string_view>& args);
     void runDebugServer(const std::vector<std::string_view>& args);
+    void runReqRepServer(const std::vector<std::string_view>& args);
 }
 
 #endif //CPPPROJECTS_SERVERS_HPP
