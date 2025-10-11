@@ -7,7 +7,7 @@ Copyright   : Your copyright notice
 Description : DebugServer.cpp
 ============================================================================**/
 
-#include "DebugServer.hpp"
+#include "Servers.hpp"
 #include "../Common/Logger.hpp"
 
 #include <iostream>
@@ -82,8 +82,8 @@ namespace DebugServer
     };
 }
 
-void DebugServer::TestAll(const std::vector<std::string_view>&)
+void Servers::runDebugServer(const std::vector<std::string_view>&)
 {
-    ZeroMQServer server;
+    DebugServer::ZeroMQServer server;
     server.run();
 }

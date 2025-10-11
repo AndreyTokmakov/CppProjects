@@ -32,7 +32,8 @@ add_executable(${PROJECT_NAME}
         Router_Dealer_One/Router_Dealer_One.cpp
         Router_Dealer_Poller_Timeout/Router_Dealer_Poller_Timeout.cpp
         Router_Dealer_Asynch/RouterDealerAsynch.cpp
-        Server/DebugServer.cpp
+        Servers/DebugServer.cpp
+        Servers/Servers.cpp
         Proxy/ZeroMqProxy.cpp
 )
 

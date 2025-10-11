@@ -20,7 +20,7 @@ Description : C++ Utilities
 #include "Router_Dealer_Poller_Timeout/Router_Dealer_Poller_Timeout.hpp"
 #include "Router_Dealer/Router_Dealer.hpp"
 #include "Router_Dealer_Asynch/RouterDealerAsynch.hpp"
-#include "Server/DebugServer.hpp"
+#include "Servers/Servers.hpp"
 #include "Experiments/Experiments.hpp"
 #include "Proxy/ZeroMqProxy.hpp"
 
@@ -47,11 +47,11 @@ int main([[maybe_unused]] int argc,
     // Router_Dealer_One::TestAll();
     // Router_Dealer_Simple::TestAll(); /** <--- NOT WORKING YET **/
     // Router_Dealer_Poller_Timeout::TestAll();
-    RouterDealerAsynch::TestAll();
+    // RouterDealerAsynch::TestAll();
 
     // ZeroMqProxy::TestAll();
 
-    // DebugServer::TestAll(args);
+    Servers::TestAll(args);
 
     return EXIT_SUCCESS;
 }

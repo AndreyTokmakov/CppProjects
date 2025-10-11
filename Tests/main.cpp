@@ -1643,7 +1643,8 @@ namespace demo
 }
 
 
-
+int f(bool) { return 1; }
+int f(std::string_view) { return 2; }
 
 int main([[maybe_unused]] const int argc,
          [[maybe_unused]] char** argv)
@@ -1651,9 +1652,8 @@ int main([[maybe_unused]] const int argc,
     const std::vector<std::string_view> args(argv + 1, argv + argc);
 
 
+    std::cout << f("hello") << std::endl;
 
-
-    // demo::start_lifetime_as_test();
 
 
     /** * * * * *  Move to lib * * * * * **/
