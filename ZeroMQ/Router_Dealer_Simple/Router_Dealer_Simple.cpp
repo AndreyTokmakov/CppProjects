@@ -8,13 +8,10 @@ Description : Router_Dealer_Simple.cpp
 ============================================================================**/
 
 #include "Router_Dealer_Simple.hpp"
+#include "Logger.hpp"
 
-#include <iostream>
-#include <format>
-#include <print>
 #include <unordered_map>
 #include <thread>
-
 
 #include <zmq.hpp>
 
@@ -23,7 +20,7 @@ namespace Router_Dealer_Simple
 {
     // constexpr uint16_t clientPort { 5555 };
 
-    void router()
+    void router(logger::Logger& logger)
     {
         zmq::context_t ctx;
         zmq::socket_t router(ctx, zmq::socket_type::router);
@@ -32,7 +29,7 @@ namespace Router_Dealer_Simple
         std::unordered_map<std::string, std::string> routing_table; // from client to worker
         zmq::message_t msgIdentity, msgEmpty, msgPayload;
 
-        std::println("[Router] Starting ....");
+        logger.info("[Router] Starting ....");
 
         int counter = 0;
         while (true)
@@ -40,18 +37,18 @@ namespace Router_Dealer_Simple
             std::optional<size_t> result = router.recv(msgIdentity);
 
             const std::string_view identity = msgIdentity.to_string_view();
-            std::println("[Router] Received: 'identity' message size: {}, data: {} ",
+            logger.info("[Router] Received: 'identity' message size: {}, data: {} ",
                          result.value_or(0), identity);
 
             /*
             result = router.recv(msgEmpty);
             const std::string_view empty = msgEmpty.to_string_view();
-            std::println("[Router] Received: 'empty' message size: {}, data: {} ",
+            logger.info("[Router] Received: 'empty' message size: {}, data: {} ",
                          result.value_or(0), empty);*/
 
             result = router.recv(msgPayload);
             const std::string_view payload = msgPayload.to_string_view();
-            std::println("[Router] Received: 'payload' message size: {}, data: {} ",
+            logger.info("[Router] Received: 'payload' message size: {}, data: {} ",
                          result.value_or(0), payload);
 
             std::string target = (payload.find("worker1") != std::string::npos) ? "worker1" : "worker2";
@@ -67,23 +64,23 @@ namespace Router_Dealer_Simple
         }
     }
 
-    void client()
+    void client(logger::Logger& logger)
     {
         zmq::context_t ctx;
         zmq::socket_t dealer(ctx, zmq::socket_type::dealer);
         dealer.set(zmq::sockopt::routing_id, "client1");
         dealer.connect("tcp://localhost:5555");
 
-        std::println("[Client] before send");
+        logger.info("[Client] before send");
         dealer.send(zmq::buffer("request to worker1"), zmq::send_flags::none);
 
         zmq::message_t reply;
         const std::optional<size_t> result = dealer.recv(reply);
 
-        std::println("[Client] Got reply ({}): {}", result.value_or(0), reply.to_string_view());
+        logger.info("[Client] Got reply ({}): {}", result.value_or(0), reply.to_string_view());
     }
 
-    void worker()
+    void worker(logger::Logger& logger)
     {
         zmq::context_t ctx;
         zmq::socket_t dealer(ctx, zmq::socket_type::dealer);
@@ -95,15 +92,15 @@ namespace Router_Dealer_Simple
         {
             msg.rebuild();
 
-            std::println("[Worker] before receive");
+            logger.info("[Worker] before receive");
             const std::optional<size_t> result = dealer.recv(msg);
 
             std::string text = msg.to_string();
 
-            std::println("[Worker] Received ({}): {}", result.value_or(0), text);
+            logger.info("[Worker] Received ({}): {}", result.value_or(0), text);
 
             std::string reply = "processed: " + text;
-            std::println("[Worker] Send response : {}", reply);
+            logger.info("[Worker] Send response : {}", reply);
             dealer.send(zmq::buffer(reply), zmq::send_flags::none);
         }
     }
@@ -111,15 +108,16 @@ namespace Router_Dealer_Simple
 
     void run()
     {
+        logger::Logger logger { "zmq", "/tmp/Logs/server/trace.log" };
         std::vector<std::jthread> tasks;
 
-        tasks.emplace_back(router);
+        tasks.emplace_back(router, std::ref(logger));
 
         std::this_thread::sleep_for(std::chrono::milliseconds (100u));
-        tasks.emplace_back(worker);
+        tasks.emplace_back(worker, std::ref(logger));
 
         std::this_thread::sleep_for(std::chrono::milliseconds (100u));
-        tasks.emplace_back(client);
+        tasks.emplace_back(client, std::ref(logger));
     }
 }
 

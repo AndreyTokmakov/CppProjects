@@ -8,9 +8,8 @@ Description : Publisher_Subscriber.h
 ============================================================================**/
 
 #include "Publisher_Subscriber.hpp"
-#include "DateTimeUtilities.hpp"
+#include "Logger.hpp"
 
-#include <iostream>
 #include <thread>
 
 #include <zmq.hpp>
@@ -18,10 +17,9 @@ Description : Publisher_Subscriber.h
 
 namespace PubSub_Simple
 {
-    using namespace DateTimeUtilities;
     using namespace std::string_view_literals;
 
-    void publisher()
+    void publisher(logger::Logger& logger)
     {
         zmq::context_t context(1);
         zmq::socket_t socket(context, zmq::socket_type::pub);
@@ -33,7 +31,8 @@ namespace PubSub_Simple
             std::string msg = "Hello #" + std::to_string(count++);
             zmq::message_t message(msg.begin(), msg.end());
             socket.send(message, zmq::send_flags::none);
-            std::cout << getCurrentTime() << " Published: " << msg << std::endl;
+            logger.info("Published: {}", msg);
+
             std::this_thread::sleep_for(std::chrono::milliseconds (250u));
 
             if (10 == count)
@@ -48,7 +47,7 @@ namespace PubSub_Simple
         socket.close();
     }
 
-    void subscriber()
+    void subscriber(logger::Logger& logger)
     {
         zmq::context_t context(1);
         zmq::socket_t socket(context, zmq::socket_type::sub);
@@ -60,15 +59,15 @@ namespace PubSub_Simple
             zmq::message_t message;
             const std::optional<size_t> result = socket.recv(message, zmq::recv_flags::none);
             if (!result) {
-                std::cerr << getCurrentTime() << " Receive error\n";
+                logger.info("Receive error");
                 continue;
             }
 
             const std::string_view data(static_cast<char*>(message.data()), message.size());
-            std::cout << getCurrentTime() << " Received: " << data << std::endl;
+            logger.info("Received: {}", data);
 
             if ("QUIT"sv == data) {
-                std::cout << getCurrentTime() << " Stopping .... \n";
+                logger.info("Stopping ....");
                 break;
             }
         }
@@ -78,23 +77,23 @@ namespace PubSub_Simple
 
     void run()
     {
+        logger::Logger logger { "zmq", "/tmp/Logs/server/trace.log" };
         std::vector<std::jthread> workers;
-        workers.emplace_back(publisher);
 
-        workers.emplace_back(subscriber);
-        workers.emplace_back(subscriber);
-        workers.emplace_back(subscriber);
+        workers.emplace_back(publisher, std::ref(logger));
+        workers.emplace_back(subscriber, std::ref(logger));
+        workers.emplace_back(subscriber, std::ref(logger));
+        workers.emplace_back(subscriber, std::ref(logger));
     }
 }
 
 namespace PubSub_Topics
 {
-    using namespace DateTimeUtilities;
     using namespace std::string_view_literals;
 
     constexpr std::array<std::string_view, 2> topics { "events", "notifications" };
 
-    void publisher()
+    void publisher(logger::Logger& logger)
     {
         zmq::context_t context(1);
         zmq::socket_t socket(context, zmq::socket_type::pub);
@@ -115,7 +114,8 @@ namespace PubSub_Topics
                 socket.send(topicInfoMsg, zmq::send_flags::sndmore);
                 socket.send(msgData, zmq::send_flags::none);
 
-                std::cout << getCurrentTime() << " ==> Published: '" << data << "' to '" << topic << "'\n";
+                logger.info(" ==> Published: '{}' to '{}'", data, topic);
+
                 std::this_thread::sleep_for(std::chrono::milliseconds (250u));
             }
             else
@@ -136,7 +136,9 @@ namespace PubSub_Topics
         socket.close();
     }
 
-    void subscriber(const std::string_view name, const std::string_view topic)
+    void subscriber(const std::string_view name,
+                    const std::string_view topic,
+                    logger::Logger& logger)
     {
         zmq::context_t context(1);
         zmq::socket_t socket(context, zmq::socket_type::sub);
@@ -152,16 +154,16 @@ namespace PubSub_Topics
             {
                 const zmq::message_t& message = recv_msgs.front();
                 const std::string_view data = message.to_string_view();
-                std::cout << "[" << name << "] " << getCurrentTime() << " Topic: " << data << std::endl;
+                logger.info("[{}] topic: {}", name, data);
             }
 
             {
                 const zmq::message_t& message = recv_msgs.back();
                 const std::string_view data = message.to_string_view();
-                std::cout << "[" << name << "] " << getCurrentTime()  << " Data: " << data << std::endl;
+                logger.info("[{}] Data: {}", name, data);
 
                 if ("QUIT"sv == data) {
-                    std::cout << "[" << name << "] " << getCurrentTime()  << " Stopping .... \n";
+                    logger.info("[{}] Stopping ....", name);
                     break;
                 }
             }
@@ -172,12 +174,14 @@ namespace PubSub_Topics
 
     void run()
     {
+        logger::Logger logger { "zmq", "/tmp/Logs/server/trace.log" };
         std::vector<std::jthread> workers;
-        workers.emplace_back(publisher);
-        workers.emplace_back(subscriber, "S1", topics.front());
-        workers.emplace_back(subscriber, "S2", topics.back());
-        workers.emplace_back(subscriber, "S3", topics.front());
-        workers.emplace_back(subscriber, "S4", topics.back());
+
+        workers.emplace_back(publisher, std::ref(logger));
+        workers.emplace_back(subscriber, "S1", topics.front(), std::ref(logger));
+        workers.emplace_back(subscriber, "S2", topics.back(), std::ref(logger));
+        workers.emplace_back(subscriber, "S3", topics.front(), std::ref(logger));
+        workers.emplace_back(subscriber, "S4", topics.back(), std::ref(logger));
 
     }
 

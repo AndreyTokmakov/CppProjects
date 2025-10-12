@@ -8,9 +8,8 @@ Description : Router_Dealer_One.cpp
 ============================================================================**/
 
 #include "Router_Dealer_One.hpp"
-#include "DateTimeUtilities.hpp"
+#include "Logger.hpp"
 
-#include <iostream>
 #include <thread>
 #include <format>
 
@@ -22,8 +21,7 @@ namespace Router_Dealer_One
     constexpr uint16_t clientPort { 5555 };
     constexpr uint16_t serverPort { 5556 };
 
-
-    void broker()
+    void broker(logger::Logger&)
     {
         zmq::context_t ctx(1);
         zmq::socket_t clientSocket(ctx, zmq::socket_type::router);
@@ -45,8 +43,10 @@ namespace Router_Dealer_One
         bool hasMore = true;
         while (true)
         {
+            [[maybe_unused]]
             int n = zmq::poll(items);
             // std::cout << n << std::endl;
+
             for (uint32_t itemId = 0; itemId < items.size(); ++itemId, hasMore = true)
             {
                 if (items[itemId].revents & ZMQ_POLLIN)
@@ -67,7 +67,7 @@ namespace Router_Dealer_One
         }
     }
 
-    void worker(const std::string& name)
+    void worker(const std::string& name, logger::Logger& logger)
     {
         zmq::context_t ctx(1);
         zmq::socket_t sock(ctx, zmq::socket_type::dealer);
@@ -79,11 +79,12 @@ namespace Router_Dealer_One
 
         while (true)
         {
-            sock.recv(client_id, zmq::recv_flags::none);
-            sock.recv(empty, zmq::recv_flags::none);
-            sock.recv(request, zmq::recv_flags::none);
+            zmq::recv_result_t result = sock.recv(client_id, zmq::recv_flags::none);
+            result = sock.recv(empty, zmq::recv_flags::none);
+            result = sock.recv(request, zmq::recv_flags::none);
 
-            std::cout << "[" << name << "] Received: " << request.to_string_view() << "\n";
+            logger.info("[{}] Received", name, request.to_string_view());
+
             std::this_thread::sleep_for(std::chrono::milliseconds(100u));
 
             std::string reply = "Reply to: " + request.to_string();;
@@ -94,7 +95,7 @@ namespace Router_Dealer_One
         }
     }
 
-    void client(const std::string& name)
+    void client(const std::string& name, logger::Logger& logger)
     {
         zmq::context_t ctx(1);
         zmq::socket_t sock(ctx, zmq::socket_type::req);
@@ -106,29 +107,32 @@ namespace Router_Dealer_One
             std::string msg = std::format("Request {} from {}", i, name);
             sock.send(zmq::buffer(msg), zmq::send_flags::none);
 
-            sock.recv(reply, zmq::recv_flags::none);
-            std::cout << "[Client] Got reply: " << reply.to_string_view() << "\n";
+            [[maybe_unused]]
+            zmq::recv_result_t result = sock.recv(reply, zmq::recv_flags::none);
+
+            logger.info("[Client] Got reply", reply.to_string_view());
 
             std::this_thread::sleep_for(std::chrono::milliseconds(150u));
         }
     }
 
-
     void run()
     {
+        logger::Logger logger { "zmq", "/tmp/Logs/server/trace.log" };
         std::vector<std::jthread> tasks;
-        tasks.emplace_back(broker);
 
-        tasks.emplace_back(worker, "Worker-1");
-        tasks.emplace_back(worker, "Worker-2");
-        tasks.emplace_back(worker, "Worker-3");
+        tasks.emplace_back(broker, std::ref(logger));
 
-        tasks.emplace_back(client, "Client-1");
-        tasks.emplace_back(client, "Client-2");
-        tasks.emplace_back(client, "Client-3");
-        tasks.emplace_back(client, "Client-4");
-        tasks.emplace_back(client, "Client-5");
-        tasks.emplace_back(client, "Client-6");
+        tasks.emplace_back(worker, "Worker-1", std::ref(logger));
+        tasks.emplace_back(worker, "Worker-2", std::ref(logger));
+        tasks.emplace_back(worker, "Worker-3", std::ref(logger));
+
+        tasks.emplace_back(client, "Client-1", std::ref(logger));
+        tasks.emplace_back(client, "Client-2", std::ref(logger));
+        tasks.emplace_back(client, "Client-3", std::ref(logger));
+        tasks.emplace_back(client, "Client-4", std::ref(logger));
+        tasks.emplace_back(client, "Client-5", std::ref(logger));
+        tasks.emplace_back(client, "Client-6", std::ref(logger));
     }
 
 }

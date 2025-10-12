@@ -13,7 +13,7 @@ find_package(Boost REQUIRED COMPONENTS
         program_options
 )
 
-add_compile_options(-c -Wall -Wextra -O3 -std=c++26)
+add_compile_options(-c -Wall -Wextra -O3 -std=c++26 )
 
 include_directories(Utilities)
 

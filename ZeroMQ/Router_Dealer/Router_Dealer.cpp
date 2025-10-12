@@ -8,7 +8,7 @@ Description : Router_Dealer.h
 ============================================================================**/
 
 #include "Router_Dealer.hpp"
-#include "DateTimeUtilities.hpp"
+#include "Logger.hpp"
 
 #include <iostream>
 #include <thread>
@@ -16,16 +16,15 @@ Description : Router_Dealer.h
 #include <zmq.hpp>
 #include <zmq_addon.hpp>
 
-#define LOG std::cout << getCurrentTime() << ' '
+
 
 namespace Router_Dealer
 {
-    using namespace DateTimeUtilities;
     using namespace std::string_view_literals;
 
     constexpr std::string_view connString { "tcp://0.0.0.0:5556"sv };
 
-    void server()
+    void server(logger::Logger& logger)
     {
         zmq::context_t context(1);
         zmq::socket_t socket (context, zmq::socket_type::router);
@@ -37,12 +36,12 @@ namespace Router_Dealer
             zmq::message_t request;
             const std::optional<size_t> result = socket.recv(request, zmq::recv_flags::none);
             if (!result) {
-                LOG << "[Server] Receive error\n";
+                logger.info("[Server] Receive error");
                 continue;
             }
 
             const std::string_view data = request.to_string_view();
-            LOG << "[Server] Received request (" << request.size() << " bytes) : " << data << "\n";
+            logger.info("[Server] Received request ({} bytes) : {}", request.size(), data);
 
             std::string reply_str = "World";
             zmq::message_t reply(reply_str.begin(), reply_str.end());
@@ -50,7 +49,7 @@ namespace Router_Dealer
         }
     }
 
-    void client()
+    void client(logger::Logger& logger)
     {
         zmq::context_t context(1);
         zmq::socket_t socket(context, zmq::socket_type::dealer);
@@ -75,18 +74,20 @@ namespace Router_Dealer
             zmq::message_t reply;
             const std::optional<size_t> result = socket.recv(reply, zmq::recv_flags::none);
             if (!result) {
-                LOG << "[Client] Receive error\n";
+                logger.info("[Client] Receive error");
                 continue;
             }
 
             const std::string_view data = reply.to_string_view();
-            LOG << "[Client] Received reply (" << data.size() << " bytes) : " << data << "\n";
+            logger.info("[Client] Received reply ({} bytes) : {}", request.size(), data);
         }
     }
 
     void run()
     {
-        std::jthread s(server),  c(client);
+        logger::Logger logger { "zmq", "/tmp/Logs/server/trace.log" };
+
+        std::jthread s(server, std::ref(logger)),  c(client, std::ref(logger));
     }
 }
 

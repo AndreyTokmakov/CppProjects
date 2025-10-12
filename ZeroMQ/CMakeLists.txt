@@ -20,6 +20,13 @@ find_library(ZMQ_LIBRARY NAMES zmq PATHS ${PC_ZMQ_LIBRARY_DIRS})
 
 find_path(CPPZMQ_INCLUDE_DIR zmq.hpp)
 
+#[[
+message("CMAKE_SOURCE_DIR       : ${CMAKE_SOURCE_DIR}")
+message("PROJECT_SOURCE_DIR     : ${PROJECT_SOURCE_DIR}")
+message("CMAKE_BINARY_DIR       : ${CMAKE_BINARY_DIR}")
+message("CMAKE_CURRENT_LIST_DIR : ${CMAKE_CURRENT_LIST_DIR}")
+#]]
+
 add_executable(${PROJECT_NAME}
         main.cpp
         Common/Logger.cpp
@@ -37,6 +44,8 @@ add_executable(${PROJECT_NAME}
         Servers/ReqRepServer.cpp
         Proxy/ZeroMqProxy.cpp
 )
+
+target_include_directories(${PROJECT_NAME} PRIVATE "${PROJECT_SOURCE_DIR}/Common")
 
 # **** Utilities ****
 target_include_directories(${PROJECT_NAME} PUBLIC "${CMAKE_SOURCE_DIR}/Utilities")

@@ -49,9 +49,9 @@ int main([[maybe_unused]] int argc,
     // Router_Dealer_Poller_Timeout::TestAll();
     // RouterDealerAsynch::TestAll();
 
-    // ZeroMqProxy::TestAll();
+    ZeroMqProxy::TestAll();
 
-    Servers::TestAll(args);
+    // Servers::TestAll(args);
 
     return EXIT_SUCCESS;
 }

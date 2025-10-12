@@ -8,11 +8,11 @@ Description : ReqRepServer.cpp
 ============================================================================**/
 
 #include "Servers.hpp"
-#include "../Common/Logger.hpp"
+#include "Logger.hpp"
 
-#include <iostream>
 #include <string_view>
 #include <vector>
+#include <format>
 
 #include <zmq.hpp>
 
@@ -41,7 +41,7 @@ namespace ReqRepServer
 
             logger.info("Received request ({}): {}", bytesReceived, data);
 
-            std::string reply_str = "World";
+            std::string reply_str = std::format("Echo: {}", data);
             zmq::message_t reply(reply_str.begin(), reply_str.end());
             responder.send(reply, zmq::send_flags::none);
         }

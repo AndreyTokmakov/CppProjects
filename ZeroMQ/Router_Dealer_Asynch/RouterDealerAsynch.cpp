@@ -8,22 +8,15 @@ Description : RouterDealerAsynch.cpp
 ============================================================================**/
 
 #include "RouterDealerAsynch.hpp"
+#include "Logger.hpp"
 
-#include <iostream>
-#include <syncstream>
-#include <print>
-#include <format>
 #include <thread>
 #include <zmq.hpp>
 #include <zmq_addon.hpp>
 
-#include "DateTimeUtilities.hpp"
-
-#define LOG std::cout << DateTimeUtilities::getCurrentTime() << ' '
-
 namespace
 {
-    void server()
+    void server(logger::Logger& logger)
     {
         zmq::message_t emptyMessage {};
 
@@ -35,7 +28,7 @@ namespace
             { static_cast<void*>(router), 0, ZMQ_POLLIN, 0 }
         };
 
-        LOG << "[SERVER] Polling ROUTER server at tcp://*:5557\n";
+        logger.info("[SERVER] Polling ROUTER server at tcp://*:5557");
 
         std::vector<zmq::message_t> parts;
         zmq::recv_result_t result;
@@ -59,7 +52,7 @@ namespace
                     zmq::message_t& payload  = parts[1];
 
                     std::string msg(static_cast<char*>(payload.data()), payload.size());
-                    LOG << "[SERVER] Got from client: " << msg << "\n";
+                    logger.info("[SERVER] Got from client: {}", msg);
 
                     // Ответ клиенту
                     std::string reply = "Processed: " + msg;
@@ -69,24 +62,25 @@ namespace
                 }
                 else
                 {
-                    LOG << "[SERVER] Invalid message. Size = " << parts.size() << "\n";
+                    logger.info("[SERVER] Invalid message. Size = {}", parts.size());
                 }
             }
             else
             {
                 // Ничего не пришло за 1 секунду → фоновая задача
-                LOG << "[SERVER] No messages — background task...\n";
+                logger.info("[SERVER] No messages — background task...");
             }
         }
     }
 
-    void client(const std::string& clientId)
+    void client(const std::string& clientId, logger::Logger& logger)
     {
         zmq::context_t context{1};
         zmq::socket_t dealer{context, zmq::socket_type::dealer};
         dealer.set(zmq::sockopt::routing_id, clientId);
         dealer.connect("tcp://localhost:5557");
-        LOG << "[" << clientId << "] Connected to server\n";
+
+        logger.info("[{}] Connected to server", clientId);
 
         zmq::pollitem_t items[] = {
             { static_cast<void*>(dealer), 0, ZMQ_POLLIN, 0 }
@@ -99,7 +93,7 @@ namespace
             if (counter % 4 == 0) {
                 std::string msg = "Ping " + std::to_string(counter / 4) + " (" + clientId + ")";
                 dealer.send(zmq::message_t(msg), zmq::send_flags::none);
-                LOG << "[" << clientId << "] Sent: " << msg << "\n";
+                logger.info("[{}] Sent: {}", clientId, msg);
             }
 
             zmq::poll(items, 1, std::chrono::milliseconds(100U)); /** Ожидаем ответ максимум 500 мс **/
@@ -110,12 +104,12 @@ namespace
                 if (result) //  same as !messages.empty()
                 {
                     const zmq::message_t& message = messages.back();
-                    LOG << "[" << clientId << "] Got reply: (size: " << message.size() << ") Data: " << message.to_string_view() << "\n";
+                    logger.info("[{}] Got reply: (size: {}) Data: {}", clientId, message.size(), message.to_string_view());
                 }
             }
             else /** Если нет ответа — можно делать другие вещи **/
             {
-                LOG << "[" << clientId << "] No reply, idle...\n";
+                logger.info("[{}] No reply, idle...", clientId);
             }
 
             std::this_thread::sleep_for(std::chrono::milliseconds(500U));
@@ -125,17 +119,19 @@ namespace
 
     void run()
     {
+        logger::Logger logger { "zmq", "/tmp/Logs/server/trace.log" };
         std::vector<std::jthread> tasks;
-        tasks.emplace_back(server);
+
+        tasks.emplace_back(server, std::ref(logger));
 
         std::this_thread::sleep_for(std::chrono::milliseconds(100U));
-        tasks.emplace_back(client, "Worker-1");
+        tasks.emplace_back(client, "Worker-1", std::ref(logger));
 
         std::this_thread::sleep_for(std::chrono::milliseconds(100U));
-        tasks.emplace_back(client, "Worker-2");
+        tasks.emplace_back(client, "Worker-2", std::ref(logger));
 
         std::this_thread::sleep_for(std::chrono::milliseconds(100U));
-        tasks.emplace_back(client, "Worker-3");
+        tasks.emplace_back(client, "Worker-3", std::ref(logger));
     }
 }
 

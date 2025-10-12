@@ -8,25 +8,22 @@ Description : ZeroMqProxy.cpp
 ============================================================================**/
 
 #include "ZeroMqProxy.hpp"
+#include "Logger.hpp"
 
-#include <iostream>
-#include <syncstream>
-#include <print>
+
 #include <format>
 #include <thread>
 
 #include <zmq_addon.hpp>
 
-#include "DateTimeUtilities.hpp"
 
-#define LOG std::osyncstream { std::cout } << DateTimeUtilities::getCurrentTime() << ' '
 
 namespace Proxy_SimpleTest
 {
     constexpr uint16_t routerPort { 5555 };
     constexpr uint16_t dealerPort { 5556 };
 
-    void proxy()
+    void proxy(logger::Logger& logger)
     {
         zmq::context_t ctx { 1 };
 
@@ -36,11 +33,11 @@ namespace Proxy_SimpleTest
         zmq::socket_t backend(ctx, zmq::socket_type::dealer);
         backend.bind(std::format("tcp://*:{}", dealerPort));
 
-        LOG << "[Broker] Starting proxy..." << std::endl;
+        logger.info("[Broker] Starting proxy... ");
         zmq::proxy(frontend, backend);
     }
 
-    void worker()
+    void worker(logger::Logger& logger)
     {
         zmq::context_t ctx { 1 };
         zmq::socket_t worker(ctx, zmq::socket_type::rep);
@@ -51,7 +48,7 @@ namespace Proxy_SimpleTest
         while (true)
         {
             result = worker.recv(request, zmq::recv_flags::none);
-            LOG << "[Worker] Received (" << result.value_or(0) << "): " << request.to_string_view() << std::endl;
+            logger.info("[Worker] Received ({})): {}", result.value_or(0), request.to_string_view());
 
             std::this_thread::sleep_for(std::chrono::milliseconds(100u));
             std::string reply = "Processed: " + request.to_string();
@@ -59,7 +56,7 @@ namespace Proxy_SimpleTest
         }
     }
 
-    void client()
+    void client(logger::Logger& logger)
     {
         zmq::context_t ctx { 1 };
         zmq::socket_t client(ctx, zmq::socket_type::req);
@@ -73,16 +70,18 @@ namespace Proxy_SimpleTest
             client.send(zmq::buffer(msg), zmq::send_flags::none);
 
             result = client.recv(reply, zmq::recv_flags::none);
-            LOG << "[Client] Received (" << result.value_or(0) << "): " << reply.to_string_view() << std::endl;
+            logger.info("[Client] Received ({})): {}", result.value_or(0), reply.to_string_view());
         }
     }
 
     void run()
     {
+        logger::Logger logger { "zmq", "/tmp/Logs/server/trace.log" };
         std::vector<std::jthread> tasks;
-        tasks.emplace_back(proxy);
-        tasks.emplace_back(worker);
-        tasks.emplace_back(client);
+
+        tasks.emplace_back(proxy, std::ref(logger));
+        tasks.emplace_back(worker, std::ref(logger));
+        tasks.emplace_back(client, std::ref(logger));
     }
 }
 
