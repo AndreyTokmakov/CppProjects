@@ -252,15 +252,17 @@ void Use_Count_1()
 
     std::weak_ptr<Integer> wInt;
 
+	std::cout << std::string(100, '-') << std::endl;
     {
-        std::shared_ptr<Integer> integer = std::make_shared<Integer>(123);
+        const std::shared_ptr<Integer> integer = std::make_shared<Integer>(123);
         wInt = integer;
 
         std::cout << "Use count = " << wInt.use_count() << std::endl;
     }
+	std::cout << std::string(100, '-') << std::endl;
 
     std::cout << "Use count = " << wInt.use_count() << std::endl;
-    auto ptr = wInt.lock();
+     std::shared_ptr<Integer>  ptr = wInt.lock();
 
     if (!ptr) {
         std::cout << "Null" << std::endl;
@@ -270,7 +272,7 @@ void Use_Count_1()
 
 void WeakPtr::TestAll()
 {
-    WeakPtr_MakeShared::TestAll();
+    // WeakPtr_MakeShared::TestAll();
 
 
 	// SimpleTest();
@@ -290,5 +292,5 @@ void WeakPtr::TestAll()
 	// Vector_of_WeakPtr();
 
     // Use_Count();
-    // Use_Count_1();
+    Use_Count_1();
 }

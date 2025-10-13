@@ -135,7 +135,9 @@ namespace Tuple {
 		}
 	}
 
-	void ForeachTupple() {
+	void ForeachTupple()
+	{
+		[[maybe_unused]]
 		auto myTyple = std::make_tuple(42, 3.14, "boo");
 		//utils::tupleForeach(utils::ForeachCallback(), myTyple);
 	}
@@ -342,7 +344,8 @@ namespace Tuple::IterateValues
 namespace Tuple::IterateValues2
 {
 	template<typename Tuple, typename Functor, size_t Index = 0>
-	constexpr void tuple_for_each(const Tuple &tpl, const Functor &func) {
+	constexpr void tuple_for_each(const Tuple &tpl, const Functor &func)
+	{
 		constexpr size_t tuple_size = std::tuple_size_v<Tuple>;
 		if constexpr(Index < tuple_size) {
 			//func(std::get<Index>(tpl));
@@ -353,7 +356,7 @@ namespace Tuple::IterateValues2
 
 	void IterateTest()
 	{
-		std::tuple tpl = std::make_tuple(1, true, std::string{"Jedi"});
+		const std::tuple tpl = std::make_tuple(1, true, std::string{"Jedi"});
 		tuple_for_each(tpl, [](const auto& v) {
 			std::cout << v << " ";
 		});
@@ -370,12 +373,18 @@ namespace Tuple::Apply
         std::cout << std::apply(sum, tup) << std::endl;
     }
 
-
     void PrintTuple()
     {
         std::apply([](const auto&... args){
             (std::cout << ... << std::forward<decltype(args)>(args)) << std::endl;
         }, std::make_tuple<int, char, std::string>(1, '=', "One"));
+    }
+
+	void PrintTuple_2()
+    {
+    	std::apply([]<typename ... Args>(Args&& ... params){
+			(std::cout << ... << std::forward<Args>(params)) << std::endl;
+		}, std::make_tuple<int, char, std::string>(1, '=', "One"));
     }
 }
 
@@ -389,7 +398,7 @@ namespace Tuple::Apply_ForEach
 		}, std::forward<TupleT>(tp));
 	}
 
-	void test()
+	void printTuple()
 	{
 		std::tuple<int, std::string, std::string> t = std::make_tuple(1, "Two", "III");
 		for_each(t, [](auto x){
@@ -414,13 +423,11 @@ namespace Tuple::Lambda_Tuple
         impl.template operator()<0>(tuple);
     };
 
-
     void PrintTuple()
     {
-        std::tuple<int, double, std::string> tp{1, 2.0, "qwe"};
+        const std::tuple<int, double, std::string> tp {1, 2.0, "qwe"};
         printTuple(tp);
     }
-
 }
 
 
@@ -501,7 +508,8 @@ void Tuple::TestAll()
 
     // Apply::Sum_Tuple();
     // Apply::PrintTuple();
-    Apply_ForEach::test();
+    Apply::PrintTuple_2();
+    // Apply_ForEach::printTuple();
     // Lambda_Tuple::PrintTuple();
 
     // Reference_Wrapper::Create_Tuple_with_Ref();
