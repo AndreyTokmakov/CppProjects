@@ -11,6 +11,14 @@ Description : Reflection.cpp
 
 #include <iostream>
 #include <optional>
+#include <type_traits>
+#include <array>
+#include <numeric>
+#include <string>
+#include <unordered_map>
+#include <ranges>
+
+#include <experimental/meta>
 
 // https://godbolt.org/z/6Prs3fT1b
 
@@ -186,9 +194,87 @@ namespace demo3
 
     }
 }
-
 #endif
 
+
+#if 0
+namespace print_enum_values_2
+{
+    template<typename E>
+    requires std::is_enum_v<E>
+    consteval auto enumerators_of()
+    {
+        return []<size_t ... I>(std::index_sequence<I...>)
+        {
+            return std::array{[:enumerators_of(^^E)[I]:] ...};
+        }
+        (std::make_index_sequence<enumerators_of(^^E).size()>{});
+    }
+
+    template<typename E>
+    requires std::is_enum_v<E>
+    consteval auto identifiers_of()
+    {
+        return []<size_t ... I>(std::index_sequence<I...>)
+        {
+            return std::array{std::string_view(identifier_of(enumerators_of(^^E)[I])) ...};
+        }
+        (std::make_index_sequence<enumerators_of(^^E).size()>{});
+    }
+
+    template<typename E>
+    requires std::is_enum_v<E>
+    const auto& to_string(E value)
+    {
+        static const auto toStringMap = [] static
+        {
+            static constexpr auto AllValues = enumerators_of<E>();
+            static constexpr auto AllStrings = identifiers_of<E>();
+            static std::unordered_map<E, const std::string> result;
+            for(const auto& [enumValue, string] : std::ranges::zip_view(AllValues, AllStrings))
+                result.emplace(enumValue, string);
+            return result;
+        }();
+        return toStringMap.at(value);
+    }
+
+    template<typename E>
+    requires std::is_enum_v<E>
+    std::ostream& operator<<(std::ostream& s, E value)
+    {
+        s << to_string(value);
+        return s;
+    }
+
+    enum class Color { Red, Green, Blue, Yellow, Purple };
+    enum class Animal { Cat, Dog, Horse, Rabbit, Snail };
+
+    int demo()
+    {
+        for(const auto color : enumerators_of<Color>())
+            std::cout << color << std::endl;
+
+        std::cout << std::endl;
+
+        for(const auto animal : enumerators_of<Animal>())
+            std::cout << animal << std::endl;
+    }
+
+    /**
+    Red
+    Green
+    Blue
+    Yellow
+    Purple
+
+    Cat
+    Dog
+    Horse
+    Rabbit
+    Snail
+    **/
+}
+#endif
 
 void Reflection::TestAll()
 {
