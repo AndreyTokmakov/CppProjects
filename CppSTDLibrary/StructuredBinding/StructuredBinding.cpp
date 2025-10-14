@@ -313,8 +313,73 @@ namespace StructuredBinding::CustomdBinding
 		std::cout << y << std::endl;
 		std::cout << "{" <<  z.a << ", " << z.b << "}" << std::endl;
 	}
-
 }
+
+
+namespace StructuredBinding::If_Init_Comparison_Operator_Cpp26
+{
+	struct kinetic_energy_result
+	{
+		enum class error_code
+		{
+			no_error,
+			mass_is_negative,
+		};
+
+		error_code errorCode;
+		double result;
+
+		// This will be evaluated as the `if` condition
+		explicit operator bool() const
+		{
+			std::cout << "Calling kinetic_energy_result::operator bool()" << std::endl;
+			return errorCode == error_code::no_error;
+		}
+	};
+
+	using enum kinetic_energy_result::error_code;
+
+	kinetic_energy_result kinetic_energy(const double mass, const double velocity)
+	{
+		if (mass < 0.0)
+			return { mass_is_negative, std::numeric_limits<double>::quiet_NaN() };
+		return { no_error, 0.5 * mass * velocity * velocity };
+	}
+
+	void demo()
+	{
+		constexpr double velocity = 10.0;
+		for(const double mass : { 10.0, -1.5, 20.0 })
+		{
+			// This is new in C++26 !
+			if (const auto [error_code, result] = kinetic_energy(mass, velocity))
+				std::cout << "The kinetic energy of a mass of " << mass << " kg moving at "
+					<< velocity << "m/s is " << result << " J\n";
+			else
+			{
+				switch(error_code)
+				{
+					case mass_is_negative:
+						std::cout << "Error, mass is negative (with mass = {" << mass << "})\n";
+						break;
+					default:
+						std::cout << "Unknown error.\n";
+						break;
+				}
+			}
+		}
+	}
+
+	/**
+	Calling kinetic_energy_result::operator bool()
+	The kinetic energy of a mass of 10 kg moving at 10m/s is 500 J
+	Calling kinetic_energy_result::operator bool()
+	Error, mass is negative (with mass = {-1.5})
+	Calling kinetic_energy_result::operator bool()
+	The kinetic energy of a mass of 20 kg moving at 10m/s is 1000 J
+	**/
+}
+
 
 void StructuredBinding::TestAll()
 {
@@ -340,6 +405,7 @@ void StructuredBinding::TestAll()
 
 	// Test();
 
+	// CustomBinding::Test();
 
-	CustomdBinding::Test();
+	If_Init_Comparison_Operator_Cpp26::demo();
 }

@@ -166,7 +166,7 @@ int main([[maybe_unused]] int argc,
     // StringStream::TestAll();
     // String::TestAll();
     // StringView::TestAll();
-    // StructuredBinding::TestAll();
+    StructuredBinding::TestAll();
     // StrongTypes::TestAll();
     // Span::TestAll();
     // Simd::TestAll();
@@ -178,7 +178,7 @@ int main([[maybe_unused]] int argc,
     // VolatileTests::TestAll();
     // TypeTraits::TestAll();
     // Types::Tests();
-    Tuple::TestAll();
+    // Tuple::TestAll();
     // TypeCast::TestAll();
     // Int::TestAll();
     // Templates::TestAll();
