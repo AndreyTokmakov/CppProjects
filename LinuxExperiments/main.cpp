@@ -48,6 +48,7 @@
 
 #include "Files/Files.h"
 #include "Files/AsynchFileReader.h"
+#include "Files/AsynchFileMonitor.hpp"
 
 #include "Logs/Logs.h"
 #include "ShellCommands/ShellCommands.h"
@@ -146,6 +147,7 @@ int main([[maybe_unused]] int argc,
 
     // Files::TestAll();
     // AsynchFileReader::TestAll();
+    AsynchFileMonitor::TestAll();
 
     // Logs::TestAll();
     // ShellCommands::TestAll();

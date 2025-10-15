@@ -18,6 +18,7 @@ add_executable(${PROJECT_NAME}
         main.cpp
         Files/Files.cpp
         Files/AsynchFileReader.cpp
+        Files/AsynchFileMonitor.cpp
         Processes/Processes.cpp
         Logs/Logs.cpp
         ShellCommands/ShellCommands.cpp
