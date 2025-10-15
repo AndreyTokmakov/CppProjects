@@ -1643,11 +1643,74 @@ namespace demo
 }
 
 
+namespace resource_registry
+{
+    using TypeID = uint32_t;
+
+    [[nodiscard]]
+    constexpr TypeID generateUniqueTypeId()
+    {
+        static std::atomic<TypeID> currentId { 1 };
+        return currentId++;
+    }
+
+    template<typename Ty>
+    struct TypeId
+    {
+        [[nodiscard]]
+        TypeID getTypeId() const noexcept
+        {
+            static const TypeID id = generateUniqueTypeId();
+            return id;
+        }
+    };
+
+    struct Resource
+    {
+        virtual ~Resource() = default;
+
+    private:
+
+        virtual std::unique_ptr<Resource> create() const noexcept = 0;
+    };
+
+
+    struct Board: TypeId<Board> {};
+    struct Sensor: TypeId<Sensor> {};
+
+    template<typename Ty>
+    concept HasTypeIdGetter = requires(const Ty& obj) {
+        { obj.getTypeId() } noexcept -> std::convertible_to<TypeID>;
+    };
+
+    template<HasTypeIdGetter Ty>
+    void check(const Ty& obj)
+    {
+        std::cout << "Id: " <<  obj.getTypeId() << std::endl;
+    }
+
+    void test()
+    {
+        Board b1, b2;
+        Sensor s1, s2;
+
+        check(b1);
+        check(b2);
+        check(s1);
+        check(s2);
+
+    }
+}
+
+
+
+
 int main([[maybe_unused]] const int argc,
          [[maybe_unused]] char** argv)
 {
     const std::vector<std::string_view> args(argv + 1, argv + argc);
 
+    resource_registry::test();
 
 
     /** * * * * *  Move to lib * * * * * **/
