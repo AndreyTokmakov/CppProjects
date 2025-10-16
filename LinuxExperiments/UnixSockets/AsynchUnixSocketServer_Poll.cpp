@@ -657,6 +657,7 @@ namespace AsynchUnixSocketServer_Poll::Perf
                         continue;
                     if (fds[idx].revents != POLLIN)
                     {
+                        [[maybe_unused]]
                         const Socket hSocket = fds[idx].fd;
                         if (fds[idx].revents & POLLHUP)
                         {

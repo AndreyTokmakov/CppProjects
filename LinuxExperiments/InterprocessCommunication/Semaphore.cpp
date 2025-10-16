@@ -162,9 +162,9 @@ namespace Semaphore::Tests
             std::cout << "Ping: " << local << std::endl;
             local++;
             counter = local;
-            std::this_thread::sleep_for(std::chrono::milliseconds(250));
+            std::this_thread::sleep_for(std::chrono::milliseconds(250u));
             sem_post(&semaphore);
-            std::this_thread::sleep_for(std::chrono::milliseconds (10));
+            std::this_thread::sleep_for(std::chrono::milliseconds (10u));
         }
         return nullptr;
     }
@@ -178,9 +178,9 @@ namespace Semaphore::Tests
             std::cout << "Pong: " << local << std::endl;
             local--;
             counter = local;
-            std::this_thread::sleep_for(std::chrono::milliseconds(250));
+            std::this_thread::sleep_for(std::chrono::milliseconds(250u));
             sem_post(&semaphore);
-            std::this_thread::sleep_for(std::chrono::milliseconds (10));
+            std::this_thread::sleep_for(std::chrono::milliseconds (10u));
         }
         return nullptr;
     }
@@ -332,11 +332,13 @@ namespace Semaphore::MultiprocessTest
         for (int i = 0; i < 10; ++i)
         {
             // std::cout << std::endl;
-            std::this_thread::sleep_for(std::chrono::milliseconds (250));
+            std::this_thread::sleep_for(std::chrono::milliseconds (250u));
             // LOG{} << "ProcessOne. Releasing semOne\n";
             ::sem_post(semOne.value());
 
             LOG{} << "ProcessOne. Waiting for TWO\n";
+
+            [[maybe_unused]]
             const int value  = ::sem_wait(semTwo.value());
             // LOG{} << "ProcessOne. TWO ok. value = " << value << "\n";
         }
@@ -348,7 +350,7 @@ namespace Semaphore::MultiprocessTest
     void ProcessTwo()
     {
         //LOG{} << "ProcessTwo. Creating .....\n";
-        std::this_thread::sleep_for(std::chrono::milliseconds (100));
+        std::this_thread::sleep_for(std::chrono::milliseconds (100u));
 
         std::optional<sem_t*> semOne = OpenSemaphore(semaphoreOneName);
         if (!semOne)
@@ -362,10 +364,12 @@ namespace Semaphore::MultiprocessTest
         {
             // std::cout << std::endl;
             // LOG{} << "ProcessTwo. Waiting for ONE\n";
+
+            [[maybe_unused]]
             const int value = ::sem_wait(semOne.value());
             // LOG{} << "ProcessTwo. ONE ok. value = " << value << "\n";
 
-            std::this_thread::sleep_for(std::chrono::milliseconds (250));
+            std::this_thread::sleep_for(std::chrono::milliseconds (250u));
             // LOG{} << "ProcessTwo. Releasing semTwo\n";
             ::sem_post(semTwo.value());
         }

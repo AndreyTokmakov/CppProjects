@@ -1703,6 +1703,13 @@ namespace resource_registry
 }
 
 
+void swp(int* a, int* b)
+{
+    const int tmp = *a;
+    *a = *b;
+    *b = tmp;
+}
+
 
 
 int main([[maybe_unused]] const int argc,
@@ -1710,7 +1717,13 @@ int main([[maybe_unused]] const int argc,
 {
     const std::vector<std::string_view> args(argv + 1, argv + argc);
 
-    resource_registry::test();
+    // resource_registry::test();
+
+    int x = 10, y = 20;
+
+    std::cout << x << " | " << y << std::endl;
+    swp(&x, &y);
+    std::cout << x << " | " << y << std::endl;
 
 
     /** * * * * *  Move to lib * * * * * **/

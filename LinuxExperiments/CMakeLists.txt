@@ -61,8 +61,12 @@ add_executable(${PROJECT_NAME}
         UnixSockets/AsynchUnixSocketServer_Poll_Debug.cpp
 )
 
+target_include_directories(${PROJECT_NAME} PUBLIC "${CMAKE_SOURCE_DIR}/Utilities")
+target_link_directories(${PROJECT_NAME} PUBLIC "${CMAKE_BINARY_DIR}/Utilities")
+
 # Link libraries to the project/executable
 target_link_libraries(${PROJECT_NAME} PUBLIC
+        utils
         pthread
         rt
         crypt

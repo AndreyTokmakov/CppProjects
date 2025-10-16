@@ -31,6 +31,8 @@ namespace IOUringExperiments::Examples
          * Емкость SQ и CQ буфера указываем как 4096 вхождений.
          */
         io_uring ring {};
+
+        [[maybe_unused]]
         int ret = io_uring_queue_init_params(4, &ring, &params);
         assert(ret == 0);
 
@@ -184,7 +186,7 @@ namespace IOUringExperiments::Echo_Server
         while (true)
         {
             struct io_uring_cqe *cqe;
-            int ret;
+            [[maybe_unused]] int ret = 0;
 
             /** Сабмитим все SQE которые были добавлены на предыдущей итерации **/
             io_uring_submit(&ring);

@@ -8,8 +8,23 @@ Description : AsynchFileMonitor.cpp
 ============================================================================**/
 
 #include "AsynchFileMonitor.hpp"
+#include "FileUtilities.hpp"
 
 #include <iostream>
+#include <filesystem>
+#include <print>
+#include <format>
+
+namespace
+{
+    constexpr std::filesystem::path testDataDir() noexcept
+    {
+        return std::filesystem::current_path() / "../../resources";
+    }
+}
+
+
+
 
 namespace AsynchFileMonitor
 {
@@ -18,5 +33,9 @@ namespace AsynchFileMonitor
 
 void AsynchFileMonitor::TestAll()
 {
-    std::cout << "AsynchFileMonitor::TestAll" << std::endl;
+    const std::filesystem::path testFile = testDataDir() / "test_file.txt";
+    const std::string str = FileUtilities::ReadFile(testFile);
+
+    std::cout << str << std::endl;
+
 }

@@ -242,7 +242,7 @@ namespace MultiThreaded_LockBased_RingBuffer::Tests
             tasks.emplace_back([&] {
                 while (true) {
                     ValueType val { 0 };
-                    if (const bool ok = buffer.read(val)) {
+                    if (const bool _ = buffer.read(val)) {
                         std::lock_guard<std::mutex> lock(mtxResults);
                         readValues.push_back(val);
                     } else if (done.load(std::memory_order::relaxed)) {
