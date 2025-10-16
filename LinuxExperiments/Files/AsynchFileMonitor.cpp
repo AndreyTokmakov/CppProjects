@@ -14,6 +14,15 @@ Description : AsynchFileMonitor.cpp
 #include <filesystem>
 #include <print>
 #include <format>
+#include <memory>
+
+
+#include <sys/epoll.h>
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <fcntl.h>
+#include <unistd.h>
+#include <cstdio>
 
 namespace
 {

@@ -1218,6 +1218,84 @@ namespace Lambdas::Parameter_Pack_Expansion
     }
 }
 
+namespace Lambdas::Parameter_Pack_Expansion
+{
+	template<typename ... Args>
+	void lambda_with_copy_1(Args&& ... params)
+	{
+		auto func = [... vars = params]() { std::cout << (sizeof ... (vars)) << std::endl; };
+		func();
+	}
+
+	template<typename ... Args>
+	void lambda_with_copy_2(Args&& ... params)
+	{
+		auto func = [... vars = std::forward<Args>(params)]() { std::cout << (sizeof ... (vars)) << std::endl; };
+		func();
+	}
+
+	template<typename ... Args>
+	void lambda_no_copy_1(Args&& ... params)
+	{
+		auto func = [&...vars = params]() { std::cout << (sizeof ... (vars)) << std::endl; };
+		func();
+	}
+
+	template<typename ... Args>
+	void lambda_no_copy_2(Args&& ... params)
+	{
+		auto func = [...vars = &params]() { std::cout << (sizeof ... (vars)) << std::endl; };
+		func();
+	}
+
+	template<typename ... Args>
+	void lambda_no_copy_3(Args&& ... params)
+	{
+		auto func = [&params...]() { std::cout << (sizeof ... (params)) << std::endl; };
+		func();
+	}
+
+	void lambda_captured_parameter_copy()
+	{
+		Integer var {123 };
+
+		std::cout << std::string(120, '-') << std::endl;
+		lambda_with_copy_1(var);
+
+		std::cout << std::string(120, '-') << std::endl;
+		lambda_with_copy_2(var);
+
+		std::cout << std::string(120, '-') << std::endl;
+		lambda_no_copy_1(var);
+
+		std::cout << std::string(120, '-') << std::endl;
+		lambda_no_copy_2(var);
+
+		std::cout << std::string(120, '-') << std::endl;
+		lambda_no_copy_3(var);
+
+		std::cout << std::string(120, '-') << std::endl;
+	}
+
+	/**
+	------------------------------------------------------------------------------------------------------------------------
+	Integer [Copy constructor]. (123)
+	1
+	~Integer(123)
+	------------------------------------------------------------------------------------------------------------------------
+	Integer [Copy constructor]. (123)
+	1
+	~Integer(123)
+	------------------------------------------------------------------------------------------------------------------------
+	1
+	------------------------------------------------------------------------------------------------------------------------
+	1
+	------------------------------------------------------------------------------------------------------------------------
+	1
+	------------------------------------------------------------------------------------------------------------------------
+	**/
+}
+
 namespace Lambdas::Shared_Lambda_Wrapper
 {
 	template<typename Lambda>
@@ -1451,6 +1529,7 @@ void Lambdas::TestAll()
 	// Tests::VECTOR_OF_LAMBDAS();
 
     // Parameter_Pack_Expansion::lambda_params_pack_expansion();
+    Parameter_Pack_Expansion::lambda_captured_parameter_copy();
 
 
     // Concepts::Using_Existing_STD_Concepts();
