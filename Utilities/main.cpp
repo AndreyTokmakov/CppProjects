@@ -29,6 +29,11 @@ Description : C++ Utilities
 #include "HexConverter.hpp"
 #include "PerfUtilities.hpp"
 
+
+#include "FinalAction.hpp"
+
+#include <experimental/scope>
+
 namespace
 {
     template<typename T>
@@ -319,6 +324,26 @@ namespace HexConverter_Tests
     }
 }
 
+namespace final_action_test
+{
+    void test()
+    {
+        {
+            auto cleanup = []{ std::cout << "Cleanup-1" << std::endl; };
+            final_action::ScopeExit onExit(cleanup);
+            std::cout << "Done-1" << std::endl;
+        }
+
+        {
+            auto cleanup = []{ std::cout << "Cleanup-2" << std::endl; };
+            final_action::ScopeExit onExit(cleanup);
+
+            onExit.release();
+            std::cout << "Done-2" << std::endl;
+        }
+    }
+}
+
 
 // TODO: BitUtils
 //      - check bit is set
@@ -339,7 +364,7 @@ int main([[maybe_unused]] int argc,
     // StringUtilitiesTests::Update_string_test();
     // StringUtilitiesTests::Random_String();
     // StringUtilitiesTests::stringToChunks_Test();
-    StringUtilitiesTests::Trim_Test();
+    // StringUtilitiesTests::Trim_Test();
 
     // FileUtilities_Tests::ReadFile();
     // FileUtilities_Tests::ReadFile2String();
@@ -359,6 +384,7 @@ int main([[maybe_unused]] int argc,
 
     // HexConverter_Tests::Test();
 
+    final_action_test::test();
 
     return EXIT_SUCCESS;
 }
