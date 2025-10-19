@@ -8,7 +8,9 @@ Description : AsynchFileMonitor.cpp
 ============================================================================**/
 
 #include "AsynchFileMonitor.hpp"
+
 #include "FileUtilities.hpp"
+#include "FinalAction.hpp"
 
 #include <iostream>
 #include <filesystem>
@@ -60,12 +62,17 @@ namespace AsynchFileMonitor::Demo_1
         const std::filesystem::path testFile = testDataDir() / "test_file.txt";
         const char* path = testFile.c_str();
 
-        // const int fileHandle = 0;
         const int fileHandle = ::open(path, O_RDONLY | O_NONBLOCK);
         if (-1 == fileHandle) {
             std::cerr << "Failed to open file. Error = " << errno << std::endl;
             return;
         }
+
+        auto cleanup = [&fileHandle] {
+            std::cout << "Cleanup (fileHandle: " << fileHandle << ")\n";
+            ::close(fileHandle);
+        };
+        final_action::ScopeExit onExit(cleanup);
 
         if (!setNonBlocking(fileHandle)) {
             return;
@@ -118,7 +125,6 @@ namespace AsynchFileMonitor::Demo_1
             }
         }
 
-        ::close(epollFd);
         ::close(fileHandle);
     }
 }

@@ -18,8 +18,8 @@ namespace final_action
     struct [[nodiscard]] ScopeExit
     {
         template<typename Func>
-            requires std::constructible_from<Fn, Func> &&
-                std::is_nothrow_constructible_v<Fn, Func>
+        requires std::constructible_from<Fn, Func> &&
+            std::is_nothrow_constructible_v<Fn, Func>
         explicit ScopeExit(Func func): exitFunction { std::forward<Func>(func) } {
         }
 
