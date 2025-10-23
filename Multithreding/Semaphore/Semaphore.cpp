@@ -142,11 +142,14 @@ namespace Semaphore::BinarySemaphore
             semaphore.release();
         };
 
-        std::future<void> job1 = std::async(task);
-        std::future<void> job2 = std::async(task);
+        std::jthread t1(task), t2(task);
 
-        job1.wait();
-        job2.wait();
+        // [2025-10-23 22:18:08.698040] Thread [139956563613440] Started
+        // [2025-10-23 22:18:08.698207] Thread [139956563613440] Semaphore captured...
+        // [2025-10-23 22:18:08.698220] Thread [139956555220736] Started
+        // [2025-10-23 22:18:10.698347] Thread [139956563613440] Semaphore released...
+        // [2025-10-23 22:18:10.698476] Thread [139956555220736] Semaphore captured...
+        // [2025-10-23 22:18:12.698618] Thread [139956555220736] Semaphore released...
     }
 
     void Semaphore_VS_ConditionalVariable()
@@ -228,6 +231,11 @@ namespace Semaphore::CountingSemaphore
         };
 
         std::jthread t1(producer), t2(consumer);
+
+        // 23-10-2025 18:13:49 Consumer: trying to acquire semaphore
+        // 23-10-2025 18:13:51 Producer: releasing the semaphore
+        // 23-10-2025 18:13:51 Consumer: Done
+
     }
 }
 
@@ -408,10 +416,10 @@ void Semaphore::TestAll()
     // BinarySemaphore::Release_TRY_Acquire__BasicTest();
     // BinarySemaphore::Release_TRY_Acquire_FOR__BasicTest();
 
-    // BinarySemaphore::Simple_Acquire_Release();
+    BinarySemaphore::Simple_Acquire_Release();
     // BinarySemaphore::Semaphore_VS_ConditionalVariable();
 
-    CountingSemaphore::BasicTest();
+    // CountingSemaphore::BasicTest();
     // CountingSemaphore::Producer_Consumer();
     // CountingSemaphore::WorkQueue_Demo();
 

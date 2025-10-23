@@ -2841,17 +2841,18 @@ namespace Concepts::CRPT
     struct Event {};
 
     template<typename T>
-    concept Handler = requires(T obj, Event event) {
-        { obj.handle(event) } -> std::same_as<bool>;
+    concept Handler = requires(const T& obj, Event event) {
+        { obj.handle(event) };
     };
 
-    template<typename T>
+    template<Handler T>
     struct BaseHandler
     {
         void call(Event event) {
             (static_cast<const T&>(*this)).handle(event);
         }
 
+        [[nodiscard]]
         bool handle(Event event) const {
             std::cout << "BaseHandler::handle() - DEFAULT \n";
             return true;
@@ -2860,6 +2861,7 @@ namespace Concepts::CRPT
 
     struct Processor: BaseHandler<Processor>
     {
+        [[nodiscard]]
         bool handle(Event event) const {
             std::cout << "Processor::handle()\n";
             return true;
@@ -3081,7 +3083,7 @@ void Concepts::TestAll()
     // Callables::Test_Invocable();
     // Callables::Test_Invocable_Regular();
     // Callables::Test_Predicate();
-    Callables::Test_Predicate_and_Invocable_as_ClassParameter();
+    // Callables::Test_Predicate_and_Invocable_as_ClassParameter();
     // Callables::Test_Predicate_WithParams();
     // Callables::Test_Predicate_WithParams_Variadic();
     // Callables::Test_Predicate_PrintVector();
@@ -3107,7 +3109,7 @@ void Concepts::TestAll()
 
 
     // CRPT::Concepts_Instead_CRTP();
-    // CRPT::CRTP_Derive_using_Concepts();
+    CRPT::CRTP_Derive_using_Concepts();
 
 
     // ConceptsAsInterface::passClassObjAsInterface();

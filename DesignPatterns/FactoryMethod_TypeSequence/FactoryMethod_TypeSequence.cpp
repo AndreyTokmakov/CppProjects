@@ -130,7 +130,7 @@ void FactoryMethod_TypeSequence::TestAll()
 {
     constexpr std::string_view name = "Stegosaurus";
 
-#if 1
+#if 0
     {
         std::unique_ptr<Dinosaur> obj = make_dinosaur(name);
         obj->info();

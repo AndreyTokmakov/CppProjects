@@ -89,7 +89,7 @@ int main([[maybe_unused]] int argc,
     // PackagedTask::TEST_ALL();
     // ParallelExecutionAlgoritms::TEST_ALL();
 
-    // Semaphore::TestAll();
+    Semaphore::TestAll();
 
     // Synchronization::TEST_ALL();
     // SynchStream::TEST_ALL();
@@ -98,7 +98,7 @@ int main([[maybe_unused]] int argc,
     // SpinLock::TestAll();
     // FairSpinLock::TestAll();
     // SpinLockFutex::TestAll();
-    SpinLock_PerformanceTests::TestAll();
+    // SpinLock_PerformanceTests::TestAll();
 
     // StoppingThreads::TestAll();
 
