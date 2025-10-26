@@ -2845,7 +2845,7 @@ namespace Concepts::CRPT
         { obj.handle(event) };
     };
 
-    template<Handler T>
+    template<typename T>
     struct BaseHandler
     {
         void call(Event event) {

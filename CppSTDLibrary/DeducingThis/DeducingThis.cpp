@@ -182,13 +182,54 @@ namespace DeducingThis::Policy_Based_Design
     }
 }
 
+namespace DeducingThis::Mixin_Builder
+{
+    struct NameMixin
+    {
+        void setName(this auto& self, std::string n) {
+            self.name = std::move(n);
+        }
+    };
+
+    struct AgeMixin
+    {
+        void setAge(this auto& self, int age) {
+            self.age = age;
+        }
+    };
+
+    struct Person : NameMixin, AgeMixin
+    {
+        std::string name;
+        int age{};
+
+        void printInfo() const {
+            std::cout << "Age: " << age << "\n";
+            std::cout << "Name: " << name << "\n";
+        }
+    };
+
+    void test()
+    {
+        Person p;
+        p.setName("AndTokm");
+        p.setAge(33);
+        p.printInfo();
+
+        // Age: 33
+        // Name: AndTokm
+    }
+}
+
 
 void DeducingThis::TestAll()
 {
-    Deduplicating_Function_Overloading::test();
+    // Deduplicating_Function_Overloading::test();
 
     // CRTP_OldStyle::demo();
     // CRTP_NewStyle::demo();
 
     // Policy_Based_Design::test();
+
+    Mixin_Builder::test();
 }

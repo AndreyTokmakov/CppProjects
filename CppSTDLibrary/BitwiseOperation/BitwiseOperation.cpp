@@ -82,6 +82,10 @@ namespace BitUtils
         const int32_t mask = v >> (sizeof(int32_t) * CHAR_BIT - 1);
         return (v + mask) ^ mask;
     }
+
+    constexpr uint32_t round_up_to_pow2(const uint32_t value) {
+        return 1u << (32 - std::countl_zero(value - 1));
+    }
 }
 
 
