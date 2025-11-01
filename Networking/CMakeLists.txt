@@ -22,12 +22,17 @@ include_directories(${THIRD_PARTY_DIR}/grpc/include)
 include_directories(${THIRD_PARTY_DIR}/abseil-cpp)
 include_directories(${THIRD_PARTY_DIR}/json/include)
 
+# CurlCPP
+include_directories(${THIRD_PARTY_DIR}/curlpp/include)
+link_directories(${THIRD_PARTY_DIR}/curlpp/build)
+
 # find_package(gRPC CONFIG REQUIRED)
 # message(STATUS "Using gRPC ${gRPC_VERSION}")
 
 # include all components
 add_executable(${PROJECT_NAME}
         main.cpp
+        CurpCpp/CurlCpp.cpp
         Common/Header.cpp
         APIServer/APIServer.cpp
         Common/HTTPHeader.cpp
@@ -89,4 +94,6 @@ target_link_libraries(${PROJECT_NAME}
         crypt
         crypto
         ssl
+        curl
+        curlpp
 )

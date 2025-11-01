@@ -12,6 +12,8 @@ Description : Tests C++ project
 #include <vector>
 #include <string_view>
 
+#include "CurpCpp/CurlCpp.hpp"
+
 #include "Clients/Clients.h"
 #include "Clients/UDPClient.h"
 #include "DNS/DNS_ResponseParser.h"
@@ -62,7 +64,7 @@ int main([[maybe_unused]] int argc,
 {
     const std::vector<std::string_view> args(argv + 1, argv + argc);
 
-    Clients::Tests();
+    // Clients::Tests();
     // UDPClient::TestAll();
 
     // DNS_ResponseParser::TestAll();
@@ -111,7 +113,9 @@ int main([[maybe_unused]] int argc,
 
     // MessagingProxy::TestAll();
 
-    //  UDSAsynchServer::TestAll();
+    // UDSAsynchServer::TestAll();
+
+    CurpCpp::TestAll();
 
     return EXIT_SUCCESS;
 }
