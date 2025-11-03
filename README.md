@@ -47,6 +47,7 @@ git clone https://gitlab.com/libeigen/eigen.git
 git clone https://github.com/gabime/spdlog.git
 git clone https://github.com/weidai11/cryptopp
 git clone https://github.com/ClickHouse/clickhouse-cpp.git
+git clone git@github.com:jpbarrette/curlpp.git
 
 
 ====================================================================================
