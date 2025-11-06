@@ -21,6 +21,7 @@ add_executable(${PROJECT_NAME}
         BranchLessCodeExamples/BranchLessCodeExamples.cpp
         Branches/Remove_Branches_Builtin_Unreachable.cpp
         AoS_vs_SoA/AoS_vs_SoA.cpp
+        Data_Prefetching/DataPrefetching.cpp
 )
 
 TARGET_LINK_LIBRARIES(${PROJECT_NAME}

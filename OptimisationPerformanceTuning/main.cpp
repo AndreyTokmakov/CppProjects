@@ -17,6 +17,7 @@ Description : C++ Optimisation and Performance Tuning experiments
 #include "BranchLessCodeExamples/BranchLessCodeExamples.h"
 #include "Branches/Remove_Branches_Builtin_Unreachable.h"
 #include "AoS_vs_SoA/AoS_vs_SoA.h"
+#include "Data_Prefetching/DataPrefetching.hpp"
 
 #include <iostream>
 #include <string_view>
@@ -68,11 +69,10 @@ int main([[maybe_unused]] int argc,
     // OptimizationTricks::TestAll();
     // Numa::TestAll();
     // DoubleBuffering::TestAll();
-
     // Remove_Branches_Builtin_Unreachable::TestAll();
     // BranchLessCodeExamples::TestAll();
-
-    AoS_vs_SoA::TestAll();
+    DataPrefetching::TestAll();
+    // AoS_vs_SoA::TestAll();
 
     return EXIT_SUCCESS;
 }

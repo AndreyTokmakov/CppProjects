@@ -1406,7 +1406,7 @@ void Map::TestAll()
 	// emplace_test1();
 	// emplace_return();
 	// emplace_vs_insert();
-	emplace_efficient_multiple_arguments();
+	// emplace_efficient_multiple_arguments();
 	// try_emplace_vs_emplace();
 	// emplace_test_2_ReferenceWrapper();
 
@@ -1453,7 +1453,7 @@ void Map::TestAll()
     // Extract_And_UpdateKey();
     // Extract_ByITer_And_UpdateKey();
 
-	// LowerBound();
+	LowerBound();
     // LowerBound_GreaterSorted();
 	// UpperBound();
 
