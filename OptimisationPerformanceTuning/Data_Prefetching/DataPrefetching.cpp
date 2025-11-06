@@ -13,6 +13,8 @@ Description : DataPrefetching.cpp
 
 #include "DataPrefetching.hpp"
 
+#include <cstring>
+
 // __builtin_prefetch
 
 void simpleExample()
@@ -29,6 +31,34 @@ void simpleExample()
 
     std::cout << "Sum = " << sum << "\n";
 }
+
+
+void simpleExample2()
+{
+    constexpr int PREFETCH_DIST = 16;
+    std::vector<int> v(1'000'000, 42);
+    long long sum = 0;
+
+    for (size_t i = 0; i < v.size(); ++i) {
+        if (i + PREFETCH_DIST < v.size())
+            __builtin_prefetch(&v[i + PREFETCH_DIST], 0, 1);
+        sum += v[i];
+    }
+    std::cout << sum << "\n";
+}
+
+
+// Если заранее подгрузить источник, CPU может выполнять копирование почти без pipeline stalls.
+void fast_copy(const char* src, char* dst, size_t n)
+{
+    for (size_t i = 0; i < n; i += 64)
+    {
+        __builtin_prefetch(src + i + 256, 0, 3);
+        __builtin_prefetch(dst + i + 256, 1, 3);
+        std::memcpy(dst + i, src + i, 64);
+    }
+}
+
 
 namespace iteration_over_structures
 {
@@ -62,5 +92,8 @@ namespace iteration_over_structures
 void DataPrefetching::TestAll()
 {
     // simpleExample();
-    iteration_over_structures::demo();
+    simpleExample2();
+    // iteration_over_structures::demo();
+
+    // fast_copy
 }
