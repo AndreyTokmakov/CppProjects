@@ -141,6 +141,7 @@ add_executable(${PROJECT_NAME}
 		Utilities/CompilerVersion.cpp
 		Utilities/NullPtr_T.cpp
 		Utilities/ScopeExit.cpp
+		Utilities/Class_Member_Pointer.cpp
 )
 
 # Link libraries to the project/executable

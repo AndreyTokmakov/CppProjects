@@ -1268,6 +1268,41 @@ namespace Ranges::Ranges_Sort
     }
 }
 
+namespace Ranges::Max_Element
+{
+    struct Payment
+    {
+        double amount { 0.0 };
+        std::string category;
+
+        auto operator<=>(const Payment& other) const = default;
+    };
+
+    std::ostream& operator<<(std::ostream& stream, const Payment& payment)
+    {
+        return stream << "Payment{amount: " << payment.amount << ", category: " << payment.category <<" }";
+    }
+
+    void Find_Max_Element_by_Class_Field()
+    {
+        std::vector<Payment> payments {
+	            {100.0, "food"},
+                {200.0, "transport"},
+                {150.0, "food"},
+                {300.0, "entertainment"},
+                {50.0, "transport"},
+                {250.0, "food"},
+                {120.0, "food"}
+        };
+
+        Payment& maxPayment = *std::ranges::max_element(payments, {}, &Payment::amount);
+        std::cout << maxPayment << std::endl;
+
+        /// Output:
+        //      Payment{amount: 300, category: entertainment }
+    }
+}
+
 void Ranges::TestAll()
 {
     // For_Each();
@@ -1315,7 +1350,9 @@ void Ranges::TestAll()
     // Algorithms::Sort_ByID();
     // Algorithms::Sort_BackWards();
 
-    Ranges_Sort::Sort_Custom_Type();
+    // Ranges_Sort::Sort_Custom_Type();
+
+    Max_Element::Find_Max_Element_by_Class_Field();
 
     // Algorithms::Reverse();
     // Algorithms::Reverse_Views();

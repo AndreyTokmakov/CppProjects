@@ -239,7 +239,7 @@ namespace Barrier::Reuse_Callback
 
 void Barrier::TEST_ALL()
 {
-    // SimpleTest();
+    SimpleTest();
     // Test();
 
     // Wait_To_All_Thread_Completed();
@@ -249,5 +249,5 @@ void Barrier::TEST_ALL()
     // Barrier_With_Completion();
     // Check_Block_By_Barrier();
 
-    Reuse_Callback::Test();
+    // Reuse_Callback::Test();
 };

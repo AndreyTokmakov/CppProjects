@@ -18,6 +18,7 @@ namespace Utilities
 	namespace Invoke  { void TestAll(); }
 	namespace CompilerVersion { void TestAll(); }
 	namespace ScopeExit { void TestAll(); }
+	namespace Class_Member_Pointer { void TestAll(); }
 
 };
 

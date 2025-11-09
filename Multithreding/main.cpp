@@ -75,7 +75,7 @@ int main([[maybe_unused]] int argc,
     // Atomic_IsLockFree::TestAll();
     // AtomicPerformanceTests::TestAll();
 
-    // Barrier::TEST_ALL();
+    Barrier::TEST_ALL();
     // CallOnce::TEST_ALL();
     // ConditionVariable::TEST_ALL();
     // Exceptions_Handling::TEST_ALL();
@@ -89,7 +89,7 @@ int main([[maybe_unused]] int argc,
     // PackagedTask::TEST_ALL();
     // ParallelExecutionAlgoritms::TEST_ALL();
 
-    Semaphore::TestAll();
+    // Semaphore::TestAll();
 
     // Synchronization::TEST_ALL();
     // SynchStream::TEST_ALL();

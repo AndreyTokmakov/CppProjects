@@ -479,7 +479,8 @@ void Utilities::TestAll()
     // Invoke::TestAll();
 	// NullPtr_T::TestAll();
 	// CompilerVersion::TestAll();
-	ScopeExit::TestAll();
+	// ScopeExit::TestAll();
+	Class_Member_Pointer::TestAll();
 
 	// Extent::getArraySize();
 
