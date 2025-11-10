@@ -88,30 +88,30 @@ namespace Barrier
 
     void Wait_To_All_Thread_Completed()
     {
-        constexpr size_t threadsCount {5};
+        constexpr size_t threadsCount {3};
         std::barrier barrier(threadsCount);
 
         auto task = [&]() {
             const uint32_t secondsToSleep = getRandomInteger(1, 10);
-            LOG << std::this_thread::get_id()<< " thread started. Sleep time = " << secondsToSleep << std::endl;
+            LOG << '[' <<std::this_thread::get_id() << "] thread started. Will be sleeping for " << secondsToSleep << std::endl;
 
             std::this_thread::sleep_for(std::chrono::seconds(secondsToSleep));
 
-
             [[maybe_unused]]
             const auto token = barrier.arrive();
+            LOG << '[' <<std::this_thread::get_id() << "] task completed\n";
         };
 
-        LOG << " starting...\n";
+        LOG << "starting...\n";
         std::vector<std::jthread> threads;
         for (size_t idx = 0; idx < threadsCount; ++idx)
             threads.emplace_back(task);
 
-        std::this_thread::sleep_for(std::chrono::milliseconds(100U));
+        std::this_thread::sleep_for(std::chrono::milliseconds(1U));
 
-        LOG << " waiting for all threads to finish...\n";
+        LOG << "waiting for all threads to finish...\n";
         barrier.arrive_and_wait();
-        LOG << " done...\n";
+        LOG << "done...\n";
     }
 
 
@@ -185,6 +185,59 @@ namespace Barrier
             jobs.emplace_back(work, param.first, param.second);
 
     }
+
+    void Arrive_and_Wait_Separately()
+    {
+        std::atomic<uint32_t> counter {0};
+        constexpr int num_threads = 3;
+        std::barrier sync_point(num_threads, [] {
+            LOG << ">>> All threads reached the barrier. Moving on... <<<\n";
+        });
+
+        auto task = [&]() {
+            const uint32_t id = counter.fetch_add(1, std::memory_order_relaxed);
+            const uint32_t msToSleep = getRandomInteger(100, 1000);
+            LOG << "Thread[" <<id << "] thread started. Will be sleeping for " << msToSleep << std::endl;
+
+            std::this_thread::sleep_for(std::chrono::milliseconds(msToSleep));
+
+            LOG<< "Thread[" << id << "] signaled arrival, Signaling\n";
+            auto token = sync_point.arrive(); // Does NOT wait
+
+            LOG<< "Thread[" << id << "] doing extra work before waiting...\n";
+            std::this_thread::sleep_for(std::chrono::milliseconds(250u));
+
+            // Now explicitly wait for others
+            sync_point.wait(std::move(token));
+
+            LOG << "Thread[" << id << "] passed the barrier.\n";
+        };
+
+        {
+            std::vector<std::jthread> threads;
+            for (int i = 0; i < num_threads; ++i)
+                threads.emplace_back(task);
+        }
+
+        LOG << ">>> All threads finished <<<\n";
+
+        /**
+        2025-11-10 19:50:16.555381 Thread[2] thread started. Will be sleeping for 872
+        2025-11-10 19:50:16.555356 Thread[0] thread started. Will be sleeping for 637
+        2025-11-10 19:50:16.555356 Thread[1] thread started. Will be sleeping for 150
+        2025-11-10 19:50:16.705612 Thread[1] signaled arrival, Signaling
+        2025-11-10 19:50:16.705653 Thread[1] doing extra work before waiting...
+        2025-11-10 19:50:17.192601 Thread[0] signaled arrival, Signaling
+        2025-11-10 19:50:17.192643 Thread[0] doing extra work before waiting...
+        2025-11-10 19:50:17.427596 Thread[2] signaled arrival, Signaling
+        2025-11-10 19:50:17.427651 >>> All threads reached the barrier. Moving on... <<<
+        2025-11-10 19:50:17.427669 Thread[2] doing extra work before waiting...
+        2025-11-10 19:50:17.427690 Thread[1] passed the barrier.
+        2025-11-10 19:50:17.442734 Thread[0] passed the barrier.
+        2025-11-10 19:50:17.677766 Thread[2] passed the barrier.
+        2025-11-10 19:50:17.677909 >>> All threads finished <<<
+        **/
+    }
 };
 
 namespace Barrier::Reuse_Callback
@@ -217,7 +270,7 @@ namespace Barrier::Reuse_Callback
 
 void Barrier::TEST_ALL()
 {
-    SimpleTest();
+    // SimpleTest();
     // Test();
 
     // Wait_To_All_Thread_Completed();
@@ -228,4 +281,6 @@ void Barrier::TEST_ALL()
     // Check_Block_By_Barrier();
 
     // Reuse_Callback::Test();
+
+    Arrive_and_Wait_Separately();
 };
