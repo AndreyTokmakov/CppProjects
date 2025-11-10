@@ -16,17 +16,13 @@ Description : AtomicFlag.cpp
 #include <chrono>
 #include <format>
 #include <syncstream>
+#include "DateTimeUtilities.hpp"
 
 namespace
 {
-    std::string timeString()
-    {
-        std::string buffer;
-        buffer.reserve(32);
-        std::format_to(std::back_inserter(buffer), "{:%Y-%m-%d %H:%M:%OS}", std::chrono::system_clock::now());
-        buffer.shrink_to_fit();
-        return buffer;
-    }
+    using DateTimeUtilities::getCurrentTime;
+
+#define LOG  std::osyncstream { std::cout } << getCurrentTime() << " "
 }
 
 namespace AtomicFlag::BasicTests
@@ -104,19 +100,19 @@ namespace AtomicFlag::SpinLock
 
         auto consumer = [&]()
         {
-            std::osyncstream{std::cout} << timeString() << " Consumer: Started\n";
+            LOG << " Consumer: Started\n";
             std::lock_guard lock {mtx};
 
-            std::osyncstream{std::cout} << timeString() << " Consumer: Done\n\n";
+            LOG << " Consumer: Done\n\n";
         };
 
         auto producer = [&]()
         {
-            std::osyncstream{std::cout} << timeString() << " Producer: Started\n";
+            LOG << " Producer: Started\n";
             std::lock_guard lock {mtx};
 
             std::this_thread::sleep_for(std::chrono::seconds(1UL));
-            std::osyncstream{std::cout} << timeString() << " Producer: Done\n";
+            LOG << " Producer: Done\n";
         };
 
         for (int i = 0; i < 3; ++i)
@@ -159,7 +155,7 @@ namespace AtomicFlag::SpinLock
         auto task = [&]()
         {
             spinLock.lock();
-            std::osyncstream{std::cout} << timeString() << " " << ++counter << std::endl;
+            LOG << " " << ++counter << std::endl;
             // std::this_thread::sleep_for(std::chrono::milliseconds (1));
             spinLock.unlock();
         };
@@ -203,38 +199,38 @@ namespace AtomicFlag::Waiting
         std::atomic_flag atomicFlag {false};
 
         auto producer = [&]() {
-            std::osyncstream{std::cout} << timeString() << " Producer: Started" << std::endl;
+            LOG << " Producer: Started" << std::endl;
 
             for (int i = 0; i < 3; ++i)
             {
-                data = "NEW VALUE + " + timeString();
+                data = "NEW VALUE + " + getCurrentTime();
 
                 atomicFlag.test_and_set();
 
                 std::this_thread::sleep_for(std::chrono::seconds(1UL));
 
                 atomicFlag.notify_one();
-                std::osyncstream{std::cout} << timeString() << " Producer: notify_one " << std::endl;
+                LOG << " Producer: notify_one " << std::endl;
 
                 atomicFlag.wait(true);
             }
 
-            std::osyncstream{std::cout} << timeString() << " Producer: done " << std::endl;
+            LOG << " Producer: done " << std::endl;
         };
 
         auto consumer = [&] {
-            std::osyncstream{std::cout} << timeString() << " Consumer: Started" << std::endl;
+            LOG << " Consumer: Started" << std::endl;
 
             for (int i = 0; i < 3; ++i)
             {
                 atomicFlag.wait(false);
-                std::osyncstream{std::cout} << timeString() << " Consumer: data = " << data << std::endl;
+                LOG << " Consumer: data = " << data << std::endl;
 
                 atomicFlag.clear();
                 atomicFlag.notify_one();
             }
 
-            std::osyncstream{std::cout} << timeString() << " Consumer: done" << std::endl;
+            LOG << " Consumer: done" << std::endl;
         };
 
         std::jthread t2(consumer);

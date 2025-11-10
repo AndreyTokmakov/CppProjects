@@ -19,8 +19,10 @@
 #include <iomanip>
 #include <format>
 #include <chrono>
+#include <syncstream>
 
 #include "Barrier.h"
+#include "DateTimeUtilities.hpp"
 
 namespace
 {
@@ -32,32 +34,10 @@ namespace
         return static_cast<int>(distribution(gen));
     }
 
-    std::string getCurrentTime() noexcept {
-        auto now = std::chrono::system_clock::now();
-        auto in_time_t = std::chrono::system_clock::to_time_t(now);
-        const auto nowMs = std::chrono::duration_cast<std::chrono::microseconds>(
-                now.time_since_epoch()) % 1000000;
-        std::stringstream ss;
-        ss << std::put_time(std::localtime(&in_time_t), "%a %b %d %Y %T")
-           << '.' << std::setfill('0') << std::setw(6) << nowMs.count();
-        return ss.str();
-    }
+    using DateTimeUtilities::getCurrentTime;
 
-    struct SyncTimeStream
-    {
-        const std::chrono::time_point<std::chrono::high_resolution_clock> now { std::chrono::system_clock::now() };
+#define LOG  std::osyncstream { std::cout } << getCurrentTime() << " "
 
-        template<class T>
-        std::osyncstream operator<<(T&& s)
-        {
-            const std::string time {std::format("{:%d-%m-%Y %H:%M:%OS} ", now)};
-            std::osyncstream stream {std::cout} ;
-            stream << time << std::forward<T>(s);
-            return stream;
-        }
-    };
-
-#define synch_cout SyncTimeStream {}
 }
 
 
@@ -69,11 +49,11 @@ namespace Barrier
         std::barrier barrier(threadsCount);
 
         auto task = [&](std::string_view name, const uint32_t timeout) {
-            synch_cout << name  <<  " started\n";
+            LOG << name  <<  " started\n";
             std::this_thread::sleep_for(std::chrono::seconds(timeout));
-            synch_cout << name  <<  " completed. waiting for others\n";
+            LOG << name  <<  " completed. waiting for others\n";
             barrier.arrive_and_wait();
-            synch_cout << name  <<  " done\n";
+            LOG << name  <<  " done\n";
         };
 
         std::jthread t1 (task, "T1", getRandomInteger(0, 5));
@@ -88,20 +68,20 @@ namespace Barrier
         auto completionCallback = []() noexcept {
             // locking not needed here
             static auto phase = "---> Done!! Cleaning up...\n";
-            synch_cout << phase;
+            LOG << phase;
             phase = "... done\n";
         };
 
         std::barrier sync_point(std::ssize(workers), completionCallback);
 
         auto work = [&](const std::string& name) {
-            synch_cout << name + "worked\n";
+            LOG << name + "worked\n";
             sync_point.arrive_and_wait();
-            synch_cout << name + "cleaned\n";;
+            LOG << name + "cleaned\n";;
             sync_point.arrive_and_wait();
         };
 
-        synch_cout << "Starting...\n";
+        LOG << "Starting...\n";
         for (std::vector<std::jthread> threads; auto const& worker : workers)
             threads.emplace_back(work, worker);
     }
@@ -113,8 +93,7 @@ namespace Barrier
 
         auto task = [&]() {
             const uint32_t secondsToSleep = getRandomInteger(1, 10);
-            std::osyncstream {std::cout} << std::this_thread::get_id()<< " thread started. Sleep time = "
-                    << secondsToSleep << std::endl;
+            LOG << std::this_thread::get_id()<< " thread started. Sleep time = " << secondsToSleep << std::endl;
 
             std::this_thread::sleep_for(std::chrono::seconds(secondsToSleep));
 
@@ -123,16 +102,16 @@ namespace Barrier
             const auto token = barrier.arrive();
         };
 
-        std::cout << getCurrentTime() << " starting...\n";
+        LOG << " starting...\n";
         std::vector<std::jthread> threads;
         for (size_t idx = 0; idx < threadsCount; ++idx)
             threads.emplace_back(task);
 
         std::this_thread::sleep_for(std::chrono::milliseconds(100U));
 
-        std::cout << getCurrentTime() << " waiting for all threads to finish...\n";
+        LOG << " waiting for all threads to finish...\n";
         barrier.arrive_and_wait();
-        std::cout << getCurrentTime() << " done...\n";
+        LOG << " done...\n";
     }
 
 
@@ -140,7 +119,7 @@ namespace Barrier
     {
 
         auto on_completion = []() noexcept {
-            std::osyncstream {std::cout} << " **** ALL DONE at " << getCurrentTime()  << " ***\n";
+            LOG << " **** ALL DONE at " << getCurrentTime()  << " ***\n";
         };
 
         constexpr size_t threadsCount {5};
@@ -148,21 +127,20 @@ namespace Barrier
 
         auto task = [&]() {
             const uint32_t secondsToSleep = getRandomInteger(1, 4);
-            std::osyncstream {std::cout} << std::this_thread::get_id()<< " thread started. Sleep time = "
-                                         << secondsToSleep << std::endl;
+            LOG << std::this_thread::get_id()<< " thread started. Sleep time = " << secondsToSleep << std::endl;
 
             std::this_thread::sleep_for(std::chrono::seconds(secondsToSleep));
             barrier.arrive_and_wait();
         };
 
-        std::cout << getCurrentTime() << " starting...\n";
+        LOG << " starting...\n";
         std::vector<std::jthread> threads;
         for (size_t idx = 0; idx < threadsCount; ++idx)
             threads.emplace_back(task);
 
         for (std::jthread& T: threads)
             T.join();
-        std::cout << getCurrentTime() << " done\n";
+        LOG << " done\n";
 
     }
 
@@ -171,18 +149,18 @@ namespace Barrier
     {
         std::vector<std::string> names { "One", "Two", "Three" };
         std::barrier phase(std::ssize(names),[] {
-            std::osyncstream(std::cout) << "Callback()\n";
+            LOG << "Callback()\n";
         });
 
         auto work = [&](std::string&& name) {
-            std::cout << name << " job started\n";
+            LOG<< name << " job started\n";
             phase.arrive_and_wait();
             std::this_thread::sleep_for(std::chrono::seconds(1U));
-            std::cout << name << " job completed\n";
+            LOG << name << " job completed\n";
             phase.arrive_and_wait();
         };
 
-        std::cout << "Starting...\n";
+        LOG << "Starting...\n";
         for (std::vector<std::jthread> jobs; std::string& name : names)
             jobs.emplace_back(work, name);
 
@@ -192,17 +170,17 @@ namespace Barrier
     {
         std::array params { std::make_pair("One", 4), std::make_pair("Two", 2), std::make_pair("Three",3) };
         std::barrier phase(std::ssize(params),[] {
-            std::osyncstream(std::cout) << "* * * * * Barrier limit reached!!!* * * * * \n";
+            LOG << "* * * * * Barrier limit reached!!!* * * * * \n";
         });
 
         auto work = [&](std::string&& name, uint32_t timeout) {
-            std::osyncstream {std::cout} << name << " job started\n";
+            LOG << name << " job started\n";
             std::this_thread::sleep_for(std::chrono::seconds(timeout));
             phase.arrive_and_wait();
-            std::osyncstream {std::cout} << name << " continuing\n";
+            LOG << name << " continuing\n";
         };
 
-        std::cout << "Starting...\n";
+        LOG << "Starting...\n";
         for (std::vector<std::jthread> jobs; auto && param : params)
             jobs.emplace_back(work, param.first, param.second);
 
@@ -216,19 +194,19 @@ namespace Barrier::Reuse_Callback
         constexpr uint16_t threadCount {4};
 
         std::barrier phase(threadCount,[id = 1] mutable {
-            std::osyncstream{std::cout} << "Phase " << id << " complete\n";
+            LOG << "Phase " << id << " complete\n";
             id++;
         });
 
         std::vector<std::jthread> runners;
         std::generate_n(std::back_inserter(runners), threadCount, [&phase]{
             return std::jthread([&phase]{
-                std::osyncstream{std::cout} << "Running phase 1 for thread " << std::this_thread::get_id() << std::endl;
+                LOG << "Running phase 1 for thread " << std::this_thread::get_id() << std::endl;
 
                 std::this_thread::yield(); /** block until all threads arrive **/
                 phase.arrive_and_wait();
 
-                std::osyncstream{std::cout} << "Running phase 2 for thread " << std::this_thread::get_id() << std::endl;
+                LOG << "Running phase 2 for thread " << std::this_thread::get_id() << std::endl;
 
                 std::this_thread::yield(); /** block until all threads arrive **/
                 phase.arrive_and_wait();

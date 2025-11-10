@@ -22,17 +22,13 @@ Description : Atomic_MemoryOrder.cpp
 
 #include <print>
 #include <format>
+#include "DateTimeUtilities.hpp"
 
 namespace
 {
-    std::string timeString()
-    {
-        std::string buffer;
-        buffer.reserve(32);
-        std::format_to(std::back_inserter(buffer), "{:%Y-%m-%d %H:%M:%OS}", std::chrono::system_clock::now());
-        buffer.shrink_to_fit();
-        return buffer;
-    }
+    using DateTimeUtilities::getCurrentTime;
+
+#define LOG  std::osyncstream { std::cout } << getCurrentTime() << " "
 }
 
 
@@ -113,7 +109,7 @@ namespace Atomic_MemoryOrder::Consumer_Producer
 
         std::future<void> consumer = std::async( std::launch::async, [&]{
             while (data_ready.load( std::memory_order_acquire ) == 0 ) { /** **/ }
-            std::osyncstream{std::cout} << shared_data << std::endl;
+            LOG << shared_data << std::endl;
         });
 
         std::future<void> producer = std::async( std::launch::async, [&]{
@@ -132,15 +128,15 @@ namespace Atomic_MemoryOrder::Consumer_Producer
 
         std::future<void> consumer = std::async( std::launch::async, [&]
         {
-            std::osyncstream{std::cout} << timeString() << " Consumer: started\n";
+            LOG << " Consumer: started\n";
             while (flag.test_and_set(std::memory_order_acquire)) { /** **/ }
-            std::osyncstream{std::cout} << timeString() << " Consumer: Data = " << data << std::endl;
+            LOG << " Consumer: Data = " << data << std::endl;
         });
 
         std::future<void> producer = std::async( std::launch::async, [&]
         {
-            std::osyncstream{std::cout} << timeString() << " Producer: Sleeping\n";
-            std::this_thread::sleep_for(std::chrono::seconds (1));
+            LOG << " Producer: Sleeping\n";
+            std::this_thread::sleep_for(std::chrono::seconds (1u));
 
             data = "Hello world!";
 
@@ -160,8 +156,8 @@ namespace Atomic_MemoryOrder::CompareExchange
 
         auto updater = [&variable]
         {
-            std::this_thread::sleep_for(std::chrono::seconds (1));
-            std::osyncstream{std::cout} << timeString() << " Updater : variable -> 1\n";
+            std::this_thread::sleep_for(std::chrono::seconds (1u));
+            LOG << " Updater : variable -> 1\n";
             variable.store(1, std::memory_order::release);
         };
 
@@ -173,13 +169,12 @@ namespace Atomic_MemoryOrder::CompareExchange
             // while (!order.compare_exchange_weak(expected, desired, std::memory_order_acquire, std::memory_order_relaxed))
             while (!variable.compare_exchange_weak(actual, desired, std::memory_order_acquire))
             {
-                std::this_thread::sleep_for(std::chrono::milliseconds (250));
-                std::osyncstream{std::cout} << timeString()
-                        << " Consumer: False. actual: " << actual << std::endl;
+                std::this_thread::sleep_for(std::chrono::milliseconds (250u));
+                LOG << " Consumer: False. actual: " << actual << std::endl;
                 actual = expected;
             }
 
-            std::osyncstream{std::cout} << timeString() << " Consumer: True.  variable: " << variable << std::endl;
+            LOG << " Consumer: True.  variable: " << variable << std::endl;
         };
 
         std::jthread a(updater), b(consumer);
@@ -191,8 +186,8 @@ namespace Atomic_MemoryOrder::CompareExchange
 
         auto updater = [&variable]
         {
-            std::this_thread::sleep_for(std::chrono::seconds (1));
-            std::osyncstream{std::cout} << timeString() << " Updater : variable -> 1\n";
+            std::this_thread::sleep_for(std::chrono::seconds (1u));
+            LOG << " Updater : variable -> 1\n";
             variable.store(1, std::memory_order::release);
         };
 
@@ -204,13 +199,13 @@ namespace Atomic_MemoryOrder::CompareExchange
             // while (!order.compare_exchange_weak(expected, desired, std::memory_order_acquire, std::memory_order_relaxed))
             while (!variable.compare_exchange_strong(actual, desired, std::memory_order_acquire))
             {
-                std::this_thread::sleep_for(std::chrono::milliseconds (250));
-                std::osyncstream{std::cout} << timeString()
+                std::this_thread::sleep_for(std::chrono::milliseconds (250u));
+                LOG
                                             << " Consumer: False. actual: " << actual << std::endl;
                 actual = expected;
             }
 
-            std::osyncstream{std::cout} << timeString() << " Consumer: True.  variable: " << variable << std::endl;
+            LOG << " Consumer: True.  variable: " << variable << std::endl;
         };
 
         std::jthread a(updater), b(consumer);
@@ -223,8 +218,8 @@ namespace Atomic_MemoryOrder::SynchThreads
 
     void updater()
     {
-        std::this_thread::sleep_for(std::chrono::seconds (5));
-        std::osyncstream{std::cout} << timeString() << " Updater: order -> 1\n";
+        std::this_thread::sleep_for(std::chrono::seconds (5u));
+        LOG << " Updater: order -> 1\n";
         order.store(1, std::memory_order::release);
     }
 
@@ -234,13 +229,13 @@ namespace Atomic_MemoryOrder::SynchThreads
         // while (!order.compare_exchange_weak(expected, 2, std::memory_order_acquire, std::memory_order_relaxed))
         while (!order.compare_exchange_weak(expected, 2, std::memory_order_acquire))
         {
-            std::this_thread::sleep_for(std::chrono::seconds (1));
-            std::osyncstream{std::cout} << timeString()
+            std::this_thread::sleep_for(std::chrono::seconds (1u));
+            LOG
                 << " False. order: " << order << ", expected: " << expected << std::endl;
             expected = 1;
         }
 
-        std::osyncstream{std::cout} << timeString() << " Order: " << order << std::endl;
+        LOG << " Order: " << order << std::endl;
     }
 
     /*

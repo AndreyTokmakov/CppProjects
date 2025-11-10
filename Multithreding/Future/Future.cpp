@@ -20,18 +20,15 @@
 
 #include "Future.h"
 #include "../Utilities/Utilities.h"
+#include "DateTimeUtilities.hpp"
 
 namespace
 {
-    std::string timeString()
-    {
-        std::string buffer;
-        buffer.reserve(32);
-        std::format_to(std::back_inserter(buffer), "{:%Y-%m-%d %H:%M:%OS}", std::chrono::system_clock::now());
-        buffer.shrink_to_fit();
-        return buffer;
-    }
+    using DateTimeUtilities::getCurrentTime;
+
+#define LOG  std::osyncstream { std::cout } << getCurrentTime() << " "
 }
+
 
 namespace Future::CallClassMethod {
 
@@ -41,7 +38,7 @@ namespace Future::CallClassMethod {
 
     protected:
         bool doStomething(std::string_view message, unsigned int timeout = 10) {
-            std::this_thread::sleep_for(std::chrono::milliseconds(100));
+            std::this_thread::sleep_for(std::chrono::milliseconds(100u));
             THREAD_INFO << "Input message : " << message << std::endl;
             std::this_thread::sleep_for(std::chrono::seconds(timeout));
             THREAD_INFO << "Done." << std::endl;
@@ -92,7 +89,7 @@ namespace Future {
     int countdown(int from, int to) {
         for (int i = from; i != to; --i) {
             std::cout << i << std::endl;
-            std::this_thread::sleep_for(std::chrono::seconds(1));
+            std::this_thread::sleep_for(std::chrono::seconds(1u));
         }
         std::cout << "Lift off! " << std::endl;
         return from - to;
@@ -117,7 +114,7 @@ namespace Future {
 
 
         std::cout << "Do something while waiting for function to set future : ";
-        std::chrono::milliseconds span(100);
+        std::chrono::milliseconds span(100u);
         while (jobs.back().wait_for(span) == std::future_status::timeout)
             std::cout << ". " << std::flush;
 
@@ -131,7 +128,7 @@ namespace Future {
         std::future<bool> fut = std::async(doStomething, "444444443", 3);
 
         THREAD_INFO << "Do something while waiting for function to set future : ";
-        std::chrono::milliseconds span(500);
+        std::chrono::milliseconds span(500u);
         while (fut.wait_for(span) == std::future_status::timeout)
             std::cout << ". " << std::flush;
 
@@ -149,12 +146,12 @@ namespace Future {
             return std::string("Task lasted for " + std::to_string(timeout) + " seconds.");
         }, timeout);
 
-        std::this_thread::sleep_for(std::chrono::milliseconds(10));
+        std::this_thread::sleep_for(std::chrono::milliseconds(10u));
         THREAD_INFO << "waiting..." << std::endl;
 
         std::future_status status;
         do {
-            status = future.wait_for(std::chrono::seconds(1));
+            status = future.wait_for(std::chrono::seconds(1u));
             if (status == std::future_status::deferred) {
                 THREAD_INFO << "deferred" << std::endl;
             }
@@ -181,7 +178,7 @@ namespace Future {
             return std::string("Task lasted for " + std::to_string(timeout) + " seconds.");
         }, timeout);
 
-        std::this_thread::sleep_for(std::chrono::milliseconds(100));
+        std::this_thread::sleep_for(std::chrono::milliseconds(100u));
         THREAD_INFO << "Do something while waiting for function to set future: ";
 
         std::chrono::milliseconds span(170);
@@ -210,10 +207,10 @@ namespace Future {
         const unsigned int timeout = 7;
         std::future<std::string> future = createFuture(timeout);
 
-        std::this_thread::sleep_for(std::chrono::milliseconds(100));
+        std::this_thread::sleep_for(std::chrono::milliseconds(100u));
         std::cout << "Do something while waiting for function to set future: ";
 
-        std::chrono::milliseconds span(170);
+        std::chrono::milliseconds span(170u);
         while (future.wait_for(span) == std::future_status::timeout)
             std::cout << ". " << std::flush;
 
@@ -318,7 +315,7 @@ namespace Future {
     void Future_Lambda() {
         constexpr unsigned short timeout = 5;
         std::future<std::string_view> future = std::async([]( unsigned short timeout)-> std::string_view {
-            std::this_thread::sleep_for(std::chrono::milliseconds(10)); // For pritty output
+            std::this_thread::sleep_for(std::chrono::milliseconds(10u)); // For pritty output
             THREAD_INFO << "Async task started. Sleeping " << timeout << " seconds" << std::endl;
             std::this_thread::sleep_for(std::chrono::seconds(timeout));
             THREAD_INFO << "Task completed." << std::endl;
@@ -334,7 +331,7 @@ namespace Future {
     void Future_Move() {
         constexpr unsigned short timeout = 5;
         std::future<std::string_view> future = std::async([](unsigned short timeout)-> std::string_view {
-            std::this_thread::sleep_for(std::chrono::milliseconds(10)); // For pritty output
+            std::this_thread::sleep_for(std::chrono::milliseconds(10u)); // For pritty output
             THREAD_INFO << "Async task started. Sleeping " << timeout << " seconds" << std::endl;
             std::this_thread::sleep_for(std::chrono::seconds(timeout));
             THREAD_INFO << "Task completed." << std::endl;
@@ -412,7 +409,7 @@ namespace Future {
 
     void Furute_Asynch_vs_Defered() {
         auto some_task = [](unsigned long timeout)-> void {
-            std::this_thread::sleep_for(std::chrono::milliseconds(50));
+            std::this_thread::sleep_for(std::chrono::milliseconds(50u));
             THREAD_INFO << "Task started. Sleeping for " << timeout << " seconds\n";
             std::this_thread::sleep_for(std::chrono::seconds(timeout));
             THREAD_INFO << "Done!\n";
@@ -422,7 +419,7 @@ namespace Future {
         std::future<void> futureAsync = std::async(std::launch::async, some_task, timeout);
 
         THREAD_INFO << "After std::launch::async task. Point 1\n";
-        std::this_thread::sleep_for(std::chrono::seconds(3));
+        std::this_thread::sleep_for(std::chrono::seconds(3u));
         THREAD_INFO << "After std::launch::async task. Point 2\n";
 
         futureAsync.wait();
@@ -433,7 +430,7 @@ namespace Future {
         std::future<void> futureDeferred = std::async(std::launch::deferred, some_task, timeout);
 
         THREAD_INFO << "After std::launch::deferred task. Point 1\n";
-        std::this_thread::sleep_for(std::chrono::seconds(3));
+        std::this_thread::sleep_for(std::chrono::seconds(3u));
         THREAD_INFO << "After std::launch::deferred task. Point 2\n";
 
         futureDeferred.get();
@@ -470,7 +467,7 @@ namespace Future::SharedFuture
 
             sharedFuture.wait(); // waits for the signal from main()
             THREAD_INFO << "Done" << std::endl;
-            std::this_thread::sleep_for(std::chrono::milliseconds(10)); // For pritty output
+            std::this_thread::sleep_for(std::chrono::milliseconds(10u)); // For pritty output
             return std::chrono::high_resolution_clock::now() - start;
         };
 
@@ -478,27 +475,27 @@ namespace Future::SharedFuture
         unsigned int timeout1 = 2, timeout2 = 3;
         THREAD_INFO << "Starting threads...." << std::endl;
 
-        std::this_thread::sleep_for(std::chrono::milliseconds(10)); // For pritty output
+        std::this_thread::sleep_for(std::chrono::milliseconds(10u)); // For pritty output
         auto result1 = std::async(std::launch::async, func1, timeout1);
 
-        std::this_thread::sleep_for(std::chrono::milliseconds(10)); // For pritty output
+        std::this_thread::sleep_for(std::chrono::milliseconds(10u)); // For pritty output
         auto result2 = std::async(std::launch::async, func2, timeout2);
 
         THREAD_INFO << "Wait for the threads to become ready..." << std::endl;
         thread1Ready.get_future().wait();
         thread2Ready.get_future().wait();
 
-        std::this_thread::sleep_for(std::chrono::milliseconds(100)); // For pritty output
+        std::this_thread::sleep_for(std::chrono::milliseconds(100u)); // For pritty output
         THREAD_INFO << "Workers are ready!" << std::endl;
 
         // the threads are ready, start the clock
         start = std::chrono::high_resolution_clock::now();
 
         // signal the threads to go
-        std::this_thread::sleep_for(std::chrono::seconds(5));
+        std::this_thread::sleep_for(std::chrono::seconds(5u));
         ready_promise.set_value();
 
-        std::this_thread::sleep_for(std::chrono::milliseconds(10)); // For pritty output
+        std::this_thread::sleep_for(std::chrono::milliseconds(10u)); // For pritty output
         THREAD_INFO << "Thread 1 received the signal "
                     << result1.get().count() << " ms after start\n"
                     << "Thread 2 received the signal "
@@ -534,7 +531,7 @@ namespace Future::SharedFuture
         };
 
         auto waitTask1 = std::async(waiter);
-        std::this_thread::sleep_for(std::chrono::milliseconds(5)); // For pritty output
+        std::this_thread::sleep_for(std::chrono::milliseconds(5u)); // For pritty output
         auto waitTask2 = std::async(waiter);
 
         waitTask1.get();
@@ -574,7 +571,7 @@ namespace Future::SharedFuture
         using namespace std::literals;
 
         auto debug = [](std::string_view text) {
-            std::osyncstream(std::cout) << timeString() << " | " << std::this_thread::get_id() << " : " << text << '\n';
+            std::osyncstream(std::cout) << getCurrentTime() << " | " << std::this_thread::get_id() << " : " << text << '\n';
         };
 
         // Our runner with two stages.
@@ -623,17 +620,17 @@ namespace Future::CollectionFutures {
 
         {
             jobs.emplace_back(std::async(handler, 5));
-            std::this_thread::sleep_for(std::chrono::milliseconds(50));
+            std::this_thread::sleep_for(std::chrono::milliseconds(50u));
 
             jobs.emplace_back(std::async(handler, 10));
-            std::this_thread::sleep_for(std::chrono::milliseconds(50));
+            std::this_thread::sleep_for(std::chrono::milliseconds(50u));
 
             jobs.emplace_back(std::async(handler, 30));
-            std::this_thread::sleep_for(std::chrono::milliseconds(50));
+            std::this_thread::sleep_for(std::chrono::milliseconds(50u));
         }
 
         std::cout << "Do something while waiting for function to set future : ";
-        std::chrono::milliseconds span(100);
+        std::chrono::milliseconds span(100u);
 
         // print '.' while any of jobs status == std::future_status::timeout
         while (std::any_of(jobs.cbegin(), jobs.cend(), [&span](const auto& T) {
@@ -652,7 +649,7 @@ namespace Future::Tests {
 
         std::async(std::launch::async, [&] {
             THREAD_INFO << "Job 1 started." << std::endl;
-            std::this_thread::sleep_for(std::chrono::seconds(2));
+            std::this_thread::sleep_for(std::chrono::seconds(2u));
             text = "Y";
             THREAD_INFO << "Job 1 done." << std::endl;
         }).wait();
@@ -660,7 +657,7 @@ namespace Future::Tests {
 
         std::async(std::launch::async, [&] {
             THREAD_INFO << "Job 2 started." << std::endl;
-            std::this_thread::sleep_for(std::chrono::seconds(1));
+            std::this_thread::sleep_for(std::chrono::seconds(1u));
             text = "Z";
             THREAD_INFO << "Job 2 done." << std::endl;
         }).wait();
