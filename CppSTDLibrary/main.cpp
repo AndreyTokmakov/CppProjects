@@ -174,7 +174,7 @@ int main([[maybe_unused]] int argc,
     // Stacktrace::TestAll();
     // SourceLocation::TestAll();
     // SharedPtr_Tests::TestAll();
-    // Variant::TestAll();
+    Variant::TestAll();
     // VolatileTests::TestAll();
     // TypeTraits::TestAll();
     // Types::Tests();
@@ -182,7 +182,7 @@ int main([[maybe_unused]] int argc,
     // TypeCast::TestAll();
     // Int::TestAll();
     // Templates::TestAll();
-    Utilities::TestAll();
+    // Utilities::TestAll();
     // UniquePtr::TestAll();
     // WeakPtr::TestAll();
     // StaticAsserts::TestAll();

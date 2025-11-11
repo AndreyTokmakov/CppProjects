@@ -1179,7 +1179,8 @@ namespace Variant::Experiments_DNS_Response {
 
     };
 
-    void Tests() {
+    void Tests()
+	{
         std::variant<std::string, NS, SOA, CNAME, AAAA> resourceData;
 
 
@@ -1262,6 +1263,57 @@ namespace Variant::Heterogeneous_Message_Handler
 }
 
 
+namespace Variant::Return_and_Store_HeavyObjects
+{
+	using Helpers::Integer;
+	using Values = std::vector<Integer>;
+
+	struct Object {};
+	struct Entry {};
+
+	Values getValues()
+	{
+		std::vector<Integer> ints;
+		ints.reserve(5);
+		for (int i = 0; i < 5; ++i)
+			ints.emplace_back(i);
+
+		return ints;
+	}
+
+	using Result = std::variant<Object, Entry, Values>;
+
+	Result GetResult()
+	{
+		return Result{getValues()};
+	}
+
+
+	void Test()
+	{
+		const Result result = GetResult();
+		if (std::holds_alternative<Values>(result)) {
+			for (const Values& values = std::get<Values>(result); const Integer& value : values)
+				std::cout << value << ' ';
+			std::cout << '\n';
+		}
+	}
+
+	/**
+	Wrapper<i,true>(0)
+	Wrapper<i,true>(1)
+	Wrapper<i,true>(2)
+	Wrapper<i,true>(3)
+	Wrapper<i,true>(4)
+	0 1 2 3 4
+	~Wrapper<i,true>(0)
+	~Wrapper<i,true>(1)
+	~Wrapper<i,true>(2)
+	~Wrapper<i,true>(3)
+	~Wrapper<i,true>(4)
+	**/
+}
+
 void Variant::TestAll()
 {
 	// Matcher_Visitor::TestAll();
@@ -1286,7 +1338,7 @@ void Variant::TestAll()
 	// Creation_Monostate_Test();
 
 	// Monostate::Basic_Tests();
-	Monostate::Emplace_into_Vector_Variants();
+	// Monostate::Emplace_into_Vector_Variants();
 
 	// ChangingValues();
 	 
@@ -1323,4 +1375,6 @@ void Variant::TestAll()
 
     // Experiments_DNS_Response::Tests();
 	// Experiments::Map_Variant_Keys();
+
+	Return_and_Store_HeavyObjects::Test();
 };
