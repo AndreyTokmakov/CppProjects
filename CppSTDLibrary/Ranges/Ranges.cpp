@@ -1044,6 +1044,17 @@ namespace Ranges::Join
         // THE C++ RANGES LIBRARY
     }
 
+    void Join_With_to_String()
+    {
+        const std::vector<std::string_view> words {"One", "Two", "Three" };
+        constexpr std::string_view delimiter { " " };
+
+        const std::string result = words | std::views::join_with(delimiter) | std::ranges::to<std::string >();
+        std::println("{}", result);
+
+        /// Output:  One Two Three
+    }
+
     void Join_Get_ClassParameters()
     {
         std::vector<Person> persons {
@@ -1318,11 +1329,12 @@ void Ranges::TestAll()
 
     // Map_to_Vector_of_Values::collectValues();
 
+    // Join::oldStyle();
     // Join::Join();
     // Join::Join_View();
     // Join::Join_With_1();
     // Join::Join_With_2();
-    // Join::oldStyle();
+    Join::Join_With_to_String();
     // Join::rangeJoinStyle();
     // Join::Join_Get_ClassParameters();
 
@@ -1352,7 +1364,7 @@ void Ranges::TestAll()
 
     // Ranges_Sort::Sort_Custom_Type();
 
-    Max_Element::Find_Max_Element_by_Class_Field();
+    // Max_Element::Find_Max_Element_by_Class_Field();
 
     // Algorithms::Reverse();
     // Algorithms::Reverse_Views();
