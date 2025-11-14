@@ -11,6 +11,7 @@ Description : Software design patterns C++ test project
 #include <thread>
 
 #include "AccessToken/AccessToken.h"
+#include "Passkey_Idiom/PasskeyIdiom.hpp"
 #include "CopyAndSwap/CopyAndSwap.h"
 #include "Prototype/Prototype.h"
 #include "Interpreter/Interpreter.h"
@@ -108,7 +109,7 @@ int main([[maybe_unused]]  int argc,
 
     // CRTP::Test();
     // NVI_SimpleExample::TestAll();
-    TypeErasure::Test();
+    // TypeErasure::Test();
     // RAII::Test();
     // CopyAndSwap::TEST_ALL();   ---- TESTs
     // TagDispatching::Test();
@@ -117,8 +118,8 @@ int main([[maybe_unused]]  int argc,
 
     // LazyComputation::TestAll();
 
-
     // AccessToken::TestAll();
+    PasskeyIdiom::TestAll();
 
 
     // ExecutorAdapter::TestAll();

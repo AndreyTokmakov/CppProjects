@@ -77,7 +77,7 @@ int main([[maybe_unused]] int argc,
     // ExecutorAdapter::TestAll();
     // ExecutorAdapter2::TestAll();
     // Finalizers::TestAll();
-    Function::Test();
+    // Function::Test();
     // HashTable::TestAll();
     // LinkedLists::TEST_ALL();
     // Logging::TEST_ALL();

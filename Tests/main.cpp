@@ -1712,18 +1712,14 @@ void swp(int* a, int* b)
 
 
 
+
+
 int main([[maybe_unused]] const int argc,
          [[maybe_unused]] char** argv)
 {
     const std::vector<std::string_view> args(argv + 1, argv + argc);
 
     // resource_registry::test();
-
-    int x = 10, y = 20;
-
-    std::cout << x << " | " << y << std::endl;
-    swp(&x, &y);
-    std::cout << x << " | " << y << std::endl;
 
 
     /** * * * * *  Move to lib * * * * * **/

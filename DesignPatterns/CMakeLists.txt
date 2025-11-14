@@ -108,6 +108,7 @@ add_executable(${PROJECT_NAME}
 		Decorator/WindowDecorator.cpp
         TypeID/TypeID.cpp
 		AccessToken/AccessToken.cpp
+		Passkey_Idiom/PasskeyIdiom.cpp
 		FactoryClasses/FactoryClasses.cpp
 )
 
