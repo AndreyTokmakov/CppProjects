@@ -10,7 +10,58 @@ Description : PasskeyIdiom.cpp
 #include <string>
 #include "PasskeyIdiom.hpp"
 
-namespace simple_examples
+#include <iostream>
+#include <ostream>
+
+namespace simple_example
+{
+
+    class Token
+    {
+        Token() = default;
+        friend struct AllowedClass;
+        friend void functionWithAccess();
+    };
+
+    void modifyPrivateData(Token)
+    {
+        std::cout << "modifying private data" << std::endl;
+    }
+
+    struct AllowedClass
+    {
+        void execute() {
+            doSomethingSecret(Token{});
+        }
+
+    private:
+
+        void doSomethingSecret(Token)
+        {
+            std::cout << "doing something secret" << std::endl;
+        }
+    };
+
+    void functionWithAccess()
+    {
+        modifyPrivateData(Token{});
+    }
+
+    void functionWithoutAccess()
+    {
+        // modifyPrivateData(Token{});  <<----- Will not compile
+                                        // simple_example::Token::Token()’ is private within this context
+    }
+
+    void test()
+    {
+        AllowedClass{}.execute();
+        functionWithAccess();
+        functionWithoutAccess();
+    }
+}
+
+namespace demo2
 {
     class Secret
     {
@@ -26,12 +77,14 @@ namespace simple_examples
 
         // Whoever can provide a key has access:
         explicit Secret(std::string str, ConstructorKey) : data(std::move(str)) {
+            std::cout << "Secret::Secret(" << data << ")" << std::endl;
         }
 
     private:
 
         // these stay private, since Secret itself has no friends anymore
         void addData(const std::string& moreData) {
+            std::cout << "Secret::addData(" << moreData << ")" << std::endl;
         }
 
         std::string data {};
@@ -47,7 +100,7 @@ namespace simple_examples
 
         void modify(Secret& secret, std::string const& additionalData)
         {
-            // ERROR: void Secret::addData(const string&) is private
+            /** ERROR: void Secret::addData(const string&) is private **/
             // secret.addData(additionalData);
         }
     };
@@ -66,5 +119,6 @@ namespace simple_examples
 
 void PasskeyIdiom::TestAll()
 {
-
+    simple_example::test();
+    // demo2::test();
 }
