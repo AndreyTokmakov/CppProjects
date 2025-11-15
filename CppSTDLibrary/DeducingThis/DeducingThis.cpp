@@ -10,6 +10,62 @@ Description : DeducingThis.cpp
 #include "DeducingThis.h"
 
 #include <iostream>
+#include <utility>
+#include <spdlog/fmt/bundled/core.h>
+
+namespace DeducingThis::Explicit_Object_Member_Functions
+{
+    struct SimpleObject
+    {
+        std::string name { "SimpleObject" };
+
+        void foo1(this SimpleObject const& self, int i) // same as void foo(int i) const &;
+        {
+            std::cout << __PRETTY_FUNCTION__ << std::endl;
+            std::cout << "name: " << self.name << std::endl;
+
+            /** ERROR: Will not compile **/
+            // std::cout << "name: " << this->name << std::endl;
+        }
+
+        void foo2(int i) const
+        {
+            std::cout << __PRETTY_FUNCTION__ << std::endl;
+            std::cout << "name: " << this->name << std::endl;
+        }
+
+        void bar(this SimpleObject self, int i) // pass object by value: makes a copy of “*this”
+        {
+            std::cout << __PRETTY_FUNCTION__ << std::endl;
+        }
+    };
+
+    struct SimpleObjectAuto
+    {
+        std::string name { "SimpleObjectAuto" };
+
+        void foo1(this auto& self, int i)
+        {
+            std::cout << __PRETTY_FUNCTION__ << std::endl;
+            std::cout << "name: " << self.name << std::endl;
+        }
+    };
+
+    void simpleExample()
+    {
+        {
+            SimpleObject obj;
+            obj.foo1(1);
+            obj.foo2(1);
+        }
+        {
+            SimpleObjectAuto obj;
+            obj.foo1(1);
+        }
+    }
+}
+
+
 
 namespace DeducingThis::Deduplicating_Function_Overloading
 {
@@ -18,37 +74,55 @@ namespace DeducingThis::Deduplicating_Function_Overloading
         template <typename Self>
         void explicitCall(this Self&& self, const std::string& text)
         {
-            std::cout << text << ": ";
-            std::forward<Self>(self).implicitCall();
+            std::forward<Self>(self).implicitCall(text);
         }
 
-        void implicitCall() & {
-            std::cout << "non const lvalue" << std::endl;
+        void implicitCall(const std::string& text) & {
+            std::cout << "non const lvalue. input: " << text  << std::endl;
         }
 
-        void implicitCall() const& {
-            std::cout << "const lvalue"<< std::endl;
+        void implicitCall(const std::string& text) const& {
+            std::cout << "const lvalue. input: " << text  << std::endl;
         }
 
-        void implicitCall() && {
-            std::cout << "non const rvalue"<< std::endl;
+        void implicitCall(const std::string& text) && {
+            std::cout << "non const rvalue. input: " << text  << std::endl;
         }
 
-        void implicitCall() const&& {
-            std::cout << "const rvalue"<< std::endl;
+        void implicitCall(const std::string& text) const&& {
+            std::cout << "const rvalue. input: " << text  << std::endl;
         }
     };
 
 
     void test()
     {
-        Test test;
-        const Test constTest;
+        {
+            Test test;
 
-        test.explicitCall("test");
-        constTest.explicitCall("constTest");
-        std::move(test).explicitCall("std::move(test)");
-        std::move(constTest).explicitCall("std::move(consTest)");
+            test.explicitCall("test");
+            std::as_const(test).explicitCall("constTest");
+            std::move(test).explicitCall("std::move(test)");
+            std::move(std::as_const(test)).explicitCall("std::move(consTest)");
+
+            // non const lvalue. input: test
+            // const lvalue. input: constTest
+            // non const rvalue. input: std::move(test)
+            // const rvalue. input: std::move(consTest)
+        }
+        {
+            Test test;
+
+            test.implicitCall("test");
+            std::as_const(test).implicitCall("constTest");
+            std::move(test).implicitCall("std::move(test)");
+            std::move(std::as_const(test)).implicitCall("std::move(consTest)");
+
+            // non const lvalue. input: test
+            // const lvalue. input: constTest
+            // non const rvalue. input: std::move(test)
+            // const rvalue. input: std::move(consTest)
+        }
     }
 }
 
@@ -222,14 +296,56 @@ namespace DeducingThis::Mixin_Builder
 }
 
 
+namespace DeducingThis::UseCases
+{
+    struct add_postfix_increment
+    {
+        template <typename Self>
+        auto operator++(this Self&& self, int) -> decltype(auto) {
+            auto tmp = self;
+            ++self;
+            return tmp;
+        }
+    };
+
+    struct Int : add_postfix_increment
+    {
+        explicit Int(const int i = 0): value(i) {
+        }
+
+        Int& operator++(int)
+        {
+            std::cout << __PRETTY_FUNCTION__ << '\n';
+            ++value;
+            return *this;
+        }
+
+        int value { 0 };
+    };
+
+    void OperatorOverloading()
+    {
+        Int i1 {1}, i2 {2};
+        i1++;
+        i2++;
+        std::cout << i1.value << " " << i2.value << '\n';
+
+        // DeducingThis::UseCases::Int& DeducingThis::UseCases::Int::operator++(int)
+        // DeducingThis::UseCases::Int& DeducingThis::UseCases::Int::operator++(int)
+        // 2 3
+    }
+}
+
 void DeducingThis::TestAll()
 {
+    // Explicit_Object_Member_Functions::simpleExample();
+
     // Deduplicating_Function_Overloading::test();
 
     // CRTP_OldStyle::demo();
     // CRTP_NewStyle::demo();
-
     // Policy_Based_Design::test();
+    // Mixin_Builder::test();
 
-    Mixin_Builder::test();
+    UseCases::OperatorOverloading();
 }
