@@ -19,6 +19,7 @@ Description : DataStructures
 #include "Finalizers/Finalizers.h"
 #include "BinaryTree/BinaryTree.h"
 #include "BitSet/BitSet.h"
+#include "FlatMap/FlatMap.hpp"
 #include "CircularBuffers/CircularBuffers.h"
 #include "ThreadsafeQueue/ThreadsafeQueue.h"
 #include "SharedPtr/SharedPtr.h"
@@ -77,6 +78,7 @@ int main([[maybe_unused]] int argc,
     // ExecutorAdapter::TestAll();
     // ExecutorAdapter2::TestAll();
     // Finalizers::TestAll();
+    FlatMap::TestAll();
     // Function::Test();
     // HashTable::TestAll();
     // LinkedLists::TEST_ALL();

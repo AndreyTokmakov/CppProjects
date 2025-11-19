@@ -19,6 +19,7 @@ add_executable(${PROJECT_NAME}
 		ObjectPool_Growing/ObjectPool_Growing.cpp
 		LockFreeDataStructures/LockFreeQueue.cpp
 		Finalizers/Finalizers.cpp
+		FlatMap/FlatMap.cpp
 		Optional/Optional.cpp
 		Expected/Expected.cpp
 		SharedPtr/SharedPtr.cpp
