@@ -71,7 +71,7 @@ struct std::hash<Iterable>
     std::size_t operator()(const Iterable& range) const noexcept
     {
         std::size_t result = 0;
-        for(const auto& object: range)
+        for (const auto& object: range)
             hash_combine(result, object);
         return result;
     }
