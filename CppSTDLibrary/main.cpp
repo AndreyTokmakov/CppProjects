@@ -39,7 +39,7 @@ Description : Cpp STD lib
 #include "Expected/Expected.h"
 #include "Errors/Errors.h"
 #include "Exceptions/Exceptions.h"
-#include "Hashing/Hashing.h"
+#include "Hashing/Hashing.hpp"
 #include "InitializerList/InitializerList.h"
 #include "InlineVariables/InlineVariables.h"
 #include "Types//Int.h"
@@ -122,7 +122,7 @@ int main([[maybe_unused]] int argc,
     // CompileTimeProgramming::TestAll();
     // Constexpr::TestAll();
     // CopyElision::TestAll();
-    DeducingThis::TestAll();
+    // DeducingThis::TestAll();
     // RVO_FailureCases::TestAll();
     // ClassTemplateArgumentDeduction::TestAll();
     // DateAndTime::TestAll();
@@ -140,7 +140,7 @@ int main([[maybe_unused]] int argc,
     // Filesystem::TestAll();
     // Format::TestAll();
     // FunctionObjects::TestAll();
-    // Hashing::TestAll();
+    Hashing::TestAll();
     // LookupTypes::TestAll();
     // Lambdas::TestAll();
     // LifetimeExtension::TestAll();

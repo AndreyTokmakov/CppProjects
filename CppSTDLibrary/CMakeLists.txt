@@ -102,7 +102,7 @@ add_executable(${PROJECT_NAME}
 		WeakPtr/WeakPtr.cpp
 		WeakPtr/WeakPtr_MakeShared.cpp
         Volatile/VolatileTests.cpp
-		Hashing/Hashing.cpp
+		Hashing/Hashing.cpp Hashing/Hashing_Utilities.cpp
 		Metaprogramming/Metaprogramming.cpp
 		StarshipOperator/StarshipOperator.cpp
 		Expected/Expected.cpp

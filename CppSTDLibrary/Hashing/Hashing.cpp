@@ -1,16 +1,17 @@
-//============================================================================
-// Name        : Hashing.h
-// Created on  : 16.08.22.
-// Author      : Tokmakov Andrey
-// Version     : 1.0
-// Copyright   : Your copyright notice
-// Description : C++ Hashing tests
-//============================================================================
+/**============================================================================
+Name        : Hashing.cpp
+Created on  : 16.08.2022
+Author      : Andrei Tokmakov
+Version     : 1.0
+Copyright   : Your copyright notice
+Description : C++ Hashing tests
+============================================================================**/
+
 
 #include <iostream>
 #include <string_view>
 
-#include "Hashing.h"
+#include "Hashing.hpp"
 
 namespace Hashing::CustomTypeHash
 {
@@ -22,15 +23,20 @@ namespace Hashing::CustomTypeHash
 };
 
 template<>
-struct std::hash<Hashing::CustomTypeHash::SpaceShip> {
-    size_t operator()(const Hashing::CustomTypeHash::SpaceShip& ship) const {
+struct std::hash<Hashing::CustomTypeHash::SpaceShip>
+{
+    size_t operator()(const Hashing::CustomTypeHash::SpaceShip& ship) const noexcept
+    {
         return std::hash<int>()(ship.id) ^ std::hash<std::string>()(ship.name);;
     }
 };
 
 void Hashing::TestAll()
 {
+    TestUtilities();
+
+    /*
     CustomTypeHash::SpaceShip ship;
     std::cout << std::hash<decltype(ship)>{}(ship) << std::endl;
-
+    */
 };
