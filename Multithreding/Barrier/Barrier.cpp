@@ -51,7 +51,7 @@ namespace Barrier
         auto task = [&](std::string_view name, const uint32_t timeout) {
             LOG << name  <<  " started\n";
             std::this_thread::sleep_for(std::chrono::seconds(timeout));
-            LOG << name  <<  " completed. waiting for others\n";
+            LOG << name  <<  " completed in " << timeout << " seconds. Waiting for others\n";
             barrier.arrive_and_wait();
             LOG << name  <<  " done\n";
         };
@@ -59,6 +59,18 @@ namespace Barrier
         std::jthread t1 (task, "T1", getRandomInteger(0, 5));
         std::jthread t2 (task, "T2", getRandomInteger(0, 5));
         std::jthread t3 (task, "T3", getRandomInteger(0, 5));
+
+        /**
+        2025-11-20 18:33:39.095909 T3 started
+        2025-11-20 18:33:39.095865 T1 started
+        2025-11-20 18:33:39.095871 T2 started
+        2025-11-20 18:33:40.096161 T3 completed in 1 seconds. Waiting for others
+        2025-11-20 18:33:41.096249 T2 completed in 2 seconds. Waiting for others
+        2025-11-20 18:33:42.096156 T1 completed in 3 seconds. Waiting for others
+        2025-11-20 18:33:42.096222 T1 done
+        2025-11-20 18:33:42.096247 T3 done
+        2025-11-20 18:33:42.096275 T2 done
+        **/
     }
 
     void Test_WithCallback()
@@ -89,7 +101,7 @@ namespace Barrier
     void Wait_To_All_Thread_Completed()
     {
         constexpr size_t threadsCount {3};
-        std::barrier barrier(threadsCount);
+        std::barrier barrier(threadsCount + 1); /**  +1 for the Main Thread **/
 
         auto task = [&]() {
             const uint32_t secondsToSleep = getRandomInteger(1, 10);
@@ -112,8 +124,19 @@ namespace Barrier
         LOG << "waiting for all threads to finish...\n";
         barrier.arrive_and_wait();
         LOG << "done...\n";
-    }
 
+        /**
+        2025-11-20 18:31:06.579687 starting...
+        2025-11-20 18:31:06.579831 [139943672960768] thread started. Will be sleeping for 8
+        2025-11-20 18:31:06.579861 [139943664568064] thread started. Will be sleeping for 1
+        2025-11-20 18:31:06.579897 [139943656175360] thread started. Will be sleeping for 4
+        2025-11-20 18:31:06.580921 waiting for all threads to finish...
+        2025-11-20 18:31:07.580028 [139943664568064] task completed
+        2025-11-20 18:31:10.580391 [139943656175360] task completed
+        2025-11-20 18:31:14.579991 [139943672960768] task completed
+        2025-11-20 18:31:14.580035 done...
+        **/
+    }
 
     void Run_CallBack_WhenAllDone()
     {
@@ -163,7 +186,6 @@ namespace Barrier
         LOG << "Starting...\n";
         for (std::vector<std::jthread> jobs; std::string& name : names)
             jobs.emplace_back(work, name);
-
     }
 
     void Check_Block_By_Barrier()
@@ -272,15 +294,10 @@ void Barrier::TEST_ALL()
 {
     // SimpleTest();
     // Test();
-
     // Wait_To_All_Thread_Completed();
-
     // Run_CallBack_WhenAllDone();
-
-    // Barrier_With_Completion();
+    Barrier_With_Completion();
     // Check_Block_By_Barrier();
-
     // Reuse_Callback::Test();
-
-    Arrive_and_Wait_Separately();
+    // Arrive_and_Wait_Separately();
 };
