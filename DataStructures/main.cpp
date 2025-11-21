@@ -57,6 +57,7 @@ Description : DataStructures
 #include "ThreadPool/ThreadPoolEx.h"
 #include "Trie/Trie.h"
 #include "TypeListChecker/TypeListChecker.hpp"
+#include "StaticSortedSearchArray/StaticSortedSearchArray.hpp"
 
 
 // TODO:
@@ -78,7 +79,7 @@ int main([[maybe_unused]] int argc,
     // ExecutorAdapter::TestAll();
     // ExecutorAdapter2::TestAll();
     // Finalizers::TestAll();
-    FlatMap::TestAll();
+    // FlatMap::TestAll();
     // Function::Test();
     // HashTable::TestAll();
     // LinkedLists::TEST_ALL();
@@ -99,6 +100,7 @@ int main([[maybe_unused]] int argc,
     // HeapWithComparator::TestAll();
     // CompressedPair::TestAll();
 
+	static_sorted_search_array::TestAll();
     // CircularBuffers::TEST_ALL();
     // RingBuffer::TestAll();
     // RingBufferEx::TestAll();

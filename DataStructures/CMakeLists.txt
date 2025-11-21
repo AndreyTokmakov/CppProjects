@@ -46,6 +46,7 @@ add_executable(${PROJECT_NAME}
 		ObjectNumberLimiter/ObjectNumberLimiter.cpp
 		BinaryTree/BinaryTree.cpp
 		ThreadPoolLimited/ThreadPoolLimited.cpp
+		StaticSortedSearchArray/StaticSortedSearchArray.cpp
 		Trie/Trie.cpp
 		TypeListChecker/TypeListChecker.cpp
 		Utilities/Long.cpp
