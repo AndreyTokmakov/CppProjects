@@ -11,6 +11,7 @@ Description : StaticSortedSearchArray.cpp
 
 #include <iostream>
 #include <memory>
+#include <utility>
 #include <vector>
 
 namespace static_sorted_search_array
@@ -24,38 +25,53 @@ namespace static_sorted_search_array
     template<typename Ty, SortOrder ordering = SortOrder::Ascending>
     struct SortedArray
     {
-        using size_type  = size_t;
-        using value_type = Ty;
-        using pointer    = value_type*;
+        using size_type      = uint32_t;
+        using value_type     = Ty;
+        using pointer        = value_type*;
         using const_pointer  = const pointer;
-        using array_type = value_type[];
+        using array_type     = value_type[];
 
         size_type size { 0 };
         size_type capacity { 0 };
-        std::unique_ptr<array_type> elements { nullptr }; //  std::make_unique_for_overwrite<int[]>(len);
+        std::unique_ptr<array_type> elements { nullptr };
 
         explicit SortedArray(const size_type capacity) :
                 size { 0 }, capacity { capacity }, elements { std::make_unique<array_type>(capacity) }  {
         }
 
-        SortedArray(const SortedArray &other) = default;
-        SortedArray & operator=(const SortedArray &other) = default;
+        SortedArray(const SortedArray & other):
+                size { other.size },
+                capacity { other.capacity },
+                elements { std::make_unique_for_overwrite<array_type>(capacity) }
+        {
+            std::copy_n(other.elements.get(), size, elements.get());
+        }
 
-        /*
-        SortedArray(const SortedArray && other)
-            : size { other.size }, capacity { other.capacity }, elements { other.elements }
+        SortedArray & operator=(const SortedArray & other)
+        {
+            size = other.size;
+            capacity = other.capacity;
+            elements = std::make_unique_for_overwrite<array_type>(capacity);
+            std::copy_n(other.elements.get(), size, elements.get());
+
+            return *this;
+        }
+
+        SortedArray(SortedArray && other) noexcept:
+                size { std::exchange(other.size, 0) },
+                capacity { std::exchange(other.capacity, 0) },
+                elements { std::move(other.elements) }
         {
         }
 
-        SortedArray & operator=(SortedArray &&other) noexcept
+        SortedArray & operator=(SortedArray && other) noexcept
         {
-            if (this == &other)
-                return *this;
-            size = other.size;
-            capacity = other.capacity;
+            size = std::exchange(other.size, 0);
+            capacity = std::exchange(other.capacity, 0);
             elements = std::move(other.elements);
+
             return *this;
-        }*/
+        }
 
         [[nodiscard]]
         size_type findInsertIndex(const value_type item) const noexcept
@@ -105,13 +121,6 @@ namespace static_sorted_search_array
             else
                 return a <= b;
         }
-
-
-        // TODO:
-        //  - Copy constructor
-        //  - Copy assignment
-        //  - Move constructor
-        //  - Move assignment
 
         // TODO:
         //  - Iterators
@@ -205,6 +214,7 @@ void static_sorted_search_array::TestAll()
 
     constexpr uint32_t initialSize = 5;
     SortedArray<int> values (initialSize);
+    std::cout << sizeof(values) << std::endl;
 
     /*
     for (int i = 0; i < initialSize; ++i) {
@@ -229,7 +239,12 @@ void static_sorted_search_array::TestAll()
 
     values.print();
 
-    std::cout << std::string(120, '-') << std::endl;
+    std::cout << std::string(120, '=') << std::endl;
 
-    SortedArray<int> values1  = values;
+    SortedArray<int> values1(1);
+    values1 = std::move(values);
+
+    values1.print();
+    std::cout << std::string(120, '=') << std::endl;
+    values.print();
 }
