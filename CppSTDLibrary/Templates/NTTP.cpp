@@ -8,7 +8,7 @@ Description : NTTP.cpp
 ============================================================================**/
 
 // ReSharper disable CppMemberFunctionMayBeStatic
-#include "NTTP.hpp"
+#include "Templates.hpp"
 
 #include <iostream>
 #include <array>
@@ -17,7 +17,7 @@ Description : NTTP.cpp
 #include <numeric>
 
 
-namespace NTTP::One
+namespace Templates::NTTP::One
 {
     template<std::array a> auto get_value() {
         return a[1];
@@ -42,7 +42,7 @@ namespace NTTP::One
 }
 
 
-namespace NTTP::Function_With_Param
+namespace NTTemplates::NTTPTP::Function_With_Param
 {
     struct Config
     {
@@ -64,7 +64,7 @@ namespace NTTP::Function_With_Param
 }
 
 
-namespace NTTP::Type_With_Param
+namespace Templates::NTTP::Type_With_Param
 {
     struct Config
     {
@@ -86,7 +86,7 @@ namespace NTTP::Type_With_Param
     }
 }
 
-namespace NTTP::Lambda_as_NTTP
+namespace Templates::NTTP::Lambda_as_NTTP
 {
     template<auto Func>
     struct PersonalBudget {
@@ -112,7 +112,7 @@ namespace NTTP::Lambda_as_NTTP
 
 
 
-void NTTP::TestAll()
+void Templates::NTTP::TestAll()
 {
     // One::ArrayAsTemplateParam();
     // Function_With_Param::test();

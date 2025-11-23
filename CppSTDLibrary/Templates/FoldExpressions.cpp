@@ -7,7 +7,7 @@ Copyright   : Your copyright notice
 Description : FoldExpressions
 ============================================================================**/
 
-#include "FoldExpressions.hpp"
+#include "Templates.hpp"
 
 #include <iostream>
 #include <vector>
@@ -25,7 +25,7 @@ namespace
     }
 }
 
-namespace FoldExpressions::Basic_Operations
+namespace Templates::FoldExpressions::Basic_Operations
 {
     template<typename... Args>
     consteval size_t count(Args&&...) {
@@ -40,7 +40,7 @@ namespace FoldExpressions::Basic_Operations
     }
 }
 
-namespace FoldExpressions::Basic_Operations
+namespace Templates::FoldExpressions::Basic_Operations
 {
     template<typename Predicate, typename... Types>
     consteval size_t count_if(Predicate&& predicate, Types&&... args) {
@@ -56,7 +56,7 @@ namespace FoldExpressions::Basic_Operations
     }
 }
 
-namespace FoldExpressions::Basic_Operations
+namespace Templates::FoldExpressions::Basic_Operations
 {
     template<template <typename T> typename Predicate, typename... Args>
     consteval size_t count_if_types() {
@@ -76,7 +76,7 @@ namespace FoldExpressions::Basic_Operations
     }
 }
 
-namespace FoldExpressions
+namespace Templates::FoldExpressions
 {
     template<typename ...Args>
     auto sum(Args ...args) {
@@ -287,7 +287,7 @@ namespace FoldExpressions
     }
 };
 
-namespace FoldExpressions
+namespace Templates::FoldExpressions
 {
     template<typename ...Ts>
     struct GetFirst{};
@@ -325,7 +325,7 @@ namespace FoldExpressions
 
 
 
-namespace FoldExpressions
+namespace Templates::FoldExpressions
 {
     template<uint32_t N, class ... Nums>
     consteval uint32_t factorial(Nums ... values)
@@ -349,7 +349,7 @@ namespace FoldExpressions
     }
 }
 
-namespace FoldExpressions
+namespace Templates::FoldExpressions
 {
 
     class Blob {
@@ -402,7 +402,7 @@ namespace FoldExpressions
 };
 
 
-namespace FoldExpressions
+namespace Templates::FoldExpressions
 {
 
     template<typename... Types>
@@ -492,7 +492,7 @@ namespace FoldExpressions
     }
 }
 
-namespace FoldExpressions::Classes
+namespace Templates::FoldExpressions::Classes
 {
     template<typename... Bases>
     struct MultiBase : private Bases...
@@ -523,7 +523,7 @@ namespace FoldExpressions::Classes
     }
 }
 
-namespace FoldExpressions::Classes
+namespace Templates::FoldExpressions::Classes
 {
     struct One {
         One() { std::cout << "One::One()\n"; }
@@ -550,7 +550,7 @@ namespace FoldExpressions::Classes
 }
 
 
-namespace FoldExpressions::Classes
+namespace Templates::FoldExpressions::Classes
 {
 
     template<typename... Ts>
@@ -573,7 +573,7 @@ namespace FoldExpressions::Classes
     }
 }
 
-namespace FoldExpressions
+namespace Templates::FoldExpressions
 {
 
     template<typename T>
@@ -646,7 +646,7 @@ namespace FoldExpressions
     }
 }
 
-namespace FoldExpressions
+namespace Templates::FoldExpressions
 {
     template<typename T, size_t... sizes>
     auto concat(const std::array<T, sizes>&... arrays)
@@ -682,7 +682,7 @@ namespace FoldExpressions
 }
 
 
-namespace FoldExpressions::Variadic_Friends
+namespace Templates::FoldExpressions::Variadic_Friends
 {
     template<class Derived, class Message>
     struct Receiver
@@ -742,7 +742,7 @@ namespace FoldExpressions::Variadic_Friends
     }
 }
 
-void FoldExpressions::TestAll()
+void Templates::FoldExpressions::TestAll()
 {
     // Basic_Operations::Count_Number_Entries();
     // Basic_Operations::Count_If();

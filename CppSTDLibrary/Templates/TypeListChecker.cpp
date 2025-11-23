@@ -7,7 +7,7 @@ Copyright   : Your copyright notice
 Description : TypeListChecker.cpp
 ============================================================================**/
 
-#include "TypeListChecker.hpp"
+#include "Templates.hpp"
 
 #include <iostream>
 #include <utility>
@@ -53,7 +53,7 @@ namespace
 
 }
 
-void TypeListChecker::TestAll()
+void Templates::TypeListChecker::TestAll()
 {
     Helper<uint32_t, std::string, float> helper;
 

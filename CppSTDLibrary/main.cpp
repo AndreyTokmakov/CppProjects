@@ -140,7 +140,7 @@ int main([[maybe_unused]] int argc,
     // Filesystem::TestAll();
     // Format::TestAll();
     // FunctionObjects::TestAll();
-    Hashing::TestAll();
+    // Hashing::TestAll();
     // LookupTypes::TestAll();
     // Lambdas::TestAll();
     // LifetimeExtension::TestAll();
@@ -181,7 +181,7 @@ int main([[maybe_unused]] int argc,
     // Tuple::TestAll();
     // TypeCast::TestAll();
     // Int::TestAll();
-    // Templates::TestAll();
+    Templates::TestAll();
     // Utilities::TestAll();
     // UniquePtr::TestAll();
     // WeakPtr::TestAll();

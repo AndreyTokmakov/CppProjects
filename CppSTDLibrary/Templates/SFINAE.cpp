@@ -7,7 +7,7 @@ Copyright   : Your copyright notice
 Description : SFINAE.cpp
 ============================================================================**/
 
-#include "SFINAE.hpp"
+#include "Templates.hpp"
 
 #include <iostream>
 #include <type_traits>
@@ -37,7 +37,7 @@ namespace
 
 
 
-namespace SFINAE::EnableIf
+namespace Templates::SFINAE::EnableIf
 {
 
     template<class T>
@@ -220,7 +220,7 @@ namespace SFINAE::EnableIf
         auto T1 = typeid(std::enable_if_t<std::is_integral_v<int>>).name(); // void
         std::cout << T1 << std::endl;
 
-        int var = 10;
+        int _ = 10;
         using T_2 = std::enable_if_t<std::is_integral_v<int>, int>;
         std::cout << "T_2 = " << typeid(T_2).name() << std::endl;
 
@@ -513,7 +513,7 @@ namespace Templates::EnableIf_Classes_Applications
 
 
 
-void SFINAE::TestAll()
+void Templates::SFINAE::TestAll()
 {
     // EnableIf::Basic_Test();
     EnableIf::Test1();

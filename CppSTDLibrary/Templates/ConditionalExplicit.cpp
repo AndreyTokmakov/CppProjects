@@ -7,11 +7,11 @@ Copyright   : Your copyright notice
 Description : ConditionalExplicit.cpp
 ============================================================================**/
 
-#include "ConditionalExplicit.hpp"
+#include "Templates.hpp"
 
 #include <concepts>
 
-namespace ConditionalExplicit
+namespace Templates::ConditionalExplicit
 {
     template<std::integral Src, std::integral Dst>
     constexpr bool is_safe_conversion =
@@ -55,6 +55,6 @@ namespace ConditionalExplicit
     }
 }
 
-void ConditionalExplicit::TestAll() {
+void Templates::ConditionalExplicit::TestAll() {
     CastTest();
 }

@@ -7,11 +7,11 @@ Copyright   : Your copyright notice
 Description : PartialSpecialization.cpp
 ============================================================================**/
 
-#include "TemplateSpecialization.hpp"
+#include "Templates.hpp"
 
 #include <iostream>
 
-namespace TemplateSpecialization::Specialization
+namespace Templates::TemplateSpecialization::Specialization
 {
     template<typename T>
     struct Node
@@ -46,7 +46,7 @@ namespace TemplateSpecialization::Specialization
     }
 }
 
-namespace TemplateSpecialization::Specialization
+namespace Templates::TemplateSpecialization::Specialization
 {
     template<typename T1, typename T2>
     struct Object {
@@ -78,7 +78,7 @@ namespace TemplateSpecialization::Specialization
 }
 
 
-namespace TemplateSpecialization::ClassSpecialization
+namespace Templates::TemplateSpecialization::ClassSpecialization
 {
 
     class Object {
@@ -159,7 +159,7 @@ namespace TemplateSpecialization::ClassSpecialization
     }
 };
 
-namespace TemplateSpecialization::PartialSpecialization
+namespace Templates::TemplateSpecialization::PartialSpecialization
 {
     template<typename T1, typename T2>
     struct Object
@@ -263,7 +263,7 @@ namespace TemplateSpecialization::PartialSpecialization
 }
 
 
-namespace TemplateSpecialization::PartialSpecialization_WithConcepts
+namespace Templates::TemplateSpecialization::PartialSpecialization_WithConcepts
 {
     template<typename T>
     concept BasicAddable = requires(T a, T b) {
@@ -320,7 +320,7 @@ namespace TemplateSpecialization::PartialSpecialization_WithConcepts
     }
 }
 
-namespace TemplateSpecialization::ClassSpecialization_RawArrays
+namespace Templates::TemplateSpecialization::ClassSpecialization_RawArrays
 {
     template<typename T>
     struct ArrayKeeper;
@@ -396,7 +396,7 @@ namespace TemplateSpecialization::ClassSpecialization_RawArrays
     }
 }
 
-namespace TemplateSpecialization::FunctionSpecialization
+namespace Templates::TemplateSpecialization::FunctionSpecialization
 {
     template<typename T>
     T sqrt(T t) {
@@ -442,7 +442,7 @@ namespace TemplateSpecialization::FunctionSpecialization
 }
 
 
-void TemplateSpecialization::TestAll()
+void Templates::TemplateSpecialization::TestAll()
 {
     // FunctionSpecialization::Test1();
     // FunctionSpecialization::PartialSpecialization();

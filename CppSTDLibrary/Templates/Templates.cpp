@@ -18,15 +18,9 @@ Description : Templates src
 #include <algorithm>
 #include <cstdint>
 #include <functional>
-// #include <format>
 
 #include "../Helpers/Integer.h"
-#include "ConditionalExplicit.hpp"
-
 #include "Templates.hpp"
-#include "TypeListChecker.hpp"
-#include "FoldExpressions.hpp"
-#include "NTTP.hpp"
 
 namespace
 {
@@ -136,19 +130,20 @@ namespace Templates::Methods
 {
 
     template<typename T>
-    T* BuildArray(size_t size) {
-        static_assert(std::is_integral<T>::value, "This function is only designed for integral types.");
+    T* BuildArray(size_t size)
+    {
+        static_assert(std::is_integral_v<T>, "This function is only designed for integral types.");
         T* d = new T[size];
-        for (T i = 0; i < size; i++)
+        for (T i = 0; i < static_cast<T>(size); i++)
             d[i] = i;
         return d;
     }
 
     template<typename T = int>
     T* BuildArrayEx(size_t size) {
-        static_assert(std::is_integral<T>::value, "This function is only designed for integral types.");
+        static_assert(std::is_integral_v<T>, "This function is only designed for integral types.");
         T* d = new T[size];
-        for (T i = 0; i < size; i++)
+        for (T i = 0; i < static_cast<T>(size); i++)
             d[i] = i;
         return d;
     }
@@ -666,7 +661,8 @@ namespace Templates::Auto_Template_Params {
         static constexpr auto value = v;
     };
 
-    void ConstClass() {
+    void ConstClass()
+    {
         using intCons = Constant<'A'>;
         using i = constant<42>;
     }
@@ -1277,6 +1273,8 @@ namespace Templates::Applications_And_Examples
     void PassingFunction_to_ClassTemplateArgument()
     {
         auto logged_add = make_logger(add, "Add");
+
+        [[maybe_unused]]
         auto result = logged_add(2, 3);
     }
 

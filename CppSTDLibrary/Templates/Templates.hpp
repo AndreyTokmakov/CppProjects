@@ -10,8 +10,17 @@ Description : Templates src
 #ifndef TEMPLATES_TESTS__H_
 #define TEMPLATES_TESTS__H_
 
-namespace Templates {
+namespace Templates
+{
 	void TestAll();
+
+	namespace NTTP { void TestAll(); };
+	namespace PackIndexing { void TestAll(); }
+	namespace SFINAE { void TestAll(); }
+	namespace TemplateSpecialization { void TestAll(); }
+	namespace FoldExpressions { void TestAll(); }
+	namespace ConditionalExplicit { void TestAll(); }
+	namespace TypeListChecker { void TestAll(); }
 };
 
 #endif /* TEMPLATES_TESTS__H_ */

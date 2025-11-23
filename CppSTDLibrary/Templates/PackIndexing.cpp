@@ -7,7 +7,7 @@ Copyright   : Your copyright notice
 Description : PackIndexing.cpp
 ============================================================================**/
 
-#include "PackIndexing.hpp"
+#include "Templates.hpp"
 
 namespace PackIndexing
 {
@@ -33,7 +33,7 @@ namespace PackIndexing
 }
 
 
-void PackIndexing::TestAll()
+void Templates::PackIndexing::TestAll()
 {
     // PackIndexing::PackIndexingDemo();
 }
