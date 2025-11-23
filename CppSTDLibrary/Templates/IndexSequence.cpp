@@ -108,10 +108,12 @@ namespace compile_time_values_sequence
 
 namespace unroll_data_processing_loop
 {
+    constexpr size_t SlotCount = 8;
+
     // HFT-style slot processor
     struct SlotProcessor
     {
-        alignas(64) std::array<int, 8> slots {};   // cache-line aligned
+        alignas(64) std::array<int, SlotCount> slots {};   // cache-line aligned
 
         void process_one(const std::size_t i)
         {
@@ -151,7 +153,7 @@ namespace unroll_data_processing_loop
         SlotProcessor proc;
 
         // Fully unrolled at compile time: equivalent to 8 manual calls
-        unrolled<8>([&](std::size_t i) {
+        unrolled<SlotCount>([&](const std::size_t i) {
             proc.process_one(i);
         });
 
