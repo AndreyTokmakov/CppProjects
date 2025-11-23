@@ -1483,10 +1483,11 @@ void Templates::TestAll()
 {
     // TypeListChecker::TestAll();
     // FoldExpressions::TestAll();
-    NTTP::TestAll();
+    // NTTP::TestAll();
     // SFINAE::TestAll();
     // TemplateSpecialization::TestAll();
     // PackIndexing::TestAll();
+    IndexSequence::TestAll();
 
     // Is_Base_Of__Test();
     // Is_Same();

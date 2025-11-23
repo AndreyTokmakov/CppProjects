@@ -264,9 +264,10 @@ namespace Templates::FoldExpressions
         invoke2(1,2,3,4, "33333");
     }
 
-    void CallFunctionList() {
+    void CallFunctionList()
+    {
         auto f1 = [] { std::cout << "f1() called" << std::endl; return true; };
-        auto f2 = [] { std::cout << "f2() called" << std::endl; return true; };
+        auto _ = [] { std::cout << "f2() called" << std::endl; return true; };
         auto f3 = [] { std::cout << "f3() called" << std::endl; return true; };
         auto f4 = [] { std::cout << "f3() called" << std::endl; return false; };
 
@@ -638,10 +639,13 @@ namespace Templates::FoldExpressions
         return (np ->* ... ->*paths); // np ->* paths1 ->* paths2 ...
     }
 
-    void FoldedPathTraversals() {
+    void FoldedPathTraversals()
+    {
         Node* root = new Node{ 0 };
         root->left = new Node{ 1 };
         root->left->right = new Node{ 2 };
+
+        [[maybe_unused]]
         Node* node = traverse(root, left, right);
     }
 }

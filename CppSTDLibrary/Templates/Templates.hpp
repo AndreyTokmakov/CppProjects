@@ -21,6 +21,7 @@ namespace Templates
 	namespace FoldExpressions { void TestAll(); }
 	namespace ConditionalExplicit { void TestAll(); }
 	namespace TypeListChecker { void TestAll(); }
+	namespace IndexSequence { void TestAll(); }
 };
 
 #endif /* TEMPLATES_TESTS__H_ */

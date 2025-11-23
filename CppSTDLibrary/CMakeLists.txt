@@ -120,6 +120,7 @@ add_executable(${PROJECT_NAME}
 		Templates/PackIndexing.cpp
 		Templates/TemplateSpecialization.cpp
 		Templates/TypeListChecker.cpp
+		Templates/IndexSequence.cpp
 
 		RVO_CopyElision/CopyElision.cpp
 		RVO_CopyElision/RVO_FailureCases.cpp
