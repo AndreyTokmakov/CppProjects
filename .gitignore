@@ -41,7 +41,11 @@
 /FinTechMarketProjects/data/*
 /FuzzingExperiments/fuzzer
 /FuzzingExperiments/crash*
-.idea/
 test_bin
+
+.idea/
+.vscode/
+*.code-workspace
+
 
 

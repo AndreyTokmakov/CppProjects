@@ -11,7 +11,6 @@ Description : DeducingThis.cpp
 
 #include <iostream>
 #include <utility>
-#include <spdlog/fmt/bundled/core.h>
 
 namespace DeducingThis::Explicit_Object_Member_Functions
 {
