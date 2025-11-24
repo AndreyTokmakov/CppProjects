@@ -221,17 +221,15 @@ namespace static_sorted_search_array
     template <typename T>
     using array_const_iterator = base_iterator<T, const SortedArray<T>>;
 
-
-    /*
-    template <typename T, const size_t Size>
-    array_iterator<T, Size> begin(SortedArray<T>& collection) {
-        return array_iterator<T, Size>(collection, 0);
+    template <typename T>
+    array_iterator<T> begin(SortedArray<T>& collection) {
+        return array_iterator<T>(collection, 0);
     }
 
-    template <typename T, const size_t Size>
-    array_iterator<T, Size> end(SortedArray<T>& collection) {
-        return array_iterator<T, Size>(collection, collection.GetSize());
-    }*/
+    template <typename T>
+    array_iterator<T> end(SortedArray<T>& collection) {
+        return array_iterator<T>(collection, collection.Size());
+    }
 
     template <typename T>
     array_const_iterator<T> begin(const SortedArray<T>& collection) {
