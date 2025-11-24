@@ -8,11 +8,14 @@ Description : StaticSortedSearchArray.cpp
 ============================================================================**/
 
 #include "StaticSortedSearchArray.hpp"
+#include "PerfUtilities.hpp"
 
 #include <iostream>
 #include <memory>
 #include <utility>
 #include <vector>
+#include <random>
+
 
 namespace static_sorted_search_array
 {
@@ -131,6 +134,11 @@ namespace static_sorted_search_array
                 return a <= b;
         }
 
+        [[nodiscard]]
+        size_type Size() const noexcept {
+            return size;
+        }
+
         // TODO: Methods
         //  - size()
 
@@ -183,8 +191,17 @@ namespace static_sorted_search_array
     };
 }
 
-namespace
+namespace static_sorted_array::testing
 {
+    std::random_device rd{};
+    std::mt19937 generator = std::mt19937 {rd()};
+
+    int getRandomInRange(const int32_t start, const int32_t end) noexcept
+    {
+        auto distribution = std::uniform_int_distribution<>{ start, end };
+        return distribution(generator);
+    }
+
     template<typename Ty>
     std::ostream& operator<<(std::ostream& os, const std::vector<Ty>& values)
     {
@@ -192,71 +209,35 @@ namespace
             os << value << " ";
         return os;
     }
+
+    [[nodiscard]]
+    std::vector<int32_t> getTestData(const size_t size = 10'000'000)
+    {
+        std::vector<int32_t> data(size);
+        for (size_t i = 0; i < size; ++i) {
+            data[i] = getRandomInRange(0, size);
+        }
+        return data;
+    }
+
+    void benchmark()
+    {
+        constexpr uint32_t collectionSize { 1'000 }, testDataSize = 100'000'000;
+        const std::vector<int32_t> data = getTestData(testDataSize);
+
+        PerfUtilities::ScopedTimer timer { "SortedArray"};
+        static_sorted_search_array::SortedArray<int> array (collectionSize);
+        for (uint32_t idx = 0; idx < testDataSize; ++idx)
+        {
+            const auto key = data[idx];
+            array.push(key);
+        }
+        std::cout << array.Size() << std::endl;
+    }
 }
+
 
 void static_sorted_search_array::TestAll()
 {
-    /*
-    SortedArray<int, false> values (10);
 
-    for (int i = 0; i < 10; ++i)
-        values.data[i] = i * 3;
-    values.size = 10;
-
-    values.print();
-
-    const auto item = values.find_insert_pos(11);
-    std::cout << item << std::endl;
-    */
-
-    /*
-    std::vector<int> values { 0, 3, 6, 9, 12, 15, 18, 21, 24, 27 };
-    int item = 11;
-    const int pos = 4;
-
-
-    for (uint32_t idx = values.size() - 1; idx > pos; --idx) {
-        values[idx] = values[idx - 1];
-    }
-    values[pos] = item;
-
-    std::cout << values << std::endl;
-    */
-
-
-    constexpr uint32_t initialSize = 5;
-    SortedArray<int> values (initialSize);
-    std::cout << sizeof(values) << std::endl;
-
-    /*
-    for (int i = 0; i < initialSize; ++i) {
-        values.elements[i] = i * 3;
-        values.size++;
-    }*/
-
-    values.print();
-
-    values.push(11);
-    std::cout << std::string(120, '-') << std::endl;
-
-    values.print();
-
-    values.push(23);
-    std::cout << std::string(120, '-') << std::endl;
-
-    values.print();
-
-    values.push(3);
-    std::cout << std::string(120, '-') << std::endl;
-
-    values.print();
-
-    std::cout << std::string(120, '=') << std::endl;
-
-    SortedArray<int> values1(1);
-    values1 = std::move(values);
-
-    values1.print();
-    std::cout << std::string(120, '=') << std::endl;
-    values.print();
 }

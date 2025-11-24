@@ -7,7 +7,6 @@ Copyright   : Your copyright notice
 Description : DataStructures
 ============================================================================**/
 
-#include "../CppSTDLibrary/Templates/TypeListChecker.hpp"
 #include "Array/Array.h"
 #include "BitFlags/BitFlags.h"
 #include "LRUCache/LRUCache.h"
