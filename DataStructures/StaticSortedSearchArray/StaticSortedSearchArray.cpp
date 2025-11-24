@@ -90,6 +90,15 @@ namespace static_sorted_search_array
 
         bool push(const value_type item)
         {
+            if (size == capacity && item > elements[size - 1]) {
+                return false;
+            }
+            // TODO: Check if size > 0 && size == capacity  && item > elements[capacity - 1]
+            /*if (size > 0 && item > elements[size - 1]) {
+                elements[size++] = item;;
+                return true;
+            }*/
+
             const size_type idxInsert = findInsertIndex(item);
             if (capacity == idxInsert || item == elements[idxInsert]) {
                 return false;
@@ -121,6 +130,9 @@ namespace static_sorted_search_array
             else
                 return a <= b;
         }
+
+        // TODO: Methods
+        //  - size()
 
         // TODO:
         //  - Iterators
