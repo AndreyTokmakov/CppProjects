@@ -189,9 +189,62 @@ namespace static_sorted_search_array
             elements[idxInsert] = item;
         }
     };
+
+    template <typename Ty, typename Collection>
+    class base_iterator
+    {
+        Collection::size_type index { 0 };
+        Collection& collection;
+
+    public:
+        base_iterator(Collection& collection, const size_t index) :
+            index(index), collection(collection) {
+        }
+
+        bool operator!= (const base_iterator & other) const {
+            return index != other.index;
+        }
+
+        const Ty& operator*() const {
+            return collection.elements[index];
+        }
+
+        const base_iterator& operator++ () {
+            ++index;
+            return *this;
+        }
+    };
+
+    template <typename T>
+    using array_iterator = base_iterator<T, SortedArray<T>>;
+
+    template <typename T>
+    using array_const_iterator = base_iterator<T, const SortedArray<T>>;
+
+
+    /*
+    template <typename T, const size_t Size>
+    array_iterator<T, Size> begin(SortedArray<T>& collection) {
+        return array_iterator<T, Size>(collection, 0);
+    }
+
+    template <typename T, const size_t Size>
+    array_iterator<T, Size> end(SortedArray<T>& collection) {
+        return array_iterator<T, Size>(collection, collection.GetSize());
+    }*/
+
+    template <typename T>
+    array_const_iterator<T> begin(const SortedArray<T>& collection) {
+        return array_const_iterator<T>(collection, 0);
+    }
+
+    template <typename T>
+    array_const_iterator<T> end(const SortedArray<T>& collection) {
+        return array_const_iterator<T>(collection, collection.Size());
+    }
 }
 
-namespace static_sorted_array::testing
+namespace static_sorted_search_array::testing
 {
     std::random_device rd{};
     std::mt19937 generator = std::mt19937 {rd()};
@@ -226,7 +279,7 @@ namespace static_sorted_array::testing
         const std::vector<int32_t> data = getTestData(testDataSize);
 
         PerfUtilities::ScopedTimer timer { "SortedArray"};
-        static_sorted_search_array::SortedArray<int> array (collectionSize);
+        SortedArray<int> array (collectionSize);
         for (uint32_t idx = 0; idx < testDataSize; ++idx)
         {
             const auto key = data[idx];
@@ -239,5 +292,15 @@ namespace static_sorted_array::testing
 
 void static_sorted_search_array::TestAll()
 {
+    //testing::benchmark();
 
+    SortedArray<int> array (10);
+
+    for (int i = 0; i < 10; ++i) {
+        array.push(i);
+    }
+
+    for (const auto & e : array) {
+        std::cout << e << std::endl;
+    }
 }
