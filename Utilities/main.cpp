@@ -28,6 +28,7 @@ Description : C++ Utilities
 #include "Base64.hpp"
 #include "HexConverter.hpp"
 #include "PerfUtilities.hpp"
+#include "Testing.hpp"
 
 
 #include "FinalAction.hpp"
@@ -344,6 +345,42 @@ namespace final_action_test
     }
 }
 
+namespace testing_utils
+{
+    using namespace testing;
+
+    void test_assert_equal()
+    {
+        // AssertEqual(1, 2);
+        AssertEqual(1, 2, "OPS");
+    }
+
+    void test_assert_true()
+    {
+        AssertTrue(true);
+        AssertTrue(1 == 1);
+        // AssertTrue(false);
+        AssertTrue(false, "Should Fail");
+    }
+
+    void test_assert_false()
+    {
+        AssertFalse(false);
+        AssertFalse(1 == 2);
+        // AssertFalse(true);
+        AssertFalse(true, "Should Fail");
+    }
+
+    void test_assert_null()
+    {
+        int *ptr = new int(1);
+        // AssertNotNull(ptr);
+        // AssertNotNull(ptr, "Shall not be null");
+
+        // AssertIsNull(ptr);
+        AssertIsNull(ptr, "Shall be null");
+    }
+}
 
 // TODO: BitUtils
 //      - check bit is set
@@ -384,7 +421,12 @@ int main([[maybe_unused]] int argc,
 
     // HexConverter_Tests::Test();
 
-    final_action_test::test();
+    // final_action_test::test();
+
+    // testing_utils::test_assert_equal();
+    // testing_utils::test_assert_true();
+    // testing_utils::test_assert_false();
+    testing_utils::test_assert_null();
 
     return EXIT_SUCCESS;
 }

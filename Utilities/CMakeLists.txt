@@ -17,6 +17,7 @@ add_library(utils
         PerfUtilities.cpp
         ThreadUtilities.cpp
         DateTimeUtilities.cpp
+        Testing.cpp
 )
 
 add_executable(${PROJECT_NAME}
