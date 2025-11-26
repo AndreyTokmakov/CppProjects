@@ -31,6 +31,12 @@ namespace testing
         }
     }
 
+    constexpr void printLocation(const std::source_location& location)
+    {
+        std::println(std::cerr, "\tFile: {}\n\tFunction: {}\n\tLine: {}",
+            location.file_name(), location.function_name(), location.line());
+    }
+
     // TODO: Add concepts to 'Ty'
     template<typename Ty>
     constexpr void AssertEqual(const Ty& expected,
@@ -40,8 +46,8 @@ namespace testing
     {
         if (expected != actual)
         {
-            std::println(std::cerr, "Assertation failed: {} != {}\n\tFile: {}\n\tFunction: {}\n\tLine: {}",
-                expected, actual, location.file_name(), location.function_name(), location.line());
+            std::println(std::cerr, "Assertation failed: {} != {}",expected, actual);
+            printLocation(location);
             performAction(action);
         }
     }
@@ -56,8 +62,8 @@ namespace testing
     {
         if (expected != actual)
         {
-            std::println(std::cerr, "{}: {} != {}\n\tFile: {}\n\tFunction: {}\n\tLine: {}",
-                message, expected, actual, location.file_name(), location.function_name(), location.line());
+            std::println(std::cerr, "{}: {} != {}", message, expected, actual);
+            printLocation(location);
             performAction(action);
         }
     }
@@ -70,8 +76,8 @@ namespace testing
     {
         if (nullptr == actual)
         {
-            std::println(std::cerr, "Assertion failed (Actual value is null)\n\tFile: {}\n\tFunction: {}\n\tLine: {}",
-                location.file_name(), location.function_name(), location.line());
+            std::println(std::cerr, "Assertion failed (Actual value is null)");
+            printLocation(location);
             performAction(action);
         }
     }
@@ -85,8 +91,8 @@ namespace testing
     {
         if (nullptr == actual)
         {
-            std::println(std::cerr, "{}\n\tFile: {}\n\tFunction: {}\n\tLine: {}",
-                message, location.file_name(), location.function_name(), location.line());
+            std::println(std::cerr, "{}", message);
+            printLocation(location);
             performAction(action);
         }
     }
@@ -99,8 +105,8 @@ namespace testing
     {
         if (nullptr != actual)
         {
-            std::println(std::cerr, "Assertion failed (Actual value is not null)\n\tFile: {}\n\tFunction: {}\n\tLine: {}",
-                location.file_name(), location.function_name(), location.line());
+            std::println(std::cerr, "Assertion failed (Actual value is not null)");
+            printLocation(location);
             performAction(action);
         }
     }
@@ -114,8 +120,8 @@ namespace testing
     {
         if (nullptr != actual)
         {
-            std::println(std::cerr, "{}\n\tFile: {}\n\tFunction: {}\n\tLine: {}",
-                message, location.file_name(), location.function_name(), location.line());
+            std::println(std::cerr, "{}",message);
+            printLocation(location);
             performAction(action);
         }
     }
@@ -126,8 +132,8 @@ namespace testing
     {
         if (!condition)
         {
-            std::println(std::cerr, "Assertation failed:\n\tFile: {}\n\tFunction: {}\n\tLine: {}",
-                location.file_name(), location.function_name(), location.line());
+            std::println(std::cerr, "Assertation failed");
+            printLocation(location);
             performAction(action);
         }
     }
@@ -139,8 +145,8 @@ namespace testing
     {
         if (!condition)
         {
-            std::println(std::cerr, "{}:\n\tFile: {}\n\tFunction: {}\n\tLine: {}",
-                    message, location.file_name(), location.function_name(), location.line());
+            std::println(std::cerr, "{}", message);
+            printLocation(location);
             performAction(action);
         }
     }
@@ -151,8 +157,8 @@ namespace testing
     {
         if (condition)
         {
-            std::println(std::cerr, "Condition is True (False expected):\n\tFile: {}\n\tFunction: {}\n\tLine: {}",
-                    location.file_name(), location.function_name(), location.line());
+            std::println(std::cerr, "Condition is True (False expected):");
+            printLocation(location);
             performAction(action);
         }
     }
@@ -164,8 +170,8 @@ namespace testing
     {
         if (condition)
         {
-            std::println(std::cerr, "{}:\n\tFile: {}\n\tFunction: {}\n\tLine: {}",
-                    message, location.file_name(), location.function_name(), location.line());
+            std::println(std::cerr, "{}", message);
+            printLocation(location);
             performAction(action);
         }
     }
