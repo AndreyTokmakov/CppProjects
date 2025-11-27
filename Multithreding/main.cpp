@@ -75,7 +75,7 @@ int main([[maybe_unused]] int argc,
     // Atomic_IsLockFree::TestAll();
     // AtomicPerformanceTests::TestAll();
 
-    Barrier::TEST_ALL();
+    // Barrier::TEST_ALL();
     // CallOnce::TEST_ALL();
     // ConditionVariable::TEST_ALL();
     // Exceptions_Handling::TEST_ALL();
@@ -100,7 +100,6 @@ int main([[maybe_unused]] int argc,
     // SpinLockFutex::TestAll();
     // SpinLock_PerformanceTests::TestAll();
 
-    // StoppingThreads::TestAll();
 
     // ThreadPools::TestAll();
     // ThreadPoolsEx::TestAll();
@@ -109,7 +108,9 @@ int main([[maybe_unused]] int argc,
     // ThreadPoolLimited::TestAll();
 
     // Threads::TEST_ALL();
-    // JThreads::TEST_ALL();
+    JThreads::TestAll();
+    // StoppingThreads::TestAll();
+
 
     /** Performance **/
 

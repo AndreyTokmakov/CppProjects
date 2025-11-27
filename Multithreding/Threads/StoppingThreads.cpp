@@ -42,7 +42,7 @@ namespace StoppingThreads::BasicExamples
             std::osyncstream(std::cout) << "Thread: Stopped!!!\n";
         });
 
-        std::this_thread::sleep_for(std::chrono::seconds(1));
+        std::this_thread::sleep_for(std::chrono::seconds(1u));
         std::osyncstream(std::cout) << "Main  : Stopping thread.\n";
         job.request_stop(); // request stop
 
@@ -247,12 +247,12 @@ namespace StoppingThreads::StopSource
 
 void StoppingThreads::TestAll()
 {
-    // BasicExamples::SimpleExample();
+    BasicExamples::SimpleExample();
     // BasicExamples::SimpleExample_StopCallback();
     // BasicExamples::SimpleExample_ConditionalVariable();
     // BasicExamples::StopMultipleThreads();
 
     // Callbacks::MultipleCallbacks();
 
-    StopSource::StopMultipleThreads();
+    // StopSource::StopMultipleThreads();
 };

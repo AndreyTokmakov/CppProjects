@@ -25,6 +25,15 @@
 #include <syncstream>
 
 #include "JThreads.h"
+#include "DateTimeUtilities.hpp"
+
+namespace
+{
+    using DateTimeUtilities::getCurrentTime;
+
+#define LOG  std::osyncstream { std::cout } << getCurrentTime() << " "
+}
+
 
 namespace
 {
@@ -45,12 +54,12 @@ namespace
         std::lock_guard<std::mutex> lock {mtxPrint};
         const auto threadID = std::this_thread::get_id();
 
-        std::cout  << "[" << ss.str() << "] Thread [";
+        LOG  << "[" << ss.str() << "] Thread [";
         if (mainThreadId == threadID)
-            std::cout  << std::setiosflags(std::ios::left) << std::setw(19) << "Main";
+            LOG  << std::setiosflags(std::ios::left) << std::setw(19) << "Main";
         else
-            std::cout  << "Id: " << std::setiosflags(std::ios::left) << std::setw(11) << threadID;
-        std::cout  << "] ";
+            LOG << "Id: " << std::setiosflags(std::ios::left) << std::setw(11) << threadID;
+        LOG << "] ";
         (std::cout << ... << add_space(std::forward<_Types>(params))) << std::endl;
     }
 }
@@ -62,14 +71,14 @@ namespace JThreads
     {
         while (!stop_token.stop_requested()) {
             Debug(value++);
-            std::this_thread::sleep_for(std::chrono::seconds(1));
+            std::this_thread::sleep_for(std::chrono::seconds(1u));
         }
     }
 
 
     void Start_and_Stop_Thread() {
         std::jthread thread(cancelable_functions, 0);
-        std::this_thread::sleep_for(std::chrono::seconds(3));
+        std::this_thread::sleep_for(std::chrono::seconds(3u));
     }
 
     //--------------------------------------------------------------------------
@@ -81,15 +90,15 @@ namespace JThreads
             const auto id = std::this_thread::get_id();
 
             std::stop_callback callBack(stoken, [&counter, id] {
-                std::cout << "Stop callback: id: " << id<< "; counter: " << counter << '\n';
+                LOG << "Stop callback: id: " << id<< "; counter: " << counter << '\n';
             });
 
             while (counter < 10) {
-                std::this_thread::sleep_for(std::chrono::milliseconds(175));
+                std::this_thread::sleep_for(std::chrono::milliseconds(175u));
                 ++counter;
             }
 
-            std::cout << "Thread " << id << " done\n";
+            LOG << "Thread " << id << " done\n";
         };
 
 
@@ -97,7 +106,7 @@ namespace JThreads
         for(auto& T: vecThreads)
             T = std::jthread(func);
 
-        std::this_thread::sleep_for(std::chrono::seconds(1));
+        std::this_thread::sleep_for(std::chrono::seconds(1u));
 
         for(auto& T: vecThreads)
             T.request_stop();
@@ -136,7 +145,7 @@ namespace JThreads
             }
         });
 
-        std::this_thread::sleep_for(std::chrono::seconds(1));
+        std::this_thread::sleep_for(std::chrono::seconds(1u));
 
         Debug("Requesting stop of sleepy worker");
         sleepy_worker.request_stop();
@@ -151,7 +160,7 @@ namespace JThreads
 
         std::jthread job([&done] (std::stop_token token) {
             while (!token.stop_requested()) {
-                std::this_thread::sleep_for(std::chrono::milliseconds(100));
+                std::this_thread::sleep_for(std::chrono::milliseconds(100u));
             }
             done = true;
         });
@@ -159,17 +168,49 @@ namespace JThreads
         std::osyncstream {std::cout} << "Tread stopped: " << std::boolalpha << done << std::endl;
 
         job.request_stop();
-        std::this_thread::sleep_for(std::chrono::milliseconds(250));
+        std::this_thread::sleep_for(std::chrono::milliseconds(250u));
 
         std::osyncstream {std::cout} << "Tread stopped: " << std::boolalpha << done << std::endl;
     }
 }
 
-void JThreads::TEST_ALL()
+namespace JThreads::Joinable
 {
+    void Test()
+    {
+        std::jthread job = std::jthread([](const std::stop_token &token) {
+            while (!token.stop_requested()) {
+                LOG << "Thread: Doing some work . . . . . \n";
+                std::this_thread::sleep_for(250ms);
+            }
+            LOG << "Thread: Stopped!!!\n";
+        });
+
+        for (int i = 0; i < 10; ++i) {
+            std::this_thread::sleep_for(250ms);
+            LOG << "Main: Is Job Joinable = " << std::boolalpha << job.joinable() << '\n';
+            if (i == 6 && job.joinable()) {
+                job.request_stop();
+                LOG << "Main: Stopping thread.\n";
+            }
+        }
+
+        job.join();
+        std::osyncstream(std::cout) << "Main  : Done.\n";
+    }
+}
+
+void JThreads::TestAll()
+{
+    /**
+     * joinable ()
+     *
+    **/
+
+    Joinable::Test();
+
     // Start_and_Stop_Thread();
     // Stop_Thread_2();
-
     // Request_Stop();
-    Request_Stop_2();
+    // Request_Stop_2();
 }

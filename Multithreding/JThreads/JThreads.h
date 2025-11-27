@@ -10,8 +10,9 @@
 #ifndef JTHREAD_TESTS_INCLUDE_GUARD__H
 #define JTHREAD_TESTS_INCLUDE_GUARD__H
 
-namespace JThreads {
-    void TEST_ALL();
+namespace JThreads
+{
+    void TestAll();
 };
 
 #endif // !JTHREAD_TESTS_INCLUDE_GUARD__H
