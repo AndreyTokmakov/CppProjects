@@ -108,8 +108,8 @@ int main([[maybe_unused]] int argc,
     // ThreadPoolLimited::TestAll();
 
     // Threads::TEST_ALL();
-    JThreads::TestAll();
-    // StoppingThreads::TestAll();
+    // JThreads::TestAll();
+    StoppingThreads::TestAll();
 
 
     /** Performance **/

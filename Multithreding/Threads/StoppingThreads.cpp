@@ -16,6 +16,15 @@ Description : StoppingThreads.cpp
 #include <vector>
 #include <optional>
 
+#include "DateTimeUtilities.hpp"
+
+namespace
+{
+    using DateTimeUtilities::getCurrentTime;
+
+#define LOG  std::osyncstream { std::cout } << getCurrentTime() << " "
+}
+
 
 using namespace std::literals; // for duration literals
 
@@ -66,7 +75,7 @@ namespace StoppingThreads::BasicExamples
             std::osyncstream(std::cout) << "Thread: Stopped!!!\n";
         });
 
-        std::this_thread::sleep_for(std::chrono::seconds(1));
+        std::this_thread::sleep_for(1s);
         std::osyncstream(std::cout) << "Main  : Stopping thread.\n";
         job.request_stop(); // request stop
 
@@ -128,7 +137,7 @@ namespace StoppingThreads::BasicExamples
             });
 
             while (!stop_token.stop_requested()) {
-                std::this_thread::sleep_for(std::chrono::milliseconds(250));
+                std::this_thread::sleep_for(250ms);
                 ++counter;
             }
 
@@ -186,13 +195,13 @@ namespace StoppingThreads::Callbacks
             });
 
             while (!token.stop_requested()) {
-                std::this_thread::sleep_for(std::chrono::milliseconds(250));
+                std::this_thread::sleep_for(250ms);
             }
 
             std::osyncstream(std::cout) << "Thread id: " << std::this_thread::get_id() << " done\n";
         });
 
-        std::this_thread::sleep_for(std::chrono::seconds(1));
+        std::this_thread::sleep_for(1s);
         std::osyncstream(std::cout) << "Main  : Stopping thread.\n";
         job.request_stop(); // request stop
 
@@ -245,9 +254,32 @@ namespace StoppingThreads::StopSource
     }
 }
 
+namespace StoppingThreads
+{
+    void StopMultipleThreads_UsingOneStopToken()
+    {
+        auto func = [](const std::stop_token &token, const int id) {
+            while (!token.stop_requested()) {
+                LOG << std::format("Thread: {} Doing some work . . . . . \n", id);
+                std::this_thread::sleep_for(250ms);
+            }
+            LOG << std::format("Thread: {} Stopped!!!\n", id);
+        };
+
+        std::jthread job1 = std::jthread(func, 1);
+        std::stop_token token = job1.get_stop_token();
+        std::jthread job2 = std::jthread(func, 2);
+
+        std::this_thread::sleep_for(1s);
+
+        LOG << "Main  : Stopping threads.\n";
+        job1.request_stop();
+    }
+}
+
 void StoppingThreads::TestAll()
 {
-    BasicExamples::SimpleExample();
+    // BasicExamples::SimpleExample();
     // BasicExamples::SimpleExample_StopCallback();
     // BasicExamples::SimpleExample_ConditionalVariable();
     // BasicExamples::StopMultipleThreads();
@@ -255,4 +287,6 @@ void StoppingThreads::TestAll()
     // Callbacks::MultipleCallbacks();
 
     // StopSource::StopMultipleThreads();
+
+    StopMultipleThreads_UsingOneStopToken();
 };
