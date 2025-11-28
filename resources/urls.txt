@@ -1,0 +1,22 @@
+https://example.com
+http://example.org/test
+https://subdomain.example.net/page?id=123&sort=asc
+https://www.google.com/search?q=test+query
+http://localhost:8080/api/v1/resource
+https://127.0.0.1/status
+ftp://ftp.example.com/files/data.zip
+https://user:pass@secure.example.com/login
+https://api.github.com/repos/owner/project
+https://raw.githubusercontent.com/user/repo/main/readme.md
+https://en.wikipedia.org/wiki/URL
+https://bit.ly/3Qe4UKW
+https://openai.com/research
+http://example.edu:8000/path/to/resource?debug=true
+https://cdn.example.com/assets/image.png
+https://files.example.io/download?file=data.csv
+https://shop.example.com/product/12345/reviews
+https://news.example.com/article/2025/11/23.html
+https://blog.example.com/tags/networking
+https://example.com/redirect -> https://final.example.com/
+wss://stream.binance.com:9443/ws/btcusdt@depth
+ws://testserver.local/socket?token=abc123

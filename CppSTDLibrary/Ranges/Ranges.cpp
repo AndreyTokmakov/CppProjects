@@ -24,7 +24,7 @@ Description :  C++ Ranges
 #include <compare>
 #include <ranges>
 #include <span>
-#include <bit>
+#include <fstream>
 #include <bitset>
 #include <numeric>
 #include <cstdint>
@@ -36,6 +36,7 @@ Description :  C++ Ranges
 #include <iomanip>
 #include <format>
 #include <print>
+#include <filesystem>
 
 #include "../Helpers/Wrapper.h"
 
@@ -1314,6 +1315,68 @@ namespace Ranges::Max_Element
     }
 }
 
+
+namespace Ranges::Keys_Values_of_Map
+{
+    struct UserProperties {};
+
+    std::vector<std::string> getUsernamesFromMap(const std::map<std::string, UserProperties>& usersMap)
+    {
+        return usersMap | std::views::keys | std::ranges::to<std::vector>();
+    }
+
+    std::vector<int> getValuesFromMap(const std::map<std::string, int>& usersMap)
+    {
+        return usersMap | std::views::values | std::ranges::to<std::vector>();
+    }
+
+    void getAllKeysFromMap()
+    {
+        std::map<std::string, UserProperties> usersMap = {{"John", UserProperties{}}, {"Peter", UserProperties{}}};
+        std::vector<std::string> usernames = getUsernamesFromMap(usersMap);
+        std::ranges::for_each(usernames, [](const auto& username) {
+            std::println("{}", username);
+        });
+
+        // John
+        // Peter
+    }
+
+    void getAllValuesFromMap()
+    {
+        std::map<std::string, int> data = {{"John", 1}, {"Peter", 2}};
+        std::vector<int> usernames = getValuesFromMap(data);
+        std::ranges::for_each(usernames, [](const auto& username) {
+            std::println("{}", username);
+        });
+
+        // 1
+        // 2
+    }
+}
+
+namespace Ranges::Files
+{
+    std::filesystem::path getDataDir()
+    {
+        return std::filesystem::current_path() / "../../resources";
+    }
+
+    std::vector<std::string> loadUrls(std::istream& stream)
+    {
+        return std::views::istream<std::string>(stream) | std::ranges::to<std::vector<std::string>>();
+    }
+
+    void parsing_Input_Files()
+    {
+        const std::filesystem::path urlListFile = getDataDir() / "urls.txt";
+        if (std::fstream file (urlListFile.string()); file.is_open()) {
+            const std::vector<std::string> urls = loadUrls(file);
+            std::ranges::for_each(urls, [](const auto& url) { std::println("{}", url); });
+        }
+    }
+}
+
 void Ranges::TestAll()
 {
     // For_Each();
@@ -1334,7 +1397,7 @@ void Ranges::TestAll()
     // Join::Join_View();
     // Join::Join_With_1();
     // Join::Join_With_2();
-    Join::Join_With_to_String();
+    // Join::Join_With_to_String();
     // Join::rangeJoinStyle();
     // Join::Join_Get_ClassParameters();
 
@@ -1376,6 +1439,9 @@ void Ranges::TestAll()
     // Filters::PrintRange();
     // Filters::Pass_Range_to_the_Function__Predicate();
 
+    // Keys_Values_of_Map::getAllKeysFromMap();
+    // Keys_Values_of_Map::getAllValuesFromMap();
+
     // Transform::Transform_Filter();
     // Transform::Transform_Filter_2();
     // Transform::Modify_ToUpper();
@@ -1396,4 +1462,5 @@ void Ranges::TestAll()
 
     // Experiments();
 
+    Files::parsing_Input_Files();
 }
