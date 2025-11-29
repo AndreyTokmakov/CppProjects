@@ -73,8 +73,8 @@ Math:
 
 	[ allows using static constexpr variables in constexpr functions ]
 
-• Static operators
-`																	   void some_test_func() 
+• Static operators  | static operator()
+`																	   void some_test_func() {
     struct S {                                                             constexpr S s;
         static constexpr bool operator() (int x, int y) {              	   static_assert (s (1, 2)); 
             return x < y;                                                  
@@ -87,6 +87,26 @@ Math:
 
 • 'Attributes on Lambda-Expressions' [https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2021/p2173r1.pdf] 
 
+• std::string::substr() && |  `перегрузка метода substr() для временных строк:`
+
+	`	
+	std::string StripSchema(std::string url) { 
+	    if (url.starts_with("http://")) return std::move(url).substr(5);
+	    if (url.starts_with("https://")) return std::move(url).substr(6);
+	    return url;
+	}`
+
+
+• **_Fix for range-based for loops_**<br>
+
+   The issue was that the lifetime of the temporaries used in the initializer of a range-based for loops weren’t extended, causing undefined behavior.<br>
+   In C++23, the problem was corrected and now the lifetime of the temporaries is extended to cover the whole loop.
+
+• `#embed`
+
+	const std::byte icon_display_data[] = {
+    	#embed "art.png"
+	};
 
 • std::start_lifetime_as | std::start_lifetime_as_array
 
@@ -105,6 +125,42 @@ Math:
 
 • **_Feature testing_**  (since C++20) --> https://en.cppreference.com/w/cpp/feature_test#cpp_lib_freestanding_functional
 
+• **_Запрет возврата из функции ссылок на временное значение_** | [P2748](https://wg21.link/P2748)
+
+
+	const int& f1() {
+		return 42;  // ошибка
+	}
+
+	struct Y {
+	    std::map<std::string, int> d_map;
+
+	    const std::pair<std::string, int>& first() const {
+	        return *d_map.begin();  // тут возвращается std::pair<CONST std::string, int>
+	    }
+	};
+
+• **_[[indeterminate]] и уменьшение Undefined Behavior_** | [P2795](https://wg21.link/P2795)
+
+	В P2795 ввели понятие erroneous behavior — поведение, которое рекомендуется диагностировать компиляторам, которое запрещено в constexpr-контекстах и которое является последствием ошибки в коде.
+	Таким поведением сделали работу с неинициализированной переменной, например:
+
+	void fill(int&);
+
+	void sample() {
+	  int x;
+	  fill(x);     // ошибочное поведение (erroneous behavior)
+	}
+
+	Что подводит нас к новому атрибуту [[indeterminate]].
+	Если у нас есть неинициализированная переменная и есть функция, которая только пишет в переменную, то можно компилятору дать подсказку, что это не ошибочное поведение.
+	Тогда значение из переменной не будут читать в функции:
+
+	void sample() {
+	  int x [[indeterminate]];  // без атрибута компилятор выдаст предупреждение
+	  fill(x);     // всё в полном порядке
+	}
+
 • [RCU](https://en.cppreference.com/w/cpp/header/rcu)
 
 • **_Specifying a reason for deleting a function_**
@@ -117,7 +173,7 @@ Math:
 
 	if(auto [position, length] = get_next_token(text, offset); position >= 0)      | 	for (auto [position, length] : tokenize(text, offset)) 
 	{                                                                              |	{
-  		std::println("pos {}, len {}", position, length);                          |		std::println("pos {}, len {}", position, length);
+        std::println("pos {}, len {}", position, length);                          |		std::println("pos {}, len {}", position, length);
 	}                                                                              |  	}
 
 • **_user-generated static_assert messages_**
@@ -126,12 +182,11 @@ Math:
 
 • **_Variadic friends_**
 
-                                                             template<class... Ts>
-	template<class T>                               |		 struct VS {
-	struct C {                                      |			 template<class U>
-        template<class U> struct Nested;            |			 friend class C<Ts>::Nested...; // OK
-	};                                              |        };
-
+                                                template<class... Ts>
+	template<class T>                        |	struct VS {
+	struct C {                               |		template<class U>
+        template<class U> struct Nested;     |		friend class C<Ts>::Nested...; // OK
+	};                                       |	};
 
 • **_Constexpr Placement new_**
 
@@ -142,12 +197,32 @@ Math:
 	  constexpr auto r = foo ();                  alloc.deallocate (p, 16);
 	}                                             return 1;
                                                }   
-                                              
+• **_Pack indexing_**  | [P2662R3](https://wg21.link/P2662R3)
 
-• **_Fix for range-based for loops_**<br>
+	Если вы часто пользуетесь variadic templates, то вы, скорее всего, настрадались с Prolog-подобным стилем работы со списками,
+	где приходилось откусывать по одному элементу списка с начала или конца.
+	Во многих шаблонных библиотеках (в том числе в стандартной библиотеке C++) реализовывали вспомогательные шаблонные механизмы для работы с variadic templates:
 
-   The issue was that the lifetime of the temporaries used in the initializer of a range-based for loops weren’t extended, causing undefined behavior.<br>
-   In C++23, the problem was corrected and now the lifetime of the temporaries is extended to cover the whole loop.
+	template <std::size_t Index, class P0, class... Pack>     |  template <class P0, class... Pack>   |  template <std::size_t Index, class... Pack>
+	struct nth {                                              |  struct nth<0, P0, Pack...> {         |  using nth_t = typename nth<Index, Pack...>::type;
+	    using type = typename nth<Index - 1, Pack...>::type;  |     using type = P0;                  |
+	};                                                        |  };  
+
+	код можно просто заменить на Pack...[I].
+
+	[](auto... args) {
+	    assert(args...[0] != 42);
+	    // ...
+	}
+
+• **_Structured Bindings can introduce a Pack_**  | [P1061](https://wg21.link/P1061)
+
+	void my_function(auto aggregate) {
+	    auto [... elements] = aggregate;
+	    foo(elements...[0], elements...[1]);
+	    bar(elements...[2], elements...[3]); 
+	}
+
 
 • **_Compiler Flags_**<br>
 * 	[-Wdefaulted-function-deleted](https://gcc.gnu.org/onlinedocs/gcc/C_002b_002b-Dialect-Options.html#index-Wdefaulted-function-deleted)
