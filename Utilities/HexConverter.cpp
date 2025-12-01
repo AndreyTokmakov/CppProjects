@@ -15,6 +15,7 @@ Description : HexConverter
 #include <cstdint>
 #include <iostream>
 #include <cstring>
+#include <iomanip>
 
 namespace
 {
@@ -112,6 +113,17 @@ namespace HexConverter
     }
 };
 
+template<std::integral T>
+void dump(T v, const char term = '\n')
+{
+    std::cout << std::hex << std::uppercase << std::setfill('0')
+              << std::setw(sizeof(T) * 2) << v << " : ";
+    for (std::size_t i{}; i != sizeof(T); ++i, v >>= 8)
+        std::cout << std::setw(2) << static_cast<unsigned>(T(0xFF) & v) << ' ';
+    std::cout << std::dec << term;
+}
+
+
 void HexConverter::TestAll()
 {
 #if 0
@@ -135,6 +147,7 @@ void HexConverter::TestAll()
 #endif
 
 
+#if 0
     {
         const std::string data {"some_test_data"};
         const std::string hexStr = bytesToHexStr(data.data(), data.size());
@@ -153,5 +166,11 @@ void HexConverter::TestAll()
         const auto hexStr = hex2BytesString(data);
         std::cout << hexStr << std::endl;
     }
+#endif
 
+
+    std::cout << "byteswap for U16:\n";
+    constexpr auto x = std::uint16_t(0xCAFE);
+    dump(x);
+    dump(std::byteswap(x));
 }

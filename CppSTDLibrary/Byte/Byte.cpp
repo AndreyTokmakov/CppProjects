@@ -12,7 +12,8 @@
 #include <iostream>
 #include <iomanip>
 
-namespace Byte {
+namespace Byte
+{
     template <typename T>
     auto only_return_int_type_bar(std::byte& b) {
         return T(b);
@@ -45,9 +46,11 @@ namespace Byte {
     */
 };
 
-namespace Byte::Size {
+namespace Byte::Size
+{
 
-    class Class_3_Byte {
+    class Class_3_Byte
+    {
         std::byte b1;
         std::byte b2;
         std::byte b3;
@@ -83,12 +86,60 @@ void printBytes_Hex()
     // 1a b4 c8 5f 02
 }
 
+namespace Byte::Swap_Bytes
+{
+    template<std::integral T>
+    void dump(T v, const char term = '\n')
+    {
+        std::cout << std::hex << std::uppercase << std::setfill('0')
+                  << std::setw(sizeof(T) * 2) << v << " : ";
+        for (std::size_t i{}; i != sizeof(T); ++i, v >>= 8)
+            std::cout << std::setw(2) << static_cast<unsigned>(T(0xFF) & v) << ' ';
+        std::cout << std::dec << term;
+    }
+
+    void swap_Bytes()
+    {
+        static_assert(std::byteswap('a') == 'a');
+
+        std::cout << "byteswap for U16:\n";
+        constexpr auto x = std::uint16_t(0xCAFE);
+        dump(x);
+        dump(std::byteswap(x));
+
+        std::cout << "\nbyteswap for U32:\n";
+        constexpr auto y = std::uint32_t(0xDEADBEEFu);
+        dump(y);
+        dump(std::byteswap(y));
+
+        std::cout << "\nbyteswap for U64:\n";
+        constexpr auto z = std::uint64_t{0x0123456789ABCDEFull};
+        dump(z);
+        dump(std::byteswap(z));
+
+        /**
+        byteswap for U16:
+        CAFE : FE CA
+        FECA : CA FE
+
+        byteswap for U32:
+        DEADBEEF : EF BE AD DE
+        EFBEADDE : DE AD BE EF
+
+        byteswap for U64:
+        0123456789ABCDEF : EF CD AB 89 67 45 23 01
+        EFCDAB8967452301 : 01 23 45 67 89 AB CD EF
+
+        **/
+    }
+}
+
 void Byte::TestAll()
 {
     // ToInt();
     // BaseTests();
+    // Size::Test();
+    // printBytes_Hex();
 
-    Size::Test();
-
-    printBytes_Hex();
+    Swap_Bytes::swap_Bytes();
 };

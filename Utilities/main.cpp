@@ -378,7 +378,7 @@ namespace testing_utils
         // AssertNotNull(ptr, "Shall not be null");
 
         // AssertIsNull(ptr);
-        AssertIsNull(ptr, "Shall be null");
+        // AssertIsNull(ptr, "Shall be null");
     }
 }
 
@@ -414,7 +414,7 @@ int main([[maybe_unused]] int argc,
 
     // CSV_Reader_Tests::TestAll();
 
-    // HexConverter::TestAll();
+    HexConverter::TestAll();
 
     // TimeMeasurement::testScopedTimer();
     // TimeMeasurement::testScopedTimer_TSC();
@@ -426,7 +426,7 @@ int main([[maybe_unused]] int argc,
     // testing_utils::test_assert_equal();
     // testing_utils::test_assert_true();
     // testing_utils::test_assert_false();
-    testing_utils::test_assert_null();
+    // testing_utils::test_assert_null();
 
     return EXIT_SUCCESS;
 }
