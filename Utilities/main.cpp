@@ -29,6 +29,7 @@ Description : C++ Utilities
 #include "HexConverter.hpp"
 #include "PerfUtilities.hpp"
 #include "Testing.hpp"
+#include "Random.hpp"
 
 
 #include "FinalAction.hpp"
@@ -414,7 +415,7 @@ int main([[maybe_unused]] int argc,
 
     // CSV_Reader_Tests::TestAll();
 
-    HexConverter::TestAll();
+    // HexConverter::TestAll();
 
     // TimeMeasurement::testScopedTimer();
     // TimeMeasurement::testScopedTimer_TSC();
@@ -427,6 +428,9 @@ int main([[maybe_unused]] int argc,
     // testing_utils::test_assert_true();
     // testing_utils::test_assert_false();
     // testing_utils::test_assert_null();
+
+    const double d = utilities::random::getRandomInRange<double>(1.0, 2.0);
+    std::cout << d << std::endl;
 
     return EXIT_SUCCESS;
 }

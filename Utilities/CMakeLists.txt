@@ -18,6 +18,7 @@ add_library(utils
         ThreadUtilities.cpp
         DateTimeUtilities.cpp
         Testing.cpp
+        Random.hpp
 )
 
 add_executable(${PROJECT_NAME}
