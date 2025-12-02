@@ -1199,6 +1199,25 @@ namespace Lambdas_Inheritance
 		std::cout << child(42) << std::endl;
 		std::cout << child(42.0) << std::endl;
 	}
+
+	void Derive_From_Lambda_call_Operator()
+	{
+		auto printer = [] {
+			std::cout << "Hello, world!" << std::endl;
+			return 10;
+		};
+
+		struct Printer: public decltype(printer) {
+			explicit operator int() const {
+				return this->operator()();
+			}
+		};
+
+		std::cout << static_cast<int>(Printer{}) << std::endl;
+
+		// Hello, world!
+		// 10
+	}
 }
 
 
@@ -1465,6 +1484,11 @@ namespace Lambdas::Capture_Pitfalls
 }
 
 
+namespace Lambdas_Inheritance
+{
+
+}
+
 void Lambdas::TestAll()
 {
 	// Lambdas::FindIF_Lambda_Test();
@@ -1529,7 +1553,7 @@ void Lambdas::TestAll()
 	// Tests::VECTOR_OF_LAMBDAS();
 
     // Parameter_Pack_Expansion::lambda_params_pack_expansion();
-    Parameter_Pack_Expansion::lambda_captured_parameter_copy();
+    // Parameter_Pack_Expansion::lambda_captured_parameter_copy();
 
 
     // Concepts::Using_Existing_STD_Concepts();
@@ -1539,6 +1563,8 @@ void Lambdas::TestAll()
 	// Lambdas_Inheritance::LambdaAsBaseClass();
 	// Lambdas_Inheritance::MultipleInheritanceDemo();
 	// Lambdas_Inheritance::MultipleInheritanceDemoTwo();
+	Lambdas_Inheritance::Derive_From_Lambda_call_Operator();
+
 
 	// High_Order_Function::PredicateComposition_WhenAll();
 	// High_Order_Function::PredicateComposition_WhenAll_Concepts();

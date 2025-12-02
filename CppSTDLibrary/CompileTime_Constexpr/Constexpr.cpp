@@ -358,6 +358,44 @@ namespace Constexpr::Strings
 }
 
 
+
+namespace constexpr_experiments
+{
+	constexpr char *strncopy(char* dst, const char * src, const size_t len)
+	{
+		for (size_t i = 0; i < len; ++i)
+		{
+			dst[i] = src[i];
+			if (dst[i] == '\0')
+			{
+				return &dst[i + 1];
+			}
+		}
+		return nullptr;
+	}
+
+	template <size_t N1, size_t N2>
+	constexpr auto concat(char const (&a)[N1], char const (&b)[N2])
+	{
+		std::array<char, N1 + N2 - 1> result = {};
+		char *next = strncopy(result.data(), a, N1 - 1);
+		char *nextDst = next ? next : &result[N1 - 1];
+		strncopy(nextDst, b, N2);
+		result.back() = '\0';
+		return result;
+	}
+
+	void concatStringsAtCompileTime()
+	{
+		constexpr auto hello = concat("Hello, ", "world!");
+		static_assert(hello.back() == '\0');
+		static_assert(hello[7] == 'w');
+	}
+}
+
+
+
+
 void Constexpr::TestAll()
 {
     // ConstexprArray::Test();
@@ -365,9 +403,10 @@ void Constexpr::TestAll()
 	// ConstexprSwitch::Test();
 	// ConstexprObjects::Test();
 
-    Exceptions::Test();
-    Exceptions::Test2();
+    // Exceptions::Test();
+    // Exceptions::Test2();
 
+	constexpr_experiments::concatStringsAtCompileTime();
     // Strings::Constexpr_Strings();
     // Strings::Constexpr_Strings2();
 }

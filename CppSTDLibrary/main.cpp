@@ -112,7 +112,7 @@ int main([[maybe_unused]] int argc,
     // Auto::TestAll();
     // BitSet::TestAll();
     // BitwiseOperation::TestAll();
-    Byte::TestAll();
+    // Byte::TestAll();
     // Chrono::TestAll();
     // ContextControl::TestAll();
     // Comparators::TestAll();
@@ -120,7 +120,7 @@ int main([[maybe_unused]] int argc,
     // ConsoleInOut::TestAll();
     // ConstConstexprMutable::TestAll();
     // CompileTimeProgramming::TestAll();
-    // Constexpr::TestAll();
+    Constexpr::TestAll();
     // CopyElision::TestAll();
     // DeducingThis::TestAll();
     // RVO_FailureCases::TestAll();
