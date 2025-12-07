@@ -428,9 +428,15 @@ int main([[maybe_unused]] int argc,
     // testing_utils::test_assert_true();
     // testing_utils::test_assert_false();
     // testing_utils::test_assert_null();
+    {
+        const auto v = utilities::random::getRandomInRange<int>(1.0, 20.0);
+        std::cout << v << std::endl;
+    }
 
-    const double d = utilities::random::getRandomInRange<double>(1.0, 2.0);
-    std::cout << d << std::endl;
+    {
+        const auto v = utilities::random::getRandomInRange<double>(1.0, 20.0);
+        std::cout << v << std::endl;
+    }
 
     return EXIT_SUCCESS;
 }

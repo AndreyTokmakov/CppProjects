@@ -13,7 +13,6 @@ Description : Reflection.cpp
 #include <optional>
 #include <type_traits>
 #include <array>
-#include <numeric>
 #include <string>
 #include <unordered_map>
 #include <ranges>
@@ -21,6 +20,170 @@ Description : Reflection.cpp
 // #include <experimental/meta>
 
 // https://godbolt.org/z/6Prs3fT1b
+
+#if 0
+// ==============================================================================================================================
+// https://medium.com/@massimiliano.bastia92/c-static-reflection-an-overview-of-the-metaprogramming-paradigm-shift-4cc2ca49a2c6
+// ==============================================================================================================================
+
+struct User
+{
+    std::string name;
+    int age;
+};
+
+constexpr int max_connections = 100;
+
+void say_hello() { }
+
+
+void reflectTypes_Simple()
+{
+    // Reflect the struct type 'User'
+   constexpr std::meta::info user_reflection = ^^User;
+
+   // Reflect the global variable 'max_connections'
+   constexpr std::meta::info connections_reflection = ^^max_connections;
+
+   // Reflect the free function 'say_hello'
+   constexpr std::meta::info hello_reflection = ^^say_hello;
+
+   // Reflect the data member 'age' inside struct 'User'
+   constexpr std::meta::info user_age_reflection = ^^User::age;
+}
+
+// The [: :] Splicer
+// Once an entity has been reflected into a std::meta::info value, it can be reintroduced into the program’s code using the splicer syntax [: :].
+// The splicer effectively injects a reflection back into the source code at compile time,
+//    allowing the program to transform meta-level representations into real code.
+// The compiler then processes the resulting code as if it had been written manually from the beginning,
+//    ensuring smooth integration between the domain of reflection and the ordinary structure of the code.
+// In this sense, the splicer completes the transformation initiated by reification, allowing meta-level representations produced through
+//    reflection to materialize back into ordinary C++ code, ready to be compiled and executed like any other part of the program.
+
+
+// The operand inside the splicer must be a constant expression that either is, or can be implicitly converted to a std::meta::info value.
+// Depending on the context, splicing behaves differently:
+//      [: r :]          -  produces an expression evaluating to the entity represented by r;
+//      typename [: r :] -  produces a simple type specifier if r reflects a type;
+//      template [: r :] -  produces a template name if r reflects a template.
+//      [: r :]::        -  produces a nested-name-specifier corresponding to a namespace, enumeration type, or class.
+
+void useReflectedData()
+{
+    constexpr std::meta::info int_reflection = ^^int;
+    constexpr std::meta::info double_reflection = ^^double;
+    constexpr std::meta::info string_reflection = ^^std::string;
+
+    typename [: int_reflection :] number = 100;
+    typename [: double_reflection :] pi = 3.14;
+    typename [: string_reflection :] message = "Hello Reflection";
+
+    std::cout << "Number: " << number << std::endl;
+    std::cout << "Pi: " << pi << std::endl;
+    std::cout << "Message: " << message << std::endl;
+
+    // Number: 100
+    // Pi: 3.14
+    // Message: Hello Reflection
+}
+
+
+template <typename T>
+void splicing_example()
+{
+    constexpr auto vec = ^^std::vector<T>;
+    typename [: vec :] x = {1, 2, 3};
+    for (const auto& elem : x) {
+        std::cout << elem << " ";
+    }
+
+    // Output: 1 2 3
+}
+
+void retrieve_Data_Members_Names()
+{
+    // Reflect the type User
+    constexpr std::meta::info user_reflection = ^^User;
+
+    // Retrieve the name of the reflected type
+    std::cout << "Type: " << std::meta::identifier_of(user_reflection) << std::endl;
+
+    // Reflect and list the non-static data members
+    [: expand(std::meta::nonstatic_data_members_of(user_reflection)) :] >>
+    [&]<std::meta::info member>() {
+        std::cout << " Member: " << std::meta::identifier_of(member) << std::endl;
+    };
+
+    // Type: User
+    //  Member: name
+    //  Member: age
+}
+
+// A simple generic vector with 3 elements of type T
+template <typename T>
+struct MyVec
+{
+    std::array<T, 3> data;
+};
+
+// A simple map-like struct with a key and a value
+template <typename Key, typename Value>
+struct MyMap
+{
+    Key key;
+    Value value;
+};
+
+
+void create_new_type()
+{
+    // Step 1: Reflect the individual types we'll need
+    constexpr std::meta::info key_info = ^^int;        // Get meta info for 'int'
+    constexpr std::meta::info vec_template = ^^MyVec;  // Get meta info for the template 'MyVec'
+    constexpr std::meta::info value_arg = ^^double;    // Get meta info for 'double'
+
+    // Step 2: Use reflection to create the type MyVec<double>
+    // This "fills in" the template MyVec<T> with T = double
+    constexpr std::meta::info vec_info = std::meta::substitute(vec_template, {value_arg});
+
+    // Step 3: Use reflection to create the type MyMap<int, MyVec<double>>
+    //  This creates a reflected instantiation of MyMap with the previous types
+    constexpr std::meta::info map_info = std::meta::substitute(^^MyMap, {key_info, vec_info});
+
+    // Step 4: Splice the reflected type into real C++ code using [: :]
+    // This gives us a real usable type: MyMap<int, MyVec<double>>
+    typename [:map_info:] obj = {
+        7,                              // obj.key = 7
+        { {1.1, 2.2, 3.3} }             // obj.value = MyVec<double> with 3 doubles
+    };
+
+    // Step 5: Use the object like any normal type
+    std::cout << "Key: " << obj.key << "\nValues:\n";
+    for (double v : obj.value.data)  // Loop through the MyVec's data array
+        std::cout << v << '\n';
+
+    // EDITED ON June 21, 2025 for better clarity
+}
+
+
+int main()
+{
+    reflectTypes_Simple();
+
+    useReflectedData();
+
+    splicing_example<int>();
+
+    retrieve_Data_Members_Names();
+
+    create_new_type();
+}
+
+// ==============================================================================================================================
+// ==============================================================================================================================
+
+#endif
 
 
 #if 0
