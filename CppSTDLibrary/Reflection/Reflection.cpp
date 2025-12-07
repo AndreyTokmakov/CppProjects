@@ -139,20 +139,20 @@ struct MyMap
 void create_new_type()
 {
     // Step 1: Reflect the individual types we'll need
-    constexpr std::meta::info key_info = ^^int;        // Get meta info for 'int'
-    constexpr std::meta::info vec_template = ^^MyVec;  // Get meta info for the template 'MyVec'
-    constexpr std::meta::info value_arg = ^^double;    // Get meta info for 'double'
+    constexpr std::meta::info key_info     = ^^int;       // Get meta info for 'int'
+    constexpr std::meta::info vec_template = ^^MyVec;     // Get meta info for the template 'MyVec'
+    constexpr std::meta::info value_arg    = ^^double;    // Get meta info for 'double'
 
     // Step 2: Use reflection to create the type MyVec<double>
-    // This "fills in" the template MyVec<T> with T = double
+    //         This "fills in" the template MyVec<T> with T = double
     constexpr std::meta::info vec_info = std::meta::substitute(vec_template, {value_arg});
 
     // Step 3: Use reflection to create the type MyMap<int, MyVec<double>>
-    //  This creates a reflected instantiation of MyMap with the previous types
+    //         This creates a reflected instantiation of MyMap with the previous types
     constexpr std::meta::info map_info = std::meta::substitute(^^MyMap, {key_info, vec_info});
 
     // Step 4: Splice the reflected type into real C++ code using [: :]
-    // This gives us a real usable type: MyMap<int, MyVec<double>>
+    //         This gives us a real usable type: MyMap<int, MyVec<double>>
     typename [:map_info:] obj = {
         7,                              // obj.key = 7
         { {1.1, 2.2, 3.3} }             // obj.value = MyVec<double> with 3 doubles
