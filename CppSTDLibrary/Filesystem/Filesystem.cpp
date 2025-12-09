@@ -685,9 +685,10 @@ namespace Filesystem::Tests {
 }
 
 
-namespace Filesystem::Paths {
-
-    void PathTests() {
+namespace Filesystem::Paths
+{
+    void PathTests()
+    {
         auto path = std::filesystem::path{R"(C:\Users\Marius\Documents\sample.file.txt)"};
         std::cout << path << std::endl;
 
@@ -702,14 +703,39 @@ namespace Filesystem::Paths {
         std::cout << pth1 << std::endl;
     }
 
-    void GetPathParts() {
+    void GetPathParts()
+    {
         auto path1 = std::filesystem::path{ R"(:/Users/Marius/Documents/sample.file.txt)" };
         for (auto const & part : path1) {
             std::cout << part << std::endl;
         }
     }
-}
 
+    void Concat_vs_Append()
+    {
+        const std::string homeDir = "/home/user";
+        const std::filesystem::path prefix { "/test/files" };
+
+        {
+            const std::filesystem::path res = std::filesystem::path{prefix} / homeDir;
+            std::cout << res << '\n';
+        }
+
+        {
+            const std::filesystem::path res = std::filesystem::path{prefix}.concat(homeDir);
+            std::cout << res << '\n';
+        }
+
+        {
+            const std::filesystem::path res = std::filesystem::path{prefix}.append(homeDir);
+            std::cout << res << '\n';
+        }
+
+        // "/home/user"
+        // "/test/files/home/user"
+        // "/home/user"
+    }
+}
 
 namespace Filesystem::Attributes {
 
@@ -920,7 +946,6 @@ namespace Filesystem::Iterate_Files
 
 void Filesystem::TestAll()
 {
-
     // TempDirectoryPath();
     // StandartMethods();
     // StandartMethods2();
@@ -950,7 +975,7 @@ void Filesystem::TestAll()
     // Files::CopyFile();
     // Files::MoveFile();
     // Files::Last_Write_Time_UNIX_API();
-    Files::Last_Write_Time();
+    // Files::Last_Write_Time();
     // Files::Check_IsFile_Exists();
 
     // Iterate_Files::List_Files_With_Lambda(); // Requires: C++26
@@ -971,6 +996,7 @@ void Filesystem::TestAll()
     // Tests::Tests();
 
     // Paths::PathTests();
+    Paths::Concat_vs_Append();
     // Paths::GetPathParts();
 
     // Experiments::CreateFile_and_GetTime();
@@ -980,8 +1006,8 @@ void Filesystem::TestAll()
     // SpaceInfo::GetSpaceInfo();
     // SpaceInfo::PrintSpaceInfo();
 
-
     // Attributes::Test();
+
 }
 
 
