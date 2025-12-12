@@ -116,3 +116,157 @@ void Auto::TestAll()
     Test_GetReference();
     Test_LoseReference_Copy();
 };
+
+/** https://www.volatileint.dev/posts/auto-type-deduction-gauntlet/#advanced **/
+
+/**  ------------------------------------ Basics ------------------------------------
+
+auto v = 5;
+
+    Type: int
+    Explanation: Straightforward type deduction from an integer constant.
+
+auto v = 0.1;
+
+    Type: double
+    Explanation: Notably different than integers. Floating points default to the larger double instead of float.
+
+int x;               auto v = x;
+
+    Type: int
+    Explanation: Simple type derived from the assigned-from variable.
+
+auto v = 5, w = 0.1;
+
+    Type: Fails to compile.
+    Explanation: All types in an expression defined with auto have to be the same.
+
+int x;              auto v = &x;
+
+    Type: int*
+    Explanation: Auto will deduce pointers.
+
+auto v = nullptr;
+
+    Type: std::nullptr_t
+    Explanation: nullptr has its own type.
+
+auto v = { 1, 2, 3 };
+
+    Type: std::initializer_list<int>
+    Explanation: It might seem like this should create a container, but it won’t!
+
+int x[5];           auto v = x;
+
+    Type: int*
+    Explanation: C-style arrays decay to a pointer. The decay happens before auto is evaluated.
+
+int foo(int x) {     auto v = foo;
+    return x;
+}
+
+    Type: int (*) (int)
+    Explanation: auto can deduce function pointers.
+**/
+
+/**  ------------------------------------ Intermediate ---------------------------------------
+
+volatile const int x = 1;     auto v = x;
+
+    Type: int
+    Explanation: auto drops top-level CV qualifiers.
+
+volatile const int x = 1;      auto v = &x;
+
+    Type: volatile const int*
+    Explanation: CV qualifiers applied to pointed-to or referred-to types are maintained.
+
+int x;       int& y = x;       auto v = y;
+
+    Type: int
+    Explanation: auto will never deduce a reference on its own.
+
+int x;                         auto& v = x;
+
+    Type: int&
+    Explanation: lvalue references are deduced via auto&.
+
+int x[5];                      auto& v = x;
+
+    Type: int (&) [5]
+    Explanation: When binding arrays to references, they don’t decay. So auto deduces the actual array type.
+
+int foo(const int x) {          auto v = foo;
+    return x;
+}
+
+    Type: int (*) (int)
+    Explanation: Remember - CV qualifiers on parameters are thrown away during function resolution!
+**/
+
+/** -------------------------------------- Advanced--------------------------------------------
+
+int x;    auto&& v = x;
+
+    Type: int&
+    Explanation: A forwarding reference like auto&& can bind to lvalue or rvalue expressions. Here we get an lvalue reference because x is an lvalue.
+
+auto x = [] () -> int {
+    return 1;
+};
+auto&& v = x();
+
+    Type: int&&
+    Explanation: x() returns a prvalue, and prvalues assigned to forwarding references yield an rvalue reference.
+
+int x;         auto y = [&] () -> int& {            auto&& v = y();
+                  return x;
+               };
+
+    Type: int&
+    Explanation: This time x() returns an lvalue, and lvalues assigned to forwarding references yields an lvalue reference.
+
+int x;          decltype(auto) v = (x);
+
+    Type: int&
+    Explanation: (x) is an expression. decltype(expression) yields an lvalue reference when the expression is an lvalue.
+
+struct Foo {};        auto&& v = Foo{};
+
+    Type: Foo&&
+    Explanation: prvalues like Foo{} will bind to an rvalue reference.
+
+struct Foo {};       decltype(auto) v = Foo{};
+
+    Type: Foo
+    Explanation: For any prvalue expression e, decltype(e) evaluates to the type of e.
+
+int x;               decltype(auto) v = std::move(x);
+
+    Type: int&&
+    Explanation: For any xvalue expression e, decltype(e) evalutes to an rvalue reference to the type of e.
+
+int foo(int x) {       decltype(auto) v = foo;
+    return x;
+}
+
+    Type: Fails to compile.
+    Explanation: Function id-expressions do not decay to pointers when evaluating with decltype!
+
+int foo(int x) {        decltype(auto) v = (foo);
+    return x;
+}
+
+    Type: int (&) (int)
+    Explanation: Parenthesized function symbol expressions are deduced as a reference to the function.
+
+
+struct Base {                  struct Derived : public Base {           Derived d;
+    auto foo() {               };                                       auto v = d.foo();
+        return this;
+    };
+};
+
+    Type: Base*
+    Explanation: foo is defined in the Base class, so this has to refer to a Base*, even when foo is called from a child class.
+**/
