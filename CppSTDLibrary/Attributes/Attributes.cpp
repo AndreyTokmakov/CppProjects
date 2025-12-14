@@ -437,5 +437,5 @@ void Attributes::TestAll()
     // NoUniqueAddress::Test2();
     // NoUniqueAddress::Demo();
 
-    // Assume::TestAll();
+    Assume::TestAll();
 };
