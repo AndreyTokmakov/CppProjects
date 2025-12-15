@@ -101,26 +101,58 @@ namespace LookupTypes::Argument_Dependent_Lookups_ADL
 
     void demo()
     {
-
         constexpr math_one::Integer intVar1 {1}, intVar2 {2};
 
         static_assert(true == normalize(intVar1));  // OK via ADL
         static_assert(intVar1 == intVar2);          // OK via ADL
 
         /**
-         * Even though normalize and operator== are in the math_one namespace, they are found without qualification because
-         * the arguments are of type math_one::Integer. Thanks to ADL, function within the math_one namespace are brought into scope.
-         */
+         * Even though normalize and operator== are in the math_one namespace,
+         * they are found without qualification because the arguments are of type math_one::Integer.
+         * Thanks to ADL, function within the math_one namespace are brought into scope.
+        */
     }
 }
 
+namespace lib_1
+{
+    struct X {};
 
+    void foo(X) {
+        std::cout << "lib_1::foo(X)" << std::endl;
+    }
+
+    template<typename T>
+    void makeCall(T val)
+    {
+        foo(val);
+    }
+}
+
+namespace lib_2
+{
+    struct X {};
+
+    void foo(X){
+        std::cout << "lib_2::foo(X)" << std::endl;
+    }
+}
+
+void libCallResolve()
+{
+    lib_1::makeCall(lib_1::X{});
+    lib_1::makeCall(lib_2::X{});
+
+    // lib_1::foo(X)
+    // lib_2::foo(X)
+}
 
 void LookupTypes::TestAll()
 {
     // Qualified_Name_Lookup::demo();
     // Unqualified_Name_Lookups::demo();
 
+    // Argument_Dependent_Lookups_ADL::demo();
 
-    Argument_Dependent_Lookups_ADL::demo();
+    libCallResolve();
 }

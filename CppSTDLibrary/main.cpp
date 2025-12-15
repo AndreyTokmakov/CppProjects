@@ -108,7 +108,7 @@ int main([[maybe_unused]] int argc,
     // Arrays::TestAll();
     // Asserts::TestAll();
     // Atomic::TestAll();
-    Attributes::TestAll();
+    // Attributes::TestAll();
     // Auto::TestAll();
     // BitSet::TestAll();
     // BitwiseOperation::TestAll();
@@ -141,7 +141,7 @@ int main([[maybe_unused]] int argc,
     // Format::TestAll();
     // FunctionObjects::TestAll();
     // Hashing::TestAll();
-    // LookupTypes::TestAll();
+    LookupTypes::TestAll();
     // Lambdas::TestAll();
     // LifetimeExtension::TestAll();
     // Locale::TestAll();
