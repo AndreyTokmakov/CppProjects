@@ -626,6 +626,52 @@ namespace EnumTests::Consteval_SwitchCase_Bitmask
 	}
 }
 
+namespace EnumTests::Check_Order_Type_without_OR
+{
+	enum class OrderState: uint8_t
+	{
+		New = 1 << 0,
+		Live = 1 << 1,
+		Partially_Filled = 1 << 2,
+		Filled = 1 << 3,
+		Cancelled = 1 << 4,
+		Rejected = 1 << 5,
+	};
+
+	consteval OrderState operator|(const OrderState lhs, const OrderState rhs)
+	{
+		return static_cast<OrderState>(static_cast<unsigned int>(lhs) | static_cast<unsigned int>(rhs));
+	}
+
+	consteval bool operator&(OrderState lhs, const uint8_t mask)
+	{
+		return static_cast<unsigned int>(lhs) & mask;
+	}
+
+	void Test()
+	{
+		using enum OrderState;
+		constexpr uint8_t activeMask = static_cast<uint8_t>(New | Live | Partially_Filled);
+
+		constexpr auto checkIsOrderActive = [](const OrderState order) {
+			return order & activeMask;
+		};
+
+		std::cout << "Is Active: " << std::boolalpha << checkIsOrderActive(New) << std::endl;
+		std::cout << "Is Active: " << std::boolalpha << checkIsOrderActive(Live) << std::endl;
+		std::cout << "Is Active: " << std::boolalpha << checkIsOrderActive(Partially_Filled) << std::endl;
+		std::cout << "Is Active: " << std::boolalpha << checkIsOrderActive(Filled) << std::endl;
+		std::cout << "Is Active: " << std::boolalpha << checkIsOrderActive(Cancelled) << std::endl;
+		std::cout << "Is Active: " << std::boolalpha << checkIsOrderActive(Rejected) << std::endl;
+
+		// Is Active: true
+		// Is Active: true
+		// Is Active: true
+		// Is Active: false
+		// Is Active: false
+		// Is Active: false
+	}
+}
 
 void EnumTests::TestAll()
 {
@@ -658,7 +704,9 @@ void EnumTests::TestAll()
 
 	// ToUnderlying::To_Underlying();
 
-    Is_Scoped_Enum::is_scoped();
+    // Is_Scoped_Enum::is_scoped();
 
 	// Consteval_SwitchCase_Bitmask::test();
+
+	Check_Order_Type_without_OR::Test();
 };
