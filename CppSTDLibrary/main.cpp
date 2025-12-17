@@ -126,7 +126,7 @@ int main([[maybe_unused]] int argc,
     // RVO_FailureCases::TestAll();
     // ClassTemplateArgumentDeduction::TestAll();
     // DateAndTime::TestAll();
-    // EnumTests::TestAll();
+    EnumTests::TestAll();
     // Errors::TestAll();
     // Embed::TestAll();
     // Exceptions::TestAll();
@@ -182,7 +182,7 @@ int main([[maybe_unused]] int argc,
     // TypeCast::TestAll();
     // Int::TestAll();
     // Templates::TestAll();
-    Utilities::TestAll();
+    // Utilities::TestAll();
     // UniquePtr::TestAll();
     // WeakPtr::TestAll();
     // StaticAsserts::TestAll();

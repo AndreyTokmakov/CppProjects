@@ -584,6 +584,48 @@ namespace EnumTests::Is_Scoped_Enum
     }
 }
 
+namespace EnumTests::Consteval_SwitchCase_Bitmask
+{
+	enum class BitMask : unsigned int
+	{
+		None = 0,
+		First = 1 << 0,
+		Second = 1 << 1,
+		Third = 1 << 2,
+	};
+
+	consteval BitMask operator|(BitMask lhs, BitMask rhs)
+	{
+		return static_cast<BitMask>(static_cast<unsigned int>(lhs) | static_cast<unsigned int>(rhs));
+	}
+
+
+	void check(const BitMask mask)
+	{
+		switch (mask)
+		{
+			case BitMask::First | BitMask::Second:
+				std::cout << "First | Second" << std::endl;
+				break;
+			case BitMask::Third:
+				std::cout << "First" << std::endl;
+				break;
+			default:
+				std::cout << "Something different" << std::endl;
+				break;
+		}
+	}
+
+	void test()
+	{
+		const BitMask mask = BitMask::First | BitMask::Second;
+		check(mask);
+
+		// First | Second
+
+	}
+}
+
 
 void EnumTests::TestAll()
 {
@@ -614,7 +656,9 @@ void EnumTests::TestAll()
 
     // UsingEmum_ClassScope::accessEnum_FromClassInstance();
 
-	ToUnderlying::To_Underlying();
+	// ToUnderlying::To_Underlying();
 
     Is_Scoped_Enum::is_scoped();
+
+	// Consteval_SwitchCase_Bitmask::test();
 };
