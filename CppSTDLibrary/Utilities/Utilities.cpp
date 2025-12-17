@@ -476,11 +476,11 @@ void Utilities::TestAll()
 {
     // Bind_Tests();
     // Decay_Tests();
-    // Invoke::TestAll();
+    Invoke::TestAll();
 	// NullPtr_T::TestAll();
 	// CompilerVersion::TestAll();
 	// ScopeExit::TestAll();
-	Class_Member_Pointer::TestAll();
+	// Class_Member_Pointer::TestAll();
 
 	// Extent::getArraySize();
 

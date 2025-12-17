@@ -141,7 +141,7 @@ int main([[maybe_unused]] int argc,
     // Format::TestAll();
     // FunctionObjects::TestAll();
     // Hashing::TestAll();
-    LookupTypes::TestAll();
+    // LookupTypes::TestAll();
     // Lambdas::TestAll();
     // LifetimeExtension::TestAll();
     // Locale::TestAll();
@@ -182,7 +182,7 @@ int main([[maybe_unused]] int argc,
     // TypeCast::TestAll();
     // Int::TestAll();
     // Templates::TestAll();
-    // Utilities::TestAll();
+    Utilities::TestAll();
     // UniquePtr::TestAll();
     // WeakPtr::TestAll();
     // StaticAsserts::TestAll();

@@ -209,20 +209,40 @@ namespace Utilities::Invoke
         std::invoke(printer, 1, "Two");
         std::invoke(printer, 1, "Two", "III");
     }
+
+    template<typename __Range, typename __Func>
+    void printRange(__Range&& r, __Func&& f)
+    {
+        for (const auto& entry : r) {
+            std::cout << std::invoke(f, entry) << ' ';
+        }
+        std::cout << std::endl;
+    }
+
+    void Print_Pair_Seconds_Value()
+    {
+        std::vector<std::pair<int, int>> pairs { {1, 2}, {2, 3}, {4,5} };
+
+        printRange(pairs, [](const auto& pair) { return pair.first; });
+        printRange(pairs, &std::pair<int, int>::second);
+
+        // 1 2 4
+        // 2 3 5
+    }
 }
 
 
 void Utilities::Invoke::TestAll()
 {
-    Access_Member();
-    // ::Call_Class_Method();
-    // ::Is_Invocable();
-    // ::Invoke_Functor();
-    // ::Invoke_Class_Method_FromMethod();
-    // ::Invoke_Class_Method_FromMethod_Delegate();
-    // ::Call_Lambda();
-
+    // Access_Member();
+    // Call_Class_Method();
+    // Is_Invocable();
+    // Invoke_Functor();
+    // Invoke_Class_Method_FromMethod();
+    // Invoke_Class_Method_FromMethod_Delegate();
+    // Call_Lambda();
     // Callbacks::invoke_class_method();
-
     // Invoke_Objects_Methods_Manually::call();
+
+    Print_Pair_Seconds_Value();
 }
