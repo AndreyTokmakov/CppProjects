@@ -1712,6 +1712,58 @@ void swp(int* a, int* b)
 
 
 
+namespace array_to_store_crtp_objects
+{
+    struct ParserOne
+    {
+        void parse() const
+        {
+            std::cout << "ParserOne::parse()" << std::endl;
+        }
+    };
+
+    struct ParserTwo
+    {
+        void parse() const
+        {
+            std::cout << "ParserTwo::parse()" << std::endl;
+        }
+    };
+
+
+    // TODO: Concepts
+    template<typename Derived>
+    struct Handler
+    {
+        [[nodiscard]]
+        const Derived &self() const noexcept {
+            return *static_cast<const Derived *const>(this);
+        }
+
+        void doSomething() const
+        {
+            self().parse();
+        }
+    };
+
+    struct WrapperOne: Handler<WrapperOne>, ParserOne {
+    };
+
+    struct WrapperTwo: Handler<WrapperTwo>, ParserTwo {
+    };
+
+
+    void test()
+    {
+        constexpr WrapperOne wrapperOne;
+        wrapperOne.doSomething();
+
+        constexpr WrapperTwo wrapperTwo;
+        wrapperTwo.doSomething();
+    }
+}
+
+
 
 
 int main([[maybe_unused]] const int argc,
@@ -1721,6 +1773,7 @@ int main([[maybe_unused]] const int argc,
 
     // resource_registry::test();
 
+    array_to_store_crtp_objects::test();
 
     /** * * * * *  Move to lib * * * * * **/
     // Cpp_NEW_Features::TestAll();

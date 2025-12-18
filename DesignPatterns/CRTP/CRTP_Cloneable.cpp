@@ -50,7 +50,7 @@ namespace CRTP::CRTP_Cloneable
 
         [[nodiscard]]
         std::unique_ptr<Base> clone() const override {
-            std::cout << "Cloning " << typeid(Derived).name() << std::endl;
+            //std::cout << "Cloning " << typeid(Derived).name() << std::endl;
             return std::make_unique<Derived>(this->self());
         }
 
