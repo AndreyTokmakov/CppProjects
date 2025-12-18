@@ -122,11 +122,11 @@ int main([[maybe_unused]] int argc,
     // CompileTimeProgramming::TestAll();
     // Constexpr::TestAll();
     // CopyElision::TestAll();
-    // DeducingThis::TestAll();
+    DeducingThis::TestAll();
     // RVO_FailureCases::TestAll();
     // ClassTemplateArgumentDeduction::TestAll();
     // DateAndTime::TestAll();
-    EnumTests::TestAll();
+    // EnumTests::TestAll();
     // Errors::TestAll();
     // Embed::TestAll();
     // Exceptions::TestAll();

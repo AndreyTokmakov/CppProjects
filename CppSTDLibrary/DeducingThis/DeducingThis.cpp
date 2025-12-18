@@ -335,6 +335,86 @@ namespace DeducingThis::UseCases
     }
 }
 
+namespace DeducingThis::CRTP_vs_DeducingThis::Crtp
+{
+    struct ParserOne
+    {
+        static void parse() {
+            std::cout << "ParserOne::parse()" << std::endl;
+        }
+    };
+
+    struct ParserTwo
+    {
+        static void parse() {
+            std::cout << "ParserTwo::parse()" << std::endl;
+        }
+    };
+
+    // TODO: Concepts
+    template<typename Derived>
+    struct Interface
+    {
+        [[nodiscard]]
+        const Derived &self() const noexcept {
+            return *static_cast<const Derived *const>(this);
+        }
+
+        void doSomething() const
+        {
+            self().parse();
+        }
+    };
+
+    struct WrapperOne: Interface<WrapperOne>, ParserOne { };
+    struct WrapperTwo: Interface<WrapperTwo>, ParserTwo { };
+
+    void test()
+    {
+        constexpr WrapperOne wrapperOne;
+        wrapperOne.doSomething();
+
+        constexpr WrapperTwo wrapperTwo;
+        wrapperTwo.doSomething();
+    }
+}
+
+namespace DeducingThis::CRTP_vs_DeducingThis::This
+{
+    struct ParserOne
+    {
+        static void parse() {
+            std::cout << "ParserOne::parse()" << std::endl;
+        }
+    };
+
+    struct ParserTwo
+    {
+        static void parse() {
+            std::cout << "ParserTwo::parse()" << std::endl;
+        }
+    };
+
+    struct Interface
+    {
+        void doSomething(this auto& self) {
+            self.parse();
+        }
+    };
+
+    struct WrapperOne: Interface, ParserOne { };
+    struct WrapperTwo: Interface, ParserTwo { };
+
+    void test()
+    {
+        constexpr WrapperOne wrapperOne;
+        wrapperOne.doSomething();
+
+        constexpr WrapperTwo wrapperTwo;
+        wrapperTwo.doSomething();
+    }
+}
+
 void DeducingThis::TestAll()
 {
     // Explicit_Object_Member_Functions::simpleExample();
@@ -346,5 +426,8 @@ void DeducingThis::TestAll()
     // Policy_Based_Design::test();
     // Mixin_Builder::test();
 
-    UseCases::OperatorOverloading();
+    // UseCases::OperatorOverloading();
+
+    CRTP_vs_DeducingThis::Crtp::test();
+    CRTP_vs_DeducingThis::This::test();
 }

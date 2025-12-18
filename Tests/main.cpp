@@ -1716,24 +1716,21 @@ namespace array_to_store_crtp_objects
 {
     struct ParserOne
     {
-        void parse() const
-        {
+        static void parse() {
             std::cout << "ParserOne::parse()" << std::endl;
         }
     };
 
     struct ParserTwo
     {
-        void parse() const
-        {
+        static void parse() {
             std::cout << "ParserTwo::parse()" << std::endl;
         }
     };
 
-
     // TODO: Concepts
     template<typename Derived>
-    struct Handler
+    struct Interface
     {
         [[nodiscard]]
         const Derived &self() const noexcept {
@@ -1746,12 +1743,44 @@ namespace array_to_store_crtp_objects
         }
     };
 
-    struct WrapperOne: Handler<WrapperOne>, ParserOne {
+    struct WrapperOne: Interface<WrapperOne>, ParserOne { };
+    struct WrapperTwo: Interface<WrapperTwo>, ParserTwo { };
+
+    void test()
+    {
+        constexpr WrapperOne wrapperOne;
+        wrapperOne.doSomething();
+
+        constexpr WrapperTwo wrapperTwo;
+        wrapperTwo.doSomething();
+    }
+}
+
+namespace array_to_store_deducing_this_objects
+{
+    struct ParserOne
+    {
+        static void parse() {
+            std::cout << "ParserOne::parse()" << std::endl;
+        }
     };
 
-    struct WrapperTwo: Handler<WrapperTwo>, ParserTwo {
+    struct ParserTwo
+    {
+        static void parse() {
+            std::cout << "ParserTwo::parse()" << std::endl;
+        }
     };
 
+    struct Interface
+    {
+        void doSomething(this auto& self) {
+            self.parse();
+        }
+    };
+
+    struct WrapperOne: Interface, ParserOne { };
+    struct WrapperTwo: Interface, ParserTwo { };
 
     void test()
     {
@@ -1765,7 +1794,6 @@ namespace array_to_store_crtp_objects
 
 
 
-
 int main([[maybe_unused]] const int argc,
          [[maybe_unused]] char** argv)
 {
@@ -1773,7 +1801,8 @@ int main([[maybe_unused]] const int argc,
 
     // resource_registry::test();
 
-    array_to_store_crtp_objects::test();
+    // array_to_store_crtp_objects::test();
+    array_to_store_deducing_this_objects::test();
 
     /** * * * * *  Move to lib * * * * * **/
     // Cpp_NEW_Features::TestAll();
