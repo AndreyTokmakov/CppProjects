@@ -13,10 +13,15 @@ add_executable(${PROJECT_NAME}
         main.cpp
         Integer.h Integer.cpp
         MemoryPool.h
-        Collections/Collections.h Collections/Collections.cpp
-        VirtualCall_vs_TypeErasure/VirtualCall_vs_TypeErasure.h VirtualCall_vs_TypeErasure/VirtualCall_vs_TypeErasure.cpp
+        Collections/Collections.cpp
+        VirtualCall_vs_TypeErasure/VirtualCall_vs_TypeErasure.cpp
+        VirtualCall_vs_Variant/VirtualCall_vs_Variant.cpp
 )
 
+target_include_directories(${PROJECT_NAME} PUBLIC "${CMAKE_SOURCE_DIR}/Utilities")
+target_link_directories(${PROJECT_NAME} PUBLIC "${CMAKE_BINARY_DIR}/Utilities")
+
 TARGET_LINK_LIBRARIES(${PROJECT_NAME}
+        utils
         ${EXTRA_LIBS}
 )

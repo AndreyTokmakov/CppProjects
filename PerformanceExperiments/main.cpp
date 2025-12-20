@@ -51,6 +51,7 @@
 
 #include "Collections/Collections.h"
 #include "VirtualCall_vs_TypeErasure/VirtualCall_vs_TypeErasure.h"
+#include "VirtualCall_vs_Variant/VirtualCall_vs_Variant.hpp"
 
 
 using Utilities::Integer;
@@ -3973,7 +3974,8 @@ int main([[maybe_unused]] int argc,
     using namespace PerformanceTests;
 
     // Collections::TestAll();
-    VirtualCall_vs_TypeErasure::benchmark();
+    // VirtualCall_vs_TypeErasure::benchmark();
+    VirtualCall_vs_Variant::benchmark();
 
 
     // Caching_Performance::Test();
