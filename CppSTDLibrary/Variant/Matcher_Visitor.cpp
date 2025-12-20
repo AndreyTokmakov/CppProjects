@@ -7,7 +7,7 @@ Copyright   : Your copyright notice
 Description : Matcher_Visitor.cpp
 ============================================================================**/
 
-#include "Matcher_Visitor.hpp"
+#include "Variant.hpp"
 
 #include <iostream>
 #include <variant>
@@ -37,7 +37,7 @@ namespace
 
 }
 
-void Matcher_Visitor::TestAll()
+void Variant::Matcher_Visitor::TestAll()
 {
     const WebEvent::webEvent event(WebEvent::Click { .x=32, .y=64 } );
     match(event,

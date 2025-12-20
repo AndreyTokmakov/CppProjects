@@ -97,8 +97,11 @@ add_executable(${PROJECT_NAME}
 		TypeCast/TypeCast.cpp
 		TypeTraits/TypeTraits.cpp
 		UniquePtr/UniquePtr.cpp
+
 		Variant/Variant.cpp
 		Variant/Matcher_Visitor.cpp
+		Variant/ParsersVariantDemo.cpp
+
 		WeakPtr/WeakPtr.cpp
 		WeakPtr/WeakPtr_MakeShared.cpp
         Volatile/VolatileTests.cpp

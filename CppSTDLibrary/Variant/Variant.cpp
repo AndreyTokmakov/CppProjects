@@ -8,8 +8,7 @@
 #include <unordered_map>
 #include <memory>
 
-#include "Variant.h"
-#include "Matcher_Visitor.hpp"
+#include "Variant.hpp"
 #include "../Helpers/Helpers.h"
 
 namespace Variant
@@ -1317,6 +1316,7 @@ namespace Variant::Return_and_Store_HeavyObjects
 void Variant::TestAll()
 {
 	// Matcher_Visitor::TestAll();
+	ParsersVariantDemo::TestAll();
 
 
 	// Variant_Tests::VariantCreate_Tests();
@@ -1376,5 +1376,5 @@ void Variant::TestAll()
     // Experiments_DNS_Response::Tests();
 	// Experiments::Map_Variant_Keys();
 
-	Return_and_Store_HeavyObjects::Test();
+	// Return_and_Store_HeavyObjects::Test();
 };

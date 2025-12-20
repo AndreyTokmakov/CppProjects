@@ -80,7 +80,7 @@ Description : Cpp STD lib
 #include "StructuredBinding/StructuredBinding.h"
 #include "StrongTypes/StrongTypes.h"
 #include "SourceLocation/SourceLocation.h"
-#include "Variant/Variant.h"
+#include "Variant/Variant.hpp"
 #include "WeakPtr/WeakPtr.h"
 #include "SharedPtr/SharedPtrTests.h"
 #include "Stacktrace/Stacktrace.h"
@@ -122,7 +122,7 @@ int main([[maybe_unused]] int argc,
     // CompileTimeProgramming::TestAll();
     // Constexpr::TestAll();
     // CopyElision::TestAll();
-    DeducingThis::TestAll();
+    // DeducingThis::TestAll();
     // RVO_FailureCases::TestAll();
     // ClassTemplateArgumentDeduction::TestAll();
     // DateAndTime::TestAll();
@@ -174,7 +174,7 @@ int main([[maybe_unused]] int argc,
     // Stacktrace::TestAll();
     // SourceLocation::TestAll();
     // SharedPtr_Tests::TestAll();
-    // Variant::TestAll();
+    Variant::TestAll();
     // VolatileTests::TestAll();
     // TypeTraits::TestAll();
     // Types::Tests();
