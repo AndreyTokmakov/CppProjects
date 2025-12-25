@@ -277,16 +277,68 @@ namespace PackagedTask {
 
             THREAD_INFO << "Task completed\n\n";
         }
+    }
+}
 
+
+namespace PackagedTask::CreateGenericTask
+{
+    template<typename Func, typename ... Args>
+    std::packaged_task<std::invoke_result_t<Func, Args ... >()> createTask(Func&& func, Args&& ... args)
+    {
+        using ReturnType = std::invoke_result_t<Func, Args ... >;
+        auto task = [fn = std::forward<Func>(func), ...args = std::forward<Args>(args)]() mutable {
+            return std::invoke(std::move(fn), std::forward<Args>(args)...);
+        };
+        return std::packaged_task<ReturnType()>(std::move(task));
     }
 
+    int getInt() {
+        return 101;
+    }
+
+    std::string getString() {
+        return "Hello World!";
+    }
+
+    void getVoid(const std::string_view text)
+    {
+        std::cout << text << std::endl;
+    }
+
+    void create_and_run_task()
+    {
+        using namespace std::string_view_literals;
+        {
+            auto task = CreateGenericTask::createTask(&getInt);
+            std::future<int> fut = task.get_future();
+            std::thread(std::move(task)).detach();
+            std::cout << fut.get() << std::endl;
+        }
+        {
+            auto task = CreateGenericTask::createTask(&getString);
+            std::future<std::string> fut = task.get_future();
+            std::thread(std::move(task)).detach();
+            std::cout << fut.get() << std::endl;
+        }
+        {
+            auto task = CreateGenericTask::createTask(&getVoid, "Hello from packaged task!"sv);
+            const std::future<void> fut = task.get_future();
+            std::thread(std::move(task)).detach();
+            fut.wait();
+        }
+
+        // 101
+        // Hello World!
+        // Hello from packaged task!
+    }
 }
 
 void PackagedTask::TEST_ALL()
 {
     // Task_From_ClassParam();
 
-    PackagedTask_Create_and_Run();
+    // PackagedTask_Create_and_Run();
 
     // TEST_PackagedTask();
     // Lambda_Task();
@@ -301,4 +353,7 @@ void PackagedTask::TEST_ALL()
 
     // PackagedTask_Collection();
     // PackagedTask_Collection_2();
+
+
+    CreateGenericTask::create_and_run_task();
 };

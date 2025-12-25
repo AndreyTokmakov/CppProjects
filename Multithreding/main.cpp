@@ -86,7 +86,7 @@ int main([[maybe_unused]] int argc,
 
     // Multithreading_Communication::TEST_ALL();
     // Promise::TEST_ALL();
-    // PackagedTask::TEST_ALL();
+    PackagedTask::TEST_ALL();
     // ParallelExecutionAlgoritms::TEST_ALL();
 
     // Semaphore::TestAll();
@@ -109,7 +109,7 @@ int main([[maybe_unused]] int argc,
 
     // Threads::TEST_ALL();
     // JThreads::TestAll();
-    StoppingThreads::TestAll();
+    // StoppingThreads::TestAll();
 
 
     /** Performance **/
