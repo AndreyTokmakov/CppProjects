@@ -20,6 +20,15 @@ Description : C++ data structures experiments
 #include "RingBuffer.h"
 #include "Int2String_MappingTable/Int2String_MappingTable.h"
 
+#include "__2_study/forward_list.hpp"
+#include "__2_study/mpsc_queue.hpp"
+#include "__2_study/shared_ptr.hpp"
+#include "__2_study/spsc_queue.hpp"
+#include "__2_study/threadsafe_queue.hpp"
+#include "__2_study/threadsafe_stack.hpp"
+#include "__2_study/unique_ptr.hpp"
+#include "__2_study/vector.hpp"
+
 #include <iostream>
 
 int main([[maybe_unused]] int argc,
@@ -35,7 +44,7 @@ int main([[maybe_unused]] int argc,
     // MinMaxStack::TestAll();
     // RateLimiter::TestAll();
     // RingBuffer::TestAll();
-    RateLimiterEx::TestAll();
+    // RateLimiterEx::TestAll();
     // Int2String_MappingTable::TestAll();
 
     return EXIT_SUCCESS;

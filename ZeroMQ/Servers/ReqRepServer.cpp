@@ -24,9 +24,9 @@ namespace ReqRepServer
 
         zmq::context_t context(1);
         zmq::socket_t responder(context, zmq::socket_type::rep);
-        responder.bind("tcp://*:5556");
+        responder.bind("tcp://*:52525");
 
-        logger.info("Running server on {}", "tcp://*:5556");
+        logger.info("Running server on {}", "tcp://*:52525");
         while (true)
         {
             zmq::message_t request;
