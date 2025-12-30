@@ -14,7 +14,6 @@ Description : C++ data structures experiments
 #include "LRUCache.h"
 #include "MaxStack.h"
 #include "MinStack.h"
-#include "MinMaxStack.h"
 #include "RateLimiter.h"
 #include "RateLimiterEx.h"
 #include "RingBuffer.h"

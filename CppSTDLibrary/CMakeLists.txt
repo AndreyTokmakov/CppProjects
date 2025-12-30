@@ -90,7 +90,10 @@ add_executable(${PROJECT_NAME}
 		String/String.cpp
 		String/StringUtilities.cpp
 		StringStream/StringStreamTests.cpp
+
 		StringView/StringViewTests.cpp
+		StringView/Number_Parser.cpp
+
 		StructuredBinding/StructuredBinding.cpp
 		StrongTypes/StrongTypes.cpp
 		Tuple/TupleTests.cpp

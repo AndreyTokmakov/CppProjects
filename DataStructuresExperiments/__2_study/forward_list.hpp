@@ -5,119 +5,125 @@
 #include <iterator>
 #include <utility>
 
-namespace dev {
-template <typename T> class forward_list {
-  public:
-    using value_type = T;
-    using size_type = std::size_t;
-    using pointer = T*;
-    using const_pointer = const T*;
-    using reference = T&;
-    using const_reference = const T&;
-    using difference_type = std::ptrdiff_t;
+namespace dev
+{
+    template <typename T> class forward_list
+    {
+    public:
+        using value_type = T;
+        using size_type = std::size_t;
+        using pointer = T*;
+        using const_pointer = const T*;
+        using reference = T&;
+        using const_reference = const T&;
+        using difference_type = std::ptrdiff_t;
 
-  private:
-    struct ListNode {
-        value_type m_value;
-        ListNode* next{nullptr};
+    private:
 
-        ListNode(const_reference value) : m_value{value} {}
+        struct ListNode
+        {
+            value_type m_value;
+            ListNode* next{nullptr};
 
-        ListNode(T&& value) : m_value{std::move(value)} {}
-    };
+            ListNode(const_reference value) : m_value{value} {}
+            ListNode(T&& value) : m_value{std::move(value)} {}
+        };
 
-    ListNode* m_head{nullptr};
-    size_type m_size{0};
+        ListNode* m_head{nullptr};
+        size_type m_size{0};
 
-  public:
-    template <typename U> class Iterator {
-      public:
-        using value_type = forward_list::value_type;
-        using pointer = forward_list::pointer;
-        using reference = forward_list::reference;
-        using difference_type = forward_list::difference_type;
-        friend class forward_list<T>;
+    public:
 
-      private:
-        ListNode* m_current_node_ptr;
+        template <typename U> class Iterator
+        {
 
-      public:
-        Iterator() = default;
-        Iterator(ListNode* ptr) : m_current_node_ptr{ptr} {}
+        public:
+            using value_type = forward_list::value_type;
+            using pointer = forward_list::pointer;
+            using reference = forward_list::reference;
+            using difference_type = forward_list::difference_type;
+            friend class forward_list<T>;
 
-        // Pre-increment
-        Iterator& operator++() {
-            m_current_node_ptr = m_current_node_ptr->next;
-            return *this;
+        private:
+            ListNode* m_current_node_ptr;
+
+        public:
+            Iterator() = default;
+            Iterator(ListNode* ptr) : m_current_node_ptr{ptr} {}
+
+            // Pre-increment
+            Iterator& operator++() {
+                m_current_node_ptr = m_current_node_ptr->next;
+                return *this;
+            }
+
+            // Post-increment
+            Iterator operator++(int) {
+                auto temp = *this;
+                m_current_node_ptr = m_current_node_ptr->next;
+                return temp;
+            }
+
+            bool operator==(const Iterator& other) const {
+                return (m_current_node_ptr == other.m_current_node_ptr);
+            }
+
+            bool operator!=(const Iterator& other) const {
+                return !(*this == other);
+            }
+
+            // Pointer-like operations
+            U& operator*() {
+                return m_current_node_ptr->m_value;
+            }
+
+            const U& operator*() const {
+                return m_current_node_ptr->m_value;
+            }
+
+            U* operator->() {
+                return m_current_node_ptr;
+            }
+
+            const U* operator->() const {
+                return m_current_node_ptr;
+            }
+        };
+
+        using iterator = Iterator<T>;
+        using const_iterator = Iterator<const T>;
+
+        size_type size() const {
+            return m_size;
         }
 
-        // Post-increment
-        Iterator operator++(int) {
-            auto temp = *this;
-            m_current_node_ptr = m_current_node_ptr->next;
-            return temp;
+        bool empty() const {
+            return (!m_head);
         }
 
-        bool operator==(const Iterator& other) const {
-            return (m_current_node_ptr == other.m_current_node_ptr);
+        iterator begin() {
+            return iterator(m_head);
         }
 
-        bool operator!=(const Iterator& other) const {
-            return !(*this == other);
+        const_iterator begin() const {
+            return const_iterator(m_head);
         }
 
-        // Pointer-like operations
-        U& operator*() {
-            return m_current_node_ptr->m_value;
+        const_iterator cbegin() const {
+            return const_iterator(m_head);
         }
 
-        const U& operator*() const {
-            return m_current_node_ptr->m_value;
+        iterator end() {
+            return iterator(nullptr);
         }
 
-        U* operator->() {
-            return m_current_node_ptr;
+        const_iterator end() const {
+            return const_iterator(nullptr);
         }
 
-        const U* operator->() const {
-            return m_current_node_ptr;
+        const_iterator cend() const {
+            return end();
         }
-    };
-
-    using iterator = Iterator<T>;
-    using const_iterator = Iterator<const T>;
-
-    size_type size() const {
-        return m_size;
-    }
-
-    bool empty() const {
-        return (!m_head);
-    }
-
-    iterator begin() {
-        return iterator(m_head);
-    }
-
-    const_iterator begin() const {
-        return const_iterator(m_head);
-    }
-
-    const_iterator cbegin() const {
-        return const_iterator(m_head);
-    }
-
-    iterator end() {
-        return iterator(nullptr);
-    }
-
-    const_iterator end() const {
-        return const_iterator(nullptr);
-    }
-
-    const_iterator cend() const {
-        return end();
-    }
 
     /* Destroy the containers content */
     void clear() noexcept {

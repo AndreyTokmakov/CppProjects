@@ -10,8 +10,10 @@
 #ifndef STRING_VIEW_TESTS__INCLUDE_GUARD__H
 #define STRING_VIEW_TESTS__INCLUDE_GUARD__H
 
-namespace StringView {
+namespace StringView
+{
 	void TestAll();
+	namespace number_parser { void TestAll(); }
 };
 
 #endif /* STRING_VIEW_TESTS__INCLUDE_GUARD__H */

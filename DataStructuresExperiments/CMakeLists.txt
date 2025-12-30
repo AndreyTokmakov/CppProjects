@@ -13,7 +13,6 @@ include_directories(DVector)
 include_directories(EventLoop)
 include_directories(LRUCache)
 include_directories(MaxStack)
-include_directories(MinMaxStack)
 include_directories(MinStack)
 include_directories(RingBuffer)
 include_directories(RateLimiter)
@@ -28,7 +27,6 @@ add_executable(${PROJECT_NAME}
 		EventLoop/EventLoop.h EventLoop/EventLoop.cpp
 		LRUCache/LRUCache.h LRUCache/LRUCache.cpp
 		MaxStack/MaxStack.h MaxStack/MaxStack.cpp
-		MinMaxStack/MinMaxStack.h MinMaxStack/MinMaxStack.cpp
 		MinStack/MinStack.h MinStack/MinStack.cpp
 		RingBuffer/RingBuffer.h RingBuffer/RingBuffer.cpp
 		RateLimiter/RateLimiter.h RateLimiter/RateLimiter.cpp

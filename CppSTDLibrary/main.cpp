@@ -165,7 +165,7 @@ int main([[maybe_unused]] int argc,
     // Streams::TestAll();
     // StringStream::TestAll();
     // String::TestAll();
-    // StringView::TestAll();
+    StringView::TestAll();
     // StructuredBinding::TestAll();
     // StrongTypes::TestAll();
     // Span::TestAll();
@@ -174,7 +174,7 @@ int main([[maybe_unused]] int argc,
     // Stacktrace::TestAll();
     // SourceLocation::TestAll();
     // SharedPtr_Tests::TestAll();
-    Variant::TestAll();
+    // Variant::TestAll();
     // VolatileTests::TestAll();
     // TypeTraits::TestAll();
     // Types::Tests();
