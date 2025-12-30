@@ -169,6 +169,7 @@ void StringView::number_parser::TestAll()
     run_test<Status>("3", std::optional<Status>{static_cast<Status>(3)}, "Enum Unknown Value");
 }
 
+
 /**
 --- Integer Tests ---
 [PASS] Simple Int                     Input: '123'
