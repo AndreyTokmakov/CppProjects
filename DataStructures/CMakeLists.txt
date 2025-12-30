@@ -22,7 +22,6 @@ add_executable(${PROJECT_NAME}
 		FlatMap/FlatMap.cpp
 		Optional/Optional.cpp
 		Expected/Expected.cpp
-		SharedPtr/SharedPtr.cpp
 		ThreadsafeQueue/ThreadsafeQueue.cpp
 		TTLCache/TTLCache.cpp
 		Utilities/Integer.cpp
@@ -64,6 +63,9 @@ add_executable(${PROJECT_NAME}
 		RingBuffer/RingBufferEx.cpp
 		RingBuffer/RingBufferExAtomic.cpp
 		RingBuffer/RingBuffer_SPSC.cpp
+
+		SharedPtr/SharedPtr.cpp
+		UniquePtr/UniquePtr.cpp
 )
 
 

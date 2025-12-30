@@ -56,6 +56,7 @@ Description : DataStructures
 #include "ThreadPool/ThreadPoolEx.h"
 #include "Trie/Trie.h"
 #include "TypeListChecker/TypeListChecker.hpp"
+#include "UniquePtr/UniquePtr.hpp"
 #include "StaticSortedSearchArray/StaticSortedSearchArray.hpp"
 
 
@@ -99,7 +100,7 @@ int main([[maybe_unused]] int argc,
     // HeapWithComparator::TestAll();
     // CompressedPair::TestAll();
 
-	static_sorted_search_array::TestAll();
+	// static_sorted_search_array::TestAll();
     // CircularBuffers::TEST_ALL();
     // RingBuffer::TestAll();
     // RingBufferEx::TestAll();
@@ -114,6 +115,8 @@ int main([[maybe_unused]] int argc,
 	// TypeListChecker::TestAll();
 
     // Memory::Shared_Ptr_Tests();
+    Memory::UniquePtrTests();
+
 
     // ThreadPool::TestAll();
     // ThreadPoolEx::TestAll();
