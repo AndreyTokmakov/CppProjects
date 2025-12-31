@@ -42,16 +42,10 @@ Description :  C++ Ranges
 
 namespace
 {
-    /*
-    template <std::ranges::input_range RangeType>
-    void print(RangeType&& range)
+    std::filesystem::path getDataDir()
     {
-        std::ranges::for_each(print, [](const auto& v) {
-            std::cout << v << ' ';
-        });
-        std::cout << '\n';
+        return std::filesystem::current_path() / "../../resources";
     }
-     */
 
     template <typename T>
     void print(T&& range_or_view)
@@ -1357,11 +1351,6 @@ namespace Ranges::Keys_Values_of_Map
 
 namespace Ranges::Files
 {
-    std::filesystem::path getDataDir()
-    {
-        return std::filesystem::current_path() / "../../resources";
-    }
-
     std::vector<std::string> loadUrls(std::istream& stream)
     {
         return std::views::istream<std::string>(stream) | std::ranges::to<std::vector<std::string>>();
@@ -1377,9 +1366,108 @@ namespace Ranges::Files
     }
 }
 
+namespace Ranges::Istream
+{
+    void Read_Ints()
+    {
+        /* Old Style
+        int value { 0 };
+        while (std::cin >> value) {
+            std::println("{}", value);
+        }
+        */
+
+        for (const auto value: std::views::istream<int>(std::cin)) {
+            std::println("{}", value);
+        }
+    }
+
+    void Get_Strings_and_Floats()
+    {
+        auto words = std::istringstream{"today is yesterday’s tomorrow"};
+        for (const auto& s : std::views::istream<std::string>(words))
+            std::cout << std::quoted(s, '"') << ' ';
+        std::cout << '\n';
+
+        auto floats = std::istringstream{"1.1  2.2\t3.3\v4.4\f55\n66\r7.7  8.8"};
+        std::ranges::copy
+        (
+            std::views::istream<float>(floats),
+            std::ostream_iterator<float>{std::cout, ", "}
+        );
+        std::cout << '\n';
+
+        // "today" "is" "yesterday’s" "tomorrow"
+        // 1.1, 2.2, 3.3, 4.4, 55, 66, 7.7, 8.8,
+    }
+
+    void Read_Vector_1()
+    {
+        const std::vector<int> input = std::views::istream<int>(std::cin) |
+            std::ranges::to<std::vector<int>>();
+        std::println("{}", input);
+    }
+
+    void Read_Vector_2()
+    {
+        std::vector<int> input;
+        std::ranges::copy(std::views::istream<int>(std::cin), std::back_inserter(input));
+        std::println("{}", input);
+    }
+
+    void Read_File_of_String()
+    {
+        const std::filesystem::path stringFile = getDataDir() / "strings.txt";
+        auto getFile = [&]  {
+            std::fstream file(stringFile, std::ios::in);
+            if (!file.is_open() || !file.good()) {
+                std::println(std::cerr, "Failed to open file {}", stringFile.string());
+                throw std::runtime_error("Failed to open file " + stringFile.string());
+            }
+            return file;
+        };
+
+        {
+            auto file = getFile();
+            const auto strings = std::views::istream<std::string>(file)
+                | std::ranges::to<std::vector<std::string>>();
+
+            std::println("{}", strings);
+            // ["one", "two", "three", "for", "five"]
+        }
+
+        {
+            auto file = getFile();
+            const auto strings = std::views::istream<std::string>(file) |
+                std::views::filter([](const auto& s) {
+                    return s.contains("1") || s.contains("2");
+                }) |
+                std::ranges::to<std::vector<std::string>>();
+
+            std::println("{}", strings);
+            // ["one_1", "two_2"]
+        }
+
+        {
+            auto file = getFile();
+            const auto strings = std::views::istream<std::string>(file) |
+                std::views::filter([](const auto& s) {
+                    return s.contains("1") || s.contains("2");
+                }) |
+                std::views::transform([](const auto& s) {
+                    return std::format("({})", s);
+                }) |
+                std::ranges::to<std::vector<std::string>>();
+
+            std::println("{}", strings);
+            // ["(one_1)", "(two_2)"]
+        }
+    }
+}
+
 void Ranges::TestAll()
 {
-    Store::TestAll();
+    // Store::TestAll();
 
     // For_Each();
 
@@ -1461,6 +1549,12 @@ void Ranges::TestAll()
     // Ranges_To::Get_Even_Numbers_Mapping();
     // Containers_From_Ranges::CreateVectorFromRange();
     // Containers_From_Ranges::CreateVectorFromRange_Inplace();
+
+    // Istream::Read_Ints();
+    // Istream::Get_Strings_and_Floats();
+    // Istream::Read_Vector();
+    // Istream::Read_Vector_2();
+    Istream::Read_File_of_String();
 
     // Experiments();
 
