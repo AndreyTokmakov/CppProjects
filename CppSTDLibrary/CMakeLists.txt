@@ -79,7 +79,10 @@ add_executable(${PROJECT_NAME}
         Optional/Custom_Optional.cpp
 		PolymorphicMemoryResources/PolymorphicMemoryResources.cpp
 		Random/Random.cpp
-		Ranges/Ranges.cpp
+
+		Ranges_Views/Ranges.cpp
+		Ranges_Views/Store.cpp
+
 		ReferenceWrapper/ReferenceWrapper.cpp
 		SharedPtr/SharedPtrTests.cpp
 		SourceLocation/SourceLocation.cpp

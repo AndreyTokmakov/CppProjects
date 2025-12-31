@@ -66,7 +66,7 @@ Description : Cpp STD lib
 #include "ObjectOrientedProgramming/ConstexprVirtualFunctions.h"
 #include "Optional/Optional.h"
 #include "Random/Random.h"
-#include "Ranges/Ranges.h"
+#include "Ranges_Views/Ranges.hpp"
 #include "Reflection/Reflection.hpp"
 #include "ReferenceWrapper/ReferenceWrapper.h"
 #include "Streams/Streams.h"
@@ -159,13 +159,13 @@ int main([[maybe_unused]] int argc,
     // PolymorphicMemoryResources::TestAll();
     // Print::TestAll();
     // Random::TestAll();
-    // Ranges::TestAll();
+    Ranges::TestAll();
     // ReferenceWrapper::TestAll();
     // StarshipOperator::TestAll();
     // Streams::TestAll();
     // StringStream::TestAll();
     // String::TestAll();
-    StringView::TestAll();
+    // StringView::TestAll();
     // StructuredBinding::TestAll();
     // StrongTypes::TestAll();
     // Span::TestAll();
