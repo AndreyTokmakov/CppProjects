@@ -9,12 +9,10 @@ Description : Templates src
 
 #include <iostream>
 #include <string>
+#include <utility>
 #include <vector>
 #include <list>
 #include <array>
-#include <algorithm>
-#include <concepts>
-#include <utility>
 #include <algorithm>
 #include <cstdint>
 #include <functional>
@@ -22,29 +20,20 @@ Description : Templates src
 #include "../Helpers/Integer.h"
 #include "Templates.hpp"
 
-namespace
+namespace Templates
 {
-    template<typename T>
-    std::ostream& operator<<(std::ostream &stream,
-                             const std::vector<T> & collections) {
-        for (const T& i: collections)
-            stream << " " << i;
-        return stream;
-    }
-}
+    struct  A
+    {
+        virtual ~A() = default;
 
-namespace Templates {
-
-    class A {
-    public:
         virtual void info() const noexcept {
             std::cout << __FUNCTION__ << std::endl;
         }
     };
 
-    class B : public A {
-    public:
-        virtual void info() const noexcept override {
+    struct B : A
+    {
+        void info() const noexcept override {
             std::cout << __FUNCTION__ << std::endl;
         }
     };
@@ -55,38 +44,39 @@ namespace Templates {
 
     /////////////////////////////////
 
-    void Rank() {
-        std::cout << std::rank<int[1][2][3]>::value << std::endl;
-        std::cout << std::rank<int[][2][3][4]>::value << std::endl;
-        std::cout << std::rank<int>::value << std::endl;
+    void Rank()
+    {
+        std::cout << std::rank_v<int[1][2][3]> << std::endl;
+        std::cout << std::rank_v<int[][2][3][4]> << std::endl;
+        std::cout << std::rank_v<int> << std::endl;
     }
 
     void Is_Base_Of__Test() {
         std::cout << std::boolalpha;
-        std::cout << "a2b: " << std::is_base_of<A, B>::value << '\n';
-        std::cout << "b2a: " << std::is_base_of<B, A>::value << '\n';
-        std::cout << "c2b: " << std::is_base_of<C, B>::value << '\n';
-        std::cout << "Same types: " << std::is_base_of<C, C>::value << '\n';
+        std::cout << "a2b: " << std::is_base_of_v<A, B> << '\n';
+        std::cout << "b2a: " << std::is_base_of_v<B, A> << '\n';
+        std::cout << "c2b: " << std::is_base_of_v<C, B> << '\n';
+        std::cout << "Same types: " << std::is_base_of_v<C, C> << '\n';
     }
 
     void Is_Same() {
         std::cout << std::boolalpha;
 
-        std::cout << "is_same<int, int32_t> = " << std::is_same<int, int32_t>::value << std::endl;
-        std::cout << "is_same<int, int64_t> = " << std::is_same<int, int64_t>::value << std::endl;
-        std::cout << "is_same<float, int32_t> = " << std::is_same<float, int32_t>::value << std::endl;
+        std::cout << "is_same<int, int32_t> = " << std::is_same_v<int, int32_t> << std::endl;
+        std::cout << "is_same<int, int64_t> = " << std::is_same_v<int, int64_t> << std::endl;
+        std::cout << "is_same<float, int32_t> = " << std::is_same_v<float, int32_t> << std::endl;
 
         std::cout << "----------------" << std::endl;
 
-        std::cout << "is_same<int, int> = " << std::is_same<int, int>::value << std::endl;
-        std::cout << "is_same<int, unsigned int> = " << std::is_same<int, unsigned int>::value << std::endl;
-        std::cout << "is_same<int, signed int> = " << std::is_same<int, signed int>::value << std::endl;
+        std::cout << "is_same<int, int> = " << std::is_same_v<int, int> << std::endl;
+        std::cout << "is_same<int, unsigned int> = " << std::is_same_v<int, unsigned int> << std::endl;
+        std::cout << "is_same<int, signed int> = " << std::is_same_v<int, signed int> << std::endl;
 
         std::cout << "----------------" << std::endl;
 
-        std::cout << "is_same<char, char> = " << std::is_same<char, char>::value << std::endl;
-        std::cout << "is_same<char, unsigned char> = " << std::is_same<char, unsigned char>::value << std::endl;
-        std::cout << "is_same<char, signed char> = " << std::is_same<char, signed char>::value << std::endl;
+        std::cout << "is_same<char, char> = " << std::is_same_v<char, char> << std::endl;
+        std::cout << "is_same<char, unsigned char> = " << std::is_same_v<char, unsigned char> << std::endl;
+        std::cout << "is_same<char, signed char> = " << std::is_same_v<char, signed char> << std::endl;
 
         std::cout << "----------------" << std::endl;
 
@@ -100,12 +90,12 @@ namespace Templates {
     }
 
     template<typename T = int>
-    class Foo {
-    private:
+    class Foo
+    {
         T val;
 
     public:
-        Foo(T v) : val(v) {
+        explicit Foo(T v) : val(std::move(v)) {
         }
 
         void info() {
@@ -130,11 +120,11 @@ namespace Templates::Methods
 {
 
     template<typename T>
-    T* BuildArray(size_t size)
+    T* BuildArray(const size_t size)
     {
         static_assert(std::is_integral_v<T>, "This function is only designed for integral types.");
         T* d = new T[size];
-        for (T i = 0; i < static_cast<T>(size); i++)
+        for (size_t i = 0; i < static_cast<T>(size); ++i)
             d[i] = i;
         return d;
     }
@@ -143,19 +133,19 @@ namespace Templates::Methods
     T* BuildArrayEx(size_t size) {
         static_assert(std::is_integral_v<T>, "This function is only designed for integral types.");
         T* d = new T[size];
-        for (T i = 0; i < static_cast<T>(size); i++)
+        for (size_t i = 0; i < static_cast<T>(size); ++i)
             d[i] = i;
         return d;
     }
 
     void SimpleTemplate() {
-        int* data = BuildArray<int>(10);
+        const int* data = BuildArray<int>(10);
         for (int i = 0; i< 10; i++)
             std::cout << data[i] << std::endl;
     }
 
     void SimpleTemplate_DefaultType() {
-        int* data = BuildArrayEx(10);
+        const int* data = BuildArrayEx(10);
         for (int i = 0; i < 10; i++)
             std::cout << data[i] << std::endl;
     }
@@ -199,7 +189,8 @@ namespace Templates::Methods
     }
 
     void Compare_Raw_Arrays() {
-        int x[] = { 1, 2, 3 }, y[] = { 1, 2, 3, 4, 5 };
+        constexpr int x[] = { 1, 2, 3 };
+        const int y[] = { 1, 2, 3, 4, 5 };
         std::cout << std::boolalpha << less(x, y) << std::endl;
     }
 
@@ -261,15 +252,16 @@ namespace Templates::Methods
     }
 }
 
-namespace Templates::VariadicTemplates {
-
+namespace Templates::VariadicTemplates
+{
     template<typename... Args>
     auto adder(Args... args) {
         return (... + args);
         // or (args + ...)
     }
 
-    void Sum_Multiple_Variables() {
+    void Sum_Multiple_Variables()
+    {
         long sum = adder(1, 2, 3, 8, 7);
         std::cout << sum << std::endl;
 
@@ -278,9 +270,10 @@ namespace Templates::VariadicTemplates {
 
         std::cout << ssum << std::endl;
     }
+}
 
-    //////////////////////////////////////////////////////
-
+namespace Templates::VariadicTemplates
+{
     void print() {
         std::cout << "* * * Will be called at the very end * * * " << std::endl;
     }
@@ -295,10 +288,10 @@ namespace Templates::VariadicTemplates {
 
         print(1, 2, 3.14, "Pass me any number of arguments", "I will print\n");
     }
+}
 
-
-    ///////////////////////////////////////////////////////////////////////
-
+namespace Templates::VariadicTemplates
+{
     template<typename T, typename... Types>
     void print_sizes(T firstArg, Types... args) {
         std::cout << sizeof...(Types) << '\n'; // print number of remaining types
@@ -308,9 +301,10 @@ namespace Templates::VariadicTemplates {
     void Variadic_Sizeof() {
         print_sizes("qwerty", 1.4, 1u, false);
     }
+}
 
-    ///////////////////////////////////////////////////////////////////////////
-
+namespace Templates::VariadicTemplates
+{
     template<typename T1, typename... TN>
     constexpr bool isHomogeneous(T1, TN...) {
         return (std::is_same<T1, TN>::value && ...); // since C++17
@@ -320,10 +314,10 @@ namespace Templates::VariadicTemplates {
         std::cout << std::boolalpha << isHomogeneous<int, double, int>(1, 1, 1) << std::endl;
         std::cout << std::boolalpha << isHomogeneous<int, int, int>(1, 1, 1) << std::endl;
     }
+}
 
-
-    //-------------------------------------------------------------------------
-
+namespace Templates::VariadicTemplates
+{
     template<typename T>
     T adder(T v) {
         return v;
@@ -334,16 +328,18 @@ namespace Templates::VariadicTemplates {
         return first + adder(args...);
     }
 
-    void Sum_Values() {
-
-        auto result = adder(1, 2, 3, 4, 5);
+    void Sum_Values()
+    {
+        const int result = adder(1, 2, 3, 4, 5);
         std::cout << result << std::endl;
     }
+}
 
-    //-------------------------------------------------------------------------
-
+namespace Templates::VariadicTemplates
+{
     template<typename T>
-    bool pair_comparer(T a, T b) {
+    bool pair_comparer(T a, T b)
+    {
         // In real-world code, we wouldn't compare floating point values like
         // this. It would make sense to specialize this function for floating
         // point types to use approximate comparison.
@@ -355,18 +351,18 @@ namespace Templates::VariadicTemplates {
         return a == b && pair_comparer(args...);
     }
 
-
-    void Compare_Pairs() {
-
+    void Compare_Pairs()
+    {
         auto result = pair_comparer(1.5, 1.5, 2, 2, 6, 6);
         std::cout << std::boolalpha << result << std::endl;
 
         result = pair_comparer(1, 1, 1, 2);
         std::cout << std::boolalpha << result << std::endl;
     }
+}
 
-    //-------------------------------------------------------------------------
-
+namespace Templates::VariadicTemplates
+{
     template<typename T>
     bool all_equals(T a, T b) {
         return a == b;
@@ -384,9 +380,10 @@ namespace Templates::VariadicTemplates {
         result = all_equals(1, 2, 1, 1);
         std::cout << std::boolalpha << result << std::endl;
     }
+}
 
-    //----------------------------------------------------------------------------
-
+namespace Templates::VariadicTemplates
+{
     template <int a>
     int sum_Non_Template_Params() {
         return a;
@@ -404,9 +401,10 @@ namespace Templates::VariadicTemplates {
         x = sum_Non_Template_Params<1, 4, 3, 11>();
         std::cout << x << std::endl;
     }
+}
 
-    //========================================================================================================
-
+namespace Templates::VariadicTemplates
+{
     // When there is only two parameter left
     template<typename T>
     double sum_two(const T &a, const T &b) {
@@ -422,9 +420,10 @@ namespace Templates::VariadicTemplates {
     void Recursive_Expansion_Two() {
         sum_two(1, 2, 3, 4, 5);
     }
+}
 
-    //========================================================================================================
-
+namespace Templates::VariadicTemplates
+{
     template<typename... Ts>
     class Overload: Ts... {
     public:
@@ -435,24 +434,21 @@ namespace Templates::VariadicTemplates {
     Overload(Ts...)->Overload<Ts...>;
 
 
-
     template<typename T>
     class Base {
         T value {};
     public:
-        Base() { }
-        Base(T v) : value{ v } {}
+        Base() = default;
+        explicit Base(T v) : value{ v } {}
     };
 
-
     template<typename... Types>
-    class Multi : private Base<Types>...
+    class Multi : Base<Types>...
     {
     public:
         // derive all constructors:
         using Base<Types>::Base...;
     };
-
 
     void ExtendedUsingDeclarations()
     {
@@ -460,16 +456,14 @@ namespace Templates::VariadicTemplates {
     }
 }
 
-namespace Templates::Decltype {
-
+namespace Templates::Decltype
+{
     using namespace std::string_literals;
 
     template <class T, class U>
     auto mix(T Lhs, U Rhs) -> decltype(Lhs + Rhs) {
         return Lhs + Rhs;
     }
-
-    //////////////////////////////////////////////////////////
 
     int& foo(int& i) { return i; }
     float& foo(float& f) { return f; }
@@ -479,14 +473,16 @@ namespace Templates::Decltype {
         return foo(t);
     }
 
-    void Test() {
+    void Test()
+    {
         std::cout << typeid(mix(""s, "")).name() << std::endl;
         std::cout << typeid(mix(1, 3)).name() << std::endl;
         std::cout << typeid(mix(1, 3.3)).name() << std::endl;
         std::cout << typeid(mix(1, 3.3f)).name() << std::endl;
     }
 
-    void Test2() {
+    void Test2()
+    {
         int i = 1;
         std::cout << typeid(transparent_forwarder(foo(i))).name() << std::endl;
 
@@ -495,11 +491,8 @@ namespace Templates::Decltype {
     }
 }
 
-///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-namespace Templates::Forwarding {
-
-
+namespace Templates::Forwarding
+{
     template<class T>
     void __print_no_forward(T&& var) {
         var.printInfo();
@@ -510,9 +503,6 @@ namespace Templates::Forwarding {
         __print_no_forward(var);
     }
 
-
-
-
     template<class T>
     void __print(T&& var) {
         var.printInfo();
@@ -522,9 +512,6 @@ namespace Templates::Forwarding {
     void print(T&& var) {
         __print(std::forward<T>(var));
     }
-
-
-
 
     template<class... Args>
     void __print_integers(Args&&... args) {
@@ -537,29 +524,31 @@ namespace Templates::Forwarding {
         __print_integers(std::forward<Args>(args) ... );
     }
 
-    /////////////////////////////////////////////////////////////
-
-    void Test_No_Forward() {
+    void Test_No_Forward()
+    {
         Integer integer(111);
         print_no_forward(integer);
     }
 
-    void Test_Integer() {
+    void Test_Integer()
+    {
         Integer integer(123);
         print(integer);
     }
 
-    void Test_IntegerList() {
+    void Test_IntegerList()
+    {
         Integer integer1(11);
         Integer integer2(22);
 
         print_integers(integer1, integer2);
     }
+}
 
-    //-------------------------------------------------------------------------------------//
-
-    class Str {
-    private:
+namespace Templates::Forwarding
+{
+    class Str
+    {
         std::string value;
 
     public:
@@ -597,7 +586,8 @@ namespace Templates::Forwarding {
             std::cout << "[Destructor] (" << this->value << ")" << std::endl;
         }
 
-        inline virtual std::string getValue() const noexcept {
+        [[nodiscard]]
+        virtual std::string getValue() const noexcept {
             return this->value;
         }
 
@@ -616,7 +606,7 @@ namespace Templates::Forwarding {
             const Str str("Some_Test_String");
             str.printInfo();
 #if 0
-            // ERROR HERE. Cant consturct string using std::move
+            // ERROR HERE. Cant construct string using std::move
 			Str str1 = std::move(str);
 #endif
         }
@@ -877,18 +867,18 @@ namespace Templates::Compile_Time_IF {
 
     void ToStringTest() {
         {
-            std::string value = "SomeText";
-            std::string result = toString(value);
+            const std::string value = "SomeText";
+            const std::string result = toString(value);
             std::cout << value << " -> " << result << std::endl;
         }
         {
-            int value = 12345;
-            std::string result = toString(value);
+            constexpr int value = 12345;
+            const std::string result = toString(value);
             std::cout << value << " -> " << result << std::endl;
         }
         {
-            char value[] = "Some pain text";
-            std::string result = toString(value);
+            constexpr char value[] = "Some pain text";
+            const std::string result = toString(value);
             std::cout << value << " -> " << result << std::endl;
         }
     }
@@ -954,31 +944,8 @@ namespace Templates::Conditional
         }
     }
 
-
 };
 
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-namespace Templates::NontypeFunctionTemplates {
-
-    template<int Val, typename T>
-    constexpr T addValue(T x) {
-        return x + Val;
-    }
-
-    void AddValue() {
-        constexpr auto result = addValue<10>(5);
-        std::cout << "5 + 10 = " << result << std::endl;
-    }
-
-    void TransformArray() {
-        std::array<int, 10> data {1,2,3,4,5,6,7,8,9,10};
-        std::transform(data.begin(), data.end(), data.begin(), addValue<10, int>);
-        std::for_each(data.begin(), data.end(), [](int i) {std::cout << i << std::endl; });
-    }
-}
-
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 namespace Templates::Requires {
     using namespace std::string_view_literals;
@@ -1016,7 +983,7 @@ namespace Templates::PackExpansions {
             // base class initializer pack expansion
         }
 
-        Mixin(int v) : Types(v)... {
+        explicit Mixin(int v) : Types(v)... {
             // base class initializer pack expansion
         }
 
@@ -1029,17 +996,17 @@ namespace Templates::PackExpansions {
 
     struct Type1 {
         Type1() { std::cout << "Type1::Type1()" << std::endl; }
-        Type1(int value) { std::cout << "Type1::Type1(" << value << ")" << std::endl; }
+        explicit Type1(const int value) { std::cout << "Type1::Type1(" << value << ")" << std::endl; }
     };
 
     struct Type2 {
         Type2() { std::cout << "Type2::Type2()" << std::endl; }
-        Type2(int value) { std::cout << "Type2::Type2(" << value << ")" << std::endl; }
+        explicit Type2(const int value) { std::cout << "Type2::Type2(" << value << ")" << std::endl; }
     };
 
     struct Type3 {
         Type3() { std::cout << "Type3::Type3()" << std::endl; }
-        Type3(int value) { std::cout << "Type3::Type3(" << value << ")" << std::endl;}
+        explicit Type3(int value) { std::cout << "Type3::Type3(" << value << ")" << std::endl;}
     };
 
     void Create_Mixin_Class () {
@@ -1082,7 +1049,8 @@ namespace Templates::PackExpansions {
             std::cout << "Ty1::test()\n";
         }
 
-        void operator()() {
+        void operator()() const
+        {
             std::cout << "Ty1::operator()\n";
         }
 
@@ -1100,7 +1068,8 @@ namespace Templates::PackExpansions {
             std::cout << "Ty2::test()\n";
         }
 
-        void operator()() {
+        void operator()() const
+        {
             std::cout << "Ty2::operator()\n";
         }
 
@@ -1126,7 +1095,7 @@ namespace Templates::PackExpansions {
 
     template<typename T1, typename... TN>
     struct IsHomogeneous {
-        static constexpr bool value = (std::is_same<T1,TN>::value && ...);
+        static constexpr bool value = (std::is_same_v<T1,TN> && ...);
     };
 
     void IsHomogeneous_Test() {
@@ -1141,8 +1110,8 @@ namespace Templates::PackExpansions {
 namespace Templates::StaticMembersInTemplates {
 
     template<typename T>
-    class Base {
-    private:
+    class Base
+    {
         inline static size_t counter{ 0 };
 
     public:
@@ -1151,19 +1120,19 @@ namespace Templates::StaticMembersInTemplates {
             std::cout << "Base<" << typeid(T).name() << ">::~Base()" << std::endl;
         }
 
-        inline size_t getCounter() const noexcept {
+        [[nodiscard]] size_t getCounter() const noexcept {
             return counter;
         }
 
-        inline void printInfo() const noexcept {
+        void printInfo() const noexcept {
             std::cout << counter << std::endl;
         }
 
-        inline void setCounter(size_t new_value) noexcept {
+        void setCounter(const size_t new_value) noexcept {
             counter = new_value;
         }
 
-        inline void incrementCounter() noexcept {
+        void incrementCounter() noexcept {
             counter++;
         }
     };
@@ -1203,16 +1172,16 @@ namespace Templates::Friends {
     class Keeper;
 
     template<typename T>
-    class Object {
-    private:
+    class Object
+    {
         T value;
 
         friend class Keeper<T>;
     };
 
     template<typename T>
-    class Keeper {
-    private:
+    class Keeper
+    {
         Object<T> data;
 
     public:
@@ -1265,7 +1234,7 @@ namespace Templates::Applications_And_Examples
         return Logger<R(Args...)>(std::function<R(Args...)>(func), name);
     }
 
-    double add(double a, double b)
+    double add(const double a, const double b)
     {
         return a + b;
     }
@@ -1346,7 +1315,6 @@ namespace Templates::OperatorOverload
 {
     class Customer
     {
-    private:
         std::string name;
     public:
         explicit Customer(std::string n) : name(std::move(n)) {
@@ -1493,8 +1461,6 @@ void Templates::TestAll()
     // Is_Same();
     // Rank();
 
-    // NontypeFunctionTemplates::AddValue();
-    // NontypeFunctionTemplates::TransformArray();
 
     // Compile_Time_IF::ToStringTest();
     // Compile_Time_IF::IsNegative();

@@ -12,9 +12,29 @@ Description : NTTP.cpp
 
 #include <iostream>
 #include <array>
-#include <vector>
-#include <map>
 #include <numeric>
+
+
+namespace Templates::NTTP
+{
+    template<int Val, typename T>
+    constexpr T addValue(T x) {
+        return x + Val;
+    }
+
+    void AddValue()
+    {
+        constexpr auto result = addValue<10>(5);
+        std::cout << "5 + 10 = " << result << std::endl;
+    }
+
+    void TransformArray()
+    {
+        std::array<int, 10> data {1,2,3,4,5,6,7,8,9,10};
+        std::transform(data.begin(), data.end(), data.begin(), addValue<10, int>);
+        std::for_each(data.begin(), data.end(), [](int i) {std::cout << i << std::endl; });
+    }
+}
 
 
 namespace Templates::NTTP::One
@@ -114,8 +134,12 @@ namespace Templates::NTTP::Lambda_as_NTTP
 
 void Templates::NTTP::TestAll()
 {
+
+    AddValue();
+    TransformArray();
+
     // One::ArrayAsTemplateParam();
     // Function_With_Param::test();
     // Type_With_Param::test();
-    Lambda_as_NTTP::test();
+    // Lambda_as_NTTP::test();
 };
