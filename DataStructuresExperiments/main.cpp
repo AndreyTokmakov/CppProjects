@@ -12,7 +12,6 @@ Description : C++ data structures experiments
 #include "DVector.h"
 #include "EventLoop.h"
 #include "LRUCache.h"
-#include "MaxStack.h"
 #include "MinStack.h"
 #include "RateLimiter.h"
 #include "RateLimiterEx.h"
@@ -38,7 +37,6 @@ int main([[maybe_unused]] int argc,
     // DVector::TestAll();
     // EventLoop::TestAll();
     // LRUCache::TestAll();
-    // MaxStack::TestAll();
     // MinStack::TestAll();
     // MinMaxStack::TestAll();
     // RateLimiter::TestAll();

@@ -26,7 +26,6 @@ add_executable(${PROJECT_NAME}
 		DVector/DVector.h DVector/DVector.cpp
 		EventLoop/EventLoop.h EventLoop/EventLoop.cpp
 		LRUCache/LRUCache.h LRUCache/LRUCache.cpp
-		MaxStack/MaxStack.h MaxStack/MaxStack.cpp
 		MinStack/MinStack.h MinStack/MinStack.cpp
 		RingBuffer/RingBuffer.h RingBuffer/RingBuffer.cpp
 		RateLimiter/RateLimiter.h RateLimiter/RateLimiter.cpp

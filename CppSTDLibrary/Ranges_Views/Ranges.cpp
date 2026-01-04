@@ -1465,6 +1465,30 @@ namespace Ranges::Istream
     }
 }
 
+namespace Ranges::As_Const_View
+{
+    void Create_Const_View()
+    {
+        int x[]{1, 2, 3, 4, 5};
+
+        {
+            std::ranges::drop_view mutableView = x | std::views::drop(2);
+            mutableView[0]++;
+
+            std::println("{}", mutableView);
+            // [4, 4, 5]
+        }
+
+        {
+            auto mutableView = x | std::views::drop(2) | std::views::as_const;
+            // mutableView[0]++; // <----------- WILL NOT COMPILE
+
+            std::println("{}", mutableView);
+            // [4, 4, 5]
+        }
+    }
+}
+
 void Ranges::TestAll()
 {
     // Store::TestAll();
@@ -1516,7 +1540,6 @@ void Ranges::TestAll()
     // Algorithms::Sort_BackWards();
 
     // Ranges_Sort::Sort_Custom_Type();
-
     // Max_Element::Find_Max_Element_by_Class_Field();
 
     // Algorithms::Reverse();
@@ -1554,7 +1577,9 @@ void Ranges::TestAll()
     // Istream::Get_Strings_and_Floats();
     // Istream::Read_Vector();
     // Istream::Read_Vector_2();
-    Istream::Read_File_of_String();
+    // Istream::Read_File_of_String();
+
+    As_Const_View::Create_Const_View();
 
     // Experiments();
 
