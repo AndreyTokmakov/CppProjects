@@ -226,18 +226,16 @@ namespace Ranges
 
     void Concat_1()
     {
-        std::vector<std::string> v1{"world", "hi"}, v2 { "abc", "xyz" };
+        std::vector<std::string> v1{"world", "-"}, v2 { "world", " => " };
         std::string arr[]{"one", "two", "three"};
 
-        /*
         auto v1_rev = v1 | std::views::reverse;
         auto concat = std::views::concat(v1_rev, v2, arr);
 
-        concat[0] = "hello"; // access and write
+        // concat[0] = "hello"; // access and write
+        std::println("{} ", concat);
 
-        for (auto& elem : concat)
-            std::print("{} ", elem);
-        */
+        // ["-", "world", "world", " => ", "one", "two", "three"]
     }
 }
 
@@ -1515,7 +1513,7 @@ void Ranges::TestAll()
     // Join::rangeJoinStyle();
     // Join::Join_Get_ClassParameters();
 
-    // Concat_1();
+    Concat_1();
 
     // Split::Split_String_Simple();
     // Split::Split_Non_String();
@@ -1579,7 +1577,7 @@ void Ranges::TestAll()
     // Istream::Read_Vector_2();
     // Istream::Read_File_of_String();
 
-    As_Const_View::Create_Const_View();
+    // As_Const_View::Create_Const_View();
 
     // Experiments();
 
