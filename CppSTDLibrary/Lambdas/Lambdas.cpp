@@ -219,9 +219,29 @@ namespace Lambdas::Capture
             std::cout << func3() << std::endl;
         }
     }
-
 }
 
+
+namespace Lambdas::Capture
+{
+	template <class... Args>
+	void captureTest(Args... args)
+	{
+		const auto lambda = [args...] {
+			const auto tup = std::make_tuple(args...);
+			std::cout << "args size : " << sizeof...(args) << "\n";
+			std::cout << "tuple size: " << std::tuple_size_v<decltype(tup)> << "\n";
+			std::cout << "tuple 1st : "  << std::get<0>(tup) << "\n\n";
+		};
+		lambda();
+	}
+
+	void capturing_as_pack()
+	{
+		captureTest(1, 2, 3, 4);
+		captureTest("Hello World", 10.0f);
+	}
+}
 
 
 namespace Lambdas {
@@ -504,12 +524,12 @@ namespace Lambdas {
     auto func1 = []() noexcept -> int { return x + 1; };
     auto func2 = [x = x]() noexcept -> int { return x + 1; };
 
-    void Handle_Global_Varibles() {
+    void Handle_Global_Variables() {
         x = 10;
         std::cout << "func1 = " << func1() << "   func2 = " << func2() << std::endl;
     }
 
-    void Handle_Global_Varibles2()
+    void Handle_Global_Variables2()
 	{
         [[maybe_unused]] int x = 10;
         std::cout << "func1 = " << func1() << "   func2 = " << func2() << std::endl;
@@ -698,67 +718,6 @@ namespace Lambdas
 		std::cout << x << std::endl;
 	}
 
-	//----------------------------------------------------------------------------------------------------------------------------//
-
-	template<typename L1, typename L2>
-	struct S : L1, L2 {
-		S(L1 l1, L2 l2) : L1(std::move(l1)), L2(std::move(l2)) { }
-		using L1::operator();
-		using L2::operator();
-	};
-
-
-	void Inheriting_From_Lambdas()
-    {
-		auto f1 = []()-> std::string {
-            return "Hello world!";
-        };
-		auto f2 = [](const std::string& text)-> void {
-            std::cout << "Input text: " << text << std::endl;
-        };
-		auto compose = S(f1, f2);
-
-
-		//compose("123");
-		auto result = compose();
-
-        std::cout << result << std::endl;
-	}
-
-    //----------------------------------------------------------------------------------------------------------------------------//
-
-
-    template <class ... Ts>
-    struct Overloader: Ts... {
-        /*
-        template <class ... Types>
-        overload(Types&& ... params) : Ts{ std::forward<Types>(params) }... {
-            // Impl
-        }
-        */
-
-        using Ts::operator()...;
-    };
-
-
-    void Overload_Example()
-    {
-        auto F = Overloader {
-            [](int a) { std::cout << "INT: " << a << std::endl; },
-            [](float f) { std::cout << "Float: " << f << std::endl; },
-            [](std::string str) { std::cout << "String: " << str << std::endl; }
-        };
-
-
-        // std::variant<int, float, std::string> var = 2;
-        // std::visit(F, var);
-
-        F(10);
-        F(10.0f);
-        F("10");
-    }
-
-    //----------------------------------------------------------------------------------------------------------------------------//
 
 	template<typename... Args>
 	void printer(Args&&... args) {
@@ -868,30 +827,6 @@ namespace Lambdas
 		call(task2, "");
 	}
 };
-
-namespace Lambdas::Lambda_With_Concepts
-{
-
-    template <typename T>
-    concept PlusOperator = requires(T type) {
-        { type + type };
-    };
-
-    void PlusFunction()
-    {
-        using namespace std::string_literals;
-        auto plus = [] <PlusOperator T, PlusOperator ...Args> (T first, Args ...args)
-                requires ( std::is_same_v<T, Args> && ... ) {
-            return (first + ... + args);
-        };
-
-        std::cout << plus(1) << std::endl; // Prints: 1
-        std::cout << plus(1, 4, 5) << std::endl; // Prints: 10
-        std::cout << plus(2.3, 4.5, 5.6) << std::endl; // Prints: 12.4
-        std::cout << plus("Template"s, " "s, "Lambda"s, " "s, "Expression"s) << std::endl;
-    }
-}
-
 
 namespace Lambdas::High_Order_Function {
 
@@ -1114,6 +1049,33 @@ namespace Lambdas::Concepts
 	}
 }
 
+namespace Lambdas::Concepts
+{
+	template <typename T>
+	concept PlusOperator = requires(T type) {
+		{ type + type };
+	};
+
+	void Check_support_Plus_Operation()
+	{
+		using namespace std::string_literals;
+		auto plus = [] <PlusOperator T, PlusOperator ...Args> (const T& first, const Args& ...args)
+				requires ( std::is_same_v<T, Args> && ... ) {
+			return (first + ... + args);
+		};
+
+		std::cout << plus(1) << std::endl;
+		std::cout << plus(1, 4, 5) << std::endl;
+		std::cout << plus(2.3, 4.5, 5.6) << std::endl;
+		std::cout << plus("Template"s, " "s, "Lambda"s, " "s, "Expression"s) << std::endl;
+
+		// 1
+		// 10
+		// 12.4
+		// Template Lambda Expression
+	}
+}
+
 
 namespace Lambdas::Constexpr_Constevel_Lambda {
 
@@ -1144,7 +1106,103 @@ namespace Lambdas::Constexpr_Constevel_Lambda {
 }
 
 
+namespace Lambdas_Inheritance__Overload
+{
+	template<typename L1, typename L2>
+	struct S : L1, L2
+	{
+		S(L1 l1, L2 l2) : L1(std::move(l1)), L2(std::move(l2)) { }
+		using L1::operator();
+		using L2::operator();
+	};
+
+	void Derive_from_Two_Lambdas__Simple()
+	{
+		auto f1 = []()-> std::string {
+			return "Hello world!";
+		};
+		auto f2 = [](const std::string& text) {
+			std::cout << "Input text: " << text << std::endl;
+			return text;
+		};
+		const auto compose = S(f1, f2);
+
+		const auto result1 = compose();
+		const auto result2 = compose("123");
+
+		std::cout << result1 << std::endl;
+		std::cout << result2 << std::endl;
+
+		// Input text: 123
+		// Hello world!
+		// 123
+	}
+}
+
+
+
 namespace Lambdas_Inheritance
+{
+	template <class ... Types>
+	struct Overloader: Types... {
+		using Types::operator()...;
+	};
+
+	void Overload_Example()
+	{
+		const auto callable = Overloader {
+			[](const int a)   { std::cout << "Int   : " << a << std::endl; },
+			[](const float f) { std::cout << "Float : " << f << std::endl; },
+			[](const std::string& str) { std::cout << "String: " << str << std::endl; }
+		};
+
+		// std::variant<int, float, std::string> var = 2;
+		// std::visit(F, var);
+
+		callable(10);
+		callable(10.0f);
+		callable("10");
+
+		// Int   : 10
+		// Float : 10
+		// String: 10
+	}
+}
+
+
+namespace Lambdas_Inheritance__Overload
+{
+	template<typename Lambda>
+	struct Wrapper: Lambda
+	{
+		explicit Wrapper(Lambda f) : Lambda(f){}
+		using Lambda::operator();
+	};
+
+	template<typename Lambda>
+	Wrapper<Lambda> makeWrapper(Lambda&& lambda){
+		return Wrapper<Lambda>(std::forward<Lambda>(lambda));
+	}
+
+	void MakeDerived_using_CTAD_1()
+	{
+		const auto callable = makeWrapper([]{
+			std::cout << "Hey-1" << std::endl;
+		});
+		callable();
+	}
+
+	void MakeDerived_using_CTAD_2()
+	{
+		auto lambda = []{
+			std::cout << "Hey-2" << std::endl;
+		};
+		const Wrapper callable {lambda};
+		callable();
+	}
+}
+
+namespace Lambdas_Inheritance__Overload
 {
 	template<class Lambda>
 	struct DerivedFromLambda : public Lambda
@@ -1484,10 +1542,7 @@ namespace Lambdas::Capture_Pitfalls
 }
 
 
-namespace Lambdas_Inheritance
-{
 
-}
 
 void Lambdas::TestAll()
 {
@@ -1500,6 +1555,7 @@ void Lambdas::TestAll()
 	// Capture::Capturing_Parameter_Packs();  // By REF, MOVE and COPY
     // Capture::Capture_This();
     // Capture::Capture_FunctionCallResult_Global();
+    // Capture::capturing_as_pack();
 
     // Capture_Pitfalls::Creation_Lifetime_Race();
     // Capture_Pitfalls::CopyByValue_LargeObject();
@@ -1516,23 +1572,19 @@ void Lambdas::TestAll()
 	// Lambdas::Statics_In_Lambda();
 	// Lambdas::Statics_In_Lambda_2();
 	 
-	// Lambdas::Handle_Global_Varibles();
-	// Lambdas::Handle_Global_Varibles2();
+	// Lambdas::Handle_Global_Variables();
+	// Lambdas::Handle_Global_Variables2();
 
 	// Lambdas::Determine_TypeOf_VectorParameter();
 	// Lambdas::Determine_TypeOf_VectorParameter_2_Constexpr();
 
 	// Lambdas::Lambda_Itialyzed_With_Another_Lambda();
 	// Lambdas::LambdasWithDestructors();
-	// Lambdas::Inheriting_From_Lambdas();
-	// Lambdas::Overload_Example();
 
 	// Lambdas::Template_Lambda();
 	// Lambdas::Template_Lambda_Default();
 	// Lambdas::Call_Lambda_InPlace();
-
 	// Lambdas::Invoke_Lambda();
-
 	// Lambdas::Get_Lambda_Return_Type();
 
 	// RecursiveLambda::Recursive_Lambda();
@@ -1543,28 +1595,26 @@ void Lambdas::TestAll()
 
 	// Lambdas::Get_Lambda_Type();
 
-
 	// Shared_Lambda_Wrapper::create_and_share_lambda();
 	// Shared_Lambda_Wrapper::create_and_share_lambda_as_class_variable();
-
-
-	// Tests::_TEST_();
-	// Tests::TYPE_TEST_();
-	// Tests::VECTOR_OF_LAMBDAS();
 
     // Parameter_Pack_Expansion::lambda_params_pack_expansion();
     // Parameter_Pack_Expansion::lambda_captured_parameter_copy();
 
-
     // Concepts::Using_Existing_STD_Concepts();
     // Concepts::Using_Required_Keyword();
     // Concepts::Constrain_Lambda_with_Concepts();
+	// Concepts::Check_support_Plus_Operation();
 
+
+	// Lambdas_Inheritance::MakeDerived_using_CTAD_1();
+	// Lambdas_Inheritance::MakeDerived_using_CTAD_2();
 	// Lambdas_Inheritance::LambdaAsBaseClass();
 	// Lambdas_Inheritance::MultipleInheritanceDemo();
 	// Lambdas_Inheritance::MultipleInheritanceDemoTwo();
-	Lambdas_Inheritance::Derive_From_Lambda_call_Operator();
-
+	// Lambdas_Inheritance::Derive_From_Lambda_call_Operator();
+	// Lambdas_Inheritance::Derive_from_Two_Lambdas__Simple();
+	Lambdas_Inheritance::Overload_Example();
 
 	// High_Order_Function::PredicateComposition_WhenAll();
 	// High_Order_Function::PredicateComposition_WhenAll_Concepts();
@@ -1573,5 +1623,8 @@ void Lambdas::TestAll()
 	// Constexpr_Constevel_Lambda::ConstexprLambda();
 	// Constexpr_Constevel_Lambda::Constevel_Lambda();
 
-    // Lambda_With_Concepts::PlusFunction();
+
+	// Tests::_TEST_();
+	// Tests::TYPE_TEST_();
+	// Tests::VECTOR_OF_LAMBDAS();
 }
