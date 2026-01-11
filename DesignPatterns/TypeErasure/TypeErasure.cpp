@@ -242,13 +242,11 @@ void TypeErasure::Test()
 {
     // ExperimentFirst::Test();
     // TypeErasure_Two::Test();
-    TypeErasure_Simple::Test();
+    // TypeErasure_Simple::Test();
+    TypeErasure_Function::Test();
+    // TypeErasure_VoidType::test();
+    // TypeErasure_CallOperator_Test();
 
     // ExperimentSecond::Test();
-
-
-    // TypeErasure_VoidType::test();
-
-    // TypeErasure_CallOperator_Test();
 };
 

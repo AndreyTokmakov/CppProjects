@@ -13,3 +13,9 @@ https://www.youtube.com/watch?v=SJ0NFLpR9vE
 
 
 https://medium.com/@massimiliano.bastia92/c-static-reflection-an-overview-of-the-metaprogramming-paradigm-shift-4cc2ca49a2c6
+
+
+# C++26 - What's In It For You? - Marc Gregoire - CppCon 2025
+# - небольшой пример для ENUM
+
+https://youtu.be/PcidhLUYp-4?t=272

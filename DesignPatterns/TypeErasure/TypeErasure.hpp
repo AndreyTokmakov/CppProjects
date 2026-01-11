@@ -13,5 +13,6 @@ Description : TypeErasure
 namespace TypeErasure { void Test(); };
 namespace TypeErasure_Two { void Test(); }
 namespace TypeErasure_Simple { void Test();}
+namespace TypeErasure_Function { void Test();}
 
 #endif //! CPPPROJECTS_TYPEERASURE_H

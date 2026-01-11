@@ -60,10 +60,13 @@ add_executable(${PROJECT_NAME}
 		Visitor/StockVisitor.cpp
 		Visitor/DynamicComponentsVisitor.cpp
 		Builder/HtmlBuilder.cpp
+
 		TypeErasure/TypeErasure.cpp
 		TypeErasure/TypeErasure_CallOperator.cpp
 		TypeErasure/TypeErasure_Simple.cpp
 		TypeErasure/TypeErasure_Two.cpp
+		TypeErasure/Function.cpp
+
 		CopyAndSwap/CopyAndSwap.cpp
 		TagDispatching/TagDispatching.cpp
 		TagDispatching/TagDispatching_RegisterIO.cpp
