@@ -108,13 +108,190 @@ namespace Auto
     }
 }
 
+namespace Auto::Deduction_Rules
+{
+    int foo(int x){
+        return x;
+    }
+
+    void examples()
+    {
+        {
+            // auto a = 5, b = 0.1;  /** Compiler error **/
+        }
+
+        {
+            auto a { 0uz };
+            static_assert(std::is_same_v<decltype(a), size_t>);
+        }
+
+        {
+            int x;
+            auto a = &x; // --> int*
+            static_assert(std::is_same_v<decltype(a), int*>);
+        }
+
+        {
+            int x[5];
+            auto a = x; // --> int*
+            static_assert(std::is_same_v<decltype(a), int*>);
+        }
+
+        {
+            auto a = nullptr; // --> nullptr_t
+            static_assert(std::is_same_v<decltype(a), nullptr_t>);
+        }
+
+        {
+            auto a = {1, 2, 3}; // std::initializer_list<int>>
+            static_assert(std::is_same_v<decltype(a), std::initializer_list<int>>);
+        }
+
+        {
+            auto a = {17}; // std::initializer_list<int>>
+            static_assert(std::is_same_v<decltype(a), std::initializer_list<int>>);
+
+        }
+
+        {
+            // auto a {1, 2, 3};  /** Compiler error **/
+        }
+
+        {
+            auto a = foo;  /// ---> Function pointer: int(*)(int
+            static_assert(std::is_same_v<decltype(a), int(*)(int) >);
+        }
+
+        {
+            decltype(auto) a = (foo);
+            static_assert(std::is_same_v<decltype(a), int(&)(int) >);
+        }
+
+        {
+            volatile const int x = 1;
+            auto a = x;
+            static_assert(std::is_same_v<decltype(a), int>);
+
+            // We strip all modifiers off x, so that results in an int.
+            // Thus, auto is deduced as int. auto always drops top-level CV qualifiers.
+        }
+
+        {
+            volatile const int x = 1;
+            decltype(auto) a = x;
+            static_assert(std::is_same_v<decltype(a), volatile const int>);
+        }
+
+        {
+            volatile const int x = 1;
+            auto a = x;
+            static_assert(std::is_same_v<decltype(a), int>);
+        }
+
+        {
+            const int& x{42};
+            auto& a = x;
+            static_assert(std::is_same_v<decltype(a), const int&>);
+        }
+
+        {
+            int x;
+            int& y = x;
+            auto a = y;
+
+            static_assert(std::is_same_v<decltype(a), int>);
+        }
+
+        {
+            int x;
+            auto& a = x;
+            static_assert(std::is_same_v<decltype(a), int&>);
+        }
+
+        {
+            int x;
+            auto&& a = x;
+
+            static_assert(std::is_same_v<decltype(a), int&>);
+            // auto&& v is a forwarding reference. x is an lvalue and lvalues bind to lvalue references. Here, we get an lvalue reference.
+        }
+
+        {
+            auto func = [] () -> int {
+                return 1;
+            };
+
+            auto&& a = func();
+            static_assert(std::is_same_v<decltype(a), int&&>);
+
+            // The return value of the function call is a prvalue.
+            // It will bind to an rvalue reference. So, the type of v is deduced as int&&.
+        }
+
+        {
+            int x;
+            auto func = [&] () -> int& {
+                return x;
+            };
+
+            auto&& a = func();
+            static_assert(std::is_same_v<decltype(a), int&>);
+
+            // The result of the function call y() is an lvalue, so the type of v is deduced to be int&.
+        }
+
+        {
+            int x;
+            auto a = (x);
+
+            static_assert(std::is_same_v<decltype(a), int>);
+        }
+        {
+            int x;
+            decltype(auto) a = (x);
+
+            static_assert(std::is_same_v<decltype(a), int&>);
+            // The expression (x) is an lvalue, so decltype(auto) deduces to an lvalue reference of type int&.
+        }
+
+        {
+            int x;
+            auto a = std::move(x);
+            static_assert(std::is_same_v<decltype(a), int>);
+        }
+
+        {
+            int x;
+            decltype(auto) a = std::move(x);
+            static_assert(std::is_same_v<decltype(a), int&&>);
+        }
+
+        {
+            struct Base {
+                auto foo() {
+                    return this;
+                };
+            };
+
+            class Derived : public Base {};
+
+            Derived d;
+            auto a = d.foo();
+
+            static_assert(std::is_same_v<decltype(a), Base*>);
+        }
+    }
+}
+
 
 void Auto::TestAll()
 {
     // Auto::SimpleTest();
+    // Test_GetReference();
+    // Test_LoseReference_Copy();
 
-    Test_GetReference();
-    Test_LoseReference_Copy();
+
+    Deduction_Rules::examples();
 };
 
 /** https://www.volatileint.dev/posts/auto-type-deduction-gauntlet/#advanced **/

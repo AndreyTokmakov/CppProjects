@@ -11,15 +11,26 @@ Description : PackIndexing.cpp
 
 namespace PackIndexing
 {
+
+// INFO: https://compiler-explorer.com/
+
+
 #if 0
     template <typename... T>
     constexpr auto first(T... values) -> T...[0] {
         return values...[0];
     }
 
-    template <typename... T>
-    constexpr auto last(T... values) -> T...[sizeof...(values)-1] {
-        return values...[sizeof...(values)-1];
+    template <typename... Ts>
+    constexpr auto last(Ts ... values) -> Ts ... [sizeof ... (values) - 1] {
+        return values ... [sizeof ... (values) - 1];
+    }
+
+    template<size_t... Is, typename... Args>
+    constexpr auto select(Args&&... args)
+    {
+        auto tup = std::forward_as_tuple(args...);
+        return std::make_tuple(std::get<Is>(tup)...);
     }
 
     void PackIndexingDemo()
@@ -28,6 +39,8 @@ namespace PackIndexing
         static_assert(first(1, 2, 3, 4, 5) == 1);
         static_assert(last(1, 2, 3, 4, 5) == 5);
         static_assert(first(1, 2, 3, 4, 5) + last(1, 2, 3, 4, 5) == 6);
+
+        static_assert(select<2,1,0>(1, 2, 3, 4, 5) == std::tuple{3,2,1});
     }
 #endif
 }
