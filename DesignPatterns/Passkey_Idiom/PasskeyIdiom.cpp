@@ -65,18 +65,18 @@ namespace demo2
 {
     class Secret
     {
-        class ConstructorKey
+        class AccessKey
         {
             friend struct SecretFactory;
 
-            ConstructorKey() = default;
-            ConstructorKey(ConstructorKey const&) = default;
+            AccessKey() = default;
+            AccessKey(AccessKey const&) = default;
         };
 
     public:
 
         // Whoever can provide a key has access:
-        explicit Secret(std::string str, ConstructorKey) : data(std::move(str)) {
+        explicit Secret(std::string str, AccessKey) : data(std::move(str)) {
             std::cout << "Secret::Secret(" << data << ")" << std::endl;
         }
 
@@ -90,6 +90,9 @@ namespace demo2
         std::string data {};
     };
 
+    // 1. Do not have access to Secret private data
+    // 2. yet can create Secret objects
+    // 3. .. and Secret can be created ONLY buy  SecretFactory
     struct SecretFactory
     {
         Secret getSecret(std::string str)
@@ -107,7 +110,7 @@ namespace demo2
 
     void test()
     {
-        /** ERROR: Secret::ConstructorKey::ConstructorKey() is private **/
+        /** ERROR: Secret::AccessKey::AccessKey() is private **/
         // Secret s { "foo?", {} };
 
         SecretFactory sf;

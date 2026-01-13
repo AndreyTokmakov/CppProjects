@@ -109,7 +109,7 @@ int main([[maybe_unused]]  int argc,
 
     // CRTP::Test();
     // NVI_SimpleExample::TestAll();
-    TypeErasure::Test();
+    // TypeErasure::Test();
     // RAII::Test();
     // CopyAndSwap::TEST_ALL();   ---- TESTs
     // TagDispatching::Test();
@@ -119,7 +119,7 @@ int main([[maybe_unused]]  int argc,
     // LazyComputation::TestAll();
 
     // AccessToken::TestAll();
-    // PasskeyIdiom::TestAll();
+    PasskeyIdiom::TestAll();
 
 
     // ExecutorAdapter::TestAll();
