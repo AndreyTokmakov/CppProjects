@@ -20,6 +20,7 @@ add_executable(${PROJECT_NAME}
 		LockFreeDataStructures/LockFreeQueue.cpp
 		Finalizers/Finalizers.cpp
 		FlatMap/FlatMap.cpp
+		FlatMap_Fast/FlatMap.cpp
 		Optional/Optional.cpp
 		Expected/Expected.cpp
 		ThreadsafeQueue/ThreadsafeQueue.cpp
