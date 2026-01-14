@@ -40,10 +40,27 @@ $10 \times 16^1 + 7 \times 16^0 = 160 + 7 = 167$
     Big-endian: 12 34 56 78
 
 -----
+🧨 Вариация с аналога htons() с использованием 'std::byteswap(v)'
+
+    template <std::integral T>
+    constexpr T toBigEndian(T v)
+    {
+        static_assert(std::is_integral_v<T>);
+        if constexpr (std::endian::native == std::endian::little)
+            return std::byteswap(v);
+        else
+            return v;
+    }
+
+    std::cout << toBigEndian<uint16_t>(443) << std::endl;
+
+-----
+
+
 
 Ниже — **практичный cheat-sheet часто используемых HEX-значений**, именно тех, которые **реально встречаются в C/C++**, embedded, протоколах и low-level коде.
 
----
+
 
 ## 🔢 Базовые значения (байт)
 
