@@ -195,6 +195,17 @@ namespace bytes::handle_message
     }
 }
 
+namespace bytes::std_byte
+{
+    void byte_to_int()
+    {
+        constexpr std::byte b = std::byte { 0xA7 };
+        constexpr int32_t x = std::to_integer<int32_t>(b);
+
+        std::cout << x << std::endl; // --> 167
+    }
+}
+
 void bytes::TestAll()
 {
     // ToInt();
@@ -206,5 +217,7 @@ void bytes::TestAll()
     // hex::print_bytes_as_hex();
     // hex::hex_string_to_int();
 
-    handle_message::handeUIntBuffer();
+    // handle_message::handeUIntBuffer();
+
+    std_byte::byte_to_int();
 };
