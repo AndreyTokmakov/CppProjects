@@ -109,10 +109,10 @@ int main([[maybe_unused]] int argc,
     // Asserts::TestAll();
     // Atomic::TestAll();
     // Attributes::TestAll();
-    Auto::TestAll();
+    // Auto::TestAll();
     // BitSet::TestAll();
     // BitwiseOperation::TestAll();
-    // Byte::TestAll();
+    bytes::TestAll();
     // Chrono::TestAll();
     // ContextControl::TestAll();
     // Comparators::TestAll();

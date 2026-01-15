@@ -11,8 +11,9 @@
 
 #include <iostream>
 #include <iomanip>
+#include <spdlog/fmt/bundled/core.h>
 
-namespace Byte
+namespace bytes
 {
     template <typename T>
     auto only_return_int_type_bar(std::byte& b) {
@@ -46,7 +47,7 @@ namespace Byte
     */
 };
 
-namespace Byte::Size
+namespace bytes::Size
 {
 
     class Class_3_Byte
@@ -72,21 +73,9 @@ namespace Byte::Size
     }
 }
 
-void printBytes_Hex()
-{
-    unsigned char bytes[] = {0x1A, 0xB4, 0xC8, 0x5F, 0x02};
 
-    // Print bytes as hexadecimal
-    for (unsigned char byte : bytes) {
-        std::cout << std::hex << std::setw(2) << std::setfill('0') << static_cast<int>(byte) << " ";
-    }
 
-    std::cout << std::endl;
-
-    // 1a b4 c8 5f 02
-}
-
-namespace Byte::Swap_Bytes
+namespace bytes::Swap_Bytes
 {
     template<std::integral T>
     void dump(T v, const char term = '\n')
@@ -134,12 +123,88 @@ namespace Byte::Swap_Bytes
     }
 }
 
-void Byte::TestAll()
+namespace bytes::hex
+{
+    void hex_string_to_int()
+    {
+        const int value = std::stoi("A7", nullptr, 16);
+        std::cout << value << std::endl;
+        // ---> 167
+    }
+
+    void print_bytes_as_hex()
+    {
+        unsigned char bytes[] = {0x1A, 0xB4, 0xC8, 0x5F, 0x02};
+
+        // Print bytes as hexadecimal
+        for (unsigned char byte : bytes) {
+            std::cout << std::hex << std::setw(2) << std::setfill('0') << static_cast<int>(byte) << " ";
+        }
+
+        std::cout << std::endl;
+        // --> 1a b4 c8 5f 02
+    }
+}
+
+
+namespace bytes::handle_message
+{
+    void printMessage(const uint32_t* ptr, const size_t lenInBytes)
+    {
+        constexpr uint32_t typeSize = sizeof(uint32_t);
+        for (uint32_t idx = 0, size = lenInBytes / typeSize; idx < size; ++idx) {
+            std::cout << std::hex << std::uppercase << ptr[idx] << ' ';
+        }
+        std::cout << std::endl;
+    }
+
+    void printMessage_CastTo_Uint8T(const uint32_t* ptr, const size_t lenInBytes)
+    {
+        const uint8_t* bytes = reinterpret_cast<const uint8_t*>(ptr);
+        constexpr uint32_t typeSize = sizeof(uint32_t);
+
+        for (uint32_t idx = 0, size = lenInBytes; idx < size; idx += typeSize)
+        {
+            std::cout << std::hex << std::uppercase
+                << static_cast<int>(bytes[idx + 3])
+                << static_cast<int>(bytes[idx + 2])
+                << static_cast<int>(bytes[idx + 1])
+                << static_cast<int>(bytes[idx])  << ' ';
+        }
+        std::cout << std::endl;
+    }
+
+    void handeUIntBuffer()
+    {
+        constexpr std::array<uint32_t, 8> buffer {
+            3000000031,
+            3000000032,
+            3000000033,
+            3000000034,
+            3000000035,
+            3000000036,
+            3000000037,
+            3000000038
+        };
+
+        printMessage(buffer.data(), buffer.size() * sizeof(decltype(buffer)::value_type));
+        printMessage_CastTo_Uint8T(buffer.data(), buffer.size() * sizeof(decltype(buffer)::value_type));
+
+        // B2D05E1F B2D05E20 B2D05E21 B2D05E22 B2D05E23 B2D05E24 B2D05E25 B2D05E26
+        // B2D05E1F B2D05E20 B2D05E21 B2D05E22 B2D05E23 B2D05E24 B2D05E25 B2D05E26
+    }
+}
+
+void bytes::TestAll()
 {
     // ToInt();
     // BaseTests();
     // Size::Test();
-    // printBytes_Hex();
 
-    Swap_Bytes::swap_Bytes();
+    // Swap_Bytes::swap_Bytes();
+
+    // hex::print_bytes_as_hex();
+    // hex::hex_string_to_int();
+
+    handle_message::handeUIntBuffer();
 };

@@ -10,7 +10,7 @@
 #ifndef BYTE__INCLUDE_GUARD__H
 #define BYTE__INCLUDE_GUARD__H
 
-namespace Byte {
+namespace bytes {
     void TestAll();
 };
 
