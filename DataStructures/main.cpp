@@ -59,6 +59,7 @@ Description : DataStructures
 #include "TypeListChecker/TypeListChecker.hpp"
 #include "UniquePtr/UniquePtr.hpp"
 #include "StaticSortedSearchArray/StaticSortedSearchArray.hpp"
+#include "StaticString/StaticString.hpp"
 
 
 // TODO:
@@ -81,7 +82,7 @@ int main([[maybe_unused]] int argc,
     // ExecutorAdapter2::TestAll();
     // Finalizers::TestAll();
     // FlatMap::TestAll();
-    flat_map_fast::TestAll();
+    // flat_map_fast::TestAll();
     // Function::Test();
     // HashTable::TestAll();
     // LinkedLists::TEST_ALL();
@@ -108,6 +109,8 @@ int main([[maybe_unused]] int argc,
     // RingBufferEx::TestAll();
     // RingBufferExAtomic::TestAll();
     // RingBuffer_SPSC::TestAll();
+
+	static_string::TestAll();
 
     // GenericTableTemplate::TestAll();
 
