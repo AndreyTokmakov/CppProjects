@@ -492,9 +492,43 @@ namespace BitwiseOperation
     }
 }
 
+namespace BitwiseOperation::Right_Shift
+{
+    void demo()
+    {
+        constexpr int v = 64;
+        BitUtils::show_bits(v);
+        BitUtils::show_bits(v >> 1);
+        BitUtils::show_bits(v >> 2);
+        BitUtils::show_bits(v >> 3);
+        BitUtils::show_bits(v >> 4);
+        BitUtils::show_bits(v >> 5);
+
+        // 64  ===>  00000000000000000000000001000000
+        // 32  ===>  00000000000000000000000000100000
+        // 16  ===>  00000000000000000000000000010000
+        // 8   ===>  00000000000000000000000000001000
+        // 4   ===>  00000000000000000000000000000100
+        // 2   ===>  00000000000000000000000000000010
+    }
+
+    /**
+     * Сдвиг на право на N позиций эквивалентно делению на 2^N
+     * Другими словам a >> N эквивалентно a / (2^N)
+     *
+     * a >> 1 ---> a / 2
+     * a >> 2 ---> a / 4
+     * a >> 3 ---> a / 8
+     *  например
+     *  16 >> 1 = 16 / 2 --> 8
+     *  16 >> 2 = 16 / 4 --> 4
+     *  16 >> 3 = 16 / 8 --> 2
+    **/
+}
+
+
 void BitwiseOperation::TestAll()
 {
-
     // InitVariable_BinaryForm();
 
     Modulo_Tests();
@@ -523,7 +557,6 @@ void BitwiseOperation::TestAll()
     // Multiplying_By_2();
     // Check_Two_Numbers_Are_Equal();
 
-
     // Upper_to_Lower_Case();
     // Lower_to_Upper_Case();
     // Count_Set_bits();
@@ -533,10 +566,11 @@ void BitwiseOperation::TestAll()
 
     // Sum_Two_BinStrins();
 
-
     // Bitset::Popcount();
     // Count_Set_Bits();
 
     // Count_Zeros();
     // Count_One_s();
+
+    Right_Shift::demo();
 };

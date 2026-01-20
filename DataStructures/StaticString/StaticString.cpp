@@ -24,7 +24,11 @@ namespace static_string
         using value_type = char;
         using size_type  = size_t;
 
-        std::array<value_type, Size> buffer {};
+        std::array<value_type, Size> buffer = [] {
+            std::array<value_type, Size> tmp {};
+            std::fill(tmp.begin(), tmp.end(), '\0');
+            return tmp;
+        }();
 
         explicit consteval FixedString(const value_type (&str)[Size + 1])
         {
@@ -33,10 +37,7 @@ namespace static_string
 
         explicit consteval FixedString(const std::string_view sv)
         {
-            const size_type len = std::min(sv.size(), Size);
-            std::copy_n(sv.begin(), len, std::begin(buffer));
-            if (len < Size)
-                buffer[len] = '\0';
+            std::copy_n(sv.begin(), sv.length(), std::begin(buffer));
         }
 
         [[nodiscard]]
@@ -143,8 +144,8 @@ namespace static_string
         [[nodiscard]]
         consteval std::uint64_t hash() const noexcept
         {
-            constexpr uint64_t fnv_offset = 14695981039346656037ull;
-            constexpr uint64_t fnv_prime  = 1099511628211ull;
+            static constexpr uint64_t fnv_offset = 14695981039346656037ull;
+            static constexpr uint64_t fnv_prime  = 1099511628211ull;
 
             std::uint64_t h = fnv_offset;
             for (size_type idx = 0; idx < length(); ++idx)
@@ -303,6 +304,7 @@ namespace static_string::tests
         static constexpr auto value = Name;
         static constexpr auto id    = Name.hash();
     };
+
 
     consteval void test_nttp_usage()
     {

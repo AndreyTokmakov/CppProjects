@@ -111,8 +111,8 @@ int main([[maybe_unused]] int argc,
     // Attributes::TestAll();
     // Auto::TestAll();
     // BitSet::TestAll();
-    // BitwiseOperation::TestAll();
-    bytes::TestAll();
+    BitwiseOperation::TestAll();
+    // bytes::TestAll();
     // Chrono::TestAll();
     // ContextControl::TestAll();
     // Comparators::TestAll();
