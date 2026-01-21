@@ -11,6 +11,7 @@ Description : SIMD
 #include <vector>
 #include <iostream>
 
+#include "PerfUtilities.hpp"
 
 namespace
 {
@@ -312,7 +313,138 @@ namespace data_initialization
         // Individually-initialized float vector: [1, 2, 3, 4, 5, 6, 7, 8]
         // Individually-initialized double vector: [4, 5, 6, 7]
     }
+}
 
+namespace load_data
+{
+    constexpr int ARRAY_SIZE = 8;
+    constexpr int TEST_ITERATIONS = 10'000'000;
+
+    void demo()
+    {
+        // Allocate aligned and unaligned memory
+        float* aligned_data = aligned_alloc<float>(ARRAY_SIZE, 32);  // 32-byte alignment for AVX
+        float* unaligned_data = new float[ARRAY_SIZE + 1];  // +1 to ensure we can create unaligned pointer
+        float* unaligned_ptr = unaligned_data + 1;  // Offset by 1 to ensure unalignment
+
+        // Initialize data
+        for (int i = 0; i < ARRAY_SIZE; i++) {
+            aligned_data[i] = static_cast<float>(i + 1);
+            unaligned_ptr[i] = static_cast<float>(i + 1);
+        }
+
+        const __m256 aligned_vec   = _mm256_load_ps(aligned_data);   // Demonstrate aligned load
+        const __m256 unaligned_vec = _mm256_loadu_ps(unaligned_ptr); // Demonstrate unaligned load
+
+        print_m256(aligned_vec, "Aligned load result");
+        print_m256(unaligned_vec, "Unaligned load result");
+
+        // Aligned   load result : [1, 2, 3, 4, 5, 6, 7, 8]
+        // Unaligned load result : [1, 2, 3, 4, 5, 6, 7, 8]
+    }
+
+    void benchmark_Data_Load()
+    {
+        const float* aligned_data = aligned_alloc<float>(ARRAY_SIZE, 32);  // 32-byte alignment for AVX
+        const float* unaligned_data = new float[ARRAY_SIZE + 1];  // +1 to ensure we can create unaligned pointer
+        const float* unaligned_ptr = unaligned_data + 1;  // Offset by 1 to ensure unalignment
+
+        const __m256 aligned_vec   = _mm256_load_ps(aligned_data);   // Demonstrate aligned load
+        const __m256 unaligned_vec = _mm256_loadu_ps(unaligned_ptr); // Demonstrate unaligned load
+
+        // Benchmark aligned load
+        auto aligned_load = [&]() {
+            __m256 result;
+            for (int i = 0; i < TEST_ITERATIONS; i++) {
+                result = _mm256_load_ps(aligned_data);
+            }
+            return result;
+        };
+
+        // Benchmark unaligned load
+        auto unaligned_load = [&]() {
+            __m256 result;
+            for (int i = 0; i < TEST_ITERATIONS; i++) {
+                result = _mm256_loadu_ps(unaligned_ptr);
+            }
+            return result;
+        };
+
+        {
+            PerfUtilities::ScopedTimer timer { "aligned load"};
+            aligned_load();
+        }
+        {
+            PerfUtilities::ScopedTimer timer { "unaligned load"};
+            unaligned_load();
+        }
+    }
+
+    void masked_Store ()
+    {
+        float* aligned_data = aligned_alloc<float>(ARRAY_SIZE, 32);
+        const __m256 test_vec = _mm256_set_ps(16.0f, 14.0f, 12.0f, 10.0f,
+                                               8.0f, 6.0f, 4.0f, 2.0f);
+        // Create a mask to store only elements 1, 3, 5, and 7
+        const __m256i mask = _mm256_set_epi32(-1, 0, -1, 0, -1, 0, -1, 0);
+
+        // Perform masked store
+        _mm256_maskstore_ps(aligned_data, mask, test_vec);
+
+        std::cout << "Masked store result (odd indices only): [";
+        for (int i = 0; i < ARRAY_SIZE - 1; i++) {
+            std::cout << aligned_data[i] << ", ";
+        }
+        std::cout << aligned_data[ARRAY_SIZE - 1] << "]" << std::endl;
+
+        // Masked store result (odd indices only): [0, 4, 0, 8, 0, 12, 0, 16]
+    }
+}
+
+
+namespace math
+{
+    // INFO: https://github.com/yuninxia/hands-on-simd-programming/blob/main/src/02_Computations/01_simple_maths/main.cpp
+
+    void addition()
+    {
+        constexpr float data1[8] = {1.0f, 2.0f, 3.0f, 4.0f, 5.0f, 6.0f, 7.0f, 8.0f};
+        constexpr float data2[8] = {8.0f, 7.0f, 6.0f, 5.0f, 4.0f, 3.0f, 2.0f, 1.0f};
+
+        // Load data into SIMD vectors
+        const __m256 vector1 = _mm256_loadu_ps(data1);
+        const __m256 vector2 = _mm256_loadu_ps(data2);
+
+        print_m256(vector1, "Vector 1");
+        print_m256(vector2, "Vector 2");
+
+        const __m256 add_result = _mm256_add_ps(vector1, vector2);
+        print_m256(add_result, "Addition Result (Vector 1 + Vector 2)");
+
+        // Vector 1: [1, 2, 3, 4, 5, 6, 7, 8]
+        // Vector 2: [8, 7, 6, 5, 4, 3, 2, 1]
+        // Addition Result (Vector 1 + Vector 2): [9, 9, 9, 9, 9, 9, 9, 9]
+    }
+
+    void subtraction()
+    {
+        constexpr float data1[8] = {1.0f, 2.0f, 3.0f, 4.0f, 5.0f, 6.0f, 7.0f, 8.0f};
+        constexpr float data2[8] = {8.0f, 7.0f, 6.0f, 5.0f, 4.0f, 3.0f, 2.0f, 1.0f};
+
+        // Load data into SIMD vectors
+        const __m256 vector1 = _mm256_loadu_ps(data1);
+        const __m256 vector2 = _mm256_loadu_ps(data2);
+
+        print_m256(vector1, "Vector 1");
+        print_m256(vector2, "Vector 2");
+
+        const __m256 add_result = _mm256_sub_ps(vector1, vector2);
+        print_m256(add_result, "Subtraction Result (Vector 1 - Vector 2)");
+
+        // Vector 1: [1, 2, 3, 4, 5, 6, 7, 8]
+        // Vector 2: [8, 7, 6, 5, 4, 3, 2, 1]
+        // Subtraction Result (Vector 1 - Vector 2): [-7, -5, -3, -1, 1, 3, 5, 7]
+    }
 }
 
 int main([[maybe_unused]] int argc,
@@ -328,7 +460,14 @@ int main([[maybe_unused]] int argc,
 
     // data_initialization::init_Simd_Arrays();
     // data_initialization::init_Simd_Arrays_and_FILL();
-    data_initialization::init_Simd_Arrays_as_InitList();
+    // data_initialization::init_Simd_Arrays_as_InitList();
+
+    // load_data::demo();
+    // load_data::benchmark_Data_Load();
+    // load_data::masked_Store();
+
+    // math::addition();
+    math::subtraction();
 
     return EXIT_SUCCESS;
 }
