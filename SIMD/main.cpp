@@ -193,6 +193,28 @@ namespace basics
         // A + B: [9, 9, 9, 9, 9, 9, 9, 9]
     }
 
+    void sumVectors_Floats_128()
+    {
+        float a[4] __attribute__((aligned(16))) = {1.0f, 2.0f, 3.0f, 4.0f};
+        float b[4] __attribute__((aligned(16))) = {5.0f, 6.0f, 7.0f, 8.0f};
+        float res[4] __attribute__((aligned(16))) {};
+
+        const __m128 va = _mm_load_ps(a);
+        const __m128 vb = _mm_load_ps(b);
+
+        // Perform addition
+        const __m128 vres = _mm_add_ps(va, vb);
+
+        // Store result
+        _mm_store_ps(res, vres);
+
+        for (const auto v: res) {
+            std::cout << v << " ";
+        }
+
+        // 6 8 10 12
+    }
+
     void sumVectors_AndStore()
     {
         // Initialize two SIMD vectors with 8 float values each
@@ -534,6 +556,7 @@ int main([[maybe_unused]] int argc,
     // Multiplication::demo();
 
     // basics::sumVectors();
+    basics::sumVectors_Floats_128();
     // basics::sumVectors_AndStore();
     // basics::sumInts();
     // basics::sumDoubles();
@@ -549,7 +572,7 @@ int main([[maybe_unused]] int argc,
     // math::addition();
     // math::subtraction();
 
-    search::test();
+    // search::test();
 
     return EXIT_SUCCESS;
 }
