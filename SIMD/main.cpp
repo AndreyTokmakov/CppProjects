@@ -469,6 +469,36 @@ namespace math
     }
 }
 
+namespace examples
+{
+    void filtering_positive_values()
+    {
+        float* data = aligned_alloc<float>(8);
+        {
+            data[0] = -1.0f;
+            data[1] = 4.0f;
+            data[2] = 9.0f;
+            data[3] = -16.0f;
+            data[4] = 25.0f;
+            data[5] = -36.0f;
+            data[6] = 49.0f;
+            data[7] = -64.0f;
+        }
+
+        const __m256 vector = _mm256_load_ps(data);
+        const __m256 zero = _mm256_setzero_ps();
+        const __m256 positiveMask = _mm256_cmp_ps(vector, zero, _CMP_GT_OQ);
+
+        // Print the mask (all bits set for true, all bits clear for false)
+        const float8 maskValues(positiveMask);
+        std::cout << "Positive mask (as floats): [";
+        for (int i = 0; i < 7; i++) {
+            std::cout << maskValues.a[i] << ", ";
+        }
+        std::cout << maskValues.a[7] << "]" << std::endl;
+    }
+}
+
 
 namespace search
 {
@@ -556,7 +586,7 @@ int main([[maybe_unused]] int argc,
     // Multiplication::demo();
 
     // basics::sumVectors();
-    basics::sumVectors_Floats_128();
+    // basics::sumVectors_Floats_128();
     // basics::sumVectors_AndStore();
     // basics::sumInts();
     // basics::sumDoubles();
@@ -573,6 +603,8 @@ int main([[maybe_unused]] int argc,
     // math::subtraction();
 
     // search::test();
+
+    examples::filtering_positive_values();
 
     return EXIT_SUCCESS;
 }
