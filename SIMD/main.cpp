@@ -447,6 +447,86 @@ namespace math
     }
 }
 
+
+namespace search
+{
+    bool contains_simple(const std::string& str, const char target)
+    {
+        for (const char i : str) {
+            if (i == target) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    bool contains_128(const std::string& str, const char target)
+    {
+        static constexpr uint32_t blockSize = 16;
+
+        // Load the targets characters into ab SSE register
+        const __m128i targetVec = _mm_set1_epi8(target);
+
+        for (uint32_t i = 0; i < str.size(); i += blockSize)
+        {
+            // Load a block of the string into a AVX register
+            const __m128i strVec = _mm_loadu_si128(reinterpret_cast<const __m128i*>(str.data() + i));
+
+            // Compare the block of the string with the target characters using SSE register
+            const __m128i resVec = _mm_cmpeq_epi8(strVec, targetVec);
+
+            // Extract the result of the comparison
+            const int32_t result = _mm_movemask_epi8(resVec);
+            if (result)
+                return true;
+        }
+        return false;
+    }
+
+    bool contains_256(const std::string& str, const char target)
+    {
+        static constexpr uint32_t blockSize = 32;
+
+        // Load the targets characters into ab AVX register
+        const __m256i  targetVec = _mm256_set1_epi8(target);
+
+        for (uint32_t i = 0; i < str.size(); i += blockSize )
+        {
+            // Load a block of the string into a AVX register
+            const __m256i strVec = _mm256_loadu_si256(reinterpret_cast<const __m256i*>(str.data() + i));
+
+            // Compare the block of the string with the target characters using AVX register
+            const __m256i resVec = _mm256_cmpeq_epi8(strVec, targetVec);
+
+            // Extract the result of the comparison
+            const int32_t result = _mm256_movemask_epi8(resVec);
+            if (result)
+                return true;
+        }
+        return false;
+    }
+
+    void test()
+    {
+        const std::string str = "abcdefghabcdefghabcdefghabcdefghabcdefghabcdefghabcdefghabcdefgh";
+        constexpr char target = 'a';
+
+        {
+            const bool result = contains_simple(str, target);
+            std::cout << std::boolalpha << result << std::endl;
+        }
+        {
+            const bool result = contains_128(str, target);
+            std::cout << std::boolalpha << result << std::endl;
+        }
+
+        {
+            const bool result = contains_256(str, target);
+            std::cout << std::boolalpha << result << std::endl;
+        }
+    }
+}
+
 int main([[maybe_unused]] int argc,
          [[maybe_unused]] char** argv)
 {
@@ -467,7 +547,9 @@ int main([[maybe_unused]] int argc,
     // load_data::masked_Store();
 
     // math::addition();
-    math::subtraction();
+    // math::subtraction();
+
+    search::test();
 
     return EXIT_SUCCESS;
 }
