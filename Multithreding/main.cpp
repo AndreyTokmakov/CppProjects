@@ -41,6 +41,8 @@ Description : Multithreading tests main entry point
 #include "Multithreading_Communication/Multithreading_Communication.h"
 #include "Collections/Collections.h"
 
+#include "Futex/Futex.hpp"
+
 #include "PerformanceExperiments/Mutex_vs_AtomicLock.h"
 #include "PerformanceExperiments/Multithreading_Performance.h"
 #include "PerformanceExperiments/PerformanceExperiments.h"
@@ -83,10 +85,12 @@ int main([[maybe_unused]] int argc,
 
     // Latch::TEST_ALL();
 
+    Futex::TestAll();
+
 
     // Multithreading_Communication::TEST_ALL();
     // Promise::TEST_ALL();
-    PackagedTask::TEST_ALL();
+    // PackagedTask::TEST_ALL();
     // ParallelExecutionAlgoritms::TEST_ALL();
 
     // Semaphore::TestAll();

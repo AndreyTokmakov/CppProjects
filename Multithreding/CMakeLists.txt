@@ -26,6 +26,7 @@ add_executable(${PROJECT_NAME}
         ConditionVariable/ConditionVariable.cpp
         Exceptions_Handling/Exceptions_Handling.cpp
         Future/Future.cpp
+        Futex/Futex.cpp
         JThreads/JThreads.cpp
         Latch/Latch.cpp
         Collections/LockFreeQueue.cpp
