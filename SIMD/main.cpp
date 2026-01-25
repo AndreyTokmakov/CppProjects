@@ -558,7 +558,7 @@ namespace search
         return false;
     }
 
-    void test()
+    void contains()
     {
         const std::string str = "abcdefghabcdefghabcdefghabcdefghabcdefghabcdefghabcdefghabcdefgh";
         constexpr char target = 'a';
@@ -578,6 +578,95 @@ namespace search
         }
     }
 }
+
+namespace search
+{
+    int findFirst(const std::span<const int> data, const int target)
+    {
+        const __m256i vec = _mm256_set1_epi32(target);
+        for (int i = 0 ; i < std::ssize(data); i += 8)
+        {
+            const __m256i arrVec = _mm256_loadu_si256(reinterpret_cast<const __m256i*>(data.data() + i));
+            const __m256i mask = _mm256_cmpeq_epi32(arrVec, vec);
+            if (const unsigned int maskInt = _mm256_movemask_epi8(mask); 0 != maskInt) {
+                for (int j = 0; j < 8; j++) {
+                    if ((maskInt >> (j * 4)) & 0xF) {
+                        return i + j;
+                    }
+                }
+            }
+        }
+        return -1;
+    }
+
+
+    void findFirst()
+    {
+        std::vector<int> values {1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16};
+        const int idx = findFirst(values, 13);
+        std::cout  << values[idx] << std::endl;
+    }
+}
+
+namespace search
+{
+    int32_t max_simd(const std::span<const int32_t> data)
+    {
+        if (data.empty())
+            return std::numeric_limits<int32_t>::min();
+
+        const int32_t* ptr = data.data();
+        const size_t size = data.size();
+
+        static constexpr size_t W = 8; // 8 x int32
+        size_t i = 0;
+
+        __m256i vmax = _mm256_set1_epi32(std::numeric_limits<int32_t>::min());
+
+        // SIMD loop
+        for (; i + W <= size; i += W)
+        {
+            __m256i v = _mm256_loadu_si256(reinterpret_cast<const __m256i*>(ptr + i));
+            vmax = _mm256_max_epi32(vmax, v);
+        }
+
+        // reduction
+        alignas(32) int32_t tmp[W];
+        _mm256_store_si256(reinterpret_cast<__m256i*>(tmp), vmax);
+
+        int32_t result = tmp[0];
+        for (int j = 1; j < W; ++j)
+            result = result > tmp[j] ? result : tmp[j];
+
+        // tail
+        for (; i < size; ++i)
+            result = result > ptr[i] ? result : ptr[i];
+
+        return result;
+    }
+
+    int32_t findMax2(const std::span<const int> data)
+    {
+        __m256i maxVec = _mm256_set1_epi32(std::numeric_limits<int32_t>::max());
+        for (int i = 0 ; i < std::ssize(data); i += 8)
+        {
+             __m256i arrVec = _mm256_loadu_si256(reinterpret_cast<const __m256i*>(data.data() + i));
+             __m256i cmpVec = _mm256_cmpeq_epi32(arrVec, maxVec);
+            // maxVec = _mm256_blend_epi32(maxVec, arrVec, cmpVec);
+
+        }
+    }
+
+
+
+    void findMax()
+    {
+        std::vector<int32_t> v = {1, -3, 42, 7, 9, 100, 5};
+        std::cout << max_simd(v) << "\n"; // 100
+    }
+
+}
+
 
 int main([[maybe_unused]] int argc,
          [[maybe_unused]] char** argv)
@@ -602,9 +691,11 @@ int main([[maybe_unused]] int argc,
     // math::addition();
     // math::subtraction();
 
-    // search::test();
+    // search::contains();
+    // search::findFirst();
+    search::findMax();
 
-    examples::filtering_positive_values();
+    // examples::filtering_positive_values();
 
     return EXIT_SUCCESS;
 }
