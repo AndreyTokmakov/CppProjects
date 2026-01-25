@@ -60,6 +60,8 @@ Description : DataStructures
 #include "UniquePtr/UniquePtr.hpp"
 #include "StaticSortedSearchArray/StaticSortedSearchArray.hpp"
 #include "StaticString/StaticString.hpp"
+#include "MPMCQueue/MPMCQueue.hpp"
+
 
 
 // TODO:
@@ -110,7 +112,9 @@ int main([[maybe_unused]] int argc,
     // RingBufferExAtomic::TestAll();
     // RingBuffer_SPSC::TestAll();
 
-	static_string::TestAll();
+	// static_string::TestAll();
+
+	MPMCQueue::TestAll();
 
     // GenericTableTemplate::TestAll();
 

@@ -53,6 +53,7 @@ add_executable(${PROJECT_NAME}
         TwoSidedVector/TwoSidedVector.cpp
 		MinMaxStack/MinMaxStack.cpp
 		MinStack/MinStack.cpp
+		MPMCQueue/MPMCQueue.cpp
 		MinHeap/MinHeap.cpp
 		Heap_WithComparator/HeapWithComparator.cpp
 		Invoker_MethodClass/Invoker.cpp
