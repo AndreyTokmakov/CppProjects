@@ -32,13 +32,16 @@
 
 ## 🟠 Condition Variables / Coordination
 - Почему `condition_variable` не хранит состояние?
+- Spurious wakeups — что это и почему они существуют [ответ](#spurious_wakeups)
 - Что произойдёт, если вызвать `notify_one` без mutex?
-- Почему `notify_all` может быть опасен?
+- Почему `notify_all` может быть опасен?  [ответ](#notify_all_danger) 
 - Что будет, если `notify` вызван до `wait`?
 - Можно ли использовать `condition_variable` без mutex?
 - Чем `condition_variable_any` хуже?
 - Когда лучше использовать `latch` или `barrier`?
 - Можно ли реализовать semaphore через `condition_variable`?
+- Lost wakeups vs spurious wakeups — в чём разница
+- Semaphore vs condition_variable
 
 ---
 
@@ -275,3 +278,97 @@ Priority inversion — это когда high-priority поток блокиру
 * spinlock
 * `sleep_for`
 * повышение приоритета H
+
+
+<a name="spurious_wakeups"></a>
+### 🟢 Spurious wakeups — что это и почему они существуют?
+**Spurious wakeup** — это ситуация, когда `condition_variable::wait` возвращается **без `notify` и без выполнения условия**.<br>
+Это **нормальное и допустимое поведение** по стандарту C++.
+
+#### Почему они существуют
+Из-за реализации ОС и железа
+* Futex’ы
+* interrupts
+* race при пробуждении нескольких потоков
+* упрощение fast-path
+
+Стандарт **разрешает** такие пробуждения, чтобы:
+
+* не усложнять реализацию
+* не тормозить быстрые пути
+
+❌ Типичная ошибка
+
+```cpp
+cv.wait(lock);   // ❌
+use(data);
+```
+
+✅ Правильный паттерн
+
+```cpp
+cv.wait(lock, [&] {
+    return ready;
+});
+```
+
+Или эквивалентно:
+
+```cpp
+while (!ready) {
+    cv.wait(lock);
+}
+```
+
+<a name="notify_all_danger"></a>
+### 🟢 Почему `notify_all` может быть опасен?
+`notify_all` может вызвать **thundering herd problem**: все ожидающие потоки просыпаются, конкурируют за mutex, большинство тут же засыпает обратно → скачки latency и падение производительности.
+
+
+#### Thundering herd
+
+```cpp
+cv.notify_all();
+```
+
+* просыпаются **N потоков**
+* mutex может захватить **только один**
+* остальные:
+
+  * проснулись зря
+  * получили context switch
+  * снова ушли в `wait`
+
+📉 Итог:
+
+* лишние wakeups
+* scheduler thrashing
+* cache invalidation
+
+
+❌ Типичное злоупотребление
+
+```cpp
+// producer
+queue.push(x);
+cv.notify_all(); // ❌ хотя нужен только один consumer
+```
+
+✅ Когда `notify_all` **нужен**
+
+✔ глобальное событие:
+
+* shutdown
+* stop flag
+* barrier
+* изменение режима работы
+
+✔ когда **условие стало истинным для всех**
+
+
+🧠 Best practices
+
+* Если нужен **один поток** → `notify_one`
+* Если **все должны проснуться** → `notify_all`
+* Минимизировать количество ожидающих потоков
+* Разделять CV по смыслу
