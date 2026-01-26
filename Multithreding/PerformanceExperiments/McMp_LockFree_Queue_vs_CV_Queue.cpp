@@ -131,58 +131,67 @@ namespace mpmc_lockfree_queue
     template<typename T, size_t Capacity>
     class Queue
     {
+        using value_type = T;
+        using size_type  = size_t;
+
+        static_assert(!std::is_same_v<value_type, void>, "ERROR: Value type can not be void");
         static_assert((Capacity & (Capacity - 1)) == 0, "Capacity must be power of two");
 
         struct alignas(64) Cell
         {
-            std::atomic<size_t> seq;
-            std::aligned_storage_t<sizeof(T), alignof(T)> storage;
-        };
+            std::atomic<size_type> seq;
+#if 0
+            std::aligned_storage_t<sizeof(value_type), alignof(value_type)> storage{};
+#else
+            alignas(value_type) std::byte storage[sizeof(value_type)]{};
+#endif
+};
 
     public:
 
         Queue()
         {
-            for (size_t i = 0; i < Capacity; ++i)
-                buffer_[i].seq.store(i, std::memory_order_relaxed);
+            for (size_type i = 0; i < Capacity; ++i)
+                buffer[i].seq.store(i, std::memory_order_relaxed);
         }
 
         ~Queue() {
-            T tmp;
+            value_type tmp;
             while (try_pop(tmp)) {}
         }
 
-        bool try_push(const T& value) {
+        bool try_push(const value_type& value) {
             return emplace(value);
         }
 
-        bool try_push(T&& value) {
+        bool try_push(value_type&& value) {
             return emplace(std::move(value));
         }
 
-        bool try_pop(T& out)
+        bool try_pop(value_type& out)
         {
             Cell* cell;
-            size_t pos = dequeue_pos_.load(std::memory_order_relaxed);
+            size_type pos = dequeuePos.load(std::memory_order_relaxed);
 
-            for (;;) {
-                cell = &buffer_[pos & mask_];
-                const size_t seq = cell->seq.load(std::memory_order_acquire);
+            while (true)
+            {
+                cell = &buffer[pos & mask_];
+                const size_type seq = cell->seq.load(std::memory_order_acquire);
                 const intptr_t diff = static_cast<intptr_t>(seq) - static_cast<intptr_t>(pos + 1);
 
                 if (diff == 0) {
-                    if (dequeue_pos_.compare_exchange_weak(pos, pos + 1,std::memory_order_relaxed))
+                    if (dequeuePos.compare_exchange_weak(pos, pos + 1,std::memory_order_relaxed))
                         break;
                 } else if (diff < 0) {
                     return false; // empty
                 } else {
-                    pos = dequeue_pos_.load(std::memory_order_relaxed);
+                    pos = dequeuePos.load(std::memory_order_relaxed);
                 }
             }
 
-            T* data = reinterpret_cast<T*>(&cell->storage);
+            value_type* data = reinterpret_cast<value_type*>(&cell->storage);
             out = std::move(*data);
-            data->~T();
+            data->~value_type();
 
             cell->seq.store(pos + Capacity, std::memory_order_release);
             return true;
@@ -194,25 +203,25 @@ namespace mpmc_lockfree_queue
         bool emplace(U&& value)
         {
             Cell* cell;
-            size_t pos = enqueue_pos_.load(std::memory_order_relaxed);
+            size_type pos = enqueuePos.load(std::memory_order_relaxed);
 
-            for (;;)
+            while (true)
             {
-                cell = &buffer_[pos & mask_];
-                const size_t seq = cell->seq.load(std::memory_order_acquire);
+                cell = &buffer[pos & mask_];
+                const size_type seq = cell->seq.load(std::memory_order_acquire);
                 const intptr_t diff = static_cast<intptr_t>(seq) - static_cast<intptr_t>(pos);
 
                 if (diff == 0) {
-                    if (enqueue_pos_.compare_exchange_weak(pos, pos + 1,std::memory_order_relaxed))
+                    if (enqueuePos.compare_exchange_weak(pos, pos + 1,std::memory_order_relaxed))
                         break;
                 } else if (diff < 0) {
                     return false; // full
                 } else {
-                    pos = enqueue_pos_.load(std::memory_order_relaxed);
+                    pos = enqueuePos.load(std::memory_order_relaxed);
                 }
             }
 
-            new (&cell->storage) T(std::forward<U>(value));
+            new (&cell->storage) value_type(std::forward<U>(value));
             cell->seq.store(pos + 1, std::memory_order_release);
             return true;
         }
@@ -220,9 +229,9 @@ namespace mpmc_lockfree_queue
     private:
         static constexpr size_t mask_ = Capacity - 1;
 
-        alignas(64) Cell buffer_[Capacity];
-        alignas(64) std::atomic<size_t> enqueue_pos_{0};
-        alignas(64) std::atomic<size_t> dequeue_pos_{0};
+        alignas(64) Cell buffer [Capacity];
+        alignas(64) std::atomic<size_type> enqueuePos { 0 };
+        alignas(64) std::atomic<size_type> dequeuePos { 0 };
     };
 }
 
