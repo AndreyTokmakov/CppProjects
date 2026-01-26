@@ -40,12 +40,14 @@ Description : Multithreading tests main entry point
 #include "ParallelExecutionAlgoritms/ParallelExecutionAlgoritms.h"
 #include "Multithreading_Communication/Multithreading_Communication.h"
 #include "Collections/Collections.h"
+#include "PerformanceExperiments/McMp_LockFree_Queue_vs_CV_Queue.hpp"
 
 #include "Futex/Futex.hpp"
 
 #include "PerformanceExperiments/Mutex_vs_AtomicLock.h"
 #include "PerformanceExperiments/Multithreading_Performance.h"
 #include "PerformanceExperiments/PerformanceExperiments.h"
+#include "PerformanceExperiments/McMp_LockFree_Queue_vs_CV_Queue.hpp"
 
 #include "Barrier/Barrier.h"
 #include "FalseSharing/FalseSharingExperiments.h"
@@ -85,7 +87,7 @@ int main([[maybe_unused]] int argc,
 
     // Latch::TEST_ALL();
 
-    Futex::TestAll();
+    // Futex::TestAll();
 
 
     // Multithreading_Communication::TEST_ALL();
@@ -121,6 +123,7 @@ int main([[maybe_unused]] int argc,
     // Multithreading_Performance::TEST_ALL();
     // FalseSharingExperiments::TEST_ALL();
     // PerformanceExperiments::TestAll();
+    McMp_LockFree_Queue_vs_CV_Queue::TestAll();
 
     /** ThreadSafeCollections **/
 
