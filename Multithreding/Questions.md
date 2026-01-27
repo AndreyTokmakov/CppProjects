@@ -47,17 +47,19 @@
 
 ## 🟠 Atomics / Memory Model
 - В чём разница между **atomicity** и **visibility**?
-- Почему `std::atomic<T>` не всегда lock-free?
+- Почему `std::atomic<T>` не всегда lock-free?  [ответ](#lock_free_atomic)
 - Что значит `is_lock_free()`?
-- Когда `compare_exchange_weak` предпочтительнее `strong`?
-- Может ли `atomic<int>` привести к cache line bouncing?
-- Почему atomic может быть медленнее mutex?
+- Когда `compare_exchange_weak` предпочтительнее `strong`?  [ответ](#compare_exchange_weak_vs_stromg)
+- Может ли `atomic<int>` привести к cache line bouncing?  [ответ](#cache_line_bouncing)
+- `false sharing` vs `cache line bouncing` [ответ](#cache_line_bouncing_vs_false_sharing)
+- Почему atomic может быть медленнее mutex?  [ответ](#atomic_slower_than_mutex)
 - В чём разница между acquire/release и seq_cst?
 - Можно ли смешивать разные memory_order?
 - Что такое **out-of-thin-air reads**?
 - Почему UB из-за data race хуже segfault?
 - Почему CAS может спуриться (fail spuriously)?
 - Что такое release sequence?
+- Что такое LL/SC (Load-Link / Store-Conditional) [ответ](#ll_sc) 
 
 ---
 ## 🔴 Продвинутые темы
@@ -126,6 +128,7 @@
 Thread-safety — это свойство кода или объекта корректно работать при одновременном доступе из нескольких потоков,
 без data race и UB, сохраняя свои инварианты.
 
+---
 
 <a name="when_to_choose_thread_vs_async"></a>
 ### 🟢 Когда std::thread дешевле, чем std::async, и наоборот?
@@ -156,6 +159,7 @@ std::async:
 | Подходит для HFT  | ✔           | ❌               |
 | Boilerplate       | больше      | меньше           |
 
+---
 
 <a name="can_std_thread_be_copied"></a>
 ### 🟢 Можно ли копировать std::thread? Почему?
@@ -182,6 +186,8 @@ std::thread t1(worker);
 std::thread t2 = t1;   // ❌ compile error
 ```
 
+---
+
 <a name="lock_convoy"></a>
 ### 🟢 Что такое lock convoy?
 
@@ -192,6 +198,8 @@ Lock convoy — это ситуация, когда несколько пото�
 
 Lock convoy — это цепочка потоков, блокирующихся на одном mutex, когда каждый ждёт своего хода, что вызывает задержки и падение производительности.
 Проблему решают уменьшением критических секций, использованием нескольких mutex или lock-free структур.
+
+---
 
 <a name="signal_handler"></a>
 ### 🟢 Можно ли захватить mutex в signal handler?
@@ -231,6 +239,8 @@ void handler(int) {
 }
 ```
 
+---
+
 #### ✅ Как **правильно** делать
 Atomic flag (самый частый ответ на интервью)
 
@@ -252,6 +262,8 @@ while (!stop.load()) {
 
 ✔ async-signal-safe
 ✔ без блокировок
+
+---
 
 <a name="priority_inversion"></a>
 ### 🟢 Что такое priority inversion?
@@ -279,6 +291,7 @@ Priority inversion — это когда high-priority поток блокиру
 * `sleep_for`
 * повышение приоритета H
 
+---
 
 <a name="spurious_wakeups"></a>
 ### 🟢 Spurious wakeups — что это и почему они существуют?
@@ -319,6 +332,8 @@ while (!ready) {
     cv.wait(lock);
 }
 ```
+
+---
 
 <a name="notify_all_danger"></a>
 ### 🟢 Почему `notify_all` может быть опасен?
@@ -373,6 +388,7 @@ cv.notify_all(); // ❌ хотя нужен только один consumer
 * Минимизировать количество ожидающих потоков
 * Разделять CV по смыслу
 
+---
 
 <a name="latch_vs_barrier"></a>
 ### 🟢 Когда лучше использовать `latch` или `barrier`?
@@ -388,3 +404,348 @@ latch используют для одноразовой синхронизац�
 | Фазы                | ❌                | ✔                        |
 | Completion function | ❌                | ✔                        |
 | Пересоздание        | нужно            | не нужно                 |
+
+---
+
+<a name="lock_free_atomic"></a>
+### 🟢 Почему `std::atomic<T>` не всегда lock-free?
+
+std::atomic<T> не всегда lock-free, потому что стандарт требует атомарности, но не требует реализации без блокировок.
+Если аппаратно нет подходящей инструкции или тип слишком большой/плохо выровнен, реализация использует mutex.
+
+####  Ограничения аппаратуры
+
+CPU умеет атомарно работать **только с некоторыми размерами и типами**:
+
+1, 2, 4, 8 байт — часто lock-free<br>
+16 байт — иногда (x86 `cmpxchg16b`)<br>
+больше 16 байт — почти никогда<br>
+
+```cpp
+std::atomic<int64_t>   // обычно lock-free
+std::atomic<long double> // почти всегда нет
+std::atomic<MyStruct> // нет
+```
+
+####  Стандарт не требует lock-free
+
+C++ стандарт **разрешает реализацию через mutex**, если:
+
+* нет подходящей инструкции CPU
+* тип слишком большой
+* тип не trivially copyable
+
+```cpp
+static_assert(std::atomic<int>::is_always_lock_free);
+```
+
+#### Как проверить
+В compile-time
+
+```cpp
+std::atomic<T>::is_always_lock_free
+```
+
+В runtime
+
+```cpp
+a.is_lock_free()
+```
+
+
+####  Важный подвох
+
+**Lock-free ≠ fast**
+
+* lock-free может:
+
+  * крутиться в CAS-цикле
+  * вызывать cache line bouncing
+* mutex иногда быстрее при низкой конкуренции
+
+---
+
+<a name="compare_exchange_weak_vs_stromg"></a>
+### 🟢 Когда compare_exchange_weak предпочтительнее strong?
+
+`compare_exchange_weak` предпочтительнее в CAS-циклах, особенно на LL/SC архитектурах, где `strong` может эмулироваться через цикл. <br>
+`strong` нужен для одноразовых проверок, где ложный отказ недопустим.
+
+Коротко
+
+* **`weak`** — может *ложно* вернуть `false`
+* **`strong`** — не имеет spurious failure
+
+Когда `weak` предпочтительнее
+
+В CAS-циклах (основной кейс)
+
+```cpp
+int expected = x.load();
+while (!x.compare_exchange_weak(expected, expected + 1)) {
+    // expected обновлён автоматически
+}
+```
+
+✔ стандартный паттерн
+✔ оптимальнее на ARM / Power
+✔ позволяет компилятору использовать LL/SC
+
+Почему быстрее?
+
+На архитектурах с **LL/SC**:
+
+* `weak` → одна попытка
+* `strong` → эмулируется циклом внутри
+
+➡ двойной цикл = хуже
+
+
+Таблица различий
+
+|                  | weak | strong |
+| ---------------- | ---- | ------ |
+| Spurious failure | ✔    | ❌      |
+| Для циклов       | ✔    | ❌      |
+| Для single-shot  | ❌    | ✔      |
+| LL/SC friendly   | ✔    | ❌      |
+| Обычно быстрее   | ✔    | ❌      |
+
+---
+
+<a name="cache_line_bouncing"></a>
+### 🟢 Может ли `atomic<int>` привести к cache line bouncing?
+
+Да, std::atomic<int> может вызывать cache line bouncing, особенно при частых RMW-операциях из нескольких потоков <br>
+Атомарность не избавляет от кеш-когерентности и может серьёзно ухудшить масштабируемость.<br>
+
+Atomic гарантирует корректность - но не гарантирует масштабируемость.<br>
+
+🔥 Что такое cache line bouncing
+* cache line ≈ 64 байта
+* атомарная запись требует **exclusive ownership**
+* cache line постоянно «прыгает» между ядрами
+
+➡ падает производительность
+
+🧪 Пример проблемы
+
+```cpp
+std::atomic<int> counter{0};
+
+void worker() {
+    for (int i = 0; i < 1'000'000; ++i)
+        counter.fetch_add(1, std::memory_order_relaxed);
+}
+```
+
+Запусти на 8–16 потоках —
+**производительность хуже, чем mutex**.
+
+🧠 Почему это происходит
+
+1. `atomic<int>` лежит в cache line
+2. `fetch_add` → RMW
+3. CPU:
+
+   * invalidates cache line у других ядер
+   * ждёт exclusive state
+4. повторяется для каждого потока
+
+➡ **MESI ping-pong**
+
+🛠 Как бороться
+
+1️ Sharding / striping
+
+```cpp
+alignas(64) std::atomic<int> counters[N];
+```
+
+каждому потоку — свой
+
+
+2️Thread-local + merge
+
+```cpp
+thread_local int local;
+```
+3️ Padding / alignment
+
+```cpp
+struct alignas(64) Counter {
+    std::atomic<int> x;
+};
+```
+
+4️Reduce contention
+
+* batching
+* less frequent updates
+
+---
+
+<a name="cache_line_bouncing_vs_false_sharing"></a>
+### 🟢 false sharing vs cache line bouncing
+
+False sharing возникает, когда разные данные лежат в одной cache line и мешают друг другу.<br>
+Cache line bouncing — когда один и тот же объект постоянно перемещается между ядрами.<br>
+Оба связаны с когерентностью, но причины разные.<br>
+
+🧠 Коротко (1 строка)
+
+* **False sharing** — *разные данные, одна cache line*
+* **Cache line bouncing** — *одни и те же данные, много ядер*
+
+🔁 Cache Line Bouncing
+
+Что это<br>
+**Один и тот же объект** (обычно atomic)
+постоянно мигрирует между ядрами.
+
+Типичный кейс
+```cpp
+std::atomic<int> counter;
+
+void worker() {
+    counter.fetch_add(1);
+}
+```
+
+Причина
+* RMW требует exclusive state
+* invalidate на других ядрах
+* ping-pong между кешами
+
+Симптомы
+* плохая масштабируемость
+* деградация при росте потоков
+
+🧨 False Sharing
+
+Что это
+
+**Разные переменные**,
+но лежат **в одной cache line**.
+
+Типичный кейс
+```cpp
+struct Stats {
+    int a;
+    int b;
+};
+
+Stats s;
+
+thread1() { s.a++; }
+thread2() { s.b++; }
+```
+
+Причина
+* CPU не различает поля
+* invalidate всей линии
+* даже без логического конфликта
+
+Симптомы
+* внезапно медленно
+* «невинный» код
+
+
+|                | Cache Line Bouncing  | False Sharing        |
+| -------------- | -------------------- | -------------------- |
+| Данные         | одни и те же         | разные               |
+| Причина        | реальная конкуренция | физическое соседство |
+| Часто с atomic | ✔                    | ❌                    |
+| Часто с struct | ❌                    | ✔                    |
+| Исправляется   | sharding             | padding              |
+| Видимость      | очевидная            | скрытая              |
+
+---
+
+<a name="atomic_slower_than_mutex"></a>
+### 🟢 Почему atomic может быть медленнее mutex
+
+`std::atomic` может быть медленнее `std::mutex` из-за cache line bouncing и активного спина при высокой конкуренции. <br>
+Mutex умеет усыплять потоки и снижать нагрузку на кеши, поэтому при контенции он часто масштабируется лучше.<br>
+
+1. Cache line bouncing
+
+Что происходит
+* атомик → RMW
+* нужен exclusive cache line
+* MESI invalidations
+* ping-pong между ядрами
+
+```cpp
+counter.fetch_add(1);
+```
+
+➡ чем больше потоков — тем хуже
+
+2. Spin vs sleep
+
+Atomic
+
+* CAS-loop
+* активно жжёт CPU
+* не уступает ядро
+
+3. Mutex
+
+* при контенции:
+
+  * усыпляет поток
+  * даёт другому выполнить работу
+
+➡ при высокой конкуренции mutex выигрывает
+
+🧨  High contention
+
+| Потоки | Atomic     | Mutex      |
+| ------ | ---------- | ---------- |
+| 1–2    | быстрее    | медленнее  |
+| 8–32   | деградация | стабильнее |
+
+🛠 Как понять, что выбрать
+
+Atomic хорош, если:
+
+✔ мало потоков<br>
+✔ low contention<br>
+✔ простой счётчик<br>
+✔ короткие операции
+
+Mutex лучше, если:
+
+✔ высокая конкуренция<br>
+✔ длинная критическая секция<br>
+✔ сложная логика<br>
+✔ fairness важна
+
+
+---
+
+<a name="ll_sc"></a>
+### 🟢 Что такое LL/SC (Load-Link / Store-Conditional)
+
+🧠 Определение
+
+**LL/SC** — это **атомарная пара инструкций**, которая используется в CPU для реализации lock-free операций:
+
+1. **LL (Load-Link)** — читаем значение из памяти и «связываем» его с регистром.
+2. **SC (Store-Conditional)** — пытаемся записать новое значение **только если** никто другой не изменил память с момента LL.
+
+* Если кто-то другой изменил память → SC **неудача**
+* Если не изменил → SC **успех**
+
+🔹 Пример логики CAS на LL/SC
+
+```text
+do {
+    old = LL(addr)
+    new = old + 1
+} while (!SC(addr, new))
+```
+
+* Повторяем, пока SC не сработает
+* Легко реализовать `atomic<int>` на ARM/PowerPC
