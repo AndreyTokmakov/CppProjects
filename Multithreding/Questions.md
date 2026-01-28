@@ -1,24 +1,28 @@
-# 🧵 Потенциальные вопросы на собеседовании (C++ Multithreading)
+# Вопросы (C++ Multithreading)
 
----
+## База / разогрев
+* Что такое **thread-safety**?  [ответ](#what_is_thread_safety)
+* Чем **concurrency** отличается от **parallelism**?
+* Что такое **critical section**?
+* Когда `std::thread` дешевле, чем `std::async`, и наоборот? [ответ](#when_to_choose_thread_vs_async)
+* Что происходит при исключении внутри `std::thread`?
+* Можно ли копировать `std::thread`? Почему?  [ответ](#can_std_thread_be_copied)
+* В чём разница между `detach()` и `join()`?
+* Почему `sleep_for` — плохая синхронизация?
+* ожно ли безопасно завершить detached thread?
+* Что произойдёт, если два потока пишут в `std::vector`?
+* Почему деструктор `std::thread` может вызвать `std::terminate`?
+* В каких случаях `detach()` допустим в production?
+* Что произойдёт, если поток выбросит исключение?
+* Почему `std::jthread` безопаснее `std::thread`?
+* Как корректно передать ownership ресурса в поток?
+* Можно ли перезапустить `std::thread` объект?
 
-## 🟢 База / разогрев
-- Что такое **thread-safety**?  [ответ](#what_is_thread_safety)
-- Чем **concurrency** отличается от **parallelism**?
-- Что такое **critical section**?
-- Когда `std::thread` дешевле, чем `std::async`, и наоборот? [ответ](#when_to_choose_thread_vs_async)
-- Что происходит при исключении внутри `std::thread`?
-- Можно ли копировать `std::thread`? Почему?  [ответ](#can_std_thread_be_copied)
-- В чём разница между `detach()` и `join()`?
-- Почему `sleep_for` — плохая синхронизация?
-- ожно ли безопасно завершить detached thread?
-- Что произойдёт, если два потока пишут в `std::vector`?
-
----
-
-## 🟡 Mutex / Locks
+## Mutex / Locks
 - Чем `std::mutex` отличается от `std::recursive_mutex`?
+- Чем `std::recursive_mutex` плох? [ответ](#why_recursive_mutex_is_bad)
 - Когда `recursive_mutex` — плохая идея?
+- Что такое livelock? [ответ](#livelock)
 - Что такое **lock convoy**? [ответ](#lock_convoy)  
 - Зачем нужен `std::try_lock`?
 - Можно ли захватить mutex в signal handler? [ответ](#signal_handler)
@@ -27,25 +31,30 @@
 - Чем `std::scoped_lock` лучше `std::lock_guard`?
 - Что такое priority inversion? [ответ](#priority_inversion)
 - Как priority inversion решается?
+- В чём разница между `lock_guard`, `unique_lock` и `scoped_lock`?
+- Почему `try_lock` может привести к livelock?
+- Когда spinlock хуже mutex?
+- Можно ли уничтожить mutex, если на нём кто-то ждёт?
 
----
+## Condition Variables / Coordination
+* Почему `condition_variable` не хранит состояние?
+* Spurious wakeups — что это и почему они существуют [ответ](#spurious_wakeups)
+* Что произойдёт, если вызвать `notify_one` без mutex?
+* Почему `notify_all` может быть опасен?  [ответ](#notify_all_danger) 
+* Что будет, если `notify` вызван до `wait`?
+* Можно ли использовать `condition_variable` без mutex?
+* Чем `condition_variable_any` хуже?
+* Когда лучше использовать `latch` или `barrier`? [ответ](#latch_vs_barrier)
+* Можно ли реализовать semaphore через `condition_variable`?
+* Lost wakeups vs spurious wakeups — в чём разница
+* Semaphore vs condition_variable
+* Почему `wait()` всегда вызывается в цикле?
+* Что будет, если забыть predicate?
+* Чем `notify_one` отличается от `notify_all` на уровне производительности?
+* Почему `condition_variable` не гарантирует fairness?
+* Как реализовать timed wait без race condition?
 
-## 🟠 Condition Variables / Coordination
-- Почему `condition_variable` не хранит состояние?
-- Spurious wakeups — что это и почему они существуют [ответ](#spurious_wakeups)
-- Что произойдёт, если вызвать `notify_one` без mutex?
-- Почему `notify_all` может быть опасен?  [ответ](#notify_all_danger) 
-- Что будет, если `notify` вызван до `wait`?
-- Можно ли использовать `condition_variable` без mutex?
-- Чем `condition_variable_any` хуже?
-- Когда лучше использовать `latch` или `barrier`? [ответ](#latch_vs_barrier)
-- Можно ли реализовать semaphore через `condition_variable`?
-- Lost wakeups vs spurious wakeups — в чём разница
-- Semaphore vs condition_variable
-
----
-
-## 🟠 Atomics / Memory Model
+## Atomics / Memory Model
 - В чём разница между **atomicity** и **visibility**?
 - Почему `std::atomic<T>` не всегда lock-free?  [ответ](#lock_free_atomic)
 - Что значит `is_lock_free()`?
@@ -59,10 +68,14 @@
 - Почему UB из-за data race хуже segfault?
 - Почему CAS может спуриться (fail spuriously)?
 - Что такое release sequence?
-- Что такое LL/SC (Load-Link / Store-Conditional) [ответ](#ll_sc) 
+- Что такое LL/SC (Load-Link / Store-Conditional) [ответ](#ll_sc)
+- Можно ли реализовать mutex на atomics?
+- Когда `fetch_add` быстрее CAS?
+- Почему `compare_exchange_weak` может спуриться?
+- Что значит `is_lock_free()` и почему ему нельзя верить?
+- Может ли `std::atomic<T*>` быть lock-free, а `std::atomic<uint64_t>` — нет?
 
----
-## 🔴 Продвинутые темы
+## Продвинутые темы
 - Что такое **ABA problem** и где она возникает?
 - Почему lock-free ≠ fast?
 - Что такое **wait-free progress guarantee**?
@@ -75,10 +88,9 @@
 - Можно ли сделать lock-free `std::vector`?
 - `Data race` vs `Race condition` [ответ](#data_race_vs_race_condition)
 - `lock-free` vs `wait-free` [ответ](#lock_free_vs_wait_free)
+- Когда lock-free оправдан?
 
----
-
-## 🔥 Производительность / Архитектура
+## Производительность / Архитектура
 - Что такое cache coherence? [ответ](#cache_coherence)
 - MESI протокол — кратко
 - Почему false sharing опаснее, чем contention?
@@ -91,10 +103,16 @@
 - Как аллокаторы влияют на multithreading?
 - Почему shared_ptr дорогой в MT?
 - Что такое contention и как измерить? [ответ](#contention)
+- Что такое memory fence и когда он нужен?
+- Почему contention растёт нелинейно?
+- Thread-per-request vs thread pool?
+- Work stealing — когда полезен?
+- Как безопасно останавливать сервис с потоками?
+- Как протестировать код на race condition?
 
----
-
-## 🧪 Debugging / Production
+## Debugging / Production / System / OS
+- Что делает futex и почему он быстрый? [ответ](#futex)
+- Чем userspace blocking отличается от kernel blocking?
 - Как найти data race в проде?
 - Почему race может исчезнуть при логировании?
 - Как ThreadSanitizer влияет на memory ordering?
@@ -104,11 +122,28 @@
 - Как безопасно останавливать сервис с потоками?
 - Что происходит при `fork()` в многопоточном процессе?
 - Что такое async-signal-safe?
+- Почему нельзя брать mutex в signal handler?
 - Можно ли ловить deadlock автоматически?
 
----
+## Bugs & UB
+* Почему data race — это UB, а не просто баг?
+* Почему UB хуже, чем segfault?
+* Может ли UB выглядеть «стабильно»?
+* Почему TSan может скрыть баги?
+* Что такое out-of-thin-air reads?
+* Почему double-checked locking долго был сломан?
 
-## 🧠 Вопросы «на мышление»
+## Коварные вопросы
+* Можно ли вызвать `notify_one` без mutex?
+* Можно ли читать non-atomic после atomic store?
+* Может ли `atomic<int>` привести к cache line bouncing?
+* Гарантирует ли `seq_cst` отсутствие UB?
+* Можно ли безопасно использовать relaxed для счётчиков?
+* Что будет, если `notify` вызвать до `wait`?
+* Можно ли сделать thread-safe singleton без mutex?
+* Почему `sleep_for` — плохая синхронизация?
+
+## Вопросы «на мышление»
 - Как бы ты объяснил memory model джуниору?
 - Что ты выберешь: проще код или быстрее?
 - Когда лучше отказаться от lock-free?
@@ -120,7 +155,6 @@
 - Какой самый сложный concurrent баг ты видел?
 - Какие MT темы ты считаешь «красным флагом»?
 
----
 
 <a name="what_is_thread_safety"></a>
 ### 🟢 Что такое thread-safety?
@@ -185,6 +219,56 @@ std::thread t2 = std::move(t1);  // OK
 std::thread t1(worker);
 std::thread t2 = t1;   // ❌ compile error
 ```
+
+---
+
+<a name="why_recursive_mutex_is_bad"></a>
+### 🟢 Чем `std::recursive_mutex` плох?
+
+> *`std::recursive_mutex` плох тем, что скрывает ошибки дизайна, ухудшает производительность и усложняет анализ критических секций. Он решает только self-deadlock и не защищает от deadlock между потоками, поэтому почти всегда лучше обычный mutex или переработка архитектуры.*
+
+
+🔹 `std::recursive_mutex` позволяет одному и тому же потоку захватывать mutex **несколько раз**, но:
+
+* он **маскирует проблемы дизайна**
+* ухудшает производительность
+* усложняет reasoning о коде
+* не решает большинство реальных проблем
+
+🔹 Основная проблема: скрывает ошибки дизайна
+
+Если нужен recursive mutex — значит:
+* функции **слишком связаны**
+* нарушен принцип single responsibility
+* логика захвата локов размазана по стеку
+
+🔹 Производительность хуже
+
+* нужно хранить:
+  * owner thread id
+  * recursion counter
+* каждый lock/unlock дороже
+* больше кода → хуже кеш
+
+---
+
+<a name="livelock"></a>
+### 🟢 Что такое livelock?
+
+**Livelock** — это ситуация, когда потоки **не заблокированы**, активно работают, но **прогресс не происходит**.
+
+> Потоки «живы», крутятся, реагируют друг на друга — но система стоит.
+
+🔹 В отличие от других “locks”
+
+| Ситуация   | Потоки        | CPU      | Прогресс              |
+| ---------- | ------------- | -------- | --------------------- |
+| Deadlock   | Заблокированы | 0%       | ❌                     |
+| Livelock   | Активны       | 100%     | ❌                     |
+| Starvation | Активны       | variable | ❌ (для одного потока) |
+
+> *Livelock — это ситуация, когда потоки активно выполняются и реагируют друг на друга, но не делают полезного прогресса. В отличие от deadlock, потоки не заблокированы, но система фактически стоит.*
+
 
 ---
 
@@ -1006,3 +1090,38 @@ perf stat -e \
 
 * высокий `LLC-store-misses`
 * рост latency при росте потоков
+
+---
+
+<a name="futex"></a>
+### 🟢 Что делает futex и почему он быстрый?
+
+**futex (fast userspace mutex)** — это **механизм синхронизации, который работает в основном в userspace** и обращается в ядро **только при необходимости**.
+
+> Благодаря этому он быстрее обычных pthread mutex, особенно при низкой конкуренции.
+
+🔹 Как работает futex
+
+1. **Userspace** (fast path)
+
+   * Поток пытается захватить lock **без syscalls**
+   * Обычная проверка `atomic` переменной:
+
+     ```cpp
+     if (lock == 0) { lock = 1; } // fast path
+     ```
+   * Если получилось → **нет перехода в ядро** → быстро
+
+2. **Kernel space** (slow path)
+
+   * Если lock занят → поток вызывает syscall `futex()`
+   * Ядро ставит поток в **очередь ожидания**
+   * Когда lock освобождается, ядро пробуждает один или несколько потоков
+
+
+
+| Функция                    | Userspace | Kernel | Performance              |
+| -------------------------- | --------- | ------ | ------------------------ |
+| Захват lock без contention | ✅         | ❌      | Очень быстро             |
+| Захват lock при contention | ❌         | ✅      | Зависит от scheduler     |
+| Разбудить поток            | ❌         | ✅      | Только при необходимости |
