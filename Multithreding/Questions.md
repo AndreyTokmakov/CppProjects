@@ -90,7 +90,7 @@
 - Почему `malloc/free` плохо масштабируются?
 - Как аллокаторы влияют на multithreading?
 - Почему shared_ptr дорогой в MT?
-- Как измерить contention?
+- Что такое contention и как измерить? [ответ](#contention)
 
 ---
 
@@ -903,3 +903,106 @@ Wait-free
 
 * `std::atomic` использует **кеш-когерентность**, чтобы гарантировать корректные RMW операции
 * Cache line bouncing — это прямое следствие когерентности при частых атомарных операциях между ядрами
+
+---
+
+<a name="contention"></a>
+### 🟢 Что такое contention и как измерить?
+
+*Contention измеряют по времени ожидания mutex, количеству CAS-retries, futex wait событиям и cache misses.<br>
+Лучший способ — perf: futex_wait, cache-misses и масштабируемость throughput при росте потоков.*
+
+🔹 **Contention** — это время/ресурсы, потраченные потоками **на ожидание** доступа к разделяемому ресурсу (mutex, atomic, cache line).
+
+Измеряют:
+
+1. **Время ожидания**
+2. **Количество конфликтов**
+3. **Низкоуровневые события CPU**
+
+В коде (быстро и просто)
+
+🔹 Mutex wait time
+
+```cpp
+auto t0 = std::chrono::high_resolution_clock::now();
+m.lock();
+auto t1 = std::chrono::high_resolution_clock::now();
+
+wait_time += (t1 - t0);
+```
+
+* Работает для:
+
+  * mutex
+  * spinlock
+* Минус: искажает тайминги
+
+🔹 CAS retry count (lock-free)
+
+```cpp
+size_t retries = 0;
+while (!x.compare_exchange_weak(exp, val)) {
+    ++retries;
+}
+```
+
+* Много retries → высокий contention
+* Классика для lock-free очередей
+
+🔹 Измерить: Linux `perf` (Через ОС и CPU (лучший способ))
+
+```bash
+perf stat -e \
+  mutex_contention,\
+  cache-misses,\
+  LLC-load-misses \
+  ./app
+```
+
+Ключевые события:
+
+* `cache-misses`
+* `LLC-load-misses`
+* `cpu/mem-loads/`
+* `sched:sched_switch`
+
+🔹 perf record / report
+
+```bash
+perf record -g ./app
+perf report
+```
+
+* Видно:
+
+  * где спин
+  * где блокировки
+  * горячие mutex
+
+
+🔹 futex wait (Специально для mutex / futex)
+
+```bash
+perf stat -e futex:futex_wait ./app
+```
+
+* Чем больше `futex_wait` → тем выше contention
+* Отлично работает для `std::mutex`
+
+---
+
+## 5️⃣ Cache contention / false sharing
+
+```bash
+perf stat -e \
+  cache-references,\
+  cache-misses,\
+  LLC-store-misses \
+  ./app
+```
+
+Признаки:
+
+* высокий `LLC-store-misses`
+* рост latency при росте потоков
