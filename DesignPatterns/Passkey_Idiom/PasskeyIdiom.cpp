@@ -111,10 +111,10 @@ namespace demo2
     void test()
     {
         /** ERROR: Secret::AccessKey::AccessKey() is private **/
-        // Secret s { "foo?", {} };
+        // Secret s1 { "foo?", {} };
 
         SecretFactory sf;
-        Secret s = sf.getSecret("moo!"); //OK
+        Secret s2 = sf.getSecret("moo!"); //OK
     }
 }
 
@@ -122,6 +122,6 @@ namespace demo2
 
 void PasskeyIdiom::TestAll()
 {
-    simple_example::test();
-    // demo2::test();
+    // simple_example::test();
+    demo2::test();
 }

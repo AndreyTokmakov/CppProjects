@@ -103,12 +103,12 @@ int main([[maybe_unused]]  int argc,
     // State::TestAll();
     // TemplateMethod::TestAll();
     // Visitor::test();
-    /// NULL OBJECT
+    // NULL OBJECT
 
     /** C++ IDIOMS: **/
 
     // CRTP::Test();
-    // NVI_SimpleExample::TestAll();
+    NVI_SimpleExample::TestAll();
     // TypeErasure::Test();
     // RAII::Test();
     // CopyAndSwap::TEST_ALL();   ---- TESTs
@@ -119,7 +119,7 @@ int main([[maybe_unused]]  int argc,
     // LazyComputation::TestAll();
 
     // AccessToken::TestAll();
-    PasskeyIdiom::TestAll();
+    // PasskeyIdiom::TestAll();
 
 
     // ExecutorAdapter::TestAll();

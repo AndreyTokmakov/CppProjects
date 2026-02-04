@@ -10,7 +10,9 @@
 #ifndef BITWISE_OPERATION_TESTS__H_
 #define BITWISE_OPERATION_TESTS__H_
 
-namespace BitwiseOperation {
+namespace BitwiseOperation
+{
+    void Count_Zeros_Demo();
     void TestAll();
 };
 

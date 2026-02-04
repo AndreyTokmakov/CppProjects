@@ -8,6 +8,7 @@
 * Что происходит при исключении внутри `std::thread`?
 * Можно ли копировать `std::thread`? Почему?  [ответ](#can_std_thread_be_copied)
 * В чём разница между `detach()` и `join()`?
+* В чём разница между `yield()` и `sleep_for()`?   [ответ](#yield_vs_sleep_for)
 * Почему `sleep_for` — плохая синхронизация?
 * ожно ли безопасно завершить detached thread?
 * Что произойдёт, если два потока пишут в `std::vector`?
@@ -112,7 +113,7 @@
 
 ## Debugging / Production / System / OS
 - Что делает futex и почему он быстрый? [ответ](#futex)
-- Чем userspace blocking отличается от kernel blocking?
+- Чем userspace blocking отличается от kernel blocking? [ответ](#userspace_blocking_vs_kernel_blocking)
 - Как найти data race в проде?
 - Почему race может исчезнуть при логировании?
 - Как ThreadSanitizer влияет на memory ordering?
@@ -219,6 +220,108 @@ std::thread t2 = std::move(t1);  // OK
 std::thread t1(worker);
 std::thread t2 = t1;   // ❌ compile error
 ```
+
+---
+
+<a name="yield_vs_sleep_for"></a>
+### 🟢 В чём разница между `yield()` и `sleep_for()`?
+
+`yield()` — это **добровольная передача CPU** другим runnable-потокам **того же приоритета**.
+> «Я сейчас могу работать, но если есть кто-то другой — пусть он поработает»
+
+> *yield используется, чтобы добровольно отдать CPU другим runnable потокам, уменьшая нагрузку при активном ожидании. Он полезен в spinlock или retry-циклах для снижения contention и предотвращения livelock, но не является механизмом синхронизации и не подходит для долгого ожидания.*
+
+
+🔹 Что делает `yield` на самом деле
+
+* Поток **не блокируется**
+* Поток остаётся **RUNNABLE**
+* Scheduler может:
+
+  * поставить поток в конец run queue
+  * дать время другому потоку
+* **Никаких гарантий**: поток может быть запущен снова сразу же
+ Важно: `yield` — **hint**, а не синхронизация.
+
+Где `yield` полезен
+
+🔹1️⃣ В spinlock / busy wait
+
+```cpp
+while (lock.test_and_set(std::memory_order_acquire)) {
+    std::this_thread::yield();
+}
+```
+
+**Зачем:**
+
+* уменьшает CPU burn
+* снижает cache line bouncing
+* повышает шанс, что владелец lock'а выполнится и освободит его
+
+
+🔹2️⃣ При oversubscription
+
+> Потоков больше, чем ядер
+
+Без `yield`:
+
+* все потоки крутятся
+* scheduler thrash
+* latency ↑
+
+С `yield`:
+
+* поток «уступает»
+* система стабилизируется
+
+🔹 3️⃣ В retry-циклах (`try_lock`, CAS)
+
+```cpp
+while (!m.try_lock()) {
+    std::this_thread::yield();
+}
+```
+
+* предотвращает livelock
+* повышает fairness
+
+🔹 Yield vs Sleep
+
+| Характеристика       | yield    | sleep_for |
+| -------------------- | -------- | --------- |
+| Syscall              | Возможно | Да        |
+| Блокирует поток      | ❌        | ✅         |
+| Минимальная задержка | Да       | Нет       |
+| Энергопотребление    | Высокое  | Низкое    |
+| Подходит для spin    | ✅        | ❌         |
+
+🔹 Yield vs pause (CPU instruction)
+
+* `pause` (x86):
+
+  * уменьшает power
+  * снижает contention
+  * **не отдаёт CPU**
+* `yield`:
+
+  * отдаёт CPU scheduler'у
+
+🔹 Busy-wait: без `yield` vs с `yield`
+
+| Аспект                        | Без `yield`                         | С `yield`                |
+| ----------------------------- | ----------------------------------- | ------------------------ |
+| Поведение потока              | Активно крутится                    | Добровольно уступает CPU |
+| Состояние потока              | RUNNABLE                            | RUNNABLE                 |
+| Использование CPU             | 🔥 100% ядра                        | ⚖️ Сниженное             |
+| Scheduler                     | Thrashing (частые перепланирования) | Стабильнее               |
+| Прогресс владельца lock       | Затруднён                           | Ускоряется               |
+| Latency системы               | ⬆️ Растёт                           | ⬇️ Стабилизируется       |
+| Cache contention              | Высокий                             | Ниже                     |
+| Fairness                      | ❌ Нет                               | ⚠️ Улучшается            |
+| Энергопотребление             | Высокое                             | Ниже                     |
+| Подходит для oversubscription | ❌ Плохо                             | ✅ Лучше                  |
+
 
 ---
 
@@ -1100,7 +1203,7 @@ perf stat -e \
 
 > Благодаря этому он быстрее обычных pthread mutex, особенно при низкой конкуренции.
 
-🔹 Как работает futex
+🔹Как работает futex
 
 1. **Userspace** (fast path)
 
@@ -1118,10 +1221,87 @@ perf stat -e \
    * Ядро ставит поток в **очередь ожидания**
    * Когда lock освобождается, ядро пробуждает один или несколько потоков
 
-
-
 | Функция                    | Userspace | Kernel | Performance              |
 | -------------------------- | --------- | ------ | ------------------------ |
 | Захват lock без contention | ✅         | ❌      | Очень быстро             |
 | Захват lock при contention | ❌         | ✅      | Зависит от scheduler     |
 | Разбудить поток            | ❌         | ✅      | Только при необходимости |
+
+---
+
+<a name="userspace_blocking_vs_kernel_blocking "></a>
+### 🟢 Чем userspace blocking отличается от kernel blocking
+
+*Userspace blocking — это активное ожидание без перехода в ядро, с минимальной задержкой, но высокой загрузкой CPU.<br>
+Kernel blocking усыпляет поток через syscall, отдавая CPU планировщику, что масштабируется лучше, но дороже по latency.<br>
+Современные mutex используют гибридный подход через futex.*
+
+* **Userspace blocking** — поток *логически* ждёт, но **не отдаёт CPU ядру**
+* **Kernel blocking** — поток **усыпляется ядром**, CPU отдаётся другим
+
+🔹Userspace blocking (busy wait / spin)
+
+Поток:
+
+* остаётся **RUNNABLE**
+* крутится в цикле
+* постоянно проверяет условие
+
+```cpp
+while (!flag.load(std::memory_order_acquire)) {
+    // spin
+}
+```
+
+Что происходит на CPU
+
+* поток **всегда активен**
+* выполняет инструкции
+* держит cache lines
+* участвует в cache-coherence
+
+🔹Kernel blocking (sleep)
+
+Поток:
+
+* вызывает syscall (`futex`, `pthread_cond_wait`, `sleep`)
+* ядро:
+
+  * снимает поток с run queue
+  * переводит в **SLEEPING / WAITING**
+
+```cpp
+std::unique_lock<std::mutex> lk(m);
+cv.wait(lk);
+```
+
+Что происходит на CPU
+
+* поток **не исполняется**
+* CPU может выполнять другой код
+* scheduler управляет fairness
+
+Плюсы
+
+* ✅ не жрёт CPU
+* ✅ хорошо масштабируется
+* ✅ подходит для долгого ожидания
+
+
+**Userspace blocking vs Kernel blocking**
+
+| Критерий                | Userspace blocking (spin / busy wait) | Kernel blocking (sleep / wait)   |
+| ----------------------- | ------------------------------------- | -------------------------------- |
+| Где происходит ожидание | Userspace                             | Kernel space                     |
+| Состояние потока        | RUNNABLE                              | SLEEPING / WAITING               |
+| Использование CPU       | 🔥 Высокое (крутится)                 | 💤 Нулевое                       |
+| Syscall                 | ❌ Нет                                 | ✅ Есть                           |
+| Context switch          | ❌ Нет                                 | ✅ Есть                           |
+| Latency                 | ⚡ Минимальная                         | 🐢 Выше                          |
+| Масштабируемость        | ❌ Плохая                              | ✅ Хорошая                        |
+| Fairness                | ❌ Нет                                 | ⚠️ Частичная (scheduler)         |
+| Cache line bouncing     | ❌ Часто                               | ✅ Нет                            |
+| Энергопотребление       | ❌ Высокое                             | ✅ Низкое                         |
+| Типичные примеры        | spinlock, busy loop                   | mutex, condition_variable, sleep |
+| Подходит для            | Короткого ожидания                    | Долгого ожидания                 |
+| Риск livelock           | ✅ Да                                  | ❌ Нет                            |

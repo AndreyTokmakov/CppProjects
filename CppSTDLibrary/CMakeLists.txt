@@ -19,6 +19,7 @@ add_executable(${PROJECT_NAME}
 		Auto/Auto.cpp
 		BitSet/BitSet.cpp
 		BitwiseOperation/BitwiseOperation.cpp
+		BitwiseOperation/Count_Zeros.cpp
 		Byte/Byte.cpp
 		Chrono/Chrono.cpp
 		Chrono/TimeZones.cpp

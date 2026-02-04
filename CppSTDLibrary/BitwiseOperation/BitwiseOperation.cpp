@@ -529,9 +529,11 @@ namespace BitwiseOperation::Right_Shift
 
 void BitwiseOperation::TestAll()
 {
+    Count_Zeros_Demo();
+
     // InitVariable_BinaryForm();
 
-    Modulo_Tests();
+    // Modulo_Tests();
 
     // ShowBitsTests();
     // BaseTests();
@@ -572,5 +574,5 @@ void BitwiseOperation::TestAll()
     // Count_Zeros();
     // Count_One_s();
 
-    Right_Shift::demo();
+    // Right_Shift::demo();
 };

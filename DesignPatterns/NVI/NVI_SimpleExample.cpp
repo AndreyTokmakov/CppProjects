@@ -96,4 +96,10 @@ void NVI_SimpleExample::TestAll()
 
     clientCode(xmlWriter.get());
     clientCode(textWriter.get());
+
+    // XMLReaderWriter::read_from_impl()
+    // XMLReaderWriter::write_to_impl()
+    // TextReaderWriter::read_from_impl()
+    // TextReaderWriter::write_to_impl()
+
 }
