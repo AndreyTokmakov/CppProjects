@@ -56,6 +56,7 @@ Description : Software design patterns C++ test project
 #include "DependencyInjection/DependencyInjection.h"
 #include "TypeID/TypeID.h"
 #include "FactoryClasses/FactoryClasses.h"
+#include "Factory_Registry/Factory_Registry.hpp"
 #include "FactoryMethod_TypeSequence/FactoryMethod_TypeSequence.hpp"
 
 
@@ -67,6 +68,7 @@ int main([[maybe_unused]]  int argc,
     // Builder::TestAll();
     // FabricMethod::TestAll();
     // FactoryClasses::TestAll();
+    factory_registry::TestAll();
     // FactoryMethod_TypeSequence::TestAll();
     // Prototype::TestAll();
     // Singleton::TestAll();;
@@ -108,7 +110,7 @@ int main([[maybe_unused]]  int argc,
     /** C++ IDIOMS: **/
 
     // CRTP::Test();
-    NVI_SimpleExample::TestAll();
+    // NVI_SimpleExample::TestAll();
     // TypeErasure::Test();
     // RAII::Test();
     // CopyAndSwap::TEST_ALL();   ---- TESTs

@@ -30,11 +30,15 @@ add_executable(${PROJECT_NAME}
 		CRTP/Simple_Comparable_Base.cpp
 		CRTP/CRTP_Cloneable.cpp
 		Decorator/Decorator.cpp
-		Decorator/Decorator.h
 		FabricMethod/FabricMethod.h
 		FabricMethod/FabricMethod.cpp
-		FactoryMethod_TypeSequence/FactoryMethod_TypeSequence.cpp
 		FabricMethod/FabricMethod2.cpp
+
+		FactoryMethod_TypeSequence/FactoryMethod_TypeSequence.cpp
+
+		Factory_Registry/Factory_Registry_Basic.cpp
+		Factory_Registry/Factory_Registry_CompileTime.cpp
+
 		Facade/Facade.cpp Facade/Facade.h
 		Filter/Filter.cpp Filter/Filter.h Filter/Filter_ColorSize.cpp
 		Flyweight/Flyweight.cpp Flyweight/Flyweight.h Flyweight/IconFlyweight.cpp
