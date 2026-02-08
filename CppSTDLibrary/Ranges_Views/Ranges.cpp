@@ -1487,6 +1487,65 @@ namespace Ranges::As_Const_View
     }
 }
 
+
+namespace Ranges::Ranges_as_Input_Parameter
+{
+
+    // 2️⃣ Принимать любой view / range (C++20)
+    void process1(std::ranges::view auto range)
+    {
+        for (auto&& entry : range) {
+            std::cout << entry << ' ';
+        }
+        std::cout << '\n';
+    }
+
+    // Принимать и контейнеры, и views (ЛУЧШЕЕ РЕШЕНИЕ)
+    template <std::ranges::input_range R>
+    void process2(R&& range)
+    {
+        for (auto&& entry : range) {
+            std::cout << entry << ' ';
+        }
+        std::cout << '\n';
+    }
+
+    // Ограничить ТОЛЬКО views
+    template <std::ranges::view V>
+    void process3(V&& range)
+    {
+        for (auto&& entry : range) {
+            std::cout << entry << ' ';
+        }
+        std::cout << '\n';
+    }
+
+    // Range + требования (HFT / generic)
+    template <std::ranges::input_range R>
+        requires std::integral<std::ranges::range_value_t<R>>
+    void sum(R&& range)
+    {
+        for (auto&& entry : range) {
+            // ...
+        }
+    }
+
+    void demo()
+    {
+        std::vector<int> values = {1,2,3,4,5,6,7,8,9};
+
+        process1(values | std::views::filter([](const auto& v) {
+            return !(v & 1);
+        }));
+        process2(values | std::views::filter([](const auto& v) {
+            return v & 1;
+        }));
+        process3(values | std::views::filter([](const auto& v) {
+            return !(v & 1);
+        }));
+    }
+}
+
 void Ranges::TestAll()
 {
     // Store::TestAll();
@@ -1513,7 +1572,9 @@ void Ranges::TestAll()
     // Join::rangeJoinStyle();
     // Join::Join_Get_ClassParameters();
 
-    Concat_1();
+    // Concat_1();
+
+    Ranges_as_Input_Parameter::demo();
 
     // Split::Split_String_Simple();
     // Split::Split_Non_String();
