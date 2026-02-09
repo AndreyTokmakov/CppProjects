@@ -68,7 +68,7 @@ int main([[maybe_unused]]  int argc,
     // Builder::TestAll();
     // FabricMethod::TestAll();
     // FactoryClasses::TestAll();
-    factory_registry::TestAll();
+    // factory_registry::TestAll();
     // FactoryMethod_TypeSequence::TestAll();
     // Prototype::TestAll();
     // Singleton::TestAll();;
@@ -117,13 +117,9 @@ int main([[maybe_unused]]  int argc,
     // TagDispatching::Test();
     // VirtualConstructor::Test();
     // TypeID::TestAll();
-
     // LazyComputation::TestAll();
-
     // AccessToken::TestAll();
-    // PasskeyIdiom::TestAll();
-
-
+    PasskeyIdiom::TestAll();
     // ExecutorAdapter::TestAll();
 	// NamedParameter::Test();
     // Filter::TestAll();

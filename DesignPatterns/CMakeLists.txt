@@ -116,6 +116,7 @@ add_executable(${PROJECT_NAME}
         TypeID/TypeID.cpp
 		AccessToken/AccessToken.cpp
 		Passkey_Idiom/PasskeyIdiom.cpp
+		Passkey_Idiom/PasskeyTemplate.cpp
 		FactoryClasses/FactoryClasses.cpp
 )
 

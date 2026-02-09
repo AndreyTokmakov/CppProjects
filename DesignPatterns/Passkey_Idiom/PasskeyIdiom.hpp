@@ -13,6 +13,7 @@ Description : PasskeyIdiom.hpp
 namespace PasskeyIdiom
 {
     void TestAll();
+    void PasskeyTemplate_Test();
 }
 
 #endif //CPPPROJECTS_PASSKEYIDIOM_HPP
