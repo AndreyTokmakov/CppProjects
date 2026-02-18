@@ -20,6 +20,8 @@ Description : DataStructures
 #include "BitSet/BitSet.h"
 #include "FlatMap/FlatMap.hpp"
 #include "FlatMap_Fast/FlatMap.hpp"
+#include "FreeList/FreeList.hpp"
+#include "FreeList_ThreadSafe/FreeList_ThreadSafe.hpp"
 #include "CircularBuffers/CircularBuffers.h"
 #include "ThreadsafeQueue/ThreadsafeQueue.h"
 #include "SharedPtr/SharedPtr.h"
@@ -105,6 +107,9 @@ int main([[maybe_unused]] int argc,
     // HeapWithComparator::TestAll();
     // CompressedPair::TestAll();
 
+	// free_list::TestAll();
+	free_list_thread_safe::TestAll();
+
 	// static_sorted_search_array::TestAll();
     // CircularBuffers::TEST_ALL();
     // RingBuffer::TestAll();
@@ -114,7 +119,7 @@ int main([[maybe_unused]] int argc,
 
 	// static_string::TestAll();
 
-	MPMCQueue::TestAll();
+	// MPMCQueue::TestAll();
 
     // GenericTableTemplate::TestAll();
 

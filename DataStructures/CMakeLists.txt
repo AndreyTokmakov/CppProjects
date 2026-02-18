@@ -18,6 +18,8 @@ add_executable(${PROJECT_NAME}
         ObjectPool/ObjectPool.cpp
 		ObjectPool_Growing/ObjectPool_Growing.cpp
 		LockFreeDataStructures/LockFreeQueue.cpp
+		FreeList/FreeList.cpp
+		FreeList_ThreadSafe/FreeList_ThreadSafe.cpp
 		Finalizers/Finalizers.cpp
 		FlatMap/FlatMap.cpp
 		FlatMap_Fast/FlatMap.cpp
