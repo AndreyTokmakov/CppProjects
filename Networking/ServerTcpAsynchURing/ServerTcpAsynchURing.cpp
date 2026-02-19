@@ -291,11 +291,263 @@ namespace minimal_example_2
         Server server;
         server.run(52525);
     }
+}
+
+namespace no_heap_alloc
+{
+    struct Server
+    {
+        using Handle = int;
+        static constexpr Handle invalidHandle { -1 };
+
+        constexpr static uint16_t backlogSize { 512 };
+        constexpr static uint16_t queueDepth { 1024 };
+        constexpr static uint16_t bufferSize { 4096 };
+        static constexpr uint16_t maxConnections { 512 };
+
+        enum class Operation {
+            Accept,
+            Read,
+            Write
+        };
+
+        struct RequestContext
+        {
+            Operation opType {};
+            Handle socketFd { invalidHandle };
+            size_t dataSize {};
+            std::array<char, bufferSize> buffer{};
+            RequestContext* next{};
+        };
+
+        Server()
+        {
+            if (const int ret = io_uring_queue_init(queueDepth, &ring, 0); ret < 0) {
+                std::println(std::cerr, "io_uring_queue_init() failed  Error = {}", errno);
+                return;
+            }
+
+            for (size_t i = 0; i < pool.size() - 1; ++i) {
+                pool[i].next = &pool[i + 1];
+            }
+            pool.back().next = nullptr;
+            freePool = &pool[0];
+        }
+
+        ~Server() {
+            io_uring_queue_exit(&ring);
+        }
+
+        void run(const uint16_t port)
+        {
+            setupListenSocket(port);
+            submitAccept();
+            while (true)
+            {
+                io_uring_cqe* cqe;
+                if (const int ret = io_uring_wait_cqe(&ring, &cqe); ret < 0)
+                    continue;
+
+                RequestContext* context = static_cast<RequestContext*>(io_uring_cqe_get_data(cqe));
+                handleCompletion(cqe, context);
+                io_uring_cqe_seen(&ring, cqe);
+            }
+        }
+
+    private:
+
+        io_uring ring{};
+        Handle listenSocketFd{ invalidHandle };
+
+        std::array<RequestContext, maxConnections * 2> pool{};
+        RequestContext* freePool{};
+
+
+        RequestContext* allocateContext()
+        {
+            if (!freePool) {
+                std::println(std::cerr, "RequestContext pool exhausted");
+                return nullptr;
+            }
+            RequestContext* ctx = freePool;
+            freePool = ctx->next;
+            ctx->next = nullptr;
+            return ctx;
+        }
+
+        void freeContext(RequestContext* ctx)
+        {
+            ctx->next = freePool;
+            freePool = ctx;
+        }
+
+        bool setupListenSocket(uint16_t port)
+        {
+            listenSocketFd = ::socket(AF_INET, SOCK_STREAM | SOCK_NONBLOCK, 0);
+            if (listenSocketFd < 0) {
+                std::println(std::cerr, "Failed to create server socker. Error = {}", errno);
+                return false;
+            }
+
+            constexpr int opt = 1;
+            setsockopt(listenSocketFd, SOL_SOCKET, SO_REUSEADDR, &opt, sizeof(opt));
+
+            const sockaddr_in address { AF_INET, htons(port), {.s_addr = INADDR_ANY}, {}};
+            if (0 != ::bind(listenSocketFd, reinterpret_cast<const sockaddr*>(&address),sizeof(address))) {
+                std::println(std::cerr, "Failed to bind server socket to port {}. Error = {}", port, errno);
+                return false;
+            }
+            if (0 != ::listen(listenSocketFd, backlogSize)) {
+                std::println(std::cerr, "listen() failed. Error = {}", port, errno);
+                return false;
+            }
+            return true;
+        }
+
+        bool submitAccept()
+        {
+            RequestContext* ctx = allocateContext();
+            if (!ctx) {
+                return false;
+            }
+
+            ctx->opType = Operation::Accept;
+            ctx->socketFd = listenSocketFd;
+
+            io_uring_sqe* sqe = io_uring_get_sqe(&ring);
+            if (!sqe) {
+                std::println(std::cerr, "io_uring_get_sqe failed for accept. Error = {}", errno);
+                freeContext(ctx);
+                return false;
+            }
+
+            io_uring_prep_accept(sqe, listenSocketFd, nullptr, nullptr, SOCK_NONBLOCK);
+            io_uring_sqe_set_data(sqe, ctx);
+
+            if (io_uring_submit(&ring) < 0) {
+                std::println(std::cerr, "io_uring_submit failed for accept. Error = {}", errno);
+                freeContext(ctx);
+                return false;
+            }
+
+            return true;
+        }
+
+        bool submitRead(const Handle clientFd)
+        {
+            RequestContext* ctx = allocateContext();
+            if (!ctx)
+                return false;
+
+            ctx->opType = Operation::Read;
+            ctx->socketFd = clientFd;
+
+            io_uring_sqe* sqe = io_uring_get_sqe(&ring);
+            if (!sqe)
+            {
+                std::println(std::cerr, "io_uring_get_sqe failed for read. Error = {}", errno);
+                freeContext(ctx);
+                return false;
+            }
+
+            io_uring_prep_recv(sqe, clientFd, ctx->buffer.data(), bufferSize, 0);
+            io_uring_sqe_set_data(sqe, ctx);
+
+            if (io_uring_submit(&ring) < 0) {
+                std::println(std::cerr, "io_uring_submit failed for read. Error = {}", errno);
+                freeContext(ctx);
+                return false;
+            }
+            return true;
+        }
+
+        // TODO: {data ,size } --> span ??
+        bool submitWrite(const Handle clientFd,
+                         const char* data,
+                         const size_t size)
+        {
+            RequestContext* ctx = allocateContext();
+            if (!ctx)
+                return false;
+
+            ctx->opType = Operation::Write;
+            ctx->socketFd = clientFd;
+            ctx->dataSize = size;
+            std::memcpy(ctx->buffer.data(), data, size);
+
+            io_uring_sqe* sqe = io_uring_get_sqe(&ring);
+            if (!sqe) {
+                std::println(std::cerr, "io_uring_get_sqe failed for write. Error = {}", errno);
+                freeContext(ctx);
+                return false;
+            }
+
+            io_uring_prep_send(sqe, clientFd, ctx->buffer.data(), size, 0);
+            io_uring_sqe_set_data(sqe, ctx);
+
+            if (io_uring_submit(&ring) < 0) {
+                std::println(std::cerr, "io_uring_submit failed for write. Error = {}", errno);
+                freeContext(ctx);
+                return false;
+            }
+
+            return true;
+        }
+
+        void handleCompletion(const io_uring_cqe* cqe,
+                              RequestContext* ctx)
+        {
+            if (!ctx)
+                return;
+            if (cqe->res < 0)
+            {
+                if (ctx->opType != Operation::Accept && ctx->socketFd != invalidHandle) {
+                    close(ctx->socketFd);
+                }
+                freeContext(ctx);
+                return;
+            }
+
+            switch (ctx->opType)
+            {
+                case Operation::Accept:
+                {
+                    const Handle clientFd = cqe->res;
+                    submitAccept(); // resubmit accept
+                    submitRead(clientFd);
+                    break;
+                }
+                case Operation::Read:
+                {
+                    if (cqe->res == 0) {
+                        close(ctx->socketFd);
+                    } else {
+                        submitWrite(ctx->socketFd, ctx->buffer.data(), cqe->res);
+                    }
+                    break;
+                }
+                case Operation::Write:
+                {
+                    submitRead(ctx->socketFd);
+                    break;
+                }
+            }
+            freeContext(ctx);
+        }
+    };
+
+    void run()
+    {
+        Server server;
+        server.run(52525);
+    }
 
 }
 
 void server_tcp_asynch_uring::TestAll()
 {
     // minimal_example_1::run();
-    minimal_example_2::run();
+    // minimal_example_2::run();
+
+    no_heap_alloc::run();
 }
