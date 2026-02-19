@@ -42,6 +42,7 @@ Description : Tests C++ project
 #include "Servers/EPollTCPServerMultithreaded.h"
 #include "ServersTCP/AsynchTcpServerWithSessions.hpp"
 #include "ServerTcpAsynch/AsynchTcpService.hpp"
+#include "ServerTcpAsynchURing/ServerTcpAsynchURing.hpp"
 
 #include "ssh/SshExperiments.h"
 #include "SSL/SSL_Experiments.h"
@@ -95,6 +96,7 @@ int main([[maybe_unused]] int argc,
 
     // tcp_server::TestAll();
     // AsynchTcpService::TestAll();
+    server_tcp_asynch_uring::TestAll();
 
     // PcapAnalyzer::TestAll();
 
@@ -115,7 +117,7 @@ int main([[maybe_unused]] int argc,
 
     // UDSAsynchServer::TestAll();
 
-    CurpCpp::TestAll();
+    // CurpCpp::TestAll();
 
     return EXIT_SUCCESS;
 }

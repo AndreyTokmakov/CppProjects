@@ -53,8 +53,8 @@ namespace
             }
 
             Node* head = freeList.load(std::memory_order_acquire);
-
-            while (head) {
+            while (head)
+            {
                 Node* next = head->next;
                 if (freeList.compare_exchange_weak(head,next, std::memory_order_acq_rel, std::memory_order_acquire))
                 {

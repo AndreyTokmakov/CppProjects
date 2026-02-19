@@ -26,6 +26,9 @@ include_directories(${THIRD_PARTY_DIR}/json/include)
 include_directories(${THIRD_PARTY_DIR}/curlpp/include)
 link_directories(${THIRD_PARTY_DIR}/curlpp/build)
 
+include_directories(${THIRD_PARTY_DIR}/liburing/install_dir/include)
+link_directories(${THIRD_PARTY_DIR}/liburing/install_dir/lib)
+
 # find_package(gRPC CONFIG REQUIRED)
 # message(STATUS "Using gRPC ${gRPC_VERSION}")
 
@@ -65,6 +68,8 @@ add_executable(${PROJECT_NAME}
         ServerTcpAsynch/Session.cpp
         ServerTcpAsynch/TcpServer.cpp
 
+        ServerTcpAsynchURing/ServerTcpAsynchURing.cpp
+
         RawSockets/CaptureTraffic.cpp
         PcapAnalyzer/PcapAnalyzer.cpp
         WiFi/WiFiExperiments.cpp
@@ -96,4 +101,5 @@ target_link_libraries(${PROJECT_NAME}
         ssl
         curl
         curlpp
+        uring
 )
