@@ -11,6 +11,7 @@ Description : DataStructures
 #include "Array/Array.h"
 #include "BitFlags/BitFlags.h"
 #include "Barrier/Barrier.hpp"
+#include "Semaphore/Semaphore.hpp"
 #include "LRUCache/LRUCache.h"
 #include "TTLCache/TTLCache.h"
 #include "Function/Function.hpp"
@@ -139,15 +140,18 @@ int main([[maybe_unused]] int argc,
     // ThreadPoolTwo::TEST_ALL();
     // ThreadPoolLimited::TestAll();
 
-	barrier::TestAll();
-
     // Trie::TestAll();
 
     // ObjectNumberLimiter::TestAll();
 
-    // Queues::Multithreading::RunTests();
-
 	// TTLCache::TEST_ALL();
 
-    // LockFreeQueue::TEST_ALL();
+	/*********************************** Multithreading ***********************************/
+
+    // Queues::Multithreading::RunTests();
+
+	// LockFreeQueue::TEST_ALL();
+
+    // barrier::TestAll();
+    semaphore::TestAll();
 }
