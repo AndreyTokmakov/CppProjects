@@ -172,21 +172,22 @@ namespace
         }
     };
 
-
-    int setNonBlocking(const Handle fd)
+    Handle setNonBlocking(const Handle fd)
     {
         const Handle flags = ::fcntl(fd, F_GETFL, 0);
         return ::fcntl(fd, F_SETFL, flags | O_NONBLOCK);
     }
 
-    void setTcpOptions(const Handle fd)
+    Handle setTcpOptions(const Handle fd)
     {
         constexpr int one = 1;
-        setsockopt(fd, IPPROTO_TCP, TCP_NODELAY, &one, sizeof(one));
+        return ::setsockopt(fd, IPPROTO_TCP, TCP_NODELAY, &one, sizeof(one));
     }
 
-    struct  EpollServer
+    struct EpollServer
     {
+        constexpr static uint16_t maxEvents = 1024;
+
         explicit EpollServer(const uint16_t port)
         {
             serverSocket = ::socket(AF_INET, SOCK_STREAM, 0);
@@ -214,8 +215,7 @@ namespace
 
         void run()
         {
-            constexpr int maxEvents = 1024;
-            std::array<epoll_event,maxEvents> events {};
+            std::array<epoll_event, maxEvents> events {};
             while (true)
             {
                 const int n = ::epoll_wait(epollFd, events.data(), maxEvents, -1);
@@ -230,6 +230,7 @@ namespace
         }
 
     private:
+
         void acceptLoop()
         {
             while (true)
@@ -275,6 +276,8 @@ namespace
 
             if (event.events & EPOLLOUT)
             {
+                std::cout << "EPOLLOUT\n";
+
                 while (true) {
                     if (const ssize_t s = conn->tx.sendToFd(fd); s <= 0) {
                         break;
@@ -283,6 +286,16 @@ namespace
                 if (conn->tx.empty()) {
                     disableWrite(fd);
                 }
+            }
+
+            if (event.events & EPOLLHUP || event.events & EPOLLRDHUP)
+            {
+                std::cout << "EPOLLHUP/EPOLLRDHUP\n";
+
+                Connection* conn = connectionsTable[fd];
+                connectionsTable.erase(fd);
+                delete conn;
+                removeEvent(fd);
             }
         }
 
@@ -302,11 +315,16 @@ namespace
             ::epoll_ctl(epollFd, EPOLL_CTL_MOD, fd, &ev);
         }
 
+        void removeEvent(const Handle fd) const
+        {
+            ::epoll_ctl(epollFd, EPOLL_CTL_DEL, fd, nullptr);
+        }
+
     private:
 
         Handle serverSocket { invalidHandle };
         Handle epollFd { invalidHandle };
-        std::unordered_map<int, Connection*> connectionsTable;
+        std::unordered_map<Handle, Connection*> connectionsTable;
     };
 
     void run(uint16_t port = 52525)

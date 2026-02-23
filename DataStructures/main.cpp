@@ -7,8 +7,10 @@ Copyright   : Your copyright notice
 Description : DataStructures
 ============================================================================**/
 
+#include "../Multithreding/Barrier/Barrier.h"
 #include "Array/Array.h"
 #include "BitFlags/BitFlags.h"
+#include "Barrier/Barrier.hpp"
 #include "LRUCache/LRUCache.h"
 #include "TTLCache/TTLCache.h"
 #include "Function/Function.hpp"
@@ -108,7 +110,7 @@ int main([[maybe_unused]] int argc,
     // CompressedPair::TestAll();
 
 	// free_list::TestAll();
-	free_list_thread_safe::TestAll();
+	// free_list_thread_safe::TestAll();
 
 	// static_sorted_search_array::TestAll();
     // CircularBuffers::TEST_ALL();
@@ -136,6 +138,8 @@ int main([[maybe_unused]] int argc,
     // ThreadPoolOne::TEST_ALL();
     // ThreadPoolTwo::TEST_ALL();
     // ThreadPoolLimited::TestAll();
+
+	barrier::TestAll();
 
     // Trie::TestAll();
 
