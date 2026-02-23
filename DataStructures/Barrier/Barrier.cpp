@@ -13,7 +13,7 @@ Description : Barrier.cpp
 #include <string_view>
 #include <vector>
 #include <thread>
-#include <random>
+#include <functional>
 
 #include <syncstream>
 #include <mutex>
@@ -33,15 +33,24 @@ namespace barrier
         explicit Barrier(const size_type num) : threshold { num }, count { num } {
         }
 
+        Barrier(const size_type num, std::function<void()>&& callback) :
+            threshold { num }, count { num }, callback { std::move(callback) } {
+        }
+
         void arrive_and_wait()
         {
             std::unique_lock<std::mutex> lock(mtx);
-            const size_type gen = generation;
+            const size_t gen = generation;
 
             if (--count == 0)
             {
                 generation++;
                 count = threshold;
+                lock.unlock();
+
+                if (const auto cbCopy = callback; cbCopy) {
+                    cbCopy(); // TODO: Try-catch --> terminate
+                }
                 reached.notify_all();
             }
             else
@@ -52,14 +61,24 @@ namespace barrier
             }
         }
 
-    private:
+        void wait()
+        {
+            std::unique_lock lock { mtx };
+            const size_t gen = generation;
+            reached.wait(lock, [&, gen] {
+                return generation != gen;
+            });
+        }
 
+    private:
         std::mutex mtx;
         std::condition_variable reached;
+
 
         const size_type threshold { 0 };
         alignas(64) size_type count { 0 };
         size_type generation { 0 };
+        std::function<void()> callback {};
     };
 }
 
@@ -103,6 +122,21 @@ namespace barrier::unit_tests
         std::cerr << "TEST FAILED: " << msg << "\n";
     }
 
+    void test_threshold_one()
+    {
+        std::atomic<int> passed{0};
+        Barrier barrier(1);
+        std::jthread t([&] {
+            barrier.arrive_and_wait();
+            passed.fetch_add(1);
+        });
+
+        t.join();
+        if (passed.load() != 1)
+            std::cerr << "Threshold=1 failed\n";
+    }
+
+
     void test_basic()
     {
         constexpr int N = 8;
@@ -128,11 +162,11 @@ namespace barrier::unit_tests
     void test_no_early_release()
     {
         constexpr int N = 4;
-        Barrier b(N);
+        Barrier barrier(N);
         std::atomic<int> passed{0};
 
         std::thread t1([&] {
-            b.arrive_and_wait();
+            barrier.arrive_and_wait();
             passed.fetch_add(1);
         });
 
@@ -143,7 +177,7 @@ namespace barrier::unit_tests
         std::vector<std::thread> rest;
         for (int i = 1; i < N; ++i) {
             rest.emplace_back([&] {
-                b.arrive_and_wait();
+                barrier.arrive_and_wait();
                 passed.fetch_add(1);
             });
         }
@@ -157,17 +191,16 @@ namespace barrier::unit_tests
 
     void test_reuse()
     {
-        constexpr int N = 6;
-        constexpr int ROUNDS = 50;
+        constexpr int N = 6, ROUNDS = 50;
 
-        Barrier b(N);
+        Barrier barrier(N);
         std::atomic<int> counter{0};
         std::vector<std::jthread> threads;
 
         for (int i = 0; i < N; ++i){
             threads.emplace_back([&] {
                 for (int r = 0; r < ROUNDS; ++r) {
-                    b.arrive_and_wait();
+                    barrier.arrive_and_wait();
                     counter.fetch_add(1, std::memory_order_relaxed);
                 }
             });
@@ -180,19 +213,60 @@ namespace barrier::unit_tests
 
     void test_stress()
     {
-        constexpr int N = 16;
-        constexpr int ROUNDS = 200;
+        constexpr int N = 16, ROUNDS = 200;
 
-        Barrier b(N);
+        Barrier barrier(N);
         std::vector<std::jthread> threads;
 
         for (int i = 0; i < N; ++i){
             threads.emplace_back([&] {
                 for (int r = 0; r < ROUNDS; ++r){
-                    b.arrive_and_wait();
+                    barrier.arrive_and_wait();
                 }
             });
         }
+    }
+
+    void test_callback_once()
+    {
+        constexpr int N = 5, ROUNDS = 20;
+
+        std::atomic<int> cb_count{0};
+        Barrier barrier(N, [&] {
+            cb_count.fetch_add(1, std::memory_order_relaxed);
+        });
+
+        std::vector<std::jthread> threads;
+        for (int i = 0; i < N; ++i) {
+            threads.emplace_back([&] {
+                for (int r = 0; r < ROUNDS; ++r)
+                    barrier.arrive_and_wait();
+            });
+        }
+
+        threads.clear();
+        if (cb_count.load() != ROUNDS)
+            std::cerr << "Callback count mismatch\n";
+    }
+
+    void test_wait_blocks()
+    {
+        Barrier barrier(2);
+        std::atomic<bool> finished{false};
+
+        std::jthread t1([&] {
+            barrier.wait();
+            finished = true;
+        });
+
+        std::this_thread::sleep_for(std::chrono::milliseconds(100));
+
+        if (finished.load())
+            std::cerr << "wait() returned without generation change\n";
+
+        std::jthread t2([&] {
+            barrier.arrive_and_wait();
+        });
     }
 }
 
@@ -202,6 +276,8 @@ void barrier::TestAll()
     unit_tests::test_no_early_release();
     unit_tests::test_reuse();
     unit_tests::test_stress();
+    unit_tests::test_callback_once();
+    // unit_tests::test_wait_blocks();
 
     tests::SimpleTest();
 }
