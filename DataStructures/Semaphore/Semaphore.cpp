@@ -48,11 +48,91 @@ namespace semaphore
     };
 }
 
-namespace semaphore::unit_tests
+namespace semaphore_fast
 {
+    class Semaphore
+    {
+        using size_type = uint32_t;
+
+        std::atomic<size_type> count { 0 };
+        const size_type maxCount { 0 };
+
+        std::mutex mtx;
+        std::condition_variable cv;
+
+    public:
+
+        explicit Semaphore(const size_type initial):
+            count { initial }, maxCount { initial }
+        {
+            if (0 == initial) {
+                throw std::invalid_argument("negative semaphore");
+            }
+        }
+
+        void acquire()
+        {
+            size_type old = count.load(std::memory_order_relaxed);
+            while (old > 0)
+            {
+                if (count.compare_exchange_weak(old, old - 1,
+                    std::memory_order_acquire,
+                    std::memory_order_relaxed)) {
+                    return; // успех без блокировки
+                }
+            }
+
+            // Slow path
+            std::unique_lock lock(mtx);
+
+            cv.wait(lock, [&] {
+                const size_type value = count.load(std::memory_order_relaxed);
+                return value > 0;
+            });
+
+            // Guaranteed > 0
+            count.fetch_sub(1, std::memory_order_acquire);
+        }
+
+        void release()
+        {
+            // Fast path
+            size_type old = count.load(std::memory_order_relaxed);
+
+            while (true)
+            {
+                if (old >= maxCount) {
+                    return; // bounded
+                }
+                if (count.compare_exchange_weak(old, old + 1,
+                        std::memory_order_release,
+                        std::memory_order_relaxed)) {
+                    break;
+                }
+            }
+
+            // Slow path wake
+            std::lock_guard lock(mtx);
+            cv.notify_one();
+        }
+    };
+
+}
+
+
+namespace unit_tests
+{
+    template<typename T>
+    concept ISemaphore = std::constructible_from<T, int> &&
+        requires(T sem, int value) {
+            { sem.acquire() } -> std::same_as<void>;
+            { sem.release() } -> std::same_as<void>;
+    };
+
+    template<ISemaphore SemT>
     void test_semaphore_basic()
     {
-        Semaphore sem(1);
+        SemT sem(1);
         std::atomic<int> counter{0};
 
         auto worker = [&] {
@@ -64,8 +144,18 @@ namespace semaphore::unit_tests
         };
 
         std::jthread t1(worker), t2(worker);
-        if (counter.load() != 0) {
-            std::cerr << "Semaphore failed, counter != 0\n";
+
+        {
+            std::this_thread::sleep_for(std::chrono::milliseconds(10));
+            if (1 != counter.load() ) {
+                std::cerr << "Semaphore failed. Test - 1\n";
+            }
+        }
+        {
+            t1.join(); t2.join();
+            if (0 != counter.load() ) {
+                std::cerr << "Semaphore failed. Test - 2\n";
+            }
         }
     }
 
@@ -73,5 +163,8 @@ namespace semaphore::unit_tests
 
 void semaphore::TestAll()
 {
+    unit_tests::test_semaphore_basic<Semaphore>();
+    unit_tests::test_semaphore_basic<semaphore_fast::Semaphore>();
+
 
 }
