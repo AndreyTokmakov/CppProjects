@@ -27,6 +27,7 @@ Description : DataStructures
 #include "FreeList_ThreadSafe/FreeList_ThreadSafe.hpp"
 #include "CircularBuffers/CircularBuffers.h"
 #include "ThreadsafeQueue/ThreadsafeQueue.h"
+#include "ThreadSafe_BoundedQueue/ThreadSafe_BoundedQueue.hpp"
 #include "SharedPtr/SharedPtr.h"
 #include "ObjectPool/ObjectPool.h"
 #include "ObjectPool_Growing/ObjectPool_Growing.h"
@@ -134,12 +135,6 @@ int main([[maybe_unused]] int argc,
     // Memory::Shared_Ptr_Tests();
     // Memory::UniquePtrTests();
 
-    // ThreadPool::TestAll();
-    // ThreadPoolEx::TestAll();
-    // ThreadPoolOne::TEST_ALL();
-    // ThreadPoolTwo::TEST_ALL();
-    // ThreadPoolLimited::TestAll();
-
     // Trie::TestAll();
 
     // ObjectNumberLimiter::TestAll();
@@ -148,10 +143,19 @@ int main([[maybe_unused]] int argc,
 
 	/*********************************** Multithreading ***********************************/
 
+    // ThreadPool::TestAll();
+    // ThreadPoolEx::TestAll();
+    // ThreadPoolOne::TEST_ALL();
+    // ThreadPoolTwo::TEST_ALL();
+    // ThreadPoolLimited::TestAll();
+
+	thread_safe_bounded_queue::TestAll();
+
     // Queues::Multithreading::RunTests();
 
 	// LockFreeQueue::TEST_ALL();
 
     // barrier::TestAll();
-    semaphore::TestAll();
+
+    // semaphore::TestAll();
 }

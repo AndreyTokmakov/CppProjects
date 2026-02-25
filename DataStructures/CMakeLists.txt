@@ -26,6 +26,7 @@ add_executable(${PROJECT_NAME}
 		Optional/Optional.cpp
 		Expected/Expected.cpp
 		ThreadsafeQueue/ThreadsafeQueue.cpp
+		ThreadSafe_BoundedQueue/ThreadSafe_BoundedQueue.cpp
 		TTLCache/TTLCache.cpp
 		Utilities/Integer.cpp
 		Utilities/ThreadHelperUtilities.cpp
