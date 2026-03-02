@@ -96,11 +96,27 @@ Description : Cpp STD lib
 #include "Volatile/VolatileTests.h"
 #include "StaticAsserts/StaticAsserts.h"
 
+#include <vector>
+#include <map>
+#include <string_view>
 
-int main([[maybe_unused]] int argc,
-         [[maybe_unused]] char** argv)
+
+
+int main([[maybe_unused]] const int argc,
+         [[maybe_unused]] char** argv,
+         [[maybe_unused]] char** environment)
 {
     const std::vector<std::string_view> args(argv + 1, argv + argc);
+    const std::map<std::string_view, std::string_view> env = [&] {
+        std::map<std::string_view, std::string_view> envs;
+        for (int i = 0; environment && environment[i]; ++i) {
+            const std::string_view envVar = environment[i];
+            if (const size_t pos = envVar.find('='); std::string::npos != pos) {
+                envs.emplace(envVar.substr(0, pos), envVar.substr(pos + 1));
+            }
+        }
+        return envs;
+    }();
 
     // AggregateInitialization::TestAll();
     // Algorithms::TestAll();
@@ -142,7 +158,7 @@ int main([[maybe_unused]] int argc,
     // FunctionObjects::TestAll();
     // Hashing::TestAll();
     // LookupTypes::TestAll();
-    // Lambdas::TestAll();
+    Lambdas::TestAll();
     // LifetimeExtension::TestAll();
     // Locale::TestAll();
     // Literals::TestAll();
@@ -159,7 +175,7 @@ int main([[maybe_unused]] int argc,
     // PolymorphicMemoryResources::TestAll();
     // Print::TestAll();
     // Random::TestAll();
-    Ranges::TestAll();
+    // Ranges::TestAll();
     // ReferenceWrapper::TestAll();
     // StarshipOperator::TestAll();
     // Streams::TestAll();

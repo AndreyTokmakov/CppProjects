@@ -19,6 +19,7 @@
 #include <string_view>
 #include "Lambdas.h"
 #include <cassert>
+#include <iomanip>
 #include <utility>
 #include <memory>
 #include <thread>
@@ -1542,6 +1543,32 @@ namespace Lambdas::Capture_Pitfalls
 }
 
 
+namespace Lambdas::Explicit_Template_Parameters
+{
+	struct Data {};
+	struct Int {};
+
+	void Call_With_Explicit_Template_Param()
+	{
+		auto callback = []<typename Ty> {
+			Ty obj{};
+			if constexpr (requires { std::cout << obj; }) {
+				std::cout << typeid(obj).name() << " = [" << obj << "]\n";
+			}
+			else {
+				std::cout << typeid(obj).name() << std::endl;
+			}
+		};
+
+		callback.template operator()<int>();
+		callback.template operator()<float>();
+		callback.template operator()<uint64_t>();
+		callback.template operator()<std::string_view>();
+		callback.template operator()<std::string>();
+		callback.template operator()<Data>();
+		callback.template operator()<Int>();
+	}
+}
 
 
 void Lambdas::TestAll()
@@ -1614,7 +1641,9 @@ void Lambdas::TestAll()
 	// Lambdas_Inheritance::MultipleInheritanceDemoTwo();
 	// Lambdas_Inheritance::Derive_From_Lambda_call_Operator();
 	// Lambdas_Inheritance::Derive_from_Two_Lambdas__Simple();
-	Lambdas_Inheritance::Overload_Example();
+	// Lambdas_Inheritance::Overload_Example();
+
+	Explicit_Template_Parameters::Call_With_Explicit_Template_Param();
 
 	// High_Order_Function::PredicateComposition_WhenAll();
 	// High_Order_Function::PredicateComposition_WhenAll_Concepts();
