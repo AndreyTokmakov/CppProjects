@@ -22,9 +22,14 @@
 #include <semaphore>
 #include <future>         // std::async, std::future
 #include <chrono>
+#include <print>
+#include <format>
 #include <syncstream>
 
 #include "JThreads.h"
+
+#include <functional>
+
 #include "DateTimeUtilities.hpp"
 
 namespace
@@ -200,14 +205,65 @@ namespace JThreads::Joinable
     }
 }
 
+namespace JThreads::Run_JThread_as_ClassMethod
+{
+    struct Worker
+    {
+        void run() {
+            worker = std::jthread(std::bind_front(&Worker::handler, this));
+        }
+
+        void stop() {
+            worker.request_stop();
+        }
+
+    private:
+
+        std::jthread worker;
+
+        void handler(const std::stop_token &token)
+        {
+            LOG << "Starting thread.\n";
+            while (!token.stop_requested()) {
+                std::this_thread::sleep_for(std::chrono::milliseconds(250u));
+                LOG << std::format("Wrorking. [Stop requested: {}]", token.stop_requested()) << std::endl;
+            }
+        }
+    };
+
+    void demo()
+    {
+        {
+            Worker worker;
+            worker.run();
+
+            std::this_thread::sleep_for(std::chrono::seconds(2));
+            LOG << "Stopping thread.\n";
+            worker.stop();
+        }
+        LOG << "Test completed\n";
+    }
+
+    /*
+    2026-03-03 18:17:50.040390 Starting thread.
+    2026-03-03 18:17:50.290592 Wrorking. [Stop requested: false]
+    2026-03-03 18:17:50.540722 Wrorking. [Stop requested: false]
+    2026-03-03 18:17:50.790871 Wrorking. [Stop requested: false]
+    2026-03-03 18:17:51.041038 Wrorking. [Stop requested: false]
+    2026-03-03 18:17:51.291167 Wrorking. [Stop requested: false]
+    2026-03-03 18:17:51.541303 Wrorking. [Stop requested: false]
+    2026-03-03 18:17:51.791403 Wrorking. [Stop requested: false]
+    2026-03-03 18:17:52.040420 Stopping thread.
+    2026-03-03 18:17:52.041512 Wrorking. [Stop requested: true]
+    2026-03-03 18:17:52.041576 Test completed
+    */
+}
+
 void JThreads::TestAll()
 {
-    /**
-     * joinable ()
-     *
-    **/
+    // Joinable::Test();
 
-    Joinable::Test();
+    Run_JThread_as_ClassMethod::demo();
 
     // Start_and_Stop_Thread();
     // Stop_Thread_2();

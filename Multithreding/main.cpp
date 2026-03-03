@@ -114,7 +114,7 @@ int main([[maybe_unused]] int argc,
     // ThreadPoolLimited::TestAll();
 
     // Threads::TEST_ALL();
-    // JThreads::TestAll();
+    JThreads::TestAll();
     // StoppingThreads::TestAll();
 
 
@@ -123,7 +123,7 @@ int main([[maybe_unused]] int argc,
     // Multithreading_Performance::TEST_ALL();
     // FalseSharingExperiments::TEST_ALL();
     // PerformanceExperiments::TestAll();
-    McMp_LockFree_Queue_vs_CV_Queue::TestAll();
+    // McMp_LockFree_Queue_vs_CV_Queue::TestAll();
 
     /** ThreadSafeCollections **/
 
