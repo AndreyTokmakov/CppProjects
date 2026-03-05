@@ -143,13 +143,13 @@ int main([[maybe_unused]] int argc,
 
 	/*********************************** Multithreading ***********************************/
 
-    // ThreadPool::TestAll();
+    ThreadPool::TestAll();
     // ThreadPoolEx::TestAll();
     // ThreadPoolOne::TEST_ALL();
     // ThreadPoolTwo::TEST_ALL();
     // ThreadPoolLimited::TestAll();
 
-	thread_safe_bounded_queue::TestAll();
+	// thread_safe_bounded_queue::TestAll();
 
     // Queues::Multithreading::RunTests();
 

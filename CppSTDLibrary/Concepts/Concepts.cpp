@@ -3031,7 +3031,38 @@ namespace Concepts::Using_Concepts_With_ReturnType_Spec
     }
 }
 
+namespace Concepts::Concepts_on_Two_Types
+{
+    template<typename Ty, typename Task>
+    concept ExecutorType = requires(Ty& ex, const Task& task)
+    {
+        { ex.execute(task) } -> std::same_as<bool>;
+    };
 
+    template<typename Exec, typename Ty>
+        requires ExecutorType<Exec, Ty>
+    struct Worker
+    {
+        void handler(const Ty& obj)
+        {
+            Exec{}.execute(obj);
+        }
+    };
+
+    struct Processor
+    {
+        bool execute(const std::string& command) const {
+            std::cout << command << std::endl;
+            return false;
+        }
+    };
+
+    void demo()
+    {
+        Worker<Processor, std::string> worker {};
+        worker.handler("12345");
+    }
+}
 
 // https://www.youtube.com/watch?v=jzwqTi7n-rg | Back to Basics: Concepts in C++ - Nicolai Josuttis - CppCon 2024
 
@@ -3109,7 +3140,9 @@ void Concepts::TestAll()
 
 
     // CRPT::Concepts_Instead_CRTP();
-    CRPT::CRTP_Derive_using_Concepts();
+    // CRPT::CRTP_Derive_using_Concepts();
+
+    Concepts_on_Two_Types::demo();
 
 
     // ConceptsAsInterface::passClassObjAsInterface();

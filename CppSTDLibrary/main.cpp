@@ -132,7 +132,7 @@ int main([[maybe_unused]] const int argc,
     // Chrono::TestAll();
     // ContextControl::TestAll();
     // Comparators::TestAll();
-    // Concepts::TestAll();
+    Concepts::TestAll();
     // ConsoleInOut::TestAll();
     // ConstConstexprMutable::TestAll();
     // CompileTimeProgramming::TestAll();
@@ -158,7 +158,7 @@ int main([[maybe_unused]] const int argc,
     // FunctionObjects::TestAll();
     // Hashing::TestAll();
     // LookupTypes::TestAll();
-    Lambdas::TestAll();
+    // Lambdas::TestAll();
     // LifetimeExtension::TestAll();
     // Locale::TestAll();
     // Literals::TestAll();
