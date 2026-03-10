@@ -328,20 +328,88 @@ namespace HexConverter_Tests
 
 namespace final_action_test
 {
-    void test()
+    void test_1()
     {
-        {
-            auto cleanup = []{ std::cout << "Cleanup-1" << std::endl; };
-            final_action::ScopeExit onExit(cleanup);
-            std::cout << "Done-1" << std::endl;
+        auto cleanup = []{ std::cout << "Cleanup-1" << std::endl; };
+        final_action::ScopeExit onExit(cleanup);
+        std::cout << "Done-1" << std::endl;
+    }
+
+    void test_2()
+    {
+        auto cleanup = []{ std::cout << "Cleanup-2" << std::endl; };
+        final_action::ScopeExit onExit(cleanup);
+
+        onExit.release();
+        std::cout << "Done-2" << std::endl;
+    }
+
+    void test_3()
+    {
+        auto guard = final_action::scopeExit([] {
+           std::puts("cleanup");
+        });
+
+        std::cout << "Doing something\n";
+
+        // Doing something
+        // cleanup
+    }
+
+    void test_ScopeExit()
+    {
+        // test_1();
+        // test_2();
+        test_3();
+    }
+
+    void test_ScopeFail()
+    {
+        try {
+            auto guard = final_action::scopeFail([] {
+                std::cout << "rollback\n";
+            });
+            throw std::runtime_error("error");
+        }
+        catch (const std::runtime_error& e) {
+            std::cout << e.what() << std::endl;
         }
 
-        {
-            auto cleanup = []{ std::cout << "Cleanup-2" << std::endl; };
-            final_action::ScopeExit onExit(cleanup);
+        // rollback
+        // error
+    }
 
-            onExit.release();
-            std::cout << "Done-2" << std::endl;
+    struct Database {
+        void rollback() {
+            std::cout << "rollback\n";
+        }
+
+        void commit() {
+            std::cout << "commit\n";
+        }
+
+        void updateDatabase(const int value)
+        {
+            if (0 >= value) {
+                throw std::runtime_error("error");
+            }
+        }
+    };
+
+
+    void test_TransactionalScope()
+    {
+        Database database;
+        try {
+            auto tx = final_action::transactionalScope(
+                [&] { database.rollback(); },
+                [&] { database.commit(); }
+            );
+
+            database.updateDatabase(-1);
+        }
+        catch (const std::runtime_error& e) {
+            std::cerr << e.what() << std::endl;
         }
     }
 }
@@ -422,12 +490,16 @@ int main([[maybe_unused]] int argc,
 
     // HexConverter_Tests::Test();
 
-    // final_action_test::test();
+    // final_action_test::test_ScopeExit();
+    // final_action_test::test_ScopeFail();
+    final_action_test::test_TransactionalScope();
 
     // testing_utils::test_assert_equal();
     // testing_utils::test_assert_true();
     // testing_utils::test_assert_false();
     // testing_utils::test_assert_null();
+
+    /*
     {
         const auto v = utilities::random::getRandomInRange<int>(1.0, 20.0);
         std::cout << v << std::endl;
@@ -436,7 +508,7 @@ int main([[maybe_unused]] int argc,
     {
         const auto v = utilities::random::getRandomInRange<double>(1.0, 20.0);
         std::cout << v << std::endl;
-    }
+    }*/
 
     return EXIT_SUCCESS;
 }
