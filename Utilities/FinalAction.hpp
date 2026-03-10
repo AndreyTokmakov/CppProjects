@@ -21,8 +21,8 @@ namespace final_action
         template<typename Func>
         requires std::constructible_from<Fn, Func&&> &&
                  std::is_nothrow_constructible_v<Fn, Func&&>
-                 //std::is_nothrow_invocable_v<Fn>
-        explicit ScopeExit(Func&& func) noexcept(std::is_nothrow_constructible_v<Fn, Func&&>)
+                 // && std::is_nothrow_invocable_v<Fn>
+        constexpr explicit ScopeExit(Func&& func) noexcept(std::is_nothrow_constructible_v<Fn, Func&&>)
             : exitFunction ( std::forward<Func>(func) ) {
         }
 
@@ -32,14 +32,14 @@ namespace final_action
         ScopeExit& operator=(const ScopeExit&) = delete;
         ScopeExit& operator=(ScopeExit&&) noexcept = delete;
 
-        ~ScopeExit() noexcept
+        constexpr ~ScopeExit() noexcept
         {
             if (callOnExit) {
                 exitFunction();
             }
         }
 
-        void release() noexcept {
+        constexpr void release() noexcept {
             callOnExit = false;
         }
 

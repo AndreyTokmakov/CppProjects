@@ -490,9 +490,9 @@ int main([[maybe_unused]] int argc,
 
     // HexConverter_Tests::Test();
 
-    // final_action_test::test_ScopeExit();
+    final_action_test::test_ScopeExit();
     // final_action_test::test_ScopeFail();
-    final_action_test::test_TransactionalScope();
+    // final_action_test::test_TransactionalScope();
 
     // testing_utils::test_assert_equal();
     // testing_utils::test_assert_true();
