@@ -12,6 +12,7 @@ Description : FinalAction.hpp
 
 #include <concepts>
 #include <utility>
+#include <cstdint>
 
 namespace final_action
 {

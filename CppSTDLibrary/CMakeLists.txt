@@ -126,6 +126,7 @@ add_executable(${PROJECT_NAME}
 		Templates/ConditionalExplicit.cpp
 		Templates/FoldExpressions.cpp
 		Templates/NTTP.cpp
+		Templates/Metaprogramming.cpp
 		Templates/SFINAE.cpp
 		Templates/PackIndexing.cpp
 		Templates/TemplateSpecialization.cpp

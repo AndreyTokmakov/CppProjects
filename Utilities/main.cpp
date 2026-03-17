@@ -463,6 +463,9 @@ int main([[maybe_unused]] int argc,
 {
     const std::vector<std::string_view> args(argv + 1, argv + argc);
 
+
+    std::cout << "hello" << std::endl;
+
     // StringUtilitiesTests::split_test_1();
     // StringUtilitiesTests::strip_string_test();
     // StringUtilitiesTests::trim_string_test();

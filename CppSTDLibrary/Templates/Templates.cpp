@@ -1455,7 +1455,8 @@ void Templates::TestAll()
     // SFINAE::TestAll();
     // TemplateSpecialization::TestAll();
     // PackIndexing::TestAll();
-    IndexSequence::TestAll();
+    // IndexSequence::TestAll();
+    Metaprogramming::TestAll();
 
     // Is_Base_Of__Test();
     // Is_Same();

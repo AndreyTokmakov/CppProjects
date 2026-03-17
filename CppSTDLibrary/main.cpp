@@ -132,7 +132,7 @@ int main([[maybe_unused]] const int argc,
     // Chrono::TestAll();
     // ContextControl::TestAll();
     // Comparators::TestAll();
-    Concepts::TestAll();
+    // Concepts::TestAll();
     // ConsoleInOut::TestAll();
     // ConstConstexprMutable::TestAll();
     // CompileTimeProgramming::TestAll();
@@ -197,7 +197,7 @@ int main([[maybe_unused]] const int argc,
     // Tuple::TestAll();
     // TypeCast::TestAll();
     // Int::TestAll();
-    // Templates::TestAll();
+    Templates::TestAll();
     // Utilities::TestAll();
     // UniquePtr::TestAll();
     // WeakPtr::TestAll();

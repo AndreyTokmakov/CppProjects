@@ -22,6 +22,7 @@ namespace Templates
 	namespace ConditionalExplicit { void TestAll(); }
 	namespace TypeListChecker { void TestAll(); }
 	namespace IndexSequence { void TestAll(); }
+	namespace Metaprogramming { void TestAll(); }
 };
 
 #endif /* TEMPLATES_TESTS__H_ */
