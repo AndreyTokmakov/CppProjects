@@ -271,7 +271,7 @@ namespace SpinLock_PerformanceTests::Tests
 
     void RunBenchmark()
     {
-        constexpr int threadsMax { 32 };
+        constexpr int threadsMax { 8 };
         constexpr size_t iterCount { 5'000'000 };
 #if 0
         {
@@ -354,11 +354,12 @@ namespace SpinLock_PerformanceTests::Tests
         }
 #endif
 
-        {
-            SpinLock_WithYield spinLock;
+
+        auto benchmark = [&]<typename LockType> (std::string_view name) {
+            LockType spinLock;
             uint64_t counter = 0;
 
-            auto task = [&] {
+            auto task = [&counter, &spinLock] {
                 for (size_t idx  = 0; idx < iterCount; ++idx) {
                     spinLock.lock();
                     ++counter;
@@ -366,139 +367,27 @@ namespace SpinLock_PerformanceTests::Tests
                 }
             };
 
-            {
-                ScopedTimer timer {"SpinLock_WithYield"};
-                std::vector<std::jthread> jobs;
-                for (int t = 0; t < threadsMax; ++t)
-                    jobs.emplace_back(task);
-            }
-        }
+            const ScopedTimer timer { name };
+            std::vector<std::jthread> jobs;
+            for (int t = 0; t < threadsMax; ++t)
+                jobs.emplace_back(task);
+        };
 
-        {
-            SpinLock2_Int_Timer spinLock;
-            uint64_t counter = 0;
+        benchmark.template operator()<SpinLock_WithYield>("SpinLock_WithYield");
+        benchmark.template operator()<SpinLock2_Int_Timer>("SpinLock2_Int_Timer");
+        benchmark.template operator()<SpinLock2_Timer_Ex>("SpinLock2_Timer_Ex");
+        benchmark.template operator()<SpinLock3>("SpinLock3");
+        benchmark.template operator()<SpinLock4>("SpinLock4");
+        benchmark.template operator()<SpinLock4_1>("SpinLock4_1");
+        benchmark.template operator()<SpinLockM2>("SpinLockM2");
 
-            auto task = [&] {
-                for (size_t idx  = 0; idx < iterCount; ++idx) {
-                    spinLock.lock();
-                    ++counter;
-                    spinLock.unlock();
-                }
-            };
-
-            {
-                ScopedTimer timer {"SpinLock2_Int_Timer"};
-                std::vector<std::jthread> jobs;
-                for (int t = 0; t < threadsMax; ++t)
-                    jobs.emplace_back(task);
-            }
-        }
-
-        {
-            SpinLock2_Timer_Ex spinLock;
-            uint64_t counter = 0;
-
-            auto task = [&] {
-                for (size_t idx  = 0; idx < iterCount; ++idx) {
-                    spinLock.lock();
-                    ++counter;
-                    spinLock.unlock();
-                }
-            };
-
-            {
-                ScopedTimer timer {"SpinLock2_Timer_Ex"};
-                std::vector<std::jthread> jobs;
-                for (int t = 0; t < threadsMax; ++t)
-                    jobs.emplace_back(task);
-            }
-        }
-        {
-            SpinLock3 spinLock;
-            uint64_t counter = 0;
-
-            auto task = [&] {
-                for (size_t idx  = 0; idx < iterCount; ++idx) {
-                    spinLock.lock();
-                    ++counter;
-                    spinLock.unlock();
-                }
-            };
-
-            {
-                ScopedTimer timer {"SpinLock3"};
-                std::vector<std::jthread> jobs;
-                for (int t = 0; t < threadsMax; ++t)
-                    jobs.emplace_back(task);
-            }
-        }
-
-        {
-            SpinLock4 spinLock;
-            uint64_t counter = 0;
-
-            auto task = [&] {
-                for (size_t idx  = 0; idx < iterCount; ++idx) {
-                    spinLock.lock();
-                    ++counter;
-                    spinLock.unlock();
-                }
-            };
-
-            {
-                ScopedTimer timer {"SpinLock4"};
-                std::vector<std::jthread> jobs;
-                for (int t = 0; t < threadsMax; ++t)
-                    jobs.emplace_back(task);
-            }
-        }
-
-        {
-            SpinLock4_1 spinLock;
-            uint64_t counter = 0;
-
-            auto task = [&] {
-                for (size_t idx  = 0; idx < iterCount; ++idx) {
-                    spinLock.lock();
-                    ++counter;
-                    spinLock.unlock();
-                }
-            };
-
-            {
-                ScopedTimer timer {"SpinLock4_1"};
-                std::vector<std::jthread> jobs;
-                for (int t = 0; t < threadsMax; ++t)
-                    jobs.emplace_back(task);
-            }
-        }
-
-        {
-            SpinLockM2 spinLock;
-            uint64_t counter = 0;
-
-            auto task = [&] {
-                for (size_t idx  = 0; idx < iterCount / 10; ++idx) {
-                    spinLock.lock();
-                    ++counter;
-                    spinLock.unlock();
-                }
-            };
-
-            {
-                ScopedTimer timer {"spin_mutex_M2"};
-                std::vector<std::jthread> jobs;
-                for (int t = 0; t < threadsMax; ++t)
-                    jobs.emplace_back(task);
-            }
-        }
-
-        // SpinLock2_Int_Timer:  0.498088 seconds.
-        // SpinLock2_Timer_Ex:  0.58423 seconds.
-        // SpinLock3     :  0.694609 seconds.
-        // SpinLock4     :  0.55661 seconds.
-        // SpinLock4_1   :  0.51901 seconds.
-        // spin_mutex_M2 :  8.13006 seconds.
+        // SpinLock_WithYield  :  1.42483 seconds.
+        // SpinLock2_Int_Timer :  0.498962 seconds.
+        // SpinLock2_Timer_Ex  :  0.600027 seconds.
+        // SpinLock3           :  0.675397 seconds.
+        // SpinLock4           :  0.558371 seconds.
+        // SpinLock4_1         :  0.52006 seconds.
+        // spin_mutex_M2       :  8.13006 seconds.
     }
 
     void RunBenchmark_Fastest()

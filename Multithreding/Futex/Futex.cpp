@@ -44,7 +44,7 @@ namespace
     }
 }
 
-namespace Futex
+namespace Futex_1
 {
     class FutexMutex
     {
@@ -82,27 +82,91 @@ namespace Futex
             }
         }
     };
-
 }
 
+namespace Futex_2
+{
+    class Futex
+    {
+        using Ty = uint32_t;
+
+        constexpr static Ty Unlocked { 0U };
+        constexpr static Ty Locked { 1U };
+
+        Ty isLocked { Unlocked } ;
+        std::atomic_ref<Ty> isLockedARef { isLocked };
+
+    public:
+
+        void lock()
+        {
+            ::syscall(SYS_futex, &isLocked, FUTEX_WAIT, Locked, nullptr, nullptr, 0);
+            isLockedARef.store(Locked, std::memory_order_release);
+        }
+
+        void unlock()
+        {
+            isLockedARef.store(Unlocked, std::memory_order_release);
+            ::syscall(SYS_futex, &isLocked, FUTEX_WAKE, Locked, nullptr, nullptr, 0);
+        }
+    };
+}
+
+namespace Futex_3
+{
+    class Futex
+    {
+        using Ty = uint32_t;
+
+        constexpr static Ty Unlocked { 0U };
+        constexpr static Ty Locked { 0U };
+
+        Ty isLocked { Unlocked } ;
+        std::atomic_ref<Ty> isLockedARef { isLocked };
+
+    public:
+
+        void lock()
+        {
+            while (Unlocked != isLockedARef.exchange(Locked, std::memory_order_acquire)) {
+                ::syscall(SYS_futex, &isLocked, FUTEX_WAIT_PRIVATE, Locked, nullptr);
+            }
+        }
+
+        void unlock()
+        {
+            isLockedARef.store(Unlocked, std::memory_order_release);
+            ::syscall(SYS_futex, &isLocked, FUTEX_WAIT_PRIVATE, 1);
+        }
+    };
+}
 
 void Futex::TestAll()
 {
-    FutexMutex m;
-    int counter = 0;
+    auto test = [&]<typename FtxType> () {
+        FtxType ftxLock;
+        uint64_t counter = 0;
 
-    auto worker = [&]() {
-        for (int i = 0; i < 1'000'000; ++i) {
-            m.lock();
-            ++counter;
-            m.unlock();
+        auto task = [&ftxLock, &counter]() {
+            for (int i = 0; i < 1'000'000; ++i) {
+                ftxLock.lock();
+                ++counter;
+                ftxLock.unlock();
+            }
+        };
+
+        {
+            std::jthread t1(task), t2(task);
         }
+        std::cout << counter << "\n";
     };
 
-    {
-        std::jthread t1(worker);
-        std::jthread t2(worker);
-    }
 
-    std::cout << counter << "\n";
+    test.operator()<Futex_1::FutexMutex>();
+    test.operator()<Futex_2::Futex>();
+    test.operator()<Futex_3::Futex>();
+
+    // 2000000
+    // 1999667
+    // 1999764
 }
