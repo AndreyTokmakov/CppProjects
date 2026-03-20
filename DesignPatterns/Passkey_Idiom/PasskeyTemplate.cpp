@@ -39,7 +39,7 @@ namespace
 
     struct ConnectionManagerTwo
     {
-        void manage(Connection& c)
+        void manage([[maybe_unused]] Connection& c)
         {
             // Will not compile
             // c.open(Passkey<ConnectionManagerTwo>{});

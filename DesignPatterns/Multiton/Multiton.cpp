@@ -81,7 +81,9 @@ namespace Demo
 
     void test()
     {
-        for (const std::string& cfg_name: { "Conf_1", "Conf_2", "Conf_1"}){
+        using namespace std::string_literals;
+
+        for (const std::string& cfg_name: { "Conf_1"s, "Conf_2"s, "Conf_1"s}){
             std::shared_ptr<Configuration> cfg = Configuration::getInstance(cfg_name, cfg_name);
         }
 

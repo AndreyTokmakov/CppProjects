@@ -95,13 +95,14 @@ namespace demo2
     // 3. .. and Secret can be created ONLY buy  SecretFactory
     struct SecretFactory
     {
-        Secret getSecret(std::string str)
+        Secret getSecret([[maybe_unused]] std::string str)
         {
             // OK, SecretFactory can access
             return Secret { std::move(str), {} };
         }
 
-        void modify(Secret& secret, std::string const& additionalData)
+        void modify([[maybe_unused]] Secret& secret,
+                    [[maybe_unused]] const std::string& additionalData)
         {
             /** ERROR: void Secret::addData(const string&) is private **/
             // secret.addData(additionalData);
