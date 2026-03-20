@@ -75,6 +75,8 @@ add_executable(${PROJECT_NAME}
 
 		Barrier/Barrier.cpp
 		Semaphore/Semaphore.cpp
+
+		MineSet_Fast/MiniSet.cpp
 )
 
 

@@ -67,6 +67,7 @@ Description : DataStructures
 #include "StaticSortedSearchArray/StaticSortedSearchArray.hpp"
 #include "StaticString/StaticString.hpp"
 #include "MPMCQueue/MPMCQueue.hpp"
+#include "MineSet_Fast/MiniSet.hpp"
 
 
 
@@ -141,9 +142,11 @@ int main([[maybe_unused]] int argc,
 
 	// TTLCache::TEST_ALL();
 
+	mini_set::TestAll();
+
 	/*********************************** Multithreading ***********************************/
 
-    ThreadPool::TestAll();
+    // ThreadPool::TestAll();
     // ThreadPoolEx::TestAll();
     // ThreadPoolOne::TEST_ALL();
     // ThreadPoolTwo::TEST_ALL();
