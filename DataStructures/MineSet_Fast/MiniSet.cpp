@@ -9,13 +9,9 @@ Description : MiniSet.cpp
 
 #include "MiniSet.hpp"
 
-
-
 #include <iostream>
 #include <array>
-#include <vector>
-#include <map>
-#include <cassert>
+#include <source_location>
 
 namespace
 {
@@ -54,7 +50,7 @@ namespace
         using value_type = uint16_t;
         using mask_type  = uint16_t;
 
-        constexpr Iterator(mask_type mask) noexcept: remainingMask { mask } {
+        constexpr explicit Iterator(const mask_type mask) noexcept: remainingMask { mask } {
             updateIndex();
         }
 
@@ -107,7 +103,6 @@ namespace
 
     struct Set
     {
-        using index_type = uint16_t;
         using size_type  = uint16_t;
         using value_type = uint16_t;
 
@@ -166,6 +161,15 @@ namespace
 }
 
 
+void Assert(const bool ok, const std::source_location location = std::source_location::current())
+{
+    if (!ok) {
+        std::cerr << "Error: " << location.file_name() << "\n\t\t[" << location.function_name()
+            << ":" << location.line() << "]\n";
+        std::terminate();
+    }
+}
+
 
 void mini_set::TestAll()
 {
@@ -173,25 +177,25 @@ void mini_set::TestAll()
     constexpr std::array<int, 2> data2 {2, 12};
 
     Set set {};
-    for (int v: data1) {
+    for (const int v: data1) {
         set.insert(v);
     }
-    for (int v: data1) {
-        assert(set.contains(v));
+    for (const int v: data1) {
+        Assert(set.contains(v));
     }
     for (uint32_t idx = 0; const auto i : set) {
-        assert(data1[idx++] == i);
+        Assert(data1[idx++] == i);
     }
 
-    assert(3 == set.size());
+    Assert(3 == set.size());
     set.erase(8);
 
-    for (int v: data2) {
-        assert(set.contains(v));
+    for (const int v: data2) {
+        Assert(set.contains(v));
     }
     for (uint32_t idx = 0; const auto i : set) {
-        assert(data2[idx++] == i);
+        Assert(data2[idx++] == i);
     }
 
-    assert(2 == set.size());
+    Assert(2 == set.size());
 }
