@@ -68,6 +68,7 @@ Description : DataStructures
 #include "StaticString/StaticString.hpp"
 #include "MPMCQueue/MPMCQueue.hpp"
 #include "MineSet_Fast/MiniSet.hpp"
+#include "StateManager/StateManager.hpp"
 
 
 
@@ -142,7 +143,9 @@ int main([[maybe_unused]] int argc,
 
 	// TTLCache::TEST_ALL();
 
-	mini_set::TestAll();
+	// mini_set::TestAll();
+
+	state_manager::TestAll();
 
 	/*********************************** Multithreading ***********************************/
 

@@ -77,6 +77,7 @@ add_executable(${PROJECT_NAME}
 		Semaphore/Semaphore.cpp
 
 		MineSet_Fast/MiniSet.cpp
+		StateManager/StateManager.cpp
 )
 
 
