@@ -40,11 +40,11 @@ namespace state_manager
         }
 
         [[nodiscard]]
-        bool get(const State s) const noexcept {
+        constexpr bool get(const State s) const noexcept {
             return (stateMask & bit(s)) != 0;
         }
 
-        void set(const State s, const bool value) noexcept
+        constexpr void set(const State s, const bool value) noexcept
         {
             if (value) {
                 stateMask |= bit(s);
@@ -55,51 +55,51 @@ namespace state_manager
 
     public:
         [[nodiscard]]
-        bool isActive() const noexcept {
+        constexpr bool isActive() const noexcept {
             return get(State::Active);
         }
 
         [[nodiscard]]
-        bool isRunning() const noexcept {
+        constexpr bool isRunning() const noexcept {
             return get(State::Running);
         }
 
         [[nodiscard]]
-        bool isStarted() const noexcept {
+        constexpr bool isStarted() const noexcept {
             return get(State::Started);
         }
 
         [[nodiscard]]
-        bool isConfigured() const noexcept {
+        constexpr bool isConfigured() const noexcept {
             return get(State::Configured);
         }
 
-        void setActive(const bool v) noexcept {
+        constexpr void setActive(const bool v) noexcept {
             set(State::Active, v);
         }
 
-        void setRunning(const bool v) noexcept {
+        constexpr void setRunning(const bool v) noexcept {
             set(State::Running, v);
         }
 
-        void setStarted(const bool v) noexcept {
+        constexpr void setStarted(const bool v) noexcept {
             set(State::Started, v);
         }
 
-        void setConfigured(const bool v) noexcept {
+        constexpr void setConfigured(const bool v) noexcept {
             set(State::Configured, v);
         }
 
-        void reset() noexcept {
+        constexpr void reset() noexcept {
             stateMask = 0;
         }
 
         [[nodiscard]]
-        Mask raw() const noexcept {
+        constexpr Mask raw() const noexcept {
             return stateMask;
         }
 
-        void setRaw(const Mask mask) noexcept {
+        constexpr void setRaw(const Mask mask) noexcept {
             stateMask = mask;
         }
     };
