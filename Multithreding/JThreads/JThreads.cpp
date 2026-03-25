@@ -209,8 +209,15 @@ namespace JThreads::Run_JThread_as_ClassMethod
 {
     struct Worker
     {
-        void run() {
+        void run()
+        {
+#if 0
             worker = std::jthread(std::bind_front(&Worker::handler, this));
+#else
+            worker = std::jthread([&] (const std::stop_token& token) {
+                handler(token);
+            });
+#endif
         }
 
         void stop() {

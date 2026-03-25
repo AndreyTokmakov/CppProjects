@@ -87,8 +87,7 @@ int main([[maybe_unused]] int argc,
 
     // Latch::TEST_ALL();
 
-    Futex::TestAll();
-
+    // Futex::TestAll();
 
     // Multithreading_Communication::TEST_ALL();
     // Promise::TEST_ALL();
@@ -114,7 +113,7 @@ int main([[maybe_unused]] int argc,
     // ThreadPoolLimited::TestAll();
 
     // Threads::TEST_ALL();
-    // JThreads::TestAll();
+    JThreads::TestAll();
     // StoppingThreads::TestAll();
 
 
