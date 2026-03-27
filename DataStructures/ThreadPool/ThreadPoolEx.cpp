@@ -26,7 +26,6 @@ namespace
 {
     using namespace std::chrono;
 
-
     constexpr std::string_view FORMAT { "[%d-%02d-%02d %02d:%02d:%02d.%06ld] " };
 
     [[nodiscard]]
@@ -45,7 +44,6 @@ namespace
         return buffer;
     }
 }
-
 
 namespace ThreadPoolEx
 {

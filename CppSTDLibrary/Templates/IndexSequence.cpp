@@ -42,6 +42,27 @@ namespace unpack_tuple
     }
 }
 
+namespace unpack_tuple_2
+{
+    template <typename Tuple, std::size_t... I>
+    void print_impl(const Tuple& t, std::index_sequence<I...>)
+    {
+        ((std::cout << std::get<I>(t) << " "), ...);
+    }
+
+    template <typename... Args>
+    void print(const std::tuple<Args...>& t)
+    {
+        print_impl(t, std::index_sequence_for<Args...>{});
+    }
+
+    void test()
+    {
+        print(std::make_tuple(1, 2.0, "hi"));
+        // 1 2 hi
+    }
+}
+
 namespace create_array_compile_time
 {
     template <std::size_t... I>
@@ -101,7 +122,6 @@ namespace compile_time_values_sequence
     void test()
     {
         show(std::make_index_sequence<8>{});
-
         // 0 1 2 3 4 5 6 7
     }
 }
@@ -165,12 +185,42 @@ namespace unroll_data_processing_loop
     }
 }
 
+
+namespace Templates::IndexSequence::Apply_Custom
+{
+    template <typename F, typename Tuple, std::size_t... I>
+    decltype(auto) apply_impl(F&& f, Tuple&& t, std::index_sequence<I...>)
+    {
+        return f(std::get<I>(std::forward<Tuple>(t))...);
+    }
+
+    template <typename F, typename Tuple>
+    decltype(auto) Apply(F&& f, Tuple&& t)
+    {
+        constexpr std::size_t N =std::tuple_size_v<std::remove_reference_t<Tuple>>;
+        return apply_impl(std::forward<F>(f),
+                          std::forward<Tuple>(t),
+                            std::make_index_sequence<N>{});
+    }
+
+    void test()
+    {
+        auto sum = [](int a, int b, int c){ return a + b + c;};
+        auto t = std::make_tuple(1, 2, 3);
+        int result = Apply(sum, t);
+        std::cout << result << " "; // -> 6
+    }
+}
+
 void Templates::IndexSequence::TestAll()
 {
     // unpack_tuple::test();
+    // unpack_tuple_2::test();
+
+    Apply_Custom::test(); // <- N
+
     // create_array_compile_time::test();
     // perfect_forward_tuple_constructor::test();
     // compile_time_values_sequence::test();
-
-    unroll_data_processing_loop::test();
+    // unroll_data_processing_loop::test();
 }

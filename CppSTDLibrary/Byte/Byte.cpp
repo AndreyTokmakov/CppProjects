@@ -11,7 +11,6 @@
 
 #include <iostream>
 #include <iomanip>
-#include <spdlog/fmt/bundled/core.h>
 
 namespace bytes
 {
