@@ -52,6 +52,46 @@ namespace semaphore
     };
 }
 
+
+namespace semaphore_atomic
+{
+    struct Semaphore
+    {
+        using counter_t = uint32_t;
+
+        explicit Semaphore(const counter_t n) : count { n }{
+        }
+
+        void acquire()
+        {
+            counter_t old = count.load(std::memory_order_relaxed);
+            while (true)
+            {
+                while (old == 0)
+                {
+                    count.wait(0, std::memory_order_relaxed);
+                    old = count.load(std::memory_order_relaxed);
+                }
+                if (count.compare_exchange_weak(old, old - 1,
+                                                std::memory_order_acquire,
+                                                std::memory_order_relaxed)) {
+                    return;
+                }
+            }
+        }
+
+        void release()
+        {
+            count.fetch_add(1, std::memory_order_release);
+            count.notify_one();
+        }
+
+    private:
+
+        std::atomic<counter_t> count;
+    };
+}
+
 namespace semaphore_fast
 {
     class Semaphore
@@ -234,6 +274,7 @@ namespace unit_tests
     void test_all()
     {
         testSemaphore<semaphore::Semaphore>();
+        testSemaphore<semaphore_atomic::Semaphore>();
         testSemaphore<std::counting_semaphore<>>();
     }
 
