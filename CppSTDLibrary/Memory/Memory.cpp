@@ -1744,8 +1744,8 @@ namespace Memory::Override_Global_Memory_Handler
 
 void Memory::TestAll()
 {
-    Launder::TestAll();
-    // Alignment::TestAll();
+    // Launder::TestAll();
+    Alignment::TestAll();
     // AlignedStackAllocator::TestAll();
     // CustomStackAllocator::TestAll();
     // MemoryUsageMonitor::TestAll();

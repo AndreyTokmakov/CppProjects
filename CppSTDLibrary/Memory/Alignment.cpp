@@ -361,19 +361,113 @@ void STD_Align()
     */
 }
 
+namespace Alignment::packing_data
+{
+    /**
+    #pragma pack
+    This is a non-standard preprocessor directive, but it is supported by the big three compilers.
+
+    In general, #pragma pack
+    can be used in three main ways (this will be a bit tedious, but wait for examples):
+
+            #pragma pack(push, n)
+            #pragma pack(pop)
+            #pragma pack(n)
+
+    'n' is an integer, usually a power of two: 1, 2, 4, 8, 16, etc.
+    It specifies the maximum alignment for each member.
+    The member will be placed at an offset multiple of min(n, alignof(type))
+    In fact, 'n' limits the upper alignment.
+
+    push - pushes the current packing value onto the stack (saves it).
+           If n is specified after push, the current value is saved first, then the new value is set.
+
+    pop   - pops the last saved value from the stack and restores it.
+    **/
+    struct Test
+    {
+        char c;   // offset 0
+        int  i;   // offset 4 (3 bytes of padding)
+    };
+
+#pragma pack(push, 1)
+    struct Packed
+    {
+        char c;   // offset 0
+        int  i;   // offset 1 (no padding)
+    };
+#pragma pack(pop)
+
+
+#pragma pack(push, 2)
+    struct Packed2
+    {
+        char c;   // offset 0
+        double d; // offset 2 (1 byte of padding after c)
+    };
+#pragma pack(pop)
+
+    void push_pop_attributes()
+    {
+        static_assert(sizeof(Test) == 8);
+        static_assert(alignof(Test) == 4);
+
+        static_assert(sizeof(Packed) == 5);
+        static_assert(alignof(Packed) == 1);
+
+        static_assert(sizeof(Packed2) == 10);
+        static_assert(alignof(Packed2) == 2);
+    }
+
+    /**
+    attribute((packed))
+    This attribute is supported by gcc and clang.
+    Its mechanics are slightly simpler:
+    it completely removes padding and sets the alignment to 1 for the type itself:
+    **/
+
+    struct __attribute__((packed)) PackedStruct
+    {
+        char c;
+        int  i;
+        short s;
+    };
+
+    void packed_attributes()
+    {
+        static_assert(sizeof(PackedStruct) == 7);
+        static_assert(alignof(PackedStruct) == 1);
+    }
+
+    struct [[gnu::packed]] GnuPackedStruct {
+        char c;
+        int  i;
+        short s;
+    };
+
+    /**
+    У нас же есть стандартный плюсовый синтаксис атрибутов.
+    Давайте его и используем. В C++11 и новее также можно написать  [[gnu::packed]] и эффект будет такой же, как в предыдущем пункте:
+    **/
+    void gnu_packed_attributes()
+    {
+        static_assert(sizeof(GnuPackedStruct) == 7);
+        static_assert(alignof(GnuPackedStruct) == 1);
+    }
+}
+
 void Alignment::TestAll()
 {
     // Alignment_Of_Tests();
-
     // Alignas();
     // AlignAs_2();
     // AlignAs::AlignToCacheLine();
-
     // Storage::Construct_Type();
-
     // NetworkHeaders::CheckAlignment();
-
     // Padding::BadCustomTypePadding();
+    // STD_Align();
 
-    STD_Align();
+    packing_data::push_pop_attributes();
+    packing_data::packed_attributes();
+    packing_data::gnu_packed_attributes();
 }
