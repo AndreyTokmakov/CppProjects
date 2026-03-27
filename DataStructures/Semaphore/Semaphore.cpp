@@ -15,6 +15,12 @@ Description : Semaphore.cpp
 #include <vector>
 #include <condition_variable>
 
+#include "DateTimeUtilities.hpp"
+#include "Testing.hpp"
+
+#define LOG  std::osyncstream { std::cout } << DateTimeUtilities::getCurrentTime() << " "
+
+
 namespace semaphore
 {
     class Semaphore
@@ -140,16 +146,11 @@ namespace unit_tests
 
         {
             std::this_thread::sleep_for(std::chrono::milliseconds(10));
-            if (1 != counter.load() ) {
-                std::cerr << "Semaphore failed. Test - 1\n";
-            }
+            testing::AssertEqual( 1, counter.load() , "Semaphore failed.");
         }
-        {
-            t1.join(); t2.join();
-            if (0 != counter.load() ) {
-                std::cerr << "Semaphore failed. Test - 2\n";
-            }
-        }
+
+        t1.join(); t2.join();
+        testing::AssertEqual( 0, counter.load() , "Semaphore failed.");
     }
 
     template<ISemaphore SemT>
@@ -164,10 +165,7 @@ namespace unit_tests
         });
 
         std::this_thread::sleep_for(std::chrono::milliseconds(100));
-
-        if (acquired.load()) {
-            std::cerr << "Semaphore did not block when initialized with 0\n";
-        }
+        testing::AssertTrue( 0 == acquired.load() , "Semaphore did not block when initialized with ");
         sem.release();
         t.join();
     }
@@ -187,52 +185,61 @@ namespace unit_tests
         std::this_thread::sleep_for(std::chrono::milliseconds(100));
 
         sem.release();
-
         std::this_thread::sleep_for(std::chrono::milliseconds(100));
-        if (const int value = counter.load(); value != 1) {
-            std::cerr << "notify_one woke more than one thread\n";
-        }
 
+        testing::AssertEqual(1, counter.load(), "notify_one woke more than one thread");
         sem.release();
     }
 
     template<ISemaphore SemT>
-    void test_no_overflow()
+    void max_simultaneous_task(const uint32_t maxConcurrent = 3,
+                               const uint32_t totalThreads = 10)
     {
-        SemT sem(2);
+        SemT sem(maxConcurrent);
+        std::atomic<uint32_t> current{0}, max_seen{0};
+        std::vector<std::jthread> threads;
+        for (uint32_t i = 0; i < totalThreads; ++i) {
+            threads.emplace_back([&]() {
+                sem.acquire();
+                const uint32_t now = ++current;
 
-        sem.release();
-        sem.release();
-
-        std::atomic<int> counter{0};
-        auto worker = [&] {
-            sem.acquire();
-            counter.fetch_add(1);
-        };
-
-        std::vector<std::jthread> tasks;
-        for (int i = 0; i < 3; ++i) {
-            tasks.emplace_back(worker);
+                max_seen.store(std::max(max_seen.load(), now));
+                testing::AssertFalse(now > maxConcurrent, std::format("Too many threads: {}", now));
+                std::this_thread::sleep_for(std::chrono::milliseconds(100));
+                --current;
+                sem.release();
+            });
         }
-        std::this_thread::sleep_for(std::chrono::milliseconds(100));
 
-        if (counter.load() != 2)
-            std::cerr << "Semaphore overflow detected\n";
-
-        sem.release();
-        tasks.clear();
+        for (std::jthread& task : threads) {
+            task.join();
+        }
+        testing::AssertTrue(maxConcurrent >= max_seen.load(),
+            std::format("Max concurrent more than expected {}", maxConcurrent ));
     }
 
+
+    template<ISemaphore SemT>
+    void testSemaphore()
+    {
+        unit_tests::test_semaphore_basic<SemT>();
+        unit_tests::test_initial_zero_blocks<SemT>();
+        unit_tests::test_release_unblocks_exactly_one<SemT>();
+
+        unit_tests::max_simultaneous_task<SemT>();
+        unit_tests::max_simultaneous_task<SemT>(5, 8);
+        unit_tests::max_simultaneous_task<SemT>(4, 12);
+    }
+
+    void test_all()
+    {
+        testSemaphore<semaphore::Semaphore>();
+        testSemaphore<std::counting_semaphore<>>();
+    }
 
 }
 
 void semaphore::TestAll()
 {
-    // unit_tests::test_semaphore_basic<Semaphore>();
-    // unit_tests::test_initial_zero_blocks<Semaphore>();
-    // unit_tests::test_release_unblocks_exactly_one<Semaphore>();
-    unit_tests::test_no_overflow<Semaphore>();
-
-    // unit_tests::test_semaphore_basic<semaphore_fast::Semaphore>();
-
+    unit_tests::test_all();
 }

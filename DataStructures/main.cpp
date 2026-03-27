@@ -145,7 +145,7 @@ int main([[maybe_unused]] int argc,
 
 	// mini_set::TestAll();
 
-	state_manager::TestAll();
+	// state_manager::TestAll();
 
 	/*********************************** Multithreading ***********************************/
 
@@ -163,5 +163,5 @@ int main([[maybe_unused]] int argc,
 
     // barrier::TestAll();
 
-    // semaphore::TestAll();
+    semaphore::TestAll();
 }
