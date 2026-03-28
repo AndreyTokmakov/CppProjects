@@ -22,6 +22,7 @@ Description : RingBuffers.cpp
 #include <thread>
 #include <chrono>
 
+#include "Testing.hpp"
 #include "DateTimeUtilities.hpp"
 
 namespace
@@ -119,6 +120,7 @@ namespace ring_buffers::impl_2
     public:
 
         RingBuffer() = default;
+
         RingBuffer(const RingBuffer&) = delete;
         RingBuffer& operator=(const RingBuffer&) = delete;
         RingBuffer(RingBuffer&&) = delete;
@@ -155,6 +157,7 @@ namespace ring_buffers::impl_2
 }
 
 
+/** My impl (from HFT project) **/
 namespace ring_buffers::impl_3
 {
     template<typename Ty, uint32_t Capacity>
@@ -228,6 +231,7 @@ namespace ring_buffers::impl_3
     };
 }
 
+/** My impl (from HFT project) **/
 namespace ring_buffers::impl_3_size
 {
     template<typename Ty>
@@ -301,17 +305,226 @@ namespace ring_buffers::impl_3_size
     };
 }
 
-
 namespace ring_buffers::tests
 {
-    void test_1()
+    template<typename Ty>
+    concept IRingBuffer = requires(Ty ring_buffer, int64_t value)
     {
-        //impl_1::RingBuffer<int64_t, 1024> queue;
-        impl_2::RingBuffer<int64_t, 1024> queue;
-        // impl_3::RingBuffer<int64_t, 1024> queue;
-        // impl_3_size::RingBuffer<int64_t> queue { 1024 };
+        { ring_buffer.push(value) } -> std::same_as<bool>;
+        { ring_buffer.pop(value) } -> std::same_as<bool>;
+    };
 
-        constexpr int64_t eventsCount {1'000'000}, initialValue {0};
+    void test_basic_push_pop(IRingBuffer auto& ringBuffer)
+    {
+        int64_t value = 0;
+        testing::AssertTrue(ringBuffer.push(1));
+        testing::AssertTrue(ringBuffer.pop(value));
+        testing::AssertEqual(1L, value);
+    }
+
+    void test_empty_pop(IRingBuffer auto& ringBuffer)
+    {
+        int64_t value = 0;
+        testing::AssertFalse(ringBuffer.pop(value));
+    }
+
+    void test_full_push(IRingBuffer auto& ringBuffer)
+    {
+        testing::AssertTrue(ringBuffer.push(1));
+        testing::AssertTrue(ringBuffer.push(2));
+        testing::AssertFalse(ringBuffer.push(3));
+    }
+
+    void test_fifo_order(IRingBuffer auto& ringBuffer)
+    {
+        ringBuffer.push(1);
+        ringBuffer.push(2);
+        ringBuffer.push(3);
+
+        int64_t item = 0;
+
+        ringBuffer.pop(item);
+        testing::AssertEqual(1L, item);
+
+        ringBuffer.pop(item);
+        testing::AssertEqual(2L, item);
+
+        ringBuffer.pop(item);
+        testing::AssertEqual(3L, item);
+    }
+
+    void test_wrap_around(IRingBuffer auto& ringBuffer)
+    {
+        int64_t item = 0;
+
+        testing::AssertTrue(ringBuffer.push(1));
+        testing::AssertTrue(ringBuffer.push(2));
+
+        testing::AssertTrue(ringBuffer.pop(item));
+        testing::AssertEqual(1L, item);
+
+        testing::AssertTrue(ringBuffer.push(3));
+        testing::AssertTrue(ringBuffer.push(4));
+        testing::AssertFalse(ringBuffer.push(5));
+
+        testing::AssertTrue(ringBuffer.pop(item));
+        testing::AssertEqual(2L, item);
+
+        testing::AssertTrue(ringBuffer.pop(item));
+        testing::AssertEqual(3L, item);
+    }
+
+    void test_alternating_push_pop(IRingBuffer auto& ringBuffer)
+    {
+        int64_t item = 0;
+
+        testing::AssertTrue(ringBuffer.push(1));
+        testing::AssertTrue(ringBuffer.pop(item));
+        testing::AssertEqual(1L, item);
+
+        testing::AssertTrue(ringBuffer.push(2));
+        testing::AssertTrue(ringBuffer.pop(item));
+        testing::AssertEqual(2L, item);
+    }
+
+    void test_large_sequence(IRingBuffer auto& ringBuffer)
+    {
+        for (int i = 0; i < 1000; ++i)
+            testing::AssertTrue(ringBuffer.push(i));
+
+        for (int64_t i = 0; i < 1000; ++i) {
+            int64_t item = 0;
+            testing::AssertTrue(ringBuffer.pop(item));
+            testing::AssertEqual(i, item);
+        }
+    }
+
+    void runAllUnitTests()
+    {
+        {
+            impl_1::RingBuffer<int64_t, 4> ringBuffer;
+            test_basic_push_pop(ringBuffer);
+        }
+        {
+            impl_1::RingBuffer<int64_t, 4> ringBuffer;
+            test_empty_pop(ringBuffer);
+        }
+        {
+            impl_1::RingBuffer<int64_t, 2> ringBuffer;
+            test_empty_pop(ringBuffer);
+        }
+        {
+            impl_1::RingBuffer<int64_t, 4> ringBuffer;
+            test_fifo_order(ringBuffer);
+        }
+        {
+            impl_1::RingBuffer<int64_t, 4> ringBuffer;
+            test_wrap_around(ringBuffer);
+        }
+        {
+            impl_1::RingBuffer<int64_t, 2> ringBuffer;
+            test_alternating_push_pop(ringBuffer);
+        }
+        {
+            impl_1::RingBuffer<int64_t, 1024> ringBuffer;
+            test_large_sequence(ringBuffer);
+        }
+        //---------------------------------------------------------
+        {
+            impl_2::RingBuffer<int64_t, 4> ringBuffer;
+            test_basic_push_pop(ringBuffer);
+        }
+        {
+            impl_2::RingBuffer<int64_t, 4> ringBuffer;
+            test_empty_pop(ringBuffer);
+        }
+        {
+            impl_2::RingBuffer<int64_t, 2> ringBuffer;
+            test_empty_pop(ringBuffer);
+        }
+        {
+            impl_2::RingBuffer<int64_t, 4> ringBuffer;
+            test_fifo_order(ringBuffer);
+        }
+        {
+            impl_2::RingBuffer<int64_t, 4> ringBuffer;
+            test_wrap_around(ringBuffer);
+        }
+        {
+            impl_2::RingBuffer<int64_t, 2> ringBuffer;
+            test_alternating_push_pop(ringBuffer);
+        }
+        {
+            impl_2::RingBuffer<int64_t, 1024> ringBuffer;
+            test_large_sequence(ringBuffer);
+        }
+        //---------------------------------------------------------
+        {
+            impl_3::RingBuffer<int64_t, 4> ringBuffer;
+            test_basic_push_pop(ringBuffer);
+        }
+        {
+            impl_3::RingBuffer<int64_t, 4> ringBuffer;
+            test_empty_pop(ringBuffer);
+        }
+        {
+            impl_3::RingBuffer<int64_t, 2> ringBuffer;
+            test_empty_pop(ringBuffer);
+        }
+        {
+            impl_3::RingBuffer<int64_t, 4> ringBuffer;
+            test_fifo_order(ringBuffer);
+        }
+        {
+            impl_3::RingBuffer<int64_t, 4> ringBuffer;
+            test_wrap_around(ringBuffer);
+        }
+        {
+            impl_3::RingBuffer<int64_t, 2> ringBuffer;
+            test_alternating_push_pop(ringBuffer);
+        }
+        {
+            impl_3::RingBuffer<int64_t, 1024> ringBuffer;
+            test_large_sequence(ringBuffer);
+        }
+        //---------------------------------------------------------
+        {
+            impl_3_size::RingBuffer<int64_t> ringBuffer { 4 };
+            test_basic_push_pop(ringBuffer);
+        }
+        {
+            impl_3_size::RingBuffer<int64_t> ringBuffer { 4 };
+            test_empty_pop(ringBuffer);
+        }
+        {
+            impl_3_size::RingBuffer<int64_t> ringBuffer { 2 };
+            test_empty_pop(ringBuffer);
+        }
+        {
+            impl_3_size::RingBuffer<int64_t> ringBuffer { 4 };
+            test_fifo_order(ringBuffer);
+        }
+        {
+            impl_3_size::RingBuffer<int64_t> ringBuffer { 4 };
+            test_wrap_around(ringBuffer);
+        }
+        {
+            impl_3_size::RingBuffer<int64_t> ringBuffer { 2 };
+            test_alternating_push_pop(ringBuffer);
+        }
+        {
+            impl_3_size::RingBuffer<int64_t> ringBuffer { 1024 };
+            test_large_sequence(ringBuffer);
+        }
+    }
+}
+
+
+namespace ring_buffers::tests::multithreading
+{
+    void test_1(IRingBuffer auto& ringBuffer)
+    {
+        constexpr int64_t eventsCount {10'000'000}, initialValue {0};
         int64_t reads {0}, writes {0}, errors {0};
 
         // ScopedTimer timer {"benchmark"};
@@ -320,7 +533,7 @@ namespace ring_buffers::tests
             int previousValue = initialValue - 1;
             int64_t result {0};
             while (eventsCount > reads) {
-                if (queue.pop(result)) {
+                if (ringBuffer.pop(result)) {
                     if (previousValue + 1 != result) {
                         ++errors;
                     }
@@ -334,7 +547,7 @@ namespace ring_buffers::tests
         {
             for (int64_t idx = initialValue; idx <= eventsCount; ++idx){
                 while (true) {
-                    if (queue.push(idx)) {
+                    if (ringBuffer.push(idx)) {
                         ++writes;
                         break;
                     }
@@ -346,11 +559,86 @@ namespace ring_buffers::tests
         consumer.join();
         producer.join();
 
-        LOG << "Reads: " << reads << ", writes: " << writes << ", errors: " << errors << std::endl;
+        testing::AssertEqual(eventsCount, reads);
+        testing::AssertEqual(eventsCount + 1, writes);
+        testing::AssertTrue(0 == errors);
     }
+
+    void test_2(IRingBuffer auto& ringBuffer)
+    {
+        constexpr int64_t eventsCount = 100000;
+        std::atomic<bool> producer_done = false;
+        const std::jthread producer([&]() {
+            for (int i = 0; i < eventsCount; ) {
+                if (ringBuffer.push(i)) {
+                    ++i;
+                }
+            }
+            producer_done = true;
+        });
+
+        const std::jthread consumer([&]() {
+            int64_t recordsPoped = 0, value;
+            while (!producer_done || recordsPoped < eventsCount) {
+                if (ringBuffer.pop(value)) {
+                    testing::AssertEqual(value, recordsPoped);
+                    ++recordsPoped;
+                }
+            }
+
+            testing::AssertEqual(eventsCount, recordsPoped);
+        });
+    }
+
+    void runAllTests()
+    {
+        constexpr size_t capacity { 1024 };
+        LOG << "Running tests ....\n";
+
+        //--------------------------------------------
+        {
+            impl_1::RingBuffer<int64_t, capacity> ringBuffer;
+            test_1(ringBuffer);
+        }
+        {
+            impl_1::RingBuffer<int64_t, capacity> ringBuffer;
+            test_2(ringBuffer);
+        }
+        //--------------------------------------------
+        {
+            impl_2::RingBuffer<int64_t, capacity> ringBuffer;
+            test_1(ringBuffer);
+        }
+        {
+            impl_2::RingBuffer<int64_t, capacity> ringBuffer;
+            test_2(ringBuffer);
+        }
+        //--------------------------------------------
+        {
+            impl_3::RingBuffer<int64_t, capacity> ringBuffer;
+            test_1(ringBuffer);
+        }
+        {
+            impl_3::RingBuffer<int64_t, capacity> ringBuffer;
+            test_2(ringBuffer);
+        }
+        //--------------------------------------------
+        {
+            impl_3_size::RingBuffer<int64_t> ringBuffer { capacity };
+            test_1(ringBuffer);
+        }
+        {
+            impl_3_size::RingBuffer<int64_t> ringBuffer { capacity };
+            test_2(ringBuffer);
+        }
+
+        LOG << "All tests passed" << std::endl;
+    }
+
 }
 
 void ring_buffers::TestAll()
 {
-    tests::test_1();
+    tests::runAllUnitTests();
+    tests::multithreading::runAllTests();
 }
