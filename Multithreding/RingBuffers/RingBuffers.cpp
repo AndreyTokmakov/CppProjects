@@ -1,0 +1,356 @@
+/**============================================================================
+Name        : RingBuffers.cpp
+Created on  : 27.03.2026
+Author      : Andrei Tokmakov
+Version     : 1.0
+Copyright   : Your copyright notice
+Description : RingBuffers.cpp
+============================================================================**/
+
+#include "RingBuffers.hpp"
+
+#include <iostream>
+#include <format>
+#include <print>
+#include <syncstream>
+#include <cassert>
+
+#include <array>
+#include <vector>
+
+#include <atomic>
+#include <thread>
+#include <chrono>
+
+#include "DateTimeUtilities.hpp"
+
+namespace
+{
+    using DateTimeUtilities::getCurrentTime;
+
+#define LOG  std::osyncstream { std::cout } << '[' << getCurrentTime() << "] "
+}
+
+namespace
+{
+    constexpr uint32_t fast_modulo(const uint32_t n, const uint32_t d) noexcept {
+        return n & (d - 1);
+    }
+
+    constexpr bool is_pow_of_2(const int value) noexcept {
+        return (value && !(value & (value - 1)));
+    }
+};
+
+namespace ring_buffers::impl_1
+{
+    template <typename T, std::size_t N>
+    class RingBuffer
+    {
+        using size_type = size_t;
+
+        std::array<T, N> buffer;
+
+        alignas(std::hardware_destructive_interference_size) std::atomic<size_type> head { 0 };
+        alignas(std::hardware_destructive_interference_size) std::size_t headCached{ 0 };
+        alignas(std::hardware_destructive_interference_size) std::atomic<size_type> tail { 0 };
+        alignas(std::hardware_destructive_interference_size) std::size_t tailCached{ 0 };
+
+    public:
+
+        bool push(const T& value) noexcept
+        {
+            const size_type headLocal = head.load(std::memory_order_relaxed);
+            size_type next_head = headLocal + 1;
+            if (next_head == buffer.size()) [[unlikely]] {
+                next_head = 0;
+            }
+            if (next_head == tailCached) [[unlikely]] {
+                tailCached = tail.load(std::memory_order_acquire);
+                if (next_head == tailCached) {
+                    return false;
+                }
+            }
+            buffer[headLocal] = value;
+            head.store(next_head, std::memory_order_release);
+            return true;
+        }
+
+        bool pop(T& value) noexcept
+        {
+            const size_type tailLocal = tail.load(std::memory_order_relaxed);
+            if (tailLocal == headCached) [[unlikely]] {
+                headCached = head.load(std::memory_order_acquire);
+                if (tailLocal == headCached) {
+                    return false;
+                }
+            }
+            value = buffer[tailLocal];
+            size_type next_tail = tailLocal + 1;
+            if (next_tail == buffer.size()) [[unlikely]] {
+                next_tail = 0;
+            }
+            tail.store(next_tail, std::memory_order_release);
+            return true;
+        }
+    };
+}
+
+namespace ring_buffers::impl_2
+{
+    template<typename T>
+    concept Queueable = std::default_initializable<T> && std::move_constructible<T>;
+
+    template<Queueable Ty, std::size_t Capacity>
+    class RingBuffer
+    {
+        using size_type  = size_t;
+        using value_type = Ty;
+        using collection_type = std::vector<value_type>;
+
+        static_assert(!std::is_same_v<value_type, void>, "ERROR: Value type can not be void");
+        static_assert(is_pow_of_2(Capacity), "ERROR: Capacity must be a power of 2");
+
+        std::array<value_type, Capacity> m_buffer;
+
+        alignas(std::hardware_destructive_interference_size) std::atomic<std::size_t> readIndex { 0 };
+        alignas(std::hardware_destructive_interference_size) std::atomic<std::size_t> writeIndex { 0 };
+
+    public:
+
+        RingBuffer() = default;
+        RingBuffer(const RingBuffer&) = delete;
+        RingBuffer& operator=(const RingBuffer&) = delete;
+        RingBuffer(RingBuffer&&) = delete;
+        RingBuffer& operator=(RingBuffer&&) = delete;
+
+        template<typename U>
+            requires std::is_convertible_v<value_type, std::decay_t<U>>
+        bool push(U&& element)
+        {
+            const size_type idxWrite = writeIndex.load(std::memory_order_relaxed);
+            const size_type idxWriteNext = (idxWrite + 1) & (Capacity - 1);
+
+            if (idxWriteNext != readIndex.load(std::memory_order_acquire))
+            {
+                m_buffer[idxWrite] = std::forward<U>(element);
+                writeIndex.store(idxWriteNext, std::memory_order_release);
+                return true;
+            }
+            return false;
+        }
+
+        bool pop(value_type& value) noexcept
+        {
+            const size_type idxRead = readIndex.load(std::memory_order_relaxed);
+            if (idxRead == writeIndex.load(std::memory_order_acquire)) {
+                return false;
+            }
+
+            value = std::move(m_buffer[idxRead]);
+            readIndex.store((idxRead + 1 ) & (Capacity - 1), std::memory_order_release);
+            return true;
+        }
+    };
+}
+
+
+namespace ring_buffers::impl_3
+{
+    template<typename Ty, uint32_t Capacity>
+    struct RingBuffer
+    {
+        using size_type  = uint32_t;
+        using value_type = Ty;
+        using collection_type = std::vector<value_type>;
+
+        static_assert(!std::is_same_v<value_type, void>, "ERROR: Value type can not be void");
+        static_assert(is_pow_of_2(Capacity), "ERROR: Capacity must be a power of 2");
+
+        RingBuffer(): buffer(Capacity) {
+        }
+
+        // TODO: Support for copy ??? --> bool push(value_type& item) --> std::move(item);
+        [[nodiscard]]
+        bool push(const value_type& item)
+        {
+            const size_type headCurrent = head.load(std::memory_order::relaxed);
+            const size_type headNext = fast_modulo(headCurrent + 1, Capacity);
+            if (headNext == tail.load(std::memory_order::acquire)) {
+                return false;
+            }
+
+            // buffer[headCurrent] = std::move(item);
+            buffer[headCurrent] = item;
+            head.store(headNext, std::memory_order::release);
+
+            return true;
+        }
+
+        [[nodiscard]]
+        bool pop(value_type& item)
+        {
+            const size_type tailCurrent = tail.load(std::memory_order::relaxed);
+            if (tailCurrent == head.load(std::memory_order::acquire)) {
+                return false;
+            }
+
+            item = std::move(buffer[tailCurrent]);
+            tail.store(fast_modulo(tailCurrent + 1, Capacity), std::memory_order::release);
+
+            return true;
+        }
+
+        [[nodiscard]]
+        size_type size() const noexcept {
+            return head.load(std::memory_order::relaxed) - tail.load(std::memory_order::relaxed);
+        }
+
+        [[nodiscard]]
+        size_type empty() const noexcept
+        {
+            // TODO: can 'acquire' be replaced with 'relaxed' ?
+            return head.load(std::memory_order::acquire) == tail.load(std::memory_order::acquire);
+        }
+
+        [[nodiscard]]
+        size_type full() const noexcept
+        {
+            return size() == Capacity;
+        }
+
+    private:
+
+        std::vector<value_type> buffer;
+
+        alignas(std::hardware_destructive_interference_size) std::atomic<size_type> tail {0};
+        alignas(std::hardware_destructive_interference_size) std::atomic<size_type> head {0};
+    };
+}
+
+namespace ring_buffers::impl_3_size
+{
+    template<typename Ty>
+    struct RingBuffer
+    {
+        using size_type  = uint32_t;
+        using value_type = Ty;
+        using collection_type = std::vector<value_type>;
+
+        static_assert(!std::is_same_v<value_type, void>, "ERROR: Value type can not be void");
+
+        explicit RingBuffer(const size_type capacity):
+            capacity { capacity }, buffer(capacity)
+        {
+            assert(is_pow_of_2(capacity) == true && "Capacity must be a power of 2");
+        }
+
+        bool push(const value_type& value)
+        {
+            const size_type headLocal = head.load(std::memory_order::relaxed);
+            const size_type headNext = fast_modulo(headLocal + 1, capacity);
+
+            if (headNext == tail.load(std::memory_order::acquire)) {
+                return false;
+            }
+
+            buffer[headLocal] = value;
+            head.store(headNext, std::memory_order::release);
+
+            return true;
+        }
+
+        [[nodiscard]]
+        bool pop(value_type& item)
+        {
+            const size_type tailLocal = tail.load(std::memory_order::relaxed);
+            if (tailLocal == head.load(std::memory_order::acquire)) {
+                return false;
+            }
+
+            item = std::move(buffer[tailLocal]);
+            tail.store(fast_modulo(tailLocal + 1, capacity), std::memory_order::release);
+            return true;
+        }
+
+        [[nodiscard]]
+        size_type size() const noexcept {
+            return head.load(std::memory_order::relaxed) - tail.load(std::memory_order::relaxed);
+        }
+
+        [[nodiscard]]
+        size_type empty() const noexcept
+        {
+            // TODO: can 'acquire' be replaced with 'relaxed' ?
+            return head.load(std::memory_order::acquire) == tail.load(std::memory_order::acquire);
+        }
+
+        [[nodiscard]]
+        size_type full() const noexcept
+        {
+            return size() == capacity;
+        }
+
+    private:
+
+        size_type capacity { 0 };
+        std::vector<value_type> buffer;
+
+        alignas(std::hardware_destructive_interference_size) std::atomic<size_type> tail {0};
+        alignas(std::hardware_destructive_interference_size) std::atomic<size_type> head {0};
+    };
+}
+
+
+namespace ring_buffers::tests
+{
+    void test_1()
+    {
+        //impl_1::RingBuffer<int64_t, 1024> queue;
+        impl_2::RingBuffer<int64_t, 1024> queue;
+        // impl_3::RingBuffer<int64_t, 1024> queue;
+        // impl_3_size::RingBuffer<int64_t> queue { 1024 };
+
+        constexpr int64_t eventsCount {1'000'000}, initialValue {0};
+        int64_t reads {0}, writes {0}, errors {0};
+
+        // ScopedTimer timer {"benchmark"};
+        auto consume = [&]
+        {
+            int previousValue = initialValue - 1;
+            int64_t result {0};
+            while (eventsCount > reads) {
+                if (queue.pop(result)) {
+                    if (previousValue + 1 != result) {
+                        ++errors;
+                    }
+                    previousValue = result;
+                    ++reads;
+                }
+            }
+        };
+
+        auto produce = [&]
+        {
+            for (int64_t idx = initialValue; idx <= eventsCount; ++idx){
+                while (true) {
+                    if (queue.push(idx)) {
+                        ++writes;
+                        break;
+                    }
+                }
+            }
+        };
+
+        std::jthread consumer {consume}, producer {produce};
+        consumer.join();
+        producer.join();
+
+        LOG << "Reads: " << reads << ", writes: " << writes << ", errors: " << errors << std::endl;
+    }
+}
+
+void ring_buffers::TestAll()
+{
+    tests::test_1();
+}

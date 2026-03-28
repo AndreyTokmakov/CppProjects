@@ -67,6 +67,7 @@ add_executable(${PROJECT_NAME}
         PerformanceExperiments/SpinLock.cpp
         Experiments/Experiments.cpp
         PerformanceExperiments/McMp_LockFree_Queue_vs_CV_Queue.cpp
+        RingBuffers/RingBuffers.cpp
 )
 
 target_include_directories(${PROJECT_NAME} PUBLIC "${CMAKE_SOURCE_DIR}/Utilities")

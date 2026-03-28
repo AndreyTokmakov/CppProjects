@@ -47,7 +47,6 @@ Description : Multithreading tests main entry point
 #include "PerformanceExperiments/Mutex_vs_AtomicLock.h"
 #include "PerformanceExperiments/Multithreading_Performance.h"
 #include "PerformanceExperiments/PerformanceExperiments.h"
-#include "PerformanceExperiments/McMp_LockFree_Queue_vs_CV_Queue.hpp"
 
 #include "Barrier/Barrier.h"
 #include "FalseSharing/FalseSharingExperiments.h"
@@ -61,6 +60,8 @@ Description : Multithreading tests main entry point
 
 #include "Utilities/Utilities.h"
 #include "Experiments/Experiments.h"
+
+#include "RingBuffers/RingBuffers.hpp"
 
 
 int main([[maybe_unused]] int argc,
@@ -113,8 +114,10 @@ int main([[maybe_unused]] int argc,
     // ThreadPoolLimited::TestAll();
 
     // Threads::TEST_ALL();
-    JThreads::TestAll();
+    // JThreads::TestAll();
     // StoppingThreads::TestAll();
+
+    ring_buffers::TestAll();
 
 
     /** Performance **/
