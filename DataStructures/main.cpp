@@ -7,8 +7,10 @@ Copyright   : Your copyright notice
 Description : DataStructures
 ============================================================================**/
 
+#include "../CppSTDLibrary/Any/Any.h"
 #include "../Multithreding/Barrier/Barrier.h"
 #include "Array/Array.h"
+#include "Any/Any.hpp"
 #include "BitFlags/BitFlags.h"
 #include "Barrier/Barrier.hpp"
 #include "Semaphore/Semaphore.hpp"
@@ -82,7 +84,7 @@ int main([[maybe_unused]] int argc,
     /// Unimplemented
     // BinaryTree::TestAll();
 
-
+    any::TestAll();
     // Array::TEST_ALL();
     // BitSet::TEST_ALL();
     // BitFlags::TestAll();
@@ -163,5 +165,5 @@ int main([[maybe_unused]] int argc,
 
     // barrier::TestAll();
 
-    semaphore::TestAll();
+    // semaphore::TestAll();
 }

@@ -10,6 +10,7 @@ add_compile_options(-c -Wall -Wextra -O3 -std=c++26)
 # include all components
 add_executable(${PROJECT_NAME}
 		main.cpp
+		Any/Any.cpp
 		BitSet/BitSet.cpp
 		BitFlags/BitFlags.cpp
 		CircularBuffers/CircularBuffers.cpp
