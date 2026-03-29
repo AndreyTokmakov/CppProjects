@@ -519,7 +519,6 @@ namespace ring_buffers::tests
     }
 }
 
-
 namespace ring_buffers::tests::multithreading
 {
     void test_1(IRingBuffer auto& ringBuffer)
