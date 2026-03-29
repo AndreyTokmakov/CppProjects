@@ -18,7 +18,7 @@
 
 <a id="move_semantics_perfect_forwarding"></a>
 ## Move Semantics & Perfect Forwarding
--  [What is the difference between lvalue, rvalue, prvalue, xvalue, and glvalue](#lvalue_rvalue_xvalue,)<br/>
+-  [What is the difference between lvalue, rvalue, prvalue, xvalue, and glvalue](#lvalue_rvalue_xvalue)<br/>
 -  [Explain reference collapsing rules in detail](#reference_collapsing )<br/>
 -  [What's the difference between `std::move` and `std::forward`?](#move_vs_forward)<br/>
 -  [Explain the Rule of Zero, Rule of Three, and Rule of Five](#rule_of_five)<br/>
