@@ -41,6 +41,8 @@
 -  [Explain the six memory ordering models in C++11](#six_memory_ordering_models)<br/>
 -  [What is the happens-before relationship](#happens_before_relationship )<br/>
 
+---
+
 <a id="sfinae"></a>
 ### 1. **Explain SFINAE and provide a practical use case**
 
