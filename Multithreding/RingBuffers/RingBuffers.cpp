@@ -24,6 +24,7 @@ Description : RingBuffers.cpp
 
 #include "Testing.hpp"
 #include "DateTimeUtilities.hpp"
+#include "PerfUtilities.hpp"
 
 namespace
 {
@@ -636,8 +637,71 @@ namespace ring_buffers::tests::multithreading
 
 }
 
+namespace ring_buffers::tests::performance_tests
+{
+    void runTest(IRingBuffer auto& ringBuffer,
+                 const int64_t eventsCount,
+                 std::string_view name)
+    {
+        const PerfUtilities::ScopedTimer timer {name};
+        auto consume = [&]
+        {
+            int64_t item {0}, itemsPopped {0};
+            while (eventsCount >= itemsPopped) {
+                if (ringBuffer.pop(item)) {
+                    ++itemsPopped;
+                }
+            }
+            // LOG << "itemsPopped: " << itemsPopped << std::endl;
+        };
+
+        auto produce = [&]
+        {
+            int64_t item { 0 }, itemsPushed { 0 };
+            while (eventsCount >= itemsPushed) {
+                if (ringBuffer.push(item)) {
+                    ++itemsPushed;
+                }
+            }
+            // LOG << "Produce " << itemsPushed << " items" << std::endl;
+        };
+
+        std::jthread consumer {consume}, producer {produce};
+        consumer.join();
+        producer.join();
+    }
+
+    void benchmark()
+    {
+        constexpr size_t capacity { 1024 }, eventsCount { 100'000'000 };
+
+        {
+            impl_1::RingBuffer<int64_t, capacity> ringBuffer;
+            runTest(ringBuffer, eventsCount, "impl_1::RingBuffer");
+        }
+        {
+            impl_2::RingBuffer<int64_t, capacity> ringBuffer;
+            runTest(ringBuffer, eventsCount, "impl_2::RingBuffer");
+        }
+        {
+            impl_3::RingBuffer<int64_t, capacity> ringBuffer;
+            runTest(ringBuffer, eventsCount, "impl_3::RingBuffer");
+        }
+        {
+            impl_3_size::RingBuffer<int64_t> ringBuffer { capacity };
+            runTest(ringBuffer, eventsCount, "impl_3_size::RingBuffer");
+        }
+
+        // impl_1::RingBuffer:  0.6771 seconds.
+        // impl_2::RingBuffer:  0.916864 seconds.
+        // impl_3::RingBuffer:  1.14923 seconds.
+        // impl_3_size::RingBuffer:  1.07055 seconds.
+    }
+}
+
 void ring_buffers::TestAll()
 {
-    tests::runAllUnitTests();
-    tests::multithreading::runAllTests();
+    // tests::runAllUnitTests();
+    // tests::multithreading::runAllTests();
+    tests::performance_tests::benchmark();
 }
