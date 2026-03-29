@@ -1,5 +1,6 @@
 1. [Template Metaprogramming & Advanced Templates](#template_metaprogramming_advanced_templates)
 2. [Move Semantics & Perfect Forwarding](#move_semantics_perfect_forwarding)
+3. [Memory Model & Atomics](#memory_model_atomics)
 
 <a id="template_metaprogramming_advanced_templates"></a>
 ## Template Metaprogramming & Advanced Templates
@@ -35,6 +36,10 @@
 -  [How does Return Value Optimization (RVO) interact with move semantics](#rvo_with_move_semantics)<br/>
 -  [What is the universal reference and how does template argument deduction work with it](#universal_reference_deduction)<br/>
 
+<a id="memory_model_atomics"></a>
+## Memory Model & Atomics
+-  [Explain the six memory ordering models in C++11](#six_memory_ordering_models)<br/>
+-  [What is the happens-before relationship](#happens_before_relationship )<br/>
 
 <a id="sfinae"></a>
 ### 1. **Explain SFINAE and provide a practical use case**
@@ -716,6 +721,8 @@ private:
 ```
 
 This handles edge cases like non-class types and uses `std::is_convertible` for the actual check.
+
+---
 
 ---
 
@@ -1448,9 +1455,10 @@ wrapper(10);   // Forwards as rvalue
 
 ---
 
-<a id="question_link"></a>
-## Memory Model & Atomics (Questions 29-36)
+<a id="memory_model_atomics"></a>
+## Memory Model & Atomics
 
+<a id="six_memory_ordering_models"></a>
 ### 29. **Explain the six memory ordering models in C++11**
 
 **`memory_order_relaxed`:**
@@ -1511,6 +1519,7 @@ if (ready.load(std::memory_order_acquire)) {
 
 ---
 
+<a id="happens_before_relationship"></a>
 ### 30. **What is the happens-before relationship?**
 
 Happens-before establishes ordering between operations. If A happens-before B, A's effects are visible to B.
