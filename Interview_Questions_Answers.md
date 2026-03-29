@@ -1,4 +1,5 @@
 1. [Template Metaprogramming & Advanced Templates](#template_metaprogramming_advanced_templates)
+2. [Move Semantics & Perfect Forwarding](#move_semantics_perfect_forwarding)
 
 <a id="template_metaprogramming_advanced_templates"></a>
 ## Template Metaprogramming & Advanced Templates
@@ -9,14 +10,31 @@
 -  [What is template template parameter? Provide an example](#template_template_parameter)<br/>
 -  [How does std::enable_if work internally](#enable_if_internally)<br/>
 -  [Explain variadic templates and fold expressions (C++17)](#explain_fold_expressions)<br/>
--  [Question_Title_Text](#question_link)<br/>
--  [Question_Title_Text](#question_link)<br/>
--  [Question_Title_Text](#question_link)<br/>
--  [Question_Title_Text](#question_link)<br/>
--  [Question_Title_Text](#question_link)<br/>
--  [Question_Title_Text](#question_link)<br/>
--  [Question_Title_Text](#question_link)<br/>
--  [Question_Title_Text](#question_link)<br/>
+-  [What are the differences between partial and full template specialization](#partial_and_full_specialization)<br/>
+-  [How do you detect if a type has a specific member function at compile-time](#detect_specific_member_function)<br/>
+-  [Explain dependent names and typename keyword usage](#dependent_names)<br/>
+-  [What is Expression Templates and where is it useful](#expression_templates)<br/>
+-  [Implement `is_base_of` type trait using template metaprogramming](#implement_is_base_of)<br/>
+
+<a id="move_semantics_perfect_forwarding"></a>
+## Move Semantics & Perfect Forwarding
+-  [What is the difference between lvalue, rvalue, prvalue, xvalue, and glvalue](#lvalue_rvalue_xvalue,)<br/>
+-  [Explain reference collapsing rules in detail](#reference_collapsing )<br/>
+-  [What's the difference between `std::move` and `std::forward`?](#move_vs_forward)<br/>
+-  [Explain the Rule of Zero, Rule of Three, and Rule of Five](#rule_of_five)<br/>
+-  [When would a move constructor NOT be implicitly generated](#move_constructor_not_generated)<br/>
+-  [What are the performance implications of returning by value with move semantics](#performance_implications_returning_value)<br/>
+-  [Explain mandatory copy elision (C++17) and how it differs from NRVO](#copy_elision_nrvo)<br/>
+-  [What happens when you call `std::move` on a const object?](#call_move_on_const)<br/>
+-  [How do you implement move semantics correctly for a class with raw pointers?](#implement_move_semantics)<br/>
+-  [Why should move constructors and move assignment operators be `noexcept`](#why_move_constructors_noexcept)<br/>
+-  [Explain perfect forwarding failure cases](#perfect_forwarding_failure_cases)<br/>
+-  [What is the "Has-A-Name" rule for rvalues](#name_for_rvalues)<br/>
+-  [What is the purpose of `std::move_if_noexcept`](#purpose_move_if_noexcept)<br/>
+-  [Explain the moved-from state and what guarantees it provides](#moved_from_guarantees)<br/>
+-  [How does Return Value Optimization (RVO) interact with move semantics](#rvo_with_move_semantics)<br/>
+-  [What is the universal reference and how does template argument deduction work with it](#universal_reference_deduction)<br/>
+
 
 <a id="sfinae"></a>
 ### 1. **Explain SFINAE and provide a practical use case**
@@ -387,7 +405,7 @@ std::unique_ptr<T> make_unique(Args&&... args) {
 
 ---
 
-<a id="question_link"></a>
+<a id="partial_and_full_specialization"></a>
 ### 8. **What are the differences between partial and full template specialization?**
 
 **Full specialization:** Provides complete implementation for specific template arguments. All template parameters are specified.
@@ -446,7 +464,7 @@ Pair<int, double*> p3; // Uses pointer specialization
 
 ---
 
-<a id="question_link"></a>
+<a id="detect_specific_member_function"></a>
 ### 9. **How do you detect if a type has a specific member function at compile-time?**
 
 Use SFINAE with `decltype` and `std::declval`:
@@ -507,7 +525,7 @@ concept has_foo = requires(T t) {
 
 ---
 
-<a id="question_link"></a>
+<a id="dependent_names"></a>
 ### 10. **Explain dependent names and typename keyword usage**
 
 Dependent names are names that depend on template parameters. The compiler can't resolve them until template instantiation.
@@ -571,7 +589,7 @@ void func() {
 
 ---
 
-<a id="question_link"></a>
+<a id="expression_templates"></a>
 ### 11. **What is Expression Templates and where is it useful?**
 
 Expression Templates build compile-time expression trees to delay computation and enable optimization. Instead of computing immediately, operations create template objects representing the computation.
@@ -642,7 +660,7 @@ Vector result = a + b + c + d;  // No temporaries! Single loop!
 
 ---
 
-<a id="question_link"></a>
+<a id="implement_is_base_of"></a>
 ### 12. **Implement `is_base_of` type trait using template metaprogramming**
 
 ```cpp
@@ -701,9 +719,7 @@ This handles edge cases like non-class types and uses `std::is_convertible` for 
 
 ---
 
-<a id="question_link"></a>
-## Move Semantics & Perfect Forwarding (Questions 13-28)
-
+<a id="lvalue_rvalue_xvalue"></a>
 ### 13. **What is the difference between lvalue, rvalue, prvalue, xvalue, and glvalue?**
 
 C++11 introduced a taxonomy of value categories:
@@ -746,6 +762,7 @@ x++                      // prvalue (returns copy)
 
 ---
 
+<a id="reference_collapsing"></a>
 ### 14. **Explain reference collapsing rules in detail**
 
 When references-to-references appear during template instantiation, they collapse according to these rules:
@@ -799,6 +816,7 @@ T&& forward(std::remove_reference_t<T>& param) {
 
 ---
 
+<a id="move_vs_forward"></a>
 ### 15. **What's the difference between `std::move` and `std::forward`?**
 
 **std::move:** Unconditionally casts to rvalue reference.
@@ -861,6 +879,7 @@ test_move(10);      // Prints: rvalue
 
 ---
 
+<a id="rule_of_five"></a>
 ### 16. **Explain the Rule of Zero, Rule of Three, and Rule of Five**
 
 **Rule of Zero:** If you can avoid defining special member functions, do. Let compiler generate them. Use RAII types for resource management.
@@ -942,6 +961,7 @@ public:
 
 ---
 
+<a id="move_constructor_not_generated"></a>
 ### 17. **When would a move constructor NOT be implicitly generated?**
 
 Move constructor won't be implicitly generated if you declare:
@@ -984,6 +1004,7 @@ public:
 
 ---
 
+<a id="performance_implications_returning_value"></a>
 ### 18. **What are the performance implications of returning by value with move semantics?**
 
 Modern C++ makes returning by value efficient through:
@@ -1032,6 +1053,7 @@ std::vector<int> correct() {
 
 ---
 
+<a id="copy_elision_nrvo"></a>
 ### 19. **Explain mandatory copy elision (C++17) and how it differs from NRVO**
 
 **Copy elision:** Compiler optimizes away copy/move constructors by constructing object directly in final location.
@@ -1087,6 +1109,7 @@ Widget create() {
 
 ---
 
+<a id="call_move_on_const"></a>
 ### 20. **What happens when you call `std::move` on a const object?**
 
 `std::move` on const object casts to `const T&&`, which binds to const lvalue reference, invoking copy constructor instead of move constructor.
@@ -1120,6 +1143,7 @@ std::string str2 = std::move(str);  // Actually moves
 
 ---
 
+<a id="implement_move_semantics"></a>
 ### 21. **How do you implement move semantics correctly for a class with raw pointers?**
 
 ```cpp
@@ -1179,6 +1203,7 @@ public:
 
 ---
 
+<a id="why_move_constructors_noexcept"></a>
 ### 22. **Why should move constructors and move assignment operators be `noexcept`?**
 
 `noexcept` is critical because STL containers use move only if it's `noexcept`, otherwise they copy for strong exception guarantee.
@@ -1212,6 +1237,7 @@ Without `noexcept`, vector must copy to maintain strong exception guarantee.
 
 ---
 
+<a id="perfect_forwarding_failure_cases"></a>
 ### 23. **Explain perfect forwarding failure cases**
 
 Perfect forwarding fails in these cases:
@@ -1249,6 +1275,7 @@ forward_func(NULL);     // ❌ NULL is int, not pointer
 
 ---
 
+<a id="name_for_rvalues"></a>
 ### 24. **What is the "Has-A-Name" rule for rvalues?**
 
 A named rvalue reference is an lvalue. Must explicitly use `std::move` or `std::forward` to treat it as rvalue.
@@ -1278,6 +1305,7 @@ std::string process(std::string&& str) {
 
 ---
 
+<a id="purpose_move_if_noexcept"></a>
 ### 25. **What is the purpose of `std::move_if_noexcept`?**
 
 Moves only if move constructor is `noexcept`, otherwise copies for exception safety.
@@ -1306,6 +1334,7 @@ Used in `std::vector` reallocation to maintain strong exception guarantee.
 
 ---
 
+<a id="moved_from_guarantees"></a>
 ### 26. **Explain the moved-from state and what guarantees it provides**
 
 After `std::move`, object must be in **valid but unspecified state**:
@@ -1339,6 +1368,7 @@ public:
 
 ---
 
+<a id="rvo_with_move_semantics"></a>
 ### 27. **How does Return Value Optimization (RVO) interact with move semantics?**
 
 RVO eliminates copy/move entirely by constructing directly in caller's location.
@@ -1376,6 +1406,7 @@ Widget correct() {
 
 ---
 
+<a id="universal_reference_deduction"></a>
 ### 28. **What is the universal reference and how does template argument deduction work with it?**
 
 Universal/forwarding reference is `T&&` where T is deduced. Binds to both lvalues and rvalues.
