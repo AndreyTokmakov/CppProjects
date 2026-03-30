@@ -33,9 +33,34 @@ namespace {
 }
 
 namespace Lambdas::Capture
-{
-
-    struct my_struct
+{   /**
+	┌───────────────────────────┬─────────────────────────────────────────────────────────────────────────────┐
+	│  CAPTURE                  │  DANGER LEVEL(GREEN -> ORANGE -> RED))                                      │
+	├───────────────────────────┼─────────────────────────────────────────────────────────────────────────────┤
+	│                           │                                                                             │
+	│  [x]                      │  GREEN: Safe. Lambda owns a copy.                                           │
+	│                           │                                                                             │
+	│  [&x]                     │  ORANGE: Fine IF lambda doesn't outlive x.								  │
+	│                           │  RED: DANGEROUS if it does (dangling ref).								  │
+	│                           │                                                                             │
+	│  [=]                      │  ORANGE: Seems safe but captures this in member functions. Surprise!        │
+	│                           │                                                                             │
+	│  [&]                      │  RED: Easy to accidentally capture things you didn't intend. Hard to audit. │
+	│                           │																		      │
+	│  [this]                   │  RED: Pointer capture. Object must outlive the lambda.                      │
+	│                           │                                                                             │
+	│  [*this]                  │  GREEN: Copies the object. Safe. (C++17)  (But potentially expensive!)      │
+	│                           │                                                                             │
+	│  [x = std::move(y)]       │  GREEN: Moved in. Lambda owns it.                                           │
+	│                           │  ORANGE: But it's const unless mutable!									  │
+	│                           │																			  │
+	│  [&ref = x]               │  RED:Reference init-capture. Same danger as [&x]. One & away from disaster. │
+	│                           │																		      │
+	│  [...args = move(args)]   │  GREEN: C++20 pack capture. Clean. Safe.									  │
+	│                           │																			  │
+	└───────────────────────────┴─────────────────────────────────────────────────────────────────────────────┘
+	**/
+	struct my_struct
     {
         my_struct() = default;
         my_struct(const my_struct &) {
@@ -1523,7 +1548,7 @@ namespace Lambdas::Capture_Pitfalls
     {
         int counter { 0 };
 
-        std::jthread worker {[counter] mutable  {
+        std::jthread const worker {[counter] mutable  {
             for (int i = 0; i < 100; ++i) {
                 ++counter;
             }
@@ -1542,6 +1567,91 @@ namespace Lambdas::Capture_Pitfalls
     }
 }
 
+namespace Lambdas::Capture_Pitfalls
+{
+	// https://medium.com/@sagar.necindia/the-vexing-capture-c-lambda-lifetime-issues-c-developers-overlook-dd8c346b0d39
+
+	class Server
+	{
+		std::string host = "localhost";
+		int port = 8080;
+
+	public:
+
+		[[nodiscard]]
+		auto get_handler_Bad() const
+		{	// [this] - Captures the pointer. DANGEROUS if object dies.
+			// [=]       Inside a member function, secretly captures this. SAME DANGER as [this].
+			return [=]() {
+				// Using host_ and port_ here...
+				std::cout << host << ":" << port << "\n";
+			};
+
+			// Lambda captures: copy of this  → pointer to the Server object
+			//    host is really this->host.
+			//    port is really this->port.
+			//  [=] copies the THIS POINTER, not the members!
+		}
+
+		[[nodiscard]]
+		auto get_handler_OK1() const
+		{	// C++14: capture with initializer
+			return [h = host, p = port]() {
+				std::cout << h << ":" << p << "\n";
+			};
+		}
+
+		[[nodiscard]]
+		auto get_handler_OK2() const
+		{	// [*this]   Captures a COPY of the entire object. Safe. (C++17)
+			// [m=m_]    Captures individual members by value. Safest.
+			return [*this]() {
+				std::cout << host << ":" << port << "\n";
+			};
+		}
+	};
+
+
+	decltype(auto) getHandlerBad()
+	{
+		const Server server;
+		return server.get_handler_Bad();
+	}
+
+	decltype(auto) getHandleOk1()
+	{
+		const Server server;
+		return server.get_handler_OK1();
+	}
+
+	decltype(auto) getHandleOk2()
+	{
+		const Server server;
+		return server.get_handler_OK2();
+	}
+
+	void Capturing_Dangling_THIS()
+	{
+		{
+			auto callback = getHandlerBad();
+			callback();
+		}
+		{
+			auto callback = getHandleOk1();
+			callback();
+		}
+		{
+			auto callback = getHandleOk2();
+			callback();
+		}
+
+		/**
+		       �:667435168
+		localhost:8080
+		localhost:8080
+		**/
+	}
+}
 
 namespace Lambdas::Explicit_Template_Parameters
 {
@@ -1577,7 +1687,7 @@ void Lambdas::TestAll()
 	// Lambdas::Test1();
 	// Lambdas::Pass_THIS_to_Lambda();
 
-	// Capture::Capture_Modes();
+	Capture::Capture_Modes();
     // Capture::Capture_Variable_Copy();
 	// Capture::Capturing_Parameter_Packs();  // By REF, MOVE and COPY
     // Capture::Capture_This();
@@ -1587,6 +1697,7 @@ void Lambdas::TestAll()
     // Capture_Pitfalls::Creation_Lifetime_Race();
     // Capture_Pitfalls::CopyByValue_LargeObject();
     // Capture_Pitfalls::DataRace_MutableLambda_Copy();
+    // Capture_Pitfalls::Capturing_Dangling_THIS();
 
 	// Lambdas::Lambda_With_Params_Initialization();
 	// Lambdas::Lambda_Struct();
@@ -1643,7 +1754,7 @@ void Lambdas::TestAll()
 	// Lambdas_Inheritance::Derive_from_Two_Lambdas__Simple();
 	// Lambdas_Inheritance::Overload_Example();
 
-	Explicit_Template_Parameters::Call_With_Explicit_Template_Param();
+	// Explicit_Template_Parameters::Call_With_Explicit_Template_Param();
 
 	// High_Order_Function::PredicateComposition_WhenAll();
 	// High_Order_Function::PredicateComposition_WhenAll_Concepts();
@@ -1651,7 +1762,6 @@ void Lambdas::TestAll()
 
 	// Constexpr_Constevel_Lambda::ConstexprLambda();
 	// Constexpr_Constevel_Lambda::Constevel_Lambda();
-
 
 	// Tests::_TEST_();
 	// Tests::TYPE_TEST_();

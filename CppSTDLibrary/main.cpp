@@ -158,14 +158,14 @@ int main([[maybe_unused]] const int argc,
     // FunctionObjects::TestAll();
     // Hashing::TestAll();
     // LookupTypes::TestAll();
-    // Lambdas::TestAll();
+    Lambdas::TestAll();
     // LifetimeExtension::TestAll();
     // Locale::TestAll();
     // Literals::TestAll();
     // MoveSemantics::TestAll();
     // Numbers::TestAll();
     // Math::TestAll();
-    Memory::TestAll();
+    // Memory::TestAll();
     // Metaprogramming::TestAll();
     // InlineNamespaces::TestAll();
     // NumericLimits::TestAll();
