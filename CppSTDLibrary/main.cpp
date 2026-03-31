@@ -72,6 +72,7 @@ Description : Cpp STD lib
 #include "Streams/Streams.h"
 #include "String/String.h"
 #include "Span/Span.h"
+#include "SpanStream/SpanStream.hpp"
 #include "Simd/Simd.h"
 #include "ScopeExit_Experimental/ScopeExit.hpp"
 #include "StarshipOperator/StarshipOperator.h"
@@ -158,7 +159,7 @@ int main([[maybe_unused]] const int argc,
     // FunctionObjects::TestAll();
     // Hashing::TestAll();
     // LookupTypes::TestAll();
-    Lambdas::TestAll();
+    // Lambdas::TestAll();
     // LifetimeExtension::TestAll();
     // Locale::TestAll();
     // Literals::TestAll();
@@ -185,6 +186,7 @@ int main([[maybe_unused]] const int argc,
     // StructuredBinding::TestAll();
     // StrongTypes::TestAll();
     // Span::TestAll();
+    span_stream::TestAll();
     // Simd::TestAll();
     // ScopeExit::TestAll();
     // Stacktrace::TestAll();
