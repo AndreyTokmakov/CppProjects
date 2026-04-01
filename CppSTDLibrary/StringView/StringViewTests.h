@@ -14,6 +14,7 @@ namespace StringView
 {
 	void TestAll();
 	namespace number_parser { void TestAll(); }
+	namespace failure_cases { void TestAll(); }
 };
 
 #endif /* STRING_VIEW_TESTS__INCLUDE_GUARD__H */

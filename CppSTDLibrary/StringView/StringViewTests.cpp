@@ -271,7 +271,8 @@ namespace StringView::Tests {
 
 void StringView::TestAll()
 {
-	number_parser::TestAll();
+	// number_parser::TestAll();
+	failure_cases::TestAll();
 
 	// Create();
 	// Create_2();

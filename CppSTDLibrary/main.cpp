@@ -182,7 +182,7 @@ int main([[maybe_unused]] const int argc,
     // Streams::TestAll();
     // StringStream::TestAll();
     // String::TestAll();
-    // StringView::TestAll();
+    StringView::TestAll();
     // StructuredBinding::TestAll();
     // StrongTypes::TestAll();
     // Span::TestAll();
@@ -191,7 +191,7 @@ int main([[maybe_unused]] const int argc,
     // ScopeExit::TestAll();
     // Stacktrace::TestAll();
     // SourceLocation::TestAll();
-    SharedPtr_Tests::TestAll();
+    // SharedPtr_Tests::TestAll();
     // Variant::TestAll();
     // VolatileTests::TestAll();
     // TypeTraits::TestAll();

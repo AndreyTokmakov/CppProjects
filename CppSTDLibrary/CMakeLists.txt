@@ -98,6 +98,7 @@ add_executable(${PROJECT_NAME}
 
 		StringView/StringViewTests.cpp
 		StringView/Number_Parser.cpp
+		StringView/StringView_FailureCases.cpp
 
 		StructuredBinding/StructuredBinding.cpp
 		StrongTypes/StrongTypes.cpp

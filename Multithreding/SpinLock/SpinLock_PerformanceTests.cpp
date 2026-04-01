@@ -100,7 +100,7 @@ namespace SpinLock_PerformanceTests::Impl
 
         void lock()
         {
-            static const timespec ns {0, 1};
+            static constexpr timespec ns {0, 1};
             uint32_t expected = 0;
             for (int i = 0; !isLocked.compare_exchange_weak(expected, 1, std::memory_order_acquire); ++i) {
                 expected = 0;
