@@ -207,7 +207,7 @@ namespace SpinLock_PerformanceTests::Impl
     struct SpinLock4_1
     {
         alignas(std::hardware_destructive_interference_size) std::atomic<uint32_t> flag {0 };
-        alignas(std::hardware_destructive_interference_size) timespec ns {0, 1 };
+        alignas(std::hardware_destructive_interference_size) timespec ns {.tv_sec=0, .tv_nsec=1 };
 
         void lock()
         {
