@@ -186,12 +186,12 @@ int main([[maybe_unused]] const int argc,
     // StructuredBinding::TestAll();
     // StrongTypes::TestAll();
     // Span::TestAll();
-    span_stream::TestAll();
+    // span_stream::TestAll();
     // Simd::TestAll();
     // ScopeExit::TestAll();
     // Stacktrace::TestAll();
     // SourceLocation::TestAll();
-    // SharedPtr_Tests::TestAll();
+    SharedPtr_Tests::TestAll();
     // Variant::TestAll();
     // VolatileTests::TestAll();
     // TypeTraits::TestAll();

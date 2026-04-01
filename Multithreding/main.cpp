@@ -117,14 +117,13 @@ int main([[maybe_unused]] int argc,
     // JThreads::TestAll();
     // StoppingThreads::TestAll();
 
-    ring_buffers::TestAll();
-
+    // ring_buffers::TestAll();
 
     /** Performance **/
 
     // Multithreading_Performance::TEST_ALL();
     // FalseSharingExperiments::TEST_ALL();
-    // PerformanceExperiments::TestAll();
+    PerformanceExperiments::TestAll();
     // McMp_LockFree_Queue_vs_CV_Queue::TestAll();
 
     /** ThreadSafeCollections **/

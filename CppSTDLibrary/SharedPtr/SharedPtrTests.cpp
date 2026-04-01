@@ -246,7 +246,8 @@ namespace SharedPtr_Tests {
 		std::cout << *sp << std::endl;
 	}
 
-	void SimpleTest_Crush() {
+	void SimpleTest_Crush()
+	{
 		Integer* item = new Integer(1);
 		std::shared_ptr<Integer> ptr1(item);
 		{
@@ -256,8 +257,69 @@ namespace SharedPtr_Tests {
 		std::cout << "Killing another shared pointer" << std::endl;
 	}
 
+	void Reset_Set_Pass_by_Reference()
+	{
+		std::shared_ptr<Integer> integer = std::make_shared<Integer>(1);
+		std::cout << "Use count: " << integer.use_count() << std::endl;
 
-	void Reset_Test() {
+		auto func = [](std::shared_ptr<Integer>& intPtr) {
+			std::cout << "Use count: " << intPtr.use_count() << std::endl;
+
+			// intPtr = nullptr;
+			intPtr = std::make_shared<Integer>(2);
+
+		};
+
+		std::cout << std::string(120, '=') << std::endl;
+		func(integer);
+		std::cout << std::string(120, '=') << std::endl;
+
+		std::cout << "Use count: " << integer.use_count() << std::endl;
+
+		/*
+		Integer(1)
+		Use count: 1
+		========================================================================================================================
+		Use count: 1
+		Integer(2)
+		~Integer(1)
+		========================================================================================================================
+		Use count: 1
+		~Integer(2)
+		*/
+	}
+
+	void Reset_Set_Pass_by_Value()
+	{
+		std::shared_ptr<Integer> integer = std::make_shared<Integer>(1);
+		std::cout << "Use count: " << integer.use_count() << std::endl;
+
+		auto func = [](std::shared_ptr<Integer> intPtr) {
+			std::cout << "Use count: " << intPtr.use_count() << std::endl;
+			intPtr = std::make_shared<Integer>(2);
+		};
+
+		std::cout << std::string(120, '=') << std::endl;
+		func(integer);
+		std::cout << std::string(120, '=') << std::endl;
+
+		std::cout << "Use count: " << integer.use_count() << std::endl;
+
+		/*
+		Integer(1)
+		Use count: 1
+		========================================================================================================================
+		Use count: 2
+		Integer(2)
+		~Integer(2)
+		========================================================================================================================
+		Use count: 1
+		~Integer(1)
+		*/
+	}
+
+	void Reset_Test()
+	{
 		{
 			std::shared_ptr<Integer> integer = std::make_shared<Integer>(11);
 			integer->printInfo();
@@ -1153,7 +1215,8 @@ void SharedPtr_Tests::TestAll()
 	// Count_Test();
 	// Unique_Test();
 	// Reset_Test();
-
+	// Reset_Set_Pass_by_Reference();
+	Reset_Set_Pass_by_Value();
 
 	// Enable_Shared_From_This::EnableSharedFomThis_Good();
 	// Enable_Shared_From_This::EnableSharedFomThis_Bad();

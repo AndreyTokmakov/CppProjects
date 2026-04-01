@@ -9,7 +9,6 @@ Description : Mutex_vs_AtomicLock.cpp
 
 #include "Mutex_vs_AtomicLock.h"
 
-#include "../Utilities/Utilities.h"
 #include "Multithreading_Performance.h"
 
 #include <iostream>
@@ -23,90 +22,112 @@ Description : Mutex_vs_AtomicLock.cpp
 #include <syncstream>
 #include <concepts>
 
+#include "PerfUtilities.hpp"
+
 namespace Mutex_vs_AtomicLock
 {
-    template<typename T>
-    concept Storage = requires(T store)
+    template<typename Ty>
+    concept Lockable = requires(Ty& lk)
     {
-        store.increment();
-        store.get_value();
+        { lk.lock() } -> std::same_as<void>;
+        { lk.unlock() } -> std::same_as<void>;
     };
 
-    struct SynchStorage
+    class SpinLockBasic
     {
-        std::atomic_flag flag = ATOMIC_FLAG_INIT ;
-        unsigned long counter { 0 };
+        std::atomic_flag flag {false};
 
     public:
-        void lock()
-        {
-            while (flag.test_and_set(std::memory_order_acquire)) {
-                // THREAD_INFO << "Locked"  << std::endl;
-            }
+        void lock() {
+            while (flag.test_and_set(std::memory_order_acquire)) {}
         }
+
         void unlock() {
             flag.clear(std::memory_order_release);
         }
+    };
 
-        void increment()
+    class SpinLockBasicCas
+    {
+        std::atomic<bool> isLocked;
+
+    public:
+        void lock() {
+            bool expected = false;
+            while(!isLocked.compare_exchange_weak(expected, true, std::memory_order_acquire)) {
+                expected = false;
+            }
+        }
+
+        void unlock() {
+            isLocked.store(false, std::memory_order_release);
+        }
+    };
+
+    struct SpinLockFast
+    {
+        void lock()
         {
-            lock();
-            counter++;
+            for (uint8_t timeout = 0;
+                 flag.load(std::memory_order_relaxed) || flag.exchange(1, std::memory_order_acquire);
+                 ns.tv_nsec = static_cast<int>(++timeout))
+            {
+                nanosleep(&ns, nullptr);
+            }
+        }
+
+        void unlock() noexcept {
+            flag.store(0, std::memory_order_release);
+        }
+
+        ~SpinLockFast() {
             unlock();
         }
 
-        [[nodiscard]]
-        unsigned long get_value() const noexcept {
-            return counter;
-        }
+    private:
+        alignas(std::hardware_destructive_interference_size) std::atomic<uint32_t> flag {0 };
+        alignas(std::hardware_destructive_interference_size) timespec ns { .tv_sec=0, .tv_nsec=1 };
     };
 
 
-    struct SynchStorage_Mutex
+
+    template<Lockable LockType>
+    void benchmark(const std::string_view name,
+                   const uint16_t threadsCount,
+                   const uint64_t testIterations)
     {
-        std::mutex mtx;
-        unsigned long counter{ 0 };
+        LockType lock;
 
-    public:
-
-        void increment() {
-            std::lock_guard<std::mutex> lock(mtx);
-            counter++;
-        }
-
-        [[nodiscard]]
-        unsigned long get_value() const noexcept {
-            return counter;
-        }
-    };
-
-    void benchmark(Storage auto& storage,
-                   std::string_view message)
-    {
-        constexpr int thread_max = 8, iter_max = 100'000;
-        auto worker = [&]()->void {
-            for (int i = 0; i < iter_max; i++) {
-                storage.increment();
+        uint64_t counter { 0 };
+        auto task = [&] {
+            for (uint64_t idx  = 0; idx < testIterations; ++idx) {
+                lock.lock();
+                ++counter;
+                lock.unlock();
             }
         };
 
-        Utilities::ScopedTimer timer {message};
-
-        std::vector<std::future<void>> tasks;
-        for (auto i = 0; i < thread_max; ++i)
-            tasks.emplace_back(std::async(worker));
-        for (const auto& fut : tasks)
-            fut.wait();
-
-        std::osyncstream {std::cout } << "Counter = " << storage.get_value() << std::endl;
+        const PerfUtilities::ScopedTimer timer { name };
+        std::vector<std::jthread> tasks;
+        for (uint16_t it = 0; it < threadsCount; ++it) {
+            tasks.emplace_back(task);
+        }
     }
 };
 
 
 void Mutex_vs_AtomicLock::benchmarks()
 {
-    SynchStorage atomicStorage;
-    SynchStorage_Mutex storage;
-    benchmark(atomicStorage, "AtomicLockStorage");
-    benchmark(storage, "MutexSynchStorage");
+    constexpr uint16_t threadsCount = 16;
+    constexpr uint64_t testIterations = 2'000'000;
+
+    benchmark<SpinLockBasic>("SpinLockBasic", threadsCount, testIterations);
+    benchmark<SpinLockBasicCas>("SpinLockBasicCas", threadsCount, testIterations);
+    benchmark<SpinLockFast>("SpinLockFast", threadsCount, testIterations);
+    benchmark<std::mutex>("std::mutex", threadsCount, testIterations);
+
+    // SpinLockBasic    :  1.18731 seconds.
+    // SpinLockBasicCas :  1.02128 seconds.
+    // SpinLockFast     :  0.0758979 seconds.
+    // std::mutex       :  0.491975 seconds.
 }
