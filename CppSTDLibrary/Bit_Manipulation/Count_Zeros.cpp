@@ -15,7 +15,7 @@ Description : Count_Zeros.cpp
 #include <bitset>
 #include <cstdint>
 
-#include "BitwiseOperation.h"
+#include "BitwiseOperation.hpp"
 
 namespace bit_utils
 {
@@ -100,7 +100,7 @@ namespace count_zeros
 }
 
 
-void BitwiseOperation::Count_Zeros_Demo()
+void Bit_Manipulation::Count_Zeros_Demo()
 {
     count_zeros::numberZeros_FromLeft();
     count_zeros::numberZeros_FromLeft();

@@ -17,7 +17,7 @@ Description : Cpp STD lib
 #include "Attributes/Attributes.h"
 #include "Auto/Auto.h"
 #include "BitSet/BitSet.h"
-#include "BitwiseOperation/BitwiseOperation.h"
+#include "Bit_Manipulation/BitwiseOperation.hpp"
 #include "Byte/Byte.h"
 #include "Chrono/Chrono.h"
 #include "DateAndTime/DateAndTime.h"
@@ -128,7 +128,7 @@ int main([[maybe_unused]] const int argc,
     // Attributes::TestAll();
     // Auto::TestAll();
     // BitSet::TestAll();
-    // BitwiseOperation::TestAll();
+    Bit_Manipulation::TestAll();
     // bytes::TestAll();
     // Chrono::TestAll();
     // ContextControl::TestAll();
@@ -182,7 +182,7 @@ int main([[maybe_unused]] const int argc,
     // Streams::TestAll();
     // StringStream::TestAll();
     // String::TestAll();
-    StringView::TestAll();
+    // StringView::TestAll();
     // StructuredBinding::TestAll();
     // StrongTypes::TestAll();
     // Span::TestAll();
