@@ -39,8 +39,8 @@ int main([[maybe_unused]] int argc,
 	// Heap::TestAll();
 	// Vector::TestAll();
 	// Valarray::TestAll();
-	Map::TestAll();
-	// FlatMap::TestAll();
+	// Map::TestAll();
+	FlatMap::TestAll();
 	// MultiMap::TestAll();
     // UnorderedMap::TestAll();
     // Set::TestAll();
