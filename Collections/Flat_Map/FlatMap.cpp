@@ -18,6 +18,7 @@ Description : C++ FlatMap container testing
 #include <map>
 #include <flat_map>
 #include <unordered_map>
+#include <boost/container/flat_map.hpp>
 
 
 #include "Random.hpp"
@@ -122,7 +123,7 @@ namespace FlatMap::performance
         { map[key]      } -> std::same_as<typename MapType::mapped_type&>;
     };
 
-    std::vector<std::pair<int, std::string>> getDataSet(const uint32_t size)
+    std::vector<std::pair<int, std::string>> getDataSet1(const uint32_t size)
     {
         std::vector<std::pair<int, std::string>> data;
         data.reserve(size);
@@ -138,8 +139,24 @@ namespace FlatMap::performance
         return data;
     }
 
-    template<Map map_t>
-    void benchmark_find(const std::vector<std::pair<int, std::string>>& data,
+    std::vector<std::pair<int, int>> getDataSet2(const uint32_t size)
+    {
+        std::vector<std::pair<int, int>> data;
+        data.reserve(size);
+
+        for (uint32_t idx = 0; idx < size; ++idx)
+        {
+            const int key = utilities::random::getRandomInRange(0, static_cast<int>(size * 5));
+            const int value = utilities::random::getRandomInRange(0, static_cast<int>(size * 5));
+            data.emplace_back(key, value);
+        }
+
+        std::ranges::sort(data);
+        return data;
+    }
+
+    template<Map map_t, typename K, typename V>
+    void benchmark_find(const std::vector<std::pair<K, V>>& data,
                         const std::string_view name,
                         const uint64_t iterations)
     {
@@ -161,16 +178,32 @@ namespace FlatMap::performance
         }
     }
 
-    void find()
+    void find_int_string()
     {
         constexpr uint32_t datasetSize = 1'000;
         constexpr uint64_t testIterationsCount = 100'000;
 
-        const std::vector<std::pair<int, std::string>> data = getDataSet(datasetSize);
+        const std::vector<std::pair<int, std::string>> data = getDataSet1(datasetSize);
 
         benchmark_find<std::map<int, std::string>>(data, "map"sv, testIterationsCount);
         benchmark_find<std::flat_map<int, std::string>>(data, "flat_map"sv, testIterationsCount);
         benchmark_find<std::unordered_map<int, std::string>>(data, "unordered_map"sv, testIterationsCount);
+
+        // map           :  0.0257794 seconds.
+        // flat_map      :  0.870707 seconds.
+        // unordered_map :  0.0242558 seconds.
+    }
+
+    void find_int_int()
+    {
+        constexpr uint32_t datasetSize = 1'000;
+        constexpr uint64_t testIterationsCount = 100'000;
+
+        const std::vector<std::pair<int, int>> data = getDataSet2(datasetSize);
+
+        benchmark_find<std::map<int, int>>(data, "map"sv, testIterationsCount);
+        benchmark_find<std::flat_map<int, int>>(data, "flat_map"sv, testIterationsCount);
+        benchmark_find<std::unordered_map<int, int>>(data, "unordered_map"sv, testIterationsCount);
 
         // map           :  0.0257794 seconds.
         // flat_map      :  0.870707 seconds.
@@ -184,5 +217,6 @@ void FlatMap::TestAll()
     // Custom_Comparators();
     // Construct_From_Sorted_Range();
 
-    performance::find();
+    performance::find_int_string();
+    // performance::find_int_int();
 };
