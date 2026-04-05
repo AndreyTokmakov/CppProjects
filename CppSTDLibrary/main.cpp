@@ -128,7 +128,7 @@ int main([[maybe_unused]] const int argc,
     // Attributes::TestAll();
     // Auto::TestAll();
     // BitSet::TestAll();
-    Bit_Manipulation::TestAll();
+    // Bit_Manipulation::TestAll();
     // bytes::TestAll();
     // Chrono::TestAll();
     // ContextControl::TestAll();
@@ -176,7 +176,7 @@ int main([[maybe_unused]] const int argc,
     // PolymorphicMemoryResources::TestAll();
     // Print::TestAll();
     // Random::TestAll();
-    // Ranges::TestAll();
+    Ranges::TestAll();
     // ReferenceWrapper::TestAll();
     // StarshipOperator::TestAll();
     // Streams::TestAll();

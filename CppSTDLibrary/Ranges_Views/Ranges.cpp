@@ -787,8 +787,9 @@ namespace Ranges::Algorithms
         std::cout << std::endl;
     }
 
-    void Reverse_Span_Part() {
-        auto print = [] (std::span<int> span) {
+    void Reverse_Span_Part()
+    {
+        auto print = [] (const std::span<int> span) {
             std::ranges::for_each(std::ranges::reverse_view{ span }, [](const auto& v) {
                 std::cout << v << ' ';
             });
@@ -819,7 +820,7 @@ namespace Ranges::Iota
     void CreateView_WithTransform()
     {
         auto result = std::views::iota(1)
-                      | std::views::filter([](int element) { return 0 == element % 2; })
+                      | std::views::filter([](const int element) { return 0 == element % 2; })
                       | std::views::drop(3) | std::views::take(7);
 
         print(result);
@@ -949,6 +950,45 @@ namespace Ranges::Ranges_To
     }
 }
 
+namespace Ranges::Ranges_To
+{
+    void Vector_pairs_to_Vector_First()
+    {
+        const std::vector<std::pair<int, std::string>> data {
+            {1, "I"}, { 2, "II" }, {3, "III"}, {4, "IV"}, {5, "V"}
+        };
+
+        std::vector<int> keys = data | std::views::elements<0> | std::ranges::to<std::vector>();
+        std::vector<std::string> values = data | std::views::elements<1> | std::ranges::to<std::vector>();
+
+        std::println("{}", keys);
+        std::println("{}", values);
+
+        // [1, 2, 3, 4, 5]
+        // ["I", "II", "III", "IV", "V"]
+    }
+}
+
+namespace Ranges::Ranges_To
+{
+    void Vector_of_Array_to_Vector()
+    {
+        constexpr std::array<std::array<int,3>, 3> data { 1,2,3, 4,5,6, 7,8,9 };
+
+        const std::vector<int> items0 = data | std::views::elements<0> | std::ranges::to<std::vector>();
+        const std::vector<int> items1 = data | std::views::elements<1> | std::ranges::to<std::vector>();
+        const std::vector<int> items2 = data | std::views::elements<2> | std::ranges::to<std::vector>();
+
+        std::println("{}", items0);
+        std::println("{}", items1);
+        std::println("{}", items2);
+
+        // [1, 4, 7]
+        // [2, 5, 8]
+        // [3, 6, 9]
+    }
+}
+
 namespace Ranges::Containers_From_Ranges
 {
     void CreateVectorFromRange()
@@ -968,7 +1008,7 @@ namespace Ranges::Containers_From_Ranges
         const std::vector<int> data {1,2,3,4,5,6,7,8,9};
         const std::vector<int> result = std::vector<int>(std::from_range,data
                 | std::views::filter([](int n) -> bool { return (n & 0x01) == 0; })
-                | std::views::transform([](int n) -> int { return n * n; })
+                | std::views::transform([](const int n) -> int { return n * n; })
         );
 
         for (int x : result) {
@@ -1574,7 +1614,7 @@ void Ranges::TestAll()
 
     // Concat_1();
 
-    Ranges_as_Input_Parameter::demo();
+    // Ranges_as_Input_Parameter::demo();
 
     // Split::Split_String_Simple();
     // Split::Split_Non_String();
@@ -1629,6 +1669,9 @@ void Ranges::TestAll()
 
     // Ranges_To::Get_Even_Numbers();
     // Ranges_To::Get_Even_Numbers_Mapping();
+    // Ranges_To::Vector_pairs_to_Vector_First();
+    Ranges_To::Vector_of_Array_to_Vector();
+
     // Containers_From_Ranges::CreateVectorFromRange();
     // Containers_From_Ranges::CreateVectorFromRange_Inplace();
 
