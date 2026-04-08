@@ -46,7 +46,7 @@ namespace Remove_Branches_Builtin_Unreachable
 
 void Remove_Branches_Builtin_Unreachable::TestAll()
 {
-    std::array<uint8_t, 32> data;
+    constexpr std::array<uint8_t, 32> data {};
 
     sum(data.data(), data.size());
     sum_with_constraints(data.data(), data.size());

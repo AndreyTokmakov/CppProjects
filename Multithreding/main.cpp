@@ -117,23 +117,23 @@ int main([[maybe_unused]] int argc,
     // JThreads::TestAll();
     // StoppingThreads::TestAll();
 
-    // ring_buffers::TestAll();
-
     /** Performance **/
 
     // Multithreading_Performance::TEST_ALL();
     // FalseSharingExperiments::TEST_ALL();
-    PerformanceExperiments::TestAll();
+    // PerformanceExperiments::TestAll();
     // McMp_LockFree_Queue_vs_CV_Queue::TestAll();
 
     /** ThreadSafeCollections **/
+
+    ring_buffers::TestAll();
+    // RingBuffer::TestAll();
 
     // Multithreading_Collections::TestAll();
     // SingleConsumerProducerQueue::TestAll();
     // Queue::TestAll();
     // BlockingQueue::TestAll();
     // LockFreeQueue::TEST_ALL()
-    // RingBuffer::TestAll();
     // SCSP_RingBuffer_Blocking::TestAll();
     // SCSP_RingBuffer::TestAll();
     // Collections::RingBuffer_vs_CVMutexQueue::TestAll();

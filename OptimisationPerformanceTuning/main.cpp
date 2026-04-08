@@ -57,7 +57,7 @@ namespace Variables_MemoryLayout
 
 
 
-int main([[maybe_unused]] int argc,
+int main([[maybe_unused]] const int argc,
          [[maybe_unused]] char** argv)
 {
     const std::vector<std::string_view> args(argv + 1, argv + argc);
@@ -69,10 +69,11 @@ int main([[maybe_unused]] int argc,
     // OptimizationTricks::TestAll();
     // Numa::TestAll();
     // DoubleBuffering::TestAll();
-    // Remove_Branches_Builtin_Unreachable::TestAll();
-    // BranchLessCodeExamples::TestAll();
-    DataPrefetching::TestAll();
+    // DataPrefetching::TestAll();
     // AoS_vs_SoA::TestAll();
+
+    Remove_Branches_Builtin_Unreachable::TestAll();
+    // BranchLessCodeExamples::TestAll();
 
     return EXIT_SUCCESS;
 }
