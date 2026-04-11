@@ -11,6 +11,7 @@
 #include <string>
 #include <tuple>
 #include <utility>
+#include <functional>
 
 #include "TupleTests.h"
 

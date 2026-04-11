@@ -8,7 +8,7 @@ Description :
 ============================================================================**/
 
 #include "Collections.h"
-#include "../Utilities/Utilities.h"
+#include "PerfUtilities.hpp"
 
 #include <iostream>
 #include <vector>
@@ -49,14 +49,14 @@ namespace Collections::RingBuffer_vs_CVMutexQueue_Debug
         }
 
         template<typename ... Types>
-        void emplace(Types&& ... params)
+        void emplace([[maybe_unused]] Types&& ... params)
         {
             //new (&buffer[idxWriteCached]) value_type { std::forward<Types>(params)... };
             idxWriteCached = idxWrite.fetch_add(1, std::memory_order::release) + 1;
         }
 
         [[nodiscard]]
-        bool try_read_next(value_type& result)
+        bool try_read_next([[maybe_unused]] value_type& result)
         {
             if (idxRead == idxWrite.load(std::memory_order::acquire)) {
                 return false;
@@ -232,7 +232,7 @@ namespace Collections::RingBuffer_vs_CVMutexQueue_Debug::Tests
     void multithreaded_buffer_test(bool warmUp = false)
     {
         RingBuffer<Type> buffer;
-        Utilities::ScopedTimer timer { "multithreaded_buffer_test", warmUp};
+        const PerfUtilities::ScopedTimer timer { "multithreaded_buffer_test", warmUp};
         std::jthread producer ([&buffer] {
             for (int i = 0; i < evtCount; ++i) {
                 // buffer.put(Type {i});
@@ -255,7 +255,7 @@ namespace Collections::RingBuffer_vs_CVMutexQueue_Debug::Tests
     void multithreaded_lf_queue_test(bool warmUp = false)
     {
         LFQueue<Type> buffer(256 * 256);
-        Utilities::ScopedTimer timer { "multithreaded_lf_queue_test", warmUp};
+        const PerfUtilities::ScopedTimer timer { "multithreaded_lf_queue_test", warmUp};
         std::jthread producer ([&buffer] {
             Type* next_write = nullptr;
             for (int i = 0; i < evtCount; ++i) {
@@ -267,7 +267,7 @@ namespace Collections::RingBuffer_vs_CVMutexQueue_Debug::Tests
 
         std::jthread consumer ([&buffer] {
             int count { 0 };
-            Type* result;
+            [[maybe_unused]] Type* result;
             while (true) {
                 if (buffer.size()) {
                     result = buffer.getNextToRead();
@@ -281,11 +281,11 @@ namespace Collections::RingBuffer_vs_CVMutexQueue_Debug::Tests
         });
     }
 
-    void multithreaded_queue_test(bool warmUp = false)
+    void multithreaded_queue_test(const bool warmUp = false)
     {
         BlockingQueue<Type> queue;
 
-        Utilities::ScopedTimer timer { "multithreaded_queue_test", warmUp };
+        const PerfUtilities::ScopedTimer timer { "multithreaded_queue_test", warmUp };
         std::jthread producer ([&queue] {
             for (int i = 0; i < evtCount; ++i) {
                 queue.push(Type {i});

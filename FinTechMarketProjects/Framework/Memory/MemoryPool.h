@@ -14,7 +14,7 @@ Description : MemoryPool.h
 #include <memory>
 #include <cassert>
 #include <numeric>
-#include <cmath>
+#include <mutex>
 
 namespace MemoryPool
 {

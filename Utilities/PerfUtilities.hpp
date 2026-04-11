@@ -42,7 +42,10 @@ namespace PerfUtilities
                 std::chrono::high_resolution_clock::now()
         };
 
-        explicit ScopedTimer(std::string_view info) : TimerBase(info) {
+        const bool warmUp { false };
+
+        explicit ScopedTimer(const std::string_view info,
+                             const bool warmUp = false) : TimerBase { info }, warmUp { warmUp } {
         }
 
         ~ScopedTimer();

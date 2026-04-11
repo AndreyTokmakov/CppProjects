@@ -8,16 +8,15 @@ Description : McMp_LockFree_Queue_vs_CV_Queue.cpp
 ============================================================================**/
 
 #include "McMp_LockFree_Queue_vs_CV_Queue.hpp"
+#include "PerfUtilities.hpp"
 
 #include <atomic>
 #include <mutex>
 #include <thread>
 #include <condition_variable>
-
 #include <vector>
 #include <deque>
 
-#include "../Utilities/Utilities.h"
 
 namespace mpmc_cv_queue
 {
@@ -269,7 +268,7 @@ namespace benchmarks
             // std::osyncstream { std::cout } << getCurrentTime() << " Consumer done\n";
         };
 
-        Utilities::ScopedTimer timer { "CV Queue" };
+        const PerfUtilities::ScopedTimer timer { "CV Queue" };
         for (uint16_t n = 0; n < producersCount; ++n) {
             workers.emplace_back(produce);
         }
@@ -315,7 +314,7 @@ namespace benchmarks
             // std::osyncstream { std::cout } << getCurrentTime() << " Consumer done\n";
         };
 
-        Utilities::ScopedTimer timer { "LockFree Queue" };
+        const PerfUtilities::ScopedTimer timer { "LockFree Queue" };
         for (uint16_t n = 0; n < producersCount; ++n) {
             workers.emplace_back(produce);
         }

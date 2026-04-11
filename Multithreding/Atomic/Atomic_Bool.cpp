@@ -8,24 +8,20 @@ Description : Atomic_Bool.cpp
 ============================================================================**/
 
 #include "Atomic_Bool.h"
-#include "../Utilities/Utilities.h"
 
 #include <iostream>
 #include <atomic>
-#include <condition_variable>
-#include <mutex>
 #include <thread>
-#include <queue>
 #include <string>
 #include <chrono>
 #include <future>
-#include <cassert>
-#include <syncstream>
-#include <print>
 #include <format>
+#include <syncstream>
 
+#include "DateTimeUtilities.hpp"
 
-#define PRINT std::osyncstream {std::cout} << Utilities::timeString() << " "
+#define LOG  std::osyncstream { std::cout } << DateTimeUtilities::getCurrentTime() << " "
+
 
 namespace Atomic_Bool
 {
@@ -50,10 +46,10 @@ namespace Atomic_Bool
         while (flag.exchange(true, std::memory_order::acquire)) {
         }
 
-        PRINT << "Spint lock is done" << std::endl;
+        LOG << "Spint lock is done" << std::endl;
         std::this_thread::sleep_for(std::chrono::seconds(1u));
 
-        PRINT << "Releasing " << std::endl;
+        LOG << "Releasing " << std::endl;
         flag.store(false, std::memory_order::release);
     }
 
@@ -62,17 +58,17 @@ namespace Atomic_Bool
         std::atomic<bool> flag {true };
 
         std::jthread workerOne([&] {
-            PRINT << "workerOne started" << std::endl;
+            LOG << "workerOne started" << std::endl;
             std::this_thread::sleep_for(std::chrono::seconds(1u));
 
             flag.store(false, std::memory_order::release);
-            PRINT << "workerOne done" << std::endl;
+            LOG << "workerOne done" << std::endl;
         });
 
         std::jthread workerTwo([&] {
-            PRINT << "workerTwo started" << std::endl;
+            LOG << "workerTwo started" << std::endl;
             spin_lock_func(flag);
-            PRINT << "workerTwo done" << std::endl;
+            LOG << "workerTwo done" << std::endl;
         });
     }
 };
@@ -122,10 +118,10 @@ namespace Atomic_Bool::SpinLock
         SpinLock lockMtx;
 
         auto task = [&lockMtx](const std::string& name) {
-            PRINT << std::format("task {} started", name) << std::endl;
+            LOG << std::format("task {} started", name) << std::endl;
             LockGuard lockGuard {lockMtx};
             std::this_thread::sleep_for(std::chrono::seconds(1u));
-            PRINT << std::format("task {} completed", name) << std::endl;
+            LOG << std::format("task {} completed", name) << std::endl;
         };
 
 

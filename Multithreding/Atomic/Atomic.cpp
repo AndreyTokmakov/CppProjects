@@ -17,7 +17,9 @@ Description :
 #include <syncstream>
 
 #include "Atomic.h"
-#include "../Utilities/Utilities.h"
+#include "DateTimeUtilities.hpp"
+
+#define LOG  std::osyncstream { std::cout } << DateTimeUtilities::getCurrentTime() << " "
 
 namespace Atomic::Atomic_INT
 {
@@ -169,7 +171,7 @@ namespace Atomic::Atomic_Boolean {
             while (false == data_ready.load()) {
                 std::this_thread::sleep_for(std::chrono::seconds(1u));
             }
-            THREAD_INFO << "The answer: " << data[0] << std::endl;
+            LOG << "The answer: " << data[0] << std::endl;
         };
 
         auto writer_thread = [&]()->void {
@@ -203,14 +205,14 @@ namespace Atomic::Atomic_Boolean {
         std::atomic<bool> run { true };
         auto task = std::async([&run]() {
             while (run) {
-                THREAD_INFO << "Running\n";
+                LOG << "Running\n";
                 std::this_thread::sleep_for(std::chrono::milliseconds(250U));
             }
         });
 
         std::this_thread::sleep_for(std::chrono::seconds(5U));
         run.store(false);
-        THREAD_INFO << "Done\n";
+        LOG << "Done\n";
     }
 }
 
@@ -228,7 +230,7 @@ namespace Atomic::AtomicFlag
 
         void lock() {
             while (flag.test_and_set(std::memory_order_acquire)) {
-                // THREAD_INFO << "Locked"  << std::endl;
+                // LOG << "Locked"  << std::endl;
             }
         }
         void unlock() {
@@ -254,7 +256,7 @@ namespace Atomic::AtomicFlag
         for (const auto& fut : tasks)
             fut.wait();
 
-        THREAD_INFO << "Counter = " << counter << std::endl;
+        LOG << "Counter = " << counter << std::endl;
     }
 
     void Spinlock_Test_Guard() {
@@ -276,7 +278,7 @@ namespace Atomic::AtomicFlag
         for (const auto& fut : tasks)
             fut.wait();
 
-        THREAD_INFO << "Counter = " << counter << std::endl;
+        LOG << "Counter = " << counter << std::endl;
     }
 
     //-----------------------------------------------------------------------------//
@@ -288,18 +290,18 @@ namespace Atomic::AtomicFlag
         auto handler = [&](size_t n)-> void {
             for (size_t i = 0; i < 100; ++i) {
                 while (flag.test_and_set(std::memory_order_acquire));  // acquire lock
-                THREAD_INFO << "Output from thread " << n << "\n";
+                LOG << "Output from thread " << n << "\n";
                 flag.clear(std::memory_order_release);                 // release lock
             }
         };
 
-        THREAD_INFO << "Test started.\n";
+        LOG << "Test started.\n";
         std::vector<std::future<void>> tasks;
         for (size_t i = 0; i < 10; ++i)
             tasks.emplace_back(std::async(handler, i));
         for (const auto& fut : tasks)
             fut.wait();
-        THREAD_INFO << "Test completed.\n";
+        LOG << "Test completed.\n";
     }
 
     void Wait_Notify()

@@ -197,7 +197,7 @@ namespace MatchingEngine_NO_WithAllocator
             }
         }
 
-        unsigned long long matchOrder(Order& order)
+        unsigned long long matchOrder([[maybe_unused]] Order& order)
         {
             // TODO:
             return 1;
@@ -210,7 +210,7 @@ namespace MatchingEngine_NO_WithAllocator
         }
 
 
-        void matchOrderList(Order& order,
+        void matchOrderList([[maybe_unused]] Order& order,
                             PriceOrderList& matchedOrderList)
         {
             // TODO:
@@ -427,7 +427,7 @@ namespace MatchingEngine_WithAllocator
     };
 
 
-    void info(const OrderMatchingEngine& engine, bool printTrades = true)
+    void info(const OrderMatchingEngine& engine, [[maybe_unused]] bool printTrades = true)
     {
         for (const auto& [orderId, orderIter]: engine.orderByIDMap) {
             Order& orderOne = **orderIter.orderIter;

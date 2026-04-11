@@ -13,6 +13,7 @@ Description : VirtualCall_vs_TypeErasure.cpp
 #include <memory>
 #include <vector>
 #include <chrono>
+#include <iomanip>
 
 namespace
 {

@@ -8,7 +8,6 @@ Description : FairSpinLock.cpp
 ============================================================================**/
 
 #include "FairSpinLock.h"
-#include "../Utilities/Utilities.h"
 
 #include <iostream>
 #include <atomic>
@@ -16,6 +15,11 @@ Description : FairSpinLock.cpp
 #include <vector>
 #include <syncstream>
 #include <queue>
+
+#include "DateTimeUtilities.hpp"
+
+#define LOG  std::osyncstream { std::cout } << DateTimeUtilities::getCurrentTime() << " "
+
 
 namespace FairSpinLock
 {
@@ -119,8 +123,8 @@ namespace FairSpinLock::Tests
 
         uint32_t counterTotal = 0;
 
-        auto increment = [&](int times) {
-            int counter = 0;
+        auto increment = [&](const int times) {
+            uint32_t counter = 0;
             for (int i = 0; i < times; ++i) {
                 spinLock.lock();
                 ++counter;
@@ -152,7 +156,7 @@ namespace FairSpinLock::Tests
                 std::this_thread::sleep_for(std::chrono::nanoseconds (timeoutNanos));
                 spinLock.unlock();
             }
-            std::osyncstream {std::cout} << std::this_thread::get_id() << " : " << Utilities::timeString() << std::endl;
+            LOG  << std::endl;
         };
 
         std::vector<std::jthread> threads;

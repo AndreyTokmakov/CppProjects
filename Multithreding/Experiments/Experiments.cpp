@@ -7,16 +7,14 @@ Copyright   : Your copyright notice
 Description : Experiments.cpp
 ============================================================================**/
 
-#include "Experiments.h"
-#include "../Utilities/Utilities.h"
-
 #include <iostream>
-#include <string_view>
 #include <vector>
-
 #include <thread>
 #include <barrier>
 #include <syncstream>
+
+#include "Experiments.h"
+#include "ThreadUtilities.hpp"
 
 namespace Experiments
 {
@@ -29,7 +27,7 @@ namespace Experiments
         std::vector<std::jthread> workers;
         for (int n = 0; n < threadsCount; ++n) {
             workers.emplace_back([&] {
-                Utilities::setThreadCore(n);
+                ThreadUtilities::setThreadCore(n);
                 barrier.arrive_and_wait();
                 for (int i = 0; i < 10'000; ++i)
                     counter++;

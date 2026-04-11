@@ -1,12 +1,14 @@
-//============================================================================
-// Name        : Promise.cpp
-// Created on  : 14.09.2020
-// Author      : Tokmakov Andrey
-// Version     : 1.0
-// Copyright   : Your copyright notice
-// Description : Promise src class
-//============================================================================
+/**============================================================================
+Name        : Promise.cpp
+Created on  : 14.09.2020
+Author      : Andrei Tokmakov
+Version     : 1.0
+Copyright   : Your copyright notice
+Description : Promise src class
+============================================================================**/
 
+#include <iostream>
+#include <syncstream>
 #include <mutex>
 #include <thread>
 #include <queue>
@@ -17,8 +19,10 @@
 #include <execution>
 #include <format>
 
-#include "../Utilities/Utilities.h"
 #include "Promise.h"
+#include "DateTimeUtilities.hpp"
+
+#define LOG  std::osyncstream { std::cout } << DateTimeUtilities::getCurrentTime() << " "
 
 namespace
 {
@@ -32,18 +36,18 @@ namespace Promise {
 
     void accumulate(const std::vector<int>& vector, std::promise<int> accumulate_promise)
     {
-        THREAD_INFO << "accumulate() started" << std::endl;
+        LOG << "accumulate() started" << std::endl;
         int sum = std::accumulate(vector.begin(), vector.end(), 0);
         // Notify future
         accumulate_promise.set_value(sum);
-        THREAD_INFO << "accumulate() done" << std::endl;
+        LOG << "accumulate() done" << std::endl;
     }
 
     void do_work(std::promise<void> barrier) {
-        THREAD_INFO << "do_work() started" << std::endl;
+        LOG << "do_work() started" << std::endl;
         std::this_thread::sleep_for(std::chrono::seconds(10U));
         barrier.set_value();
-        THREAD_INFO << "do_work() done" << std::endl;
+        LOG << "do_work() done" << std::endl;
     }
 
     //----------------------------------------------------------------------------------------------
@@ -53,18 +57,18 @@ namespace Promise {
         std::promise<int> promise;
 
         std::jthread T2([&promise]{
-            THREAD_INFO << "T2 started" << std::endl;
+            LOG << "T2 started" << std::endl;
             std::future<int> fut = promise.get_future();
-            THREAD_INFO << "T2 waiting" << std::endl;
+            LOG << "T2 waiting" << std::endl;
             const int result = fut.get();
-            THREAD_INFO << "T2 done. Result = " << result << std::endl;
+            LOG << "T2 done. Result = " << result << std::endl;
         });
 
         std::jthread T1([&promise]{
-            THREAD_INFO << "T1 started" << std::endl;
+            LOG << "T1 started" << std::endl;
             std::this_thread::sleep_for(std::chrono::seconds(1U));
             promise.set_value(123);
-            THREAD_INFO << "T1 done. Value -> 123" << std::endl;
+            LOG << "T1 done. Value -> 123" << std::endl;
         });
     }
 
@@ -78,7 +82,7 @@ namespace Promise {
             promise.set_value("Message from " + currentTime());
         });
 
-        THREAD_INFO << "Before" << std::endl;
+        LOG << "Before" << std::endl;
 
         // Will block until value awailable, then returns the stored value:
         std::string result = future.get();
@@ -89,13 +93,13 @@ namespace Promise {
     void Simple_Test_2()
     {
         const auto print_int = [](std::future<int>& fut) {
-            THREAD_INFO << "func started" << std::endl;
+            LOG << "func started" << std::endl;
             int x = fut.get();
             std::this_thread::sleep_for(std::chrono::seconds(3U));
-            THREAD_INFO << "value: " << x << std::endl;
+            LOG << "value: " << x << std::endl;
         };
 
-        THREAD_INFO << "main thread" << std::endl;
+        LOG << "main thread" << std::endl;
 
         std::promise<int> promise;
         std::future<int> future = promise.get_future();
@@ -110,19 +114,19 @@ namespace Promise {
         std::future<void> ready = promise.get_future();
 
         std::thread thread_b([&]() {
-            THREAD_INFO << "Worer: Do some work 1 . . . ." << std::endl;
+            LOG << "Worer: Do some work 1 . . . ." << std::endl;
             std::this_thread::sleep_for(std::chrono::seconds(3U));
             promise.set_value();
-            THREAD_INFO << "Worer: Do some work 2 . . . ." << std::endl;
+            LOG << "Worer: Do some work 2 . . . ." << std::endl;
             std::this_thread::sleep_for(std::chrono::seconds(3U));
-            THREAD_INFO << "Worer: Done" << std::endl;
+            LOG << "Worer: Done" << std::endl;
         });
 
-        THREAD_INFO << "Before wait()" << std::endl;
+        LOG << "Before wait()" << std::endl;
 
         ready.wait();
 
-        THREAD_INFO << "After wait()" << std::endl;
+        LOG << "After wait()" << std::endl;
     }
 
     void Simple_Test_4()
@@ -131,35 +135,35 @@ namespace Promise {
         std::future<void> future = promise.get_future();
 
         std::jthread task([promise = std::move(promise)]()mutable {
-            THREAD_INFO << "Worker: Do some work 1 . . . ." << std::endl;
+            LOG << "Worker: Do some work 1 . . . ." << std::endl;
             std::this_thread::sleep_for(std::chrono::seconds(3U));
             promise.set_value();
-            THREAD_INFO << "Worker: Do some work 2 . . . ." << std::endl;
+            LOG << "Worker: Do some work 2 . . . ." << std::endl;
             std::this_thread::sleep_for(std::chrono::seconds(3U));
-            THREAD_INFO << "Worker: Done" << std::endl;
+            LOG << "Worker: Done" << std::endl;
         });
 
         std::this_thread::sleep_for(std::chrono::milliseconds (10U));
-        THREAD_INFO << "Before wait()" << std::endl;
+        LOG << "Before wait()" << std::endl;
         future.wait();
-        THREAD_INFO << "After wait()" << std::endl;
+        LOG << "After wait()" << std::endl;
     }
 
     void Simple_Test_5()
     {
         const auto initiazer = [](std::promise<int>* promObj) {
-            THREAD_INFO << " Started." << std::endl;
+            LOG << " Started." << std::endl;
             std::this_thread::sleep_for(std::chrono::seconds(3U));
             promObj->set_value(35);
         };
 
-        THREAD_INFO << " Starting test." << std::endl;
+        LOG << " Starting test." << std::endl;
 
         std::promise<int> promiseObj;
         std::future<int> futureObj = promiseObj.get_future();
         std::thread th(initiazer, &promiseObj);
 
-        THREAD_INFO << ". Result: " << futureObj.get() << std::endl;
+        LOG << ". Result: " << futureObj.get() << std::endl;
         th.join();
     }
 
@@ -174,7 +178,7 @@ namespace Promise {
         // future::get() will wait until the future has a valid result and retrieves it.
         // Calling wait() before get() is not needed
         //accumulate_future.wait();  // wait for result
-        THREAD_INFO << "result=" << accumulate_future.get() << '\n';
+        LOG << "result=" << accumulate_future.get() << '\n';
         work_thread.join();  // wait for thread completion
     }
 
@@ -184,11 +188,11 @@ namespace Promise {
         std::future<void> barrier_future = barrier.get_future();
         std::thread new_work_thread(do_work, std::move(barrier));
 
-        THREAD_INFO << "barrier_future.wait()..." << std::endl;
+        LOG << "barrier_future.wait()..." << std::endl;
         barrier_future.wait();
-        THREAD_INFO << "new_work_thread.join()..." << std::endl;
+        LOG << "new_work_thread.join()..." << std::endl;
         new_work_thread.join();
-        THREAD_INFO << "new_work_thread.join() done" << std::endl;
+        LOG << "new_work_thread.join() done" << std::endl;
     }
 
     void SetValueAtThreadExit()
@@ -200,10 +204,10 @@ namespace Promise {
             promise.set_value_at_thread_exit(9);
         }).detach();
 
-        THREAD_INFO << "Waiting for thread to exit...." << std::endl;
+        LOG << "Waiting for thread to exit...." << std::endl;
         future.wait();
 
-        THREAD_INFO << "Done!!!. Result = " << future.get() << std::endl;
+        LOG << "Done!!!. Result = " << future.get() << std::endl;
     }
 
     void ComplexTest()
@@ -215,26 +219,26 @@ namespace Promise {
             //size_t i = std::numeric_limits<size_t>::max();
             size_t i = 100;
             while (i--) {
-                THREAD_INFO << i << "    " << value << std::endl;
+                LOG << i << "    " << value << std::endl;
                 if (i == value) {
-                    THREAD_INFO << i << " == " << value << std::endl;
+                    LOG << i << " == " << value << std::endl;
                     spPromise->set_value();
                 }
                 std::this_thread::sleep_for(std::chrono::milliseconds(100U));
             }
         };
 
-        THREAD_INFO << "Starting thread" << std::endl;
+        LOG << "Starting thread" << std::endl;
         //std::thread thread(call, std::numeric_limits<size_t>::max() - 500);
         std::thread thread(call, 50);
 
-        THREAD_INFO << "Detach thread" << std::endl;
+        LOG << "Detach thread" << std::endl;
         thread.detach();
 
-        THREAD_INFO << "Waiting.." << std::endl;
+        LOG << "Waiting.." << std::endl;
         waiter.get();
 
-        THREAD_INFO << "Done" << std::endl;
+        LOG << "Done" << std::endl;
     }
 
     void SetException()
@@ -242,12 +246,12 @@ namespace Promise {
         std::promise<int> promise;
         std::future<int> future = promise.get_future();
 
-        THREAD_INFO << "Thread [id: " << std::this_thread::get_id() << "] " << "Starting test." << std::endl;
+        LOG << "Thread [id: " << std::this_thread::get_id() << "] " << "Starting test." << std::endl;
 
         std::thread thread([&promise] {
             try {
                 // code that may throw
-                THREAD_INFO << "Thread [id: " << std::this_thread::get_id() << "]" << "Starting test." << std::endl;
+                LOG << "Thread [id: " << std::this_thread::get_id() << "]" << "Starting test." << std::endl;
                 throw std::runtime_error("Example");
             }
             catch (...) {
@@ -262,10 +266,10 @@ namespace Promise {
         });
 
         try {
-            THREAD_INFO << future.get();
+            LOG << future.get();
         }
         catch (const std::exception& e) {
-            THREAD_INFO << "Exception from the thread: " << e.what() << std::endl;
+            LOG << "Exception from the thread: " << e.what() << std::endl;
         }
         thread.join();
     }
@@ -294,25 +298,25 @@ namespace Promise {
     }
 
     void Consumer_Producer() {
-        THREAD_INFO << " Starting test." << std::endl;
+        LOG << " Starting test." << std::endl;
         auto promise = std::promise<std::string>();
         auto future = promise.get_future();
 
         auto producer = std::thread([&promise] {
-            THREAD_INFO << " Producer started." << std::endl;
+            LOG << " Producer started." << std::endl;
             std::this_thread::sleep_for(std::chrono::seconds(2U));
             promise.set_value("Hello World");
         });
 
         auto consumer = std::thread([&future] {
-            THREAD_INFO << " Consumer started." << std::endl;
-            THREAD_INFO << future.get();
+            LOG << " Consumer started." << std::endl;
+            LOG << future.get();
         });
 
-        THREAD_INFO << " producer.join()" << std::endl;
+        LOG << " producer.join()" << std::endl;
         producer.detach();
 
-        THREAD_INFO << " consumer.join()" << std::endl;
+        LOG << " consumer.join()" << std::endl;
         consumer.join();
     }
 }

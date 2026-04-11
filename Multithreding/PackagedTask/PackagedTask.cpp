@@ -8,24 +8,29 @@
 //============================================================================
 
 #include <iostream>
-#include <future>         // std::async, std::future
-#include <chrono>         // std::chrono::milliseconds
+#include <syncstream>
+#include <future>
+#include <chrono>
 #include <string>
 #include <deque>
 #include <functional>
 #include <cmath>
+#include <thread>
 
-#include "../Utilities/Utilities.h"
 #include "PackagedTask.h"
+#include "DateTimeUtilities.hpp"
 
-namespace PackagedTask {
+#define LOG  std::osyncstream { std::cout } << DateTimeUtilities::getCurrentTime() << " "
+
+namespace PackagedTask
+{
     class  DBDataFetcher {
     public:
         std::string operator()(const std::string& token) {
-            THREAD_INFO << "Starting job..." << std::endl;
+            LOG << "Starting job..." << std::endl;
             std::this_thread::sleep_for(std::chrono::seconds(3u));
             std::string data = "Data From " + token;
-            THREAD_INFO << "Done" << std::endl;
+            LOG << "Done" << std::endl;
             return data;
         }
     };
@@ -48,7 +53,7 @@ namespace PackagedTask {
 
             std::string data = result.get();
             th.join();
-            THREAD_INFO << data << std::endl;
+            LOG << data << std::endl;
         }
         std::cout << std::endl;
         {
@@ -57,7 +62,7 @@ namespace PackagedTask {
             std::future<std::string> result = task.get_future();
             std::thread(std::move(task), "Test_2").detach();
             std::string data = result.get();
-            THREAD_INFO << data << std::endl;
+            LOG << data << std::endl;
         }
     }
 
@@ -98,7 +103,7 @@ namespace PackagedTask {
     void PackagedTask_Create_and_Run()
     {
         std::packaged_task<std::string(size_t timeout)> task([](size_t timeout) {
-            THREAD_INFO << "Task is started [timeout = " << timeout << "]: ";
+            LOG << "Task is started [timeout = " << timeout << "]: ";
 
             int ms_sleep = (static_cast<int>(timeout) * 1000) / 20;
             for (int i = 0; i < 20; i++) {
@@ -106,42 +111,42 @@ namespace PackagedTask {
                 std::cout << ". ";
             }
             std::cout << "\n";
-            THREAD_INFO << "Task is completed\n";
+            LOG << "Task is completed\n";
             return std::string("Task lasted " + std::to_string(timeout));
         });
 
-        THREAD_INFO << "Prepare future object." << std::endl;
+        LOG << "Prepare future object." << std::endl;
         std::future<std::string> futureResult = task.get_future();
 
-        THREAD_INFO << "Sleep for 0.5 seconds" << std::endl;
+        LOG << "Sleep for 0.5 seconds" << std::endl;
         std::this_thread::sleep_for(std::chrono::milliseconds(500u));
 
-        THREAD_INFO << "* * * * * Running task * * * * *\n";
+        LOG << "* * * * * Running task * * * * *\n";
         std::jthread threadHandle(std::move(task), 4);
 
-        THREAD_INFO << "* * * * * After task * * * * *\n";
+        LOG << "* * * * * After task * * * * *\n";
         auto value = futureResult.get();
 
-        THREAD_INFO << value << " seconds." << std::endl;
+        LOG << value << " seconds." << std::endl;
     }
 
     void Lambda_Task()
     {
         std::packaged_task<double(int, int)> task([](int a, int b) {
-            THREAD_INFO << "**** Executing task ******" << std::endl;
+            LOG << "**** Executing task ******" << std::endl;
             std::this_thread::sleep_for(std::chrono::seconds(3u));
-            THREAD_INFO << "**** Task completed ******" << std::endl;
+            LOG << "**** Task completed ******" << std::endl;
             return std::pow(a, b);
         });
 
-        THREAD_INFO << "Entered" << std::endl;
+        LOG << "Entered" << std::endl;
         std::future<double> result = task.get_future();
 
-        THREAD_INFO << "Running task... " << std::endl;
+        LOG << "Running task... " << std::endl;
         task(2, 9);
-        THREAD_INFO << "After task [BLOCKED!!!!]" << std::endl;
+        LOG << "After task [BLOCKED!!!!]" << std::endl;
 
-        THREAD_INFO << "Result: " << result.get() << std::endl;
+        LOG << "Result: " << result.get() << std::endl;
     }
 
     void Bind_Task() {
@@ -153,17 +158,17 @@ namespace PackagedTask {
         std::packaged_task<double()> task([func] { return func(2, 11); });
         std::future<double> result = task.get_future();
 
-        THREAD_INFO << "Before task... \n";
+        LOG << "Before task... \n";
         task();
-        THREAD_INFO << "After task [BLOCKED!!!!]\n";
-        THREAD_INFO << "Result: " << result.get() << std::endl;
+        LOG << "After task [BLOCKED!!!!]\n";
+        LOG << "Result: " << result.get() << std::endl;
     }
 
     void Run_Task_Test() {
         auto sleep = []() {
-            THREAD_INFO << "Task started\n";
+            LOG << "Task started\n";
             std::this_thread::sleep_for(std::chrono::seconds(3u));
-            THREAD_INFO << "Task completed\n";
+            LOG << "Task completed\n";
             return 1;
         };
 
@@ -171,8 +176,8 @@ namespace PackagedTask {
         std::future<int> fut = task.get_future();
         task();
 
-        THREAD_INFO << "You can see this after 1 second" << std::endl;
-        THREAD_INFO << fut.get() << std::endl;
+        LOG << "You can see this after 1 second" << std::endl;
+        LOG << fut.get() << std::endl;
     }
 
     void Valid() {
@@ -192,7 +197,7 @@ namespace PackagedTask {
             return x * 2;
         });
         std::future<int> fut = launcher(task, 25);
-        THREAD_INFO << "The double of 25 is " << fut.get() << std::endl;
+        LOG << "The double of 25 is " << fut.get() << std::endl;
     }
 
     void MakeReady_AtThreadExit() {
@@ -203,11 +208,11 @@ namespace PackagedTask {
             bool done = false;
 
             my_task.make_ready_at_thread_exit(done); // execute task right away
-            THREAD_INFO << "Worker: done = " << std::boolalpha << done << std::endl;
+            LOG << "Worker: done = " << std::boolalpha << done << std::endl;
 
             auto status = result.wait_for(std::chrono::seconds(0u));
             if (status == std::future_status::timeout)
-                THREAD_INFO << "Worker: result is not ready yet" << std::endl;
+                LOG << "Worker: result is not ready yet" << std::endl;
 
             output = std::move(result);
         };
@@ -217,7 +222,7 @@ namespace PackagedTask {
 
         auto status = result.wait_for(std::chrono::seconds(0u));
         if (status == std::future_status::ready)
-            THREAD_INFO << "Main: result is ready" << std::endl;
+            LOG << "Main: result is ready" << std::endl;
     }
 
 
@@ -227,21 +232,21 @@ namespace PackagedTask {
         std::deque<std::packaged_task<void()>> tasks;
 
         tasks.emplace_back([]() {
-            THREAD_INFO << "Task 1 is started\n";
+            LOG << "Task 1 is started\n";
             std::this_thread::sleep_for(std::chrono::seconds(2u));
-            THREAD_INFO << "Task 1 is completed\n";
+            LOG << "Task 1 is completed\n";
         });
 
         tasks.emplace_back([]() {
-            THREAD_INFO << "Task 2 is started\n";
+            LOG << "Task 2 is started\n";
             std::this_thread::sleep_for(std::chrono::seconds(2u));
-            THREAD_INFO << "Task 2 is completed\n";
+            LOG << "Task 2 is completed\n";
         });
 
         tasks.emplace_back([]() {
-            THREAD_INFO << "Task 3 is started\n";
+            LOG << "Task 3 is started\n";
             std::this_thread::sleep_for(std::chrono::seconds(2u));
-            THREAD_INFO << "Task 3 is completed\n";
+            LOG << "Task 3 is completed\n";
         });
 
         while (false == tasks.empty()) {
@@ -254,9 +259,9 @@ namespace PackagedTask {
     void PackagedTask_Collection_2()
     {
         auto work = [](int id) {
-            THREAD_INFO << "Task " << id << " is started\n";
+            LOG << "Task " << id << " is started\n";
             std::this_thread::sleep_for(std::chrono::seconds(2u));
-            THREAD_INFO << "Task " << id << " is completed\n";
+            LOG << "Task " << id << " is completed\n";
         };
 
         std::deque<std::packaged_task<void()>> tasks;
@@ -268,14 +273,14 @@ namespace PackagedTask {
             std::packaged_task<void()> task{ std::move(tasks.front()) };
             tasks.pop_front();
 
-            THREAD_INFO << "Starting task in the separate thread.\n";
+            LOG << "Starting task in the separate thread.\n";
 
             std::future<void> result = task.get_future();
             std::thread task_thread(std::move(task));
             task_thread.join();
             result.get();
 
-            THREAD_INFO << "Task completed\n\n";
+            LOG << "Task completed\n\n";
         }
     }
 }

@@ -9,12 +9,7 @@ Description : TimeZones.cpp
 
 #include "TimeZones.h"
 
-
-#include "Chrono.h"
-#include "../Helpers/ScopedTimer.h"
-
 #include <iostream>
-#include <syncstream>
 #include <chrono>
 #include <thread>
 #include <iomanip>
@@ -27,7 +22,9 @@ Description : TimeZones.cpp
 #include <set>
 
 
-namespace TimeZones {
+
+namespace TimeZones
+{
     using namespace std::chrono;
 
     void GetVersion_AndAvailableZones() {

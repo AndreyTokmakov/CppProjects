@@ -7,10 +7,11 @@ Copyright   : Your copyright notice
 Description : SpinLock_PerformanceTests.cpp
 ============================================================================**/
 
+#include <atomic>
+#include <thread>
+
 #include "SpinLock_PerformanceTests.h"
-
-#include "../Utilities/Utilities.h"
-
+#include "PerfUtilities.hpp"
 
 namespace SpinLock_PerformanceTests::Impl
 {
@@ -265,7 +266,6 @@ namespace SpinLock_PerformanceTests::Impl
 
 namespace SpinLock_PerformanceTests::Tests
 {
-    using Utilities::ScopedTimer;
     using namespace Impl;
 
 
@@ -367,7 +367,7 @@ namespace SpinLock_PerformanceTests::Tests
                 }
             };
 
-            const ScopedTimer timer { name };
+            const PerfUtilities::ScopedTimer timer { name };
             std::vector<std::jthread> jobs;
             for (int t = 0; t < threadsMax; ++t)
                 jobs.emplace_back(task);
@@ -408,7 +408,7 @@ namespace SpinLock_PerformanceTests::Tests
             };
 
             {
-                ScopedTimer timer {"SpinLock4"};
+                const PerfUtilities::ScopedTimer timer {"SpinLock4"};
                 std::vector<std::jthread> jobs;
                 for (int t = 0; t < threadsMax; ++t)
                     jobs.emplace_back(task);
@@ -428,7 +428,7 @@ namespace SpinLock_PerformanceTests::Tests
             };
 
             {
-                ScopedTimer timer {"SpinLock4_1"};
+                const PerfUtilities::ScopedTimer timer {"SpinLock4_1"};
                 std::vector<std::jthread> jobs;
                 for (int t = 0; t < threadsMax; ++t)
                     jobs.emplace_back(task);
@@ -457,7 +457,7 @@ namespace SpinLock_PerformanceTests::Tests
             };
 
             {
-                ScopedTimer timer {"SpinLock4"};
+                const PerfUtilities::ScopedTimer timer {"SpinLock4"};
                 std::vector<std::jthread> jobs;
                 for (int t = 0; t < threadsMax; ++t)
                     jobs.emplace_back(task);
@@ -477,7 +477,7 @@ namespace SpinLock_PerformanceTests::Tests
             };
 
             {
-                ScopedTimer timer {"SpinLock4_1"};
+                const PerfUtilities::ScopedTimer timer {"SpinLock4_1"};
                 std::vector<std::jthread> jobs;
                 for (int t = 0; t < threadsMax; ++t)
                     jobs.emplace_back(task);

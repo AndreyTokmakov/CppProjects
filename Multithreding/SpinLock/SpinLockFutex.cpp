@@ -9,7 +9,6 @@ Description : SpinLockFutex.cpp
 
 #include "SpinLockFutex.h"
 
-#include "../Utilities/Utilities.h"
 
 #include <iostream>
 #include <vector>

@@ -134,18 +134,22 @@ namespace StringView {
 		std::cout << str << std::endl;
 	}
 
-	void worker_str(const std::string& str) {
-		int len = str.length();
-		//std::cout << len << std::endl;
+	void worker_str(const std::string& str)
+	{
+
+		const int len = str.length();
+		std::cout << len << std::endl;
 	}
 
-	void  worker_str_view(std::string_view str) {
-		int len = str.length();
-		//std::cout << len << std::endl;
+	void  worker_str_view(const std::string_view str)
+	{
+		const int len = str.length();
+		std::cout << len << std::endl;
 	}
 
-	void PerformanceTest() {
-		std::chrono::steady_clock::time_point start = std::chrono::steady_clock::now();
+	void PerformanceTest()
+	{
+		const std::chrono::steady_clock::time_point start = std::chrono::steady_clock::now();
 
 		constexpr char text[] = "Some_test_value";
 		//std::this_thread::sleep_for(std::chrono::milliseconds(125));
@@ -157,9 +161,9 @@ namespace StringView {
 			}
 		}
 
-		std::chrono::steady_clock::time_point stop = std::chrono::steady_clock::now();
-		double duration = std::chrono::duration_cast<std::chrono::duration<double>>(stop - start).count();
-		std::cout << "Excution time: " << duration << std::endl;
+		const std::chrono::steady_clock::time_point stop = std::chrono::steady_clock::now();
+		const double duration = std::chrono::duration_cast<std::chrono::duration<double>>(stop - start).count();
+		std::cout << "Execution time: " << duration << std::endl;
 	}
 
 	template<class Type>
@@ -187,7 +191,8 @@ namespace StringView::UsageExamples
 {
 	using namespace std::literals;
 
-	void Compare_Part_Of_String() {
+	void Compare_Part_Of_String()
+	{
 		const std::string str1 = "SomeRandomText_1234";
 		const std::string str2 = "SomeRandomText_4321";
 
@@ -195,26 +200,26 @@ namespace StringView::UsageExamples
 		constexpr size_t TESTS_COUNT = 100'000'000;	
 
 		{
-			auto start = std::chrono::high_resolution_clock::now();
+			const auto start = std::chrono::high_resolution_clock::now();
 			for (size_t i = 0; i < TESTS_COUNT; ++i) {
 				auto x1 = str1.substr(offset, str1.length() - offset);
 				auto x2 = str2.substr(offset, str1.length() - offset);
 				auto result = x1.compare(x2);
 			}
-			auto end = std::chrono::high_resolution_clock::now(); 
-			auto duration = std::chrono::duration_cast<std::chrono::microseconds>(end - start).count(); 
+			const auto end = std::chrono::high_resolution_clock::now();
+			const auto duration = std::chrono::duration_cast<std::chrono::microseconds>(end - start).count();
 			std::cout << "Result: " << duration << " microseconds" << std::endl;
 		}
 
 		{
-			auto start = std::chrono::high_resolution_clock::now();
+			const auto start = std::chrono::high_resolution_clock::now();
 			for (size_t i = 0; i < TESTS_COUNT; ++i) {
-				auto x1 = std::string_view(str1).substr(offset, str1.length() - offset);
-				auto x2 = std::string_view(str2).substr(offset, str1.length() - offset);
+				const auto x1 = std::string_view(str1).substr(offset, str1.length() - offset);
+				const auto x2 = std::string_view(str2).substr(offset, str1.length() - offset);
 				auto result = x1.compare(x2);
 			}
-			auto end = std::chrono::high_resolution_clock::now();
-			auto duration = std::chrono::duration_cast<std::chrono::microseconds>(end - start).count();
+			const auto end = std::chrono::high_resolution_clock::now();
+			const auto duration = std::chrono::duration_cast<std::chrono::microseconds>(end - start).count();
 			std::cout << "Result: " << duration << " microseconds" << std::endl;
 		}
 	}

@@ -338,19 +338,20 @@ namespace ring_buffers::tests
 
     void test_fifo_order(IRingBuffer auto& ringBuffer)
     {
-        ringBuffer.push(1);
-        ringBuffer.push(2);
-        ringBuffer.push(3);
+        [[maybe_unused]]
+        bool result = ringBuffer.push(1);
+        result = ringBuffer.push(2);
+        result = ringBuffer.push(3);
 
         int64_t item = 0;
 
-        ringBuffer.pop(item);
+        result = ringBuffer.pop(item);
         testing::AssertEqual(1L, item);
 
-        ringBuffer.pop(item);
+        result = ringBuffer.pop(item);
         testing::AssertEqual(2L, item);
 
-        ringBuffer.pop(item);
+        result = ringBuffer.pop(item);
         testing::AssertEqual(3L, item);
     }
 

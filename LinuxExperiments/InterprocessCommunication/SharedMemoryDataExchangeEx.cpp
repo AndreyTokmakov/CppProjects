@@ -16,6 +16,7 @@ Description : SharedMemoryDataExchangeEx.cpp
 #include <utility>
 #include <random>
 #include <format>
+#include "semaphore.h"
 #include "../common.h"
 
 #define RESULT_OK       ( 0)

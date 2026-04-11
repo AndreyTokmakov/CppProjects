@@ -38,7 +38,6 @@ namespace Locale
 
 	void IsUpper_ToLower()
 	{
-		int i = 0;
 		std::string str = "TeSt-TeSt";
 		std::cout << str << "  --->  ";
 		for (auto& c : str) {
@@ -50,7 +49,6 @@ namespace Locale
 
 	void IsLower_ToUpper()
 	{
-		int i = 0;
 		std::string str = "test-test";
 		std::cout << str << "  --->  ";
 		for (auto& c: str) {

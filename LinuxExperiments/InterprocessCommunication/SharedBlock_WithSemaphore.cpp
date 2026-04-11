@@ -16,6 +16,8 @@ Description : SharedBlock_WithSemaphore.cpp
 #include <utility>
 #include <random>
 #include "../common.h"
+#include <unistd.h>
+#include <semaphore.h>
 
 #define RESULT_OK       ( 0)
 #define INVALID_HANDLE  (-1)

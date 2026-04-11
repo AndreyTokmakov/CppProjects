@@ -21,7 +21,8 @@ Description : ThreadSafeQueue_CV_vs_RingBuffer.cpp
 #include <chrono>
 #include <list>
 
-#include "../Utilities/Utilities.h"
+#include "PerfUtilities.hpp"
+
 
 namespace Collections::ThreadSafeQueue_CV_vs_RingBuffer
 {
@@ -328,7 +329,7 @@ namespace Collections::ThreadSafeQueue_CV_vs_RingBuffer::BasicQueue_Test
             }
         };
 
-        Utilities::ScopedTimer timer { "Dequeue_Tests" };
+        PerfUtilities::ScopedTimer timer { "Dequeue_Tests" };
         {
             std::jthread producer{produce, eventMax };
             std::jthread consumer{consume, eventMax };
@@ -359,7 +360,7 @@ namespace Collections::ThreadSafeQueue_CV_vs_RingBuffer::RFQueue_Tests
             }
         };
 
-        Utilities::ScopedTimer timer { "RFQueue_Tests" };
+        PerfUtilities::ScopedTimer timer { "RFQueue_Tests" };
         {
             std::jthread consumer{consume, eventMax };
             std::jthread producer{produce, eventMax };
@@ -392,7 +393,7 @@ namespace Collections::ThreadSafeQueue_CV_vs_RingBuffer::Queue_List_Atomic_Tests
         };
 
 
-        Utilities::ScopedTimer timer { "Queue_List_Atomic" };
+        PerfUtilities::ScopedTimer timer { "Queue_List_Atomic" };
         {
             std::jthread consumer { consume, eventMax };
             std::jthread producer { produce, eventMax };
@@ -422,7 +423,7 @@ namespace Collections::ThreadSafeQueue_CV_vs_RingBuffer::RingBuffer_AtomicSize_T
             }
         };
 
-        Utilities::ScopedTimer timer { "RingBuffer_AtomicSize" };
+        PerfUtilities::ScopedTimer timer { "RingBuffer_AtomicSize" };
         {
             std::jthread consumer { consume, eventMax };
             std::jthread producer { produce, eventMax };
@@ -452,7 +453,7 @@ namespace Collections::ThreadSafeQueue_CV_vs_RingBuffer::RingBuffer_AtomicSize_N
             }
         };
 
-        Utilities::ScopedTimer timer { "RingBuffer_AtomicSize" };
+        PerfUtilities::ScopedTimer timer { "RingBuffer_AtomicSize" };
         {
             std::jthread consumer { consume, eventMax };
             std::jthread producer { produce, eventMax };

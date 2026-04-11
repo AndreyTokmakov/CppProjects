@@ -13,7 +13,6 @@ Description : SharedMemoryWrapper.cpp
 #include <iostream>
 #include <string_view>
 #include <thread>
-#include <optional>
 #include <format>
 #include <chrono>
 #include <utility>
@@ -23,6 +22,9 @@ Description : SharedMemoryWrapper.cpp
 #include <fcntl.h>
 #include <sys/mman.h>
 #include <sys/stat.h>
+#include <unistd.h>
+#include <semaphore.h>
+
 
 #define RESULT_OK (0)
 #define RESULT_FAILURE (-1)

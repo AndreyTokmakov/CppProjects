@@ -7,12 +7,9 @@ Copyright   : Your copyright notice
 Description : Chrono
 ============================================================================**/
 
-
 #define _CRT_SECURE_NO_WARNINGS
 
 #include "Chrono.h"
-#include "../Helpers/ScopedTimer.h"
-#include "TimeZones.h"
 
 #include <iostream>
 #include <syncstream>
@@ -23,6 +20,10 @@ Description : Chrono
 #include <cstdio>
 #include <functional>
 #include <print>
+
+#include "PerfUtilities.hpp"
+
+#
 
 namespace
 {
@@ -734,7 +735,7 @@ namespace Chrono::FunctionPerformance
         constexpr int32_t iterCount {100'000'000};
 
         {
-            Helpers::ScopedTimer timer{"system_clock::now()"};
+            const PerfUtilities::ScopedTimer timer{"system_clock::now()"};
             for (int i = 0; i < iterCount; ++i)
             {
                 std::chrono::system_clock::time_point today = std::chrono::system_clock::now();
@@ -743,7 +744,7 @@ namespace Chrono::FunctionPerformance
         }
 
         {
-            Helpers::ScopedTimer timer{"high_resolution_clock::now()"};
+            const PerfUtilities::ScopedTimer timer{"high_resolution_clock::now()"};
             for (int i = 0; i < iterCount; ++i)
             {
                 [[maybe_unused]]
@@ -752,7 +753,7 @@ namespace Chrono::FunctionPerformance
         }
 
         {
-            Helpers::ScopedTimer timer{"clock_gettime()"};
+            const PerfUtilities::ScopedTimer timer{"clock_gettime()"};
             timespec time{};
             for (int i = 0; i < iterCount; ++i)
             {
@@ -761,7 +762,7 @@ namespace Chrono::FunctionPerformance
         }
 
         {
-            Helpers::ScopedTimer timer{"std::time(1)"};
+            const PerfUtilities::ScopedTimer timer{"std::time(1)"};
             for (int i = 0; i < iterCount; ++i)
             {
                 std::time_t t = std::time(nullptr);
@@ -770,7 +771,7 @@ namespace Chrono::FunctionPerformance
         }
 
         {
-            Helpers::ScopedTimer timer{"std::time(2)"};
+            const PerfUtilities::ScopedTimer timer{"std::time(2)"};
             time_t rawTime;
             for (int i = 0; i < iterCount; ++i)
             {
@@ -779,7 +780,7 @@ namespace Chrono::FunctionPerformance
         }
 
         {
-            Helpers::ScopedTimer timer{"std::timespec_get"};
+            const PerfUtilities::ScopedTimer timer{"std::timespec_get"};
             std::timespec ts {};
             for (int i = 0; i < iterCount; ++i)
             {

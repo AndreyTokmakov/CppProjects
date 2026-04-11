@@ -7,8 +7,6 @@ Copyright   : Your copyright notice
 Description : SpinLock.cpp
 ============================================================================**/
 
-#include "SpinLock.h"
-#include "../Utilities/Utilities.h"
 
 #include <iostream>
 #include <vector>
@@ -18,8 +16,14 @@ Description : SpinLock.cpp
 #include <mutex>
 #include <syncstream>
 
-
 #include <emmintrin.h> // _mm_pause()
+
+#include "SpinLock.h"
+
+#include "DateTimeUtilities.hpp"
+
+#define LOG  std::osyncstream { std::cout } << DateTimeUtilities::getCurrentTime() << " "
+
 
 namespace SpinLock::Impl
 {
@@ -198,21 +202,21 @@ namespace SpinLock::SwitchingThreads_SpinLock
 
         void first()
         {
-            std::osyncstream {std::cout} << Utilities::timeString() <<  ": First" << std::endl;
+            LOG <<  ": First" << std::endl;
             turnSwitch.store(2, std::memory_order_release); // turnSwitch.store(2) or turnSwitch = 2
         }
 
         void second()
         {
             waitForOrder_SpinLock(2);
-            std::osyncstream {std::cout} << Utilities::timeString() <<  ": Second" << std::endl;
+            LOG <<  ": Second" << std::endl;
             turnSwitch.store(3, std::memory_order_release);
         }
 
         void third()
         {
             waitForOrder_SpinLock(3);
-            std::osyncstream {std::cout} << Utilities::timeString() <<  ": Third" << std::endl;
+            LOG <<  ": Third" << std::endl;
         }
     };
 

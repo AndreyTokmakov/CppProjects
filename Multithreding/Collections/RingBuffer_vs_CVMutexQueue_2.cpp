@@ -8,7 +8,7 @@ Description :
 ============================================================================**/
 
 #include "Collections.h"
-#include "../Utilities/Utilities.h"
+#include "PerfUtilities.hpp"
 
 #include <iostream>
 #include <vector>
@@ -172,7 +172,7 @@ namespace Collections::RingBuffer_vs_CVMutexQueue_2::Tests
     void multithreaded_buffer_test(bool warmUp = false)
     {
         LFQueue<Type> buffer(256 * 256);
-        Utilities::ScopedTimer timer { "multithreaded_buffer_test", warmUp};
+        const PerfUtilities::ScopedTimer timer { "multithreaded_buffer_test", warmUp};
         std::jthread producer ([&buffer] {
             Type* next_write = nullptr;
            for (int i = 0; i < evtCount; ++i) {
@@ -184,7 +184,7 @@ namespace Collections::RingBuffer_vs_CVMutexQueue_2::Tests
 
         std::jthread consumer ([&buffer] {
             int count { 0 };
-            Type* result;
+            [[maybe_unused]] Type* result { nullptr };
             while (true) {
                 if (buffer.size()) {
                     result = buffer.getNextToRead();
@@ -198,11 +198,11 @@ namespace Collections::RingBuffer_vs_CVMutexQueue_2::Tests
         });
     }
 
-    void multithreaded_queue_test(bool warmUp = false)
+    void multithreaded_queue_test(const bool warmUp = false)
     {
         BlockingQueue<Type> queue;
 
-        Utilities::ScopedTimer timer { "multithreaded_queue_test", warmUp };
+        const PerfUtilities::ScopedTimer timer { "multithreaded_queue_test", warmUp };
         std::jthread producer ([&queue] {
             for (int i = 0; i < evtCount; ++i) {
                 queue.push(Type {i});

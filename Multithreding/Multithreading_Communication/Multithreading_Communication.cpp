@@ -8,22 +8,25 @@
 //============================================================================
 
 #include <iostream>
-#include <future>         // std::async, std::future
-#include <chrono>         // std::chrono::milliseconds
+#include <syncstream>
+#include <future>
+#include <chrono>
 #include <string>
 #include <vector>
 #include <functional>
 #include <thread>
-#include <stdexcept>
 #include <algorithm>
 #include <queue>
 #include <deque>
 
 #include "../Integer/Integer.h"
-#include "../Utilities/Utilities.h"
 #include "Multithreading_Communication.h"
+#include "DateTimeUtilities.hpp"
 
-namespace Multithreading_Communication {
+#define LOG  std::osyncstream { std::cout } << DateTimeUtilities::getCurrentTime() << " "
+
+namespace Multithreading_Communication
+{
 
     template<typename T>
     class Queue {
@@ -120,16 +123,16 @@ namespace Multithreading_Communication::Tests {
         std::unordered_map<std::thread::id, size_t> stats;
 
         const auto producer = [&queue]()->void {
-            THREAD_INFO << "Producer started" << std::endl;
+            LOG << "Producer started" << std::endl;
             for (int i = 0; i < 10000000; i++) {
                 queue.emplace(std::string("Message_").append(std::to_string(i)));
                 // std::this_thread::sleep_for(std::chrono::microseconds(1));
             }
-            THREAD_INFO << "Producer done" << std::endl;
+            LOG << "Producer done" << std::endl;
         };
 
         const auto consumer = [&queue, &stats]()->void {
-            THREAD_INFO << "Consumer started" << std::endl;
+            LOG << "Consumer started" << std::endl;
             std::string message;
             std::thread::id id = std::this_thread::get_id();
             while (true) {

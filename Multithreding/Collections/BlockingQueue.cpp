@@ -7,15 +7,13 @@ Copyright   : Your copyright notice
 Description : BlockingQueue.cpp
 ============================================================================**/
 
-#include "Collections.h"
-
 #include <iostream>
 #include <vector>
 #include <thread>
+#include <mutex>
 
-#include "../Utilities/Wrapper.h"
-#include "../Utilities/Utilities.h"
-
+#include "Collections.h"
+#include "PerfUtilities.hpp"
 
 namespace Collections::BlockingQueue
 {
@@ -129,7 +127,7 @@ void Collections::BlockingQueue::TestAll()
 
     constexpr int eventsCount {1'000'000};
 
-    Utilities::ScopedTimer timer {"benchmark"};
+    const PerfUtilities::ScopedTimer timer {"benchmark"};
 
     auto consume = [&]() {
         int eventsRead = 0, result;

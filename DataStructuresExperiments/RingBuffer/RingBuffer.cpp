@@ -17,6 +17,7 @@ Description : RingBuffer.cpp
 
 #include <atomic>
 #include <thread>
+#include <mutex>
 
 namespace
 {

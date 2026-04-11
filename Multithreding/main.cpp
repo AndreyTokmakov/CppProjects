@@ -58,7 +58,6 @@ Description : Multithreading tests main entry point
 #include "SpinLock/SpinLockFutex.h"
 #include "SpinLock/SpinLock_PerformanceTests.h"
 
-#include "Utilities/Utilities.h"
 #include "Experiments/Experiments.h"
 
 #include "RingBuffers/RingBuffers.hpp"

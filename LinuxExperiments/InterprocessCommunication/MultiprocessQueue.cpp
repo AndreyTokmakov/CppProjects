@@ -48,7 +48,7 @@ Description : C++ MultiprocessQueue
 #include <syslog.h> /* syslog */
 #include <termios.h>
 #include <unistd.h> /* read, fork, ftruncate */
-
+#include <semaphore.h>
 #include "MultiprocessQueue.h"
 
 

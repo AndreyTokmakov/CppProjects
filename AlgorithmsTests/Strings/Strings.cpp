@@ -13,6 +13,7 @@ Description : Strings.cpp
 
 #include <iostream>
 #include <string>
+#include <iomanip>
 #include <string_view>
 
 #include <vector>
@@ -383,7 +384,7 @@ namespace Strings
     bool __contains(const std::string& text,
                     const std::string& str)
     {
-        for (int idx = 0, m = 0, n= 0; idx <= std::ssize(text) - std::ssize(str); ++idx)
+        for (uint32_t idx = 0, m = 0, n= 0; idx <= std::ssize(text) - std::ssize(str); ++idx)
         {
             // std::cout << idx << std::endl;
             for (m = 0, n = idx; m < str.size(); ++m, ++n) {
@@ -554,8 +555,8 @@ namespace Strings
         StringUtilities::split_to(input, words, " ");
 
         int count = 0;
-        for (int i = 0; i < words.size(); ++i ){
-            for (int n = 0; n < words.size(); ++n)
+        for (uint32_t i = 0; i < words.size(); ++i ){
+            for (uint32_t n = 0; n < words.size(); ++n)
                 count += are_anagrams(words[i], words[n]);
         }
 
@@ -665,13 +666,13 @@ namespace Strings
         int stopCounter = 0;
 
         int idx1 = -1, i1 = -1, n1 = -1, branch = 0;
-        for (int idx = 0, i = 0, n = 0; idx < dest.size(); ++idx)
+        for (int idx = 0, i = 0, n = 0; idx < std::ssize(dest); ++idx)
         {
             if (++stopCounter > 100) break;
 
-            if (0 == branch && str1.size() > i && str1[i] == dest[idx])
+            if (0 == branch && std::ssize(str1) > i && str1[i] == dest[idx])
             {
-                if (-1 == idx1 && str2.size() > n && str1[i] == str2[n])
+                if (-1 == idx1 && std::ssize(str2) > n && str1[i] == str2[n])
                 {
                     std::cout << "MEMO (idx: " << idx << ", i: " << i << ", n: " << n << ") "
                               << "[" << dest[idx] << ", " << str1[i] << ", " << str2[n] << "]\n";
@@ -682,7 +683,7 @@ namespace Strings
                           << " | (str2[" << n << "]: " << str2[n] << ") | branch: " << branch<< std::endl;
                 ++i;
             }
-            else if (str2.size() > n && str2[n] == dest[idx])
+            else if (std::ssize(str2) > n && str2[n] == dest[idx])
             {
                 if (1 == branch) {
                     idx = idx1, i = i1, n = n1;
@@ -725,17 +726,17 @@ namespace Strings
             return false;
 
         int idx1 = -1, i1 = -1, n1 = -1, branch = 0;
-        for (int idx = 0, i = 0, n = 0; idx < dest.size(); ++idx)
+        for (int idx = 0, i = 0, n = 0; idx < std::ssize(dest); ++idx)
         {
 
-            if (0 == branch && str1.size() > i && str1[i] == dest[idx])
+            if (0 == branch && std::ssize(str1) > i && str1[i] == dest[idx])
             {
-                if (-1 == idx1 && str2.size() > n && str1[i] == str2[n]) {
+                if (-1 == idx1 && std::ssize(str2) > n && str1[i] == str2[n]) {
                     idx1 = idx; i1 = i; n1 = n;
                 }
                 ++i;
             }
-            else if (str2.size() > n && str2[n] == dest[idx])
+            else if (std::ssize(str2) > n && str2[n] == dest[idx])
             {
                 if (1 == branch) {
                     idx = idx1, i = i1, n = n1;

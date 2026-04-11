@@ -13,8 +13,6 @@
 #include <iostream>
 #include <thread>
 
-#define THREAD_INFO std::cout << ThreadHelperUtilities::ThreadInfo()
-
 namespace ThreadHelperUtilities {
 
 	class ThreadInfo {

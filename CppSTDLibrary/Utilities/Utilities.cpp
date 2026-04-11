@@ -120,6 +120,8 @@ namespace Utilities::Make_Tuples
 	void Test()
 	{
 		auto tuple = std::make_tuple(42, 3.14f, 0);
+
+		[[maybe_unused]]
 		auto obj = std::make_from_tuple<Foo>(std::move(tuple));
 	}
 

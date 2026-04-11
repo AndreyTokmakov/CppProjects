@@ -637,7 +637,7 @@ namespace Heap_Algoritms {
 		//-----------------------------------------------------------------------------------------------------------//
 
 		void max_heapify(std::vector<int>& numbers, int index) {
-			size_t left, right, current;
+			int left, right, current;
 			while (true) {
 				left = 2 * index + 1;
 				right = 2 * index + 2;

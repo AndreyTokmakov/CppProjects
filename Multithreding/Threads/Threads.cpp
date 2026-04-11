@@ -7,7 +7,7 @@
 // Description : Threads src class
 //============================================================================
 
-#include <condition_variable>
+#include <iostream>
 #include <mutex>
 #include <sstream>
 #include <thread>
@@ -22,16 +22,18 @@
 #include <syncstream>
 
 #include "Threads.h"
-#include "../Utilities/Utilities.h"
+#include "DateTimeUtilities.hpp"
+
+#define LOG  std::osyncstream { std::cout } << DateTimeUtilities::getCurrentTime() << " "
 
 namespace Threads
 {
     struct DisplayThread
     {
         void operator()() {
-            THREAD_INFO << "DisplayThread entered. Sleeping 2 seconds." << std::endl;
+            LOG << "DisplayThread entered. Sleeping 2 seconds." << std::endl;
             std::this_thread::sleep_for(std::chrono::seconds(2u));
-            THREAD_INFO << "DisplayThread done" << std::endl;
+            LOG << "DisplayThread done" << std::endl;
         }
     };
 
@@ -47,19 +49,19 @@ namespace Threads
 
         void Task()
         {
-            THREAD_INFO << "Handler name: " << this->name << ". Count: " << this->count << std::endl;
+            LOG << "Handler name: " << this->name << ". Count: " << this->count << std::endl;
             for (int i = 1; i <= this->count; i++) {
                 std::this_thread::sleep_for(std::chrono::seconds(1u));
-                THREAD_INFO << i << "  of " << this->count << std::endl;
+                LOG << i << "  of " << this->count << std::endl;
             }
         }
 
         void Task1(const std::string& _name, int count)
         {
-            THREAD_INFO << "Handler name: " << _name << ". Count: " << count << std::endl;
+            LOG << "Handler name: " << _name << ". Count: " << count << std::endl;
             for (int i = 1; i <= count; i++) {
                 std::this_thread::sleep_for(std::chrono::seconds(1u));
-                THREAD_INFO << i << " of " << count << std::endl;
+                LOG << i << " of " << count << std::endl;
             }
         }
 
@@ -74,34 +76,34 @@ namespace Threads
 
     void Thead_as_ClassMethod()
     {
-        THREAD_INFO << "Started" << std::endl;
+        LOG << "Started" << std::endl;
 
         ThreadHandler handler("TestThreadHandler", 5);
         std::thread thread(&ThreadHandler::Task, &handler);
         thread.join();
 
-        THREAD_INFO << "Completed" << std::endl;
+        LOG << "Completed" << std::endl;
     }
 
     void Thead_as_ClassMethod_Params()
     {
-        THREAD_INFO << "Started" << std::endl;
+        LOG << "Started" << std::endl;
 
         ThreadHandler handler("TestThreadHandler", 5);
         std::thread thread(&ThreadHandler::Task1, &handler , "PARAM-1", 10);
         thread.join();
 
-        THREAD_INFO << "Completed" << std::endl;
+        LOG << "Completed" << std::endl;
     }
 
     void Thead_as_ClassMethod_1()
     {
-        THREAD_INFO << "Started" << std::endl;
+        LOG << "Started" << std::endl;
 
         ThreadHandler handler("TestThreadHandler", 5);
         handler.RunTask();
 
-        THREAD_INFO << "Completed" << std::endl;
+        LOG << "Completed" << std::endl;
     }
 
     template <typename Func, typename TupleType, size_t... Indices>
@@ -116,7 +118,7 @@ namespace Threads
     void Create_Thread_Tuple_as_Params()
     {
         auto task = [](int num, const std::string& text) {
-            THREAD_INFO << "Value: " << num << ", text: " << text << std::endl;
+            LOG << "Value: " << num << ", text: " << text << std::endl;
         };
 
         std::tuple<int, std::string> param = std::make_tuple(12, "One1");
@@ -130,7 +132,7 @@ namespace Threads
     void Create_Thread_Tuple_as_Params_2()
     {
         auto task = [](int num, const std::string& text, float fVal) {
-            THREAD_INFO << "Value: " << num << ", text: " << text << ", fVal: " << fVal << std::endl;
+            LOG << "Value: " << num << ", text: " << text << ", fVal: " << fVal << std::endl;
         };
 
         std::tuple param = std::make_tuple(12, "One1", 0.1);
@@ -144,90 +146,90 @@ namespace Threads
     void Create_Simple_Thread()
     {
         const auto func = []()-> void {
-            THREAD_INFO << " Entered. Sleeping 2 seconds." << std::endl;
+            LOG << " Entered. Sleeping 2 seconds." << std::endl;
             std::this_thread::sleep_for(std::chrono::seconds(2u));
-            THREAD_INFO << " Done" << std::endl;
+            LOG << " Done" << std::endl;
         };
 
-        THREAD_INFO << " Started" << std::endl;
+        LOG << " Started" << std::endl;
         std::thread thread(func);
 
         thread.join();
-        THREAD_INFO << " Completed" << std::endl;
+        LOG << " Completed" << std::endl;
     }
 
     void Create_Simple_Thread_Lambda()
     {
-        THREAD_INFO << " Started" << std::endl;
+        LOG << " Started" << std::endl;
         std::thread thread([](void)-> void {
-            THREAD_INFO << " Entered. Sleeping 2 seconds." << std::endl;
+            LOG << " Entered. Sleeping 2 seconds." << std::endl;
             std::this_thread::sleep_for(std::chrono::seconds(2u));
-            THREAD_INFO << " Done" << std::endl;
+            LOG << " Done" << std::endl;
         });
 
         thread.join();
-        THREAD_INFO << " Completed" << std::endl;
+        LOG << " Completed" << std::endl;
     }
 
     void Create_Simple_Thread_Params()
     {
         const auto func = [](unsigned short timeout)-> void {
-            THREAD_INFO << "Entered. Sleeping " << timeout << " seconds." << std::endl;
+            LOG << "Entered. Sleeping " << timeout << " seconds." << std::endl;
             std::this_thread::sleep_for(std::chrono::seconds(timeout));
-            THREAD_INFO << "Done" << std::endl;
+            LOG << "Done" << std::endl;
         };
 
-        THREAD_INFO << "Started" << std::endl;
+        LOG << "Started" << std::endl;
         std::thread thread(func, 5);
 
         thread.join();
-        THREAD_INFO << "Completed" << std::endl;
+        LOG << "Completed" << std::endl;
     }
 
 
     void Create_Simple_Thread_Params_By_Reference()
     {
         const auto func = [](int& value)-> void {
-            THREAD_INFO << "Starting thread" << std::endl;
+            LOG << "Starting thread" << std::endl;
             for (int i = 0; i < 10; ++i) {
                 std::this_thread::sleep_for(std::chrono::milliseconds(100u));
                 value++;
             }
-            THREAD_INFO << "Done" << std::endl;
+            LOG << "Done" << std::endl;
         };
 
         int value{ 10 };
-        THREAD_INFO << "Starting thread: value = " << value << std::endl;
+        LOG << "Starting thread: value = " << value << std::endl;
         std::thread thread(func, std::ref(value));
 
         thread.join();
-        THREAD_INFO << "Completed: value = " << value << std::endl;
+        LOG << "Completed: value = " << value << std::endl;
     }
 
     void Create_Simple_Thread_FunctionObjects() {
-        THREAD_INFO << "Started" << std::endl;
+        LOG << "Started" << std::endl;
         std::thread thread((DisplayThread()));
         thread.join();
-        THREAD_INFO << "Completed" << std::endl;
+        LOG << "Completed" << std::endl;
     }
 
     void CreateThread_Function_accept_Function() {
 
         auto handler = [](auto func,  std::string text)-> void {
-            THREAD_INFO << "Starting thread" << std::endl;
+            LOG << "Starting thread" << std::endl;
             std::this_thread::sleep_for(std::chrono::seconds(2u));
             func(text);
-            THREAD_INFO << "Done" << std::endl;
+            LOG << "Done" << std::endl;
         };
 
         auto callback = [](const std::string& text)-> void {
-            THREAD_INFO << "Callback: " << text << std::endl;
+            LOG << "Callback: " << text << std::endl;
         };
 
-        THREAD_INFO << "Started" << std::endl;
+        LOG << "Started" << std::endl;
         std::thread thread(handler, callback,  "text");
         thread.join();
-        THREAD_INFO << "Completed" << std::endl;
+        LOG << "Completed" << std::endl;
     }
 
 
@@ -321,13 +323,13 @@ namespace Threads::ThreadLocalStorage
         auto increase_rage = [&cout_mutex](const std::string& thread_name)-> void {
             ++thread_local_counter; // modifying outside a lock is okay; this is a thread-local variable
             std::lock_guard<std::mutex> lock(cout_mutex);
-            THREAD_INFO << "Rage counter for " << thread_name << ": " << thread_local_counter << '\n';
+            LOG << "Rage counter for " << thread_name << ": " << thread_local_counter << '\n';
         };
 
         std::thread a(increase_rage, "a"), b(increase_rage, "b");
         {
             std::lock_guard<std::mutex> lock(cout_mutex);
-            THREAD_INFO << "Rage counter for main: " << thread_local_counter << '\n';
+            LOG << "Rage counter for main: " << thread_local_counter << '\n';
         }
 
         a.join();
@@ -376,9 +378,9 @@ namespace Threads::HandlingExceptions {
 
     void do_some_work()
     {
-        THREAD_INFO << "Starting thread/n";
+        LOG << "Starting thread/n";
         std::this_thread::sleep_for(std::chrono::seconds(4u));
-        THREAD_INFO << "Thread throwing a runtime_error exception...\n";
+        LOG << "Thread throwing a runtime_error exception...\n";
         throw std::runtime_error{ "Exception from thread" };
     }
 
@@ -388,7 +390,7 @@ namespace Threads::HandlingExceptions {
             do_some_work();
         }
         catch (...) {
-            THREAD_INFO << "Thread caught exception, returning exception...\n";
+            LOG << "Thread caught exception, returning exception...\n";
             err = std::current_exception();
         }
     }
@@ -400,11 +402,11 @@ namespace Threads::HandlingExceptions {
         T.join();
 
         if (error) {
-            THREAD_INFO << "Main thread received exception, rethrowing it...\n";
+            LOG << "Main thread received exception, rethrowing it...\n";
             rethrow_exception(error);
         }
         else {
-            THREAD_INFO << "Main thread did not receive any exception.\n";
+            LOG << "Main thread did not receive any exception.\n";
         }
     }
 
@@ -414,7 +416,7 @@ namespace Threads::HandlingExceptions {
             doWorkInThread();
         }
         catch (const std::exception& e) {
-            THREAD_INFO << "Main function caught: '" << e.what() << "'\n";
+            LOG << "Main function caught: '" << e.what() << "'\n";
         }
     }
 }

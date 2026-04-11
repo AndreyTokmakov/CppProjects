@@ -158,8 +158,11 @@ add_executable(${PROJECT_NAME}
 		Utilities/Class_Member_Pointer.cpp
 )
 
-# Link libraries to the project/executable
+target_include_directories(${PROJECT_NAME} PUBLIC "${CMAKE_SOURCE_DIR}/Utilities")
+target_link_directories(${PROJECT_NAME} PUBLIC "${CMAKE_BINARY_DIR}/Utilities")
+
 target_link_libraries(${PROJECT_NAME} PUBLIC
+		utils
 		pthread
 		${EXTRA_LIBS}
 )

@@ -8,7 +8,7 @@ Description : SingleConsumerProducerQueue.cpp
 ============================================================================**/
 
 #include "../Utilities/Wrapper.h"
-#include "../Utilities/Utilities.h"
+#include "PerfUtilities.hpp"
 
 #include "Collections.h"
 
@@ -242,7 +242,7 @@ namespace Collections::SingleConsumerProducerQueue::AtomicBusyWaitReadLoop
         }
 
         void try_read_next(size_type& index,
-                           value_type& entry) const noexcept
+                            [[maybe_unused]] value_type& entry) const noexcept
         {
             while (head.load(std::memory_order_relaxed) == index) { /** **/ }
 
@@ -255,7 +255,7 @@ namespace Collections::SingleConsumerProducerQueue::AtomicBusyWaitReadLoop
 namespace Collections::SingleConsumerProducerQueue::AtomicBusyWaitReadLoop_NoMove
 {
     template<class T,
-            size_t Capacity = 100>
+            int32_t Capacity = 100>
     struct RingBuffer
     {
         using value_type = T;
@@ -390,7 +390,8 @@ namespace Collections::SingleConsumerProducerQueue::Tests
 
             while (true)
             {
-                buffer.try_read_next(idx, integer);
+                [[maybe_unused]]
+                const auto& res = buffer.try_read_next(idx, integer);
                 std::osyncstream {std::cout} << integer.value << std::endl;
             }
         };
@@ -418,6 +419,8 @@ namespace Collections::SingleConsumerProducerQueue::Tests
             for (size_t i = 0; i < elementsCount; ++i)
             {
                 idx = buffer.nextReadIndex();
+
+                [[maybe_unused]]
                 Integer& integer = reinterpret_cast<decltype(buffer)::value_type &>(buffer.buffer[idx]);
                 //std::osyncstream {std::cout} << "Load <-- " << idx << ". Value: " << integer.value <<  std::endl;
             }
@@ -452,7 +455,8 @@ namespace Collections::SingleConsumerProducerQueue::Tests
             decltype(buffer)::size_type idx {0};
             while (true)
             {
-                buffer.try_read_next(idx, integer);
+                [[maybe_unused]]
+                const auto& res = buffer.try_read_next(idx, integer);
                 ++totalConsumed;
                 if (integer.value != prev + 1)
                     ++errors;
@@ -470,7 +474,7 @@ namespace Collections::SingleConsumerProducerQueue::Tests
             }
         };
 
-        Utilities::ScopedTimer timer {"benchmark_DemoTwo"};
+        const PerfUtilities::ScopedTimer timer {"benchmark_DemoTwo"};
 
         std::jthread consumer {consume};
         std::jthread producer {produce};
@@ -515,7 +519,7 @@ namespace Collections::SingleConsumerProducerQueue::Tests
             }
         };
 
-        Utilities::ScopedTimer timer {"benchmark_DemoTwo"};
+        const PerfUtilities::ScopedTimer timer {"benchmark_DemoTwo"};
 
         std::jthread consumer {consume};
         std::jthread producer {produce};

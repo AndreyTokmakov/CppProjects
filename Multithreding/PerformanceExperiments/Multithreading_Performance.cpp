@@ -7,7 +7,6 @@
 // Description : Multithread performance tests class
 //============================================================================
 
-#include "../Utilities/Utilities.h"
 #include "Multithreading_Performance.h"
 
 #include <iostream>

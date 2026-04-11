@@ -15,32 +15,30 @@
 #include <fstream>
 #include <mutex>
 #include <shared_mutex>
-
-#include <iostream>
-#include <mutex>
-#include <thread>
 #include <vector>
 #include <sstream>
 #include <unordered_map>
-
 #include <ranges>
 #include <span>
 #include <chrono>
 #include <cstdlib>
 #include <ctime>
-
 #include <optional>
 #include <syncstream>
 
 #include "Synchronization.h"
-#include "../Utilities/Utilities.h"
+
+#include "DateTimeUtilities.hpp"
+#define LOG  std::osyncstream { std::cout } << DateTimeUtilities::getCurrentTime() << " "
+
+
 
 namespace Synchronization
 {
     void Test_Unsynch()
     {
         int counter = 0;
-        THREAD_INFO << "started." << std::endl;
+        LOG << "started." << std::endl;
 
         auto incrementor = [&]()-> void {
             for (int i = 0; i < 1000000; ++i) {
@@ -60,14 +58,14 @@ namespace Synchronization
     {
         std::mutex mtx;
 
-        THREAD_INFO << "started." << std::endl;
+        LOG << "started." << std::endl;
 
         int counter = 0;
         auto incrementor = [&]()-> void {
             for (int i = 0; i < 100; ++i) {
                 //mtx.lock();
                 ++counter;
-                THREAD_INFO  << "Counter: " << counter << std::endl;
+                LOG  << "Counter: " << counter << std::endl;
                 //mtx.unlock();
                 std::this_thread::sleep_for(std::chrono::milliseconds(10u));
             }
@@ -85,33 +83,33 @@ namespace Synchronization
         unsigned int sharedVariable = 0;
         std::mutex mtx;
 
-        THREAD_INFO << "started." << std::endl;
+        LOG << "started." << std::endl;
 
         auto safe_increment = [&]()-> void {
             const std::lock_guard<std::mutex> lock(mtx);
             ++sharedVariable;
-            THREAD_INFO << sharedVariable << std::endl;
+            LOG << sharedVariable << std::endl;
             std::this_thread::sleep_for(std::chrono::milliseconds(100u));
             // g_i_mutex is automatically released when lock goes out of scope
         };
 
-        THREAD_INFO << "Start value: " << sharedVariable << std::endl;
+        LOG << "Start value: " << sharedVariable << std::endl;
 
         std::vector<std::future<void>> jobs;
         for (int i = 0; i < 3; i++)
             jobs.emplace_back(std::async(safe_increment));
         std::for_each(jobs.begin(), jobs.end(), [](auto& T) {T.wait(); });
 
-        THREAD_INFO << "End value: " << sharedVariable << std::endl;
+        LOG << "End value: " << sharedVariable << std::endl;
     }
 
     void LockGuard_Test_2() {
         std::mutex mtx;
-        THREAD_INFO << "started." << std::endl;
+        LOG << "started." << std::endl;
 
         auto print_even = [](int x)-> void {
             if (x % 2 == 0) {
-                THREAD_INFO << "is even" << std::endl;
+                LOG << "is even" << std::endl;
             } else {
                 throw (std::logic_error("not even"));
             }
@@ -123,7 +121,7 @@ namespace Synchronization
                 print_even(id);
             }
             catch (const std::logic_error& exc) {
-                THREAD_INFO << "[exception caught]: " << exc.what() << std::endl;
+                LOG << "[exception caught]: " << exc.what() << std::endl;
             }
         };
 
@@ -131,7 +129,7 @@ namespace Synchronization
         for (int i = 0; i++ < 5;)
             jobs.emplace_back(print_thread_id, i + 1);
         std::for_each(jobs.begin(), jobs.end(), [](auto& T) {T.join(); });
-        THREAD_INFO << "Done." << std::endl;
+        LOG << "Done." << std::endl;
     }
 }
 
@@ -141,7 +139,7 @@ namespace Synchronization::UniqueLock
     void UniqueLock_Lock()
     {
         std::mutex mtx;
-        THREAD_INFO << "started." << std::endl;
+        LOG << "started." << std::endl;
 
         auto print_block = [&](int n, char c)-> void {
             // critical section (exclusive access to std::cout signaled by lifetime of lck):
@@ -163,13 +161,13 @@ namespace Synchronization::UniqueLock
 
         [[maybe_unused]]
         unsigned long counter = 0;
-        THREAD_INFO << "started." << std::endl;
+        LOG << "started." << std::endl;
 
         auto print_thread_id = [&](int id)-> void {
             std::unique_lock<std::mutex> lock(mtx, std::defer_lock);
             // critical section (exclusive access to std::cout signaled by locking lck):
             lock.lock();
-            THREAD_INFO << id << std::endl;
+            LOG << id << std::endl;
             lock.unlock();
         };
 
@@ -177,7 +175,7 @@ namespace Synchronization::UniqueLock
         for (int i = 0; i++ < 10;)
             jobs.emplace_back(print_thread_id, i + 1);
         std::for_each(jobs.begin(), jobs.end(), [](auto& T) {T.join(); });
-        THREAD_INFO << "Done." << std::endl;
+        LOG << "Done." << std::endl;
     }
 
     void UniqueLock_UnLock_2() {
@@ -282,12 +280,12 @@ namespace Synchronization::UniqueLock
     //-------------------------------------------------------------------------
 
     void prepare_data() {
-        THREAD_INFO << " Prepate data\n";
+        LOG << " Prepate data\n";
         std::this_thread::sleep_for(std::chrono::seconds(3u));
     }
 
     void handle_data() {
-        THREAD_INFO << " Handle data\n";
+        LOG << " Handle data\n";
         std::this_thread::sleep_for(std::chrono::seconds(3u));
     }
 
@@ -301,7 +299,7 @@ namespace Synchronization::UniqueLock
     void Transfer_Ownership() {
         std::unique_lock<std::mutex> lk(processData());
         handle_data();
-        THREAD_INFO << " Done\n";
+        LOG << " Done\n";
     }
 }
 
@@ -313,9 +311,9 @@ namespace Synchronization::SharedMutext {
 
         auto reader = [&]()->void {
             std::unique_lock<std::mutex> slk(mtx);
-            THREAD_INFO << "Read i as " << i << "..." << std::endl;
+            LOG << "Read i as " << i << "..." << std::endl;
             std::this_thread::sleep_for(std::chrono::milliseconds(10u));
-            THREAD_INFO << "Woke up..." << std::endl;
+            LOG << "Woke up..." << std::endl;
         };
 
         std::future<void> future1 = std::async(reader);
@@ -337,7 +335,7 @@ namespace Synchronization::SharedMutext {
                 content = file;
             }
             std::lock_guard lock(output_mutex);
-            THREAD_INFO << "Contents read by reader #" << id << ": " << content << std::endl;
+            LOG << "Contents read by reader #" << id << ": " << content << std::endl;
         };
 
         auto write = [&mutex, &file, &output_mutex]() {
@@ -346,11 +344,11 @@ namespace Synchronization::SharedMutext {
                 file = "New content";
             }
             std::lock_guard output_lock(output_mutex);
-            THREAD_INFO << "New content saved." << std::endl;
+            LOG << "New content saved." << std::endl;
         };
 
-        THREAD_INFO << "Two readers reading from file." << std::endl;
-        THREAD_INFO << "A writer competes with them." << std::endl;
+        LOG << "Two readers reading from file." << std::endl;
+        LOG << "A writer competes with them." << std::endl;
 
         std::thread reader1(read, 1);
         std::thread reader2(read, 2);
@@ -359,7 +357,7 @@ namespace Synchronization::SharedMutext {
         reader2.join();
         writer.join();
 
-        THREAD_INFO << "The first few operations to file are done.\n";
+        LOG << "The first few operations to file are done.\n";
 
         reader1 = std::thread(read, 3);
         reader1.join();
@@ -406,17 +404,17 @@ namespace Synchronization::SharedTimedMutext {
     public:
         std::optional<dns_entry> find_entry(const std::string& domain) const {
             std::shared_lock<std::shared_mutex> lock_shared(entry_mutex);
-            THREAD_INFO << "Reading cache." << std::endl;
+            LOG << "Reading cache." << std::endl;
             const auto it = entries.find(domain);
             return (it == entries.end()) ? std::nullopt : std::make_optional<dns_entry>(it->second);
         }
 
         void update_or_add_entry(const std::string& domain, const dns_entry& dns_details) {
             std::lock_guard<std::shared_mutex> lock(entry_mutex);
-            THREAD_INFO << "Updating cache." << std::endl;
+            LOG << "Updating cache." << std::endl;
             std::this_thread::sleep_for(std::chrono::seconds(2u)); //4Test
             entries[domain] = dns_details;
-            THREAD_INFO << "Update done" << std::endl;
+            LOG << "Update done" << std::endl;
         }
     };
 
@@ -428,9 +426,9 @@ namespace Synchronization::SharedTimedMutext {
         auto reader = [&]()->void {
             // both the threads get access to the integer i
             std::shared_lock<std::shared_timed_mutex> slk(m);
-            THREAD_INFO << "Read i as " << i << "..." << std::endl;
+            LOG << "Read i as " << i << "..." << std::endl;
             std::this_thread::sleep_for(std::chrono::milliseconds(10u));
-            THREAD_INFO << "Woke up..." << std::endl;
+            LOG << "Woke up..." << std::endl;
         };
 
         std::future<void> future1 = std::async(reader);
@@ -472,12 +470,12 @@ namespace Synchronization::SharedTimedMutext {
         std::shared_timed_mutex mtx;
 
         auto func = [&] ()-> void {
-            THREAD_INFO << "Entered" << std::endl;
+            LOG << "Entered" << std::endl;
             auto now = std::chrono::steady_clock::now();
 
             [[maybe_unused]]
             auto result = mtx.try_lock_until(now + std::chrono::seconds(2u));
-            THREAD_INFO << "Done" << std::endl;
+            LOG << "Done" << std::endl;
         };
 
         std::lock_guard<std::shared_timed_mutex> lock(mtx);
@@ -506,7 +504,7 @@ namespace Synchronization::SharedTimedMutext {
             }
 
             std::lock_guard<std::mutex> lock(cout_mutex);
-            THREAD_INFO << "[" << id << "] " << stream.str() << "\n";
+            LOG << "[" << id << "] " << stream.str() << "\n";
         };
 
         std::vector<std::thread> threads;
@@ -531,12 +529,12 @@ namespace Synchronization::TimedMutex
         };
 
         auto task = [&](uint16_t timeout)-> void {
-            THREAD_INFO << "Task started.\n";
+            LOG << "Task started.\n";
             const std::chrono::time_point now = std::chrono::steady_clock::now();
 
             [[maybe_unused]]
             const bool isAcquired = mtx.try_lock_until(now + std::chrono::seconds(timeout));
-            THREAD_INFO << "Task completed. Result = " << std::boolalpha << isAcquired << "\n";
+            LOG << "Task completed. Result = " << std::boolalpha << isAcquired << "\n";
         };
 
         {
@@ -562,9 +560,9 @@ namespace Synchronization::TimedMutex
 
         auto job1 = std::async([&](unsigned int timeout)->void {
             std::scoped_lock<std::timed_mutex> lock(mtx);
-            THREAD_INFO << "Locked for " << timeout << " milliseconds" << std::endl;
+            LOG << "Locked for " << timeout << " milliseconds" << std::endl;
             std::this_thread::sleep_for(std::chrono::milliseconds(timeout));
-            THREAD_INFO << "Release." << std::endl;
+            LOG << "Release." << std::endl;
         }, 5000);
 
 
@@ -574,17 +572,17 @@ namespace Synchronization::TimedMutex
             for (int i = 0; i < 10; ++i) {
                 auto now = std::chrono::steady_clock::now();
                 if (mtx.try_lock_until(now + std::chrono::milliseconds(timeout))) {
-                    THREAD_INFO << "Locked ok!" << std::endl;
+                    LOG << "Locked ok!" << std::endl;
                     break;
                 } else {
-                    THREAD_INFO << "Failed to acquire lock." << std::endl;
+                    LOG << "Failed to acquire lock." << std::endl;
                 }
             }
         }, 1000);
 
         job1.wait();
         job2.wait();
-        THREAD_INFO << "Done." << std::endl;
+        LOG << "Done." << std::endl;
     }
 
     void TryLockFor() {
@@ -607,7 +605,7 @@ namespace Synchronization::TimedMutex
             }
 
             std::lock_guard<std::mutex> lock(cout_mutex);
-            THREAD_INFO << "[" << id << "] " << stream.str() << "\n";
+            LOG << "[" << id << "] " << stream.str() << "\n";
         };
 
         std::vector<std::thread> threads;
@@ -622,9 +620,9 @@ namespace Synchronization::TimedMutex
 
         auto job1 = std::async([&](unsigned int timeout)->void {
             std::scoped_lock<std::timed_mutex> lock(mtx);
-            THREAD_INFO << "Locked for " << timeout << " milliseconds" << std::endl;
+            LOG << "Locked for " << timeout << " milliseconds" << std::endl;
             std::this_thread::sleep_for(std::chrono::milliseconds(timeout));
-            THREAD_INFO << "Release." << std::endl;
+            LOG << "Release." << std::endl;
         }, 5000);
 
 
@@ -633,17 +631,17 @@ namespace Synchronization::TimedMutex
         auto job2 = std::async([&](unsigned int timeout)->void {
             for (int i = 0; i < 10; ++i) {
                 if (mtx.try_lock_for(std::chrono::milliseconds(timeout))) {
-                    THREAD_INFO << "Locked ok!" << std::endl;
+                    LOG << "Locked ok!" << std::endl;
                     break;
                 } else {
-                    THREAD_INFO << "Failed to acquire lock." << std::endl;
+                    LOG << "Failed to acquire lock." << std::endl;
                 }
             }
         }, 1000);
 
         job1.wait();
         job2.wait();
-        THREAD_INFO << "Done." << std::endl;
+        LOG << "Done." << std::endl;
     }
 
     void LimitTime_Using_UniqueLock()
@@ -651,16 +649,16 @@ namespace Synchronization::TimedMutex
         std::timed_mutex mtx {};
         const std::jthread holder = std::jthread([&mtx] {
             std::lock_guard<std::timed_mutex> lock {mtx};
-            THREAD_INFO << "Blocking mutex for 2 sec" << std::endl;
+            LOG << "Blocking mutex for 2 sec" << std::endl;
             std::this_thread::sleep_for(std::chrono::seconds(2u));
         });
 
         auto task = [&mtx]{
             std::unique_lock<std::timed_mutex> lock {mtx, std::chrono::milliseconds (200u)};
             if (!lock.owns_lock())
-                THREAD_INFO << "Failed to get lock." << std::endl;
+                LOG << "Failed to get lock." << std::endl;
             else
-                THREAD_INFO << "Got the lock." << std::endl;
+                LOG << "Got the lock." << std::endl;
             return;
         };
 
@@ -761,7 +759,7 @@ namespace Synchronization::ScopedLock
 
     void Simple_Test() {
         SyncCounter counter1, counter2;
-        THREAD_INFO << "started." << std::endl;
+        LOG << "started." << std::endl;
 
         auto increment = [](SyncCounter& counter)-> void {
             for (int i = 0; i < 100000; i++) {
@@ -781,9 +779,9 @@ namespace Synchronization::ScopedLock
             T.join();
         });
 
-        THREAD_INFO << "Done." << std::endl;
-        THREAD_INFO << "Counter1 = " << counter1.counter << std::endl;
-        THREAD_INFO << "Counter2 = " << counter2.counter << std::endl;
+        LOG << "Done." << std::endl;
+        LOG << "Counter1 = " << counter1.counter << std::endl;
+        LOG << "Counter2 = " << counter2.counter << std::endl;
     }
 
     //-----------------------------------------------------------------------------------------------------//

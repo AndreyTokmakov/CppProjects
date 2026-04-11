@@ -11,6 +11,7 @@ Description : RVO_FailureCases
 
 #include <iostream>
 #include <array>
+#include <vector>
 #include <numeric>
 
 #include "../Helpers/Helpers.h"

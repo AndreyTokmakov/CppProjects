@@ -58,8 +58,6 @@ add_executable(${PROJECT_NAME}
         SpinLock/SpinLockFutex.cpp
         SpinLock/SpinLock_PerformanceTests.cpp
         Threads/StoppingThreads.cpp
-        Utilities/Utilities.cpp
-        Utilities/Utilities_Tests.cpp
         PerformanceExperiments/Multithreading_Performance.cpp
         PerformanceExperiments/PerformanceExperiments.cpp
         PerformanceExperiments/ConditionVariable_vs_Atomic.cpp

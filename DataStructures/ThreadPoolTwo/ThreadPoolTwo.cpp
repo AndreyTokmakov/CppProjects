@@ -138,7 +138,7 @@ namespace ThreadPoolTwo
         {
             Task task;
             while (run) {
-                // THREAD_INFO << "result = " << std::boolalpha << result << std::endl;
+                // LOG << "result = " << std::boolalpha << result << std::endl;
                 if (auto result = wait_for_and_pop(task, TIMEOUT); result) {
                     task();
                 }

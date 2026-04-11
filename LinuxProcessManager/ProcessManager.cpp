@@ -7,8 +7,13 @@ Copyright   : Your copyright notice
 Description : v
 ============================================================================**/
 
+
 #include "ProcessManager.h"
 
+
+#define DISABLE
+
+#ifndef DISABLE
 
 #include <optional>
 #include <iostream>
@@ -261,12 +266,16 @@ void runApp(int argc, char **argv)
 }
 
 
+#endif
 
 void ProcessManager::run(int argc, char **argv)
 {
-    runApp(argc, argv);
+    // runApp(argc, argv);
 
 }
 
+#ifndef DISABLE
 
 #include "ProcessManager.moc"
+
+#endif

@@ -247,7 +247,7 @@ namespace Memory::GoodPools_Tests
 
         {
             Memory::ObjectPool<TestType> pool;
-            PerfUtilities::ScopedTimer timer {"Pool 2"};
+            const PerfUtilities::ScopedTimer timer {"Pool 2"};
 
             std::vector<decltype(pool)::ObjectPtr> store;
             store.reserve(allocations);

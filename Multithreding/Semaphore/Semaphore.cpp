@@ -7,8 +7,6 @@ Copyright   : Your copyright notice
 Description : Semaphore
 ============================================================================**/
 
-#include "../Utilities/Utilities.h"
-#include "Semaphore.h"
 
 #include <iostream>
 #include <thread>
@@ -18,7 +16,12 @@ Description : Semaphore
 #include <syncstream>
 #include <queue>
 #include <latch>
+#include <syncstream>
 
+#include "Semaphore.h"
+#include "DateTimeUtilities.hpp"
+
+#define LOG  std::osyncstream { std::cout } << DateTimeUtilities::getCurrentTime() << " "
 
 using namespace std::literals;
 
@@ -32,7 +35,7 @@ namespace Semaphore::BinarySemaphore
 
         std::jthread consumer([&] {
             sem.acquire(); /**  Will block until producer call sem.release() **/
-            SYNCH_COUT << sharedData << std::endl;
+            LOG << sharedData << std::endl;
         });
 
         std::jthread producer([&] {
@@ -54,11 +57,11 @@ namespace Semaphore::BinarySemaphore
     void thread_proc(uint32_t timeout = 3) {
         // wait for a signal from the main proc  by attempting to decrement the semaphore
         semaphoreOne.acquire();
-        THREAD_INFO << "Got signal from 'semaphoreOne'\n";
+        LOG << "Got signal from 'semaphoreOne'\n";
 
         // this call blocks until the semaphore's count is increased from the main proc
         std::this_thread::sleep_for(std::chrono::seconds(timeout));
-        THREAD_INFO << "Send the signal\n"; // message
+        LOG << "Send the signal\n"; // message
 
         // signal the main proc back
         semaphoreTwo.release();
@@ -66,62 +69,62 @@ namespace Semaphore::BinarySemaphore
 
     void Release_Acquire_BasicTest()
     {
-        SYNCH_COUT << "Starting main thread\n";
+        LOG << "Starting main thread\n";
         std::thread thrWorker(thread_proc, 3);
 
         std::this_thread::sleep_for(1s);
-        SYNCH_COUT << "Send the signal\n";
+        LOG << "Send the signal\n";
 
         // signal the worker thread to start working by increasing the semaphore's count
         semaphoreOne.release();
 
         // wait until the worker thread is done doing the work by attempting to decrement the semaphore's count
-        SYNCH_COUT << "Before acquire()...\n";
+        LOG << "Before acquire()...\n";
         semaphoreTwo.acquire();
-        SYNCH_COUT << "After acquire()...\n";
+        LOG << "After acquire()...\n";
 
         thrWorker.join();
-        SYNCH_COUT << "Done\n";
+        LOG << "Done\n";
     }
 
 
     void Release_TRY_Acquire__BasicTest() {
-        THREAD_INFO << "Starting main thread\n";
+        LOG << "Starting main thread\n";
         std::thread thrWorker(thread_proc, 3);
 
         std::this_thread::sleep_for(1s);
-        THREAD_INFO << "Send the signal\n";
+        LOG << "Send the signal\n";
 
         semaphoreOne.release(); // signal the worker thread to start working by increasing the semaphore's count
-        THREAD_INFO << "Before try_acquire()...\n";
+        LOG << "Before try_acquire()...\n";
 
         [[maybe_unused]]
         auto x = semaphoreTwo.try_acquire();
-        THREAD_INFO << "After try_acquire()...\n";
+        LOG << "After try_acquire()...\n";
 
         thrWorker.join();
-        THREAD_INFO << "Done\n";
+        LOG << "Done\n";
     }
 
 
     void Release_TRY_Acquire_FOR__BasicTest() {
-        THREAD_INFO << "Starting main thread\n";
+        LOG << "Starting main thread\n";
         std::thread thrWorker(thread_proc, 5);
 
         std::this_thread::sleep_for(1s);
-        THREAD_INFO << "Send the signal\n";
+        LOG << "Send the signal\n";
 
         semaphoreOne.release(); // signal the worker thread to start working by increasing the semaphore's count
-        THREAD_INFO << "Before try_acquire()...\n";
+        LOG << "Before try_acquire()...\n";
 
         while (!semaphoreTwo.try_acquire_for(500ms)) {
-            THREAD_INFO << "   Failed to acquire the semaphoreTwo\n";
+            LOG << "   Failed to acquire the semaphoreTwo\n";
         }
-        THREAD_INFO << "After try_acquire()...\n";
+        LOG << "After try_acquire()...\n";
 
 
         thrWorker.join();
-        THREAD_INFO << "Done\n";
+        LOG << "Done\n";
     }
 };
 
@@ -132,13 +135,13 @@ namespace Semaphore::BinarySemaphore
         std::binary_semaphore semaphore {1};
 
         auto task = [&semaphore] {
-            THREAD_INFO << "Started\n";
+            LOG << "Started\n";
             semaphore.acquire();
-            THREAD_INFO << "Semaphore captured...\n";
+            LOG << "Semaphore captured...\n";
 
             std::this_thread::sleep_for(std::chrono::seconds(2u));
 
-            THREAD_INFO << "Semaphore released...\n";
+            LOG << "Semaphore released...\n";
             semaphore.release();
         };
 

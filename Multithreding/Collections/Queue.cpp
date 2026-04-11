@@ -7,10 +7,7 @@ Copyright   : Your copyright notice
 Description : Queue.cpp
 ============================================================================**/
 
-#include "Collections.h"
-
 #include <iostream>
-#include <string_view>
 #include <thread>
 #include <condition_variable>
 #include <vector>
@@ -20,8 +17,11 @@ Description : Queue.cpp
 #include <format>
 #include <chrono>
 
-#include "../Utilities/Utilities.h"
+#include "Collections.h"
 #include "../Integer/Integer.h"
+#include "DateTimeUtilities.hpp"
+
+#define LOG  std::osyncstream { std::cout } << DateTimeUtilities::getCurrentTime() << " "
 
 namespace
 {
@@ -305,25 +305,25 @@ namespace Tests
         Queue queue;
 
         std::future<void> producer = std::async(std::launch::async, [&]()-> void {
-            THREAD_INFO << "Producer: started." << std::endl;
+            LOG << "Producer: started." << std::endl;
             std::this_thread::sleep_for(std::chrono::seconds(1u));
             queue.emplace(1);
-            THREAD_INFO << "Producer: done" << std::endl;
+            LOG << "Producer: done" << std::endl;
         });
 
         std::future<void> consumer = std::async(std::launch::async, [&]()-> void {
-            THREAD_INFO << "Consumer: started" << std::endl;
+            LOG << "Consumer: started" << std::endl;
             auto&& entry = queue.wait_and_pop();
-            THREAD_INFO << "Consumer: We've got some" << std::endl;
+            LOG << "Consumer: We've got some" << std::endl;
             std::this_thread::sleep_for(std::chrono::seconds(2u));
             entry.printInfo();
-            THREAD_INFO << "Consumer: done" << std::endl;
+            LOG << "Consumer: done" << std::endl;
         });
 
         producer.wait();
         consumer.wait();
 
-        THREAD_INFO << "Done!!" << std::endl;
+        LOG << "Done!!" << std::endl;
     }
 
     /*
@@ -332,32 +332,32 @@ namespace Tests
         Queue queue;
 
         std::future<void> producer = std::async(std::launch::async, [&]()-> void {
-            THREAD_INFO << "Producer: started." << std::endl;
+            LOG << "Producer: started." << std::endl;
             std::this_thread::sleep_for(std::chrono::seconds(1));
             queue.emplace(1);
-            THREAD_INFO << "Producer: done" << std::endl;
+            LOG << "Producer: done" << std::endl;
         });
 
 
         std::future<void> consumer = std::async(std::launch::async, [&]()-> void {
-            THREAD_INFO << "Consumer: started" << std::endl;
+            LOG << "Consumer: started" << std::endl;
             Int entry;
             while (true)
             {
                 const bool ok = queue.wait_for_and_pop(entry, std::chrono::milliseconds(250));
                 if (ok)
                     break;
-                THREAD_INFO << "Timeout" << std::endl;
+                LOG << "Timeout" << std::endl;
             }
 
-            THREAD_INFO << "Consumer: done. Value: ";
+            LOG << "Consumer: done. Value: ";
             entry.printInfo();
         });
 
         producer.wait();
         consumer.wait();
 
-        THREAD_INFO << "Done!!" << std::endl;
+        LOG << "Done!!" << std::endl;
     }
      */
 
@@ -369,14 +369,14 @@ namespace Tests
         std::future<void> producer = std::async(std::launch::async, [&]()-> void {
             std::this_thread::sleep_for(std::chrono::seconds(1u));
             queue.emplace(1);
-            THREAD_INFO << "Producer: done" << std::endl;
+            LOG << "Producer: done" << std::endl;
         });
 
 
         std::future<void> consumer = std::async(std::launch::async, [&]()-> void {
             Int entry;
             queue.wait_and_pop(entry);
-            THREAD_INFO << "Consumer: done. Value: ";
+            LOG << "Consumer: done. Value: ";
             entry.printInfo();
         });
 

@@ -11,6 +11,7 @@ Description : SharedMemoryDataExchange.cpp
 
 #include "SharedMemory.h"
 #include "../common.h"
+#include "semaphore.h"
 
 #include <iostream>
 #include <string_view>

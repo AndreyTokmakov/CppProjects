@@ -17,8 +17,9 @@ Description :
 #include <syncstream>
 
 #include "Atomic_Wait.h"
-#include "../Utilities/Utilities.h"
+#include "DateTimeUtilities.hpp"
 
+#define LOG  std::osyncstream { std::cout } << DateTimeUtilities::getCurrentTime() << " "
 
 namespace Atomic_Wait::Basics
 {
@@ -29,24 +30,24 @@ namespace Atomic_Wait::Basics
 
         std::future<void> waiter = std::async(std::launch::async, [&variable]()
         {
-            THREAD_INFO << "Waiting until variable changes its value: value = " << variable << std::endl;
+            LOG << "Waiting until variable changes its value: value = " << variable << std::endl;
             variable.wait(initialValue);
-            THREAD_INFO << "Waiting Done!!!: value = " << variable << std::endl;
+            LOG << "Waiting Done!!!: value = " << variable << std::endl;
         });
 
         std::future<void> task = std::async(std::launch::async, [&variable]()
         {
-            THREAD_INFO << "Starting task" << std::endl;
+            LOG << "Starting task" << std::endl;
 
             std::this_thread::sleep_for(std::chrono::seconds(2U));
             variable.store(initialValue);
-            THREAD_INFO << "Task 1 completed: value = " << variable << std::endl;
+            LOG << "Task 1 completed: value = " << variable << std::endl;
 
             variable.notify_all();
 
             std::this_thread::sleep_for(std::chrono::seconds(2U));
             variable.store(initialValue  + 1);
-            THREAD_INFO << "Task 2 completed: value = " << variable << std::endl;
+            LOG << "Task 2 completed: value = " << variable << std::endl;
 
             variable.notify_all();
         });
@@ -61,22 +62,22 @@ namespace Atomic_Wait::Basics
 
         auto task = std::async([&value]() -> void
         {
-            THREAD_INFO << "Starting task" << std::endl;
+            LOG << "Starting task" << std::endl;
             std::this_thread::sleep_for(std::chrono::seconds(1U));
 
             value.store(initialValue + 1);
             value.notify_one();
 
-            THREAD_INFO << "Task  completed: value = " << value << std::endl;
+            LOG << "Task  completed: value = " << value << std::endl;
         });
 
         std::vector<std::future<void>> tasks;
         for (int i = 0; i < 2; ++i) {
             const std::string name { "Thread_" + std::to_string(i) };
-            tasks.emplace_back(std::async([&value, name]() -> void {
-                THREAD_INFO << "Waiting until value != " << initialValue << " . . . " << std::endl;
+            tasks.emplace_back(std::async([&value, name, initialValue]() -> void {
+                LOG << "Waiting until value != " << initialValue << " . . . " << std::endl;
                 value.wait(initialValue);
-                THREAD_INFO << name << " done" << std::endl;
+                LOG << name << " done" << std::endl;
             }));
         }
     }
@@ -88,23 +89,23 @@ namespace Atomic_Wait::Basics
         std::atomic<int> value { initialValue };
 
         auto task = std::async([&value]() -> void {
-            THREAD_INFO << "Starting task" << std::endl;
+            LOG << "Starting task" << std::endl;
 
             std::this_thread::sleep_for(std::chrono::seconds(5U));
 
             value.store(initialValue + 1);
             value.notify_all();
 
-            THREAD_INFO << "Task  completed: value = " << value << std::endl;
+            LOG << "Task  completed: value = " << value << std::endl;
         });
 
         std::vector<std::future<void>> tasks;
         for (int i = 0; i < 2; ++i) {
             const std::string name{ "Thread_" + std::to_string(i) };
             tasks.emplace_back(std::async([&value, name]() -> void {
-                THREAD_INFO << "Waiting until value != 10 . . . " << std::endl;
+                LOG << "Waiting until value != 10 . . . " << std::endl;
                 value.wait(initialValue);
-                THREAD_INFO << name << " done" << std::endl;
+                LOG << name << " done" << std::endl;
             }));
         }
     }
@@ -200,19 +201,19 @@ namespace Atomic_Wait::Ring_Buffer_Tests
         RingBuffer<int> buffer(10);
 
         auto produce = [&buffer](const std::string& name) {
-            std::osyncstream { std::cout } << Utilities::getCurrentTime() << " " << name << " started" << std::endl;
+            LOG << name << " started" << std::endl;
             std::this_thread::sleep_for(std::chrono::seconds(4u));
             buffer.put(123);
-            std::osyncstream { std::cout } << Utilities::getCurrentTime() << " " << name << " done 1" << std::endl;
+            LOG << name << " done 1" << std::endl;
             std::this_thread::sleep_for(std::chrono::seconds(4u));
-            std::osyncstream { std::cout } << Utilities::getCurrentTime() << " " << name << " done 2" << std::endl;
+            LOG << name << " done 2" << std::endl;
         };
 
         auto consume = [&buffer](const std::string& name) {
-            std::osyncstream { std::cout } << Utilities::getCurrentTime() << " " << name << " started" << std::endl;
+            LOG << name << " started" << std::endl;
             int v {0};
             buffer.get_wait(v);
-            std::osyncstream { std::cout } << Utilities::getCurrentTime() << " " << name << " done" << std::endl;
+            LOG << name << " done" << std::endl;
         };
 
         std::vector<std::jthread> tasks;
@@ -226,16 +227,16 @@ namespace Atomic_Wait::Ring_Buffer_Tests
         RingBufferDebug buffer;
 
         auto produce = [&](const std::string& name) {
-            std::osyncstream { std::cout } << Utilities::getCurrentTime() << " " << name << " started" << std::endl;
+            LOG << name << " started" << std::endl;
             std::this_thread::sleep_for(std::chrono::seconds(1u));
             buffer.put(1);
-            std::osyncstream { std::cout } << Utilities::getCurrentTime() << " " << name << " done " << std::endl;
+            LOG << name << " done " << std::endl;
         };
 
         auto consume = [&](const std::string& name) {
-            std::osyncstream { std::cout } << Utilities::getCurrentTime() << " " << name << " started" << std::endl;
+            LOG << name << " started" << std::endl;
             buffer.get();
-            std::osyncstream { std::cout } << Utilities::getCurrentTime() << " " << name << " done" << std::endl;
+            LOG << name << " done" << std::endl;
         };
 
         std::vector<std::jthread> tasks;
@@ -255,18 +256,18 @@ namespace Atomic_Wait::Ring_Buffer_Tests
 
         auto produce = [&](const std::string& name)
         {
-            std::osyncstream { std::cout } << Utilities::getCurrentTime() << " " << name << " started" << std::endl;
+            LOG << name << " started" << std::endl;
             std::this_thread::sleep_for(std::chrono::seconds(1u));
             idxWrite.fetch_sub(initialValue + 1);
             idxWrite.notify_one();
-            std::osyncstream { std::cout } << Utilities::getCurrentTime() << " " << name << " done " << std::endl;
+            LOG << name << " done " << std::endl;
         };
 
         auto consume = [&](const std::string& name)
         {
-            std::osyncstream { std::cout } << Utilities::getCurrentTime() << " " << name << " started" << std::endl;
+            LOG << name << " started" << std::endl;
             idxWrite.wait(initialValue);
-            std::osyncstream { std::cout } << Utilities::getCurrentTime() << " " << name << " done" << std::endl;
+            LOG << name << " done" << std::endl;
         };
 
         std::vector<std::jthread> tasks;

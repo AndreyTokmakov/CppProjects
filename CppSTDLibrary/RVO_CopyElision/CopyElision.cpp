@@ -253,7 +253,8 @@ namespace CopyElision::CustomTests {
 
 	
 	
-	StringObject create3() {
+	StringObject create3()
+	{
 		/*static constexpr std::array< StringObject, 3> data {
 			StringObject("One"),
 			StringObject("Two"),
@@ -261,6 +262,8 @@ namespace CopyElision::CustomTests {
 		};*/	
 
 		using namespace std::literals::string_view_literals;
+
+		[[maybe_unused]]
 		static constexpr std::array< std::string_view, 3> data{
 			"One"sv,
 			"Two"sv,

@@ -18,6 +18,9 @@
 #include <iomanip>
 #include <ctime>
 
+#include "PerfUtilities.hpp"
+
+
 namespace DateAndTime
 {
     void Asctime()
@@ -235,7 +238,7 @@ namespace DateAndTime::FunctionPerformance
         constexpr int32_t iterCount {100'000'000};
 
         {
-            Helpers::ScopedTimer timer{"system_clock::now()"};
+            const PerfUtilities::ScopedTimer timer{"system_clock::now()"};
             for (int i = 0; i < iterCount; ++i)
             {
                 std::chrono::system_clock::time_point today = std::chrono::system_clock::now();
@@ -244,7 +247,7 @@ namespace DateAndTime::FunctionPerformance
         }
 
         {
-            Helpers::ScopedTimer timer{"high_resolution_clock::now()"};
+            const PerfUtilities::ScopedTimer timer{"high_resolution_clock::now()"};
             for (int i = 0; i < iterCount; ++i)
             {
                 auto start = std::chrono::high_resolution_clock::now();
@@ -252,7 +255,7 @@ namespace DateAndTime::FunctionPerformance
         }
 
         {
-            Helpers::ScopedTimer timer{"clock_gettime()"};
+            const PerfUtilities::ScopedTimer timer{"clock_gettime()"};
             timespec time{};
             for (int i = 0; i < iterCount; ++i)
             {
@@ -261,7 +264,7 @@ namespace DateAndTime::FunctionPerformance
         }
 
         {
-            Helpers::ScopedTimer timer{"std::time(1)"};
+            const PerfUtilities::ScopedTimer timer{"std::time(1)"};
             for (int i = 0; i < iterCount; ++i)
             {
                 std::time_t t = std::time(nullptr);
@@ -270,7 +273,7 @@ namespace DateAndTime::FunctionPerformance
         }
 
         {
-            Helpers::ScopedTimer timer{"std::time(2)"};
+            const PerfUtilities::ScopedTimer timer{"std::time(2)"};
             time_t rawTime;
             for (int i = 0; i < iterCount; ++i)
             {
@@ -279,7 +282,7 @@ namespace DateAndTime::FunctionPerformance
         }
 
         {
-            Helpers::ScopedTimer timer{"std::time(3)"};
+            const PerfUtilities::ScopedTimer timer{"std::time(3)"};
             time_t rawTime;
             for (int i = 0; i < iterCount; ++i)
             {
@@ -288,7 +291,7 @@ namespace DateAndTime::FunctionPerformance
         }
 
         {
-            Helpers::ScopedTimer timer{"std::timespec_get"};
+            const PerfUtilities::ScopedTimer timer{"std::timespec_get"};
             std::timespec ts {};
             for (int i = 0; i < iterCount; ++i)
             {

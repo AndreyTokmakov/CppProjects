@@ -18,11 +18,16 @@
 #include <vector>
 #include <cassert>
 #include <iomanip>
+#include <iostream>
 #include <syncstream>
 #include <format>
 
 #include "ConditionVariable.h"
-#include "../Utilities/Utilities.h"
+
+#include "DateTimeUtilities.hpp"
+
+#define LOG  std::osyncstream { std::cout } << DateTimeUtilities::getCurrentTime() << " "
+
 
 using namespace std::chrono_literals;
 
@@ -170,12 +175,12 @@ namespace ConditionVariable::Classic_Test {
         std::mutex mtx;
 
         std::future<void> producer = std::async(std::launch::async, [&]()-> void {
-            THREAD_INFO << "Producer: started." << std::endl;
+            LOG << "Producer: started." << std::endl;
             for (int i = 0; i < 10; i++) {
                 {
                     std::unique_lock<std::mutex> lock(mtx);
                     data.push_back(i);
-                    THREAD_INFO << "Producer: data size = " << data.size() << std::endl;
+                    LOG << "Producer: data size = " << data.size() << std::endl;
                 }
                 trigger.notify_one();
                 std::this_thread::sleep_for(std::chrono::seconds(1));
@@ -183,13 +188,13 @@ namespace ConditionVariable::Classic_Test {
         });
 
         std::future<void> consumer = std::async(std::launch::async, [&]()-> void {
-            THREAD_INFO << "Consumer: started" << std::endl;
+            LOG << "Consumer: started" << std::endl;
             std::unique_lock<std::mutex> lock(mtx);
             trigger.wait(lock, [&] {
-                THREAD_INFO << "Consumer: Check condition " << std::endl;
+                LOG << "Consumer: Check condition " << std::endl;
                 return data.size() > 3;
             });
-            THREAD_INFO << "Consumer: done" << std::endl;
+            LOG << "Consumer: done" << std::endl;
         });
 
         producer.wait();
@@ -206,7 +211,7 @@ namespace ConditionVariable::Classic_Test {
             for (int i = 0; i < 50; ++i) {
                 std::this_thread::sleep_for(std::chrono::milliseconds(100));
                 std::unique_lock<std::mutex> lock(mtx);
-                THREAD_INFO << "Producer: producing " << i << std::endl;
+                LOG << "Producer: producing " << i << std::endl;
                 queue.push(i);
                 notified = true;
                 trigger.notify_one();
@@ -222,7 +227,7 @@ namespace ConditionVariable::Classic_Test {
                     trigger.wait(lock);
                 }
                 while (!queue.empty()) {
-                    THREAD_INFO << "Consumer: consuming " << queue.front() << std::endl;
+                    LOG << "Consumer: consuming " << queue.front() << std::endl;
                     queue.pop();
                 }
                 notified = false;
@@ -275,38 +280,38 @@ namespace ConditionVariable::SimpleTest {
         std::mutex mtx;
         std::condition_variable trigger;
 
-        THREAD_INFO << "Started..." << std::endl;
+        LOG << "Started..." << std::endl;
 
         const unsigned int timeout = 7;
         std::future<void> producer = std::async(std::launch::async, [&trigger](unsigned int timeout)-> void {
-            THREAD_INFO << "Sleeping for " << timeout << " seconds..." << std::endl;
+            LOG << "Sleeping for " << timeout << " seconds..." << std::endl;
             std::this_thread::sleep_for(std::chrono::seconds(timeout));
-            THREAD_INFO << "Done. Notify condition variable." << std::endl;
+            LOG << "Done. Notify condition variable." << std::endl;
             trigger.notify_one();
         }, timeout);
 
         std::unique_lock<std::mutex> lock(mtx);
 
         std::this_thread::sleep_for(std::chrono::milliseconds(100));
-        THREAD_INFO << "Waiting for trigger..." << std::endl;
+        LOG << "Waiting for trigger..." << std::endl;
         trigger.wait(lock);
 
         std::this_thread::sleep_for(std::chrono::milliseconds(100));
-        THREAD_INFO << "Done" << std::endl;
+        LOG << "Done" << std::endl;
     }
 
     void WaitFor() {
         std::mutex mtx;
         std::condition_variable trigger;
 
-        THREAD_INFO << "Started..." << std::endl;
+        LOG << "Started..." << std::endl;
 
         const unsigned int timeout = 7;
         std::future<void> future = std::async(std::launch::async, [&trigger](unsigned int timeout)-> void {
-            THREAD_INFO << "Sleeping for " << timeout << " seconds..." << std::endl;
+            LOG << "Sleeping for " << timeout << " seconds..." << std::endl;
             std::this_thread::sleep_for(std::chrono::seconds(timeout));
             std::cout << std::endl;
-            THREAD_INFO << "Done. Notify condition variable." << std::endl;
+            LOG << "Done. Notify condition variable." << std::endl;
             trigger.notify_one();
         }, timeout);
 
@@ -319,7 +324,7 @@ namespace ConditionVariable::SimpleTest {
         }
 
         std::this_thread::sleep_for(std::chrono::milliseconds(100));
-        THREAD_INFO << "Done" << std::endl;
+        LOG << "Done" << std::endl;
     }
 
     void WaitFor_1() {
@@ -327,26 +332,26 @@ namespace ConditionVariable::SimpleTest {
         std::condition_variable trigger;
         int i = 0;
 
-        THREAD_INFO << "Started..." << std::endl;
+        LOG << "Started..." << std::endl;
 
         auto consumer = [&](int idx) {
             std::unique_lock<std::mutex> lock(mtx);
             if (trigger.wait_for(lock, idx * 1000ms, [&] {return i == 1; }))
-                THREAD_INFO << "Thread " << idx << " finished waiting. i == " << i << std::endl;
+                LOG << "Thread " << idx << " finished waiting. i == " << i << std::endl;
             else
-                THREAD_INFO << "Thread " << idx << " timed out. i == " << i << std::endl;
+                LOG << "Thread " << idx << " timed out. i == " << i << std::endl;
         };
 
         auto producer = [&]() {
             std::this_thread::sleep_for(1200ms);
-            THREAD_INFO << "Producer: Notifying..." << std::endl;
+            LOG << "Producer: Notifying..." << std::endl;
             trigger.notify_all();
             std::this_thread::sleep_for(1000ms);
             {
                 std::lock_guard<std::mutex> lock(mtx);
                 i = 1;
             }
-            THREAD_INFO << "Producer: Notifying..." << std::endl;
+            LOG << "Producer: Notifying..." << std::endl;
             trigger.notify_all();
         };
 
@@ -358,7 +363,7 @@ namespace ConditionVariable::SimpleTest {
 
 
         std::this_thread::sleep_for(std::chrono::milliseconds(100));
-        THREAD_INFO << "Done" << std::endl;
+        LOG << "Done" << std::endl;
     }
 
     void WaitFor_FullfilledConditionAtStart() {
@@ -366,14 +371,14 @@ namespace ConditionVariable::SimpleTest {
         std::condition_variable trigger;
         bool state {false};
 
-        THREAD_INFO << "Started..." << std::endl;
+        LOG << "Started..." << std::endl;
 
         auto consumer = [&]() {
             std::unique_lock<std::mutex> lock(mtx);
             if (trigger.wait_for(lock, std::chrono::seconds(3), [&] {return state; }))
-                THREAD_INFO << "Consumer thread " << std::this_thread::get_id() << " finished waiting"<< std::endl;
+                LOG << "Consumer thread " << std::this_thread::get_id() << " finished waiting"<< std::endl;
             else
-                THREAD_INFO << "Consumer thread " << std::this_thread::get_id() << " timed out" << std::endl;
+                LOG << "Consumer thread " << std::this_thread::get_id() << " timed out" << std::endl;
         };
 
         auto producer = [&]() {
@@ -383,7 +388,7 @@ namespace ConditionVariable::SimpleTest {
                 // state = true;
                 // We will have TIMEOUT for CONDTION_WARIABLE if we'll not set state == TRUE
             }
-            THREAD_INFO << "Producer: Notifying..." << std::endl;
+            LOG << "Producer: Notifying..." << std::endl;
             trigger.notify_all();
         };
 
@@ -392,7 +397,7 @@ namespace ConditionVariable::SimpleTest {
         t2.join();
 
         std::this_thread::sleep_for(std::chrono::milliseconds(100));
-        THREAD_INFO << "Done" << std::endl;
+        LOG << "Done" << std::endl;
     }
 
     void WaitFor_DiffThreads() {
@@ -401,23 +406,23 @@ namespace ConditionVariable::SimpleTest {
 
         const unsigned int timeout = 7;
         std::future<void> producer = std::async(std::launch::async, [&trigger](unsigned int timeout)-> void {
-            THREAD_INFO << "Producer: Started. timeout =  " << timeout << std::endl;
+            LOG << "Producer: Started. timeout =  " << timeout << std::endl;
             std::this_thread::sleep_for(std::chrono::seconds(timeout));
             std::cout << std::endl;
-            THREAD_INFO << "Producer: Done. Notify condition variable." << std::endl;
+            LOG << "Producer: Done. Notify condition variable." << std::endl;
             trigger.notify_one();
         }, timeout);
 
         std::this_thread::sleep_for(std::chrono::milliseconds(100));
 
         std::future<void> consumer = std::async(std::launch::async, [&trigger, &mtx]()-> void {
-            THREAD_INFO << "Consumer: Started. " << std::endl;
+            LOG << "Consumer: Started. " << std::endl;
             std::unique_lock<std::mutex> lock(mtx);
             while (trigger.wait_for(lock, std::chrono::milliseconds(100)) == std::cv_status::timeout) {
                 std::cout << '.';
             }
             std::this_thread::sleep_for(std::chrono::milliseconds(100));
-            THREAD_INFO << "Consumer: Done" << std::endl;
+            LOG << "Consumer: Done" << std::endl;
         });
     }
 
@@ -427,23 +432,23 @@ namespace ConditionVariable::SimpleTest {
 
         const unsigned int timeout = 16;
         std::future<void> producer = std::async(std::launch::async, [&trigger](unsigned int timeout)-> void {
-            THREAD_INFO << "Producer: Started. timeout =  " << timeout << std::endl;
+            LOG << "Producer: Started. timeout =  " << timeout << std::endl;
             std::this_thread::sleep_for(std::chrono::seconds(timeout));
             std::cout << std::endl;
-            THREAD_INFO << "Producer: Done. Notify condition variable." << std::endl;
+            LOG << "Producer: Done. Notify condition variable." << std::endl;
             trigger.notify_one();
         }, timeout);
 
         std::this_thread::sleep_for(std::chrono::milliseconds(100));
 
         std::future<void> consumer = std::async(std::launch::async, [&trigger, &mtx](int timeout)-> void {
-            THREAD_INFO << "Consumer: Started. " << std::endl;
+            LOG << "Consumer: Started. " << std::endl;
             std::unique_lock<std::mutex> lock(mtx);
             while (trigger.wait_for(lock, std::chrono::seconds(timeout)) == std::cv_status::timeout) {
-                THREAD_INFO << "Consumer: Timeout " << std::endl;
+                LOG << "Consumer: Timeout " << std::endl;
             }
             std::this_thread::sleep_for(std::chrono::milliseconds(100));
-            THREAD_INFO << "Consumer: Done" << std::endl;
+            LOG << "Consumer: Done" << std::endl;
         }, 5);
     }
 
@@ -456,10 +461,10 @@ namespace ConditionVariable::SimpleTest {
 
         auto consumer_func = [&](int timeout) {
             while (true) {
-                THREAD_INFO << "Consumer: Entered..." << std::endl;
+                LOG << "Consumer: Entered..." << std::endl;
                 std::unique_lock<std::mutex> lock(mtx);
                 while (trigger.wait_for(lock, std::chrono::seconds(timeout)) == std::cv_status::timeout) {
-                    THREAD_INFO << "Consumer: Timeout " << std::endl;
+                    LOG << "Consumer: Timeout " << std::endl;
                 }
                 std::cout << "Consumer: Do some work..." << std::endl;
                 std::this_thread::sleep_for(std::chrono::seconds(3));
@@ -469,12 +474,12 @@ namespace ConditionVariable::SimpleTest {
 
         auto producer_func = [&](int timeout) {
             while (true) {
-                THREAD_INFO << "Producer: Entered..." << std::endl;
+                LOG << "Producer: Entered..." << std::endl;
                 std::this_thread::sleep_for(std::chrono::seconds(timeout));
-                THREAD_INFO << "Producer: Send message." << std::endl;
+                LOG << "Producer: Send message." << std::endl;
                 std::unique_lock<std::mutex> lock(mtx);
                 std::cout << std::endl;
-                THREAD_INFO << "Producer: Done. Notify condition variable." << std::endl;
+                LOG << "Producer: Done. Notify condition variable." << std::endl;
                 trigger.notify_one();
             }
         };
@@ -493,14 +498,14 @@ namespace ConditionVariable::SimpleTest {
         std::condition_variable trigger;
         std::atomic<int> index = ATOMIC_VAR_INIT(0);
 
-        THREAD_INFO << "Started..." << std::endl;
+        LOG << "Started..." << std::endl;
 
         const unsigned int timeout = 7;
         std::future<void> future = std::async(std::launch::async, [&trigger, &index](unsigned int timeout)-> void {
-            THREAD_INFO << "Sleeping for " << timeout << " seconds..." << std::endl;
+            LOG << "Sleeping for " << timeout << " seconds..." << std::endl;
             std::this_thread::sleep_for(std::chrono::seconds(timeout));
             std::cout << std::endl;
-            THREAD_INFO << "Done. Notify condition variable." << std::endl;
+            LOG << "Done. Notify condition variable." << std::endl;
             index = 1;
             trigger.notify_one();
         }, timeout);
@@ -510,18 +515,18 @@ namespace ConditionVariable::SimpleTest {
         auto now = std::chrono::system_clock::now();
 
         unsigned short wait_timeout = 8;
-        THREAD_INFO << "Waiting for " << wait_timeout << " seconds." << std::endl;
+        LOG << "Waiting for " << wait_timeout << " seconds." << std::endl;
         if (trigger.wait_until(lock, now + std::chrono::milliseconds(wait_timeout * 1000), [&]() {return index == 1; })) {
-            THREAD_INFO << "Finished waiting. i == " << index << std::endl;
+            LOG << "Finished waiting. i == " << index << std::endl;
             return;
         }
         else {
-            THREAD_INFO << "Timed out. i == " << index << std::endl;
+            LOG << "Timed out. i == " << index << std::endl;
             return;
         }
 
         std::this_thread::sleep_for(std::chrono::milliseconds(100));
-        THREAD_INFO << "Done" << std::endl;
+        LOG << "Done" << std::endl;
     }
 
     void WaitUntil_Timeout() {
@@ -529,14 +534,14 @@ namespace ConditionVariable::SimpleTest {
         std::condition_variable trigger;
         std::atomic<int> index = ATOMIC_VAR_INIT(0);
 
-        THREAD_INFO << "Started..." << std::endl;
+        LOG << "Started..." << std::endl;
 
         const unsigned int timeout = 7;
         std::future<void> future = std::async(std::launch::async, [&trigger, &index](unsigned int timeout)-> void {
-            THREAD_INFO << "Sleeping for " << timeout << " seconds..." << std::endl;
+            LOG << "Sleeping for " << timeout << " seconds..." << std::endl;
             std::this_thread::sleep_for(std::chrono::seconds(timeout));
             std::cout << std::endl;
-            THREAD_INFO << "Done. Notify condition variable." << std::endl;
+            LOG << "Done. Notify condition variable." << std::endl;
             index = 1;
             trigger.notify_one();
         }, timeout);
@@ -546,17 +551,17 @@ namespace ConditionVariable::SimpleTest {
         auto now = std::chrono::system_clock::now();
 
         unsigned short wait_timeout = 5;
-        THREAD_INFO << "Waiting for " << wait_timeout << " seconds." << std::endl;
+        LOG << "Waiting for " << wait_timeout << " seconds." << std::endl;
         if (trigger.wait_until(lock, now + std::chrono::milliseconds(wait_timeout * 1000), [&]() {return index == 1; })) {
-            THREAD_INFO << "Finished waiting. i == " << index << std::endl;
+            LOG << "Finished waiting. i == " << index << std::endl;
             return;
         } else {
-            THREAD_INFO << "Timed out. i == " << index << std::endl;
+            LOG << "Timed out. i == " << index << std::endl;
             return;
         }
 
         std::this_thread::sleep_for(std::chrono::milliseconds(100));
-        THREAD_INFO << "Done" << std::endl;
+        LOG << "Done" << std::endl;
     }
 
     void WaitUntil_OK_PredicateFalse() {
@@ -566,10 +571,10 @@ namespace ConditionVariable::SimpleTest {
 
 
         std::future<void> producer = std::async(std::launch::async, [&trigger](unsigned int timeout)-> void {
-            THREAD_INFO << "Producer: Sleeping for " << timeout << " seconds..." << std::endl;
+            LOG << "Producer: Sleeping for " << timeout << " seconds..." << std::endl;
             std::this_thread::sleep_for(std::chrono::seconds(timeout));
             std::cout << std::endl;
-            THREAD_INFO << "Producer: Notify ... [Index = 0 !!!!!]" << std::endl;
+            LOG << "Producer: Notify ... [Index = 0 !!!!!]" << std::endl;
             // index = 1;
             trigger.notify_one();
         }, 3 /* Timeout = 3 sec*/);
@@ -577,16 +582,16 @@ namespace ConditionVariable::SimpleTest {
         std::this_thread::sleep_for(std::chrono::milliseconds(100));
 
         std::future<void> consumer = std::async(std::launch::async, [&](unsigned int timeout)-> void {
-            THREAD_INFO << "Consumer: Waiting for " << timeout << " seconds." << std::endl;
+            LOG << "Consumer: Waiting for " << timeout << " seconds." << std::endl;
 
             std::unique_lock<std::mutex> lock(mtx);
             while (true) {
                 auto now = std::chrono::system_clock::now();
                 if (trigger.wait_until(lock, now + std::chrono::milliseconds(timeout * 1000), [&]() {return index == 1; })) {
-                    THREAD_INFO << "Consumer:Finished waiting. i == " << index << std::endl;
+                    LOG << "Consumer:Finished waiting. i == " << index << std::endl;
                     return;
                 } else {
-                    THREAD_INFO << "Consumer: Timed out. i == " << index << std::endl;
+                    LOG << "Consumer: Timed out. i == " << index << std::endl;
                 }
             }
         }, 1 /* Timeout = 3 sec*/);
@@ -604,7 +609,7 @@ namespace ConditionVariable::NotifyAtExit {
         std::string result;
 
         auto func = [&](unsigned int timeout) {
-            THREAD_INFO << "Starting thread." << std::endl;
+            LOG << "Starting thread." << std::endl;
             thread_local std::string thread_local_data = "42";
 
             std::unique_lock<std::mutex> lk(m);
@@ -615,7 +620,7 @@ namespace ConditionVariable::NotifyAtExit {
             result = thread_local_data;
             ready = true;
 
-            THREAD_INFO << "Thread done" << std::endl;
+            LOG << "Thread done" << std::endl;
             std::notify_all_at_thread_exit(cv, std::move(lk));
         };
 
@@ -624,7 +629,7 @@ namespace ConditionVariable::NotifyAtExit {
         task.detach();
 
         std::this_thread::sleep_for(std::chrono::milliseconds(10));
-        THREAD_INFO << "Waiting for thread to exit...." << std::endl;
+        LOG << "Waiting for thread to exit...." << std::endl;
 
         // wait for the detached thread
         std::unique_lock<std::mutex> lk(m);
@@ -632,7 +637,7 @@ namespace ConditionVariable::NotifyAtExit {
             return ready;
         });
 
-        THREAD_INFO << "Main done" << std::endl;
+        LOG << "Main done" << std::endl;
         // result is ready and thread_local destructors have finished, no UB
         assert(result == "42");
     }
@@ -647,10 +652,10 @@ namespace ConditionVariable::NotifyAtExit {
             promise.set_value_at_thread_exit(9);
         }).detach();
 
-        THREAD_INFO << "Waiting for thread to exit...." << std::endl;
+        LOG << "Waiting for thread to exit...." << std::endl;
         future.wait();
 
-        THREAD_INFO << "Done!!!. Result = " << future.get() << std::endl;
+        LOG << "Done!!!. Result = " << future.get() << std::endl;
     }
 }
 
@@ -663,16 +668,16 @@ namespace ConditionVariable::VariableAny {
 
         auto waits = [&]()-> void {
             std::unique_lock<std::mutex> lk(cv_m);
-            THREAD_INFO << "Waiting... ." << std::endl;
+            LOG << "Waiting... ." << std::endl;
             cv.wait(lk, [&] { return finished; });
-            THREAD_INFO << "...finished waiting. finished!!!" << std::endl;
+            LOG << "...finished waiting. finished!!!" << std::endl;
         };
 
         auto signals = [&]()-> void {
             std::this_thread::sleep_for(std::chrono::seconds(1));
             {
                 std::lock_guard<std::mutex> lk(cv_m);
-                THREAD_INFO << "Notifying...." << std::endl;
+                LOG << "Notifying...." << std::endl;
             }
 
             cv.notify_all();
@@ -681,7 +686,7 @@ namespace ConditionVariable::VariableAny {
             {
                 std::lock_guard<std::mutex> lk(cv_m);
                 finished = true;
-                THREAD_INFO << "Notifying again...." << std::endl;
+                LOG << "Notifying again...." << std::endl;
             }
 
             cv.notify_all();
@@ -703,22 +708,22 @@ namespace ConditionVariable::VariableAny {
         std::condition_variable_any trigger;
         std::atomic<bool> ready{ false };
 
-        THREAD_INFO << "Started..." << std::endl;
+        LOG << "Started..." << std::endl;
 
         auto print_id = [&](int id)-> void {
-            THREAD_INFO << "Print thread " << id << " started." << std::endl;
+            LOG << "Print thread " << id << " started." << std::endl;
             std::lock_guard<std::mutex> lock(mtx);
             while (!ready) {
                 trigger.wait(mtx);
             }
-            THREAD_INFO << "Print thread " << id << " done." << std::endl;
+            LOG << "Print thread " << id << " done." << std::endl;
         };
 
         const auto go = [&]()-> void {
             std::lock_guard<std::mutex> lock(mtx);
             std::this_thread::sleep_for(std::chrono::seconds(5));
             ready = true;
-            THREAD_INFO << "'notify_all'." << std::endl;
+            LOG << "'notify_all'." << std::endl;
             trigger.notify_all();
         };
 
@@ -726,30 +731,30 @@ namespace ConditionVariable::VariableAny {
         for (int i = 0; i < 10; ++i)
             threads[i] = std::thread(print_id, i);
 
-        THREAD_INFO << "10 threads ready to race..." << std::endl;
+        LOG << "10 threads ready to race..." << std::endl;
         /** GO!!! **/
         go();
         for (auto& th : threads)
             th.join();
-        THREAD_INFO << "Done" << std::endl;
+        LOG << "Done" << std::endl;
     }
 
     void NotifyAll_CV_not_Any() {
         std::mutex mtx;
         std::condition_variable trigger;
-        THREAD_INFO << "Started..." << std::endl;
+        LOG << "Started..." << std::endl;
 
         auto print_id = [&](int id)-> void {
-            THREAD_INFO << "Print thread " << id << " started." << std::endl;
+            LOG << "Print thread " << id << " started." << std::endl;
             std::unique_lock<std::mutex> lock(mtx);
             trigger.wait(lock);
-            THREAD_INFO << "Print thread " << id << " done." << std::endl;
+            LOG << "Print thread " << id << " done." << std::endl;
         };
 
         const auto go = [&]()-> void {
             std::lock_guard<std::mutex> lock(mtx);
             std::this_thread::sleep_for(std::chrono::seconds(5));
-            THREAD_INFO << "'notify_all'." << std::endl;
+            LOG << "'notify_all'." << std::endl;
             trigger.notify_all();
         };
 
@@ -757,11 +762,11 @@ namespace ConditionVariable::VariableAny {
         for (int i = 0; i < 10; ++i)
             threads[i] = std::thread(print_id, i);
 
-        THREAD_INFO << "10 threads ready to race..." << std::endl;
+        LOG << "10 threads ready to race..." << std::endl;
         go();
         for (auto& th : threads)
             th.join();
-        THREAD_INFO << "Done" << std::endl;
+        LOG << "Done" << std::endl;
     }
 }
 

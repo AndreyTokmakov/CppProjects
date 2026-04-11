@@ -8,7 +8,6 @@ Description : Multithreading performance experiments
 ============================================================================**/
 
 #include "PerformanceExperiments.h"
-#include "../Utilities/Utilities.h"
 
 #include <iostream>
 #include <condition_variable>
@@ -18,6 +17,7 @@ Description : Multithreading performance experiments
 #include <syncstream>
 #include <iomanip>
 
+#include "PerfUtilities.hpp"
 #include "ConditionVariable_vs_Atomic.h"
 #include "Mutex_vs_AtomicLock.h"
 #include "SpinLock.h"
@@ -60,7 +60,7 @@ namespace PerformanceExperiments::AtomicCounter_vs_Mutex
             };
 
             {
-                Utilities::ScopedTimer timer {"Mutex"};
+                const PerfUtilities::ScopedTimer timer {"Mutex"};
                 std::vector<std::jthread> jobs;
                 for (int t = 0; t < threadsMax; ++t)
                     jobs.emplace_back(task);
@@ -76,7 +76,7 @@ namespace PerformanceExperiments::AtomicCounter_vs_Mutex
             };
 
             {
-                Utilities::ScopedTimer timer {"atomic"};
+                const PerfUtilities::ScopedTimer timer {"atomic"};
                 std::vector<std::jthread> jobs;
                 for (int t = 0; t < threadsMax; ++t)
                     jobs.emplace_back(task);
@@ -92,7 +92,7 @@ namespace PerformanceExperiments::AtomicCounter_vs_Mutex
             };
 
             {
-                Utilities::ScopedTimer timer {"atomic"};
+                const PerfUtilities::ScopedTimer timer {"atomic"};
                 std::vector<std::jthread> jobs;
                 for (int t = 0; t < threadsMax; ++t)
                     jobs.emplace_back(task);
@@ -109,7 +109,7 @@ namespace PerformanceExperiments::AtomicCounter_vs_Mutex
             };
 
             {
-                Utilities::ScopedTimer timer {"atomic"};
+                const PerfUtilities::ScopedTimer timer {"atomic"};
                 std::vector<std::jthread> jobs;
                 for (int t = 0; t < threadsMax; ++t)
                     jobs.emplace_back(task);
@@ -126,7 +126,7 @@ namespace PerformanceExperiments::AtomicCounter_vs_Mutex
             };
 
             {
-                Utilities::ScopedTimer timer {"atomic"};
+                const PerfUtilities::ScopedTimer timer {"atomic"};
                 std::vector<std::jthread> jobs;
                 for (int t = 0; t < threadsMax; ++t)
                     jobs.emplace_back(task);
@@ -146,7 +146,7 @@ namespace PerformanceExperiments::AtomicCounter_vs_Mutex
             };
 
             {
-                Utilities::ScopedTimer timer {"atomic"};
+                const PerfUtilities::ScopedTimer timer {"atomic"};
                 std::vector<std::jthread> jobs;
                 for (int t = 0; t < threadsMax; ++t)
                     jobs.emplace_back(task);
@@ -173,13 +173,13 @@ namespace PerformanceExperiments::Atomic_vs_Volatile
         constexpr size_t iterCount { 100'000'000 };
 
         {
-            Utilities::ScopedTimer timer {"atomicCounter"};
+            const PerfUtilities::ScopedTimer timer {"atomicCounter"};
             for (size_t t = 0; t < iterCount; ++t)
                 atomicCounter.fetch_add(1, std::memory_order::relaxed);
         }
 
         {
-            Utilities::ScopedTimer timer {"volatileCounter"};
+            const PerfUtilities::ScopedTimer timer {"volatileCounter"};
             for (size_t t = 0; t < iterCount; ++t)
                 volatileCounter += 1;
         }
@@ -204,7 +204,7 @@ namespace PerformanceExperiments::Atomic_vs_Volatile
                 }
             };
 
-            Utilities::ScopedTimer timer {"atomicCounter"};
+            const PerfUtilities::ScopedTimer timer {"atomicCounter"};
             std::vector<std::jthread> jobs;
             for (int32_t t = 0; t < threadsMax / 2; ++t) {
                 jobs.emplace_back(writer);
@@ -226,7 +226,7 @@ namespace PerformanceExperiments::Atomic_vs_Volatile
                 }
             };
 
-            Utilities::ScopedTimer timer {"volatileCounter"};
+            const PerfUtilities::ScopedTimer timer {"volatileCounter"};
             std::vector<std::jthread> jobs;
             for (uint32_t t = 0; t < threadsMax / 2; ++t) {
                 jobs.emplace_back(writer);

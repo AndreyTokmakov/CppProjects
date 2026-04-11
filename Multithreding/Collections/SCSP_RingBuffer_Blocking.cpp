@@ -7,14 +7,18 @@ Copyright   : Your copyright notice
 Description : SCSP_RingBuffer_Blocking.cpp
 ============================================================================**/
 
-#include "Collections.h"
-#include "../Utilities/Utilities.h"
-
 #include <iostream>
 #include <vector>
 #include <atomic>
 #include <thread>
 #include <syncstream>
+
+#include "Collections.h"
+#include "PerfUtilities.hpp"
+#include "DateTimeUtilities.hpp"
+
+#define LOG  std::osyncstream { std::cout } << DateTimeUtilities::getCurrentTime() << " "
+
 
 namespace Collections::SCSP_RingBuffer_Blocking
 {
@@ -134,7 +138,7 @@ namespace Collections::SCSP_RingBuffer_Blocking::Tests
 
 
         constexpr int events { 10'000'000 };
-        Utilities::ScopedTimer timer { "Test" };
+        const PerfUtilities::ScopedTimer timer { "Test" };
 
         std::vector<std::jthread> tasks;
         tasks.emplace_back(consume, events);
@@ -165,7 +169,7 @@ namespace Collections::SCSP_RingBuffer_Blocking::Tests
 
 
         constexpr int events { 10'000'000 };
-        Utilities::ScopedTimer timer { "Test" };
+        const PerfUtilities::ScopedTimer timer { "Test" };
 
         std::vector<std::jthread> tasks;
         tasks.emplace_back(consume, events);

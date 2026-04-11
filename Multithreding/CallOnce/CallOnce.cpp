@@ -8,14 +8,17 @@
 //============================================================================
 
 #include <iostream>
+#include <syncstream>
 #include <future>
 #include <thread>
 #include <mutex>
 #include <atomic>
 #include <vector>
 
-#include "../Utilities/Utilities.h"
 #include "CallOnce.h"
+#include "DateTimeUtilities.hpp"
+
+#define LOG  std::osyncstream { std::cout } << DateTimeUtilities::getCurrentTime() << " "
 
 namespace CallOnce::SimpleTests {
 
@@ -25,15 +28,15 @@ namespace CallOnce::SimpleTests {
 
         auto initialize = []() {
             std::this_thread::sleep_for(std::chrono::seconds(2u));
-            THREAD_INFO << "Initt OK!" << std::endl;
+            LOG << "Initt OK!" << std::endl;
         };
 
         std::vector<std::thread> jobs;
         for (int i = 0; i++ < 5;)
             jobs.emplace_back([&instance_flag, &initialize]() { {
-                THREAD_INFO << "Started" << std::endl;
+                LOG << "Started" << std::endl;
                 std::call_once(instance_flag, initialize);
-                THREAD_INFO << "Done" << std::endl;
+                LOG << "Done" << std::endl;
             }});
         for (auto& T : jobs)
             T.join();
@@ -42,7 +45,7 @@ namespace CallOnce::SimpleTests {
     class Handler {
     public:
         Handler() {
-            THREAD_INFO << " Handler:Handler(). Should call only ONCE" << std::endl;
+            LOG << " Handler:Handler(). Should call only ONCE" << std::endl;
         }
     };
 
@@ -54,9 +57,9 @@ namespace CallOnce::SimpleTests {
     }
 
     void thread_func() {
-        THREAD_INFO << "Started" << std::endl;
+        LOG << "Started" << std::endl;
         std::call_once(instance_flag, create_handler);
-        THREAD_INFO << "Done" << std::endl;
+        LOG << "Done" << std::endl;
     }
 
     void Test() {
@@ -69,7 +72,7 @@ namespace CallOnce::SimpleTests {
 
     void Test2()
     {
-        THREAD_INFO << " started" << std::endl;
+        LOG << " started" << std::endl;
         std::shared_ptr<Handler> instance;
         std::once_flag instance_flag;
 
@@ -77,7 +80,7 @@ namespace CallOnce::SimpleTests {
             instance.reset(new Handler());
         };
         auto worker = [&instance_flag, &create_handler]()-> void {
-            THREAD_INFO << " started" << std::endl;
+            LOG << " started" << std::endl;
             std::call_once(instance_flag, create_handler);
         };
 
@@ -92,11 +95,11 @@ namespace CallOnce::SimpleTests {
         std::once_flag flag_once;
 
         const auto simple_do_once = [&flag_once]()->void {
-            THREAD_INFO << "Thread started" << std::endl;
+            LOG << "Thread started" << std::endl;
             std::call_once(flag_once, []() {
-                THREAD_INFO << " Simple example: called once" << std::endl;
+                LOG << " Simple example: called once" << std::endl;
             });
-            THREAD_INFO << "Thread done" << std::endl;
+            LOG << "Thread done" << std::endl;
         };
 
         std::vector<std::thread> jobs;
@@ -110,19 +113,19 @@ namespace CallOnce::SimpleTests {
         std::once_flag flag_once;
 
         auto initialyze = []() {
-            THREAD_INFO << "***** Some uniqe initialization function!! ********" << std::endl;
+            LOG << "***** Some uniqe initialization function!! ********" << std::endl;
         };
 
         const auto handler1 = [&]()->void {
-            THREAD_INFO << "Thread1 started" << std::endl;
+            LOG << "Thread1 started" << std::endl;
             std::call_once(flag_once, initialyze);
-            THREAD_INFO << "Thread1 done" << std::endl;
+            LOG << "Thread1 done" << std::endl;
         };
 
         const auto handler2 = [&]()->void {
-            THREAD_INFO << "Thread2 started" << std::endl;
+            LOG << "Thread2 started" << std::endl;
             std::call_once(flag_once, initialyze);
-            THREAD_INFO << "Thread2 done" << std::endl;
+            LOG << "Thread2 done" << std::endl;
         };
 
         std::vector<std::future<void>> jobs;
@@ -148,10 +151,10 @@ namespace CallOnce::TestWithException {
 
         const auto may_throw_function = [](bool do_throw)->void {
             if (do_throw) {
-                THREAD_INFO << "throw: call_once will retry" << std::endl; // this may appear more than once
+                LOG << "throw: call_once will retry" << std::endl; // this may appear more than once
                 throw std::exception();
             }
-            THREAD_INFO << "Didn't throw, call_once will not attempt again" << std::endl;// guaranteed once
+            LOG << "Didn't throw, call_once will not attempt again" << std::endl;// guaranteed once
         };
 
         const auto do_once = [&may_throw_function, &flag_once](bool do_throw)->void {
@@ -188,7 +191,7 @@ namespace CallOnce::SingletonTests_NoSync {
 
     public:
         static SingletonTest* getInstance() {
-            //THREAD_INFO << " SingletonTest::getInstance()" << std::endl;
+            //LOG << " SingletonTest::getInstance()" << std::endl;
             if (false == SingletonTest::is_constructed) {
                 if (nullptr == SingletonTest::instance) {
                     Initialyze();
@@ -199,7 +202,7 @@ namespace CallOnce::SingletonTests_NoSync {
 
     protected:
         SingletonTest() {
-            THREAD_INFO << " ********** SingletonTest::SingletonTest() **********" << std::endl;
+            LOG << " ********** SingletonTest::SingletonTest() **********" << std::endl;
         }
     };
 
@@ -210,10 +213,10 @@ namespace CallOnce::SingletonTests_NoSync {
 
 
     void Test() {
-        THREAD_INFO << " > From the main thread." << std::endl;
+        LOG << " > From the main thread." << std::endl;
 
         const auto task = []()-> void {
-            THREAD_INFO << " Task stated" << std::endl;
+            LOG << " Task stated" << std::endl;
 
             [[maybe_unused]]
             SingletonTest* T = SingletonTest::getInstance();
@@ -241,14 +244,14 @@ namespace CallOnce::SingletonTests_Mutex {
 
     private:
         static void Initialyze() {
-            // THREAD_INFO << " ******** Initialyze ************" << std::endl;
+            // LOG << " ******** Initialyze ************" << std::endl;
             SingletonTest::instance = new SingletonTest();
             SingletonTest::is_constructed = true;
         }
 
     public:
         static SingletonTest* getInstance() {
-            // THREAD_INFO << " SingletonTest::getInstance()" << std::endl;
+            // LOG << " SingletonTest::getInstance()" << std::endl;
             if (false == SingletonTest::is_constructed) {
                 std::lock_guard<std::mutex> lock(mtx);
                 if (nullptr == SingletonTest::instance) {
@@ -260,7 +263,7 @@ namespace CallOnce::SingletonTests_Mutex {
 
     protected:
         SingletonTest() {
-            THREAD_INFO << " ********** SingletonTest::SingletonTest() **********" << std::endl;
+            LOG << " ********** SingletonTest::SingletonTest() **********" << std::endl;
         }
     };
 
@@ -271,9 +274,9 @@ namespace CallOnce::SingletonTests_Mutex {
 
 
     void Test() {
-        THREAD_INFO << " > From the main thread." << std::endl;
+        LOG << " > From the main thread." << std::endl;
         const auto task = []()-> void {
-            THREAD_INFO << " Task stated" << std::endl;
+            LOG << " Task stated" << std::endl;
 
             [[maybe_unused]]
             SingletonTest* T = SingletonTest::getInstance();
@@ -298,14 +301,14 @@ namespace CallOnce::SingletonTests_CallOnce {
 
     private:
         static void Initialyze() {
-            // THREAD_INFO << " ******** Initialyze ************" << std::endl;
+            // LOG << " ******** Initialyze ************" << std::endl;
             SingletonTest::instance = new SingletonTest();
             SingletonTest::is_constructed = true;
         }
 
     public:
         static SingletonTest* getInstance() {
-            // THREAD_INFO << " SingletonTest::getInstance()" << std::endl;
+            // LOG << " SingletonTest::getInstance()" << std::endl;
             if (false == SingletonTest::is_constructed) {
                 if (nullptr == SingletonTest::instance) {
                     std::call_once(flag_once, SingletonTest::Initialyze);
@@ -316,7 +319,7 @@ namespace CallOnce::SingletonTests_CallOnce {
 
     protected:
         SingletonTest() {
-            THREAD_INFO << " ********** SingletonTest::SingletonTest() **********" << std::endl;
+            LOG << " ********** SingletonTest::SingletonTest() **********" << std::endl;
         }
     };
 
@@ -328,9 +331,9 @@ namespace CallOnce::SingletonTests_CallOnce {
 
 
     void Test() {
-        THREAD_INFO << " > From the main thread." << std::endl;
+        LOG << " > From the main thread." << std::endl;
         const auto task = []()-> void {
-            THREAD_INFO << " Task stated" << std::endl;
+            LOG << " Task stated" << std::endl;
 
             [[maybe_unused]]
             SingletonTest* T = SingletonTest::getInstance();
@@ -352,19 +355,19 @@ namespace CallOnce::CallClassMethod {
         std::once_flag connection_init_flag;
 
         void open_connection() {
-            THREAD_INFO << "*** [Opeping connection] ****" << std::endl;
+            LOG << "*** [Opeping connection] ****" << std::endl;
         }
 
     public:
         void send_data() {
             std::call_once(connection_init_flag, &Worker::open_connection, this);
-            THREAD_INFO << "Send data" << std::endl;
+            LOG << "Send data" << std::endl;
         }
 
         std::string receive_data()
         {
             std::call_once(connection_init_flag, &Worker::open_connection, this);
-            THREAD_INFO << "Send data" << std::endl;
+            LOG << "Send data" << std::endl;
             return "Some_data";
         }
     };
@@ -373,12 +376,12 @@ namespace CallOnce::CallClassMethod {
         Worker worker;
 
         const auto producer = [&worker]()->void {
-            THREAD_INFO << "Producer started" << std::endl;
+            LOG << "Producer started" << std::endl;
             worker.send_data();
         };
 
         const auto consumer = [&worker]()->void {
-            THREAD_INFO << "Consumer started" << std::endl;
+            LOG << "Consumer started" << std::endl;
             worker.receive_data();
         };
 
