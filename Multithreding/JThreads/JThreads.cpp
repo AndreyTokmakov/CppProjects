@@ -1,12 +1,11 @@
-//============================================================================
-// Name        : Threads.cpp
-// Created on  : 07.06.2020
-// Author      : Tokmakov Andrey
-// Version     : 1.0
-// Copyright   : Your copyright notice
-// Description : Threads src class
-//============================================================================
-
+/**============================================================================
+Name        : Threads.cpp
+Created on  : 07.06.2020
+Author      : Tokmakov Andrey
+Version     : 1.0
+Copyright   : Your copyright notice
+Description : Threads src class
+============================================================================**/
 
 #include <iostream>
 #include <condition_variable>
@@ -17,19 +16,11 @@
 #include <string>
 #include <iomanip>
 #include <chrono>
-#include <future>
-#include <exception>
-#include <semaphore>
-#include <future>         // std::async, std::future
-#include <chrono>
-#include <print>
 #include <format>
 #include <syncstream>
-
-#include "JThreads.h"
-
 #include <functional>
 
+#include "JThreads.hpp"
 #include "DateTimeUtilities.hpp"
 
 namespace
@@ -56,7 +47,7 @@ namespace
         std::stringstream ss;
         ss << std::put_time(std::localtime(&in_time_t), "%Y-%m-%d %X");
 
-        std::lock_guard<std::mutex> lock {mtxPrint};
+        const std::lock_guard<std::mutex> lock {mtxPrint};
         const auto threadID = std::this_thread::get_id();
 
         LOG  << "[" << ss.str() << "] Thread [";
@@ -69,28 +60,29 @@ namespace
     }
 }
 
-namespace JThreads
+namespace jthreads
 {
 
-    void cancelable_functions(std::stop_token stop_token, int value)
+    void cancelable_functions(const std::stop_token& stop_token, int value)
     {
         while (!stop_token.stop_requested()) {
             Debug(value++);
-            std::this_thread::sleep_for(std::chrono::seconds(1u));
+            std::this_thread::sleep_for(std::chrono::seconds(1U));
         }
     }
 
 
-    void Start_and_Stop_Thread() {
-        std::jthread thread(cancelable_functions, 0);
-        std::this_thread::sleep_for(std::chrono::seconds(3u));
+    void Start_and_Stop_Thread()
+    {
+        const std::jthread thread(cancelable_functions, 0);
+        std::this_thread::sleep_for(std::chrono::seconds(3U));
     }
 
     //--------------------------------------------------------------------------
 
     void Stop_Thread_2()
     {
-        auto func = [](std::stop_token stoken) {
+        auto func = [](const std::stop_token& stoken) {
             int counter {0};
             const auto id = std::this_thread::get_id();
 
@@ -99,7 +91,7 @@ namespace JThreads
             });
 
             while (counter < 10) {
-                std::this_thread::sleep_for(std::chrono::milliseconds(175u));
+                std::this_thread::sleep_for(std::chrono::milliseconds(175U));
                 ++counter;
             }
 
@@ -111,7 +103,7 @@ namespace JThreads
         for(auto& T: vecThreads)
             T = std::jthread(func);
 
-        std::this_thread::sleep_for(std::chrono::seconds(1u));
+        std::this_thread::sleep_for(std::chrono::seconds(1U));
 
         for(auto& T: vecThreads)
             T.request_stop();
@@ -124,7 +116,7 @@ namespace JThreads
     void Request_Stop()
     {
         // A sleepy worker thread
-        std::jthread sleepy_worker([](std::stop_token stoken) {
+        std::jthread sleepy_worker([](const std::stop_token& stoken) {
             Debug("sleepy_worker started");
             for (int i = 10; i; --i) {
                 std::this_thread::sleep_for(300ms);
@@ -136,9 +128,8 @@ namespace JThreads
             }
         });
 
-        // A waiting worker thread
-        // The condition variable will be awoken by the stop request.
-        std::jthread waiting_worker([](std::stop_token stoken) {
+        // A waiting worker thread - The condition variable will be awoken by the stop request.
+        std::jthread const waiting_worker([](std::stop_token stoken) {
             Debug("waiting_worker started");
             std::mutex mutex;
             std::unique_lock lock(mutex);
@@ -150,7 +141,7 @@ namespace JThreads
             }
         });
 
-        std::this_thread::sleep_for(std::chrono::seconds(1u));
+        std::this_thread::sleep_for(std::chrono::seconds(1U));
 
         Debug("Requesting stop of sleepy worker");
         sleepy_worker.request_stop();
@@ -163,9 +154,9 @@ namespace JThreads
     {
         bool done = false;
 
-        std::jthread job([&done] (std::stop_token token) {
+        std::jthread job([&done] (const std::stop_token& token) {
             while (!token.stop_requested()) {
-                std::this_thread::sleep_for(std::chrono::milliseconds(100u));
+                std::this_thread::sleep_for(std::chrono::milliseconds(100U));
             }
             done = true;
         });
@@ -173,13 +164,13 @@ namespace JThreads
         std::osyncstream {std::cout} << "Tread stopped: " << std::boolalpha << done << std::endl;
 
         job.request_stop();
-        std::this_thread::sleep_for(std::chrono::milliseconds(250u));
+        std::this_thread::sleep_for(std::chrono::milliseconds(250U));
 
         std::osyncstream {std::cout} << "Tread stopped: " << std::boolalpha << done << std::endl;
     }
 }
 
-namespace JThreads::Joinable
+namespace jthreads::Joinable
 {
     void Test()
     {
@@ -205,7 +196,7 @@ namespace JThreads::Joinable
     }
 }
 
-namespace JThreads::Run_JThread_as_ClassMethod
+namespace jthreads::Run_JThread_as_ClassMethod
 {
     struct Worker
     {
@@ -228,12 +219,12 @@ namespace JThreads::Run_JThread_as_ClassMethod
 
         std::jthread worker;
 
-        void handler(const std::stop_token &token)
+        static void handler(const std::stop_token &token)
         {
             LOG << "Starting thread.\n";
             while (!token.stop_requested()) {
-                std::this_thread::sleep_for(std::chrono::milliseconds(250u));
-                LOG << std::format("Wrorking. [Stop requested: {}]", token.stop_requested()) << std::endl;
+                std::this_thread::sleep_for(std::chrono::milliseconds(250U));
+                LOG << std::format("Working. [Stop requested: {}]", token.stop_requested()) << std::endl;
             }
         }
     };
@@ -252,26 +243,27 @@ namespace JThreads::Run_JThread_as_ClassMethod
     }
 
     /*
-    2026-03-03 18:17:50.040390 Starting thread.
-    2026-03-03 18:17:50.290592 Wrorking. [Stop requested: false]
-    2026-03-03 18:17:50.540722 Wrorking. [Stop requested: false]
-    2026-03-03 18:17:50.790871 Wrorking. [Stop requested: false]
-    2026-03-03 18:17:51.041038 Wrorking. [Stop requested: false]
-    2026-03-03 18:17:51.291167 Wrorking. [Stop requested: false]
-    2026-03-03 18:17:51.541303 Wrorking. [Stop requested: false]
-    2026-03-03 18:17:51.791403 Wrorking. [Stop requested: false]
-    2026-03-03 18:17:52.040420 Stopping thread.
-    2026-03-03 18:17:52.041512 Wrorking. [Stop requested: true]
-    2026-03-03 18:17:52.041576 Test completed
+    2026-04-12 07:01:06.325397 Starting thread.
+    2026-04-12 07:01:06.575613 Working. [Stop requested: false]
+    2026-04-12 07:01:06.825744 Working. [Stop requested: false]
+    2026-04-12 07:01:07.075868 Working. [Stop requested: false]
+    2026-04-12 07:01:07.325978 Working. [Stop requested: false]
+    2026-04-12 07:01:07.576118 Working. [Stop requested: false]
+    2026-04-12 07:01:07.826254 Working. [Stop requested: false]
+    2026-04-12 07:01:08.076361 Working. [Stop requested: false]
+    2026-04-12 07:01:08.325446 Stopping thread.
+    2026-04-12 07:01:08.326470 Working. [Stop requested: true]
+    2026-04-12 07:01:08.326575 Test completed
     */
 }
 
-void JThreads::TestAll()
+void jthreads::TestAll()
 {
+    stopping_threads::TestAll();
+    // stop_callbacks::TestAll();
+
     // Joinable::Test();
-
-    Run_JThread_as_ClassMethod::demo();
-
+    // Run_JThread_as_ClassMethod::demo();
     // Start_and_Stop_Thread();
     // Stop_Thread_2();
     // Request_Stop();

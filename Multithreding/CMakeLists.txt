@@ -27,7 +27,6 @@ add_executable(${PROJECT_NAME}
         Exceptions_Handling/Exceptions_Handling.cpp
         Future/Future.cpp
         Futex/Futex.cpp
-        JThreads/JThreads.cpp
         Latch/Latch.cpp
         Collections/LockFreeQueue.cpp
         Collections/Queue.cpp
@@ -48,7 +47,12 @@ add_executable(${PROJECT_NAME}
         Synchronization/Synchronization.cpp
         ThreadPools/ThreadPools.cpp
         ThreadPools/ThreadPoolsEx.cpp
+
         Threads/Threads.cpp
+        JThreads/JThreads.cpp
+        JThreads/StoppingThreads.cpp
+        JThreads/StopCallbacks.cpp
+
         ThreadPoolLimited/ThreadPoolLimited.cpp
         FalseSharing/FalseSharingExperiments.cpp
         SynchStream_Custom/SynchStream_Custom.cpp
@@ -57,7 +61,6 @@ add_executable(${PROJECT_NAME}
         SpinLock/FairSpinLock.cpp
         SpinLock/SpinLockFutex.cpp
         SpinLock/SpinLock_PerformanceTests.cpp
-        Threads/StoppingThreads.cpp
         PerformanceExperiments/Multithreading_Performance.cpp
         PerformanceExperiments/PerformanceExperiments.cpp
         PerformanceExperiments/ConditionVariable_vs_Atomic.cpp

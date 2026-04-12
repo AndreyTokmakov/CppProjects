@@ -13,7 +13,6 @@ Description : Multithreading tests main entry point
 #include "ThreadPools/ThreadPoolsEx.h"
 
 #include "Threads/Threads.h"
-#include "Threads/StoppingThreads.h"
 
 #include "ThreadPoolBlocking/ThreadPoolBlocking.h"
 #include "ThreadPoolLimited/ThreadPoolLimited.h"
@@ -34,7 +33,7 @@ Description : Multithreading tests main entry point
 #include "Synchronization/Synchronization.h"
 #include "CallOnce/CallOnce.h"
 #include "Integer/Integer.h"
-#include "JThreads/JThreads.h"
+#include "JThreads/JThreads.hpp"
 #include "AsyncLaunch/AsyncLaunch.h"
 #include "Exceptions_Handling/Exceptions_Handling.h"
 #include "ParallelExecutionAlgoritms/ParallelExecutionAlgoritms.h"
@@ -64,7 +63,7 @@ Description : Multithreading tests main entry point
 
 
 int main([[maybe_unused]] int argc,
-         [[maybe_unused]] char** argv)
+         [[maybe_unused]] const char* const * argv)
 {
     // Experiments::TestAll();
 
@@ -113,8 +112,7 @@ int main([[maybe_unused]] int argc,
     // ThreadPoolLimited::TestAll();
 
     // Threads::TEST_ALL();
-    // JThreads::TestAll();
-    // StoppingThreads::TestAll();
+    jthreads::TestAll();
 
     /** Performance **/
 
@@ -125,7 +123,7 @@ int main([[maybe_unused]] int argc,
 
     /** ThreadSafeCollections **/
 
-    ring_buffers::TestAll();
+    // ring_buffers::TestAll();
     // RingBuffer::TestAll();
 
     // Multithreading_Collections::TestAll();
