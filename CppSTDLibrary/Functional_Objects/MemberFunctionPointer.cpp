@@ -7,13 +7,13 @@ Copyright   : Your copyright notice
 Description : MemberFunctionPointer.cpp
 ============================================================================**/
 
-#include "MemberFunctionPointer.hpp"
+#include "FunctionObjects.hpp"
 
 #include <iostream>
 #include <utility>
 #include <functional>
 
-namespace MemberFunctionPointer
+namespace FunctionObjects::MemberFunctionPointer
 {
     struct Base
     {
@@ -65,8 +65,7 @@ namespace MemberFunctionPointer
     };
 }
 
-
-namespace MemberFunctionPointer
+namespace FunctionObjects::MemberFunctionPointer
 {
 
     void CallMethod_ByPointer()
@@ -118,8 +117,7 @@ namespace MemberFunctionPointer
     }
 };
 
-
-namespace MemberFunctionPointer::FunctionPointers
+namespace FunctionObjects::MemberFunctionPointer::FunctionPointers
 {
     struct S
     {
@@ -157,8 +155,7 @@ namespace MemberFunctionPointer::FunctionPointers
     }
 }
 
-
-namespace MemberFunctionPointer::MemFuncTemplate
+namespace FunctionObjects::MemberFunctionPointer::MemFuncTemplate
 {
     template<typename ObjectType,
              typename ReturnType,
@@ -196,7 +193,7 @@ namespace MemberFunctionPointer::MemFuncTemplate
     }
 }
 
-void MemberFunctionPointer::TestAll()
+void FunctionObjects::MemberFunctionPointer::TestAll()
 {
     // MemberFunctionPointer::CallMethod_ByPointer();
     // MemberFunctionPointer::CallMethod_BIND();

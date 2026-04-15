@@ -7,7 +7,7 @@ Copyright   : Your copyright notice
 Description : CallbackTests.cpp
 ============================================================================**/
 
-#include "CallbackTests.hpp"
+#include "FunctionObjects.hpp"
 
 #include <iostream>
 #include <string_view>
@@ -15,7 +15,7 @@ Description : CallbackTests.cpp
 #include <numeric>
 #include <utility>
 
-namespace CallbackTests
+namespace FunctionObjects::CallbackTests
 {
     struct Consumer
     {
@@ -79,8 +79,7 @@ namespace CallbackTests
     }
 }
 
-
-namespace CallbackTestsRef
+namespace FunctionObjects::CallbackTestsRef
 {
     struct Consumer
     {
@@ -116,7 +115,7 @@ namespace CallbackTestsRef
     }
 }
 
-namespace CallbackTests::PassClassMethodAsCallback
+namespace FunctionObjects::CallbackTests::PassClassMethodAsCallback
 {
 
     bool isEvenGlobal(const int x) {
@@ -167,8 +166,7 @@ namespace CallbackTests::PassClassMethodAsCallback
     }
 }
 
-
-void CallbackTests::TestAll()
+void FunctionObjects::CallbackTests::TestAll()
 {
     // CallbackTests::Tests();
 

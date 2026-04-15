@@ -7,7 +7,7 @@ Copyright   : Your copyright notice
 Description : MoveOnlyFunction.cpp
 ============================================================================**/
 
-#include "MoveOnlyFunction.hpp"
+#include "FunctionObjects.hpp"
 
 #include <functional>
 #include <future>
@@ -21,8 +21,18 @@ Description : MoveOnlyFunction.cpp
 #include <thread>
 
 
-namespace MoveOnlyFunction
+// INFO: https://medium.com/@sagar.necindia/std-move-only-function-cpp23-callable-wrapper-no-copy-369e79e5baa0
+
+
+namespace FunctionObjects::MoveOnlyFunction
 {
+    /**
+    The Problem: std::function Forces Copyability
+    Say you’ve got a unique resource — a database connection, a file handle, something wrapped in a std::unique_ptr.
+    You want to create a callback that owns this resource:
+    **/
+
+
     // https://en.cppreference.com/w/cpp/utility/functional/move_only_function
     void SimpleExample()
     {
@@ -38,11 +48,33 @@ namespace MoveOnlyFunction
         function();
 
         std::cout << future.get();
+    }
 
+
+    void SimpleExample_2()
+    {
+        auto register_callback = [](std::move_only_function<void()> cb) {
+            cb();
+        };
+        auto register_callback_func = [](std::function<void()> cb) {
+            cb();
+        };
+
+        std::unique_ptr<int> resource = std::make_unique<int>(42);
+        auto callback = [res = std::move(resource)]() {
+            std::cout << "Resource value: " << *res << "\n";
+        };
+
+        register_callback(std::move(callback)); // Compiles and works.
+#if 0
+        register_callback_func(std::move(callback)); // Compiles and works.
+                                                     // error: static assertion failed: std::function target must be copy-constructible
+#endif
+        // Resource value: 42
     }
 }
 
-namespace MoveOnlyFunction
+namespace FunctionObjects::MoveOnlyFunction
 {
     using Task = std::move_only_function<void()>;
     // using Task = std::function<void()>;
@@ -90,6 +122,8 @@ namespace MoveOnlyFunction
         }
 
 
+    private:
+
         std::queue<Task> tasks;
         std::mutex mtx;
         std::condition_variable cv;
@@ -122,8 +156,9 @@ namespace MoveOnlyFunction
     }
 }
 
-void MoveOnlyFunction::TestAll()
+void FunctionObjects::MoveOnlyFunction::TestAll()
 {
     // SimpleExample();
-    TaskQueueTest();
+    SimpleExample_2();
+    // TaskQueueTest();
 }

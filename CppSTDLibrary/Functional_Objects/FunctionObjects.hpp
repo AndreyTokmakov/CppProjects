@@ -13,6 +13,12 @@ Description : Function objects src
 namespace FunctionObjects
 {
 	void TestAll();
+	namespace MemberFunctionPointer { void TestAll(); }
+	namespace PassCallableToClass { void TestAll(); }
+	namespace CallbackTests { void TestAll(); }
+	namespace SmallFunctionWrapper { void TestAll(); }
+	namespace MoveOnlyFunction { void TestAll(); }
+	namespace Static_FunctionCall_Operator { void TestAll(); }
 };
 
 #endif /* FUNCTION_OBJECTS_TESTS__H_ */

@@ -84,7 +84,7 @@ int main([[maybe_unused]] int argc,
     /// Unimplemented
     // BinaryTree::TestAll();
 
-    any::TestAll();
+    // any::TestAll();
     // Array::TEST_ALL();
     // BitSet::TEST_ALL();
     // BitFlags::TestAll();

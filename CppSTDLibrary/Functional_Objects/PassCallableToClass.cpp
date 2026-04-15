@@ -7,7 +7,7 @@ Copyright   : Your copyright notice
 Description : PassCallableToClass.cpp
 ============================================================================**/
 
-#include "PassCallableToClass.hpp"
+#include "FunctionObjects.hpp"
 
 #include <iostream>
 #include <utility>
@@ -123,7 +123,7 @@ namespace PassCallableToClass::Auto_Lambda
 */
 
 
-void PassCallableToClass::TestAll()
+void FunctionObjects::PassCallableToClass::TestAll()
 {
     // Template_Based::demo();
     // Raw_Function_Pointer::demo();

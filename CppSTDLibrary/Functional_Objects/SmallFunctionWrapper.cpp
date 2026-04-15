@@ -7,7 +7,7 @@ Copyright   : Your copyright notice
 Description : SmallFunctionWrapper.cpp
 ============================================================================**/
 
-#include "SmallFunctionWrapper.hpp"
+#include "FunctionObjects.hpp"
 #include <iostream>
 
 namespace
@@ -55,7 +55,7 @@ namespace
     };
 }
 
-void SmallFunctionWrapper::TestAll()
+void FunctionObjects::SmallFunctionWrapper::TestAll()
 {
     small_function<void()> f = [x=42]() { std::cout << "x=" << x << "\n"; };
     f();

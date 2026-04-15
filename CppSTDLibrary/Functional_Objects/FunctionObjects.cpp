@@ -26,11 +26,6 @@ Description : Function objects src
 
 #include "../Helpers/Helpers.h"
 #include "FunctionObjects.hpp"
-#include "CallbackTests.hpp"
-#include "MemberFunctionPointer.hpp"
-#include "MoveOnlyFunction.hpp"
-#include "PassCallableToClass.hpp"
-#include "SmallFunctionWrapper.hpp"
 
 namespace FunctionObjects {
 
@@ -719,13 +714,15 @@ namespace FunctionObjects::Callable_Interfaces
 
 void FunctionObjects::TestAll()
 {
-	// Auto::Return_Type_Hint();
-
     // MemberFunctionPointer::TestAll();
     // CallbackTests::TestAll();
     // MoveOnlyFunction::TestAll();
 	// PassCallableToClass::TestAll();
-	SmallFunctionWrapper::TestAll();
+	// MemberFunctionPointer::TestAll();
+	Static_FunctionCall_Operator::TestAll();
+
+	// Auto::Return_Type_Hint();
+
 
 	// BindTests::FuncPtr_Tests();
 	// BindTests::Bind_Test_1();

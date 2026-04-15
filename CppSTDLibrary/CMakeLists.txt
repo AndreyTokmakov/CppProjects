@@ -48,6 +48,7 @@ add_executable(${PROJECT_NAME}
         Functional_Objects/MoveOnlyFunction.cpp
         Functional_Objects/PassCallableToClass.cpp
         Functional_Objects/SmallFunctionWrapper.cpp
+        Functional_Objects/Static_FunctionCall_Operator.cpp
 		Initialization/Initialization.cpp
 		InitializerList/InitializerList.cpp
 		InlineVariables/InlineVariables.cpp
