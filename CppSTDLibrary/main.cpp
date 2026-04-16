@@ -21,7 +21,7 @@ Description : Cpp STD lib
 #include "Byte/Byte.h"
 #include "Chrono/Chrono.h"
 #include "DateAndTime/DateAndTime.h"
-#include "Concepts/Concepts.h"
+#include "Concepts/Concepts.hpp"
 #include "ContextControl/ContextControl.h"
 #include "ConsoleInOut/ConsoleInOut.hpp"
 #include "CompileTime_Constexpr/ConstConstexprMutable.hpp"
@@ -133,7 +133,7 @@ int main([[maybe_unused]] const int argc,
     // Chrono::TestAll();
     // ContextControl::TestAll();
     // Comparators::TestAll();
-    // Concepts::TestAll();
+    Concepts::TestAll();
     // ConsoleInOut::TestAll();
     // ConstConstexprMutable::TestAll();
     // CompileTimeProgramming::TestAll();
@@ -156,7 +156,7 @@ int main([[maybe_unused]] const int argc,
     // FilesStreams::TestAll();
     // Filesystem::TestAll();
     // Format::TestAll();
-    FunctionObjects::TestAll();
+    // FunctionObjects::TestAll();
     // Hashing::TestAll();
     // LookupTypes::TestAll();
     // Lambdas::TestAll();

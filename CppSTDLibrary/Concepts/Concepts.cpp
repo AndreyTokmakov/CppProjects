@@ -1,18 +1,17 @@
-//============================================================================
-// Name        : Concepts.h
-// Created on  : 04.11.2020
-// Author      : Tokmakov Andrey
-// Version     : 1.0
-// Copyright   : Your copyright notice
-// Description : Concepts C++20 library src class
-//============================================================================
+/**============================================================================
+Name        : Concepts.cpp
+Created on  : 04.11.2020
+Author      : Tokmakov Andrey
+Version     : 1.0
+Copyright   : Your copyright notice
+Description : Concepts C++20 library tests
+============================================================================**/
 
 #include <iostream>
 #include <string>
 #include <vector>
 #include <set>
 #include <list>
-#include <map>
 
 
 #include <array>
@@ -24,7 +23,7 @@
 #include <utility>
 #include <functional>
 
-#include "Concepts.h"
+#include "Concepts.hpp"
 #include "../Helpers/Integer.h"
 
 
@@ -409,21 +408,21 @@ namespace Concepts::Custom_Concepts
     template<Incrementable T>
     void Increment(T value) {
         std::cout << "Before: " << value << std::endl;
-        value++;
+        ++value;
         std::cout << "After: " << value << std::endl;
     }
 
     template<typename T>
     void Increment2(T value) requires Incrementable<T> {
         std::cout << "Before: " << value << std::endl;
-        value++;
+        ++value;
         std::cout << "After: " << value << std::endl;
     }
 
     template<typename T> requires Incrementable<T>
     void Increment3(T value) {
         std::cout << "Before: " << value << std::endl;
-        value++;
+        ++value;
         std::cout << "After: " << value << std::endl;
     }
 
@@ -465,12 +464,13 @@ namespace Concepts::Custom_Concepts
         T v;
     };
 
-    void Custom_Concept_IsBaseOf() {
+    void Custom_Concept_IsBaseOf()
+    {
         [[maybe_unused]]
-        SomeClass<BaseObject> a;
+        constexpr SomeClass<BaseObject> a;
 
         [[maybe_unused]]
-        SomeClass1<BaseObject> a1;
+        constexpr SomeClass1<BaseObject> a1;
 
 #if 0
         // Will not compile since TestObject is not Base of 'std::string':
@@ -2356,12 +2356,11 @@ namespace Concepts::Iterators {
 
 namespace Concepts::ClassMethods
 {
-
     template<typename T, bool enable = true>
     class Sample
     {
     public:
-        int DisableThisMethodOnRequest() requires(enable) {
+        int DisableThisMethodOnRequest() const requires enable {
             return 42;
         }
     };
@@ -2369,16 +2368,59 @@ namespace Concepts::ClassMethods
 
     void DisableClassMethods()
     {
-
-        [[maybe_unused]]
-        Sample<int, false> s;
-
-        // auto x = s.DisableThisMethodOnRequest(); // <--- will NOT Compile
-
-        Sample<int, true> s2;
-        s2.DisableThisMethodOnRequest();
-
+        {
+            [[maybe_unused]]
+            constexpr Sample<int, false> obj;
+#if 0
+            auto x = obj.DisableThisMethodOnRequest(); // <--- will NOT Compile
+#endif
+        }
+        {
+            constexpr Sample<int, true> obj;
+            auto _ = obj.DisableThisMethodOnRequest();
+        }
     }
+}
+
+namespace Concepts::ClassMethods
+{
+    template<typename T>
+    struct WrapperBad
+    {
+        WrapperBad(const WrapperBad&) = default;
+        explicit WrapperBad(const T& t)  {}      /** <-- Convertion constructor **/
+    };
+
+    template<typename T>
+    struct WrapperSafe
+    {
+        WrapperSafe(const WrapperSafe&) requires std::is_trivially_copy_constructible_v<T> = default;
+        explicit WrapperSafe(const T& t)  {}      /** <-- Convertion constructor **/
+    };
+
+    struct NonCopyable
+    {
+        NonCopyable() = default;
+
+        NonCopyable(const NonCopyable&) = delete;
+        NonCopyable& operator=(const NonCopyable&) = delete;
+    };
+
+    void disable_Convertion_Construction_BasedOnType()
+    {
+        {
+            const WrapperBad<NonCopyable> a { NonCopyable{} };
+            const WrapperBad<NonCopyable> b { a };
+        }
+
+        {
+            const WrapperSafe<NonCopyable> a { NonCopyable{} };
+#if 0
+            const WrapperSafe<NonCopyable> b { a };
+#endif
+        }
+    }
+
 }
 
 namespace Concepts::Static_Asserts
@@ -3015,7 +3057,11 @@ namespace Concepts::Using_Concepts_With_ReturnType_Spec
     template <typename T, typename U>
     concept EquallySized = sizeof(T) == sizeof(U);
 
-    int make_x() {
+    int makeInt() {
+        return  1;
+    }
+
+    ino64_t makeInt64() {
         return  1;
     }
 
@@ -3026,7 +3072,13 @@ namespace Concepts::Using_Concepts_With_ReturnType_Spec
 
     void tests()
     {
-        Small auto x = make_x();
+        Small auto _ = makeInt();
+
+#if 0
+        Small auto _ = makeInt64();  // Compile error
+#endif
+
+        [[maybe_unused]]
         EquallySized<int> decltype(auto) y = make_y();
     }
 }
@@ -3142,7 +3194,7 @@ void Concepts::TestAll()
     // CRPT::Concepts_Instead_CRTP();
     // CRPT::CRTP_Derive_using_Concepts();
 
-    Concepts_on_Two_Types::demo();
+    // Concepts_on_Two_Types::demo();
 
 
     // ConceptsAsInterface::passClassObjAsInterface();
@@ -3188,6 +3240,8 @@ void Concepts::TestAll()
     // Iterators::SortCollections_RandomAccessIterator();
 
     // ClassMethods::DisableClassMethods();
+    ClassMethods::disable_Convertion_Construction_BasedOnType();
+
 
     // Tests::StaticAssert_Conects();
     // Tests::LAMBDA_CONCEPT();
