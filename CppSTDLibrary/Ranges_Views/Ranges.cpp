@@ -24,6 +24,7 @@ Description :  C++ Ranges
 #include <compare>
 #include <ranges>
 #include <span>
+#include <set>
 #include <fstream>
 #include <bitset>
 #include <numeric>
@@ -864,28 +865,59 @@ namespace Ranges::Views
 
         // Iterate over the elements of the zip view
         for (auto [a, b, c] : std::views::zip(nums, nums1, nums2)) {
-            std::cout << std::format("[{}, {}, {}]\n", a, b, c);
+            std::println("[{}, {}, {}]", a, b, c);
         }
-
 
         for (std::tuple<int&, std::string&, char&> elem : std::views::zip(nums, nums1, nums2))
         {
-            std::cout << std::get<0>(elem) << ' '
-                      << std::get<1>(elem) << ' '
-                      << std::get<2>(elem) << '\n';
-
+            std::cout << std::get<0>(elem) << ' '<< std::get<1>(elem) << ' ' << std::get<2>(elem) << '\n';
             std::get<char&>(elem) += ('a' - 'A'); // modifies the element of z
+        }
+    }
+
+    void Zip_Transform()
+    {
+        // std::views::zip_transform is zip + transform fused into one step.
+        // Instead of producing tuples, it takes a callable and applies it across the
+        //  zipped elements, producing the transformed result directly.
+
+        std::vector<double> prices     = {10.0, 20.0, 30.0};
+        std::vector<int>    quantities = {3, 5, 2};
+
+        // Multiply price x quantity — lazy view, no allocation
+        const auto totals = std::views::zip_transform(std::multiplies{}, prices, quantities);
+        for (double t : totals) {
+            std::println("Total: {}", t);   // 30, 100, 60
         }
     }
 
     void Enumerate()
     {
-        std::vector<int> range1 = {1, 2, 3};
-        const std::ranges::enumerate_view enumerated = std::views::enumerate(range1);
+        std::vector<std::string> fruits = {"apple", "banana", "cherry", "date"};
+        const std::ranges::enumerate_view enumerated = std::views::enumerate(fruits);
         for (const auto& [index, value] : enumerated)
             std::cout << "Index: " << index << ", Value: " << value << std::endl;
+
+        // Index: 0, Value: apple
+        // Index: 1, Value: banana
+        // Index: 2, Value: cherry
+        // Index: 3, Value: date
     }
 
+    void Enumerate_Pipeline_Composition()
+    {
+        const std::vector<std::string> fruits = {"apple", "banana", "cherry", "date"};
+        auto result = fruits| std::views::enumerate | std::views::filter([](const auto& pair) {
+            const auto& [idx, fruit] = pair;
+            return fruit.size() > 5;
+        });
+        for (const auto [idx, fruit] : result) {
+            std::println("({}, {})", idx, fruit);
+        }
+
+        // (1, banana)
+        // (2, cherry)
+    }
 
     /**
     * The C++20 std::views::elements takes a range of tuple-like objects and produces
@@ -927,6 +959,28 @@ namespace Ranges::Ranges_To
                         | std::ranges::to<std::vector>();
 
         std::cout << even_numbers << std::endl; // Output: 2 4 6 8 10
+    }
+
+    void to_Vector_to_Set()
+    {
+        std::vector<int> numbers = {5, 3, 1, 4, 1, 5, 9, 2, 6};
+
+        const std::vector<int> evens = numbers| std::views::filter([](const int n) { return n % 2 == 0; })
+            | std::ranges::to<std::vector>();
+        std::println("{}", evens);  // evens = {4, 2, 6}
+
+        // Pipeline -> set (automatic dedup + sort!)
+        const std::set unique_sorted = numbers | std::ranges::to<std::set>();
+        std::println("{}", unique_sorted);   // unique_sorted = {1, 2, 3, 4, 5, 6, 9}
+    }
+
+    void To_Vector_Chunked()
+    {
+        const std::vector<int> numbers = {5, 3, 1, 4, 1, 5, 9, 2, 6};
+        const std::vector<std::vector<int>> chunks = numbers | std::views::chunk(3)
+            | std::ranges::to<std::vector<std::vector<int>>>();
+
+        std::println("{}", chunks);  // {{5,3,1}, {4,1,5}, {9,2,6}}
     }
 
     void Get_Even_Numbers_Mapping()
@@ -1091,17 +1145,24 @@ namespace Ranges::Join
     void Join_Get_ClassParameters()
     {
         std::vector<Person> persons {
-            Person { "John Snow", 20 },
-            Person { "Aria Start", 15 }
+            Person { .name="John Snow", .age=20 },
+            Person { .name="Aria Start", .age=15 }
         };
 
-        const auto namesView = persons | std::views::transform([](const Person& p) { return p.name; })
-             | std::views::join;
-
-        /*
-        std::ranges::for_each(namesView, [](const auto& entry) {
-            //std::print("{} ", name);
-        });*/
+        {
+            auto namesView = persons | std::views::transform([](const Person& p) { return p.name; });
+            for (const auto& item: namesView) {
+                std::println("{} ", item);
+                // John Snow
+                // Aria Start
+            }
+        }
+        {
+            auto namesView = persons | std::views::transform([](const Person& p) { return p.name; })
+                 | std::views::join;
+            std::print("{} ", namesView);
+            // ['J', 'o', 'h', 'n', ' ', 'S', 'n', 'o', 'w', 'A', 'r', 'i', 'a', ' ', 'S', 't', 'a', 'r', 't'] 
+        }
     }
 }
 
@@ -1258,6 +1319,26 @@ namespace Ranges::Slide
         // W = 3: [ 1 2 3 ] [ 2 3 4 ] [ 3 4 5 ]
         // W = 4: [ 1 2 3 4 ] [ 2 3 4 5 ]
         // W = 5: [ 1 2 3 4 5 ]
+    }
+}
+
+
+namespace Ranges::Stride
+{
+    const std::vector<int> data = {10, 20, 30, 40, 50, 60, 70};
+
+    void Old_Style()
+    {
+        for (size_t i = 0; i < data.size(); i += 2) {
+            std::print("{} ", data[i] ); // 10 30 50 70
+        }
+    }
+
+    void usingViews()
+    {
+        for (int val : data | std::views::stride(2)) {
+            std::print("{} ", val);  // 10 30 50 70
+        }
     }
 }
 
@@ -1610,7 +1691,7 @@ void Ranges::TestAll()
     // Join::Join_With_2();
     // Join::Join_With_to_String();
     // Join::rangeJoinStyle();
-    // Join::Join_Get_ClassParameters();
+    Join::Join_Get_ClassParameters();
 
     // Concat_1();
 
@@ -1625,10 +1706,25 @@ void Ranges::TestAll()
 
     // Slide::Simple_Example();
 
+    // Stride::Old_Style();
+    // Stride::usingViews();
+
     // Views::Zip();
+    // Views::Zip_Transform();
     // Views::Repeat();
     // Views::Elements();
     // Views::Enumerate();
+    // Views::Enumerate_Pipeline_Composition();
+
+    // Ranges_To::Get_Even_Numbers();
+    // Ranges_To::to_Vector_to_Set();
+    // Ranges_To::To_Vector_Chunked();
+    // Ranges_To::Get_Even_Numbers_Mapping();
+    // Ranges_To::Vector_pairs_to_Vector_First();
+    // Ranges_To::Vector_of_Array_to_Vector();
+
+    // Containers_From_Ranges::CreateVectorFromRange();
+    // Containers_From_Ranges::CreateVectorFromRange_Inplace();
 
     // Algorithms::For_Each();
     // Algorithms::Find_IF();
@@ -1667,13 +1763,7 @@ void Ranges::TestAll()
     // Take::Take_Test_0();
     // Take::Take_Test();
 
-    // Ranges_To::Get_Even_Numbers();
-    // Ranges_To::Get_Even_Numbers_Mapping();
-    // Ranges_To::Vector_pairs_to_Vector_First();
-    Ranges_To::Vector_of_Array_to_Vector();
 
-    // Containers_From_Ranges::CreateVectorFromRange();
-    // Containers_From_Ranges::CreateVectorFromRange_Inplace();
 
     // Istream::Read_Ints();
     // Istream::Get_Strings_and_Floats();
