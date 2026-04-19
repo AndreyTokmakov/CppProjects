@@ -11,6 +11,7 @@ Description : SynchronizedWrapper.cpp
 
 #include <print>
 #include <string>
+#include <concepts>
 #include <mutex>
 
 namespace
@@ -37,13 +38,10 @@ namespace
         int v { 0 };
     };
 
-
-
-
     template<typename Ty>
     concept Lockable = requires(Ty& lk)
     {
-        { lk.lock() } -> std::same_as<void>;
+        { lk.lock() }   -> std::same_as<void>;
         { lk.unlock() } -> std::same_as<void>;
     };
 
