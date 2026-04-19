@@ -183,12 +183,12 @@ namespace LRUCache::CircleIteratorArray::Tests {
 		constexpr size_t cache_size = 5;
 		LRUCache<int, std::string, cache_size> cache;
 
-		for (int i = 1; i <= cache_size * 3; ++i)
+		for (uint32_t i = 1; i <= cache_size * 3; ++i)
 			auto val = cache.get(i);
 
 		assert(cache_size * 3 == cache.getReadsCount());
 
-		for (int i = (cache_size * 2 + 1); i <= cache_size * 3; ++i) {
+		for (uint32_t i = (cache_size * 2 + 1); i <= cache_size * 3; ++i) {
 			auto val = cache.get(i);
 			std::string expected{ std::string("Value_") + std::to_string(i) };
 			assert(0 == val.compare(expected));
@@ -201,7 +201,7 @@ namespace LRUCache::CircleIteratorArray::Tests {
 		constexpr size_t cache_size = 5;
 		LRUCache<int, std::string, cache_size> cache;
 
-		for (int i = 1; i <= cache_size * 3; ++i)
+		for (uint32_t i = 1; i <= cache_size * 3; ++i)
 			auto val = cache.get(i);
 
 		cache.printCache();

@@ -71,6 +71,7 @@ Description : DataStructures
 #include "MPMCQueue/MPMCQueue.hpp"
 #include "MineSet_Fast/MiniSet.hpp"
 #include "StateManager/StateManager.hpp"
+#include "SynchronizedWrapper/SynchronizedWrapper.hpp"
 
 
 
@@ -148,6 +149,8 @@ int main([[maybe_unused]] int argc,
 	// mini_set::TestAll();
 
 	// state_manager::TestAll();
+
+	synchronized_wrapper::TestAll();
 
 	/*********************************** Multithreading ***********************************/
 
