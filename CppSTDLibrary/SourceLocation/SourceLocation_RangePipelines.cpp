@@ -124,13 +124,13 @@ namespace
         StepStats s_filter2 { .label = "filter(above_threshold)"  };
         StepStats s_xform2  { .label = "transform(expensive)"     };
 
-        auto is_valid        = [](int x) { return x % 2 == 0; };
-        auto normalize       = [](int x) { return x / 2; };
-        auto above_threshold = [](int x) { return x > 1000; };
-        auto expensive       = [](int x) {
+        auto is_valid        = [](const int x) { return x % 2 == 0; };
+        auto normalize       = [](const int x)  { return x / 2; };
+        auto above_threshold = [](const int x) { return x > 1000; };
+        auto expensive       = [](const int x) {
             // Simulate work
             volatile int acc = 0;
-            for (int i = 0; i < 50; ++i) acc += x * i;
+            for (int i = 0; i < 500; ++i) acc += x * i;
             return acc;
         };
 
