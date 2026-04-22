@@ -88,6 +88,7 @@ add_executable(${PROJECT_NAME}
 		ReferenceWrapper/ReferenceWrapper.cpp
 		SharedPtr/SharedPtrTests.cpp
 		SourceLocation/SourceLocation.cpp
+		SourceLocation/SourceLocation_RangePipelines.cpp
 		Span/Span.cpp
 		SpanStream/SpanStream.cpp
 		Print/Print.cpp Print/Print.h

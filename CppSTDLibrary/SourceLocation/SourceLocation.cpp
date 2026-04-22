@@ -11,7 +11,7 @@
 #include <print>
 #include <format>
 #include <source_location>
-#include "SourceLocation.h"
+#include "SourceLocation.hpp"
 
 namespace SourceLocation
 {
@@ -68,7 +68,9 @@ namespace SourceLocation
 
 void SourceLocation::TestAll()
 {
+    SourceLocation_RangePipelines::TestAll();
+
     // Test1();
     // Test2();
-    Test3();
+    // Test3();
 };
