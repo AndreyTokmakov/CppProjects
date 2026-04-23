@@ -125,7 +125,7 @@ int main([[maybe_unused]] const int argc,
     // Arrays::TestAll();
     // Asserts::TestAll();
     // Atomic::TestAll();
-    // Attributes::TestAll();
+    Attributes::TestAll();
     // Auto::TestAll();
     // BitSet::TestAll();
     // Bit_Manipulation::TestAll();
@@ -190,7 +190,7 @@ int main([[maybe_unused]] const int argc,
     // Simd::TestAll();
     // ScopeExit::TestAll();
     // Stacktrace::TestAll();
-    SourceLocation::TestAll();
+    // SourceLocation::TestAll();
     // SharedPtr_Tests::TestAll();
     // Variant::TestAll();
     // VolatileTests::TestAll();
