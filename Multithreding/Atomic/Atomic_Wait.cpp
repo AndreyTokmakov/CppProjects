@@ -181,7 +181,7 @@ namespace Atomic_Wait::Ring_Buffer_Tests
         std::atomic<size_type> idxRead { 0 };
         std::atomic<size_type> idxWrite { 0 };
 
-        void put(value_type&& value)
+        void put([[maybe_unused]] value_type&& value)
         {
             const size_type writeIdx = idxWrite.load(std::memory_order::relaxed);
             idxWrite.store(writeIdx + 1, std::memory_order::release);

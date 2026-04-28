@@ -198,9 +198,11 @@ namespace PerformanceExperiments::Atomic_vs_Volatile
                     atomicCounter.fetch_add(1, std::memory_order_relaxed);
                 }
             };
-            auto reader = [&] {
+            auto reader = [&]
+            {
                 for (int32_t idx = 0, val = 0; idx < iterCount; ++idx) {
                     val = atomicCounter.load(std::memory_order_relaxed);
+                    (void)val; // -Wunused-but-set-variable
                 }
             };
 
@@ -224,6 +226,7 @@ namespace PerformanceExperiments::Atomic_vs_Volatile
                 for (int32_t idx = 0; idx < iterCount; ++idx) {
                     val = volatileCounter;
                 }
+                (void)val; // -Wunused-but-set-variable
             };
 
             const PerfUtilities::ScopedTimer timer {"volatileCounter"};

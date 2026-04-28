@@ -28,15 +28,15 @@ namespace Atomic_CompareExchange
         std::atomic<int> atomicVar { 10 };
         constexpr int expected = 20, newValue = 30;
 
-        std::jthread producer([&] {
-            std::this_thread::sleep_for(std::chrono::seconds (2u));
+        const std::jthread  producer([&] {
+            std::this_thread::sleep_for(std::chrono::seconds (2U));
             atomicVar.store(expected, std::memory_order::relaxed);
             std::cout << "atomicVar: 10 ==> 20\n";
         });
 
         int expectedTmp { expected };
         bool result { false };
-        while (true)
+        while (!result)
         {
             const int oldValueForDebug = atomicVar.load(std::memory_order::relaxed);
             expectedTmp = expected;
@@ -52,7 +52,7 @@ namespace Atomic_CompareExchange
                          << " | newValue: " << newValue << " | atomicVar : " << oldValueForDebug << " => " << atomicVar << std::endl;
                 break;
             }
-            std::this_thread::sleep_for(std::chrono::milliseconds(500u));
+            std::this_thread::sleep_for(std::chrono::milliseconds(500U));
         }
     }
 

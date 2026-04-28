@@ -74,7 +74,7 @@ int main([[maybe_unused]] int argc,
     // Atomic_Bool::TestAll();
     // Atomic_Wait::TestAll();
     // Atomic_MemoryOrder::TestAll();
-    // Atomic_CompareExchange::TestAll();
+    Atomic_CompareExchange::TestAll();
     // Atomic_IsLockFree::TestAll();
     // AtomicPerformanceTests::TestAll();
 
@@ -112,7 +112,7 @@ int main([[maybe_unused]] int argc,
     // ThreadPoolLimited::TestAll();
 
     // Threads::TEST_ALL();
-    jthreads::TestAll();
+    // jthreads::TestAll();
 
     /** Performance **/
 

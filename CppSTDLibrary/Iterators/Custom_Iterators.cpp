@@ -446,13 +446,85 @@ namespace Iterators::CustomIterator_RangeIterator
     }
 }
 
+namespace Iterators::making_types_iterable
+{
+    struct RingBuffer
+    {
+        std::array<float, 256> data {};
+        uint32_t start = 0;
+        uint32_t count = 0;
+
+        // Raw pointers are perfectly valid iterators
+        float* begin() {
+            return data.data() + start;
+        }
+
+        float* end() {
+            return data.data() + start + count;
+        }
+    };
+
+    RingBuffer getBuffer(const int size)
+    {
+        RingBuffer buffer {};
+        std::iota(buffer.data.begin(), buffer.data.begin() + size, 1);
+        buffer.start = 0;
+        buffer.count = size;
+        return buffer;
+    }
+
+    struct DataPacket
+    {
+        std::array<uint8_t, 256> payload {};
+        size_t length { 0U };
+    };
+
+    // Place these in the same namespace — ADL will find them
+    const uint8_t* begin(const DataPacket& pkt)
+    {
+        return pkt.payload.data();
+    }
+
+    const uint8_t* end(const DataPacket& pkt)
+    {
+        return pkt.payload.data() + pkt.length;
+    }
+
+    DataPacket receive(const int len)
+    {
+        DataPacket packet {};
+        std::iota(packet.payload.data(), packet.payload.data() + len, 1);
+        packet.length = len;
+        return packet;
+    }
+
+    void demo_1()
+    {
+        RingBuffer buf = getBuffer(12);
+        for (float const sample : buf) {
+            std::cout << sample << " ";
+        }
+        // 1 2 3 4 5 6 7 8 9 10 11 12
+    }
+
+    void demo_2()
+    {
+        const DataPacket pkt = receive(32);
+        for (const uint8_t byte : pkt) {
+            std::cout << static_cast<int>(byte) << " ";
+        }
+        // 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 30 31 32
+    }
+}
+
 void Iterators::Custom_Iterators::TestAll()
 {
-
-    CustomIterator::Test();
+    // CustomIterator::Test();
     // CustomIterator2::Test();
     // CustomIterator3::Test();
     // CustomIterator_IntIterator::Test();
     // CustomIterator_RangeIterator::Test();
 
+    // making_types_iterable::demo_1();
+    making_types_iterable::demo_2();
 }
