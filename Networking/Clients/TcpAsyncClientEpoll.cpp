@@ -18,6 +18,7 @@ Description :
 #include <utility>
 #include <unordered_map>
 #include <vector>
+#include <array>
 #include <stdexcept>
 
 #include <cstring>
@@ -26,19 +27,16 @@ Description :
 #include <arpa/inet.h>
 #include <sys/epoll.h>
 #include <sys/socket.h>
-#include <sys/epoll.h>
-#include <sys/socket.h>
-#include <arpa/inet.h>
-#include <fcntl.h>
-#include <unistd.h>
-#include <errno.h>
+#include <cerrno>
 
 
 #define LOG std::osyncstream { std::cout } << DateTimeUtilities::getCurrentTime() << ' '
+#define ERR std::osyncstream { std::cout } << DateTimeUtilities::getCurrentTime() << ' '
 
 struct TcpClient
 {
     using Socket = int32_t;
+    using Handle = int32_t;
     using Port   = uint16_t;
 
     constexpr static Socket InvalidSocket { -1 };
@@ -61,7 +59,7 @@ struct TcpClient
     {
         socket = ::socket(PF_INET, SOCK_STREAM, IPPROTO_TCP);
         if (InvalidSocket == socket) {
-            std::cerr << "Failed to create socket. Error = " << errno << std::endl;
+            ERR << "Failed to create socket. Error = " << errno << std::endl;
             return false;
         }
 
@@ -76,18 +74,17 @@ struct TcpClient
         } else if (errno == EINPROGRESS) {
             state = State::Connecting;
         } else {
-            perror("connect");
+            ERR << "connect\n";
             return false;
         }
 
         epollFd = ::epoll_create1(0);
         if (epollFd < 0) {
-            perror("epoll_create1");
+            ERR << "epoll_create1\n";
             return false;
         }
 
         updateEpoll(EPOLLIN | EPOLLOUT | EPOLLERR);
-
         return true;
     }
 
@@ -99,18 +96,20 @@ struct TcpClient
 
     void run()
     {
-        epoll_event events[MaxEvents];
-        // std::array<epoll_data, MaxEvents> events {};
-
-        while (state != State::Closed) {
-            int n = epoll_wait(epollFd, events, MaxEvents, -1);
-            if (n < 0) {
-                if (errno == EINTR) continue;
-                perror("epoll_wait");
+        std::array<epoll_event, MaxEvents> events {};
+        while (state != State::Closed)
+        {
+            const int32_t eventsCount = ::epoll_wait(epollFd, events.data(), MaxEvents, -1);
+            if (eventsCount < 0)
+            {
+                if (errno == EINTR) {
+                    continue;
+                }
+                ERR << "epoll_wait" << std::endl;
                 break;
             }
 
-            for (int i = 0; i < n; ++i) {
+            for (int i = 0; i < eventsCount; ++i) {
                 handleEvent(events[i].events);
             }
         }
@@ -126,14 +125,17 @@ private:
 
     void handleEvent(const uint32_t events)
     {
-        if ((events & EPOLLERR) != 0U) {
+        if ((events & EPOLLERR) != 0U)
+        {
             handleError();
             return;
         }
-        if (state == State::Connecting && (events & EPOLLOUT)) {
+        if (state == State::Connecting && (events & EPOLLOUT))
+        {
             handleConnect();
         }
-        if (state == State::Connected) {
+        if (state == State::Connected)
+        {
             if (events & EPOLLIN) {
                 handleRead();
             }
@@ -148,13 +150,13 @@ private:
         int err = 0;
         socklen_t len = sizeof(err);
 
-        if (getsockopt(socket, SOL_SOCKET, SO_ERROR, &err, &len) < 0 || err != 0) {
-            std::cerr << "connect failed: " << strerror(err) << "\n";
+        if (InvalidSocket == ::getsockopt(socket, SOL_SOCKET, SO_ERROR, &err, &len)) {
+            ERR << "connect failed: " << strerror(err) << "\n";
             state = State::Closed;
             return;
         }
 
-        std::cout << "Connected!\n";
+        LOG << "Connected!\n";
         state = State::Connected;
     }
 
@@ -164,17 +166,22 @@ private:
         while (true)
         {
             const ssize_t bytes = recv(socket, buf.data(), sizeof(buf), 0);
-            if (bytes > 0) {
+            if (bytes > 0)
+            {
                 readBuffer.insert(readBuffer.end(), buf.data(), buf.data() + bytes);
-            } else if (bytes == 0) {
-                std::cout << "Server closed connection\n";
+            }
+            else if (bytes == 0)
+            {
+                LOG << "Server closed connection\n";
                 state = State::Closed;
                 return;
-            } else {
+            }
+            else
+            {
                 if (errno == EAGAIN || errno == EWOULDBLOCK) {
                     break;
                 }
-                perror("recv");
+                ERR << "recv" << std::endl;
                 state = State::Closed;
                 return;
             }
@@ -190,12 +197,13 @@ private:
             const ssize_t bytes = ::send(socket, writeBuffer.data(), writeBuffer.size(), 0);
             if (bytes > 0) {
                 writeBuffer.erase(writeBuffer.begin(), writeBuffer.begin() + bytes);
-            } else
+            }
+            else
             {
                 if (errno == EAGAIN || errno == EWOULDBLOCK) {
                     break;
                 }
-                perror("send");
+                ERR << "send" << std::endl;
                 state = State::Closed;
                 return;
             }
@@ -209,7 +217,7 @@ private:
 
     void handleError()
     {
-        std::cerr << "epoll error\n";
+        ERR << "epoll error\n";
         state = State::Closed;
     }
 
@@ -217,29 +225,36 @@ private:
     {
         const std::string msg(readBuffer.begin(), readBuffer.end());
         readBuffer.clear();
-        std::cout << "Received: " << msg << "\n";
+        LOG << "Received: " << msg << "\n";
     }
 
     void updateEpoll(const uint32_t events)
     {
         epoll_event ev { .events = events, .data = epoll_data_t { .ptr = this } };
-        if (!registered) {
+        if (!registered)
+        {
             ::epoll_ctl(epollFd, EPOLL_CTL_ADD, socket, &ev);
             registered = true;
-        } else {
+        }
+        else
+        {
             ::epoll_ctl(epollFd, EPOLL_CTL_MOD, socket, &ev);
         }
     }
 
-    static void setNonBlocking(const int fd)
+    static void setNonBlocking(const Handle fd)
     {
-        const int flags = ::fcntl(fd, F_GETFL, 0);
+        const Handle flags = ::fcntl(fd, F_GETFL, 0);
+        if (flags == -1) {
+            throw std::runtime_error("fcntl(F_GETFL) failed");
+        }
         ::fcntl(fd, F_SETFL, flags | O_NONBLOCK);
     }
 
 private:
+
     Socket socket { InvalidSocket };
-    Socket epollFd { InvalidSocket };
+    Handle epollFd { InvalidSocket };
 
     bool registered { false };
     State state { State::Closed };
