@@ -13,6 +13,7 @@
 namespace Clients
 {
     void Tests();
+    namespace TcpAsyncClientEpoll { void TestAll(); }
 };
 
 #endif // !CPPPROJECTS_CLIENTS_H

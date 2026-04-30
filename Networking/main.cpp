@@ -14,7 +14,7 @@ Description : Tests C++ project
 
 #include "CurpCpp/CurlCpp.hpp"
 
-#include "Clients/Clients.h"
+#include "Clients/Clients.hpp"
 #include "Clients/UDPClient.h"
 #include "DNS/DNS_ResponseParser.h"
 
@@ -66,7 +66,7 @@ int main([[maybe_unused]] int argc,
 {
     const std::vector<std::string_view> args(argv + 1, argv + argc);
 
-    // Clients::Tests();
+    Clients::Tests();
     // UDPClient::TestAll();
 
     // DNS_ResponseParser::TestAll();
@@ -97,7 +97,7 @@ int main([[maybe_unused]] int argc,
 
     // tcp_server::TestAll();
     // AsynchTcpService::TestAll();
-    server_tcp_asynch_epoll::TestAll();
+    // server_tcp_asynch_epoll::TestAll();
     // server_tcp_asynch_uring::TestAll();
 
     // PcapAnalyzer::TestAll();

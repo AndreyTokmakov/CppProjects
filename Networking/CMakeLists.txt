@@ -42,7 +42,11 @@ add_executable(${PROJECT_NAME}
         Common/HTTPRequest.cpp
         Common/HTTPResponse.cpp
         Common/URL.cpp
+
         Clients/Clients.cpp
+        Clients/UDPClient.cpp
+        Clients/TcpAsyncClientEpoll.cpp
+
         DNS/DNS_ResponseParser.cpp
         RawSockets/RawSocketsTests.cpp
         Experiments/Experiments.cpp
@@ -51,7 +55,7 @@ add_executable(${PROJECT_NAME}
         RawSockets/BuildAndSendPacketsTests.cpp
         Servers/TestWebServer.cpp
         Experiments/UtilitiesTests.cpp
-        Clients/UDPClient.cpp
+
         RawSockets/ARPTester.cpp
         Servers/SimpleServerSelect.cpp
         Servers/SocketTCPServer.cpp

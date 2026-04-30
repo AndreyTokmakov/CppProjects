@@ -19,7 +19,7 @@
 #include <cerrno>
 #include <netdb.h>
 
-#include "Clients.h"
+#include "Clients.hpp"
 
 namespace
 {
@@ -352,4 +352,6 @@ void Clients::Tests() {
     // ClickHouse::SendRequest();
     // ClickHouse::ExecuteQuery();
     // ClickHouse::ExecuteQuery_BadSize();
+
+    TcpAsyncClientEpoll::TestAll();
 }
