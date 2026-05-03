@@ -597,6 +597,23 @@ namespace Bit_Manipulation::min_number_bits_to_represent_number
     }
 }
 
+/** Cheat Sheet
+
+    std::popcount(x)                // count set bits
+    std::countl_zero(x)             // count leading zeros
+    std::countr_zero(x)             // count trailing zeros
+    std::bit_width(x)               // MSB position + 1 (== floor(log2) + 1)
+    std::bit_floor(x)               // largest pow2 <= x
+    std::bit_ceil(x)                // smallest pow2 >= x
+    std::has_single_bit(x)          // is power of two
+
+    x & (x - 1)                     // clear lowest set bit
+    x & -x                          // isolate lowest set bit
+    (x & (x - 1)) == 0              // power-of-two check (true for 0 too)
+    x & (N - 1)                     // fast modulo when N is pow2
+    -(int)cond                      // bool → all-ones / all-zeros mask
+    (a & m) | (b & ~m)              // branchless select via mask m
+**/
 void Bit_Manipulation::TestAll()
 {
     // Count_Zeros_Demo();
