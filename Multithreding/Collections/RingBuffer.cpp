@@ -316,7 +316,6 @@ namespace Collections::RingBuffer::Tests
     }
 }
 
-
 namespace Collections::RingBuffer::MultithreadedTests
 {
     using namespace TestUtils;

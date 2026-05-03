@@ -74,7 +74,7 @@ int main([[maybe_unused]] int argc,
     // Atomic_Bool::TestAll();
     // Atomic_Wait::TestAll();
     // Atomic_MemoryOrder::TestAll();
-    Atomic_CompareExchange::TestAll();
+    // Atomic_CompareExchange::TestAll();
     // Atomic_IsLockFree::TestAll();
     // AtomicPerformanceTests::TestAll();
 
@@ -124,7 +124,7 @@ int main([[maybe_unused]] int argc,
     /** ThreadSafeCollections **/
 
     // ring_buffers::TestAll();
-    // RingBuffer::TestAll();
+    Collections::RingBuffer::TestAll();
 
     // Multithreading_Collections::TestAll();
     // SingleConsumerProducerQueue::TestAll();

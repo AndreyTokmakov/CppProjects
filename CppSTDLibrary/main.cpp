@@ -152,7 +152,7 @@ int main([[maybe_unused]] const int argc,
     // InitializerList::TestAll();
     // InlineVariables::TestAll();
     // Initialization::TestAll();
-    Iterators::TestAll();
+    // Iterators::TestAll();
     // FilesStreams::TestAll();
     // Filesystem::TestAll();
     // Format::TestAll();
@@ -201,7 +201,7 @@ int main([[maybe_unused]] const int argc,
     // Int::TestAll();
     // Templates::TestAll();
     // Utilities::TestAll();
-    // UniquePtr::TestAll();
+    UniquePtr::TestAll();
     // WeakPtr::TestAll();
     // StaticAsserts::TestAll();
 

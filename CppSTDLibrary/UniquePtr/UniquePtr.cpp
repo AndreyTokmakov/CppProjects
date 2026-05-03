@@ -182,7 +182,9 @@ namespace UniquePtr
 	}
 
 
-	void Reset() {
+	void Reset()
+	{
+		std::cout << std::string(120, '-') << std::endl;
 		{
 			std::unique_ptr<Integer> integer1 = std::make_unique<Integer>(111);
 
@@ -190,7 +192,7 @@ namespace UniquePtr
 			integer1.reset(nullptr);
 			std::cout << "Done" << std::endl;
 		}
-		std::cout << "----------------- TEST2 --------------------" << std::endl;
+		std::cout << std::string(120, '-') << std::endl;
 		{
 			std::unique_ptr<Integer> integer1 = std::make_unique<Integer>(111);
 			std::unique_ptr<Integer> integer2 = std::make_unique<Integer>(222);
@@ -200,6 +202,14 @@ namespace UniquePtr
 
 			std::cout << "Done" << std::endl;
 		}
+		std::cout << std::string(120, '-') << std::endl;
+		{
+			std::unique_ptr<Integer> integer1 = std::make_unique<Integer>(11);
+			integer1.reset();
+
+			integer1 = std::make_unique<Integer>(22);
+		}
+		std::cout << std::string(120, '-') << std::endl;
 	}
 
 	void Reset_vs_Move() {
@@ -629,7 +639,7 @@ void UniquePtr::TestAll()
 	// Swap_Test_2();
 
 	// Release_Test();
-	// Reset();
+	Reset();
 	// Reset_Deleter();
 	// Reset_vs_Move();
 
@@ -665,5 +675,5 @@ void UniquePtr::TestAll()
 
     // Make_Unique_For_Overwrite::AllocateArray_AndInitialize();
 
-    Check_If_Pointer_Initialized();
+    // Check_If_Pointer_Initialized();
 };
