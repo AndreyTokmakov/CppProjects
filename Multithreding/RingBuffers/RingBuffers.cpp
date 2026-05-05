@@ -98,6 +98,7 @@ namespace ring_buffers::impl_1
     };
 }
 
+
 namespace ring_buffers::impl_2
 {
     template<typename T>
@@ -303,6 +304,115 @@ namespace ring_buffers::impl_3_size
 
         alignas(std::hardware_destructive_interference_size) std::atomic<size_type> tail {0};
         alignas(std::hardware_destructive_interference_size) std::atomic<size_type> head {0};
+    };
+}
+
+namespace ring_buffers::impl_4
+{
+#ifdef __cpp_lib_hardware_interference_size
+    inline constexpr std::size_t kCacheLineSize = std::hardware_destructive_interference_size;
+#else
+    inline constexpr std::size_t kCacheLineSize = 64;
+#endif
+
+
+    template<typename Ty, uint32_t Capacity>
+    class RingBuffer
+    {
+        using size_type  = int64_t;
+        using value_type = Ty;
+        using collection_type = std::vector<value_type>;
+
+        static_assert(!std::is_same_v<value_type, void>, "ERROR: Value type can not be void");
+        static_assert(is_pow_of_2(Capacity), "ERROR: Capacity must be a power of 2");
+        static_assert(Capacity >= 2, "Buffer size must be at least 2");
+
+    public:
+        RingBuffer() = default;
+
+        RingBuffer(const RingBuffer&) = delete;
+        RingBuffer& operator=(const RingBuffer&) = delete;
+
+        template <typename... Args>
+        bool emplace(Args&&... args)
+        {
+            const size_type seq = writeCursor.load(std::memory_order_relaxed);
+            /** Full when write is exactly N ahead of read **/
+            if (seq - cachedReadCursor >= static_cast<size_type>(Capacity))
+            {
+                cachedReadCursor = readCursor.load(std::memory_order_acquire);
+                if (seq - cachedReadCursor >= static_cast<size_type>(Capacity)) {
+                    return false; // full
+                }
+            }
+
+            // Construct the element directly in the slot
+            const std::size_t idx = seq & kMask;
+            buffer[idx].~value_type();
+            new (&buffer[idx]) value_type(std::forward<Args>(args)...);
+
+            // Publish: make the write visible to the consumer
+            writeCursor.store(seq + 1, std::memory_order_release);
+            return true;
+        }
+
+        bool push(const value_type& item)
+        {
+            const size_type seq = writeCursor.load(std::memory_order_relaxed);
+            /** Full when write is exactly N ahead of read **/
+            if (seq - cachedReadCursor >= static_cast<size_type>(Capacity))
+            {
+                cachedReadCursor = readCursor.load(std::memory_order_acquire);
+                if (seq - cachedReadCursor >= static_cast<size_type>(Capacity)) {
+                    return false; // full
+                }
+            }
+
+            // Construct the element directly in the slot
+            const std::size_t idx = seq & kMask;
+            buffer[idx] = item;
+
+            // Publish: make the write visible to the consumer
+            writeCursor.store(seq + 1, std::memory_order_release);
+            return true;
+        }
+
+        [[nodiscard]]
+        bool pop(value_type& item)
+        {
+            const size_type seq = readCursor.load(std::memory_order_relaxed);
+
+            // Empty when read has caught up to write
+            if (seq >= cachedWriteCursor)
+            {
+                // Refresh our cached copy of the write cursor
+                cachedWriteCursor =writeCursor.load(std::memory_order_acquire);
+                if (seq >= cachedWriteCursor) {
+                    return false;
+                }
+            }
+
+            // Read from the slot
+            const std::size_t idx = seq & kMask;
+            item = std::move(buffer[idx]);
+
+            // Advance read cursor
+            readCursor.store(seq + 1, std::memory_order_release);
+            return true;
+        }
+
+    private:
+        static constexpr std::size_t kMask { Capacity - 1 };
+
+        alignas(kCacheLineSize) std::array<value_type, Capacity> buffer{};
+
+        // Producer's cache line
+        alignas(kCacheLineSize) std::atomic<size_type> writeCursor { 0 };
+        size_type cachedReadCursor { 0 };  // producer's local cache
+
+        // Consumer's cache line
+        alignas(kCacheLineSize) std::atomic<size_type> readCursor { 0 };
+        size_type cachedWriteCursor { 0 }; // consumer's local cache
     };
 }
 
@@ -518,6 +628,35 @@ namespace ring_buffers::tests
             impl_3_size::RingBuffer<int64_t> ringBuffer { 1024 };
             test_large_sequence(ringBuffer);
         }
+        //---------------------------------------------------------
+        {
+            impl_4::RingBuffer<int64_t, 4> ringBuffer;
+            test_basic_push_pop(ringBuffer);
+        }
+        {
+            impl_4::RingBuffer<int64_t, 4> ringBuffer;
+            test_empty_pop(ringBuffer);
+        }
+        {
+            impl_4::RingBuffer<int64_t, 2> ringBuffer;
+            test_empty_pop(ringBuffer);
+        }
+        {
+            impl_4::RingBuffer<int64_t, 4> ringBuffer;
+            test_fifo_order(ringBuffer);
+        }
+        {
+            impl_4::RingBuffer<int64_t, 4> ringBuffer;
+            test_wrap_around(ringBuffer);
+        }
+        {
+            impl_4::RingBuffer<int64_t, 2> ringBuffer;
+            test_alternating_push_pop(ringBuffer);
+        }
+        {
+            impl_4::RingBuffer<int64_t, 1024> ringBuffer;
+            test_large_sequence(ringBuffer);
+        }
     }
 }
 
@@ -692,11 +831,16 @@ namespace ring_buffers::tests::performance_tests
             impl_3_size::RingBuffer<int64_t> ringBuffer { capacity };
             runTest(ringBuffer, eventsCount, "impl_3_size::RingBuffer");
         }
+        {
+            impl_4::RingBuffer<int64_t, capacity> ringBuffer;
+            runTest(ringBuffer, eventsCount, "impl_4::RingBuffer");
+        }
 
-        // impl_1::RingBuffer:  0.6771 seconds.
-        // impl_2::RingBuffer:  0.916864 seconds.
-        // impl_3::RingBuffer:  1.14923 seconds.
-        // impl_3_size::RingBuffer:  1.07055 seconds.
+        // impl_1::RingBuffer:  0.974007 seconds.
+        // impl_2::RingBuffer:  1.85482 seconds.
+        // impl_3::RingBuffer:  1.32877 seconds.
+        // impl_3_size::RingBuffer:  1.30787 seconds.
+        // impl_4::RingBuffer:  0.335618 seconds.
     }
 }
 

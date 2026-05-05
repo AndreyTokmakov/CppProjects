@@ -123,8 +123,8 @@ int main([[maybe_unused]] int argc,
 
     /** ThreadSafeCollections **/
 
-    // ring_buffers::TestAll();
-    Collections::RingBuffer::TestAll();
+    ring_buffers::TestAll();
+    // Collections::RingBuffer::TestAll();
 
     // Multithreading_Collections::TestAll();
     // SingleConsumerProducerQueue::TestAll();
