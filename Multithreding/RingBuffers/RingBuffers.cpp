@@ -836,11 +836,11 @@ namespace ring_buffers::tests::performance_tests
             runTest(ringBuffer, eventsCount, "impl_4::RingBuffer");
         }
 
-        // impl_1::RingBuffer:  0.974007 seconds.
-        // impl_2::RingBuffer:  1.85482 seconds.
-        // impl_3::RingBuffer:  1.32877 seconds.
+        // impl_1::RingBuffer:       0.974007 seconds.
+        // impl_2::RingBuffer:       1.85482 seconds.
+        // impl_3::RingBuffer:       1.32877 seconds.
         // impl_3_size::RingBuffer:  1.30787 seconds.
-        // impl_4::RingBuffer:  0.335618 seconds.
+        // impl_4::RingBuffer:       0.335618 seconds.
     }
 }
 

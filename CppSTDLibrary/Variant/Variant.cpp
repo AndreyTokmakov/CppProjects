@@ -1270,6 +1270,12 @@ namespace Variant::Return_and_Store_HeavyObjects
 	struct Object {};
 	struct Entry {};
 
+	enum class Error
+	{
+		Invalid,
+		Negative
+	};
+
 	Values getValues()
 	{
 		std::vector<Integer> ints;
@@ -1311,13 +1317,38 @@ namespace Variant::Return_and_Store_HeavyObjects
 	~Wrapper<i,true>(3)
 	~Wrapper<i,true>(4)
 	**/
+
+	std::variant<Integer, Error> getValue(int value)
+	{
+		std::variant<Integer, Error> result;
+		if (0 > value) {
+			result.emplace<1>(Error::Negative);
+			return result;
+		}
+
+		Integer& integer = std::get<Integer>(result);
+		integer.value = value;
+
+		return result;
+	}
+
+	void Workaround()
+	{
+		std::variant<Integer, Error> var =  getValue(12345);
+		if (std::holds_alternative<Integer>(var)) {
+			std::cout << std::get<Integer>(var).value << std::endl;
+		}
+
+		// Wrapper<i,true>(0)
+		// 12345
+		// ~Wrapper<i,true>(12345)
+	}
 }
 
 void Variant::TestAll()
 {
 	// Matcher_Visitor::TestAll();
-	ParsersVariantDemo::TestAll();
-
+	// ParsersVariantDemo::TestAll();
 
 	// Variant_Tests::VariantCreate_Tests();
 
@@ -1377,4 +1408,5 @@ void Variant::TestAll()
 	// Experiments::Map_Variant_Keys();
 
 	// Return_and_Store_HeavyObjects::Test();
+	Return_and_Store_HeavyObjects::Workaround();
 };
