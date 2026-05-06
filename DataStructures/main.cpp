@@ -72,6 +72,7 @@ Description : DataStructures
 #include "MineSet_Fast/MiniSet.hpp"
 #include "StateManager/StateManager.hpp"
 #include "SynchronizedWrapper/SynchronizedWrapper.hpp"
+#include "TaskExecutor/TaskExecutor.hpp"
 
 
 
@@ -150,7 +151,9 @@ int main([[maybe_unused]] int argc,
 
 	// state_manager::TestAll();
 
-	synchronized_wrapper::TestAll();
+	// synchronized_wrapper::TestAll();
+
+	task_executor::TestAll();
 
 	/*********************************** Multithreading ***********************************/
 
