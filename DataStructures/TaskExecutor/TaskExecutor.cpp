@@ -107,7 +107,7 @@ namespace executor
             cv.notify_all();
         }
 
-        void submit(Task t)
+        void submit(Task&& t)
         {
             {
                 std::lock_guard lock(mtx);
@@ -141,7 +141,13 @@ namespace executor
 
 namespace executor
 {
-    Executor executor;
+    Executor executor {};
+
+    template<typename Func, typename... Args>
+    void postTask(Func&& func, Args&&... args)
+    {
+        executor.submit(makeTask(std::forward<Func>(func), std::forward<Args>(args)...));
+    }
 
     struct Worker
     {
@@ -171,10 +177,18 @@ namespace executor
 
         std::this_thread::sleep_for(std::chrono::seconds{1});
     }
+
+    void demo1()
+    {
+        postTask([] {std::cout << "fire and forget\n"; });
+        postTask([](int a, int b) {std::cout << a + b << "\n"; }, 2, 3);
+        std::this_thread::sleep_for(std::chrono::seconds{1});
+    }
 }
 
 
 void task_executor::TestAll()
 {
-    executor::demo();
+    // executor::demo();
+    executor::demo1();
 }
