@@ -78,7 +78,10 @@ add_executable(${PROJECT_NAME}
 
 		Barrier/Barrier.cpp
 		Semaphore/Semaphore.cpp
-		TaskExecutor/TaskExecutor.cpp
+
+		TaskExecutor/Executors.cpp
+		TaskExecutor/TaskExecutor1.cpp
+		TaskExecutor/TaskExecutor2.cpp
 
 		MineSet_Fast/MiniSet.cpp
 		StateManager/StateManager.cpp

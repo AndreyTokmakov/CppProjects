@@ -1,13 +1,13 @@
 /**============================================================================
-Name        : TaskExecutor.cpp
+Name        : TaskExecutor1.cpp
 Created on  : 06.05.2026
 Author      : Andrei Tokmakov
 Version     : 1.0
 Copyright   : Your copyright notice
-Description : TaskExecutor.cpp
+Description : TaskExecutor1.cpp
 ============================================================================**/
 
-#include "TaskExecutor.hpp"
+#include "Executors.hpp"
 
 #include <iostream>
 #include <string_view>
@@ -34,7 +34,7 @@ namespace
 }
 
 
-namespace executor
+namespace
 {
     class Task
     {
@@ -187,7 +187,7 @@ namespace executor
 }
 
 
-void task_executor::TestAll()
+void task_executor::TaskExecutor1::TestAll()
 {
     // executor::demo();
     executor::demo1();

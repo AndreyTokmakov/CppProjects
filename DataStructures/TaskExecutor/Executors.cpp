@@ -1,18 +1,16 @@
 /**============================================================================
-Name        : TaskExecutor.hpp
-Created on  : 06.05.2026
+Name        : Executors.cpp
+Created on  : 07.05.2026
 Author      : Andrei Tokmakov
 Version     : 1.0
 Copyright   : Your copyright notice
-Description : TaskExecutor.hpp
+Description : Executors.cpp
 ============================================================================**/
 
-#ifndef CPPPROJECTS_TASKEXECUTOR_HPP
-#define CPPPROJECTS_TASKEXECUTOR_HPP
+#include "Executors.hpp"
 
-namespace task_executor
+void task_executor::TestAll()
 {
-    void TestAll();
+    // TaskExecutor1::TestAll();
+    TaskExecutor2::TestAll();
 }
-
-#endif //CPPPROJECTS_TASKEXECUTOR_HPP
