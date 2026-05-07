@@ -73,6 +73,7 @@ Description : DataStructures
 #include "StateManager/StateManager.hpp"
 #include "SynchronizedWrapper/SynchronizedWrapper.hpp"
 #include "TaskExecutor/Executors.hpp"
+#include "TaskSBO/TaskSBO.hpp"
 
 
 
@@ -154,6 +155,7 @@ int main([[maybe_unused]] int argc,
 	// synchronized_wrapper::TestAll();
 
 	task_executor::TestAll();
+	tast_sbo::TestAll();
 
 	/*********************************** Multithreading ***********************************/
 

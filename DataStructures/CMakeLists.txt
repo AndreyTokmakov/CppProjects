@@ -83,6 +83,8 @@ add_executable(${PROJECT_NAME}
 		TaskExecutor/TaskExecutor1.cpp
 		TaskExecutor/TaskExecutor2.cpp
 
+		TaskSBO/TaskSBO.cpp
+
 		MineSet_Fast/MiniSet.cpp
 		StateManager/StateManager.cpp
 )
