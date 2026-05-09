@@ -23,6 +23,7 @@ namespace Templates
 	namespace TypeListChecker { void TestAll(); }
 	namespace IndexSequence { void TestAll(); }
 	namespace Metaprogramming { void TestAll(); }
+	namespace Expression_Templates { void TestAll(); }
 };
 
 #endif /* TEMPLATES_TESTS__H_ */

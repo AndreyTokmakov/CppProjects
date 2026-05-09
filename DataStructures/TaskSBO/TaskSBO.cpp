@@ -96,11 +96,12 @@ namespace
 
         void reset()
         {
-            if (invokeCallback == nullptr)
+            if (invokeCallback == nullptr) {
                 return;
+            }
             if (inlineCallback) {
                 destroyCallback(ptr_);
-            } else {
+            } else  {
                 destroyCallback(ptr_);
                 ::operator delete(ptr_);
             }

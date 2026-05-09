@@ -118,23 +118,24 @@ namespace Templates
 
 namespace Templates::Methods
 {
-
     template<typename T>
     T* BuildArray(const size_t size)
     {
         static_assert(std::is_integral_v<T>, "This function is only designed for integral types.");
         T* d = new T[size];
-        for (size_t i = 0; i < static_cast<T>(size); ++i)
+        for (int32_t i = 0; i < static_cast<T>(size); ++i)
             d[i] = i;
         return d;
     }
 
     template<typename T = int>
-    T* BuildArrayEx(size_t size) {
+    T* BuildArrayEx(size_t size)
+    {
         static_assert(std::is_integral_v<T>, "This function is only designed for integral types.");
         T* d = new T[size];
-        for (size_t i = 0; i < static_cast<T>(size); ++i)
+        for (int32_t i = 0; i < static_cast<T>(size); ++i) {
             d[i] = i;
+        }
         return d;
     }
 
@@ -1455,8 +1456,9 @@ void Templates::TestAll()
     // SFINAE::TestAll();
     // TemplateSpecialization::TestAll();
     // PackIndexing::TestAll();
-    IndexSequence::TestAll();
+    // IndexSequence::TestAll();
     // Metaprogramming::TestAll();
+    Expression_Templates::TestAll();
 
     // Is_Base_Of__Test();
     // Is_Same();

@@ -22,6 +22,7 @@ add_executable(${PROJECT_NAME}
         Branches/Remove_Branches_Builtin_Unreachable.cpp
         AoS_vs_SoA/AoS_vs_SoA.cpp
         Data_Prefetching/DataPrefetching.cpp
+        Loop_Unrolling/Loop_Unrolling.cpp
 )
 
 TARGET_LINK_LIBRARIES(${PROJECT_NAME}

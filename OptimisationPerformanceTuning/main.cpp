@@ -18,6 +18,7 @@ Description : C++ Optimisation and Performance Tuning experiments
 #include "Branches/Remove_Branches_Builtin_Unreachable.h"
 #include "AoS_vs_SoA/AoS_vs_SoA.h"
 #include "Data_Prefetching/DataPrefetching.hpp"
+#include "Loop_Unrolling/Loop_Unrolling.hpp"
 
 #include <iostream>
 #include <string_view>
@@ -71,9 +72,9 @@ int main([[maybe_unused]] const int argc,
     // DoubleBuffering::TestAll();
     // DataPrefetching::TestAll();
     // AoS_vs_SoA::TestAll();
-
-    Remove_Branches_Builtin_Unreachable::TestAll();
+    // Remove_Branches_Builtin_Unreachable::TestAll();
     // BranchLessCodeExamples::TestAll();
+    loop_unrolling::TestAll();
 
     return EXIT_SUCCESS;
 }
