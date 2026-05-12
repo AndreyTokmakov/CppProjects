@@ -187,7 +187,7 @@ namespace StringUtilities
         while (str.length() > start && str[start] == ' ') {
             ++start;
         }
-        while (end && str[end] == ' ') {
+        while (end && std::isspace(str[end])) {
             --end;
         }
         return std::string_view { str.data() + start, end - start + 1 };

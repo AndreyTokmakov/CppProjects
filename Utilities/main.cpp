@@ -464,7 +464,11 @@ int main([[maybe_unused]] int argc,
     const std::vector<std::string_view> args(argv + 1, argv + argc);
 
 
-    std::cout << "hello" << std::endl;
+    std::cout << std::quoted(StringUtilities::trimEx("  12  ")) << std::endl;
+    std::cout << std::quoted(StringUtilities::trim("  12  ")) << std::endl;
+    std::cout << std::quoted(StringUtilities::trimEx("  12  34 ")) << std::endl;
+    std::cout << std::quoted(StringUtilities::trim("  12  34 ")) << std::endl;
+
 
     // StringUtilitiesTests::split_test_1();
     // StringUtilitiesTests::strip_string_test();
@@ -473,7 +477,7 @@ int main([[maybe_unused]] int argc,
     // StringUtilitiesTests::Update_string_test();
     // StringUtilitiesTests::Random_String();
     // StringUtilitiesTests::stringToChunks_Test();
-    StringUtilitiesTests::Trim_Test();
+    // StringUtilitiesTests::Trim_Test();
 
     // FileUtilities_Tests::ReadFile();
     // FileUtilities_Tests::ReadFile2String();
