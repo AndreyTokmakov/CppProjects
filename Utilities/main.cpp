@@ -473,7 +473,7 @@ int main([[maybe_unused]] int argc,
     // StringUtilitiesTests::Update_string_test();
     // StringUtilitiesTests::Random_String();
     // StringUtilitiesTests::stringToChunks_Test();
-    // StringUtilitiesTests::Trim_Test();
+    StringUtilitiesTests::Trim_Test();
 
     // FileUtilities_Tests::ReadFile();
     // FileUtilities_Tests::ReadFile2String();
@@ -493,7 +493,7 @@ int main([[maybe_unused]] int argc,
 
     // HexConverter_Tests::Test();
 
-    final_action_test::test_ScopeExit();
+    // final_action_test::test_ScopeExit();
     // final_action_test::test_ScopeFail();
     // final_action_test::test_TransactionalScope();
 

@@ -35,6 +35,7 @@ namespace AtomicFlag::BasicTests
             std::atomic_flag flag { ATOMIC_FLAG_INIT };
 
             std::cout << flag.test_and_set(std::memory_order_acquire) << std::endl; // ret: false, flag --> true
+            std::cout << flag.test_and_set(std::memory_order_acquire) << std::endl; // ret: false, flag --> true
             flag.clear();
             std::cout << flag.test_and_set(std::memory_order_acquire) << std::endl; // ret: false, flag --> true
             std::cout << flag.test_and_set(std::memory_order_acquire) << std::endl; // ret: true , flag --> true
@@ -45,6 +46,7 @@ namespace AtomicFlag::BasicTests
         {
             std::atomic_flag flag{true};
 
+            std::cout << flag.test_and_set(std::memory_order_acquire) << std::endl; // ret: true,  flag --> true
             std::cout << flag.test_and_set(std::memory_order_acquire) << std::endl; // ret: true,  flag --> true
             flag.clear();
             std::cout << flag.test_and_set(std::memory_order_acquire) << std::endl; // ret: false, flag --> true
@@ -244,11 +246,9 @@ namespace AtomicFlag::Waiting
 
 void AtomicFlag::TestAll()
 {
-    // BasicTests::TestAndSet();
-
+    BasicTests::TestAndSet();
     // Waiting::Notify_and_Wait();
-
-    SpinLock::Test();
+    // SpinLock::Test();
     // SpinLock::SpinLock_CounterTest();
     // SpinLock::SpinLock_WaitingTest_1();
     // SpinLock::SpinLock_WaitingTest_2();    // TODO: Error

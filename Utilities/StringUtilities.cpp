@@ -12,6 +12,7 @@ Description : StringUtilities.cpp
 #include <array>
 #include <algorithm>
 #include <random>
+#include <ranges>
 
 namespace StringUtilities
 {
@@ -183,9 +184,20 @@ namespace StringUtilities
     std::string_view trim(const std::string &str)
     {
         std::string::size_type start = 0, end = str.length() - 1;
-        while (str.length() > start && str[start] == ' ') { ++start; }
-        while (end && str[end] == ' ') { --end; }
-        return std::string_view{str.data() + start, end - start + 1};
+        while (str.length() > start && str[start] == ' ') {
+            ++start;
+        }
+        while (end && str[end] == ' ') {
+            --end;
+        }
+        return std::string_view { str.data() + start, end - start + 1 };
+    }
+
+    std::string trimEx(const std::string& str)
+    {
+        const auto start = std::ranges::find_if_not(str, ::isspace);
+        const auto end = std::ranges::find_if_not(std::views::reverse(str), ::isspace).base();
+        return (start < end) ? std::string(start, end) : "";
     }
 }
 

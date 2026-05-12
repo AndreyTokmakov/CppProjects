@@ -55,6 +55,7 @@ namespace StringUtilities
     void trim_3(std::string& str);
 
     std::string_view trim(const std::string& str);
+    std::string trimEx(const std::string& str);
 
     void strip(std::string &str);
     void strip_fast(std::string &str);

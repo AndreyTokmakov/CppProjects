@@ -70,7 +70,7 @@ int main([[maybe_unused]] int argc,
     // AsyncLaunch::TestAll();
 
     // Atomic::TestAll();
-    // AtomicFlag::TestAll();
+    AtomicFlag::TestAll();
     // Atomic_Bool::TestAll();
     // Atomic_Wait::TestAll();
     // Atomic_MemoryOrder::TestAll();
@@ -123,7 +123,7 @@ int main([[maybe_unused]] int argc,
 
     /** ThreadSafeCollections **/
 
-    ring_buffers::TestAll();
+    // ring_buffers::TestAll();
     // Collections::RingBuffer::TestAll();
 
     // Multithreading_Collections::TestAll();
