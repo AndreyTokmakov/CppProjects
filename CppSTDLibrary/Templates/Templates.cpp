@@ -17,7 +17,6 @@ Description : Templates src
 #include <cstdint>
 #include <functional>
 
-#include "../Helpers/Integer.h"
 #include "Templates.hpp"
 
 namespace Templates
@@ -492,127 +491,6 @@ namespace Templates::Decltype
     }
 }
 
-namespace Templates::Forwarding
-{
-    template<class T>
-    void __print_no_forward(T&& var) {
-        var.printInfo();
-    }
-
-    template<class T>
-    void print_no_forward(T&& var) {
-        __print_no_forward(var);
-    }
-
-    template<class T>
-    void __print(T&& var) {
-        var.printInfo();
-    }
-
-    template<class T>
-    void print(T&& var) {
-        __print(std::forward<T>(var));
-    }
-
-    template<class... Args>
-    void __print_integers(Args&&... args) {
-        (args.printInfo(), ...);
-        (args.increment(), ...);
-    }
-
-    template<class... Args>
-    void print_integers(Args&&... args) {
-        __print_integers(std::forward<Args>(args) ... );
-    }
-
-    void Test_No_Forward()
-    {
-        Integer integer(111);
-        print_no_forward(integer);
-    }
-
-    void Test_Integer()
-    {
-        Integer integer(123);
-        print(integer);
-    }
-
-    void Test_IntegerList()
-    {
-        Integer integer1(11);
-        Integer integer2(22);
-
-        print_integers(integer1, integer2);
-    }
-}
-
-namespace Templates::Forwarding
-{
-    class Str
-    {
-        std::string value;
-
-    public:
-
-        template<typename ... Args>
-        Str(Args&& ... params) : value(std::forward<Args>(params)...) {
-            std::cout << "[Object_ToMove constructor 2] (" << this->value << ")" << std::endl;
-        }
-
-
-        Str(const Str &obj) {
-            std::cout << "[Copy constructor] (" << this->value << ")" << std::endl;
-            this->value = obj.value;
-        }
-
-        Str& operator=(const Str& right) {
-            std::cout << "[Copy assignment operator] (" << this->value << " -> " << right.value << ")" << std::endl;
-            if (this != &right)
-                this->value = right.value;
-            return *this;
-        }
-
-        Str(Str&& obj) noexcept : value(std::move(obj.value)) {
-            std::cout << "[Move constructor] (" << this->value << ")" << std::endl;
-        }
-
-        Str& operator=(Str&& right) noexcept {
-            std::cout << "[Move assignment operator] (" << this->value << " => " << right.value << ")" << std::endl;
-            if (this != &right)
-                this->value = std::move(right.value);
-            return *this;
-        }
-
-        virtual ~Str() {
-            std::cout << "[Destructor] (" << this->value << ")" << std::endl;
-        }
-
-        [[nodiscard]]
-        virtual std::string getValue() const noexcept {
-            return this->value;
-        }
-
-        virtual void printInfo() const noexcept {
-            std::cout << "Object_ToMove = " << this->value << std::endl;
-        }
-    };
-
-    void Construct_Object() {
-        {
-            Str str("Some_Test_String");
-            str.printInfo();
-            Str str1 = std::move(str);
-        }
-        {
-            const Str str("Some_Test_String");
-            str.printInfo();
-#if 0
-            // ERROR HERE. Cant construct string using std::move
-			Str str1 = std::move(str);
-#endif
-        }
-    }
-}
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -1458,7 +1336,8 @@ void Templates::TestAll()
     // PackIndexing::TestAll();
     // IndexSequence::TestAll();
     // Metaprogramming::TestAll();
-    Expression_Templates::TestAll();
+    // Expression_Templates::TestAll();
+    perfect_forwarding::TestAll();
 
     // Is_Base_Of__Test();
     // Is_Same();
@@ -1525,11 +1404,6 @@ void Templates::TestAll()
     // StaticMembersInTemplates::Test();
 
     // OperatorOverload::FoldExpressionOverload();
-
-    // Forwarding::Test_No_Forward();
-    // Forwarding::Test_Integer();
-    // Forwarding::Test_IntegerList();
-    // Forwarding::Construct_Object();
 
     // Auto_Template_Params::test();
 

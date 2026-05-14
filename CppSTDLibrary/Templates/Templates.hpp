@@ -24,6 +24,7 @@ namespace Templates
 	namespace IndexSequence { void TestAll(); }
 	namespace Metaprogramming { void TestAll(); }
 	namespace Expression_Templates { void TestAll(); }
+	namespace perfect_forwarding { void TestAll(); }
 };
 
 #endif /* TEMPLATES_TESTS__H_ */
