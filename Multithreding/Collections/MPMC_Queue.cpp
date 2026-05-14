@@ -84,7 +84,7 @@ namespace
         ~MPMCQueue()
         {
             size_type r = readPos.load(std::memory_order_relaxed);
-            size_type w = writePos.load(std::memory_order_relaxed);
+            const size_type w = writePos.load(std::memory_order_relaxed);
             while (r != w)
             {
                 Slot& slot = ringBuffer[r & (Capacity-1)];
@@ -109,12 +109,12 @@ namespace
             size_type pos = writePos.load(std::memory_order_relaxed);
             while (true)
             {
+                // TODO: (Capacity - 1) <--- ToMask
                 Slot& slot = ringBuffer[pos & (Capacity-1)];
                 const size_type seq = slot.seq.load(std::memory_order_acquire);
                 const int64_t diff = static_cast<int64_t>(seq) - static_cast<int64_t>(pos);
                 if (diff == 0)
-                {
-                    // slot is free. try to claim it.
+                {   // slot is free. try to claim it.
                     //
                     // if we win the CAS, we get exclusive access to this slot.
                     // if we lose, CAS updates pos to whatever wpos_ actually
