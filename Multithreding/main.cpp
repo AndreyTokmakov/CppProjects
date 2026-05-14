@@ -7,6 +7,8 @@ Copyright   : Your copyright notice
 Description : Multithreading tests main entry point
 ============================================================================**/
 
+#include <iostream>
+
 #include "Semaphore/Semaphore.h"
 #include "Latch/Latch.h"
 #include "ThreadPools/ThreadPools.h"
@@ -32,7 +34,6 @@ Description : Multithreading tests main entry point
 #include "ConditionVariable/ConditionVariable.h"
 #include "Synchronization/Synchronization.h"
 #include "CallOnce/CallOnce.h"
-#include "Integer/Integer.h"
 #include "JThreads/JThreads.hpp"
 #include "AsyncLaunch/AsyncLaunch.h"
 #include "Exceptions_Handling/Exceptions_Handling.h"

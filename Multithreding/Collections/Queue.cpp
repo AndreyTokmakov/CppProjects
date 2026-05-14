@@ -18,8 +18,8 @@ Description : Queue.cpp
 #include <chrono>
 
 #include "Collections.h"
-#include "../Integer/Integer.h"
 #include "DateTimeUtilities.hpp"
+#include "../Utilities/Wrapper.h"
 
 #define LOG  std::osyncstream { std::cout } << DateTimeUtilities::getCurrentTime() << " "
 
@@ -295,7 +295,7 @@ namespace Tests
     using namespace QueueCV;
     using namespace QueueAtomic;
 
-    using Int = Integer<false>;
+    using Int = Helpers::Wrapper<int, false>;
     using Queue = QueueAtomic::Queue<Int>;
     // using Queue = QueueCV::Queue<Int>;
 

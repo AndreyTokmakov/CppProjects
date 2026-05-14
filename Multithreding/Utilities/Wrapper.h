@@ -42,13 +42,17 @@ namespace Helpers
                           << std::boolalpha << debug << ">(" << value << ") [Move constructor]\n";
         }
 
-        inline void setValue(value_type v) noexcept {
+        void setValue(value_type v) noexcept {
             value = v;
         }
 
         [[nodiscard]]
-        inline value_type getValue() const noexcept {
+        value_type getValue() const noexcept {
             return value;
+        }
+
+        void printInfo() const {
+            std::cout << "Value = " << this->value << std::endl;
         }
 
         ~Wrapper()

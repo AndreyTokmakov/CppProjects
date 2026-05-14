@@ -19,7 +19,6 @@
 #include <queue>
 #include <deque>
 
-#include "../Integer/Integer.h"
 #include "Multithreading_Communication.h"
 #include "DateTimeUtilities.hpp"
 
