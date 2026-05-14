@@ -28,10 +28,12 @@ add_executable(${PROJECT_NAME}
         Future/Future.cpp
         Futex/Futex.cpp
         Latch/Latch.cpp
+
         Collections/LockFreeQueue.cpp
         Collections/Queue.cpp
         Collections/BlockingQueue.cpp
         Collections/SingleConsumerProducerQueue.cpp
+        Collections/MPMC_Queue.cpp
         Collections/SCSP_RingBuffer.cpp
         Collections/SCSP_RingBuffer_Blocking.cpp
         Collections/RingBuffer.cpp
@@ -39,6 +41,7 @@ add_executable(${PROJECT_NAME}
         Collections/RingBuffer_vs_CVMutexQueue_2.cpp
         Collections/RingBuffer_vs_CVMutexQueue_Debug.cpp
         Collections/ThreadSafeQueue_CV_vs_RingBuffer.cpp
+
         Multithreading_Communication/Multithreading_Communication.cpp
         PackagedTask/PackagedTask.cpp
         ParallelExecutionAlgoritms/ParallelExecutionAlgoritms.cpp

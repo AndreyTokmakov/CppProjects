@@ -71,7 +71,7 @@ int main([[maybe_unused]] int argc,
     // AsyncLaunch::TestAll();
 
     // Atomic::TestAll();
-    AtomicFlag::TestAll();
+    // AtomicFlag::TestAll();
     // Atomic_Bool::TestAll();
     // Atomic_Wait::TestAll();
     // Atomic_MemoryOrder::TestAll();
@@ -132,6 +132,7 @@ int main([[maybe_unused]] int argc,
     // Queue::TestAll();
     // BlockingQueue::TestAll();
     // LockFreeQueue::TEST_ALL()
+    Collections::mpmc_queue::TestAll();
     // SCSP_RingBuffer_Blocking::TestAll();
     // SCSP_RingBuffer::TestAll();
     // Collections::RingBuffer_vs_CVMutexQueue::TestAll();

@@ -14,6 +14,7 @@ namespace Collections::Queue { void TestAll(); }
 namespace Collections::RingBuffer { void TestAll(); }
 namespace Collections::BlockingQueue { void TestAll(); }
 namespace Collections::LockFreeQueue { void TestAll(); }
+namespace Collections::mpmc_queue { void TestAll(); }
 namespace Collections::SCSP_RingBuffer { void TestAll(); }
 namespace Collections::SCSP_RingBuffer_Blocking { void TestAll(); }
 namespace Collections::SingleConsumerProducerQueue { void TestAll(); }
