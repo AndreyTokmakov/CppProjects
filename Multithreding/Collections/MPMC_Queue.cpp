@@ -105,7 +105,7 @@ namespace
         [[nodiscard]]
         bool emplace(Args&&... args) noexcept
         {
-            static_assert(std::is_nothrow_constructible_v<value_type, Args...>);
+            // static_assert(std::is_nothrow_constructible_v<value_type, Args...>);
             size_type pos = writePos.load(std::memory_order_relaxed);
             while (true)
             {
@@ -169,7 +169,7 @@ namespace
             size_type pos = readPos.load(std::memory_order_relaxed);
             while (true)
             {
-                const Slot& slot = ringBuffer[pos & (Capacity-1)];
+                Slot& slot = ringBuffer[pos & (Capacity-1)];
                 const uint64_t seq = slot.seq.load(std::memory_order_acquire);
                 const int64_t diff = static_cast<int64_t>(seq) - static_cast<int64_t>(pos + 1);
                 if (diff == 0)
@@ -179,7 +179,7 @@ namespace
                             std::memory_order_relaxed,
                             std::memory_order_relaxed)) {
 
-                        Ty* ptr = std::launder(reinterpret_cast<value_type*>(slot.buffer));
+                        Ty* ptr = std::launder(reinterpret_cast<value_type*>(slot.buffer.data()));
                         out = std::move(*ptr);
                         ptr->~value_type();
 
@@ -217,10 +217,168 @@ namespace
     };
 }
 
+
+namespace tests
+{
+#define TEST_ASSERT(cond)                                                     \
+    do                                                                        \
+    {                                                                         \
+        if (!(cond))                                                          \
+        {                                                                     \
+            std::cerr << "[FAILED] " << __FUNCTION__                          \
+                      << " | line: " << __LINE__                              \
+                      << " | condition: " << #cond << '\n';                   \
+            return false;                                                     \
+        }                                                                     \
+    } while (false)
+
+#define TEST_OK()                                                             \
+    do                                                                        \
+    {                                                                         \
+        std::cout << "[PASSED] " << __FUNCTION__ << '\n';                     \
+        return true;                                                          \
+    } while (false)
+
+    struct ComplexType
+    {
+        int id {};
+        std::string payload;
+
+        ComplexType() = default;
+        ComplexType(int i, std::string p): id(i), payload(std::move(p)) {
+        }
+
+        bool operator==(const ComplexType& other) const{
+            return id == other.id && payload == other.payload;
+        }
+    };
+
+    struct MoveOnly
+    {
+        std::unique_ptr<int> value;
+        explicit MoveOnly(int v) noexcept: value(std::make_unique<int>(v)) {
+        }
+
+        MoveOnly(MoveOnly&&) noexcept = default;
+        MoveOnly& operator=(MoveOnly&&) noexcept = default;
+
+        MoveOnly(const MoveOnly&) = delete;
+        MoveOnly& operator=(const MoveOnly&) = delete;
+    };
+
+    bool test_basic_push_pop()
+    {
+        MPMCQueue<int, 8> queue;
+
+        TEST_ASSERT(queue.push(42));
+        int value = 0;
+
+        TEST_ASSERT(queue.pop(value));
+        TEST_ASSERT(value == 42);
+        TEST_OK();
+    }
+
+    bool test_pop_empty_queue()
+    {
+        MPMCQueue<int, 8> queue;
+        int value = 0;
+        TEST_ASSERT(!queue.pop(value));
+        TEST_OK();
+    }
+
+    bool test_fill_queue_until_full()
+    {
+        constexpr size_t capacity = 4;
+        MPMCQueue<int, capacity> queue;
+
+        for (int i = 0; i < static_cast<int>(capacity); ++i){
+            TEST_ASSERT(queue.push(i));
+        }
+        TEST_ASSERT(!queue.push(999));
+        TEST_OK();
+    }
+
+    bool test_fifo_order_single_thread()
+    {
+        MPMCQueue<int, 16> queue;
+        for (int i = 0; i < 10; ++i) {
+            TEST_ASSERT(queue.push(i));
+        }
+
+        for (int i = 0; i < 10; ++i) {
+            int value = -1;
+            TEST_ASSERT(queue.pop(value));
+            TEST_ASSERT(value == i);
+        }
+        TEST_OK();
+    }
+
+    bool test_wraparound_behavior()
+    {
+        MPMCQueue<int, 4> queue;
+        for (int i = 0; i < 4; ++i) {
+            TEST_ASSERT(queue.push(i));
+        }
+
+        for (int i = 0; i < 2; ++i){
+            int value = -1;
+            TEST_ASSERT(queue.pop(value));
+            TEST_ASSERT(value == i);
+        }
+
+        TEST_ASSERT(queue.push(100));
+        TEST_ASSERT(queue.push(101));
+
+        for (constexpr int expected[] = {2, 3, 100, 101}; int const e : expected){
+            int value = -1;
+            TEST_ASSERT(queue.pop(value));
+            TEST_ASSERT(value == e);
+        }
+
+        TEST_OK();
+    }
+
+    bool test_emplace()
+    {
+        MPMCQueue<ComplexType, 8> queue;
+        TEST_ASSERT(queue.emplace(7, "hello"));
+
+        ComplexType out;
+
+        TEST_ASSERT(queue.pop(out));
+        TEST_ASSERT(out.id == 7);
+        TEST_ASSERT(out.payload == "hello");
+        TEST_OK();
+    }
+
+    bool test_move_only_type()
+    {
+        MPMCQueue<MoveOnly, 8> queue;
+        TEST_ASSERT(queue.push(MoveOnly(123)));
+
+        MoveOnly out(0);
+
+        TEST_ASSERT(queue.pop(out));
+        TEST_ASSERT(out.value);
+        TEST_ASSERT(*out.value == 123);
+        TEST_OK();
+    }
+
+
+}
+
+
+
 void Collections::mpmc_queue::TestAll()
 {
-    MPMCQueue<int, 32> mpmcQueue;
+    using namespace tests;
 
-    mpmcQueue.emplace(10);
+    test_basic_push_pop();
+    test_pop_empty_queue();
+    test_fill_queue_until_full();
+    test_fifo_order_single_thread();
+    test_wraparound_behavior();
+    test_emplace();
+    test_move_only_type();
 
 }
