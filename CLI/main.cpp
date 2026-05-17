@@ -82,7 +82,7 @@ namespace
         }
 
         [[nodiscard]]
-        Status processCommand(std::string_view userInput)
+        Status processCommand(const std::string_view userInput)
         {
             const auto& [cmd, params] = extractCommand(userInput);
             if (const auto funcIter = funcMapping.find(cmd); funcMapping.end() != funcIter) {
