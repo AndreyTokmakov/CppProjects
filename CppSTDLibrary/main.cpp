@@ -29,7 +29,6 @@ Description : Cpp STD lib
 #include "RVO_CopyElision/CopyElision.h"
 #include "RVO_CopyElision/RVO_FailureCases.h"
 #include "Comparators/Comparators.h"
-#include "Contracts/Contracts.hpp"
 #include "CompileTime_Constexpr/Constexpr.hpp"
 #include "CTAD/ClassTemplateArgumentDeduction.h"
 #include "DeducingThis/DeducingThis.h"
@@ -207,7 +206,6 @@ int main([[maybe_unused]] const int argc,
 
     /** C++26 **/
 
-    // Contracts::TestAll();
     // Reflection::TestAll();
 
     return EXIT_SUCCESS;

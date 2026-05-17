@@ -567,6 +567,7 @@ namespace Math
 {
     void Saturated_Operations()
     {
+#if 0
         constexpr int a = std::add_sat(3, 4); /// NO saturation occurs, T = int
         static_assert(a == 7);
 
@@ -589,6 +590,7 @@ namespace Math
 
         static_assert(f == -126);
         static_assert(g == std::numeric_limits<int8_t>::min());
+#endif
     }
 }
 

@@ -1,17 +1,18 @@
-//============================================================================
-// Name        : Format.cpp
-// Created on  : 09.07.2021
-// Author      : Tokmakov Andrey
-// Version     : 1.0
-// Copyright   : Your copyright notice
-// Description : Format 
-//============================================================================
+/**============================================================================
+Name        : Format.cpp
+Created on  :
+Author      : Andrei Tokmakov
+Version     : 1.0
+Copyright   : Your copyright notice
+Description : Format
+============================================================================**/
 
 #include <iostream>
 #include <string>
 #include <chrono>
 #include <iterator>
 #include <iomanip>
+#include <exception>
 
 #include <format>
 #include <print>
@@ -423,9 +424,12 @@ namespace Format::Runtime_Format_Checks
     void test()
     {
         const std::string FORMAT { "val = {}" };
-        const std::string result = std::format(std::runtime_format(FORMAT), 42);
 
+#if 0
+        const std::string result = std::format(std::runtime_format(FORMAT), 42);
         std::cout << result << std::endl;
+#endif
+
     }
 
 }
