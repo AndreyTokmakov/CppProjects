@@ -19,6 +19,7 @@ Description : CollectionsTests
 #include "Stack/Stack.h"
 #include "Set/Set.h"
 #include "Vector/Vector.h"
+#include "Inplace_Vector/InplaceVector.hpp"
 #include "Map/Map.h"
 #include "MultiMap/MultiMap.h"
 #include "Flat_Map/FlatMap.h"
@@ -38,9 +39,10 @@ int main([[maybe_unused]] int argc,
 	// Stack::TestAll();
 	// Heap::TestAll();
 	// Vector::TestAll();
+	inplace_vector::TestAll();
 	// Valarray::TestAll();
 	// Map::TestAll();
-	FlatMap::TestAll();
+	// FlatMap::TestAll();
 	// MultiMap::TestAll();
     // UnorderedMap::TestAll();
     // Set::TestAll();

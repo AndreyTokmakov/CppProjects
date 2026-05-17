@@ -27,6 +27,7 @@ Description : C++ Optimisation and Performance Tuning experiments
 #include <thread>
 #include <algorithm>
 #include <numeric>
+#include <unistd.h>
 
 namespace Variables_MemoryLayout
 {

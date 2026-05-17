@@ -15,6 +15,7 @@ add_executable(${PROJECT_NAME} MACOSX_BUNDLE
         Array/Array.cpp
         BinaryTrees/BinaryTrees.cpp
         Custom_Vector/Custom_Vector.cpp
+        Inplace_Vector/InplaceVector.cpp
         Deque/Deque.cpp
         ForwardList/ForwardList.cpp
         Heap/Heap.cpp
