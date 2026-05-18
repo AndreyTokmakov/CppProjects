@@ -9,6 +9,7 @@
 
 #include <iostream>
 #include <string>
+#include <print>
 #include <string_view>
 #include <type_traits>
 #include <cassert>
@@ -387,6 +388,38 @@ namespace StructuredBinding::If_Init_Comparison_Operator_Cpp26
 }
 
 
+namespace StructuredBinding::Structured_Bindings_Pack
+{
+	struct Data
+	{
+		int a { 1 };
+		int b { 2 };
+		int c { 3 };
+		int d { 4 };
+		int e { 5 };
+	};
+
+	Data getData()
+	{
+		return {};
+	}
+
+	void demo()
+	{
+		{
+			auto [v1, v2, v3, v4, v5] = getData();
+			std::println("{} {} {} {} {}", v1, v2, v3, v4, v5);
+			// 1 2 3 4 5
+		}
+		{
+			// auto [d, ...e] = getData();
+		}
+		{
+			// auto [...f, g] = getData();
+		}
+	}
+}
+
 void StructuredBinding::TestAll()
 {
 	// Test_Struct_Reference_Init()
@@ -414,4 +447,6 @@ void StructuredBinding::TestAll()
 	// CustomBinding::Test();
 
 	// If_Init_Comparison_Operator_Cpp26::demo();
+
+	Structured_Bindings_Pack::demo();
 }

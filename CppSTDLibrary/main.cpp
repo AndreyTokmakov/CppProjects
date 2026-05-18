@@ -165,7 +165,7 @@ int main([[maybe_unused]] const int argc,
     // MoveSemantics::TestAll();
     // Numbers::TestAll();
     // Math::TestAll();
-    Memory::TestAll();
+    // Memory::TestAll();
     // Metaprogramming::TestAll();
     // InlineNamespaces::TestAll();
     // NumericLimits::TestAll();
@@ -182,7 +182,7 @@ int main([[maybe_unused]] const int argc,
     // StringStream::TestAll();
     // String::TestAll();
     // StringView::TestAll();
-    // StructuredBinding::TestAll();
+    StructuredBinding::TestAll();
     // StrongTypes::TestAll();
     // Span::TestAll();
     // span_stream::TestAll();
