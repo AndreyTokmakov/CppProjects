@@ -327,7 +327,7 @@ namespace StructuredBinding::If_Init_Comparison_Operator_Cpp26
 		};
 
 		error_code errorCode;
-		double result;
+		double result { 0.0 };
 
 		// This will be evaluated as the `if` condition
 		explicit operator bool() const
@@ -342,8 +342,14 @@ namespace StructuredBinding::If_Init_Comparison_Operator_Cpp26
 	kinetic_energy_result kinetic_energy(const double mass, const double velocity)
 	{
 		if (mass < 0.0)
-			return { mass_is_negative, std::numeric_limits<double>::quiet_NaN() };
-		return { no_error, 0.5 * mass * velocity * velocity };
+			return {
+				.errorCode=mass_is_negative,
+				.result=std::numeric_limits<double>::quiet_NaN()
+			};
+		return {
+			.errorCode=no_error,
+			.result=0.5 * mass * velocity * velocity
+		};
 	}
 
 	void demo()
@@ -407,5 +413,5 @@ void StructuredBinding::TestAll()
 
 	// CustomBinding::Test();
 
-	If_Init_Comparison_Operator_Cpp26::demo();
+	// If_Init_Comparison_Operator_Cpp26::demo();
 }

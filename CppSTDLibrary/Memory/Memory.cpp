@@ -1742,14 +1742,50 @@ namespace Memory::Override_Global_Memory_Handler
 	}
 }
 
+namespace Memory::Start_Lifetime_As
+{
+	void test(int x)
+	{
+		[[assume(x > 0)]]; // Compiler may assume x is positive
+	}
+
+	struct Header
+	{
+		int version { 0 };
+		int protocol { 0 };
+	};
+
+	void start_lifetime_as_test()
+	{
+		const std::array<uint8_t, sizeof(Header)> bytes = [] -> std::array<uint8_t, sizeof(Header)> {
+			std::array<uint8_t, sizeof(Header)> tmp {};
+			constexpr Header header { .version = 1, .protocol = 2 };
+			memcpy(tmp.data(), &header, sizeof(header));
+			return tmp;
+		}();
+
+		{
+			const Header* header = std::start_lifetime_as<Header>(bytes.data());
+			std::cout << header->version << ", " << header->protocol << std::endl;
+		}
+
+		{
+			const Header* header = reinterpret_cast<const Header*>(bytes.data());
+			std::cout << header->version << ", " << header->protocol << std::endl;
+		}
+	}
+}
+
 void Memory::TestAll()
 {
     // Launder::TestAll();
-    Alignment::TestAll();
+    // Alignment::TestAll();
     // AlignedStackAllocator::TestAll();
     // CustomStackAllocator::TestAll();
     // MemoryUsageMonitor::TestAll();
     // MemoryPool::TestAll();
+
+	Start_Lifetime_As::start_lifetime_as_test();
 
 	// ObjectPool_Stack_FixedSize::TestAll();
 

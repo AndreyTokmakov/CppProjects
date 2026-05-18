@@ -1635,7 +1635,7 @@ namespace demo
             return tmp;
         } ();
 
-        // Header* header = std::start_lifetime_as<Header>(bytes.data());
+        const Header* header1 = std::start_lifetime_as<Header>(bytes.data());
 
         const Header* header = reinterpret_cast<const Header*>(bytes.data());
         std::cout << header->version << ", " << header->protocol << std::endl;
