@@ -32,7 +32,7 @@ add_executable(${PROJECT_NAME}
 		CompileTime_Constexpr/CompileTimeProgramming.cpp
         CompileTime_Constexpr/Constexpr.cpp
 		CompileTime_Constexpr/GetClassName_CompileTime.cpp
-		EnumTests/EnumTests.cpp
+		Enums/Enums.cpp
 		Embed/BinaryResourceInclusion.cpp
 		Exceptions/Exceptions.cpp
 		Errors/Errors.cpp
@@ -41,13 +41,16 @@ add_executable(${PROJECT_NAME}
 		Filesystem/Filesystem.cpp
 		Format/Format.cpp
 		Format/CustomTypesFormatters.cpp
+
         Functional_Objects/FunctionObjects.cpp
         Functional_Objects/MemberFunctionPointer.cpp
         Functional_Objects/CallbackTests.cpp
         Functional_Objects/MoveOnlyFunction.cpp
+        Functional_Objects/CopyableFunction.cpp
         Functional_Objects/PassCallableToClass.cpp
         Functional_Objects/SmallFunctionWrapper.cpp
         Functional_Objects/Static_FunctionCall_Operator.cpp
+
 		Initialization/Initialization.cpp
 		InitializerList/InitializerList.cpp
 		InlineVariables/InlineVariables.cpp

@@ -33,7 +33,7 @@ Description : Cpp STD lib
 #include "CTAD/ClassTemplateArgumentDeduction.h"
 #include "DeducingThis/DeducingThis.h"
 #include "Format/Format.h"
-#include "EnumTests/EnumTests.h"
+#include "Enums/Enums.hpp"
 #include "Embed/BinaryResourceInclusion.hpp"
 #include "Expected/Expected.h"
 #include "Errors/Errors.h"
@@ -142,7 +142,7 @@ int main([[maybe_unused]] const int argc,
     // RVO_FailureCases::TestAll();
     // ClassTemplateArgumentDeduction::TestAll();
     // DateAndTime::TestAll();
-    // EnumTests::TestAll();
+    enums::TestAll();
     // Errors::TestAll();
     // Embed::TestAll();
     // Exceptions::TestAll();
@@ -182,7 +182,7 @@ int main([[maybe_unused]] const int argc,
     // StringStream::TestAll();
     // String::TestAll();
     // StringView::TestAll();
-    StructuredBinding::TestAll();
+    // StructuredBinding::TestAll();
     // StrongTypes::TestAll();
     // Span::TestAll();
     // span_stream::TestAll();

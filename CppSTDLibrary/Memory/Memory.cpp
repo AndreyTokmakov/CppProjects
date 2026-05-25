@@ -1,11 +1,11 @@
-//============================================================================
-// Name        : Memory.cpp
-// Created on  : 14.05.2020
-// Author      : Tokmakov Andrey
-// Version     : 1.0
-// Copyright   : Your copyright notice
-// Description : Memory src class
-//============================================================================
+/**============================================================================
+Name        : Memory.cpp
+Created on  : 14.05.2020
+Author      : Tokmakov Andrey
+Version     : 1.0
+Copyright   : Your copyright notice
+Description : Memory src class
+============================================================================**/
 
 
 #include "Alignment.h"

@@ -18,6 +18,7 @@ namespace FunctionObjects
 	namespace CallbackTests { void TestAll(); }
 	namespace SmallFunctionWrapper { void TestAll(); }
 	namespace MoveOnlyFunction { void TestAll(); }
+	namespace CopyableFunction { void TestAll(); }
 	namespace Static_FunctionCall_Operator { void TestAll(); }
 };
 

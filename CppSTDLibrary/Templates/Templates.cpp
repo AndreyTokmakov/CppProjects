@@ -1333,11 +1333,11 @@ void Templates::TestAll()
     // NTTP::TestAll();
     // SFINAE::TestAll();
     // TemplateSpecialization::TestAll();
-    // PackIndexing::TestAll();
+    PackIndexing::TestAll();
     // IndexSequence::TestAll();
     // Metaprogramming::TestAll();
     // Expression_Templates::TestAll();
-    perfect_forwarding::TestAll();
+    // perfect_forwarding::TestAll();
 
     // Is_Base_Of__Test();
     // Is_Same();

@@ -68,7 +68,7 @@ int main([[maybe_unused]]  int argc,
     // Builder::TestAll();
     // FabricMethod::TestAll();
     // FactoryClasses::TestAll();
-    factory_registry::TestAll();
+    // factory_registry::TestAll();
     // FactoryMethod_TypeSequence::TestAll();
     // Prototype::TestAll();
     // Singleton::TestAll();;
@@ -82,7 +82,7 @@ int main([[maybe_unused]]  int argc,
     // Adapter::TestAll();
     // Bridge::TestAll();
     // PImpl::TestAll();
-    // Composite::Test();
+    Composite::Test();
     // Facade::Test();
     // Decorator::Test();
     // Flyweight::Test();

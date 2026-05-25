@@ -9,73 +9,6 @@
 
 #include "Composite.h"
 
-namespace Composite::Pages
-{
-    struct IPage
-    {
-        virtual void Add([[maybe_unused]] IPage& page) noexcept {}
-        virtual void Remove() noexcept {}
-        virtual void Delete([[maybe_unused]] IPage& page) noexcept {}
-
-        virtual ~IPage() = default;
-    };
-
-    class Page final : public IPage {
-    public:
-        void Add([[maybe_unused]] IPage& page) noexcept override {
-            std::cout << "Something is added to the page" << std::endl;
-        }
-
-        void Remove() noexcept override {
-            std::cout << "Something is removed from the page" << std::endl;
-        }
-
-        void Delete([[maybe_unused]] IPage& page) noexcept override {
-            std::cout << "Something is deleted from page " << std::endl;
-        }
-    };
-
-
-    class Copy : public IPage
-    {
-        std::vector<IPage> copyPages;
-
-    public:
-        void AddElement([[maybe_unused]] IPage& page) {
-            copyPages.push_back(page);
-        }
-
-        void Add([[maybe_unused]] IPage& page) noexcept override {
-            std::cout << "something is added to the copy" << std::endl;
-        }
-
-        void Remove() noexcept override {
-            std::cout << "something is removed from the copy" << std::endl;
-        }
-
-        void Delete([[maybe_unused]] IPage& page) noexcept override {
-            std::cout << "something is deleted from the copy";
-        }
-    };
-
-
-	void Test()
-    {
-		Page a;
-		Page b;
-		Copy allcopy;
-		allcopy.AddElement(a);
-		allcopy.AddElement(b);
-
-		allcopy.Add(a);
-		a.Add(b);
-
-		allcopy.Remove();
-		b.Remove();
-	}
-}
-
-
 namespace Composite::Graphics
 {
     class IGraphic {
@@ -278,11 +211,7 @@ namespace Composite::Leafs
 
 void Composite::Test()
 {
-	// Pages::Test();
-
     // Graphics::Test();
-
-    Table::Test();
-
+    // Table::Test();
     // Leafs::Test();
 }

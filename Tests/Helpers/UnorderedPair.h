@@ -15,9 +15,9 @@ Description : UnorderedPair
 namespace UnorderedPair::Utilities
 {
     template<typename T>
-    struct UnorderedPair: std::pair<T, T> {
+    struct UnorderedPair: std::pair<T, T>
+    {
         UnorderedPair(T a, T b): std::pair<T, T> {a, b} {
-            ///
         }
 
         template<typename Ty>
@@ -28,22 +28,26 @@ namespace UnorderedPair::Utilities
     };
 
     template<typename T>
-    struct PairHashUnordered {
-        std::size_t operator()(const UnorderedPair<T>& pair) const noexcept {
-            std::size_t h1 = std::hash<T>{}(std::min(pair.first, pair.second));
-            std::size_t h2 = std::hash<T>{}(std::max(pair.first, pair.second));
+    struct PairHashUnordered
+    {
+        std::size_t operator()(const UnorderedPair<T>& pair) const noexcept
+        {
+            const std::size_t h1 = std::hash<T>{}(std::min(pair.first, pair.second));
+            const std::size_t h2 = std::hash<T>{}(std::max(pair.first, pair.second));
             return h1 ^ (h2 << 1);
         }
     };
 
     template<typename Ty>
-    std::ostream& operator<<(std::ostream& stream, const UnorderedPair<Ty>& pair) {
+    std::ostream& operator<<(std::ostream& stream, const UnorderedPair<Ty>& pair)
+    {
         stream << "(" << pair.first << ", " << pair.second << ")";
         return stream;
     }
 
     template<typename Ty>
-    bool operator==(const UnorderedPair<Ty>& p1, const UnorderedPair<Ty>& p2) {
+    bool operator==(const UnorderedPair<Ty>& p1, const UnorderedPair<Ty>& p2)
+    {
         return (p1.first == p2.first && p1.second == p2.second) ||
                (p1.second == p2.first && p1.first == p2.second);
     }

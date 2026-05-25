@@ -1280,47 +1280,6 @@ namespace EnumBasedStrongTypes
 }
 
 
-namespace EnumHack
-{
-    enum class Weekdays
-    {
-        Monday = 1,
-        Tuesday = 2,
-        Wednesday = 4,
-        Thursday = 8,
-        Friday = 0x10,
-        Saturday = 0x20,
-        Sunday = 0x40
-    };
-
-
-    constexpr bool isWorkingDay(const Weekdays day)
-    {
-        using enum Weekdays;
-        static_assert(std::is_same_v< std::underlying_type_t<Weekdays>, int>);
-
-        if (static_cast<int>(day) & (static_cast<int>(Monday) |
-                                     static_cast<int>(Tuesday) |
-                                     static_cast<int>(Wednesday) |
-                                     static_cast<int>(Thursday) |
-                                     static_cast<int>(Friday))) {
-            return true;
-        }
-        return false;
-    }
-
-    void Test()
-    {
-        static_assert(true  == isWorkingDay(Weekdays::Monday));
-        static_assert(true  == isWorkingDay(Weekdays::Tuesday));
-        static_assert(true  == isWorkingDay(Weekdays::Wednesday));
-        static_assert(true  == isWorkingDay(Weekdays::Thursday));
-        static_assert(true  == isWorkingDay(Weekdays::Friday));
-        static_assert(false == isWorkingDay(Weekdays::Saturday));
-        static_assert(false == isWorkingDay(Weekdays::Sunday));
-
-    }
-}
 
 
 
@@ -1612,37 +1571,6 @@ namespace FibonacciSequence_Lambda
 }
 
 
-namespace demo
-{
-    void test(int x)
-    {
-        [[assume(x > 0)]]; // Compiler may assume x is positive
-
-    }
-
-    struct Header
-    {
-        int version { 0 };
-        int protocol { 0 };
-    };
-
-    void start_lifetime_as_test()
-    {
-        const std::array<uint8_t, sizeof(Header)> bytes = [] {
-            std::array<uint8_t, sizeof(Header)> tmp {};
-            constexpr Header header { .version = 1, .protocol = 2 };
-            memcpy(tmp.data(), &header, sizeof(header));
-            return tmp;
-        } ();
-
-        const Header* header1 = std::start_lifetime_as<Header>(bytes.data());
-
-        const Header* header = reinterpret_cast<const Header*>(bytes.data());
-        std::cout << header->version << ", " << header->protocol << std::endl;
-    }
-}
-
-
 namespace resource_registry
 {
     using TypeID = uint32_t;
@@ -1701,16 +1629,6 @@ namespace resource_registry
 
     }
 }
-
-
-void swp(int* a, int* b)
-{
-    const int tmp = *a;
-    *a = *b;
-    *b = tmp;
-}
-
-
 
 namespace array_to_store_crtp_objects
 {
@@ -1800,17 +1718,13 @@ int main([[maybe_unused]] const int argc,
     const std::vector<std::string_view> args(argv + 1, argv + argc);
 
     // resource_registry::test();
-
     // array_to_store_crtp_objects::test();
-    array_to_store_deducing_this_objects::test();
+    // array_to_store_deducing_this_objects::test();
 
     /** * * * * *  Move to lib * * * * * **/
     // Cpp_NEW_Features::TestAll();
     // Execution::TestAll();
     // Coroutines::TestAll();
-
-    // demo::start_lifetime_as_test();
-
 
     // ASM_Usage::measureElapsedTime();
 
@@ -1819,7 +1733,7 @@ int main([[maybe_unused]] const int argc,
     // VirtualFunctionTests::demo();
     // Int_to_UInt_Tests::Tests();
     // EnumBasedStrongTypes::Tests();
-    // EnumHack::Test();
+    EnumHack::Test();
     // OrderBook_TableDispatch::Tests();
     // Store_Pointer_In_Collection::demo();
     // OOP_FoldExpr_Inheritance::demo();
