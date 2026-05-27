@@ -143,13 +143,8 @@ namespace DateAndTime
 
 namespace DateAndTime::Performance
 {
-
-#define START_TIME_MEASURE auto start = std::chrono::high_resolution_clock::now();
-#define STOP_TIME_MEASURE  { auto end = std::chrono::high_resolution_clock::now(); \
-                           auto duration = std::chrono::duration_cast<std::chrono::microseconds>(end - start).count(); \
-						   std::cout << "Result: " << duration << " microseconds" << std::endl;}
-
-    std::array<int, 4> str2Date1(std::string_view str) {
+    std::array<int, 4> str2Date1(std::string_view str)
+    {
         std::array<int, 4> date {};
         size_t pos { 0 }, prev { 0 }, idx {0};
         while ((pos = str.find_first_of(":.", prev)) != std::string::npos) {
@@ -175,22 +170,21 @@ namespace DateAndTime::Performance
         return date;
     }
 
+    __attribute__((optimize("O0")))
     void Test()
     {
         constexpr size_t COUNT {10'000'000};
         constexpr std::string_view timeStr {"11:13:35.0400123"};
 
         {
-            START_TIME_MEASURE
+            const PerfUtilities::ScopedTimer timer { "str2Date1" };
             for (size_t i = 0; i < COUNT; i++)
-                auto date = str2Date1(timeStr);
-            STOP_TIME_MEASURE
+                auto _ = str2Date1(timeStr);
         }
         {
-            START_TIME_MEASURE
+            const PerfUtilities::ScopedTimer timer { "str2Date2" };
             for (size_t i = 0; i < COUNT; i++)
-                auto date = str2Date2(timeStr);
-            STOP_TIME_MEASURE
+                auto _ = str2Date2(timeStr);
         }
     }
 }
@@ -312,12 +306,11 @@ void DateAndTime::TestAll()
     // StringToTime_Manual_1("11:13:35.0400123");
     // StringToTime_Manual_2("11:13:35.0400123");
 
-    // Performance::Test();
-
     // TimeSpec();
-
     // MeasureTime::ClockGetTime();
 
-    FunctionPerformance::TestGetCurrentTimeFunctions();
+    Performance::Test();
+
+    // FunctionPerformance::TestGetCurrentTimeFunctions();
 };
 

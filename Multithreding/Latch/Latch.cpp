@@ -7,7 +7,7 @@ Copyright   : Your copyright notice
 Description : Latch src class
 ============================================================================**/
 
-#include "Latch.h"
+#include "Latch.hpp"
 
 #include <iostream>
 #include <string>
@@ -15,52 +15,14 @@ Description : Latch src class
 #include <functional>
 
 #include <latch>
-#include <future>
 #include <thread>
 #include <chrono>
-#include <iomanip>
 #include <syncstream>
 
-namespace
-{
-    using namespace std::chrono;
+#include "DateTimeUtilities.hpp"
 
-    constexpr char FORMAT[] { "[%d-%02d-%02d %02d:%02d:%02d.%06ld] " };
+#define LOG  std::osyncstream { std::cout } << DateTimeUtilities::getCurrentTime() << " "
 
-    std::string getCurrentTime(const time_point<system_clock>& timestamp = system_clock::now()) noexcept
-    {
-        const time_t time { system_clock::to_time_t(timestamp) };
-        std::tm tm {};
-        ::localtime_r(&time, &tm);
-
-        std::string buffer(64, '\0');
-        const int32_t size = std::sprintf(buffer.data(), FORMAT,
-              tm.tm_year + 1900, tm.tm_mon + 1, tm.tm_mday, tm.tm_hour, tm.tm_min, tm.tm_sec,
-              duration_cast<microseconds>(timestamp - time_point_cast<seconds>(timestamp)).count());
-        buffer.resize(size);
-        buffer.shrink_to_fit();
-        return buffer;
-    }
-
-    template<typename ...Args>
-    void debug1(Args&&... args)
-    {
-        std::osyncstream {std::cout } << std::format("{:%d-%m-%Y %H:%M:%OS}", system_clock::now()) << " ";
-        (std::osyncstream {std::cout }  << ... << std::forward<Args>(args)) << std::endl;
-    }
-
-    std::mutex mtx;
-
-    template<typename ...Args>
-    void debug(Args&&... args)
-    {
-        std::lock_guard<std::mutex> lock {mtx};
-        // std::cout << std::format("{:%d-%m-%Y %H:%M:%OS}", system_clock::now()) << " ";
-        std::cout << getCurrentTime();
-        (std::cout  << ... << std::forward<Args>(args)) << std::endl;
-    }
-
-}
 
 namespace Latch
 {
@@ -71,19 +33,19 @@ namespace Latch
         std::latch completion_latch(max_workers);
 
         std::vector<std::jthread> workers;
-        auto task = [&](unsigned int timeout)-> void {
-            debug("Waiting for ", timeout, " seconds");
+        auto task = [&](const uint32_t timeout)-> void {
+            LOG << "Sleeping for " << timeout << " seconds" << std::endl;
             std::this_thread::sleep_for(std::chrono::seconds(timeout));
             completion_latch.count_down();
         };
 
-        debug("Starting threads....");
+        LOG << "Starting threads...." << std::endl;
         while (max_workers--)
             workers.emplace_back(task, rand() % 8);
 
-        debug("Block with latch.wait() until work is done.");
+        LOG << "Block with latch.wait() until work is done." << std::endl;
         completion_latch.wait();
-        debug( "\n ****** Latch.wait() done. ***** \n");
+        LOG << '\n' << std::string(120,'-') << "\nLatch.wait() done\n" << std::string(120,'-') << '\n';
     }
 
     void TryWait_Test()
@@ -92,24 +54,24 @@ namespace Latch
         std::latch completion_latch(max_workers);
 
         std::vector<std::jthread> workers;
-        auto task = [&](unsigned int timeout)-> void {
-            debug("Waiting for ", timeout, " seconds");
+        auto task = [&](const unsigned int timeout)-> void {
+            LOG << "Waiting for " << timeout << " seconds" << std::endl;
             std::this_thread::sleep_for(std::chrono::seconds(timeout));
-            debug("Thread done");
+            LOG << "Thread done" << std::endl;
             completion_latch.count_down();
 
         };
 
-        debug("Starting threads....");
-        while (max_workers--)
+        LOG << "Starting threads...." << std::endl;
+        while ((max_workers--) != 0)
             workers.emplace_back(task, rand() % 8);
 
 
-        debug("Block with latch.wait() until work is done.");
+        LOG << "Block with latch.wait() until work is done." << std::endl;
         while (!completion_latch.try_wait()) {
             std::this_thread::sleep_for(std::chrono::microseconds(10U));
         }
-        debug("Done");
+        LOG << "Done" << std::endl;
     }
 };
 
@@ -122,20 +84,20 @@ namespace Latch::SharedResourceTest
         std::latch allReady{ numOfThreads };
     };
 
-    void startWorkAtTheSameTime(SharedResource& resource, int workerId)
+    void startWorkAtTheSameTime(SharedResource& resource, const int workerId)
     {
-        debug("Worker ", workerId,  " started");
+        LOG << "Worker " << workerId <<  " started" << std::endl;
         std::this_thread::sleep_for(std::chrono::seconds (1UL));
 
         // Synchronize threads to ensure they all start processing at the same time.
         // Atomically decrements the counter and blocks until the counter reaches zero.
         resource.allReady.arrive_and_wait();
 
-        debug("Worker ", workerId,  " can continue.");
+        LOG << "Worker " << workerId <<  " can continue." << std::endl;
         // Simulated work for each thread
-        for (int i{ 0 }; i < workerId; ++i)
+        for (int32_t i = 0; i < workerId; ++i)
         {
-            debug("Worker ID: ", workerId,  " processing..." );
+            LOG << "Worker ID: " << workerId <<  " processing..." << std::endl;
             std::this_thread::sleep_for(std::chrono::milliseconds(2U * workerId));
         }
     }
@@ -151,10 +113,9 @@ namespace Latch::SharedResourceTest
     }
 }
 
-void Latch::TEST_ALL()
+void Latch::TestAll()
 {
-    // Wait_Test();
+    Wait_Test();
     // TryWait_Test();
-
-    SharedResourceTest::Test();
+    // SharedResourceTest::Test();
 }

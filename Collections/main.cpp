@@ -39,12 +39,12 @@ int main([[maybe_unused]] int argc,
 	// Stack::TestAll();
 	// Heap::TestAll();
 	// Vector::TestAll();
-	inplace_vector::TestAll();
+	// inplace_vector::TestAll();
 	// Valarray::TestAll();
 	// Map::TestAll();
 	// FlatMap::TestAll();
 	// MultiMap::TestAll();
-    // UnorderedMap::TestAll();
+    UnorderedMap::TestAll();
     // Set::TestAll();
     // UnorderedSet::TestAll();
 	// Queue::TestAll();

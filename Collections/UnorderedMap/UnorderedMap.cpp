@@ -13,13 +13,14 @@
 #include <string>
 #include <algorithm>
 #include <string_view>
-#include <cassert>
 #include <variant>
 #include <chrono>
 #include <array>
 
 #include "../Helpers/Integer.h"
 #include "../Helpers/Helpers.h"
+#include "PerfUtilities.hpp"
+
 #include "UnorderedMap.h"
 
 namespace UnorderedMap {
@@ -583,31 +584,23 @@ namespace UnorderedMap
 			map_str_view.emplace(std::string_view{ s }, 1);
 		}
 
+
 		constexpr size_t TESTS_COUNT {100'000};
 		{
-			auto start = std::chrono::high_resolution_clock::now();
+			const PerfUtilities::ScopedTimer timer { "map_str.find" };
 			for (size_t i = 0; i < TESTS_COUNT; ++i) {
 				for (auto& s : cities) {
 					map_str.find(s);
 				}
 			}
-
-			auto end = std::chrono::high_resolution_clock::now();
-			auto duration = std::chrono::duration_cast<std::chrono::microseconds>(end - start).count();
-			std::cout << "Result: " << duration << " microseconds" << std::endl;
 		}
-
 		{
-			auto start = std::chrono::high_resolution_clock::now();
+			const PerfUtilities::ScopedTimer timer { "map_str_view.find" };
 			for (size_t i = 0; i < TESTS_COUNT; ++i) {
 				for (auto& s : cities) {
 					map_str_view.find(std::string_view{ s });
 				}
 			}
-
-			auto end = std::chrono::high_resolution_clock::now();
-			auto duration = std::chrono::duration_cast<std::chrono::microseconds>(end - start).count();
-			std::cout << "Result: " << duration << " microseconds" << std::endl;
 		}
 	}
 	#pragma optimize( "", on )
@@ -931,7 +924,7 @@ void UnorderedMap::TestAll()
 	// Erase_Loop();
 
 	// Try_Emplace();
-    Try_Emplace_CustomType();
+    // Try_Emplace_CustomType();
 	// Try_Emplace_Ptr();
 
 	// Extract();
@@ -942,7 +935,7 @@ void UnorderedMap::TestAll()
 
 	// Map_of_Variants();
 
-	// MapLookup_Performance_KeyType();
+	MapLookup_Performance_KeyType();
 
 
     // TransparentComparators::MapWith_String_Key();

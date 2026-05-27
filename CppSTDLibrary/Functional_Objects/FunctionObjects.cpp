@@ -11,20 +11,15 @@ Description : Function objects src
 #include <string>
 #include <functional>
 #include <chrono>
-#include <string>
-#include <iostream>
 #include <algorithm>
 #include <numeric>
 #include <array>
-#include <functional>   // std::modulus, std::bind2nd
-#include <algorithm> 
-#include <string_view> 
-#include <array>
-#include <type_traits>
+#include <string_view>
 #include <memory>
 #include <cassert>
 
-#include "../Helpers/Helpers.h"
+#include "PerfUtilities.hpp"
+
 #include "FunctionObjects.hpp"
 
 namespace FunctionObjects {
@@ -609,25 +604,16 @@ namespace FunctionObjects::Function {
         return res;
     }
 
-    void Function_VS_Lambda_Performance() {
+    void Function_VS_Lambda_Performance()
+	{
         {
-            std::chrono::high_resolution_clock::time_point start = std::chrono::high_resolution_clock::now();
+        	const PerfUtilities::ScopedTimer timer { "test_direct_lambda" };
             test_direct_lambda();
-
-            std::chrono::high_resolution_clock::time_point end = std::chrono::high_resolution_clock::now();
-            std::chrono::duration<double> time_span = duration_cast<std::chrono::duration<double>>(end - start);
-            std::cout << "It took me " << time_span.count() << " seconds. LAMBDA\n";
         }
-
         {
-            std::chrono::high_resolution_clock::time_point start = std::chrono::high_resolution_clock::now();
+        	const PerfUtilities::ScopedTimer timer { "test_std_function" };
             test_std_function();
-
-            std::chrono::high_resolution_clock::time_point end = std::chrono::high_resolution_clock::now();
-            std::chrono::duration<double> time_span = duration_cast<std::chrono::duration<double>>(end - start);
-            std::cout << "It took me " << time_span.count() << " seconds. FUNCTION\n";
         }
-
     }
 }
 
@@ -762,7 +748,7 @@ void FunctionObjects::TestAll()
 	// Function::Swap();
 	// Function::TargetType();
 	// Function::Lambda_To_Function();
-	// Function::Function_VS_Lambda_Performance();
+	Function::Function_VS_Lambda_Performance();
 
 	// PassToFunction::PassLambdaAsInput();
 	// PassToFunction::PassObject();

@@ -11,7 +11,6 @@
 
 #include <iostream>
 #include <algorithm>
-// #include <limits>
 
 #include <list>
 #include <deque>
@@ -19,8 +18,11 @@
 #include <chrono>
 #include <vector>
 
+#include "PerfUtilities.hpp"
 
-namespace {
+
+namespace
+{
 
 	template<typename T>
 	std::ostream& operator<<(std::ostream& stream, const std::vector<T>& vect) {
@@ -35,11 +37,6 @@ namespace {
 			stream << entry << ' ';
 		return stream;
 	}
-
-#define START_TIME_MEASURE auto start = std::chrono::high_resolution_clock::now();
-#define STOP_TIME_MEASURE  { auto end = std::chrono::high_resolution_clock::now(); \
-                           auto duration = std::chrono::duration_cast<std::chrono::microseconds>(end - start).count(); \
-						   std::cout << "Result: " << duration << " microseconds" << std::endl;}
 }
 
 namespace Graphs::Tests
@@ -869,14 +866,13 @@ namespace Graphs_Perf::Find_Shortest_Path {
         g.addEdge(1, 3);
 
         {
-            START_TIME_MEASURE
+        	const PerfUtilities::ScopedTimer timer { "PerfTest" };
             constexpr int reps = 100'000'000;
             // constexpr int reps = 1;
             for (int i = 0; i < reps; ++i) {
                 g.FindPaths(2, 3);
                 // g.print_max();
             }
-            STOP_TIME_MEASURE
         }
     }
 }

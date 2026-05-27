@@ -1,11 +1,11 @@
-//============================================================================
-// Name        : Barrier.h
-// Created on  : 02.12.2020
-// Author      : Tokmakov Andrey
-// Version     : 1.0
-// Copyright   : Your copyright notice
-// Description : Barrier src class
-//============================================================================
+/**============================================================================
+Name        : Barrier.cpp
+Created on  : 02.12.2020
+Author      : Andrey Tokmakov
+Version     : 1.0
+Copyright   : Your copyright notice
+Description : Barrier src class
+============================================================================**/
 
 #include <barrier>
 #include <iostream>
@@ -21,7 +21,7 @@
 #include <chrono>
 #include <syncstream>
 
-#include "Barrier.h"
+#include "Barrier.hpp"
 #include "DateTimeUtilities.hpp"
 
 namespace
@@ -48,7 +48,7 @@ namespace Barrier
         constexpr size_t threadsCount {3};
         std::barrier barrier(threadsCount);
 
-        auto task = [&](std::string_view name, const uint32_t timeout) {
+        auto task = [&](const std::string_view name, const uint32_t timeout) {
             LOG << name  <<  " started\n";
             std::this_thread::sleep_for(std::chrono::seconds(timeout));
             LOG << name  <<  " completed in " << timeout << " seconds. Waiting for others\n";
@@ -56,9 +56,9 @@ namespace Barrier
             LOG << name  <<  " done\n";
         };
 
-        std::jthread t1 (task, "T1", getRandomInteger(0, 5));
-        std::jthread t2 (task, "T2", getRandomInteger(0, 5));
-        std::jthread t3 (task, "T3", getRandomInteger(0, 5));
+        const std::jthread t1 (task, "T1", getRandomInteger(0, 5));
+        const std::jthread t2 (task, "T2", getRandomInteger(0, 5));
+        const std::jthread t3 (task, "T3", getRandomInteger(0, 5));
 
         /**
         2025-11-20 18:33:39.095909 T3 started
@@ -274,8 +274,8 @@ namespace Barrier::Reuse_Callback
         });
 
         std::vector<std::jthread> runners;
-        std::generate_n(std::back_inserter(runners), threadCount, [&phase]{
-            return std::jthread([&phase]{
+        for (uint16_t tId = 0; tId < threadCount; ++tId) {
+            runners.emplace_back([&phase]{
                 LOG << "Running phase 1 for thread " << std::this_thread::get_id() << std::endl;
 
                 std::this_thread::yield(); /** block until all threads arrive **/
@@ -286,18 +286,45 @@ namespace Barrier::Reuse_Callback
                 std::this_thread::yield(); /** block until all threads arrive **/
                 phase.arrive_and_wait();
             });
-        });
+        }
+    }
+
+    void Test2()
+    {
+        constexpr uint32_t numThreads = 3, numEpochs = 2;
+
+        auto callback = []() noexcept {
+            LOG << " ------ [Barrier Phase] All-Reduce Gradients & Update Model -----\n";
+        };
+
+        std::barrier sync_point { numThreads, callback };
+        auto task = [&](const int threadId) {
+            for (uint32_t epoch = 1; epoch <= numEpochs; ++epoch)
+            {
+                LOG  << "Thread " << threadId << ": Calculating gradients for Epoch.\n";
+                // Simulate heavy work
+                std::this_thread::sleep_for(std::chrono::milliseconds(100));
+                sync_point.arrive_and_wait();
+                LOG  << "Thread " << threadId << ": Starting next phase.\n";
+            }
+        };
+
+        std::vector<std::jthread> workers;
+        for (uint32_t i = 1; i <= numThreads; ++i) {
+            workers.emplace_back(task, i);
+        }
     }
 }
 
-void Barrier::TEST_ALL()
+void Barrier::TestAll()
 {
     // SimpleTest();
     // Test();
     // Wait_To_All_Thread_Completed();
     // Run_CallBack_WhenAllDone();
-    Barrier_With_Completion();
+    // Barrier_With_Completion();
     // Check_Block_By_Barrier();
     // Reuse_Callback::Test();
+    Reuse_Callback::Test2();
     // Arrive_and_Wait_Separately();
 };

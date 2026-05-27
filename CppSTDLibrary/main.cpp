@@ -141,8 +141,8 @@ int main([[maybe_unused]] const int argc,
     // DeducingThis::TestAll();
     // RVO_FailureCases::TestAll();
     // ClassTemplateArgumentDeduction::TestAll();
-    // DateAndTime::TestAll();
-    enums::TestAll();
+    DateAndTime::TestAll();
+    // enums::TestAll();
     // Errors::TestAll();
     // Embed::TestAll();
     // Exceptions::TestAll();

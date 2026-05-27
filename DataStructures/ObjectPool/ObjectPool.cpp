@@ -14,16 +14,11 @@
 #include <new>
 #include <iostream>
 #include <iterator>
-#include <algorithm>
-#include <string>
-#include <vector>
-#include <array>
 #include <cassert>
 #include <numeric>
 #include <memory_resource>
-#include <cstdlib> // for std::byte
-#include <cmath>
 
+#include "PerfUtilities.hpp"
 
 namespace ObjectPool::TestTypes {
 
@@ -48,12 +43,6 @@ namespace ObjectPool::TestTypes {
 	using TypeMedium = Object<1024>;
 	using TypeLarge  = Object<1024 * 64>;
 
-
-
-#define START_TIME_MEASURE auto start = std::chrono::high_resolution_clock::now();
-#define STOP_TIME_MEASURE  { auto end = std::chrono::high_resolution_clock::now(); \
-                           auto duration = std::chrono::duration_cast<std::chrono::microseconds>(end - start).count(); \
-						   std::cout << "Result: " << duration << " microseconds" << std::endl;}
 }
 
 namespace ObjectPool::MyPools1 {
@@ -124,7 +113,8 @@ namespace ObjectPool::MyPools1 {
 	};
 
 
-	void PerformanceTests() {
+	void PerformanceTests()
+	{
 
 		using TestType = TestTypes::TypeLarge;
 		constexpr size_t size = 256;
@@ -136,7 +126,7 @@ namespace ObjectPool::MyPools1 {
 		std::cout << " ======================== Using std::new(): =========================\n";
 
 		{
-			START_TIME_MEASURE;
+			const PerfUtilities::ScopedTimer timer { "Using std::new()" };;
 			for (size_t i = 0; i < MAX_COUNT; i++) {
 				for (size_t n = 0; n < MAX_COUNT; n++) {
 					for (size_t k = 0; k < size; k++)
@@ -145,13 +135,12 @@ namespace ObjectPool::MyPools1 {
 						delete ints[k];
 				}
 			}
-			STOP_TIME_MEASURE;
 		}
 
 		std::cout << " ======================== Using pool: =========================\n";
 
 		{
-			START_TIME_MEASURE;
+			const PerfUtilities::ScopedTimer timer { "Using pool" };;
 			for (size_t i = 0; i < MAX_COUNT; i++) {
 				for (size_t n = 0; n < MAX_COUNT; n++) {
 					for (size_t k = 0; k < size; k++)
@@ -160,7 +149,6 @@ namespace ObjectPool::MyPools1 {
 						pool.deleteObject(ints[k]);
 				}
 			}
-			STOP_TIME_MEASURE;
 		}
 	}
 }
@@ -232,7 +220,7 @@ namespace ObjectPool::MyPools2 {
 		std::cout << " ======================== Using std::new(): =========================\n";
 
 		{
-			START_TIME_MEASURE;
+			const PerfUtilities::ScopedTimer timer { "Using std::new()" };
 			for (size_t i = 0; i < MAX_COUNT; i++) {
 				for (size_t n = 0; n < MAX_COUNT; n++) {
 					for (size_t k = 0; k < size; k++)
@@ -241,13 +229,12 @@ namespace ObjectPool::MyPools2 {
 						delete ints[k];
 				}
 			}
-			STOP_TIME_MEASURE;
 		}
 
 		std::cout << " ======================== Using pool: =========================\n";
 
 		{
-			START_TIME_MEASURE;
+			const PerfUtilities::ScopedTimer timer { "Using pool" };
 			for (size_t i = 0; i < MAX_COUNT; i++) {
 				for (size_t n = 0; n < MAX_COUNT; n++) {
 					for (size_t k = 0; k < size; k++)
@@ -256,7 +243,6 @@ namespace ObjectPool::MyPools2 {
 						pool.deleteObject(ints[k]);
 				}
 			}
-			STOP_TIME_MEASURE;
 		}
 	}
 }
@@ -381,9 +367,8 @@ namespace ObjectPool::GoodPools_Basic {
 
 		ObjectPool<TestType> pool{};
 		std::cout << " ======================== Using std::new(): =========================\n";
-
 		{
-			START_TIME_MEASURE;
+			const PerfUtilities::ScopedTimer timer { "new" };
 			for (size_t i = 0; i < MAX_COUNT; i++) {
 				for (size_t n = 0; n < MAX_COUNT; n++) {
 					for (size_t k = 0; k < size; k++)
@@ -392,20 +377,16 @@ namespace ObjectPool::GoodPools_Basic {
 						delete ints[k];
 				}
 			}
-			STOP_TIME_MEASURE;
 		}
-
 		std::cout << " ======================== Using pool: =========================\n";
-
 		{
-			START_TIME_MEASURE;
+			const PerfUtilities::ScopedTimer timer { "pool" };
 			for (size_t i = 0; i < MAX_COUNT; i++) {
 				for (size_t n = 0; n < MAX_COUNT; n++) {
 					for (size_t k = 0; k < size; k++)
 						auto object{ pool.acquireObject() };
 				}
 			}
-			STOP_TIME_MEASURE;
 		}
 	}
 }
@@ -589,7 +570,7 @@ namespace ObjectPool::GoodPools_Tests {
 		std::cout << " ======================== Using std::new(): =========================\n";
 
 		{
-			START_TIME_MEASURE;
+			const PerfUtilities::ScopedTimer timer { "new" };
 			for (size_t i = 0; i < MAX_COUNT; i++) {
 				for (size_t n = 0; n < MAX_COUNT; n++) {
 					for (size_t k = 0; k < size; k++)
@@ -598,20 +579,16 @@ namespace ObjectPool::GoodPools_Tests {
 						delete ints[k];
 				}
 			}
-			STOP_TIME_MEASURE;
 		}
-
 		std::cout << " ======================== Using pool: =========================\n";
-
 		{
-			START_TIME_MEASURE;
+			const PerfUtilities::ScopedTimer timer { "pool" };
 			for (size_t i = 0; i < MAX_COUNT; i++) {
 				for (size_t n = 0; n < MAX_COUNT; n++) {
 					for (size_t k = 0; k < size; k++)
 						auto object{ pool.acquireObject() };
 				}
 			}
-			STOP_TIME_MEASURE;
 		}
 	}
 }
@@ -767,7 +744,7 @@ namespace ObjectPool::GoodPools_MultiThreaded
         std::cout << " ======================== Using std::new(): =========================\n";
 
         {
-            START_TIME_MEASURE;
+            const PerfUtilities::ScopedTimer timer { "new" };;
             for (size_t i = 0; i < MAX_COUNT; i++) {
                 for (size_t n = 0; n < MAX_COUNT; n++) {
                     for (size_t k = 0; k < size; k++)
@@ -776,20 +753,18 @@ namespace ObjectPool::GoodPools_MultiThreaded
                         delete ints[k];
                 }
             }
-            STOP_TIME_MEASURE;
         }
 
         std::cout << " ======================== Using pool: =========================\n";
 
         {
-            START_TIME_MEASURE;
+            const PerfUtilities::ScopedTimer timer { "pool" };;
             for (size_t i = 0; i < MAX_COUNT; i++) {
                 for (size_t n = 0; n < MAX_COUNT; n++) {
                     for (size_t k = 0; k < size; k++)
                         auto object{ pool.acquireObject() };
                 }
             }
-            STOP_TIME_MEASURE;
         }
     }
 }

@@ -10,7 +10,7 @@ Description : Multithreading tests main entry point
 #include <iostream>
 
 #include "Semaphore/Semaphore.h"
-#include "Latch/Latch.h"
+#include "Latch/Latch.hpp"
 #include "ThreadPools/ThreadPools.h"
 #include "ThreadPools/ThreadPoolsEx.h"
 
@@ -48,7 +48,7 @@ Description : Multithreading tests main entry point
 #include "PerformanceExperiments/Multithreading_Performance.h"
 #include "PerformanceExperiments/PerformanceExperiments.h"
 
-#include "Barrier/Barrier.h"
+#include "Barrier/Barrier.hpp"
 #include "FalseSharing/FalseSharingExperiments.h"
 #include "SynchStream_Custom/SynchStream_Custom.h"
 #include "SynchStream/SynchStream.h"
@@ -79,13 +79,16 @@ int main([[maybe_unused]] int argc,
     // Atomic_IsLockFree::TestAll();
     // AtomicPerformanceTests::TestAll();
 
-    // Barrier::TEST_ALL();
+    // Barrier::TestAll();
+
+    // Latch::TestAll();
+
+    Semaphore::TestAll();
+
     // CallOnce::TEST_ALL();
     // ConditionVariable::TEST_ALL();
     // Exceptions_Handling::TEST_ALL();
     // Future::TEST_ALL();
-
-    // Latch::TEST_ALL();
 
     // Futex::TestAll();
 
@@ -93,8 +96,6 @@ int main([[maybe_unused]] int argc,
     // Promise::TEST_ALL();
     // PackagedTask::TEST_ALL();
     // ParallelExecutionAlgoritms::TEST_ALL();
-
-    // Semaphore::TestAll();
 
     // Synchronization::TEST_ALL();
     // SynchStream::TEST_ALL();
@@ -132,7 +133,7 @@ int main([[maybe_unused]] int argc,
     // Queue::TestAll();
     // BlockingQueue::TestAll();
     // LockFreeQueue::TEST_ALL()
-    Collections::mpmc_queue::TestAll();
+    // Collections::mpmc_queue::TestAll();
     // SCSP_RingBuffer_Blocking::TestAll();
     // SCSP_RingBuffer::TestAll();
     // Collections::RingBuffer_vs_CVMutexQueue::TestAll();
