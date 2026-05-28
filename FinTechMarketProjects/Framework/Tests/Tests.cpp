@@ -16,13 +16,11 @@ Description : Tests.cpp
 #include "../Memory/MemoryPool.h"
 #include "../Memory/StackAllocator.h"
 
+#include "PerfUtilities.hpp"
+
+
 namespace MemoryPool
 {
-#define START_TIME_MEASURE auto start = std::chrono::high_resolution_clock::now();
-#define STOP_TIME_MEASURE  { auto end = std::chrono::high_resolution_clock::now(); \
-                           auto duration = std::chrono::duration_cast<std::chrono::microseconds>(end - start).count(); \
-						   std::cout << "Result: " << duration << " microseconds" << std::endl;}
-
     template<size_t N>
     class Object  {
         char buffer[N]{ 0 };
@@ -76,24 +74,22 @@ namespace MemoryPool
 
         std::cout << " ======================== Using pool: =========================\n";
         {
-            START_TIME_MEASURE;
+            const PerfUtilities::ScopedTimer timer { "Pool" };
             std::vector<std::jthread> workers;
             for (uint32_t i = 0; i < threadsCount; ++i)
                 workers.emplace_back(task_memory_pool);
             for (auto& job: workers)
                 job.join();
-            STOP_TIME_MEASURE;
         }
 
         std::cout << " ======================== Using std::new(): =========================\n";
         {
-            START_TIME_MEASURE;
+            const PerfUtilities::ScopedTimer timer { "New" };
             std::vector<std::jthread> workers;
             for (uint32_t i = 0; i < threadsCount; ++i)
                 workers.emplace_back(task_allocator);
             for (auto& job: workers)
                 job.join();
-            STOP_TIME_MEASURE;
         }
     }
 }

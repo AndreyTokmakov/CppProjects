@@ -141,7 +141,7 @@ int main([[maybe_unused]] const int argc,
     // DeducingThis::TestAll();
     // RVO_FailureCases::TestAll();
     // ClassTemplateArgumentDeduction::TestAll();
-    DateAndTime::TestAll();
+    // DateAndTime::TestAll();
     // enums::TestAll();
     // Errors::TestAll();
     // Embed::TestAll();
@@ -180,7 +180,7 @@ int main([[maybe_unused]] const int argc,
     // StarshipOperator::TestAll();
     // Streams::TestAll();
     // StringStream::TestAll();
-    // String::TestAll();
+    String::TestAll();
     // StringView::TestAll();
     // StructuredBinding::TestAll();
     // StrongTypes::TestAll();

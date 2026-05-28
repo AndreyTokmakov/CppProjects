@@ -217,6 +217,21 @@ namespace Semaphore::BinarySemaphore
 
 namespace Semaphore::CountingSemaphore
 {
+    void Construct_Release_Acquire_Size()
+    {
+        std::counting_semaphore<10> semaphore {6};
+
+        LOG << "max: " << semaphore.max() << std::endl;
+        semaphore.acquire();
+        LOG << "max: " << semaphore.max() << std::endl;
+        semaphore.release(3);
+        LOG << "max: " << semaphore.max() << std::endl;
+
+    }
+}
+
+namespace Semaphore::CountingSemaphore
+{
     void BasicTest()
     {
         std::counting_semaphore<> semaphore {0};
@@ -493,19 +508,92 @@ namespace Semaphore::Consumer_Producer
     }
 }
 
+namespace Semaphore::bounded_queue
+{
+    template<typename T>
+    class BoundedQueue
+    {
+        std::queue<T> queue;
+        std::mutex mtx;
+        std::counting_semaphore<> emptySlots { 0 };
+        std::counting_semaphore<> fullSlots { 0 };
+
+    public:
+        explicit BoundedQueue(const int32_t capacity): emptySlots(capacity) {
+        }
+
+        void push(T value)
+        {
+            emptySlots.acquire();
+            {
+                std::lock_guard<std::mutex> lock(mtx);
+                queue.push(std::move(value));
+            }
+            fullSlots.release();
+        }
+
+        T pop()
+        {
+            fullSlots.acquire();
+            T value;
+            {
+                std::lock_guard<std::mutex> lock(mtx);
+                value = std::move(queue.front());
+                queue.pop();
+            }
+            emptySlots.release();
+            return value;
+        }
+    };
+
+    void test()
+    {
+        BoundedQueue<int> queue(2);
+        std::vector<std::jthread> workers;
+
+        workers.emplace_back([&queue]() {
+            for (int i = 1; i <= 5; ++i) {
+                queue.push(i);
+                LOG << "Added : " << i << std::endl;
+                std::this_thread::sleep_for(20ms);
+            }
+        });
+        workers.emplace_back([&queue]() {
+            for (int i = 1; i <= 5; ++i) {
+                const int val = queue.pop();
+                LOG << "Popped: " << val << std::endl;
+                std::this_thread::sleep_for(50ms);
+            }
+        });
+
+        /**
+        2026-05-27 11:20:10.873180 Popped: 1
+        2026-05-27 11:20:10.873179 Added : 1
+        2026-05-27 11:20:11.073419 Added : 2
+        2026-05-27 11:20:11.273570 Added : 3
+        2026-05-27 11:20:11.373457 Popped: 2
+        2026-05-27 11:20:11.473729 Added : 4
+        2026-05-27 11:20:11.873580 Popped: 3
+        2026-05-27 11:20:11.873628 Added : 5
+        2026-05-27 11:20:12.373756 Popped: 4
+        2026-05-27 11:20:12.873930 Popped: 5
+        **/
+    }
+}
 
 
 void Semaphore::TestAll()
 {
     // BinarySemaphore::Release_Acquire_SimpleExample();
 
-    BinarySemaphore::Release_Acquire_BasicTest();
+    // BinarySemaphore::Release_Acquire_BasicTest();
     // BinarySemaphore::Release_TRY_Acquire__BasicTest();
     // BinarySemaphore::Release_TRY_Acquire_FOR__BasicTest();
 
     // BinarySemaphore::Simple_Acquire_Release();
     // BinarySemaphore::Semaphore_VS_ConditionalVariable();
 
+    // CountingSemaphore::Construct_Release_Acquire_Size();
     // CountingSemaphore::BasicTest();
     // CountingSemaphore::Basic_LimitNumberOfRunningTasks();
     // CountingSemaphore::NegativeInitialValue();
@@ -514,5 +602,7 @@ void Semaphore::TestAll()
     // CountingSemaphore::WaitFor_N_InitialEvents();
 
     // Consumer_Producer::runDemo();
+
+    bounded_queue::test();
 };
 

@@ -94,16 +94,24 @@ namespace StructuredBinding {
 		std::cout << cfg.data[0] << std::endl;
 	}
 
-	void Test_Struct() {
-		auto[title, year] = readBookInfo();
+	void Test_Struct()
+	{
+		auto [title, year] = readBookInfo();
 		std::cout << title << std::endl;
 		std::cout << year << std::endl;
 	}
 
-	void Test_TryEmplace_Map() {
+	void Test_TryEmplace_Map()
+	{
 		std::map<std::string, std::string> map;
+
+		[[maybe_unused]]
 		auto[iterator1, succeed1] = map.try_emplace("key", "abc");
+
+		[[maybe_unused]]
 		auto[iterator2, succeed2] = map.try_emplace("key", "cde");
+
+		[[maybe_unused]]
 		auto[iterator3, succeed3] = map.try_emplace("another_key", "cde");
 
 		assert(succeed1);
@@ -317,7 +325,52 @@ namespace StructuredBinding::CustomdBinding
 }
 
 
-namespace StructuredBinding::If_Init_Comparison_Operator_Cpp26
+namespace StructuredBinding::If_Init_Comparison_Operator::Demo_One
+{
+	struct Result
+	{
+		bool isSuccessful { false };
+		std::optional<std::string> errorMessage { std::nullopt };
+
+		explicit operator bool() const noexcept
+		{
+			std::println("-> Returning isSuccessful: {}", isSuccessful);
+			return isSuccessful;
+		}
+	};
+
+	Result foo(const int i)
+	{
+		if (i % 2 == 0) {
+			return { .isSuccessful=true };
+		}
+		return{
+			.isSuccessful=false,
+			.errorMessage="that didn't work!"
+		};
+	}
+
+	void test()
+	{
+		for (const int n : {1, 2})
+		{
+			if (const auto& [is_successful, error_message] = foo(n)) {
+				std::cout << "no error\n";
+			} else {
+				std::cout << "there was an error: " << error_message.value_or("") << '\n';
+			}
+		}
+
+		/**
+		-> Returning isSuccessful: false
+		there was an error: that didn't work!
+		-> Returning isSuccessful: true
+		no error
+		**/
+	}
+}
+
+namespace StructuredBinding::If_Init_Comparison_Operator::Demo_Two
 {
 	struct kinetic_energy_result
 	{
@@ -353,7 +406,7 @@ namespace StructuredBinding::If_Init_Comparison_Operator_Cpp26
 		};
 	}
 
-	void demo()
+	void test()
 	{
 		constexpr double velocity = 10.0;
 		for(const double mass : { 10.0, -1.5, 20.0 })
@@ -446,7 +499,8 @@ void StructuredBinding::TestAll()
 
 	// CustomBinding::Test();
 
-	// If_Init_Comparison_Operator_Cpp26::demo();
+	If_Init_Comparison_Operator::Demo_One::test();
+	// If_Init_Comparison_Operator::Demo_Two::test();
 
-	Structured_Bindings_Pack::demo();
+	// Structured_Bindings_Pack::demo();
 }

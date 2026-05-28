@@ -1324,8 +1324,6 @@ namespace Templates::TemplateClass_StaticMethodCall
     }
 }
 
-
-
 void Templates::TestAll()
 {
     // TypeListChecker::TestAll();
@@ -1333,7 +1331,7 @@ void Templates::TestAll()
     // NTTP::TestAll();
     // SFINAE::TestAll();
     // TemplateSpecialization::TestAll();
-    PackIndexing::TestAll();
+    // PackIndexing::TestAll();
     // IndexSequence::TestAll();
     // Metaprogramming::TestAll();
     // Expression_Templates::TestAll();

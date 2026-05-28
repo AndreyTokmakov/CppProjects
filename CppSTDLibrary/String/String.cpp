@@ -32,6 +32,8 @@ Description : String.cpp
 
 #include "String.h"
 #include "StringUtilities.h"
+#include "PerfUtilities.hpp"
+
 
 namespace String
 {
@@ -447,47 +449,37 @@ namespace String
 		const std::string base = "   Some   Sample    String  ";
 
 		{
-			auto start = std::chrono::high_resolution_clock::now();
+			const PerfUtilities::ScopedTimer timer { "trim_1" };
 			for (int i = 0; i < 10000; i++) {
 				for (int n = 0; n < 10000; n++) {
 					std::string str(base);
                     StringUtilities::trim_1(str);
 				}
 			}
-			auto end = std::chrono::high_resolution_clock::now();
-			auto durtion = std::chrono::duration_cast<std::chrono::microseconds>(end - start).count();
-			std::cout << "Result: " << durtion << std::endl;
 		}
-
 		{
-			auto start = std::chrono::high_resolution_clock::now();
+			const PerfUtilities::ScopedTimer timer { "trim_2" };
 			for (int i = 0; i < 10000; i++) {
 				for (int n = 0; n < 10000; n++) {
 					std::string str(base);
                     StringUtilities::trim_2(str);
 				}
 			}
-			auto end = std::chrono::high_resolution_clock::now();
-			auto durtion = std::chrono::duration_cast<std::chrono::microseconds>(end - start).count();
-			std::cout << "Result: " << durtion << std::endl;
 		}
 
-
         {
-            auto start = std::chrono::high_resolution_clock::now();
+			const PerfUtilities::ScopedTimer timer { "trim_3" };
             for (int i = 0; i < 10000; i++) {
                 for (int n = 0; n < 10000; n++) {
                     std::string str(base);
                     StringUtilities::trim_3(str);
                 }
             }
-            auto end = std::chrono::high_resolution_clock::now();
-            auto durtion = std::chrono::duration_cast<std::chrono::microseconds>(end - start).count();
-            std::cout << "Result: " << durtion << std::endl;
         }
 	}
 
-	void Size_Storage() {
+	void Size_Storage()
+	{
 		std::string base;
 
 		int i = 100;
@@ -827,77 +819,64 @@ namespace String::Utilities {
 	}
 }
 
-namespace String::Performance_Tests {
-
-	auto start = std::chrono::high_resolution_clock::now();
-	auto end = std::chrono::high_resolution_clock::now();
-	auto durtion = std::chrono::duration_cast<std::chrono::microseconds>(end - start).count();
-
-#define START_TIME_MEASURE start = std::chrono::high_resolution_clock::now();
-#define STOP_TIME_MEASURE end = std::chrono::high_resolution_clock::now(); \
-					  durtion = std::chrono::duration_cast<std::chrono::microseconds>(end - start).count(); \
-					  std::cout <<"Result: " << durtion << std::endl;
-
-	void SplitTest() {
-		std::string base = "11111111a 22222222222b 3333333333333c 4444444444d 55555555555f 6666666666666g";
+namespace String::Performance_Tests
+{
+	void SplitTest()
+	{
+		const std::string base = "11111111a 22222222222b 3333333333333c"
+						   " 4444444444d 55555555555f 6666666666666g";
 		std::vector<std::string> parts;
 		constexpr size_t ITER_COUNT { 1'000'000 };
 
 		{
-			START_TIME_MEASURE;
+			const PerfUtilities::ScopedTimer timer { "split_string_1" };
 			for (int i = 0; i < ITER_COUNT; i++) {
 				Utilities::split_string_1(base, parts);
 				parts.clear();
 			}
-			STOP_TIME_MEASURE;
 		}
 		{
-			START_TIME_MEASURE;
+			const PerfUtilities::ScopedTimer timer { "split_string_2" };
 			for (int i = 0; i < ITER_COUNT; i++) {
 				Utilities::split_string_2(base, parts, " ");
 				parts.clear();
 			}
-			STOP_TIME_MEASURE;
 		}
 		{
-			START_TIME_MEASURE;
+			const PerfUtilities::ScopedTimer timer { "split_string_3" };
 			for (int i = 0; i < ITER_COUNT; i++) {
 				Utilities::split_string_3(base, parts, " ");
 				parts.clear();
 			}
-			STOP_TIME_MEASURE;
 		}
 		{
-			START_TIME_MEASURE;
+			const PerfUtilities::ScopedTimer timer { "split_string_4" };
 			for (int i = 0; i < ITER_COUNT; i++) {
 				Utilities::split_string_4(base, parts, " ");
 				parts.clear();
 			}
-			STOP_TIME_MEASURE;
 		}
 	}
 
 #pragma optimize("", off)
-    void Compare() {
+    void Compare()
+	{
         std::string a = "1111111111111111", b = "1111111111111111";
         std::string c = "1111111111111111", d = "1111111111111111";
         constexpr size_t ITER_COUNT { 1'000'000 };
 
-
         /*
         {
-            START_TIME_MEASURE;
+            const PerfUtilities::ScopedTimer timer { "Benchmark" };
             for (int i = 0; i < ITER_COUNT; i++) {
                 auto x = (a == b);
             }
-            STOP_TIME_MEASURE;
         }
         {
-            START_TIME_MEASURE;
+            const PerfUtilities::ScopedTimer timer { "Benchmark" };
             for (int i = 0; i < ITER_COUNT; i++) {
                 auto x = a.compare(b);
             }
-            STOP_TIME_MEASURE;
         }
         */
     }
@@ -1175,68 +1154,54 @@ namespace String::Performance {
 		}
 	}
 
-	#pragma optimize( "", off )
-	void Find_ByString_vs_StringView() {
-		constexpr std::string_view HTTP_VERION_SEPARATOR = R"( HTTP)";
-		constexpr std::string_view HTTP_VERION_SEPARATOR_STR = R"( HTTP)";
-		const std::string src = "11111111111111111111111111111111111111111111111111111111 HTTP 11111111111 HTTP 111111111111";
+	__attribute__((optimize("O0")))
+	void Find_ByString_vs_StringView()
+	{
+		const std::string HTTP_VERSION_SEPARATOR = R"( HTTP)";
+		constexpr std::string_view HTTP_VERSION_SEPARATOR_STR = R"( HTTP)";
+		const std::string src = "11111111111111111111111111111111111111111111111111111111 "
+						  "HTTP 11111111111 HTTP 111111111111";
 		constexpr int TESTS_COUNT{ 100'000'000 };
 
 		{
-			auto start = std::chrono::high_resolution_clock::now();
+			const PerfUtilities::ScopedTimer timer { "Benchmark" };
 			for (int i = 0; i < TESTS_COUNT; ++i) {
-				const auto _ = src.find(HTTP_VERION_SEPARATOR_STR);
+				const auto _ = src.find(HTTP_VERSION_SEPARATOR_STR);
 			}
-			auto end = std::chrono::high_resolution_clock::now();
-			auto duration = std::chrono::duration_cast<std::chrono::microseconds>(end - start).count();
-			std::cout << "Result: " << duration << " microseconds" << std::endl;
 		}
-
 		{
-			auto start = std::chrono::high_resolution_clock::now();
+			const PerfUtilities::ScopedTimer timer { "Benchmark" };
 			for (int i = 0; i < TESTS_COUNT; ++i) {
-
-				auto _ = src.find(HTTP_VERION_SEPARATOR);
+				auto _ = src.find(HTTP_VERSION_SEPARATOR);
 			}
-			auto end = std::chrono::high_resolution_clock::now();
-			auto duration = std::chrono::duration_cast<std::chrono::microseconds>(end - start).count();
-			std::cout << "Result: " << duration << " microseconds" << std::endl;
 		}	
 	}
-	#pragma optimize( "", on )
 
 	using namespace std::literals;
 
 	// #pragma optimize( "", off )
-	void Compare_Part_Of_String() {
+	void Compare_Part_Of_String()
+	{
 		const std::string str1 = "SomeRandomText_1234";
 		const std::string str2 = "SomeRandomText_4321";
-
 		constexpr size_t offset = ("SomeRandomText_"sv).size();
 		constexpr size_t TESTS_COUNT = 100'000'000;
 
 		{
-			auto start = std::chrono::high_resolution_clock::now();
+			const PerfUtilities::ScopedTimer timer { "substr (string)" };
 			for (size_t i = 0; i < TESTS_COUNT; ++i) {
-				auto x1 = str1.substr(offset, str1.length() - offset);
-				auto x2 = str2.substr(offset, str1.length() - offset);
-				auto result = x1.compare(x2);
+				const auto x1 = str1.substr(offset, str1.length() - offset);
+				const auto x2 = str2.substr(offset, str1.length() - offset);
+				const auto result = x1.compare(x2);
 			}
-			auto end = std::chrono::high_resolution_clock::now();
-			auto duration = std::chrono::duration_cast<std::chrono::microseconds>(end - start).count();
-			std::cout << "Result: " << duration << " microseconds" << std::endl;
 		}
-
 		{
-			auto start = std::chrono::high_resolution_clock::now();
+			const PerfUtilities::ScopedTimer timer { "substr (string_view)" };
 			for (size_t i = 0; i < TESTS_COUNT; ++i) {
-				auto x1 = std::string_view(str1).substr(offset, str1.length() - offset);
-				auto x2 = std::string_view(str2).substr(offset, str1.length() - offset);
-				auto result = x1.compare(x2);
+				const auto x1 = std::string_view(str1).substr(offset, str1.length() - offset);
+				const auto x2 = std::string_view(str2).substr(offset, str1.length() - offset);
+				const auto result = x1.compare(x2);
 			}
-			auto end = std::chrono::high_resolution_clock::now();
-			auto duration = std::chrono::duration_cast<std::chrono::microseconds>(end - start).count();
-			std::cout << "Result: " << duration << " microseconds" << std::endl;
 		}
 	}
 	// #pragma optimize( "", on )
@@ -1539,7 +1504,7 @@ void String::TestAll()
 	// StartsWith();
 
 	// Resize_String::Resize();
-	Resize_String::Resize_and_Overwrite();
+	// Resize_String::Resize_and_Overwrite();
 
 	// Crbegin_Crend_Test();
 	// PushBack();
@@ -1568,7 +1533,7 @@ void String::TestAll()
 
 
 	// Trim();
-	// Trim_Performance();
+	Trim_Performance();
 
 	// Size_Storage();
 

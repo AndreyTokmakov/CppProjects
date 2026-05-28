@@ -1712,28 +1712,24 @@ namespace array_to_store_deducing_this_objects
 
 
 
+
 int main([[maybe_unused]] const int argc,
          [[maybe_unused]] char** argv)
 {
     const std::vector<std::string_view> args(argv + 1, argv + argc);
 
+
     // resource_registry::test();
     // array_to_store_crtp_objects::test();
     // array_to_store_deducing_this_objects::test();
-
-    /** * * * * *  Move to lib * * * * * **/
     // Cpp_NEW_Features::TestAll();
     // Execution::TestAll();
     // Coroutines::TestAll();
-
     // ASM_Usage::measureElapsedTime();
-
     // FibonacciSequence_Lambda::generate();
-
     // VirtualFunctionTests::demo();
     // Int_to_UInt_Tests::Tests();
     // EnumBasedStrongTypes::Tests();
-    EnumHack::Test();
     // OrderBook_TableDispatch::Tests();
     // Store_Pointer_In_Collection::demo();
     // OOP_FoldExpr_Inheritance::demo();
@@ -1751,12 +1747,10 @@ int main([[maybe_unused]] const int argc,
     // UBBook::Test();
     // PipelineOperator::SimplePipeTest();
     // StringTest_SSO::Tests();
-
     // BitwiseOperations::test();
     // BinaryAnalyzer::TestAll();
     // BitFlags::TestAll();
     // BinManipulation::TestAll();
-
     // Concepts::TestAll();
     // LockFreeQueueTest::Test();
     // CompileTime_Programming::Factorial();
@@ -1777,10 +1771,8 @@ int main([[maybe_unused]] const int argc,
     // Memory::TestAll();
     // MaxStack::TestAll();
     // UniquePtr_Size::SizeTest();
-
     // ObjectOrientedExperiments::OOP_Experiments::TestAll();
     // ObjectOrientedExperiments::VirtualTables::TestAll();
-
     // PointsAndLines::TestAll();           // Geometry
     // Strings::TestAll();
     // Performance::TestAll();
@@ -1795,5 +1787,10 @@ int main([[maybe_unused]] const int argc,
     // OrderBook2::TestAll();
     // MatchingOrderBook::TestAll();
     // MatchingOrderBookEx::TestAll();
+
+
+
+
+
     return EXIT_SUCCESS;
 }

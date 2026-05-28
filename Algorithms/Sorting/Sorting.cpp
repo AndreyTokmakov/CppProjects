@@ -18,6 +18,8 @@
 #include <random>
 
 #include "Sorting.h"
+#include "PerfUtilities.hpp"
+
 
 namespace Sorting::HeapSort {
 
@@ -74,11 +76,6 @@ namespace Sorting {
 	auto start = std::chrono::high_resolution_clock::now();
 	auto end = std::chrono::high_resolution_clock::now();
 	auto durtion = std::chrono::duration_cast<std::chrono::microseconds>(end - start).count();
-
-#define START_TIME_MEASURE start = std::chrono::high_resolution_clock::now();
-#define STOP_TIME_MEASURE end = std::chrono::high_resolution_clock::now();
-#define PRINT_RESULT  durtion = std::chrono::duration_cast<std::chrono::microseconds>(end - start).count(); \
-					  std::cout << "Result: " << durtion << std::endl;
 
 	void FillArray(int* input,
 					size_t size,
@@ -587,15 +584,13 @@ namespace Sorting {
 	}
 
 
-	void TESTS() {
+	void TESTS()
+	{
 		size_t size = 1000;
 		int* data = MakeIntArray(size, 0, size * 5);
 
 		std::cout << "Sorted: " << std::boolalpha << std::is_sorted(data, data + size) << std::endl;
 		print_array(data, size, "Before: ");
-
-		//START_TIME_MEASURE;
-
 
 		bool changed{ true };
 		for (size_t i = 0; i < size && changed; i++) {
@@ -671,8 +666,7 @@ namespace Sorting {
 		unsigned int size = 100;
 		int* values = MakeIntArray(size, 0, (size * 2));
 
-		START_TIME_MEASURE;
-
+		const PerfUtilities::ScopedTimer timer { "Benchmark" };
 		for (int i = 0; i < 1000; i++) {
 			for (int n = 0; n < 1000; n++) {
 				int* data = new int[100];
@@ -697,9 +691,6 @@ namespace Sorting {
 				delete data;
 			}
 		}
-
-		STOP_TIME_MEASURE;
-		PRINT_RESULT;
 	}
 
 	void Performance_Tests()
@@ -724,7 +715,7 @@ namespace Sorting {
 
 
 		{
-			START_TIME_MEASURE;
+			const PerfUtilities::ScopedTimer timer { "Benchmark" };
 			for (int i = 0; i < 1000; i++) {
 				for (int n = 0; n < 1000; n++) {
 					int* test_values = new int[size];
@@ -748,12 +739,10 @@ namespace Sorting {
 					delete test_values;
 				}
 			}
-			STOP_TIME_MEASURE;
-			PRINT_RESULT;
 		}
 
 		{
-			START_TIME_MEASURE;
+			const PerfUtilities::ScopedTimer timer { "Benchmark" };
 			for (int i = 0; i < 1000; i++) {
 				for (int n = 0; n < 1000; n++) {
 					int* test_values = new int[size];
@@ -778,12 +767,10 @@ namespace Sorting {
 					delete test_values;
 				}
 			}
-			STOP_TIME_MEASURE;
-			PRINT_RESULT;
 		}
 
 		{
-			START_TIME_MEASURE;
+			const PerfUtilities::ScopedTimer timer { "Benchmark" };;
 			for (int i = 0; i < 1000; i++) {
 				for (int n = 0; n < 1000; n++) {
 					int* test_values = new int[size];
@@ -807,8 +794,6 @@ namespace Sorting {
 					delete test_values;
 				}
 			}
-			STOP_TIME_MEASURE;
-			PRINT_RESULT;
 		}
 	}
 };

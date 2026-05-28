@@ -83,7 +83,7 @@ int main([[maybe_unused]] int argc,
 
     // Latch::TestAll();
 
-    Semaphore::TestAll();
+    // Semaphore::TestAll();
 
     // CallOnce::TEST_ALL();
     // ConditionVariable::TEST_ALL();
@@ -119,7 +119,7 @@ int main([[maybe_unused]] int argc,
     /** Performance **/
 
     // Multithreading_Performance::TEST_ALL();
-    // FalseSharingExperiments::TEST_ALL();
+    FalseSharingExperiments::TEST_ALL();
     // PerformanceExperiments::TestAll();
     // McMp_LockFree_Queue_vs_CV_Queue::TestAll();
 

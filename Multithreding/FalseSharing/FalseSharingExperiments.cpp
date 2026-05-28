@@ -10,20 +10,13 @@
 #include "FalseSharingExperiments.h"
 
 #include <iostream>
-#include <string>
 #include <thread>
 #include <vector>
-#include <string_view>
 #include <mutex>
 #include <atomic>
-#include <numeric>
 #include <chrono>
 #include <algorithm>
-
-#define START_TIME_MEASURE auto start = std::chrono::high_resolution_clock::now();
-#define STOP_TIME_MEASURE  { auto end = std::chrono::high_resolution_clock::now(); \
-                           auto duration = std::chrono::duration_cast<std::chrono::microseconds>(end - start).count(); \
-						   std::cout << "Result: " << duration << " microseconds" << std::endl;}
+#include "PerfUtilities.hpp"
 
 
 namespace FalseSharingExperiments::Base
@@ -54,26 +47,25 @@ namespace FalseSharingExperiments::Base
     void test()
     {
         std::vector<T> store (THREADS_COUNT);
-        START_TIME_MEASURE;
+        const PerfUtilities::ScopedTimer timer { "Benchmark" };;
         {
             std::vector<std::jthread> threads{};
             for (T &entry: store)
                 threads.emplace_back(doWork, std::ref(entry.counter));
         }
-        STOP_TIME_MEASURE;
 
         // for (size_t i = 0; i < THREADS_COUNT; ++i)
         //    std::cout << "    vars[" << i << "]: " << vars[i].var << std::endl;
     }
 
-    void SingleThreadTest() {
+    void SingleThreadTest()
+    {
         std::atomic<int> v {0};
 
-        START_TIME_MEASURE;
+        const PerfUtilities::ScopedTimer timer { "Benchmark" };;
         for (size_t i = 0; i < THREADS_COUNT; ++i) {
             doWork(v);
         }
-        STOP_TIME_MEASURE;
     }
 
     void ParallelThreads_SameVariable()
@@ -84,9 +76,8 @@ namespace FalseSharingExperiments::Base
         for (size_t i = 0; i < THREADS_COUNT; ++i)
             threads.emplace_back(doWork, std::ref(var));
 
-        START_TIME_MEASURE;
+        const PerfUtilities::ScopedTimer timer { "Benchmark" };;
         std::for_each(threads.begin(), threads.end(), [](std::thread&T ) { T.join(); });
-        STOP_TIME_MEASURE;
     }
 
     void ParallelThreads_DifferentVariable()
@@ -108,11 +99,6 @@ namespace FalseSharingExperiments::Base
 
 namespace FalseSharingExperiments::DemoTwo
 {
-#define START_TIME_MEASURE auto start = std::chrono::high_resolution_clock::now();
-#define STOP_TIME_MEASURE  { auto end = std::chrono::high_resolution_clock::now(); \
-                           auto duration = std::chrono::duration_cast<std::chrono::microseconds>(end - start).count(); \
-						   std::cout << "Result: " << duration << " microseconds" << std::endl;}
-
     constexpr size_t ITER_COUNT { 10'000'000 };
     constexpr size_t COUNT { 12 };
 
@@ -153,9 +139,8 @@ namespace FalseSharingExperiments::DemoTwo
             threads.emplace_back(task<int>, std::ref(entry.d));
         }
 
-        START_TIME_MEASURE;
+        const PerfUtilities::ScopedTimer timer { "Benchmark" };;
         std::for_each(threads.begin(), threads.end(), [](std::thread& job ) { job.join(); });
-        STOP_TIME_MEASURE;
     }
 
     void Benchmark()
@@ -192,7 +177,7 @@ namespace FalseSharingExperiments::DemoThree
     }
 
     template<typename T, bool warmUp = false>
-    void test()
+    void test(const std::string_view message = {})
     {
         auto benchmark = [] {
             T obj;
@@ -212,9 +197,8 @@ namespace FalseSharingExperiments::DemoThree
 
         if constexpr (not warmUp)
         {
-            START_TIME_MEASURE;
+            const PerfUtilities::ScopedTimer timer { message };
             benchmark();
-            STOP_TIME_MEASURE;
         } else
         {
             benchmark();
@@ -227,11 +211,11 @@ namespace FalseSharingExperiments::DemoThree
         test<Foo, true>();
         test<FooAligned, true>();
 
-        test<Foo>();
-        test<FooAligned>();
+        test<Foo>( "Not aligned");
+        test<FooAligned>("Aligned");
 
-        /// Result: 3696887 microseconds
-        /// Result: 1266461 microseconds
+        //  Not aligned   :  3.74931 seconds.
+        //  Aligned       :  0.987534 seconds.
     }
 }
 

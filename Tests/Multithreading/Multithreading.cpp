@@ -28,6 +28,7 @@ Description : Multithreading
 #include <syncstream>
 #include <random>
 
+#include "PerfUtilities.hpp"
 #include "../Helpers/Helpers.h"
 
 using namespace std::literals; // for duration literals
@@ -649,11 +650,6 @@ namespace Multithreading::SimpleThreadSafeCollection
 
 namespace FalseSharingExperiments
 {
-#define START_TIME_MEASURE auto start = std::chrono::high_resolution_clock::now();
-#define STOP_TIME_MEASURE  { auto end = std::chrono::high_resolution_clock::now(); \
-                           auto duration = std::chrono::duration_cast<std::chrono::microseconds>(end - start).count(); \
-						   std::cout << "Result: " << duration << " microseconds" << std::endl;}
-
     constexpr size_t ITER_COUNT { 10'000'000 };
     constexpr size_t COUNT { 12 };
 
@@ -683,7 +679,7 @@ namespace FalseSharingExperiments
     }
 
     template<typename T>
-    void test()
+    void test(const std::string_view message = {})
     {
         std::vector<T> store (COUNT);
         std::vector<std::thread> threads {};
@@ -694,15 +690,14 @@ namespace FalseSharingExperiments
             threads.emplace_back(task<int>, std::ref(entry.d));
         }
 
-        START_TIME_MEASURE;
+        const PerfUtilities::ScopedTimer timer { message };
         std::for_each(threads.begin(), threads.end(), [](std::thread& job ) { job.join(); });
-        STOP_TIME_MEASURE;
     }
 
     void Benchmark()
     {
-        test<Stats>();
-        test<StatsAligned>();
+        test<Stats>("Not Aligned");
+        test<StatsAligned>("Aligned");
     }
 };
 
@@ -711,7 +706,7 @@ namespace Future
 {
     void WaitForFuture_RangeBasedLoop_Copy()
     {
-        auto calculate = [](uint32_t timeout) {
+        auto calculate = [](const uint32_t timeout) {
             std::osyncstream(std::cout) << "Starting job\n";
             std::this_thread::sleep_for(std::chrono::seconds(timeout));
             std::osyncstream(std::cout) << "Job done\n";

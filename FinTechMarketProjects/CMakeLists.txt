@@ -49,8 +49,12 @@ add_executable(${PROJECT_NAME}
         Utilities/Utilities.cpp Utilities/Utilities.h
 )
 
-# Link libraries to the project/executable
-target_link_libraries(${PROJECT_NAME} PUBLIC
+target_include_directories(${PROJECT_NAME} PUBLIC "${CMAKE_SOURCE_DIR}/Utilities")
+target_link_directories(${PROJECT_NAME} PUBLIC "${CMAKE_BINARY_DIR}/Utilities")
+
+
+TARGET_LINK_LIBRARIES(${PROJECT_NAME}
+        utils
         pthread
         ${Boost_LIBRARIES}
 )

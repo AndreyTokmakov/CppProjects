@@ -66,8 +66,11 @@ add_executable(${PROJECT_NAME}
 
 message(STATUS "EXTRA_LIBS: ${EXTRA_LIBS}")
 
+target_include_directories(${PROJECT_NAME} PUBLIC "${CMAKE_SOURCE_DIR}/Utilities")
+target_link_directories(${PROJECT_NAME} PUBLIC "${CMAKE_BINARY_DIR}/Utilities")
 
 TARGET_LINK_LIBRARIES(${PROJECT_NAME}
+        utils
         pthread
         ${EXTRA_LIBS}
 )
