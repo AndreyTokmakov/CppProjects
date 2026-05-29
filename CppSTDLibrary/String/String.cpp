@@ -1114,43 +1114,34 @@ namespace String::TESTS {
 	}
 }
 
-namespace String::Performance {
+namespace String::Performance
+{
 
-	void Assign_Substr_vs_Iterators() {
+	void Assign_Substr_vs_Iterators()
+	{
 		constexpr size_t startPos = 3, endPos = 27;
 		constexpr int TESTS_COUNT {100'000'000};
 		const std::string src = "1111111111111111111111111111111111111111111111111111111111111111111111111111111";
 		std::string dest;
 
 		{
-			auto start = std::chrono::high_resolution_clock::now();
+			const PerfUtilities::ScopedTimer timer { "assign 1" };
 			for (int i = 0; i < TESTS_COUNT; ++i) {
 				dest.assign(src.substr(startPos, endPos - startPos));
 			}
-			auto end = std::chrono::high_resolution_clock::now();
-			auto duration = std::chrono::duration_cast<std::chrono::microseconds>(end - start).count();
-			std::cout << "Result: " << duration << " microseconds" << std::endl;
 		}
-
 		{
-			auto start = std::chrono::high_resolution_clock::now();
+			const PerfUtilities::ScopedTimer timer { "assign 2" };
 			for (int i = 0; i < TESTS_COUNT; ++i) {
 				dest.assign(src.begin() + startPos, src.begin() + endPos);
 			}
-			auto end = std::chrono::high_resolution_clock::now();
-			auto duration = std::chrono::duration_cast<std::chrono::microseconds>(end - start).count();
-			std::cout << "Result: " << duration << " microseconds" << std::endl;
 		}
-
 		{
-			auto start = std::chrono::high_resolution_clock::now();
+			const PerfUtilities::ScopedTimer timer { "insert" };
 			for (int i = 0; i < TESTS_COUNT; ++i) {
 				dest.clear();
 				dest.insert(dest.begin(), src.begin() + startPos, src.begin() + endPos);
 			}
-			auto end = std::chrono::high_resolution_clock::now();
-			auto duration = std::chrono::duration_cast<std::chrono::microseconds>(end - start).count();
-			std::cout << "Result: " << duration << " microseconds" << std::endl;
 		}
 	}
 

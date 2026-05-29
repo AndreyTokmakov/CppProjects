@@ -31,31 +31,42 @@ namespace PerfUtilities
     {
         const std::string_view benchmarkName;
 
-        explicit TimerBase(std::string_view info) :
+        explicit TimerBase(const std::string_view info) :
                 benchmarkName { info } {
         }
     };
 
     struct ScopedTimer: TimerBase
     {
-        const std::chrono::high_resolution_clock::time_point start {
-                std::chrono::high_resolution_clock::now()
-        };
-
-        const bool warmUp { false };
+        using ClockType = std::chrono::high_resolution_clock;
+        using TimePoint = ClockType::time_point;
+        using Duration  = double;
 
         explicit ScopedTimer(const std::string_view info,
                              const bool warmUp = false) : TimerBase { info }, warmUp { warmUp } {
         }
 
+        Duration getElapsedTime() const noexcept;
+        Duration getElapsedTimeAndReset() noexcept;
+
         ~ScopedTimer();
+
+    private:
+
+        [[nodiscard]]
+        static Duration getDuration(TimePoint from,
+                                    TimePoint to = ClockType::now()) noexcept;
+    private:
+
+        TimePoint start { ClockType::now() };
+        const bool warmUp { false };
     };
 
     struct TSCScopedTimer: TimerBase
     {
         const uint64_t start = __rdtsc();
 
-        explicit TSCScopedTimer(std::string_view info) : TimerBase(info) {
+        explicit TSCScopedTimer(const std::string_view info) : TimerBase(info) {
         }
 
         ~TSCScopedTimer();

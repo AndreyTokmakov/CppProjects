@@ -17,6 +17,9 @@ Description : MinHeap
 #include <algorithm>
 #include <chrono>
 
+#include "PerfUtilities.hpp"
+
+
 namespace MinHeap
 {
     template<typename __Type>
@@ -275,34 +278,21 @@ namespace MinHeap::Tests
 
         {
             MinHeap<int> minHeap;
-
-            const std::chrono::high_resolution_clock::time_point start = std::chrono::high_resolution_clock::now();
-
+            const PerfUtilities::ScopedTimer timer { "Benchmark" };
             for (size_t i = 0; i < testsCount; ++i)
             {
                 minHeap.data = data;
                 minHeap.makeHeap();
             }
-
-            const std::chrono::high_resolution_clock::time_point end = std::chrono::high_resolution_clock::now();
-            std::chrono::duration<double> time_span = duration_cast<std::chrono::duration<double>>(end - start);
-            std::cout << "It took me " << time_span.count() - vecCopyTime << " seconds.\n";
         }
-
         {
             MinHeap<int> minHeap;
-
-            const std::chrono::high_resolution_clock::time_point start = std::chrono::high_resolution_clock::now();
-
+            const PerfUtilities::ScopedTimer timer { "Benchmark" };
             for (size_t i = 0; i < testsCount; ++i)
             {
                 minHeap.data = data;
                 minHeap.makeHeap_Rebuild();
             }
-
-            const std::chrono::high_resolution_clock::time_point end = std::chrono::high_resolution_clock::now();
-            std::chrono::duration<double> time_span = duration_cast<std::chrono::duration<double>>(end - start);
-            std::cout << "It took me " << time_span.count() - vecCopyTime << " seconds.\n";
         }
     }
 

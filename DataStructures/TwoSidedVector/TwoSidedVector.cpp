@@ -18,6 +18,8 @@ Description : TwoSidedVector
 #include <iostream>
 #include <deque>
 
+#include "PerfUtilities.hpp"
+
 // TODO: Create lib/module for TestUtils
 namespace TwoSidedVector::Utilities
 {
@@ -944,8 +946,7 @@ namespace TwoSidedVector::PerfTests
     void RunTests()
     {
         {
-            std::chrono::high_resolution_clock::time_point start = std::chrono::high_resolution_clock::now();
-
+            const PerfUtilities::ScopedTimer timer { "Benchmark" };
             for (size_t test = 0; test < testsCount; ++test)
             {
                 std::deque<Type> vector;
@@ -959,15 +960,10 @@ namespace TwoSidedVector::PerfTests
                         vector.insert(vector.cbegin(), element);
                 }
             }
-
-            std::chrono::high_resolution_clock::time_point end = std::chrono::high_resolution_clock::now();
-            std::chrono::duration<double> time_span = duration_cast<std::chrono::duration<double>>(end - start);
-            std::cout << "It took me " << time_span.count() << " seconds.\n";
         }
 
         {
-            std::chrono::high_resolution_clock::time_point start = std::chrono::high_resolution_clock::now();
-
+            const PerfUtilities::ScopedTimer timer { "Benchmark" };
             for (size_t test = 0; test < testsCount; ++test)
             {
                 std::deque<Type> deque;
@@ -981,15 +977,10 @@ namespace TwoSidedVector::PerfTests
                         deque.push_front( element);
                 }
             }
-
-            std::chrono::high_resolution_clock::time_point end = std::chrono::high_resolution_clock::now();
-            std::chrono::duration<double> time_span = duration_cast<std::chrono::duration<double>>(end - start);
-            std::cout << "It took me " << time_span.count() << " seconds.\n";
         }
 
         {
-            std::chrono::high_resolution_clock::time_point start = std::chrono::high_resolution_clock::now();
-
+            const PerfUtilities::ScopedTimer timer { "Benchmark" };
             for (size_t test = 0; test < testsCount; ++test)
             {
                 DVector<Type> vector;
@@ -1003,10 +994,6 @@ namespace TwoSidedVector::PerfTests
                         vector.push_front( element);
                 }
             }
-
-            std::chrono::high_resolution_clock::time_point end = std::chrono::high_resolution_clock::now();
-            std::chrono::duration<double> time_span = duration_cast<std::chrono::duration<double>>(end - start);
-            std::cout << "It took me " << time_span.count() << " seconds.\n";
         }
     }
 }

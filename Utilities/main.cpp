@@ -451,6 +451,26 @@ namespace testing_utils
     }
 }
 
+
+namespace scoped_timer_tests
+{
+    using namespace std::chrono_literals;
+    using namespace PerfUtilities;
+
+    void tests()
+    {
+        ScopedTimer timer { "Timer" };
+
+        std::this_thread::sleep_for(100ms);
+        std::cout << timer.getElapsedTime() << std::endl;
+
+        std::this_thread::sleep_for(155ms);
+        std::cout << timer.getElapsedTimeAndReset() << std::endl;
+
+        std::this_thread::sleep_for(123ms);
+    }
+}
+
 // TODO: BitUtils
 //      - check bit is set
 //      - set bit
@@ -463,12 +483,14 @@ int main([[maybe_unused]] int argc,
 {
     const std::vector<std::string_view> args(argv + 1, argv + argc);
 
-
+    /*
     std::cout << std::quoted(StringUtilities::trimEx("  12  ")) << std::endl;
     std::cout << std::quoted(StringUtilities::trim("  12  ")) << std::endl;
     std::cout << std::quoted(StringUtilities::trimEx("  12  34 ")) << std::endl;
     std::cout << std::quoted(StringUtilities::trim("  12  34 ")) << std::endl;
+    */
 
+    scoped_timer_tests::tests();
 
     // StringUtilitiesTests::split_test_1();
     // StringUtilitiesTests::strip_string_test();

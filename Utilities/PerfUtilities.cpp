@@ -16,22 +16,36 @@ namespace PerfUtilities
 {
     ScopedTimer::~ScopedTimer()
     {
-        const std::chrono::high_resolution_clock::time_point end = std::chrono::high_resolution_clock::now();
-        const std::chrono::duration<double> time_span = duration_cast<std::chrono::duration<double>>(end - start);
-
-        if (false == warmUp)
-        {
-            std::cout << std::left << std::setw(14) << benchmarkName << ":  ";
-            std::cout << time_span.count() << " seconds.\n";
+        const Duration duration = getDuration( start);
+        if (false == warmUp) {
+            std::cout << std::left << std::setw(14) << benchmarkName << ":  "<< duration << " seconds.\n";
         }
     }
 
+    ScopedTimer::Duration ScopedTimer::getElapsedTime() const noexcept {
+        return getDuration( start);
+    }
+
+    ScopedTimer::Duration ScopedTimer::getElapsedTimeAndReset() noexcept
+    {
+        const TimePoint now = ClockType::now();
+        const Duration duration = getDuration( start, now);
+        start = now;
+        return duration;
+    }
+
+    ScopedTimer::Duration ScopedTimer::getDuration(const TimePoint from, const TimePoint to) noexcept {
+        return duration_cast<std::chrono::duration<Duration>>(to - from).count();
+    }
+}
+
+
+namespace PerfUtilities
+{
     TSCScopedTimer::~TSCScopedTimer()
     {
         const uint64_t duration =  __rdtsc() - start;
-
-        std::cout << std::left << std::setw(14) << benchmarkName << ":  ";
-        std::cout << duration << ".\n";
+        std::cout << std::left << std::setw(14) << benchmarkName << ":  " << duration << ".\n";
     }
 }
 
