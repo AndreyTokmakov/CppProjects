@@ -180,8 +180,8 @@ int main([[maybe_unused]] const int argc,
     // StarshipOperator::TestAll();
     // Streams::TestAll();
     // StringStream::TestAll();
-    String::TestAll();
-    // StringView::TestAll();
+    // String::TestAll();
+    StringView::TestAll();
     // StructuredBinding::TestAll();
     // StrongTypes::TestAll();
     // Span::TestAll();

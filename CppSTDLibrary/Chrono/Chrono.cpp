@@ -285,7 +285,7 @@ namespace Chrono::Duration
     {
         constexpr uint32_t milliseconds { 375};
 
-        std::chrono::system_clock::time_point timePoint { std::chrono::system_clock::now() };
+        const std::chrono::system_clock::time_point timePoint { std::chrono::system_clock::now() };
         std::this_thread::sleep_for(std::chrono::milliseconds(milliseconds));
 
         const std::chrono::milliseconds msDuration = std::chrono::duration_cast<std::chrono::milliseconds>(
@@ -307,12 +307,12 @@ namespace Chrono::Duration
 
     void SteadyClock__PeriodDuration()
     {
-        std::chrono::steady_clock::time_point start = std::chrono::steady_clock::now();
+        const std::chrono::steady_clock::time_point start = std::chrono::steady_clock::now();
 
         std::this_thread::sleep_for(std::chrono::microseconds (125U));
 
-        std::chrono::steady_clock::time_point end = std::chrono::steady_clock::now();
-        std::chrono::duration<double> time_span = std::chrono::duration_cast<std::chrono::duration<double>>(end - start);
+        const std::chrono::steady_clock::time_point end = std::chrono::steady_clock::now();
+        const std::chrono::duration<double> time_span = std::chrono::duration_cast<std::chrono::duration<double>>(end - start);
         std::cout << "It took me " << time_span.count() << " seconds." << std::endl;
     }
 
@@ -691,44 +691,28 @@ namespace Chrono::FunctionPerformance
     void GetCurrentTime_Performance()
     {
         constexpr int COUNT {100'000'000};
-
         {
-            auto start = std::chrono::high_resolution_clock::now();
-
+            PerfUtilities::ScopedTimer timer { "std::time" };
             for (int i = 0; i < COUNT;  ++i) {
                 std::time_t t = std::time(nullptr);
             }
-
-            auto end = std::chrono::high_resolution_clock::now();
-            auto duration = std::chrono::duration_cast<std::chrono::microseconds>(end - start).count();
-            std::cout << "Result: " << duration << " microseconds" << std::endl;
         }
-
         {
-            auto start = std::chrono::high_resolution_clock::now();
-
+            PerfUtilities::ScopedTimer timer { "system_clock::now" };
             for (int i = 0; i < COUNT; ++i) {
                 auto now = std::chrono::system_clock::now();
             }
-
-            auto end = std::chrono::high_resolution_clock::now();
-            auto duration = std::chrono::duration_cast<std::chrono::microseconds>(end - start).count();
-            std::cout << "Result: " << duration << " microseconds" << std::endl;
         }
-
         {
-            auto start = std::chrono::high_resolution_clock::now();
-
+            PerfUtilities::ScopedTimer timer { "high_resolution_clock::now" };
             for (int i = 0; i < COUNT; ++i) {
                 auto now = std::chrono::high_resolution_clock::now();
             }
-
-            auto end = std::chrono::high_resolution_clock::now();
-            auto duration = std::chrono::duration_cast<std::chrono::microseconds>(end - start).count();
-            std::cout << "Result: " << duration << " microseconds" << std::endl;
         }
+        // std::time                  :  0.265377 seconds.
+        // system_clock::now          :  2.1729   seconds.
+        // high_resolution_clock::now :  2.16984  seconds.
     }
-
 
     void TestGetCurrentTimeFunctions()
     {
@@ -739,7 +723,7 @@ namespace Chrono::FunctionPerformance
             for (int i = 0; i < iterCount; ++i)
             {
                 std::chrono::system_clock::time_point today = std::chrono::system_clock::now();
-                //time_t time = std::chrono::system_clock::to_time_t(today);
+                time_t _ = std::chrono::system_clock::to_time_t(today);
             }
         }
 
@@ -1226,13 +1210,13 @@ void Chrono::TestAll()
 
     // TimeOut::CheckTimeoutFunction();
 
-    MeasureTime::TSC::timeWithTSC();
+    // MeasureTime::TSC::timeWithTSC();
 
 
     // Cast_Conversation::TimePoint_to_Long_and_Back();
 
     // Sleep_Conditional::Test();
-    // FunctionPerformance::GetCurrentTime_Performance();
+    FunctionPerformance::GetCurrentTime_Performance();
     // FunctionPerformance::TestGetCurrentTimeFunctions();
 
 

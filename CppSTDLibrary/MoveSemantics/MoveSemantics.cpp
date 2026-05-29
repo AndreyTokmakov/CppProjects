@@ -8,9 +8,10 @@
 //============================================================================
 
 #include "MoveSemantics.h"
+#include "PerfUtilities.hpp"
 #include "../Helpers/Helpers.h"
-#include <charconv>
-#include <array>
+
+
 #include <cassert>
 #include <functional>
 #include <optional>
@@ -736,22 +737,14 @@ namespace MoveSemantics {
 			auto durtion = std::chrono::duration_cast<std::chrono::milliseconds>(time_end - time_start).count();
 			std::cout << durtion << std::endl;
 		}*/
-
-
 		{
-			auto time_start = std::chrono::high_resolution_clock::now();
-
 			TestString testString("Test_String_1");
-
+			const PerfUtilities::ScopedTimer timer { "Benchmark" };
 			for (int i = 0; i < 1000; i++) {
 				for (int n = 0; n < 100; n++) {
 					handleTestString_Move(testString);
 				}
 			}
-
-			auto time_end = std::chrono::high_resolution_clock::now();
-			auto durtion = std::chrono::duration_cast<std::chrono::milliseconds>(time_end - time_start).count();
-			std::cout << durtion << std::endl;
 		}
 	}
 
@@ -1729,7 +1722,7 @@ void MoveSemantics::TestAll()
 	// test_0();
 	// test();
 	// test1();
-	// Performance_Test_1();
+	Performance_Test_1();
 	// RValue_Tests();
 
 	// Move_BaseTests();
@@ -1737,7 +1730,7 @@ void MoveSemantics::TestAll()
 	// Move_If_Noexcept();
 	// Move_If_Const();
 
-    RValue_vs_DeclType_Auto_Return::demo();
+    // RValue_vs_DeclType_Auto_Return::demo();
 
 	// MoveFailureCases::Move_Class_DTor_Only();
 

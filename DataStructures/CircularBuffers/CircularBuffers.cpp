@@ -8,6 +8,8 @@
 //============================================================================
 
 #include "CircularBuffers.h"
+#include "PerfUtilities.hpp"
+
 
 // #include <concepts>
 #include <iostream>
@@ -321,12 +323,12 @@ namespace CircularBuffers::PerformanceTests {
 	constexpr size_t _Size = 1000;
 	constexpr size_t _Count = 100000;
 
-	void TestVector() {
+	void TestVector()
+	{
 		std::vector<int> numbers;
 		numbers.reserve(_Size);
 
-		auto start = std::chrono::high_resolution_clock::now();
-
+		const PerfUtilities::ScopedTimer timer { "Benchmark" };
 		for (size_t n = 0; n < _Count; ++n) {
 			for (size_t i = 0; i < _Size; ++i) {
 				numbers.push_back(static_cast<int>(i));
@@ -336,16 +338,13 @@ namespace CircularBuffers::PerformanceTests {
 			}
 			//assert(true == numbers.empty());
 		}
-		auto end = std::chrono::high_resolution_clock::now();
-		auto duration = std::chrono::duration_cast<std::chrono::microseconds>(end - start).count(); \
-			std::cout << "Result: " << duration << " microseconds" << std::endl;
 	}
 
-	void TestRingBuffer() {
+	void TestRingBuffer()
+	{
 		Demo1::RingBuffer<int, _Size> ringBuffer;
 
-		auto start = std::chrono::high_resolution_clock::now();
-
+		const PerfUtilities::ScopedTimer timer { "Benchmark" };
 		for (size_t n = 0; n < _Count; ++n) {
 			for (size_t i = 0; i < _Size; ++i) {
 				ringBuffer.put(static_cast<int>(i));
@@ -355,9 +354,6 @@ namespace CircularBuffers::PerformanceTests {
 			}
 			//assert(true == numbers.empty());
 		}
-		auto end = std::chrono::high_resolution_clock::now();
-		auto duration = std::chrono::duration_cast<std::chrono::microseconds>(end - start).count(); \
-			std::cout << "Result: " << duration << " microseconds" << std::endl;
 	}
 }
 

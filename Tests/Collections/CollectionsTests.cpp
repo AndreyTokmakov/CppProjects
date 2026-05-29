@@ -24,6 +24,7 @@ Description : CollectionsTests
 #include <unordered_set>
 #include <unordered_map>
 
+#include "PerfUtilities.hpp"
 #include "../Helpers/Wrapper.h"
 
 namespace CollectionsTests::Utils
@@ -428,10 +429,8 @@ namespace CollectionsTests::Trie
             set.insert(str);
             trie.insert(str);
         }
-
         {
-            auto start = std::chrono::high_resolution_clock::now();
-
+            const PerfUtilities::ScopedTimer timer { "Benchmark" };
             for (size_t idx = 0; idx < testsCount; ++idx) {
                 for (const std::string& str: samples)
                 {
@@ -441,15 +440,9 @@ namespace CollectionsTests::Trie
                     }
                 }
             }
-
-            auto end = std::chrono::high_resolution_clock::now();
-            auto duration = std::chrono::duration_cast<std::chrono::microseconds>(end - start).count();
-			std::cout << "Result: " << duration << " microseconds" << std::endl;
         }
-
         {
-            auto start = std::chrono::high_resolution_clock::now();
-
+            const PerfUtilities::ScopedTimer timer { "Benchmark" };
             for (size_t idx = 0; idx < testsCount; ++idx) {
                 for (const std::string& str: samples) {
                     if (!trie.search(str))
@@ -458,10 +451,6 @@ namespace CollectionsTests::Trie
                     }
                 }
             }
-
-            auto end = std::chrono::high_resolution_clock::now();
-            auto duration = std::chrono::duration_cast<std::chrono::microseconds>(end - start).count();
-            std::cout << "Result: " << duration << " microseconds" << std::endl;
         }
     }
 }

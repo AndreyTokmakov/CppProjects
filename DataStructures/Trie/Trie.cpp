@@ -8,6 +8,7 @@ Description : Trie
 ============================================================================**/
 
 #include "Trie.h"
+#include "PerfUtilities.hpp"
 
 #include <iostream>
 #include <array>
@@ -123,8 +124,7 @@ namespace Trie::Tests
         }
 
         {
-            auto start = std::chrono::high_resolution_clock::now();
-
+            const PerfUtilities::ScopedTimer timer { "set.find" };
             for (size_t idx = 0; idx < testsCount; ++idx) {
                 for (const std::string& str: samples)
                 {
@@ -134,15 +134,9 @@ namespace Trie::Tests
                     }
                 }
             }
-
-            auto end = std::chrono::high_resolution_clock::now();
-            auto duration = std::chrono::duration_cast<std::chrono::microseconds>(end - start).count();
-            std::cout << "Result: " << duration << " microseconds" << std::endl;
         }
-
         {
-            auto start = std::chrono::high_resolution_clock::now();
-
+            const PerfUtilities::ScopedTimer timer { "trie.search" };
             for (size_t idx = 0; idx < testsCount; ++idx) {
                 for (const std::string& str: samples) {
                     if (!trie.search(str))
@@ -151,10 +145,6 @@ namespace Trie::Tests
                     }
                 }
             }
-
-            auto end = std::chrono::high_resolution_clock::now();
-            auto duration = std::chrono::duration_cast<std::chrono::microseconds>(end - start).count();
-            std::cout << "Result: " << duration << " microseconds" << std::endl;
         }
     }
 }

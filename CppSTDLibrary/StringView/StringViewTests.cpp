@@ -12,10 +12,10 @@
 #include <string_view>
 #include <chrono>
 #include <charconv>
-#include <array>
 
 #include "../Helpers/Helpers.h"
 #include "StringViewTests.h"
+#include "PerfUtilities.hpp"
 
 
 
@@ -149,8 +149,7 @@ namespace StringView {
 
 	void PerformanceTest()
 	{
-		const std::chrono::steady_clock::time_point start = std::chrono::steady_clock::now();
-
+		const PerfUtilities::ScopedTimer timer { "benchmark" };
 		constexpr char text[] = "Some_test_value";
 		//std::this_thread::sleep_for(std::chrono::milliseconds(125));
 
@@ -160,10 +159,6 @@ namespace StringView {
 				StringView::worker_str_view(text);
 			}
 		}
-
-		const std::chrono::steady_clock::time_point stop = std::chrono::steady_clock::now();
-		const double duration = std::chrono::duration_cast<std::chrono::duration<double>>(stop - start).count();
-		std::cout << "Execution time: " << duration << std::endl;
 	}
 
 	template<class Type>
@@ -191,6 +186,7 @@ namespace StringView::UsageExamples
 {
 	using namespace std::literals;
 
+	__attribute__((optimize("O0")))
 	void Compare_Part_Of_String()
 	{
 		const std::string str1 = "SomeRandomText_1234";
@@ -200,52 +196,43 @@ namespace StringView::UsageExamples
 		constexpr size_t TESTS_COUNT = 100'000'000;	
 
 		{
-			const auto start = std::chrono::high_resolution_clock::now();
+			const PerfUtilities::ScopedTimer timer { "string" };
 			for (size_t i = 0; i < TESTS_COUNT; ++i) {
 				auto x1 = str1.substr(offset, str1.length() - offset);
 				auto x2 = str2.substr(offset, str1.length() - offset);
 				auto result = x1.compare(x2);
 			}
-			const auto end = std::chrono::high_resolution_clock::now();
-			const auto duration = std::chrono::duration_cast<std::chrono::microseconds>(end - start).count();
-			std::cout << "Result: " << duration << " microseconds" << std::endl;
 		}
 
 		{
-			const auto start = std::chrono::high_resolution_clock::now();
+			const PerfUtilities::ScopedTimer timer { "string_view" };
 			for (size_t i = 0; i < TESTS_COUNT; ++i) {
 				const auto x1 = std::string_view(str1).substr(offset, str1.length() - offset);
 				const auto x2 = std::string_view(str2).substr(offset, str1.length() - offset);
 				auto result = x1.compare(x2);
 			}
-			const auto end = std::chrono::high_resolution_clock::now();
-			const auto duration = std::chrono::duration_cast<std::chrono::microseconds>(end - start).count();
-			std::cout << "Result: " << duration << " microseconds" << std::endl;
 		}
+
+		// string        :  1.78514 seconds.
+		// string_view   :  1.0882 seconds.
 	}
 
-	void Atoi_Partial() {
+	void Atoi_Partial()
+	{
 		const std::string strNumber = "123456789";
 		constexpr size_t TESTS_COUNT = 100'000'000;
 
 		{
-			auto start = std::chrono::high_resolution_clock::now();
+			const PerfUtilities::ScopedTimer timer { "Benchmark" };
 			for (size_t i = 0; i < TESTS_COUNT; ++i) {
 				int v = atoi(strNumber.substr(3, 4).data());
 			}
-			auto end = std::chrono::high_resolution_clock::now();
-			auto duration = std::chrono::duration_cast<std::chrono::microseconds>(end - start).count();
-			std::cout << "Result: " << duration << " microseconds" << std::endl;
 		}
-
 		{
-			auto start = std::chrono::high_resolution_clock::now();
+			const PerfUtilities::ScopedTimer timer { "Benchmark" };
 			for (size_t i = 0; i < TESTS_COUNT; ++i) {
 				int v = atoi(std::string_view(strNumber).substr(3, 4).data());
 			}
-			auto end = std::chrono::high_resolution_clock::now();
-			auto duration = std::chrono::duration_cast<std::chrono::microseconds>(end - start).count();
-			std::cout << "Result: " << duration << " microseconds" << std::endl;
 		}
 	}
 }
@@ -277,7 +264,7 @@ namespace StringView::Tests {
 void StringView::TestAll()
 {
 	// number_parser::TestAll();
-	failure_cases::TestAll();
+	// failure_cases::TestAll();
 
 	// Create();
 	// Create_2();
@@ -293,7 +280,7 @@ void StringView::TestAll()
 
 	// GlobalConstVar();
 
-	// UsageExamples::Compare_Part_Of_String();
+	UsageExamples::Compare_Part_Of_String();
 	// UsageExamples::Atoi_Partial();
 
 	// Tests::Test_Append();

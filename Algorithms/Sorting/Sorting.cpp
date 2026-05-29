@@ -73,9 +73,6 @@ namespace Sorting::HeapSort {
 
 namespace Sorting {
 
-	auto start = std::chrono::high_resolution_clock::now();
-	auto end = std::chrono::high_resolution_clock::now();
-	auto durtion = std::chrono::duration_cast<std::chrono::microseconds>(end - start).count();
 
 	void FillArray(int* input,
 					size_t size,
