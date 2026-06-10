@@ -1667,6 +1667,36 @@ namespace Ranges::Ranges_as_Input_Parameter
     }
 }
 
+namespace Ranges::FileSystem
+{
+    using DefaultMatcher = decltype([] (const auto&) { return true; });
+
+    template<std::predicate<std::filesystem::path> Func = DefaultMatcher>
+    static std::vector<std::filesystem::path>
+    enumerateDirectory(const std::filesystem::path &dirPath,
+                   Func fn = Func{}) noexcept
+    {
+        return std::filesystem::directory_iterator(dirPath) | std::views::filter(fn)
+            | std::ranges::to<std::vector<std::filesystem::path>>();
+
+        /*
+        std::vector<std::filesystem::path> entries;
+        for (const auto& entry : std::filesystem::directory_iterator(dirPath) | std::views::filter(fn)) {
+            entries.push_back(entry);
+        }
+        return entries;
+        */
+    }
+
+    void enumerateDirectoryTest()
+    {
+        const std::vector<std::filesystem::path> entries = enumerateDirectory("/tmp/Test_Folder_1");
+        for (const auto& entry : entries) {
+            std::cout << entry << std::endl;
+        }
+    }
+}
+
 void Ranges::TestAll()
 {
     // Store::TestAll();
@@ -1691,7 +1721,7 @@ void Ranges::TestAll()
     // Join::Join_With_2();
     // Join::Join_With_to_String();
     // Join::rangeJoinStyle();
-    Join::Join_Get_ClassParameters();
+    // Join::Join_Get_ClassParameters();
 
     // Concat_1();
 
@@ -1763,7 +1793,7 @@ void Ranges::TestAll()
     // Take::Take_Test_0();
     // Take::Take_Test();
 
-
+    FileSystem::enumerateDirectoryTest();
 
     // Istream::Read_Ints();
     // Istream::Get_Strings_and_Floats();

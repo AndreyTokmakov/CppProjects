@@ -19,6 +19,7 @@
 #include <algorithm>
 #include <set>
 #include <iterator>
+#include <ranges>
 
 #include <sys/stat.h>
 
@@ -941,6 +942,36 @@ namespace Filesystem::Iterate_Files
     }
 }
 
+namespace FileSystem::Ranges
+{
+    using DefaultMatcher = decltype([] (const auto&) { return true; });
+
+    template<std::predicate<std::filesystem::path> Func = DefaultMatcher>
+    static std::vector<std::filesystem::path>
+    enumerateDirectory(const std::filesystem::path &dirPath,
+                   Func fn = Func{}) noexcept
+    {
+        return std::filesystem::directory_iterator(dirPath) | std::views::filter(fn)
+            | std::ranges::to<std::vector<std::filesystem::path>>();
+
+        /*
+        std::vector<std::filesystem::path> entries;
+        for (const auto& entry : std::filesystem::directory_iterator(dirPath) | std::views::filter(fn)) {
+            entries.push_back(entry);
+        }
+        return entries;
+        */
+    }
+
+    void enumerateDirectoryTest()
+    {
+        const std::vector<std::filesystem::path> entries = enumerateDirectory("/tmp/Test_Folder_1");
+        for (const auto& entry : entries) {
+            std::cout << entry << std::endl;
+        }
+    }
+}
+
 
 // INFO: https://www.cppstories.com/2024/common-filesystem-cpp20/#6-listing-directory-contents-recursively
 
@@ -986,6 +1017,7 @@ void Filesystem::TestAll()
 
     // DocumentStorageTests::Test();
 
+    FileSystem::Ranges::enumerateDirectoryTest();
 
     // Sizes::FileSize();
     // Sizes::TestFileSize();
@@ -996,7 +1028,7 @@ void Filesystem::TestAll()
     // Tests::Tests();
 
     // Paths::PathTests();
-    Paths::Concat_vs_Append();
+    // Paths::Concat_vs_Append();
     // Paths::GetPathParts();
 
     // Experiments::CreateFile_and_GetTime();

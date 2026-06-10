@@ -234,7 +234,8 @@ namespace Map
 	    {
 	    	std::map<Pair, Pair> map;
 	    	map.emplace(std::piecewise_construct,
-	    	std::forward_as_tuple(1, 2), std::forward_as_tuple(3, 4)
+	    		std::forward_as_tuple(1, 2),
+	    		std::forward_as_tuple(3, 4)
 	    	);
 	    }
 

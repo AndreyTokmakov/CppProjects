@@ -150,7 +150,7 @@ namespace ThreadPoolEx
 
     public:
 
-        explicit ThreadPool(uint32_t threadsCount = std::thread::hardware_concurrency())
+        explicit ThreadPool(const uint32_t threadsCount = std::thread::hardware_concurrency())
         {
             workers.reserve(threadsCount);
             for (size_t i = 0; i < threadsCount; ++i) {
