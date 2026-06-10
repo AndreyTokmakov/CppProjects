@@ -96,8 +96,7 @@ int main([[maybe_unused]] const int argc,
 {
     const std::vector<std::string_view> args(argv + 1, argv + argc);
 
-    caches::printCPUCaches();
-
+    // caches::printCPUCaches();
     // FalseSharingExperiments::TestAll();
     // Variables_MemoryLayout::TestAll();
     // ValgrindExperiments::TestAll();
@@ -109,7 +108,7 @@ int main([[maybe_unused]] const int argc,
     // AoS_vs_SoA::TestAll();
     // Remove_Branches_Builtin_Unreachable::TestAll();
     // BranchLessCodeExamples::TestAll();
-    // loop_unrolling::TestAll();
+    loop_unrolling::TestAll();
 
     return EXIT_SUCCESS;
 }
