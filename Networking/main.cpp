@@ -56,6 +56,8 @@ Description : Tests C++ project
 #include "APIServer/APIServer.h"
 #include "SecureMessagingProxy/MessagingProxy.h"
 
+#include "MAC_Address/MacAddress.hpp"
+
 #include "UnixDomainSockets/UDSAsynchServer.h"
 
 
@@ -66,10 +68,11 @@ int main([[maybe_unused]] int argc,
 {
     const std::vector<std::string_view> args(argv + 1, argv + argc);
 
-    Clients::Tests();
+    // Clients::Tests();
     // UDPClient::TestAll();
 
     // DNS_ResponseParser::TestAll();
+    mac_address::TestAll();
 
     // RawSocketsTests::TestAll();
     // CaptureTraffic::TestAll();
