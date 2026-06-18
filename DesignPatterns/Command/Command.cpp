@@ -7,7 +7,7 @@
 // Description : Command pattern src
 //============================================================================
 
-#include "Command.h"
+#include "Command.hpp"
 
 #include <iostream>
 #include <memory>
@@ -100,10 +100,10 @@ namespace Command::Switch_ON_OFF_Light
     }
 }
 
-void Test_MethodPtr();
 
 void Command::TestAll()
 {
-    // Test_MethodPtr();
-    Switch_ON_OFF_Light::Test();
+    // method_ptr::TestAll();
+    filesystem_command_dispatcher::TestAll();
+    // Switch_ON_OFF_Light::Test();
 }

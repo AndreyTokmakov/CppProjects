@@ -20,7 +20,11 @@ add_executable(${PROJECT_NAME}
 		Builder/BlochBuilder.cpp
 		ChainOfResponsibility/ChainOfResponsibility.cpp
 		ChainOfResponsibility/ChainOfHandlers.cpp
+
 		Command/Command.cpp
+		Command/Command_MethodPtr.cpp
+		Command/FilesystemCommandDispatcher.cpp
+
 		Composite/Composite.cpp
 		CRTP/CRTP.cpp
 		CRTP/CRTP.h
@@ -89,7 +93,6 @@ add_executable(${PROJECT_NAME}
 		LazyInitialization/LazyInitialization.cpp
 		Lazy_Computation/LazyComputation.cpp
 		ChainOfResponsibility/Example2.cpp
-		Command/Command_MethodPtr.cpp
 		Iterator/RangeIterator.cpp
 		Mediator/ChatMediator.cpp
 		Observer/ObserverBasic.cpp

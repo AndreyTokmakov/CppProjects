@@ -1,5 +1,5 @@
 /**============================================================================
-Name        : Test_MethodPtr.h
+Name        : Test_MethodPtr.cpp
 Created on  : 03.01.2023
 Author      : Andrei Tokmakov
 Version     : 1.0
@@ -7,7 +7,7 @@ Copyright   : Your copyright notice
 Description : Test_MethodPtr pattern src
 ============================================================================**/
 
-#include "Command.h"
+#include "Command.hpp"
 
 #include <iostream>
 #include <string>
@@ -100,7 +100,7 @@ namespace Command::MethodPtr
     }
 }
 
-void Test_MethodPtr()
+void Command::method_ptr::TestAll()
 {
     Command::MethodPtr::Test_Commands();
     std::cout << "---------------------------------------\n";

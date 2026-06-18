@@ -26,7 +26,7 @@ Description : Software design patterns C++ test project
 #include "Facade//Facade.h"
 #include "Bridge/Bridge.h"
 #include "PImpl/PImpl.h"
-#include "Command/Command.h"
+#include "Command/Command.hpp"
 #include "ChainOfResponsibility/ChainOfResponsibility.h"
 #include "Decorator/Decorator.h"
 #include "Observer/Observer.h"
@@ -82,7 +82,7 @@ int main([[maybe_unused]]  int argc,
     // Adapter::TestAll();
     // Bridge::TestAll();
     // PImpl::TestAll();
-    Composite::Test();
+    // Composite::Test();
     // Facade::Test();
     // Decorator::Test();
     // Flyweight::Test();
@@ -96,7 +96,7 @@ int main([[maybe_unused]]  int argc,
     // Strategy::Test();
     // Policy::Test();
     // ChainOfResponsibility::TestAll();
-    // Command::TestAll();
+    Command::TestAll();
     // Iterator::Test();
     // Interpreter::Test();
     // Mediator::TestAll();

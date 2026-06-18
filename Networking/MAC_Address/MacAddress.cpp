@@ -23,11 +23,11 @@ namespace mac_address
     struct MAC_Address
     {
         using value_type = uint8_t;
+        using size_type  = size_t;
 
-        static constexpr std::size_t BytesNum { 6 };
-        static constexpr std::size_t AddressStringSize { 17 };
+        static constexpr size_type BytesNum { 6 };
+        static constexpr size_type AddressStringSize { 17 };
 
-        std::array<value_type, BytesNum> bytes{};
         bool is_valid { false };
 
         explicit constexpr MAC_Address(const std::string_view str)
@@ -35,7 +35,7 @@ namespace mac_address
             if (str.size() != AddressStringSize) {
                 return;
             }
-            for (size_t i = 0; i < BytesNum; ++i)
+            for (size_type i = 0; i < BytesNum; ++i)
             {
                 const std::string_view byte_str = str.substr(i * 3, 2);
                 value_type value { 0 };
@@ -47,6 +47,14 @@ namespace mac_address
             }
             is_valid = true;
         }
+
+        constexpr uint8_t operator[](const size_type idx) const {
+            return bytes[idx];
+        }
+
+    private:
+
+        std::array<value_type, BytesNum> bytes{};
     };
 
 }
@@ -54,8 +62,13 @@ namespace mac_address
 
 void mac_address::TestAll()
 {
-    constexpr MAC_Address addr("00:11:22:33:44:55");
+    constexpr MAC_Address addr("00:11:22:33:44:55"); // -> [0, 17, 34, 51, 68, 85]
     static_assert(addr.is_valid);
-    std::cout << static_cast<unsigned int>(addr.bytes.at(5)) << std::endl;
 
+    static_assert(addr[0] == 0);
+    static_assert(addr[1] == 17);
+    static_assert(addr[2] == 34);
+    static_assert(addr[3] == 51);
+    static_assert(addr[4] == 68);
+    static_assert(addr[5] == 85);
 }
