@@ -65,7 +65,7 @@ namespace Command::command_crtp
         explicit JumpCommand(Player& player):player { player } {
         }
 
-        void execute() {
+        void execute() const {
             player.jump();
         }
     };
