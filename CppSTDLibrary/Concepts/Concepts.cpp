@@ -1783,14 +1783,78 @@ namespace Conversations {
         func_handle_strings_template("12345" );
         func_handle_strings_template(MyString{} );
         // func_handle_strings_template(MyStringNOT{} );
+    }
+}
 
+namespace Concepts::Multiple_Types_Concepts
+{
+    template<typename Motor,
+             typename Odometer>
+    concept CompatibleOdometry = requires(Motor motor, Odometer odometer) {
+        motor.attach(odometer);
+    };
+
+    template<typename Motor, typename Odometer>
+        requires CompatibleOdometry<Motor, Odometer>
+    struct SmartCar
+    {
+        explicit SmartCar(Motor left = {}, Odometer odometer = {}) {
+            /* ... */
+        }
+    };
+
+    struct Odometer {};
+
+    struct GoodMotor { void attach(Odometer) {} };
+    struct BadMotor  { void connect(Odometer) {} };
+
+    // https://platis.solutions/blog/2026/05/02/lets-get-comfortable-with-concepts/
+    void demo1()
+    {
+#if 0   // Will not compile
+        SmartCar<BadMotor, Odometer> badCar;
+#endif
+        const SmartCar<GoodMotor, Odometer> car;
+    }
+}
+
+namespace Concepts::Multiple_Types_Concepts
+{
+    struct GoodMotorFactory {
+        GoodMotor create() {
+            return {};
+        }
+    };
+
+    struct BadMotorFactory {
+        BadMotor create() {
+            return {};
+        }
+    };
+
+    template<typename MotorFactory,
+             typename Odometer>
+    concept CompatibleMotorFactory = requires(MotorFactory mf)
+    {
+        /// The return type of create() is fed into CompatibleOdometry
+        ///
+        /// Here we doing the Compile Time Concept Validations of 'CompatibleOdometry'
+        /// for type returned by 'MotorFactory' type
+        { mf.create() } -> CompatibleOdometry<Odometer>;
+    };
+
+    // https://platis.solutions/blog/2026/05/02/lets-get-comfortable-with-concepts/
+    void demo2()
+    {
+        std::cout << CompatibleMotorFactory<GoodMotorFactory, Odometer> << std::endl; // true
+        std::cout << CompatibleMotorFactory<BadMotorFactory, Odometer>  << std::endl; // false
     }
 }
 
 
 
-namespace ValidatTypeContains_Members_or_Types {
-
+namespace ValidatTypeContains_Members_or_Types
+{
     struct TestTypeGood {
         using ElementType = int;
     };
@@ -1820,7 +1884,6 @@ namespace ValidatTypeContains_Members_or_Types {
 
     void __handle_Template_Substitution(const ValidForTemplate auto& val) {
     }
-
 
 
     void ContainTypeDef() {
@@ -2003,10 +2066,67 @@ namespace Concepts::Noexcept
 }
 
 
+namespace Concepts::Variadic_Templates_Constexpr
+{
+    struct Cocktail
+    {
+        template<typename ... Ts>
+        explicit Cocktail(Ts&& ... ) {
+            std::cout << "Cocktail created" << std::endl;
+        }
+    };
+
+    struct Mocktail
+    {
+        template<typename ... Ts>
+        explicit Mocktail(Ts&& ... ) {
+            std::cout << "Mocktail created" << std::endl;
+        }
+    };
+
+    struct Juice {};
+    struct Watter {};
+    struct Spirit {
+        void fermentedOrDistilled() {}
+    };
+
+    template<typename... Ts>
+    concept HasAlcohol = (requires(Ts ts) { ts.fermentedOrDistilled(); } || ...);
+
+    template<typename... Ingredients>
+    auto makeDrink(Ingredients&&... ingredients)
+    {
+        if constexpr (HasAlcohol<Ingredients...>) {
+            return Cocktail { std::forward<Ingredients>(ingredients)... };
+        } else {
+            return Mocktail { std::forward<Ingredients>(ingredients)... };
+        }
+    }
+
+    template<typename... Ingredients>
+        requires HasAlcohol<Ingredients...>
+    auto makeDrinkEx(Ingredients&&... ingredients) {
+        return Cocktail{std::forward<Ingredients>(ingredients)...};
+    }
+
+    template<typename... Ingredients>
+        requires(!HasAlcohol<Ingredients...>)
+    auto makeDrinkEx(Ingredients&&... ingredients) {
+        return Mocktail{std::forward<Ingredients>(ingredients)...};
+    }
+
+    void demo()
+    {
+        auto _ = makeDrink(Watter{}, Juice {});              // Mocktail created
+        auto _  = makeDrink(Watter{}, Juice {}, Spirit {});   // Cocktail created
+        auto _  = makeDrinkEx(Watter{}, Juice {}, Spirit {}); // Cocktail created
+        auto _ = makeDrinkEx(Watter{}, Juice {});            // Mocktail created
+    }
+}
+
 
 namespace Concepts::FoldExpression
 {
-
     template<typename ... Types>
     concept TestConcept = requires(Types ... params) {
         (... + params);
@@ -2420,8 +2540,47 @@ namespace Concepts::ClassMethods
 #endif
         }
     }
-
 }
+
+namespace Concepts::ClassMethods
+{
+    template<typename Motor>
+    concept HasOdometer = requires(Motor m) {
+        { m.getPulses() } -> std::same_as<void>;
+    };
+
+    template<typename Motor>
+    struct Car
+    {
+        void drive() {
+            std::cout << "Drive\n";
+        }
+
+        void drive() requires HasOdometer<Motor> {
+            std::cout << "Drive with cruise control\n";
+        }
+    };
+
+    struct MotorOld {
+    };
+
+    struct MotorNew {
+        void getPulses() {}
+    };
+
+    void class_method_concepts_based_overload()
+    {
+        Car<MotorOld> carOld;
+        Car<MotorNew> carNew;
+
+        carOld.drive();
+        carNew.drive();
+
+        // Drive
+        // Drive with cruise control
+    }
+}
+
 
 namespace Concepts::Static_Asserts
 {
@@ -3116,6 +3275,136 @@ namespace Concepts::Concepts_on_Two_Types
     }
 }
 
+// https://platis.solutions/blog/2026/05/02/lets-get-comfortable-with-concepts/
+namespace Concepts::Constexpr_and_Requires
+{
+    template<typename T>
+    void inspect(T value)
+    {
+        if constexpr (requires(int i) { value.foo(i); }) {
+            std::cout << "T has foo(int) member function\n";
+        } else if constexpr (requires { value.bar(); }) {
+            std::cout << "T has bar() member function\n";
+        } else {
+            std::cout << "T has neither foo(int) nor bar() member functions\n";
+        }
+    }
+
+    void checkClassMethods()
+    {
+        struct HasFoo { void foo(int) { } };
+        struct HasBar { void bar() { } };
+        struct Empty  { };
+
+        inspect(HasFoo{});
+        inspect(HasBar{});
+        inspect(Empty{});
+
+        // T has foo(int) member function
+        // T has bar() member function
+        // T has neither foo(int) nor bar() member functions
+    }
+}
+
+// https://platis.solutions/blog/2026/05/02/lets-get-comfortable-with-concepts/
+namespace Concepts::Constexpr_and_Requires
+{
+    template<typename T>
+    constexpr void print_type_info(const T& value)
+    {
+        if constexpr (requires { std::is_integral_v<T>; }) {
+            std::cout << "Value is integral: " << value << std::endl;
+        } else {
+            std::cout << "Value is not integral" << std::endl;
+        }
+    }
+
+    template<typename T>
+    constexpr void print_type_info_fixed(const T& value)
+    {
+        if constexpr (requires { requires std::is_integral_v<T>; }) {
+            std::cout << "Value is integral: " << value << std::endl;
+        } else {
+            std::cout << "Value is not integral" << std::endl;
+        }
+    }
+
+    void demo_BAD()
+    {
+        print_type_info(5);
+        print_type_info(3.14);
+        print_type_info(std::string{"Hello"});
+
+        // print_type_info(5);
+        // print_type_info(3.14);
+        // print_type_info(std::string{"Hello"});
+    }
+
+    void demo_Fixed()
+    {
+        print_type_info_fixed(5);
+        print_type_info_fixed(3.14);
+        print_type_info_fixed(std::string{"Hello"});
+
+        // Value is integral: 5
+        // Value is not integral
+        // Value is not integral
+    }
+}
+
+
+namespace Concepts::Handle_Ref_Type
+{
+    template<typename T>
+    concept Quantity = requires(T t) {
+        typename T::unit;
+        // some more checks...
+    };
+
+    struct Gram {
+        using unit = int;
+    };
+
+    template<Quantity Q>
+    void foo_no_concept([[maybe_unused]] Q&& q) {
+        std::cout << __PRETTY_FUNCTION__ << std::endl;
+    }
+
+    template<typename Q>
+        requires Quantity<Q>
+    void foo_concept_bad([[maybe_unused]] Q&& q) {
+        std::cout << __PRETTY_FUNCTION__ << std::endl;
+    }
+
+    template<typename Q>
+        requires Quantity<std::remove_cvref_t<Q>>
+    void foo_concept_Ok([[maybe_unused]] Q&& q) {
+        std::cout << __PRETTY_FUNCTION__ << std::endl;
+    }
+
+    void remove_cvref_test()
+    {
+        {
+            foo_no_concept(Gram{});
+        }
+#if 0
+        {
+            Gram g;
+            foo_concept_bad(g);
+        }
+#endif
+        {
+            Gram g;
+            foo_concept_Ok(g);
+        }
+
+        // void Concepts::Handle_Ref_Type::foo_no_concept(Q&&) [with Q = Gram]
+        // void Concepts::Handle_Ref_Type::foo_concept_Ok(Q&&) [with Q = Gram&]
+    }
+}
+
+
+
 // https://www.youtube.com/watch?v=jzwqTi7n-rg | Back to Basics: Concepts in C++ - Nicolai Josuttis - CppCon 2024
 
 void Concepts::TestAll()
@@ -3187,7 +3476,6 @@ void Concepts::TestAll()
 
     // Concepts_With_Auto::Test();
     // Concepts_With_Auto::Print_Tests();
-
     // Concepts_With_Lambdas::Params_Concepts();
 
 
@@ -3196,6 +3484,7 @@ void Concepts::TestAll()
 
     // Concepts_on_Two_Types::demo();
 
+    Handle_Ref_Type::remove_cvref_test();
 
     // ConceptsAsInterface::passClassObjAsInterface();
     // NestedConcepts::CheckMethodReturnType();
@@ -3208,12 +3497,20 @@ void Concepts::TestAll()
     // Conversations::String_Test();
     // Conversations::Convertible_To_Tests();
 
-
     // Is_Constructible::ConstructTest1();      /** Fabric test **/
     // Is_Constructible::ConstructTest2();      /** Fabric test + Concepts **/
 
+    // Multiple_Types_Concepts::demo1();
+    // Multiple_Types_Concepts::demo2();
     // ValidatTypeContains_Members_or_Types::ContainTypeDef();
     // ValidatTypeContains_Members_or_Types::Valid_Template_Substitution();
+
+    // Variadic_Templates_Constexpr::demo();
+    // FoldExpression::Test();
+    // FoldExpression::Test_Construct_With_Arguments();
+    // FoldExpression::Test_All_Params_are_SameType();
+    // FoldExpression::Elements_Shall_be_Comparable();
+
 
     // CheckFunctionOverloadExists::TryCallFunction();
     // CheckCallHaveFunction_IfConstexpr::If_Constexpr_Concepts();
@@ -3223,30 +3520,32 @@ void Concepts::TestAll()
 
     // Containers::Test();
 
-    // FoldExpression::Test();
-    // FoldExpression::Test_Construct_With_Arguments();
-    // FoldExpression::Test_All_Params_are_SameType();
-    // FoldExpression::Elements_Shall_be_Comparable();
 
-    /*
-    CheckAllTypesAreSame::Check_with_Concepts();
-    CheckAllTypesAreSame::Check_with_StaticAssert();
-    CheckAllTypesAreSame::Check_ALL_Integral();
-    CheckTypes::CheckThatTypeSameAs();   // <--- Allow construction using one of the base class only
-    */
+
+    // CheckAllTypesAreSame::Check_with_Concepts();
+    // CheckAllTypesAreSame::Check_with_StaticAssert();
+    // CheckAllTypesAreSame::Check_ALL_Integral();
+    // CheckTypes::CheckThatTypeSameAs();   // <--- Allow construction using one of the base class onl
 
     // IntegerConcepts::IntegerSum();
 
     // Iterators::SortCollections_RandomAccessIterator();
 
     // ClassMethods::DisableClassMethods();
-    ClassMethods::disable_Convertion_Construction_BasedOnType();
+    // ClassMethods::disable_Convertion_Construction_BasedOnType();
+    // ClassMethods::class_method_concepts_based_overload();
+
+    // Constexpr_and_Requires::checkClassMethods();
+    // Constexpr_and_Requires::demo_BAD();
+    // Constexpr_and_Requires::demo_Fixed();
+
+    // Static_Asserts::TestClassMethods();
+    // Static_Asserts::StaticAssert_Conects();
+
+
 
 
     // Tests::StaticAssert_Conects();
     // Tests::LAMBDA_CONCEPT();
     // Tests::Printable_Test();
-
-    // Static_Asserts::TestClassMethods();
-    // Static_Asserts::StaticAssert_Conects();
 };

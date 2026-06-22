@@ -132,7 +132,7 @@ int main([[maybe_unused]] const int argc,
     // Chrono::TestAll();
     // ContextControl::TestAll();
     // Comparators::TestAll();
-    // Concepts::TestAll();
+    Concepts::TestAll();
     // ConsoleInOut::TestAll();
     // ConstConstexprMutable::TestAll();
     // CompileTimeProgramming::TestAll();
@@ -181,7 +181,7 @@ int main([[maybe_unused]] const int argc,
     // Streams::TestAll();
     // StringStream::TestAll();
     // String::TestAll();
-    StringView::TestAll();
+    // StringView::TestAll();
     // StructuredBinding::TestAll();
     // StrongTypes::TestAll();
     // Span::TestAll();
