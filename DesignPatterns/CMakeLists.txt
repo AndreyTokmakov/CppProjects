@@ -24,6 +24,7 @@ add_executable(${PROJECT_NAME}
 		Command/Command.cpp
 		Command/Command_MethodPtr.cpp
 		Command/FilesystemCommandDispatcher.cpp
+		Command/Command_CRTP.cpp
 
 		Composite/Composite.cpp
 		CRTP/CRTP.cpp

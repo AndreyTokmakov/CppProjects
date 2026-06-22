@@ -14,6 +14,7 @@ namespace Command
 {
 	void TestAll();
 	namespace method_ptr { void TestAll(); }
+	namespace command_crtp { void TestAll(); }
 	namespace filesystem_command_dispatcher { void TestAll(); }
 }
 

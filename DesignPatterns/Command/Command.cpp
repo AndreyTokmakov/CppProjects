@@ -85,7 +85,7 @@ namespace Command::Switch_ON_OFF_Light
     void Test()
     {
         std::shared_ptr<Light> light = std::make_shared<Light>();
-        std::shared_ptr<RemoteControl> control = std::make_shared<RemoteControl>();
+        const std::shared_ptr<RemoteControl> control = std::make_shared<RemoteControl>();
 
         // concrete Command objects
         // std::unique_ptr<LightOnCommand> lightOn = std::make_unique<LightOnCommand>(new LightOnCommand(light));
@@ -104,6 +104,7 @@ namespace Command::Switch_ON_OFF_Light
 void Command::TestAll()
 {
     // method_ptr::TestAll();
-    filesystem_command_dispatcher::TestAll();
+    // filesystem_command_dispatcher::TestAll();
     // Switch_ON_OFF_Light::Test();
+    command_crtp::TestAll();
 }
