@@ -82,6 +82,8 @@ namespace Utilities::Invoke::Invoke_Objects_Methods_Manually
         auto fieldPtr = &Data::field;
 
         Data data { 10 };
+
+        [[maybe_unused]]
         auto obj_field = std::invoke(fieldPtr, data);
         std::cout << std::invoke(methodPtr, data, 13) << std::endl;
     }

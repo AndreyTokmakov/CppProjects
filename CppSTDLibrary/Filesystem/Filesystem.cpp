@@ -103,14 +103,15 @@ namespace Filesystem
         }
     }
 
-    void DeleteDirectoryTest() {
+    void DeleteDirectoryTest()
+    {
         namespace fs = std::filesystem;
 
         constexpr std::string_view dir1 = R"(C:\Temp\TEST_DIRS\DirToCreate1)";
         constexpr std::string_view  dirs = R"(C:\Temp\TEST_DIRS\DirToCreate1\DirToCreate2\DirToCreate3)";
 
         try {
-            bool result = fs::remove(dir1);
+            bool const result = fs::remove(dir1);
             std::cout << "Remove directory '" << dir1 << "' result : " << result << std::endl;
         }
         catch (const std::exception& exc) {
@@ -119,7 +120,7 @@ namespace Filesystem
         }
 
         try {
-            bool result = fs::remove_all(dir1);
+            bool const result = fs::remove_all(dir1);
             std::cout << "RemoveAll directories '" << dir1 << "' result : " << result << std::endl;
         }
         catch (const std::exception& exc) {
@@ -128,13 +129,15 @@ namespace Filesystem
         }
     }
 
-    void TempDirectoryPath() {
+    void TempDirectoryPath()
+    {
         namespace fs = std::filesystem;
-        fs::path tempDir = fs::temp_directory_path();
+        const fs::path tempDir = fs::temp_directory_path();
         std::cout << "Temporary directory path : " << tempDir << std::endl;
     }
 
-    void CopyDirTest() {
+    void CopyDirTest()
+    {
         namespace fs = std::filesystem;
 
         constexpr std::string_view srcDir = R"(C:\Temp\TEST_DIRS\html_dir)";
@@ -151,16 +154,15 @@ namespace Filesystem
         fs::copy(srcDir, dstDir, code);
         if (0 != code.value())
             std::cout << "Failed to copy dir'" << srcDir << "' to '" << dstDir << "'. Error code = " << code.value() << std::endl;
-
     }
 
-    void StandartMethods2() {
-
+    void StandartMethods2()
+    {
         namespace fs = std::filesystem;
         using namespace std::chrono_literals;
 
         const std::string filePath = "C:\\Temp\\FILES\\TestFile.txt";
-        fs::path file(filePath);
+        const fs::path file(filePath);
 
         std::cout << "Root path (file) : " << file.root_path() << std::endl;
         std::cout << "Root name (file) : " << file.root_name() << std::endl;
@@ -170,7 +172,7 @@ namespace Filesystem
 
         std::cout << "--------------------------------------------------------------------" << std::endl;
 
-        fs::path currentPath = fs::current_path();
+        const fs::path currentPath = fs::current_path();
 
         std::cout << "Root path (current path) : " << currentPath.root_path() << std::endl;
         std::cout << "Root name (current path) : " << currentPath.root_name() << std::endl;

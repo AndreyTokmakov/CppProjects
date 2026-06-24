@@ -466,8 +466,9 @@ namespace Algorithms::NonModifying {
         bool operator()(int n) const { return n % d == 0; }
     };
 
-    void _any_of() {
-        std::vector<int> ints = { 2,4,6,8,10,12,17,14,16,18 };
+    void _any_of()
+    {
+        const std::vector<int> ints = { 2,4,6,8,10,12,17,14,16,18 };
 
         const auto devised_by_10 = [](int v)-> bool { return 0 == v % 10; };
 
@@ -482,8 +483,11 @@ namespace Algorithms::NonModifying {
         }
     }
 
-    void _any_of_1() {
+    void _any_of_1()
+    {
         std::vector<std::string> values = { "one", "two", "three", "four", "five" };
+
+        [[maybe_unused]]
         auto result = std::any_of(values.begin(), values.end(), [](const auto& param) {
             std::cout << param << std::endl;
             return (0 == param.compare("three"));
@@ -1378,11 +1382,13 @@ namespace Algorithms::ModifyingSequenceOperations
         }
     }
 
-    void UniqueCopy() {
+    void UniqueCopy()
+    {
         {
             int myints[] = { 1,1,2,2,3,3,4,4 };
             std::vector<int> myvector(std::size(myints));
 
+            [[maybe_unused]]
             auto it = std::unique_copy(myints, myints + std::size(myints), myvector.begin());
             print_vector_ex(myvector, "");
         }
@@ -1390,12 +1396,14 @@ namespace Algorithms::ModifyingSequenceOperations
             int myints[] = { 1,2,3,4,1,2,3,4 };
             std::vector<int> myvector(std::size(myints));
 
+            [[maybe_unused]]
             auto it = std::unique_copy(myints, myints + std::size(myints), myvector.begin());
             print_vector_ex(myvector, "");
         }
     }
 
-    void Rotate() {
+    void Rotate()
+    {
         std::vector<int> numbers(10);
 
         std::iota(numbers.begin(), numbers.end(), 0);

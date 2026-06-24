@@ -46,7 +46,6 @@ namespace DateAndTime
 
     void StringToTime_1(std::string s)
     {
-        char buf[11];
         int a, b, c;
         sscanf(s.c_str(), "%d:%d:%d", &a, &b, &c);
         std::cout << a << "-" << b << "-" << c << std::endl;
@@ -67,7 +66,7 @@ namespace DateAndTime
     }
 
 
-    void StringToTime_Manual_1(std::string_view str) {
+    void StringToTime_Manual_1(const std::string_view str) {
         std::array<int, 4> date {};
         size_t pos { 0 }, prev { 0 }, idx {0};
         while ((pos = str.find_first_of(":.", prev)) != std::string::npos) {
@@ -277,6 +276,8 @@ namespace DateAndTime::FunctionPerformance
 
         {
             const PerfUtilities::ScopedTimer timer{"std::time(3)"};
+
+            [[maybe_unused]]
             time_t rawTime;
             for (int i = 0; i < iterCount; ++i)
             {

@@ -104,7 +104,8 @@ namespace Arrays::BasicArrays {
         std::cout << "3[data] = " << 3[data] << std::endl;
     }
 
-    void Access_And_Update_Element() {
+    void Access_And_Update_Element()
+    {
         int data[] = { 1,2,3,4,5,6,7,8,9 };
         print(data, std::size(data));
 
@@ -123,7 +124,8 @@ namespace Arrays::BasicArrays {
         print(data, std::size(data));
     }
 
-    void Sort() {
+    void Sort()
+    {
         int data[] = { 3,2,1 };
 
         print(data, std::size(data), "Before: ");
@@ -153,7 +155,8 @@ namespace Arrays::BasicArrays {
         std::cout << std::endl;
     }
 
-    void TEST() {
+    void TEST()
+    {
         std::array<int, 10> src {1,2,3,4,5,6,7,8,9,10};
         std::array<int, 10> dst {0,0,0,0,0,0,0,0,0,0};
 

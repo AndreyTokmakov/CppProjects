@@ -91,8 +91,8 @@ namespace ObjectOrientedProgramming::Constructors
         }
     };
 
-    class DerivedEx2 : public Base {
-    private:
+    class DerivedEx2 : public Base
+    {
         std::string desc;
 
     public:
@@ -105,11 +105,13 @@ namespace ObjectOrientedProgramming::Constructors
 
     //-------------------------------------------------------------------------------------//
 
-    void CallOneConstructorFromAnother() {
+    void CallOneConstructorFromAnother()
+    {
         Derived d;
     }
 
-    void CallBaseClassConstructor() {
+    void CallBaseClassConstructor()
+    {
         std::cout << "Test1:" << std::endl;
         {
             Base* obj = new Derived();
@@ -118,13 +120,15 @@ namespace ObjectOrientedProgramming::Constructors
 
         std::cout << "\nTest2:" << std::endl;
         {
-            std::shared_ptr<Base> obj = std::make_shared<Derived>("TestNam1", "DESC2");
+            const std::shared_ptr<Base> obj = std::make_shared<Derived>("TestNam1", "DESC2");
         }
 
         std::cout << "\nTest3:" << std::endl;
         {
-            const auto func = [](const std::shared_ptr<Base> obj)-> void { obj->printInfo();  };
-            std::shared_ptr<Base> obj = std::make_shared<Derived>("TestNam1", "DESC2");
+            const auto func = [](const std::shared_ptr<Base>& obj)-> void {
+                obj->printInfo();
+            };
+            const std::shared_ptr<Base> obj = std::make_shared<Derived>("TestNam1", "DESC2");
             func(obj);
         }
     }
@@ -135,15 +139,15 @@ namespace ObjectOrientedProgramming::Constructors
     }
 
 
-    void InheritedConstructors() {
-
+    void InheritedConstructors()
+    {
         // If BaseClasscConstructor not implemented
 #if 0
         Base* b = new DerivedEx1("Some_input");
 #endif
 
-        Base* b = new DerivedEx2("Some_input");
-
+        [[maybe_unused]]
+        const Base *b = new DerivedEx2("Some_input");
 
     }
 }
@@ -698,17 +702,30 @@ namespace ObjectOrientedProgramming {
 #endif
         }
 
-        void CTor_Operator_Bool_1() {
-            Base b1(1);
-            Base b2 = 2;
-            Base b3 { 3, 4 };
-            Base b4 = { 5, 6 };
-            Base b5 = (Base)7;
+        void CTor_Operator_Bool_1()
+        {
+            [[maybe_unused]]
+            const Base b1(1);
+
+            [[maybe_unused]]
+            const Base b2 = 2;
+
+            [[maybe_unused]]
+            const Base b3 { 3, 4 };
+
+            [[maybe_unused]]
+            const Base b4 = { 5, 6 };
+
+            [[maybe_unused]]
+            const Base b5 = (Base)7;
 
             if (b1) {  /* OK: A::operator bool(). */}
 
-            bool na1 = b1; // OK: copy-initialization selects A::operator bool()
-            bool na2 = static_cast<bool>(b1); // OK: static_cast performs direct-initialization
+            [[maybe_unused]]
+            const bool na1 = b1; // OK: copy-initialization selects A::operator bool()
+
+            [[maybe_unused]]
+            const bool na2 = static_cast<bool>(b1); // OK: static_cast performs direct-initialization
         }
 
         void CTor_Operator_Bool_2() {
@@ -1257,7 +1274,7 @@ namespace ObjectOrientedProgramming::Overloaded_Tests {
 
     class Derived : public Base {
     public:
-        virtual void info(const std::string& text) {
+        virtual void info(const std::string&  /*text*/) {
             std::cout << "Derived::info(const std::string& text) called" << std::endl;
         }
     };
@@ -1266,7 +1283,7 @@ namespace ObjectOrientedProgramming::Overloaded_Tests {
     public:
         using Base::info; // --> This allow as to to call Base::info() of the Derived2 class object
 
-        virtual void info(const std::string& text) {
+        virtual void info(const std::string&  /*text*/) {
             std::cout << "Derived2::info(const std::string& text) called" << std::endl;
         }
     };
@@ -1760,11 +1777,9 @@ namespace ObjectOrientedProgramming::LocalClasses {
 
         };
 
-        Object obj;
-
-        [[maybe_unused]]
-        Object  *ptr;
-        Object  *ptr1 = new Object();
+        [[maybe_unused]] Object obj;
+        [[maybe_unused]] Object  *ptr;
+        [[maybe_unused]] Object  *ptr1 = new Object();
     }
 
     void Test() {
@@ -2661,8 +2676,10 @@ namespace ObjectOrientedProgramming::ClassVariables {
 
     }
 
-    void InitStaticVariable_WithLambda() {
-        Type2 T{};
+    void InitStaticVariable_WithLambda()
+    {
+        [[maybe_unused]]
+        constexpr Type2 T{};
     }
 };
 

@@ -3129,7 +3129,6 @@ namespace Concepts::Requires_Clause_vs_Expression
         return requires (const T obj) { ++obj; };
     }
 
-
     constexpr bool test_can_increment() {
         return requires (int i) { ++i; };
     }

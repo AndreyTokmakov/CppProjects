@@ -127,6 +127,7 @@ namespace InitializerList::Caveats_and_Bugs:: Referencing_Local_Array
         // Warning: warning: returning temporary ‘initializer_list’
         //                   does not extend the lifetime of the underlying array [-Winit-list-lifetime]
 
+        [[maybe_unused]]
         std::initializer_list<int> x = wrong();
     }
 }

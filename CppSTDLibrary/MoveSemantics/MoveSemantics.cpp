@@ -599,11 +599,12 @@ namespace MoveSemantics {
 		D d2 = std::move(d1);
 	}
 
-	void Move_If_Noexcept() {
+	void Move_If_Noexcept()
+	{
 		Good g;
 		Bad b;
-		Good g2 = std::move_if_noexcept(g);
-		Bad b2 = std::move_if_noexcept(b);
+		Good _ = std::move_if_noexcept(g);
+		Bad _ = std::move_if_noexcept(b);
 	}
 
 	//-------------------------------------------------------------------------------------------------//
@@ -963,8 +964,8 @@ namespace MoveSemantics::PerfectForwarding {
 		std::cout << std::endl;
 
 		// Lvalues
-		int five = 5;
-		int myFive = create_new<int>(five);
+		int const five = 5;
+		int const myFive = create_new<int>(five);
 		std::cout << "myFive: " << myFive << std::endl;
 
 		std::string str{ "Lvalue" };
@@ -985,18 +986,22 @@ namespace MoveSemantics::PerfectForwarding {
 		double doub = create_new<double>();
 		std::cout << "doub: " << doub << std::endl;
 
-		MyStruct myStr = create_new<MyStruct>(2011, 3.14, str4);
+		MyStruct _ = create_new<MyStruct>(2011, 3.14, str4);
 		std::cout << std::endl;
 	}
 
 	void Forward_Tests2() {
 		{
 			TestClass1 y;
+
+			[[maybe_unused]]
 			TestClass2 two = factory(std::move(y), TestClass1());
 		}
 		std::cout << "\n\nTest2:" << std::endl;
 		{
-			TestClass1 y;
+			const TestClass1 y;
+
+			[[maybe_unused]]
 			TestClass2 two = factory(y, TestClass1());
 		}
 	}
@@ -1004,11 +1009,15 @@ namespace MoveSemantics::PerfectForwarding {
 	void Forward_Tests3() {
 		{
 			TestClass1 y;
+
+			[[maybe_unused]]
 			TestClass2 two = factory2(std::move(y), TestClass1());
 		}
 		std::cout << "\n\nTest2:" << std::endl;
 		{
-			TestClass1 y;
+			const TestClass1 y;
+
+			[[maybe_unused]]
 			TestClass2 two = factory2(y, TestClass1());
 		}
 	}

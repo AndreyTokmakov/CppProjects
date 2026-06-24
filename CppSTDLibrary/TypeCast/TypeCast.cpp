@@ -143,25 +143,28 @@ namespace TypeCast
 		p1->info();
 	}
 
-	void DynamicCastTests_2() {
+	void DynamicCastTests_2()
+	{
 		// Old style:
-		Child* obj = (Child*)getChild();
+		const Child* obj = dynamic_cast<Child*>(getChild());
 		obj->info();
 
 		// C++ style:
 		Parent *p = getChild();
-		Child *ch = dynamic_cast<Child*>(p);
+
+		const Child *ch = dynamic_cast<Child*>(p);
 		ch->info();
 	}
 
-	void DynamicCastTests2() {
-		if (Child *ch = dynamic_cast<Child*>(getChild())) {
+	void DynamicCastTests2()
+	{
+		if (const Child *ch = dynamic_cast<Child*>(getChild())) {
 			ch->info();
 		} else {
 			std::cout << "Failed to cast getChild() to Child* type" << std::endl;
 		}
 
-		if (Child *ch = dynamic_cast<Child*>(getParent())) {
+		if (const Child *ch = dynamic_cast<Child*>(getParent())) {
 			ch->info();
 		} else {
 			std::cout << "Failed to cast getParent() to Child* type" << std::endl;
@@ -175,7 +178,7 @@ namespace TypeCast
 		const_cast<int&>(rci) = 431; // OK: modifies i
 		std::cout << "i = " << i << std::endl;
 
-		TheType t; // if this was const type t, then t.f(4) would be undefined behavior
+		const TheType t; // if this was const type t, then t.f(4) would be undefined behavior
 		t.Const_Set_Value(4);
 		std::cout << "type::i = " << t.i << std::endl;
 

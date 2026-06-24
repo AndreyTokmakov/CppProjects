@@ -45,33 +45,27 @@ namespace Chrono
     void Steady_clock()
     {
         using namespace std::chrono;
-        steady_clock::time_point t1 = steady_clock::now();
+        const steady_clock::time_point t1 = steady_clock::now();
 
         std::cout << "printing out 1000 stars..." << std::endl;
         for (int i = 0; i < 1000; ++i)
             std::cout << "*";
         std::cout << std::endl;
 
-        steady_clock::time_point t2 = steady_clock::now();
-        duration<double> time_span = duration_cast<duration<double>>(t2 - t1);
+        const steady_clock::time_point t2 = steady_clock::now();
+        const duration<double> time_span = duration_cast<duration<double>>(t2 - t1);
         std::cout << "It took me " << time_span.count() << " seconds." << std::endl;
     }
 
-    void Clock_Test() {
-        std::chrono::system_clock::time_point time_point_now = std::chrono::system_clock::now();
-        time_t time = std::chrono::system_clock::to_time_t(time_point_now);
-
-
-        /*
-        char str[26];
-        ctime_s(str, sizeof str, &time);
-        std::cout << "today is: " << str << std::endl;
-        */
+    void Clock_Test()
+    {
+        const std::chrono::system_clock::time_point time_point_now = std::chrono::system_clock::now();
+        time_t _ = std::chrono::system_clock::to_time_t(time_point_now);
     }
 
     void GM_time_VS_localtime()
     {
-        std::time_t t = std::time(nullptr);
+        const std::time_t t = std::time(nullptr);
         std::cout << "UTC:       " << std::put_time(std::gmtime(&t), "%c %Z") << '\n';
         std::cout << "local:     " << std::put_time(std::localtime(&t), "%c %Z") << '\n';
 
@@ -694,19 +688,19 @@ namespace Chrono::FunctionPerformance
         {
             PerfUtilities::ScopedTimer timer { "std::time" };
             for (int i = 0; i < COUNT;  ++i) {
-                std::time_t t = std::time(nullptr);
+                std::time_t _ = std::time(nullptr);
             }
         }
         {
             PerfUtilities::ScopedTimer timer { "system_clock::now" };
             for (int i = 0; i < COUNT; ++i) {
-                auto now = std::chrono::system_clock::now();
+                auto _ = std::chrono::system_clock::now();
             }
         }
         {
             PerfUtilities::ScopedTimer timer { "high_resolution_clock::now" };
             for (int i = 0; i < COUNT; ++i) {
-                auto now = std::chrono::high_resolution_clock::now();
+                auto _ = std::chrono::high_resolution_clock::now();
             }
         }
         // std::time                  :  0.265377 seconds.
@@ -749,7 +743,7 @@ namespace Chrono::FunctionPerformance
             const PerfUtilities::ScopedTimer timer{"std::time(1)"};
             for (int i = 0; i < iterCount; ++i)
             {
-                std::time_t t = std::time(nullptr);
+                std::time_t _ = std::time(nullptr);
                 // std::cout << "UTC:       " << std::put_time(std::gmtime(&t), "%c %Z") << '\n';
             }
         }
