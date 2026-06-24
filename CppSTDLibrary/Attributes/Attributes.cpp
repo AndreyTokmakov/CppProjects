@@ -168,8 +168,10 @@ namespace Attributes::Nodiscard
         ResourceHandle{}; // resource acquired and immediately released
     }
 
-    void MyBeUnused() {
+    void MyBeUnused()
+    {
         // We should get the 'Unused variable' WARNING here
+        [[maybe_unused]]
         auto resultCode1 = DoSystemCall();
 
         // No WARNING here

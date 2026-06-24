@@ -325,7 +325,9 @@ namespace TypeCast
 	void As_Const()
 	{
 		std::string mutableString = "Hello World!";
+		[[maybe_unused]]
 		const std::string& constView = std::as_const(mutableString);
+		[[maybe_unused]]
 		const std::string& notConstView  = mutableString;
 
 		// assert(&constView == &mutableString);
@@ -360,9 +362,12 @@ namespace TypeCast::StaticCastTests
 
 	class MyClass {};
 
-	void Test() {
+	void Test()
+	{
 		Derived* d = new Derived;
-		Base* b = static_cast<Base*>(d);        // this line will work properly
+
+		[[maybe_unused]]
+		const Base* b = static_cast<Base*>(d);        // this line will work properly
 		//            MyClass* x = static_cast<MyClass*>(d);   // ERROR will be generated during
 	}
 };

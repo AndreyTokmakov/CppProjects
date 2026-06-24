@@ -433,8 +433,12 @@ namespace Span::To_Bytes
     void As_Bytes()
     {
         std::vector<int> data { 1, 2, 3, 4, 5 };
-        std::span<const std::byte> bytes = std::as_bytes(std::span(data));
-        std::span<std::byte> wrBytes = std::as_writable_bytes(std::span(data));
+
+        [[maybe_unused]]
+        const std::span<const std::byte> bytes = std::as_bytes(std::span(data));
+
+        [[maybe_unused]]
+        const std::span<std::byte> wrBytes = std::as_writable_bytes(std::span(data));
     }
 
     void As_Bytes_Print()

@@ -245,7 +245,7 @@ namespace Bit_Manipulation
 
     void SetBit()
     {
-        int num = 4, bit = 1;
+        int num = 4;
 
         show_bits(num);
         set_bit(num, 33);
@@ -331,21 +331,23 @@ namespace Bit_Manipulation
         }
     }
 
-    void Count_Set_bits() {
-        constexpr auto counter = [](int v)-> unsigned short {
+    void Count_Set_bits()
+    {
+        constexpr auto counter = [](const int v)-> unsigned short
+        {
             unsigned short count = 0;
-            for (int i = 0; i < (sizeof(int) * 8); ++i)
+            for (uint32_t i = 0; i < (sizeof(int) * 8); ++i)
                 if (v & (1 << i))
                     count++;
             return count;
         };
 
         {
-            const int value = 7;
+            constexpr int value = 7;
             std::cout << value << " has " << counter(value) << " bits set" << std::endl;
         }
         {
-            const int value = 128;
+            constexpr int value = 128;
             std::cout << value << " has " << counter(value) << " bits set" << std::endl;
         }
 

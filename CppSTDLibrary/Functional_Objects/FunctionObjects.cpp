@@ -556,13 +556,15 @@ namespace FunctionObjects::Function {
 		std::cout << std::function{ g }.target_type().name() << '\n';
 	}
 
-	void Lambda_To_Function() {
-		std::function<bool(void)> func = []() {
+	void Lambda_To_Function()
+	{
+		[[maybe_unused]]
+		std::function<bool(void)> const func = []() {
 			std::cout << "Return true" << std::endl;
 			return true; 
 		};
 
-		bool result = func();
+		bool const _ = func();
 		std::cout << std::boolalpha << std::endl;
 	}
 

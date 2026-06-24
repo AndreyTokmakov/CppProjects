@@ -98,7 +98,9 @@ namespace {
 
     class A {};
 
-    void IsArithmetic() {
+    [[maybe_unused]]
+    void IsArithmetic()
+    {
         std::cout << std::boolalpha;
         std::cout << "A:           " << std::is_arithmetic<A>::value << '\n';
         std::cout << "int:         " << std::is_arithmetic<int>::value << '\n';
@@ -113,6 +115,7 @@ namespace {
         std::cout << "Integer:     " << std::is_arithmetic<Integer>::value << '\n';
     }
 
+    [[maybe_unused]]
     void Distance()
     {
         {
@@ -173,7 +176,9 @@ namespace {
         }
     }
 
-    void Next_Permutation() {
+    [[maybe_unused]]
+    void Next_Permutation()
+    {
         std::string s = "123";
         std::sort(s.begin(), s.end());
         do {
@@ -960,6 +965,8 @@ namespace Algorithms::Sorting {
         {
             std::vector<int> numbers{1, 9, 2, 8, 3, 7, 4, 6, 5};
             nth_element(numbers.begin(), numbers.begin() + 5, numbers.end());
+
+            [[maybe_unused]]
             auto less_than_6th_elem = [&elem = numbers[5]](int x) {
                 return x < elem;
             };

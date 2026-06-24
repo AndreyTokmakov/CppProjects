@@ -131,13 +131,15 @@ namespace Arrays::BasicArrays {
         print(data, std::size(data), "After: ");
     }
 
-    void OutOrRangeError() {
-        int data[] = { 1,2,3,4,5,6,7,8,9 };
+    void OutOrRangeError()
+    {
+        const int data[] = { 1,2,3,4,5,6,7,8,9 };
         print(data, std::size(data));
         std::cout << data[-53] << std::endl;
     }
 
-    void ReInit_Test() {
+    void ReInit_Test()
+    {
         int data[10] = {0,1,2,3,4,5,6,7,8,9};
 
         for (auto i : data)

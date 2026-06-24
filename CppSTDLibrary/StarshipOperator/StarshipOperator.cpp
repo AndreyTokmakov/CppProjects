@@ -201,8 +201,12 @@ namespace StarshipOperator::OrderingTypes
         const FloatingPointType num1{3.14},  num2{2.71};
 
         // Using the spaceship operator and std::weak_ordering / std::partial_ordering
-        std::weak_ordering weakResult = num1 <=> num2;
-        std::partial_ordering partialResult = num1 <=> num2;
+
+        [[maybe_unused]]
+        const std::weak_ordering weakResult = num1 <=> num2;
+
+        [[maybe_unused]]
+        const std::partial_ordering partialResult = num1 <=> num2;
     }
 
 }

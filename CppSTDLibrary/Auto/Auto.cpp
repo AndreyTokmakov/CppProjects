@@ -98,7 +98,7 @@ namespace Auto
 
     void Test_GetReference()
     {
-        Object& obj = getObject();
+        Object& _ = getObject();
     }
 
     void Test_LoseReference_Copy()
@@ -229,7 +229,7 @@ namespace Auto::Deduction_Rules
         }
 
         {
-            int x;
+            int x = 0;
             auto func = [&] () -> int& {
                 return x;
             };
@@ -241,13 +241,13 @@ namespace Auto::Deduction_Rules
         }
 
         {
-            int x;
+            constexpr int x = 0;
             auto a = (x);
 
             static_assert(std::is_same_v<decltype(a), int>);
         }
         {
-            int x;
+            int x = 0;
             decltype(auto) a = (x);
 
             static_assert(std::is_same_v<decltype(a), int&>);
@@ -255,7 +255,7 @@ namespace Auto::Deduction_Rules
         }
 
         {
-            int x;
+            int x = 0;
             auto a = std::move(x);
             static_assert(std::is_same_v<decltype(a), int>);
         }

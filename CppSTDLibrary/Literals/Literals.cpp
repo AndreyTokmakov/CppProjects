@@ -36,7 +36,7 @@ namespace Literals::Custom_Literals_Tests
 			template <typename T>
 			class Traits {
 			public:
-				static inline std::string name(units::Unit unit) {
+				static std::string name(units::Unit unit) {
 					return "";
 				}
 			};
@@ -44,7 +44,7 @@ namespace Literals::Custom_Literals_Tests
 			template <>
 			class Traits<units::Unit> {
 			public:
-				static inline std::string name(units::Unit unit) {
+				static std::string name(const units::Unit unit) {
 					switch (unit) {
 					case units::Unit::kilogram:
 						return "kilogram";
@@ -104,23 +104,23 @@ namespace Literals::Custom_Literals_Tests
 	{
 		using namespace units;
 
-		constexpr quantity<Unit::kilogram> operator "" _kg(long double const amount) {
+		constexpr quantity<Unit::kilogram> operator ""_kg(long double const amount) {
 			return quantity<Unit::kilogram> { static_cast<double>(amount) };
 		}
 
-		constexpr quantity<Unit::kilogram> operator "" _kg(unsigned long long const amount) {
+		constexpr quantity<Unit::kilogram> operator ""_kg(unsigned long long const amount) {
 			return quantity<Unit::kilogram> { static_cast<double>(amount) };
 		}
 
-		constexpr quantity<Unit::liter> operator "" _l(long double const amount) {
+		constexpr quantity<Unit::liter> operator ""_l(long double const amount) {
 			return quantity<Unit::liter>{ static_cast<double>(amount) };
 		}
 
-		constexpr quantity<Unit::meter> operator "" _m(long double const amount) {
+		constexpr quantity<Unit::meter> operator ""_m(long double const amount) {
 			return quantity<Unit::meter>{ static_cast<double>(amount) };
 		}
 
-		constexpr quantity<Unit::piece> operator "" _pcs(unsigned long long const amount) {
+		constexpr quantity<Unit::piece> operator ""_pcs(unsigned long long const amount) {
 			return quantity<Unit::piece> { static_cast<double>(amount) };
 		}
 	}
@@ -178,7 +178,7 @@ namespace Literals::Custom_Literals_Tests
 
 namespace Literals::Custom_Literals_Tests_Binanry {
 
-	unsigned long long operator "" _b(const char* str) {
+	unsigned long long operator ""_b(const char* str) {
 		unsigned long long result = 0;
 		size_t size = std::strlen(str);
 
@@ -216,14 +216,16 @@ namespace Literals::Custom_Variadic_Literals_Binanry {
 	};
 
 	template <char... bits>
-	constexpr unsigned long long operator "" _b()
+	constexpr unsigned long long operator ""_b()
 	{
 		return to_binary<bits...>::value;
 	}
 
 	//---------------------------------------------------------------------------//
 
-	void Convert_FromBinary() {
+	void Convert_FromBinary()
+	{
+		[[maybe_unused]]
 		int arr[1010_b]; // At compile time !!!!
 
 		std::cout << "101100_b = " << 101100_b << std::endl; //  44
@@ -280,7 +282,8 @@ namespace Literals::Custom_Variadic_Literals_BinanryRaw {
 	}
 
 
-	void Test() {
+	void Test()
+	{
 		std::cout << "00000011_b8 = "      << 00000011_b8 << std::endl;
 		std::cout << "000010101100_b16 = " << 1010000010101100_b16 << std::endl;
 
@@ -327,28 +330,34 @@ namespace Literals::Chrono_Literals {
 
 
 
-namespace Literals::Complex_Literals {
+namespace Literals::Complex_Literals
+{
 	using namespace std::literals::complex_literals;
 
-	void Test() {
+	void Test()
+	{
+		[[maybe_unused]]
 		auto complex_varialbe { 12.0 + 4.5i }; // std::complex<double>
 		std::cout << "complex_varialbe type:  " << typeid(complex_varialbe).name() << std::endl;
 	}
 }
 
-namespace Literals::RawStringLiterals {
+namespace Literals::RawStringLiterals
+{
 
-	void BaseString() {
+	void BaseString()
+	{
 		// A Normal string 
-		std::string string1 = "Geeks.\nFor.\nGeeks.\n";
+		const std::string string1 = "Geeks.\nFor.\nGeeks.\n";
 		// A Raw string 
-		std::string string2 = R"(Geeks.\nFor.\nGeeks.\n)";
+		const std::string string2 = R"(Geeks.\nFor.\nGeeks.\n)";
 
 		std::cout << string1 << std::endl;
 		std::cout << string2 << std::endl;
 	}
 
-	void Test_Auto() {
+	void Test_Auto()
+	{
 		auto filename{ R"(C:\Users\Marius\Documents\)" };
 		auto pattern{ R"((\w+)=(\d+)$)" };
 
@@ -386,7 +395,7 @@ namespace Literals::SimpleExample
     }
     */
 
-    constexpr long double operator "" _km(long double value) {
+    constexpr long double operator ""_km(long double value) {
         return value * 1000;
     }
 
@@ -461,20 +470,20 @@ namespace Literals::Kilometers
         };
     }
 
-    constexpr units::km operator"" _km(unsigned long long int v) {
+    constexpr units::km operator""_km(unsigned long long int v) {
         return {v};
     }
 
-    constexpr units::m operator"" _m(unsigned long long int v) {
+    constexpr units::m operator""_m(unsigned long long int v) {
         return {v};
     }
 
     void CompareTest()
     {
+    	[[maybe_unused]]
         auto oneKm = 1_km;
 
         // std::cout << "One KM: " << static_cast<int>(oneKm) << std::endl;
-
 
         if (100_m < 1_km) {
             std::cout << "100m is less than 1km" << std::endl;
@@ -525,7 +534,8 @@ namespace Literals::MAC_Address_CompileTime
         const std::array<char, 18> data { std::to_array("12:34:56:78:90:AB") };
         const std::expected<MACAddr, std::errc> mac = macFromString(data);
 
-        MACAddr compileTimeMAC = "12:34:56:78:90:AB"_macaddr;
+    	[[maybe_unused]]
+    	constexpr MACAddr compileTimeMAC = "12:34:56:78:90:AB"_macaddr;
 
        // std::cout << (mac == compileTimeMAC) << std::endl;
     }

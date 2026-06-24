@@ -194,7 +194,7 @@ namespace String
 			std::string str(base);
 			std::cout << str << std::endl;
 			const auto size = str.length();
-			for (int i = 1; i < size; i++)
+			for (size_t i = 1; i < size; i++)
 			{
 				str.pop_back();
 				std::cout << str << std::endl;
@@ -830,28 +830,28 @@ namespace String::Performance_Tests
 
 		{
 			const PerfUtilities::ScopedTimer timer { "split_string_1" };
-			for (int i = 0; i < ITER_COUNT; i++) {
+			for (size_t i = 0; i < ITER_COUNT; i++) {
 				Utilities::split_string_1(base, parts);
 				parts.clear();
 			}
 		}
 		{
 			const PerfUtilities::ScopedTimer timer { "split_string_2" };
-			for (int i = 0; i < ITER_COUNT; i++) {
+			for (size_t i = 0; i < ITER_COUNT; i++) {
 				Utilities::split_string_2(base, parts, " ");
 				parts.clear();
 			}
 		}
 		{
 			const PerfUtilities::ScopedTimer timer { "split_string_3" };
-			for (int i = 0; i < ITER_COUNT; i++) {
+			for (size_t i = 0; i < ITER_COUNT; i++) {
 				Utilities::split_string_3(base, parts, " ");
 				parts.clear();
 			}
 		}
 		{
 			const PerfUtilities::ScopedTimer timer { "split_string_4" };
-			for (int i = 0; i < ITER_COUNT; i++) {
+			for (size_t i = 0; i < ITER_COUNT; i++) {
 				Utilities::split_string_4(base, parts, " ");
 				parts.clear();
 			}
@@ -863,6 +863,8 @@ namespace String::Performance_Tests
 	{
         std::string a = "1111111111111111", b = "1111111111111111";
         std::string c = "1111111111111111", d = "1111111111111111";
+
+		[[maybe_unused]]
         constexpr size_t ITER_COUNT { 1'000'000 };
 
         /*
@@ -921,12 +923,10 @@ namespace String::Conversations {
 		std::cout << "Result: " << value << std::endl;
 	}
 
-
-
-	void From_Chars_ERROR() {
-
+	void From_Chars_ERROR()
+	{
 		const char* str = "#$#$onkeys";
-		int value;
+		int value = 0;
 		if (auto[ptr, ec] = std::from_chars(str, str + 10, value); ec != std::errc{}) {
 			std::cout << "Errror" << std::endl;
 		}
@@ -1180,17 +1180,21 @@ namespace String::Performance
 
 		{
 			const PerfUtilities::ScopedTimer timer { "substr (string)" };
-			for (size_t i = 0; i < TESTS_COUNT; ++i) {
+			for (size_t i = 0; i < TESTS_COUNT; ++i)
+			{
 				const auto x1 = str1.substr(offset, str1.length() - offset);
 				const auto x2 = str2.substr(offset, str1.length() - offset);
+				[[maybe_unused]]
 				const auto result = x1.compare(x2);
 			}
 		}
 		{
 			const PerfUtilities::ScopedTimer timer { "substr (string_view)" };
-			for (size_t i = 0; i < TESTS_COUNT; ++i) {
+			for (size_t i = 0; i < TESTS_COUNT; ++i)
+			{
 				const auto x1 = std::string_view(str1).substr(offset, str1.length() - offset);
 				const auto x2 = std::string_view(str2).substr(offset, str1.length() - offset);
+				[[maybe_unused]]
 				const auto result = x1.compare(x2);
 			}
 		}

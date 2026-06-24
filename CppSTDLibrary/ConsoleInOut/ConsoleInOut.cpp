@@ -115,10 +115,10 @@ namespace ConsoleInOut
 		std::cout << std::cin.gcount() << " characters read: " << str << '\n';
 	}
 
-	void Scanf_Test() {
-
+	void Scanf_Test()
+	{
 		[[maybe_unused]] int n;
-		std::int64_t lld = 0;
+		[[maybe_unused]] std::int64_t lld = 0;
 		[[maybe_unused]] char c;
 		[[maybe_unused]] float f;
 		[[maybe_unused]] double l5;

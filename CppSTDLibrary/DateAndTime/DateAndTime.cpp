@@ -235,7 +235,7 @@ namespace DateAndTime::FunctionPerformance
             const PerfUtilities::ScopedTimer timer{"system_clock::now()"};
             for (int i = 0; i < iterCount; ++i)
             {
-                std::chrono::system_clock::time_point today = std::chrono::system_clock::now();
+                const std::chrono::system_clock::time_point _ = std::chrono::system_clock::now();
                 //time_t time = std::chrono::system_clock::to_time_t(today);
             }
         }
@@ -244,7 +244,7 @@ namespace DateAndTime::FunctionPerformance
             const PerfUtilities::ScopedTimer timer{"high_resolution_clock::now()"};
             for (int i = 0; i < iterCount; ++i)
             {
-                auto start = std::chrono::high_resolution_clock::now();
+                auto _ = std::chrono::high_resolution_clock::now();
             }
         }
 

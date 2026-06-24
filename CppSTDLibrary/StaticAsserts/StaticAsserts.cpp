@@ -84,6 +84,7 @@ namespace StaticAsserts
 
     void Assert_Types()
     {
+        [[maybe_unused]]
         LRUCache<int, int, 10> cache;
 
         /// LRUCache<int, int, 0>   cache1;   <--- Non compile

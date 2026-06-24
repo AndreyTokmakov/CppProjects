@@ -197,18 +197,22 @@ namespace StringView::UsageExamples
 
 		{
 			const PerfUtilities::ScopedTimer timer { "string" };
-			for (size_t i = 0; i < TESTS_COUNT; ++i) {
+			for (size_t i = 0; i < TESTS_COUNT; ++i)
+			{
 				auto x1 = str1.substr(offset, str1.length() - offset);
 				auto x2 = str2.substr(offset, str1.length() - offset);
+				[[maybe_unused]]
 				auto result = x1.compare(x2);
 			}
 		}
 
 		{
 			const PerfUtilities::ScopedTimer timer { "string_view" };
-			for (size_t i = 0; i < TESTS_COUNT; ++i) {
+			for (size_t i = 0; i < TESTS_COUNT; ++i)
+			{
 				const auto x1 = std::string_view(str1).substr(offset, str1.length() - offset);
 				const auto x2 = std::string_view(str2).substr(offset, str1.length() - offset);
+				[[maybe_unused]]
 				auto result = x1.compare(x2);
 			}
 		}
@@ -225,13 +229,13 @@ namespace StringView::UsageExamples
 		{
 			const PerfUtilities::ScopedTimer timer { "Benchmark" };
 			for (size_t i = 0; i < TESTS_COUNT; ++i) {
-				int v = atoi(strNumber.substr(3, 4).data());
+				int _ = atoi(strNumber.substr(3, 4).data());
 			}
 		}
 		{
 			const PerfUtilities::ScopedTimer timer { "Benchmark" };
 			for (size_t i = 0; i < TESTS_COUNT; ++i) {
-				int v = atoi(std::string_view(strNumber).substr(3, 4).data());
+				int _ = atoi(std::string_view(strNumber).substr(3, 4).data());
 			}
 		}
 	}
