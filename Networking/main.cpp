@@ -59,6 +59,7 @@ Description : Tests C++ project
 #include "MAC_Address/MacAddress.hpp"
 
 #include "UnixDomainSockets/UDSAsynchServer.h"
+#include "UDP_Multicast/UDPMulticast.hpp"
 
 
 #include "JRPC/JRPC.h"
@@ -72,7 +73,7 @@ int main([[maybe_unused]] int argc,
     // UDPClient::TestAll();
 
     // DNS_ResponseParser::TestAll();
-    mac_address::TestAll();
+    // mac_address::TestAll();
 
     // RawSocketsTests::TestAll();
     // CaptureTraffic::TestAll();
@@ -121,6 +122,7 @@ int main([[maybe_unused]] int argc,
     // MessagingProxy::TestAll();
 
     // UDSAsynchServer::TestAll();
+    udp_multicast::TestAll();
 
     // CurpCpp::TestAll();
 

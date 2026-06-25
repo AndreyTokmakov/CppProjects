@@ -121,8 +121,8 @@ namespace
         }
 
         [[nodiscard]]
-        inline std::string_view toStringView() const noexcept {
-            return  std::string_view(reinterpret_cast<const char *>(buffer.data()), size);
+        std::string_view toStringView() const noexcept {
+            return  std::string_view ( reinterpret_cast<const char *>(buffer.data()), size );
         }
     };
 }

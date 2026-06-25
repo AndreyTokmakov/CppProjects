@@ -1788,9 +1788,5 @@ int main([[maybe_unused]] const int argc,
     // MatchingOrderBook::TestAll();
     // MatchingOrderBookEx::TestAll();
 
-
-
-
-
     return EXIT_SUCCESS;
 }

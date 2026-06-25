@@ -154,7 +154,6 @@ namespace SimpleExample
     }
 }
 
-
 namespace SimpleExample3
 {
     struct Awaitable
@@ -528,7 +527,6 @@ namespace DemoFour
         resuming_on_new_thread(out);
     }
 }
-
 
 
 void Coroutines::TestAll()
