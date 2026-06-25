@@ -73,12 +73,24 @@ namespace
         }
     }
 
-    void client()
+    void client(uint32_t receiverId)
     {
         const Socket sock = ::socket(AF_INET, SOCK_DGRAM, 0);
         const Utilities::SocketScoped socketGuard { sock };
         if (InvalidHandle == sock) {
             ERR << "Ошибка создания сокета" << std::endl;
+            return;
+        }
+
+        constexpr int reuse = 1;
+        if (InvalidHandle == ::setsockopt(sock,SOL_SOCKET,
+                    SO_REUSEADDR, &reuse,sizeof(reuse))) {
+            ERR << "Failed to set SO_REUSEADDR. Error = " << errno << std::endl;
+            return;
+        }
+        if (InvalidHandle == ::setsockopt(sock,SOL_SOCKET,
+                    SO_REUSEPORT, &reuse,sizeof(reuse))) {
+            ERR << "Failed to set SO_REUSEPORT. Error = " << errno << std::endl;
             return;
         }
 
@@ -113,7 +125,7 @@ namespace
                 const std::string sender_ip = inet_ntoa(senderAddr.sin_addr);
                 const int senderPort = ntohs(senderAddr.sin_port);
 
-                LOG << "Получено от " << sender_ip << ":" << senderPort << " -> "
+                LOG << "[" << receiverId << "] Получено от " << sender_ip << ":" << senderPort << " -> "
                     << std::string_view { buffer.data(), buffer.data() + bytesReceived } << std::endl;
             }
         }
@@ -127,7 +139,9 @@ namespace
     {
         std::vector<std::jthread> threads;
         threads.emplace_back(server);
-        threads.emplace_back(client);
+        threads.emplace_back(client, 1);
+        threads.emplace_back(client, 2);
+        threads.emplace_back(client, 3);
     }
 }
 
