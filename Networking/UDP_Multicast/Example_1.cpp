@@ -12,10 +12,11 @@ Description : UDPMulticast.cpp
 #include "../Utilities/Utilities.h"
 
 #include <iostream>
-#include <vector>
-#include <mutex>
-#include <thread>
 #include <string>
+#include <string_view>
+#include <vector>
+#include <format>
+#include <thread>
 #include <chrono>
 #include <syncstream>
 #include <sys/socket.h>
@@ -29,38 +30,38 @@ namespace
 {
     using Socket = int32_t;
 
+    constexpr Socket InvalidHandle = Socket {-1};
+    constexpr uint32_t serverPort { 8888 };
+
+    constexpr std::string_view multicastGroup { "239.255.0.1" };
+
     void server()
     {
         const Socket sock = socket(AF_INET, SOCK_DGRAM, 0);
-        if (sock < 0) {
-            std::cerr << "Ошибка создания сокета" << std::endl;
+        const Utilities::SocketScoped socketGuard { sock };
+        if (InvalidHandle == sock) {
+            ERR << "Ошибка создания сокета" << std::endl;
             return;
         }
 
-        const Utilities::SocketScoped socketGuard { sock };
-
         // Настройка адреса назначения (мультикаст группа)
-        sockaddr_in multicastAddr {};
-        multicastAddr.sin_family = AF_INET;
-        multicastAddr.sin_addr.s_addr = inet_addr("239.255.0.1"); // Мультикаст группа
-        multicastAddr.sin_port = htons(8888);
+        sockaddr_in multicastAddr {
+            .sin_family=AF_INET, .sin_port=htons(serverPort),
+            .sin_addr={.s_addr = inet_addr(multicastGroup.data()) }, .sin_zero={}
+        };
 
         // Разрешаем отправку на мультикаст адрес
         constexpr int multicastTtl = 1;
         if (::setsockopt(sock, IPPROTO_IP, IP_MULTICAST_TTL, &multicastTtl, sizeof(multicastTtl)) < 0) {
-            std::cerr << "Ошибка установки TTL" << std::endl;
+            ERR << "Ошибка установки TTL" << std::endl;
             return;
         }
 
-        const std::string message = "Hello, Multicast World!";
-        int message_num = 0;
-
-        std::cout << "Мультикаст сервер запущен. Отправка на 239.255.0.1:8888" << std::endl;
-        std::cout << "Нажмите Ctrl+C для остановки" << std::endl;
-
+        constexpr std::string_view message = "Hello, Multicast World!";
+        uint32_t messageId = 0;
         while (true)
         {
-            const std::string full_message = message + " #" + std::to_string(++message_num);
+            const std::string full_message = std::format("{} #{}", message, ++messageId);
             const int64_t bytes_sent = ::sendto(sock, full_message.c_str(), full_message.length(), 0,
                                    reinterpret_cast<struct sockaddr*>(&multicastAddr), sizeof(multicastAddr));
             if (bytes_sent < 0) {
@@ -74,34 +75,31 @@ namespace
 
     void client()
     {
-        const Socket sock = socket(AF_INET, SOCK_DGRAM, 0);
-        if (sock < 0) {
-            std::cerr << "Ошибка создания сокета" << std::endl;
+        const Socket sock = ::socket(AF_INET, SOCK_DGRAM, 0);
+        const Utilities::SocketScoped socketGuard { sock };
+        if (InvalidHandle == sock) {
+            ERR << "Ошибка создания сокета" << std::endl;
             return;
         }
 
-        sockaddr_in localAddr = {};
-        localAddr.sin_family = AF_INET;
-        localAddr.sin_addr.s_addr = INADDR_ANY; // Принимаем с любого интерфейса
-        localAddr.sin_port = htons(8888); // Тот же порт, что и у сервера
-
-        if (::bind(sock, reinterpret_cast<struct sockaddr*>(&localAddr), sizeof(localAddr)) < 0) {
-            std::cerr << "Ошибка привязки сокета" << std::endl;
+        sockaddr_in address {
+            .sin_family=AF_INET, .sin_port=htons(serverPort),
+            .sin_addr={.s_addr = INADDR_ANY}, .sin_zero={}
+        };
+        if (::bind(sock, reinterpret_cast<struct sockaddr*>(&address), sizeof(address)) < 0) {
+            ERR << "Ошибка привязки сокета" << std::endl;
             return;
         }
 
         // Настраиваем присоединение к мультикаст группе
         ip_mreq multicastRequest {};
-        multicastRequest.imr_multiaddr.s_addr = inet_addr("239.255.0.1"); // Группа
+        multicastRequest.imr_multiaddr.s_addr = inet_addr(multicastGroup.data());
         multicastRequest.imr_interface.s_addr = INADDR_ANY; // Интерфейс
 
         if (::setsockopt(sock, IPPROTO_IP, IP_ADD_MEMBERSHIP, &multicastRequest, sizeof(multicastRequest)) < 0) {
-            std::cerr << "Ошибка присоединения к мультикаст группе" << std::endl;
+            ERR << "Ошибка присоединения к мультикаст группе" << std::endl;
             return;
         }
-
-        std::cout << "Мультикаст клиент запущен. Ожидание данных..." << std::endl;
-        std::cout << "Нажмите Ctrl+C для остановки" << std::endl;
 
         std::array<char, 1024> buffer{};
         sockaddr_in senderAddr {};
@@ -112,10 +110,10 @@ namespace
                 reinterpret_cast<struct sockaddr*>(&senderAddr), &sender_len);
             if (bytesReceived > 0)
             {
-                const std::string  sender_ip = inet_ntoa(senderAddr.sin_addr);
+                const std::string sender_ip = inet_ntoa(senderAddr.sin_addr);
                 const int senderPort = ntohs(senderAddr.sin_port);
 
-                LOG  << "Получено от " << sender_ip << ":" << senderPort << " -> "
+                LOG << "Получено от " << sender_ip << ":" << senderPort << " -> "
                     << std::string_view { buffer.data(), buffer.data() + bytesReceived } << std::endl;
             }
         }
