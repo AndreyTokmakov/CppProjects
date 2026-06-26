@@ -14,6 +14,8 @@ namespace udp_multicast
 {
     void TestAll();
     namespace Example_1 { void TestAll(); }
+    namespace Producers { void TestAll(); }
+    namespace Consumers { void TestAll(); }
 }
 
 #endif //CPPPROJECTS_UDPMULTICAST_HPP

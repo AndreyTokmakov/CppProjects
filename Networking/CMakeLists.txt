@@ -79,6 +79,8 @@ add_executable(${PROJECT_NAME}
 
         UDP_Multicast/UDPMulticast.cpp
         UDP_Multicast/Example_1.cpp
+        UDP_Multicast/Producers.cpp
+        UDP_Multicast/Consumers.cpp
 
         RawSockets/CaptureTraffic.cpp
         PcapAnalyzer/PcapAnalyzer.cpp
