@@ -63,6 +63,10 @@ namespace
                 return;
             }
 
+            if (!allowMulticastTtl()) {
+                return;
+            }
+
             sockaddr_in multicastAddr = createMulticastAddress(multicastGroup, serverPort);
             constexpr std::string_view message = "Hello, Multicast World!";
             for ( uint32_t messageId = 0; true; ++messageId)
@@ -97,11 +101,9 @@ namespace
         }
 
         [[nodiscard]]
-        bool allowMulticastTtl() const
+        bool allowMulticastTtl(const MulticastTTL ttl =  MulticastTTL::Subnet) const
         {
-            constexpr MulticastTTL multicastTtl { MulticastTTL::Subnet } ;
-            if ( InvalidHandle == ::setsockopt(serverSocket, IPPROTO_IP,
-                IP_MULTICAST_TTL, &multicastTtl, sizeof(multicastTtl)))  {
+            if ( InvalidHandle == ::setsockopt(serverSocket, IPPROTO_IP, IP_MULTICAST_TTL, &ttl, sizeof(MulticastTTL)))  {
                 ERR << "Ошибка установки TTL" << std::endl;
                 return false;
             }

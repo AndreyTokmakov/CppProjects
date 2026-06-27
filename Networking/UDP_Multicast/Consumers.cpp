@@ -52,15 +52,36 @@ namespace
         Global    = 255
     };
 
+    [[nodiscard]]
     sockaddr_in createMulticastAddress(const Port port)
     {
-        return  {
+        return {
             .sin_family=AF_INET,
             .sin_port=htons(port),
             .sin_addr={.s_addr = INADDR_ANY },
             .sin_zero={}
         };
     }
+
+    bool joinMulticastGroup(const Socket socket,
+                            const std::string_view multicastGroup)
+    {
+        const ip_mreq multicastRequest {
+            .imr_multiaddr = in_addr  { .s_addr = inet_addr(multicastGroup.data()) },
+            .imr_interface = in_addr {  .s_addr = INADDR_ANY },
+        };
+        if (InvalidHandle == ::setsockopt(socket, IPPROTO_IP, IP_ADD_MEMBERSHIP,
+                &multicastRequest, sizeof(multicastRequest)) ) {
+            ERR << "Failed to join multicat group. Error = " << errno << std::endl;
+            return false;
+        }
+        return true;
+    }
+
+    /*
+    :: setsockopt(sock, IPPROTO_IP, IP_DROP_MEMBERSHIP,
+              &multicastRequest, sizeof(multicastRequest));
+    */
 
     void run()
     {
@@ -89,12 +110,7 @@ namespace
             return;
         }
 
-        ip_mreq multicastRequest {};
-        multicastRequest.imr_multiaddr.s_addr = inet_addr(multicastGroup.data());
-        multicastRequest.imr_interface.s_addr = INADDR_ANY; // Интерфейс
-
-        if (::setsockopt(sock, IPPROTO_IP, IP_ADD_MEMBERSHIP, &multicastRequest, sizeof(multicastRequest)) < 0) {
-            ERR << "Failed to join multicat group. Error = " << errno << std::endl;
+        if (!joinMulticastGroup(sock, multicastGroup)) {
             return;
         }
 
@@ -115,9 +131,10 @@ namespace
             }
         }
 
+        /*
         // Выход из группы (обычно не выполняется, т.к. программа завершается)
-        :: setsockopt(sock, IPPROTO_IP, IP_DROP_MEMBERSHIP,
-                      &multicastRequest, sizeof(multicastRequest));
+        :: setsockopt(sock, IPPROTO_IP, IP_DROP_MEMBERSHIP,  &multicastRequest, sizeof(multicastRequest));
+        */
     }
 }
 

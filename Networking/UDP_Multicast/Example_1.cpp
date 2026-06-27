@@ -18,7 +18,9 @@ Description : UDPMulticast.cpp
 #include <format>
 #include <thread>
 #include <chrono>
+#include <expected>
 #include <syncstream>
+
 #include <sys/socket.h>
 #include <netinet/in.h>
 #include <arpa/inet.h>
@@ -26,14 +28,55 @@ Description : UDPMulticast.cpp
 #define LOG  std::osyncstream { std::cout } << DateTimeUtilities::getCurrentTime() << " "
 #define ERR  std::osyncstream { std::cerr } << DateTimeUtilities::getCurrentTime() << " "
 
+
 namespace
 {
     using Socket = int32_t;
+    using Port =  uint16_t;
 
     constexpr Socket InvalidHandle = Socket {-1};
-    constexpr uint32_t serverPort { 8888 };
+    constexpr Port serverPort { 8888 };
 
     constexpr std::string_view multicastGroup { "239.255.0.1" };
+
+    [[nodiscard]]
+    sockaddr_in createMulticastAddress(const Port port)
+    {
+        return {
+            .sin_family=AF_INET,
+            .sin_port=htons(port),
+            .sin_addr={.s_addr = INADDR_ANY},
+            .sin_zero={}
+        };
+    }
+
+    [[nodiscard]]
+    sockaddr_in createMulticastAddress(const std::string_view group, const Port port)
+    {
+        return {
+            .sin_family=AF_INET,
+            .sin_port=htons(port),
+            .sin_addr={.s_addr = inet_addr(group.data()) },
+            .sin_zero={}
+        };
+    }
+
+    [[nodiscard]]
+    std::expected<ip_mreq, int> joinMulticastGroup(const Socket socket,
+                                                   const std::string_view multicastGroup)
+    {
+        const ip_mreq multicastRequest {
+            .imr_multiaddr = in_addr  { .s_addr = inet_addr(multicastGroup.data()) },
+            .imr_interface = in_addr {  .s_addr = INADDR_ANY },
+        };
+        if (InvalidHandle == ::setsockopt(socket, IPPROTO_IP, IP_ADD_MEMBERSHIP,
+                &multicastRequest, sizeof(multicastRequest)))
+        {
+            ERR << "Failed to join multicat group. Error = " << errno << std::endl;
+            return std::unexpected(errno);
+        }
+        return multicastRequest;
+    }
 
     void server()
     {
@@ -44,11 +87,7 @@ namespace
             return;
         }
 
-        // Настройка адреса назначения (мультикаст группа)
-        sockaddr_in multicastAddr {
-            .sin_family=AF_INET, .sin_port=htons(serverPort),
-            .sin_addr={.s_addr = inet_addr(multicastGroup.data()) }, .sin_zero={}
-        };
+        sockaddr_in multicastAddr { createMulticastAddress(multicastGroup, serverPort) };
 
         // Разрешаем отправку на мультикаст адрес
         constexpr int multicastTtl = 1;
@@ -73,7 +112,7 @@ namespace
         }
     }
 
-    void client(uint32_t receiverId)
+    void client(const uint32_t receiverId)
     {
         const Socket sock = ::socket(AF_INET, SOCK_DGRAM, 0);
         const Utilities::SocketScoped socketGuard { sock };
@@ -83,32 +122,29 @@ namespace
         }
 
         constexpr int reuse = 1;
-        if (InvalidHandle == ::setsockopt(sock,SOL_SOCKET,
-                    SO_REUSEADDR, &reuse,sizeof(reuse))) {
+        if (InvalidHandle == ::setsockopt(sock,SOL_SOCKET, SO_REUSEADDR, &reuse,sizeof(reuse))) {
             ERR << "Failed to set SO_REUSEADDR. Error = " << errno << std::endl;
             return;
         }
-        if (InvalidHandle == ::setsockopt(sock,SOL_SOCKET,
-                    SO_REUSEPORT, &reuse,sizeof(reuse))) {
+        if (InvalidHandle == ::setsockopt(sock,SOL_SOCKET, SO_REUSEPORT, &reuse,sizeof(reuse))) {
             ERR << "Failed to set SO_REUSEPORT. Error = " << errno << std::endl;
             return;
         }
 
-        sockaddr_in address {
-            .sin_family=AF_INET, .sin_port=htons(serverPort),
-            .sin_addr={.s_addr = INADDR_ANY}, .sin_zero={}
-        };
-        if (::bind(sock, reinterpret_cast<struct sockaddr*>(&address), sizeof(address)) < 0) {
+        sockaddr_in address { createMulticastAddress(serverPort) };
+        if (InvalidHandle == ::bind(sock, reinterpret_cast<sockaddr*>(&address), sizeof(address))) {
             ERR << "Ошибка привязки сокета" << std::endl;
             return;
         }
 
         // Настраиваем присоединение к мультикаст группе
-        ip_mreq multicastRequest {};
-        multicastRequest.imr_multiaddr.s_addr = inet_addr(multicastGroup.data());
-        multicastRequest.imr_interface.s_addr = INADDR_ANY; // Интерфейс
+        const ip_mreq multicastRequest {
+            .imr_multiaddr = in_addr  { .s_addr = inet_addr(multicastGroup.data()) },
+            .imr_interface = in_addr {  .s_addr = INADDR_ANY },
+        };
 
-        if (::setsockopt(sock, IPPROTO_IP, IP_ADD_MEMBERSHIP, &multicastRequest, sizeof(multicastRequest)) < 0) {
+        joinMulticastGroup
+        if (InvalidHandle == ::setsockopt(sock, IPPROTO_IP, IP_ADD_MEMBERSHIP, &multicastRequest, sizeof(multicastRequest))) {
             ERR << "Ошибка присоединения к мультикаст группе" << std::endl;
             return;
         }
