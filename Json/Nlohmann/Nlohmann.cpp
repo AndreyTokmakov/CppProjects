@@ -204,12 +204,14 @@ namespace Nlohmann::enum_parsing
 {
     enum class Class: uint8_t
     {
+        Invalid,
         Active,
         Reactive
     };
 
     enum class Type: uint8_t
     {
+        Invalid,
         CW,
         Noise,
         Sweep
@@ -222,14 +224,16 @@ namespace Nlohmann::enum_parsing
     };
 
     NLOHMANN_JSON_SERIALIZE_ENUM(Class,{
+        { Class::Invalid,  "Invalid"},
         { Class::Active,   "Active"},
         { Class::Reactive, "Reactive"}
     })
 
     NLOHMANN_JSON_SERIALIZE_ENUM(Type,{
-        { Type::CW,   "CW"},
-        { Type::Noise, "Noise"},
-        { Type::Sweep, "Sweep"}
+        { Type::Invalid, "Invalid"},
+        { Type::CW,      "CW"},
+        { Type::Noise,   "Noise"},
+        { Type::Sweep,   "Sweep"}
     })
 
     void to_json(json& json, const Signal& signal)
@@ -268,14 +272,22 @@ namespace Nlohmann::enum_parsing
     {
         constexpr std::string_view data { R"( {
             "signalClass": "Active",
-            "type": "CW"
+            "type": "WhiteNoise"
         })"};
 
         const nlohmann::json jsonData = nlohmann::json::parse(data);
         const Signal signal = jsonData;
 
-        std::cout << data << std::endl;
         std::cout << nlohmann::json{signal}.dump(4) << std::endl;
+
+        /**
+        [
+            {
+                "signalClass": "Active",
+                "type": "CW"
+            }
+        ]
+        **/
     }
 }
 
