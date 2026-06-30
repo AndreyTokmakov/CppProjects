@@ -138,22 +138,14 @@ namespace
         }
 
         // Настраиваем присоединение к мультикаст группе
-        const ip_mreq multicastRequest {
-            .imr_multiaddr = in_addr  { .s_addr = inet_addr(multicastGroup.data()) },
-            .imr_interface = in_addr {  .s_addr = INADDR_ANY },
-        };
-
-        joinMulticastGroup
-        if (InvalidHandle == ::setsockopt(sock, IPPROTO_IP, IP_ADD_MEMBERSHIP, &multicastRequest, sizeof(multicastRequest))) {
-            ERR << "Ошибка присоединения к мультикаст группе" << std::endl;
+        const std::expected<ip_mreq, int> multicastRequest = joinMulticastGroup(sock, multicastGroup);
+        if (!multicastRequest.has_value()) {
             return;
         }
 
-        std::array<char, 1024> buffer{};
         sockaddr_in senderAddr {};
         socklen_t sender_len = sizeof(senderAddr);
-        while (true)
-        {
+        for (std::array<char, 1024> buffer{} ;; ) {
             const int64_t bytesReceived = ::recvfrom(sock, buffer.data(), sizeof(buffer) - 1, 0,
                 reinterpret_cast<struct sockaddr*>(&senderAddr), &sender_len);
             if (bytesReceived > 0)
@@ -168,7 +160,7 @@ namespace
 
         // Выход из группы (обычно не выполняется, т.к. программа завершается)
         :: setsockopt(sock, IPPROTO_IP, IP_DROP_MEMBERSHIP,
-                      &multicastRequest, sizeof(multicastRequest));
+                      &multicastRequest.value(), sizeof(ip_mreq));
     }
 
     void run()

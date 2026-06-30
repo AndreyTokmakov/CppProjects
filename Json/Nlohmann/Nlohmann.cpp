@@ -200,10 +200,89 @@ namespace Nlohmann::JsonParsing
 }
 
 
+namespace Nlohmann::enum_parsing
+{
+    enum class Class: uint8_t
+    {
+        Active,
+        Reactive
+    };
+
+    enum class Type: uint8_t
+    {
+        CW,
+        Noise,
+        Sweep
+    };
+
+    struct Signal
+    {
+        Class signalClass { Class::Active };
+        Type type { Type::CW };
+    };
+
+    NLOHMANN_JSON_SERIALIZE_ENUM(Class,{
+        { Class::Active,   "Active"},
+        { Class::Reactive, "Reactive"}
+    })
+
+    NLOHMANN_JSON_SERIALIZE_ENUM(Type,{
+        { Type::CW,   "CW"},
+        { Type::Noise, "Noise"},
+        { Type::Sweep, "Sweep"}
+    })
+
+    void to_json(json& json, const Signal& signal)
+    {
+        json= {
+            {"signalClass", signal.signalClass},
+            {"type", signal.type},
+        };
+    }
+
+    void from_json(const json& json, Signal& signal)
+    {
+        json.at("signalClass").get_to(signal.signalClass);
+        json.at("type").get_to(signal.type);
+    }
+
+    void to_string()
+    {
+        constexpr Signal signal {
+            .signalClass = Class::Active,
+            .type = Type::CW
+        };
+
+        const nlohmann::json json = signal;
+        std::cout << json.dump(4) << std::endl;
+
+        /**
+        {
+            "signalClass": "Active",
+            "type": "CW"
+        }
+        **/
+    }
+
+    void from_string()
+    {
+        constexpr std::string_view data { R"( {
+            "signalClass": "Active",
+            "type": "CW"
+        })"};
+
+        const nlohmann::json jsonData = nlohmann::json::parse(data);
+        const Signal signal = jsonData;
+
+        std::cout << data << std::endl;
+        std::cout << nlohmann::json{signal}.dump(4) << std::endl;
+    }
+}
+
 
 void Nlohmann::TestAll()
 {
-    CustomType_ToAndFromJson::TestAll();
+    // CustomType_ToAndFromJson::TestAll();
 
     // checkIsValid();
     // ParseJson_StringStream();
@@ -217,4 +296,7 @@ void Nlohmann::TestAll()
     // Array::CreateArray();
 
     // JsonParsing::test();
+
+    // enum_parsing::to_string();
+    enum_parsing::from_string();
 }
