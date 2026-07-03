@@ -192,7 +192,7 @@ int main([[maybe_unused]] const int argc,
     // Stacktrace::TestAll();
     // SourceLocation::TestAll();
     // SharedPtr_Tests::TestAll();
-    // Variant::TestAll();
+    Variant::TestAll();
     // VolatileTests::TestAll();
     // TypeTraits::TestAll();
     // Types::Tests();
@@ -208,7 +208,7 @@ int main([[maybe_unused]] const int argc,
     /** C++26 **/
 
     // Reflection::TestAll();
-    Polymorphic::TestAll();
+    // Polymorphic::TestAll();
 
 
     return EXIT_SUCCESS;

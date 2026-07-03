@@ -7,6 +7,7 @@
 #include <vector>
 #include <unordered_map>
 #include <memory>
+#include <print>
 
 #include "Variant.hpp"
 #include "../Helpers/Helpers.h"
@@ -1345,6 +1346,74 @@ namespace Variant::Return_and_Store_HeavyObjects
 	}
 }
 
+namespace Variant::StoreVariants_InCollection_FindElement
+{
+	struct TypeOne
+	{
+		std::string name;
+		uint64_t id { 0 };
+	};
+
+	struct TypeTwo
+	{
+		std::string name;
+		uint64_t id { 0 };
+	};
+
+	struct Key
+	{
+		std::string name;
+		uint64_t id { 0 };
+	};
+
+	template<typename T1>
+	concept HasNameAndId = requires
+	{
+		{ decltype(T1::name){} } -> std::same_as<std::string>;
+		{ decltype(T1::id){} } -> std::same_as<uint64_t>;
+	};
+
+	constexpr bool operator==(const HasNameAndId auto& a, const HasNameAndId auto& b) {
+		return a.name == b.name && a.id == b.id;
+	}
+
+	void print(const HasNameAndId auto& item) {
+		std::println("(name: {}, id: {})", item.name, item.id);
+	}
+
+	void compare()
+	{
+		const TypeOne t1 { .name = "123", .id = 123 };
+		const TypeOne t2 { .name = "123", .id = 112 };
+
+		std::cout << std::boolalpha << (t1 == t2) << std::endl;
+	}
+
+	using Type = std::variant<TypeOne, TypeTwo>;
+
+	void findInCollection()
+	{
+		const Key key { .name = "3", .id = 3 };
+		const std::vector<Type> values {
+			TypeOne { .name = "1", .id = 1 },
+			TypeTwo { .name = "2", .id = 2 },
+			TypeOne { .name = "3", .id = 3 },
+			TypeTwo { .name = "4", .id = 4 }
+		};
+
+		const auto it = std::ranges::find_if(values, [&](const auto& typeVar) {
+			return std::visit([&](const auto& item) { return item == key; }, typeVar);
+		});
+
+		if (it != values.end()) {
+			std::visit([&](const auto& item) {print(item); }, *it);
+		}
+		else {
+			std::println(std::cerr, "Not found");
+		}
+	}
+}
+
 void Variant::TestAll()
 {
 	// Matcher_Visitor::TestAll();
@@ -1392,6 +1461,7 @@ void Variant::TestAll()
 	// VisitTests::Visit_With_Overloads_2();
 	// VisitTests::Vizit_Multiple_Variants();
 
+	StoreVariants_InCollection_FindElement::findInCollection();
 
     // Variant_InitAndGetValue_Tests_1();
     // Variant_InitAndGetValue_Tests_2();
@@ -1408,5 +1478,5 @@ void Variant::TestAll()
 	// Experiments::Map_Variant_Keys();
 
 	// Return_and_Store_HeavyObjects::Test();
-	Return_and_Store_HeavyObjects::Workaround();
+	// Return_and_Store_HeavyObjects::Workaround();
 };

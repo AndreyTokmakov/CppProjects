@@ -20,6 +20,7 @@ Description : Concepts C++20 library tests
 #include <chrono>
 #include <concepts>
 #include <memory>
+#include <print>
 #include <utility>
 #include <functional>
 
@@ -2091,7 +2092,9 @@ namespace Concepts::Variadic_Templates_Constexpr
     };
 
     template<typename... Ts>
-    concept HasAlcohol = (requires(Ts ts) { ts.fermentedOrDistilled(); } || ...);
+    concept HasAlcohol = (requires(Ts ts){
+        ts.fermentedOrDistilled();
+    } || ...);
 
     template<typename... Ingredients>
     auto makeDrink(Ingredients&&... ingredients)
@@ -2399,7 +2402,6 @@ namespace Concepts::Is_Constructible
     }
 
 }
-
 
 namespace Concepts::Containers {
 
@@ -3402,6 +3404,45 @@ namespace Concepts::Handle_Ref_Type
     }
 }
 
+namespace Concepts::CheckType_HasMember_CheckType
+{
+    struct TypeOne
+    {
+        std::string name;
+        uint64_t id { 0 };
+    };
+
+    struct TypeTwo
+    {
+        std::string name;
+        double id { 0 };
+    };
+
+    template<typename T1>
+    concept HasNameAndId = requires
+    {
+        { decltype(T1::name){} } -> std::same_as<std::string>;
+        { decltype(T1::id){} } -> std::same_as<uint64_t>;
+    };
+
+
+    void test(const HasNameAndId auto& item)
+    {
+        std::println("name: {}, id: {}", item.name, item.id);
+    }
+
+    void demo()
+    {
+        {
+            const TypeOne item;
+            test(item);
+        }
+        {
+            const TypeTwo item;
+            // test(item);
+        }
+    }
+}
 
 
 // https://www.youtube.com/watch?v=jzwqTi7n-rg | Back to Basics: Concepts in C++ - Nicolai Josuttis - CppCon 2024
@@ -3433,6 +3474,8 @@ void Concepts::TestAll()
     // Custom_Concepts::Signed_Tests();
     // Custom_Concepts::Unsigned_Tests();
 
+
+    CheckType_HasMember_CheckType::demo();
 
     // Requires::FunctionDefinition_Examples();
     // Requires::SimpleTest();
@@ -3477,13 +3520,12 @@ void Concepts::TestAll()
     // Concepts_With_Auto::Print_Tests();
     // Concepts_With_Lambdas::Params_Concepts();
 
-
     // CRPT::Concepts_Instead_CRTP();
     // CRPT::CRTP_Derive_using_Concepts();
 
     // Concepts_on_Two_Types::demo();
 
-    Handle_Ref_Type::remove_cvref_test();
+    // Handle_Ref_Type::remove_cvref_test();
 
     // ConceptsAsInterface::passClassObjAsInterface();
     // NestedConcepts::CheckMethodReturnType();
