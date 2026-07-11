@@ -147,7 +147,7 @@ int main([[maybe_unused]] int argc,
 
     // Files::TestAll();
     // AsynchFileReader::TestAll();
-    AsynchFileMonitor::TestAll();
+    // AsynchFileMonitor::TestAll();
 
     // Logs::TestAll();
     // ShellCommands::TestAll();
@@ -183,7 +183,7 @@ int main([[maybe_unused]] int argc,
     // SharedMemoryDataExchangeEx::TestAll(params);
     // SharedMemoryDataExchangeQueue::TestAll(params);
     // SharedMemory_PyExchange::TestAll(params);
-    // SharedBlock_WithSemaphore::TestAll(params);
+    SharedBlock_WithSemaphore::TestAll(params);
     // Pipes::TestAll(params);
     // SharedMemory_AtomicValue::TestAll();
     // SharedMutex::TestAll();

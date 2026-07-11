@@ -8,6 +8,7 @@ Description : SharedBlock_WithSemaphore.cpp
 ============================================================================**/
 
 #include "SharedBlock_WithSemaphore.h"
+#include "Random.hpp"
 
 #include <iostream>
 #include <string_view>
@@ -57,22 +58,7 @@ namespace
         ERR << func << " failed. Error = " << errno << std::endl;
         return errno;
     }
-
-    [[nodiscard]]
-    std::string randomString(size_t size = 32)
-    {
-        std::random_device rd{};
-        std::mt19937 generator = std::mt19937 {rd()};
-        auto ud = std::uniform_int_distribution<> {(int)'a', (int)'z'};
-
-        std::string str;
-        str.reserve(size);
-        while (size-- > 0)
-            str.push_back(static_cast<char>(ud(generator)));
-        return str;
-    }
 }
-
 
 namespace
 {
@@ -102,7 +88,7 @@ namespace
         }
 
         [[nodiscard]]
-        inline uint32_t decrementUseCount() const noexcept
+        uint32_t decrementUseCount() const noexcept
         {
             const uint32_t count = sharedDataBlock->useCount.fetch_sub(1) - 1;
             LOG << "decrementUseCount = " << count  + 1 << " --> " << count << std::endl;
@@ -112,7 +98,7 @@ namespace
 
         void initSemaphore()
         {
-            semaphoreName.assign(randomString(SharedDataBlock::semaphoreNameSize));
+            semaphoreName.assign(utilities::random::randomString(SharedDataBlock::semaphoreNameSize));
             memcpy(sharedDataBlock->semaphoreName.data(), semaphoreName.data(), SharedDataBlock::semaphoreNameSize);
             semaphore = ::sem_open(semaphoreName.data(), O_CREAT, 0777, 0);
             ASSERT_NOT(SEM_FAILED, semaphore, "sem_open");
@@ -216,7 +202,7 @@ namespace
         ASSERT_NOT(MAP_FAILED, area, "mmap");
 
         LOG << "Memory mapping [" << area << "] created\n";
-        sharedData.sharedDataBlock = reinterpret_cast<SharedDataBlock *>(area);
+        sharedData.sharedDataBlock = static_cast<SharedDataBlock *>(area);
         const uint32_t useCount = sharedData.incrementUseCount();
 
         if (1 == useCount) {

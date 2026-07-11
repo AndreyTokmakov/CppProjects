@@ -8,6 +8,7 @@ Description : SharedMemoryDataExchangeEx.cpp
 ============================================================================**/
 
 #include "SharedMemoryDataExchangeEx.h"
+#include "Random.hpp"
 
 #include <iostream>
 #include <string_view>
@@ -32,6 +33,7 @@ Description : SharedMemoryDataExchangeEx.cpp
 namespace
 {
     using namespace std::chrono;
+    using namespace utilities::random;
 
     constexpr std::string_view sharedSegmentName { "__SHARED_MEMORY_SEGMENT_NAME_00000__2__" };
     constexpr std::string_view FORMAT { "[%d-%02d-%02d %02d:%02d:%02d.%06ld] " };
@@ -57,23 +59,7 @@ namespace
         ERR << func << " failed. Error = " << errno << std::endl;
         return errno;
     }
-
-    [[nodiscard]]
-    std::string randomString(size_t size = 32)
-    {
-        std::random_device rd{};
-        std::mt19937 generator = std::mt19937 {rd()};
-        auto ud = std::uniform_int_distribution<> {(int)'a', (int)'z'};
-
-        std::string str;
-        str.reserve(size);
-        while (size-- > 0)
-            str.push_back(static_cast<char>(ud(generator)));
-        return str;
-    }
 }
-
-
 
 namespace
 {

@@ -2066,6 +2066,20 @@ namespace Concepts::Noexcept
     }
 }
 
+namespace Concepts::Variadic_Templates_Restrict_Types
+{
+    template<typename T, std::same_as<T>... Ts>
+    auto Sum(const T& val, const Ts&... vals)
+    {
+        return (val + ... + vals);
+    }
+
+    void checkSameType()
+    {
+        Sum(2, 3, 4, 5);
+        // Sum(2, 3, 4, 5.6);
+    }
+}
 
 namespace Concepts::Variadic_Templates_Constexpr
 {
@@ -3474,8 +3488,8 @@ void Concepts::TestAll()
     // Custom_Concepts::Signed_Tests();
     // Custom_Concepts::Unsigned_Tests();
 
-
-    CheckType_HasMember_CheckType::demo();
+    // CheckType_HasMember_CheckType::demo();
+    Variadic_Templates_Restrict_Types::checkSameType();
 
     // Requires::FunctionDefinition_Examples();
     // Requires::SimpleTest();
@@ -3547,6 +3561,8 @@ void Concepts::TestAll()
     // ValidatTypeContains_Members_or_Types::Valid_Template_Substitution();
 
     // Variadic_Templates_Constexpr::demo();
+
+
     // FoldExpression::Test();
     // FoldExpression::Test_Construct_With_Arguments();
     // FoldExpression::Test_All_Params_are_SameType();

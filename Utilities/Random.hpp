@@ -32,6 +32,25 @@ namespace utilities::random
             throw std::invalid_argument("getRandomInRange: Invalid type");
         }
     }
+
+    [[nodiscard]]
+    inline std::string randomString(size_t size = 32)
+    {
+        std::uniform_int_distribution<> distribution{static_cast<int>('a'), static_cast<int>('z')};
+        std::string str;
+        str.reserve(size);
+        while (size-- > 0)
+            str.push_back(static_cast<char>(distribution(generator)));
+        return str;
+    }
+
+    [[nodiscard]]
+    inline int32_t getRandomInt(const int32_t from = 0,
+                                const int32_t until = 10000)
+    {
+        std::uniform_int_distribution<> distribution(from, until);
+        return distribution(generator);
+    }
 }
 
 #endif //CPPPROJECTS_RANDOM_HPP

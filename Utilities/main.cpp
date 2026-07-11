@@ -490,7 +490,7 @@ int main([[maybe_unused]] int argc,
     std::cout << std::quoted(StringUtilities::trim("  12  34 ")) << std::endl;
     */
 
-    scoped_timer_tests::tests();
+    // scoped_timer_tests::tests();
 
     // StringUtilitiesTests::split_test_1();
     // StringUtilitiesTests::strip_string_test();
@@ -528,16 +528,20 @@ int main([[maybe_unused]] int argc,
     // testing_utils::test_assert_false();
     // testing_utils::test_assert_null();
 
-    /*
     {
         const auto v = utilities::random::getRandomInRange<int>(1.0, 20.0);
         std::cout << v << std::endl;
     }
-
     {
         const auto v = utilities::random::getRandomInRange<double>(1.0, 20.0);
         std::cout << v << std::endl;
-    }*/
+    }
+    {
+        std::cout << utilities::random::getRandomInt() << std::endl;
+        std::cout << utilities::random::randomString(64) << std::endl;
+    }
+
+
 
     return EXIT_SUCCESS;
 }

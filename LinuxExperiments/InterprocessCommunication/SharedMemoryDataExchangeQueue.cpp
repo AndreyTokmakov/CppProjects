@@ -8,6 +8,7 @@ Description : SharedMemoryDataExchangeQueue.cpp
 ============================================================================**/
 
 #include "SharedMemoryDataExchangeQueue.h"
+#include "Random.hpp"
 
 #include <iostream>
 #include <string_view>
@@ -32,6 +33,7 @@ Description : SharedMemoryDataExchangeQueue.cpp
 namespace
 {
     using namespace std::chrono;
+    using namespace utilities::random;
 
     constexpr std::string_view sharedSegmentName { "__SHARED_MEMORY_SEGMENT_NAME_00000__1__" };
     constexpr std::string_view FORMAT { "[%d-%02d-%02d %02d:%02d:%02d.%06ld] " };
@@ -58,27 +60,6 @@ namespace
         return errno;
     }
 
-    [[nodiscard]]
-    std::string randomString(size_t size = 32)
-    {
-        std::random_device rd{};
-        std::mt19937 generator = std::mt19937 {rd()};
-        auto ud = std::uniform_int_distribution<> {(int)'a', (int)'z'};
-
-        std::string str;
-        str.reserve(size);
-        while (size-- > 0)
-            str.push_back(static_cast<char>(ud(generator)));
-        return str;
-    }
-
-    int32_t getRandomInt(const int32_t from = 0,
-                         const int32_t until = 10000) {
-        std::random_device rd;
-        std::mt19937 gen(rd());
-        std::uniform_real_distribution<> distribution(from, until);
-        return distribution(gen);
-    }
 }
 
 namespace
