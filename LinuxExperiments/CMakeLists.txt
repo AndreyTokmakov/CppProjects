@@ -42,7 +42,9 @@ add_executable(${PROJECT_NAME}
         InterprocessCommunication/UnixSockets.cpp
         IPC_Performance_Experiments/UnixDomainSockets.cpp
         IPC_Performance_Experiments/UDPSockets.cpp
+        IPC_SharedMemoryChannel/SharedMemoryChannel.cpp
         Users/Users.cpp
+        Semaphores/Semaphores.cpp
         TimeAndDate/Time.cpp
         TimeAndDate/Timer.cpp
         Modules/Modules.cpp

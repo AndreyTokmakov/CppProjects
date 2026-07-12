@@ -83,7 +83,9 @@
 #include "InterprocessCommunication/UnixSockets.h"
 
 #include "IPC_Performance_Experiments/IPC_Performance_Experiments.h"
+#include "IPC_SharedMemoryChannel/SharedMemoryChannel.hpp"
 
+#include "Semaphores/Semaphores.hpp"
 #include "Users/Users.h"
 #include "TimeAndDate/Time.h"
 #include "TimeAndDate/Timer.h"
@@ -183,12 +185,16 @@ int main([[maybe_unused]] int argc,
     // SharedMemoryDataExchangeEx::TestAll(params);
     // SharedMemoryDataExchangeQueue::TestAll(params);
     // SharedMemory_PyExchange::TestAll(params);
-    SharedBlock_WithSemaphore::TestAll(params);
+    // SharedBlock_WithSemaphore::TestAll(params);
     // Pipes::TestAll(params);
     // SharedMemory_AtomicValue::TestAll();
     // SharedMutex::TestAll();
     // SemMutex::TestAll();
     // UnixSockets::TestAll();
+
+    // ipc::shared_memory_channel::TestSharedMemoryChannel();
+
+    ipc::semaphores::testAll();
 
     /** IPC_Performance_Experiments **/
 
