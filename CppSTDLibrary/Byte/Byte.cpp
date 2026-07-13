@@ -1,16 +1,20 @@
-//============================================================================
-// Name        : Byte.cpp
-// Created on  : 02.06.2020
-// Author      : Tokmakov Andrey
-// Version     : 1.0
-// Copyright   : Your copyright notice
-// Description : Byte src
-//============================================================================
+/**============================================================================
+Name        : Byte.cpp
+Created on  : 30.04.2024
+Author      : Andrei Tokmakov
+Version     : 1.0
+Copyright   : Your copyright notice
+Description : bytes
+============================================================================**/
+
 
 #include "Byte.h"
 
 #include <iostream>
 #include <iomanip>
+#include <concepts>
+#include <bit>
+#include <print>
 
 namespace bytes
 {
@@ -205,6 +209,51 @@ namespace bytes::std_byte
     }
 }
 
+namespace bytes::bit_cast_number_to_bytes
+{
+    template<std::integral Ty>
+    constexpr std::array<std::byte, sizeof(Ty)> toBytesArray(const Ty value)
+    {
+        return std::bit_cast<std::array<std::byte, sizeof(Ty)>>(value);
+    }
+
+    template<std::integral Ty>
+    constexpr Ty fromBytesArray(const std::array<std::byte, sizeof(Ty)>& array)
+    {
+        return std::bit_cast<Ty>(array);
+    }
+
+    void numToBytes_AndBack()
+    {
+        {
+            constexpr uint16_t value = std::numeric_limits<uint16_t>::max() - 1;
+            const std::array arrayOfBytes = toBytesArray(value);
+            const auto result = fromBytesArray<decltype(value)>(arrayOfBytes);
+
+            std::println("Original: {}, Result: {}", value, result);
+        }
+        {
+            constexpr int32_t value = std::numeric_limits<int32_t>::max() - 1;
+            const std::array arrayOfBytes = toBytesArray(value);
+            const auto result = fromBytesArray<decltype(value)>(arrayOfBytes);
+
+            std::println("Original: {}, Result: {}", value, result);
+        }
+        {
+            constexpr uint64_t value = std::numeric_limits<uint64_t>::max() - 1;
+            const std::array arrayOfBytes = toBytesArray(value);
+            const auto result = fromBytesArray<decltype(value)>(arrayOfBytes);
+
+            std::println("Original: {}, Result: {}", value, result);
+        }
+
+        // Original: 65534, Result: 65534
+        // Original: 2147483646, Result: 2147483646
+        // Original: 18446744073709551614, Result: 18446744073709551614
+    }
+
+}
+
 void bytes::TestAll()
 {
     // ToInt();
@@ -218,5 +267,7 @@ void bytes::TestAll()
 
     // handle_message::handeUIntBuffer();
 
-    std_byte::byte_to_int();
+    // std_byte::byte_to_int();
+
+    bit_cast_number_to_bytes::numToBytes_AndBack();
 };
