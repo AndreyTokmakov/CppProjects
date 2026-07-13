@@ -251,7 +251,6 @@ namespace bytes::bit_cast_number_to_bytes
         // Original: 2147483646, Result: 2147483646
         // Original: 18446744073709551614, Result: 18446744073709551614
     }
-
 }
 
 void bytes::TestAll()

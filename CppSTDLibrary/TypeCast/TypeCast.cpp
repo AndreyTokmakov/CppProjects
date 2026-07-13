@@ -12,6 +12,7 @@
 #include <string>
 #include <string_view>
 #include <iomanip>
+#include <print>
 
 #include <charconv>
 #include <memory>
@@ -24,7 +25,6 @@
 #include "TypeCast.h"
 
 using String = std::string;
-using CString = const String&;
 
 namespace TypeCast
 {
@@ -456,12 +456,12 @@ namespace TypeCast::BitCast
 {
     void Float_to_Integer()
     {
-        const float value = 3.1415926f;
-        uint32_t raw = std::bit_cast<uint32_t>(value);
+	    constexpr float value = 3.1415926f;
+	    constexpr uint32_t raw = std::bit_cast<uint32_t>(value);
 
         std::cout << "Bits: 0x" << std::hex << std::setw(8) << std::setfill('0') << raw << '\n';
 
-        const float restored = std::bit_cast<float>(raw);
+	    constexpr float restored = std::bit_cast<float>(raw);
         std::cout << std::dec << "Restored: " << restored << '\n';
 
         // Bits: 0x40490fda
@@ -471,7 +471,7 @@ namespace TypeCast::BitCast
     void Float_to_Integer_BUG()
     {
         const float value = 3.1415926f;
-        uint32_t raw = static_cast<uint32_t>(value); /** std::bit_cast required **/
+        const auto raw = static_cast<uint32_t>(value); /** std::bit_cast required **/
 
         std::cout << "Bits: 0x" << std::hex << std::setw(8) << std::setfill('0') << raw << '\n';
 
@@ -481,6 +481,50 @@ namespace TypeCast::BitCast
         //  Bits: 0x00000003
         //    Restored: 4.2039e-45
     }
+}
+
+namespace TypeCast::BitCast_Number2Bytes
+{
+	template<std::integral Ty>
+	constexpr std::array<std::byte, sizeof(Ty)> toBytesArray(const Ty value)
+	{
+		return std::bit_cast<std::array<std::byte, sizeof(Ty)>>(value);
+	}
+
+	template<std::integral Ty>
+	constexpr Ty fromBytesArray(const std::array<std::byte, sizeof(Ty)>& array)
+	{
+		return std::bit_cast<Ty>(array);
+	}
+
+	void numToBytes_AndBack()
+	{
+		{
+			constexpr uint16_t value = std::numeric_limits<uint16_t>::max() - 1;
+			const std::array arrayOfBytes = toBytesArray(value);
+			const auto result = fromBytesArray<decltype(value)>(arrayOfBytes);
+
+			std::println("Original: {}, Result: {}", value, result);
+		}
+		{
+			constexpr int32_t value = std::numeric_limits<int32_t>::max() - 1;
+			const std::array arrayOfBytes = toBytesArray(value);
+			const auto result = fromBytesArray<decltype(value)>(arrayOfBytes);
+
+			std::println("Original: {}, Result: {}", value, result);
+		}
+		{
+			constexpr uint64_t value = std::numeric_limits<uint64_t>::max() - 1;
+			const std::array arrayOfBytes = toBytesArray(value);
+			const auto result = fromBytesArray<decltype(value)>(arrayOfBytes);
+
+			std::println("Original: {}, Result: {}", value, result);
+		}
+
+		// Original: 65534, Result: 65534
+		// Original: 2147483646, Result: 2147483646
+		// Original: 18446744073709551614, Result: 18446744073709551614
+	}
 }
 
 
@@ -496,6 +540,7 @@ void TypeCast::TestAll()
 
     BitCast::Float_to_Integer();
     BitCast::Float_to_Integer_BUG();
+    BitCast_Number2Bytes::numToBytes_AndBack();
 
 	// PtrCasts();
 
