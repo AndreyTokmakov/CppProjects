@@ -15,6 +15,9 @@ Description : bytes
 #include <concepts>
 #include <bit>
 #include <print>
+#include <iostream>
+#include <utility>
+#include <cstddef>
 
 namespace bytes
 {
@@ -253,6 +256,77 @@ namespace bytes::bit_cast_number_to_bytes
     }
 }
 
+namespace bytes::big_endian
+{
+    template<std::integral Ty, size_t N = sizeof(Ty)>
+    constexpr std::array<uint8_t, N> toBytesArray(const Ty value)
+    {
+        std::array<uint8_t, N> bytes {};
+        for (size_t idx = 0, mask = (N - 1) * 8; idx < N; ++idx, mask -= 8) {
+            bytes[idx] =  static_cast<uint8_t>(value >> mask);
+        }
+        return bytes;
+    }
+
+    template<std::integral Ty, size_t N = sizeof(Ty)>
+    Ty fromBytesArray(const std::array<uint8_t, N> bytes)
+    {
+        Ty result = {};
+        for (size_t idx = 0, mask = (N - 1) * 8; idx < N; ++idx, mask -= 8) {
+            result |= static_cast<Ty>(bytes[idx] << mask);
+        }
+        return result;
+    }
+
+    template<std::integral Ty, size_t N = sizeof(Ty)>
+    constexpr std::array<uint8_t, N> toBytesArrayFold(Ty value)
+    {
+        return [&]<size_t... Idx> (std::index_sequence<Idx...>) { return std::array<uint8_t, N>{
+            (static_cast<uint8_t>( value >> ((N - 1 - Idx) * 8 ) & 0xff))...
+        };} (std::make_index_sequence<N>{});
+    }
+
+    template<std::integral Ty, size_t N = sizeof(Ty)>
+    constexpr Ty fromBytesArrayFold(const std::array<uint8_t, N> bytes)
+    {
+        return [&]<size_t... Idx> (std::index_sequence<Idx...>) {
+            return (( static_cast<Ty>(bytes[Idx]) << ((N - 1 - Idx) * 8)) + ... );
+        } (std::make_index_sequence<N>{});
+    }
+
+    void testOne()
+    {
+        constexpr uint32_t value = 0x12345678;
+        std::cout << value << " => " << std::hex << value << std::endl;
+
+        const auto bytes = toBytesArray(value);
+        for (const auto b : bytes) {
+            std::cout << std::hex << static_cast<int>(b) << ' ';
+        }
+
+        const uint32_t result = fromBytesArray<uint32_t>(bytes);
+        std::cout << '\n' << std::dec  << result << " => " << std::hex << result << std::endl;
+    }
+
+    void testFold()
+    {
+        constexpr uint32_t value = 0x12345678;
+        std::cout << value << " => " << std::hex << value << std::endl;
+
+        constexpr auto bytes = toBytesArrayFold(value);
+        for (const auto b : bytes) {
+            std::cout << std::hex << static_cast<int>(b) << ' ';
+        }
+
+        constexpr auto result = fromBytesArrayFold<uint32_t>(bytes);
+        std::cout << '\n' << std::dec  << result << " => " << std::hex << result << std::endl;
+
+        // 305419896 => 12345678
+        // 12 34 56 78
+        // 305419896 => 12345678
+    }
+}
+
 void bytes::TestAll()
 {
     // ToInt();
@@ -268,5 +342,8 @@ void bytes::TestAll()
 
     // std_byte::byte_to_int();
 
-    bit_cast_number_to_bytes::numToBytes_AndBack();
+    // bit_cast_number_to_bytes::numToBytes_AndBack();
+
+    // big_endian::testOne();
+    big_endian::testFold();
 };
