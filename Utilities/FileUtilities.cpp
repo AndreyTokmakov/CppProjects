@@ -77,11 +77,11 @@ namespace FileUtilities
 
     int32_t WriteToFile(const std::filesystem::path& filePath,
                         const std::string& text,
-                        std::ios_base::openmode mode)
+                        const std::ios_base::openmode mode)
     {
         if (std::ofstream file(filePath, mode); file.is_open() && file.good())
         {
-            const int32_t pos = static_cast<int32_t>(file.tellp());
+            const int32_t pos = file.tellp();
             file.write(text.data(), std::ssize(text));
             return static_cast<int32_t>(file.tellp()) - pos;
         }
