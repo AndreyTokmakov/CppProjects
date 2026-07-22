@@ -279,6 +279,15 @@ namespace
             ::sem_post(writeReadySemaphore);
         }
 
+        [[nodiscard]]
+        bool isWriteReady() const
+        {
+            if (int val { 0 }; 0 == ::sem_getvalue(writeReadySemaphore, &val)) {
+                return 1 == val;
+            }
+            return false;
+        }
+
     private:
 
         /** TODO: ==> Make struct **/

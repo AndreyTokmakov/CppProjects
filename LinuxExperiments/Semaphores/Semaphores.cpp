@@ -66,13 +66,13 @@ namespace
         }
     };
 
-    int getSemaphoreValue(sem_t* semaphore)
+    [[nodiscard]]
+    bool isSemAvailable(sem_t* semaphore)
     {
-        int val {0};
-        if (0 == ::sem_getvalue(semaphore, &val)) {
-            return val;
+        if (int val { 0 }; 0 == ::sem_getvalue(semaphore, &val)) {
+            return 1 == val;
         }
-        return -1;
+        return false;
     }
 
     void Parent()
@@ -81,11 +81,11 @@ namespace
 
         sem_t* semaphore = initSemaphore(semaphoreName);
 
-        LOG << "[Parent] Sem value: " << getSemaphoreValue(semaphore) << ". Waiting ....\n";
+        LOG << "[Parent] Sem value -> " << std::boolalpha << isSemAvailable(semaphore) << ". Waiting ....\n";
 
         ::sem_wait(semaphore);
 
-        LOG << "[Parent] Sem value: " << getSemaphoreValue(semaphore) << ". Resuming . . .\n";
+        LOG << "[Parent] Sem value -> " << std::boolalpha << isSemAvailable(semaphore) << ". Resuming . . .\n";
 
         closeSemaphore(semaphore, semaphoreName);;
         LOG << "[Parent] Completed\n";
@@ -99,10 +99,10 @@ namespace
 
         std::this_thread::sleep_for(std::chrono::seconds(2));
 
-        LOG << "[Child ] Sem value: " << getSemaphoreValue(semaphore) << " before ::sem_post()\n";
+        LOG << "[Child ] Sem value -> " << std::boolalpha << isSemAvailable(semaphore) << " before ::sem_post()\n";
         ::sem_post(semaphore);
 
-        LOG << "[Child ] Completed: " << getSemaphoreValue(semaphore) << " ::sem_post() called\n";
+        LOG << "[Child ] Completed -> " << std::boolalpha << isSemAvailable(semaphore) << " after ::sem_post()\n";
     }
 
     void demo()
@@ -119,12 +119,12 @@ void ipc::semaphores::testAll()
 {
     demo();
     /*
-    [2026-07-22 20:55:41.619451] [Parent] Started
-    [2026-07-22 20:55:41.619596] [Parent] Sem value: 0. Waiting ....
-    [2026-07-22 20:55:41.619547] [Child ] Started
-    [2026-07-22 20:55:43.720395] [Child ] Sem value: 0 before ::sem_post()
-    [2026-07-22 20:55:43.720490] [Child ] Completed: 1 ::sem_post() called
-    [2026-07-22 20:55:43.720556] [Parent] Sem value: 0. Resuming . . .
-    [2026-07-22 20:55:43.720711] [Parent] Completed
+    [2026-07-22 21:18:59.907664] [Parent] Started
+    [2026-07-22 21:18:59.907812] [Parent] Sem value -> false. Waiting ....
+    [2026-07-22 21:18:59.907751] [Child ] Started
+    [2026-07-22 21:19:02.008152] [Child ] Sem value -> false  before ::sem_post()
+    [2026-07-22 21:19:02.008222] [Child ] Completed -> true   after ::sem_post()
+    [2026-07-22 21:19:02.008277] [Parent] Sem value -> false. Resuming . . .
+    [2026-07-22 21:19:02.008391] [Parent] Completed
     */
 }
