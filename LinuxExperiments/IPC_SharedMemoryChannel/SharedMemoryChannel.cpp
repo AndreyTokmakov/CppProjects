@@ -274,7 +274,7 @@ namespace
             TRACE << "Reading ......" << std::endl;
         }
 
-        void releaseWriteSemaphore()
+        void setWriteReady() const
         {
             ::sem_post(writeReadySemaphore);
         }
@@ -302,6 +302,7 @@ namespace
                 return false;
             }
 
+            // The semaphore is initially blocked
             sem = ::sem_open(name.data(), O_CREAT, 0777, 0);
             if (SEM_FAILED == sem) {
                 ERR << "sem_open(" << name << ", 0777, 0) OK\n";
@@ -505,7 +506,7 @@ namespace tests
         std::this_thread::sleep_for(1s);
 
         DGB_CHILD << "Release semaphore\n";
-        channel.releaseWriteSemaphore();
+        channel.setWriteReady();
 
         channel.closeWriteSemaphore();
         channel.closeReadSemaphore();

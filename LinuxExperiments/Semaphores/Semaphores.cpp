@@ -66,15 +66,26 @@ namespace
         }
     };
 
+    int getSemaphoreValue(sem_t* semaphore)
+    {
+        int val {0};
+        if (0 == ::sem_getvalue(semaphore, &val)) {
+            return val;
+        }
+        return -1;
+    }
+
     void Parent()
     {
         LOG << "[Parent] Started\n";
 
         sem_t* semaphore = initSemaphore(semaphoreName);
 
-        LOG << "[Parent] Waiting . . .\n";
+        LOG << "[Parent] Sem value: " << getSemaphoreValue(semaphore) << ". Waiting ....\n";
+
         ::sem_wait(semaphore);
-        LOG << "[Parent] Resuming . . .\n";
+
+        LOG << "[Parent] Sem value: " << getSemaphoreValue(semaphore) << ". Resuming . . .\n";
 
         closeSemaphore(semaphore, semaphoreName);;
         LOG << "[Parent] Completed\n";
@@ -88,10 +99,10 @@ namespace
 
         std::this_thread::sleep_for(std::chrono::seconds(2));
 
-        LOG << "[Child ] sem_post() called\n";
+        LOG << "[Child ] Sem value: " << getSemaphoreValue(semaphore) << " before ::sem_post()\n";
         ::sem_post(semaphore);
 
-        LOG << "[Child ] Completed\n";
+        LOG << "[Child ] Completed: " << getSemaphoreValue(semaphore) << " ::sem_post() called\n";
     }
 
     void demo()
@@ -100,7 +111,6 @@ namespace
             Child();
         else if (pid > 0)
             Parent();
-        LOG << "Done" << std::endl;
     }
 }
 
@@ -108,4 +118,13 @@ namespace
 void ipc::semaphores::testAll()
 {
     demo();
+    /*
+    [2026-07-22 20:55:41.619451] [Parent] Started
+    [2026-07-22 20:55:41.619596] [Parent] Sem value: 0. Waiting ....
+    [2026-07-22 20:55:41.619547] [Child ] Started
+    [2026-07-22 20:55:43.720395] [Child ] Sem value: 0 before ::sem_post()
+    [2026-07-22 20:55:43.720490] [Child ] Completed: 1 ::sem_post() called
+    [2026-07-22 20:55:43.720556] [Parent] Sem value: 0. Resuming . . .
+    [2026-07-22 20:55:43.720711] [Parent] Completed
+    */
 }

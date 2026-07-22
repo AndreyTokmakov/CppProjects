@@ -192,8 +192,8 @@ int main([[maybe_unused]] int argc,
     // SemMutex::TestAll();
     // UnixSockets::TestAll();
 
-    ipc::shared_memory_channel::TestSharedMemoryChannel();
-    // ipc::semaphores::testAll();
+    // ipc::shared_memory_channel::TestSharedMemoryChannel();
+    ipc::semaphores::testAll();
 
     /** IPC_Performance_Experiments **/
 
