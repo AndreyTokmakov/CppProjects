@@ -14,6 +14,7 @@ Description : SharedMemoryChannel.cpp
 #include "Random.hpp"
 #include "FileUtilities.hpp"
 #include "DateTimeUtilities.hpp"
+#include "PerfUtilities.hpp"
 
 #include <iostream>
 #include <print>
@@ -278,13 +279,13 @@ namespace
             TRACE << "Reading done\n";
         }
 
-        void write(uint32_t& counter) {
+        void write(uint64_t& counter) {
             SemaphoreGuard guard { writeReadySemaphore, readReadySemaphore };
             ++counter;
             // LOG << "Write. Counter = " << counter << std::endl;
         }
 
-        void read(uint32_t& counter) {
+        void read(uint64_t& counter) {
             SemaphoreGuard guard { readReadySemaphore, writeReadySemaphore };
             ++counter;
             // LOG << "Read. Counter = " << counter << std::endl;
@@ -521,7 +522,7 @@ namespace tests::perf
 {
     using namespace std::chrono_literals;
 
-    constexpr uint64_t MaxIterations { 1'000 };
+    constexpr uint64_t MaxIterations { 1'000'000 };
 
     static void Parent()
     {
@@ -529,7 +530,8 @@ namespace tests::perf
         SharedMemoryChannel channel;
         channel.InitializeOwner();
 
-        uint32_t counter { 0 };
+        PerfUtilities::ScopedTimer timer { "Parent"};
+        uint64_t counter { 0 };
         for (uint64_t i = 0; i < MaxIterations; ++i) {
             channel.write(counter);
         }
@@ -549,8 +551,9 @@ namespace tests::perf
         SharedMemoryChannel channel;
         channel.InitializeClient();
 
+        PerfUtilities::ScopedTimer timer { "Child"};
         channel.setWriteReady();
-        uint32_t counter { 0 };
+        uint64_t counter { 0 };
         for (uint64_t i = 0; i < MaxIterations; ++i) {
             channel.read(counter);
         }
