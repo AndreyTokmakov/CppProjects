@@ -76,11 +76,11 @@ namespace
     struct SemaphoreGuard
     {
         SemaphoreGuard(sem_t* sem2Wait, sem_t* sem2Release): semRelease { sem2Release } {
-            ::sem_wait(sem2Wait);
+            sem_wait(sem2Wait);
         }
 
         ~SemaphoreGuard() {
-            ::sem_post(semRelease);
+            sem_post(semRelease);
         }
 
         SemaphoreGuard(const SemaphoreGuard&) = delete;
@@ -102,7 +102,7 @@ namespace
             // Move to functions
             if (InvalidHandle != handle)
             {
-                if (0 != ::close(handle)) {
+                if (0 != close(handle)) {
                     ERR << "close(). Error = " << errno << std::endl;
                 }
             }
@@ -152,7 +152,7 @@ namespace
             }
 
             /// Both O_CREAT and O_EXCL were specified to shm_open() and the shared memory object specified by name already exists.
-            handle = ::shm_open(sharedSegmentName.data(),
+            handle = shm_open(sharedSegmentName.data(),
                                 O_CREAT | O_RDWR | O_EXCL | O_TRUNC,
                                 S_IRWXU | S_IRWXG);
             if (InvalidHandle == handle) {
@@ -160,7 +160,7 @@ namespace
                 return false;
             }
 
-            if (InvalidHandle == ::ftruncate(handle, sizeof(SharedData))) {
+            if (InvalidHandle == ftruncate(handle, sizeof(SharedData))) {
                 ERR << "ftruncate(). Error = " << errno << std::endl;
                 return false;
             }
@@ -175,7 +175,7 @@ namespace
                 return false;
             }
 
-            handle = ::shm_open(sharedSegmentName.data(), O_CREAT | O_RDWR, S_IRWXU | S_IRWXG);
+            handle = shm_open(sharedSegmentName.data(), O_CREAT | O_RDWR, S_IRWXU | S_IRWXG);
             if (InvalidHandle == handle) {
                 ERR << "shm_open(). Error = " << errno << std::endl;
                 return false;
@@ -187,7 +187,7 @@ namespace
         [[nodiscard]]
         bool createMapping()
         {
-            void *area = ::mmap(nullptr,
+            void *area = mmap(nullptr,
                                 sizeof(SharedData),
                                 PROT_READ | PROT_WRITE,
                                 MAP_SHARED,
@@ -255,37 +255,42 @@ namespace
         static void unlinkMapping()
         {
             // TODO: Check if called by owner ???
-            if (InvalidHandle == ::shm_unlink(sharedSegmentName.data())) {
+            if (InvalidHandle == shm_unlink(sharedSegmentName.data())) {
                 ERR << "shm_unlink() failed\n";
             }
         }
 
-    public: // --------------- DEBUG -------------
-
         void write()
         {
+            TRACE << "Waiting to be able to Write." << std::endl;
             SemaphoreGuard guard { writeReadySemaphore, readReadySemaphore };
             TRACE << "Writing ......" << std::endl;
+            std::this_thread::sleep_for(std::chrono::milliseconds(500));
+            TRACE << "Writing done\n";
         }
 
         void read()
         {
+            TRACE << "Waiting to be able to Read." << std::endl;
             SemaphoreGuard guard { readReadySemaphore, writeReadySemaphore };
             TRACE << "Reading ......" << std::endl;
+            std::this_thread::sleep_for(std::chrono::milliseconds(500));
+            TRACE << "Reading done\n";
         }
 
         void setWriteReady() const
         {
-            ::sem_post(writeReadySemaphore);
+            sem_post(writeReadySemaphore);
         }
 
         [[nodiscard]]
-        bool isWriteReady() const
-        {
-            if (int val { 0 }; 0 == ::sem_getvalue(writeReadySemaphore, &val)) {
-                return 1 == val;
-            }
-            return false;
+        bool isWritable() const noexcept {
+            return canAcquireSemaphore(writeReadySemaphore);
+        }
+
+        [[nodiscard]]
+        bool isReadable() const noexcept {
+            return canAcquireSemaphore(readReadySemaphore);
         }
 
     private:
@@ -296,11 +301,20 @@ namespace
             if (ptr == nullptr) {
                 return true;
             }
-            if (InvalidHandle == ::munmap(ptr, sizeof(SharedData))) {
+            if (InvalidHandle == munmap(ptr, sizeof(SharedData))) {
                 ERR << "munmap(" << ptr << ") failed. Error = " << errno << std::endl;
                 return false;
             }
             return true;
+        }
+
+        [[nodiscard]]
+        static bool canAcquireSemaphore(sem_t* const semaphore) noexcept
+        {
+            if (int val { 0 }; 0 == sem_getvalue(semaphore, &val)) {
+                return val > 0;
+            }
+            return false;
         }
 
         [[nodiscard]]
@@ -311,8 +325,8 @@ namespace
                 return false;
             }
 
-            // The semaphore is initially blocked
-            sem = ::sem_open(name.data(), O_CREAT, 0777, 0);
+            /** The semaphore is initially blocked **/
+            sem = sem_open(name.data(), O_CREAT, 0777, 0);
             if (SEM_FAILED == sem) {
                 ERR << "sem_open(" << name << ", 0777, 0) OK\n";
                 return false;
@@ -330,7 +344,7 @@ namespace
                 return false;
             }
 
-            sem = ::sem_open(name.data(), O_CREAT);
+            sem = sem_open(name.data(), O_CREAT);
             if (SEM_FAILED == sem) {
                 ERR << "sem_open(" << name << ", O_CREAT) failed. Error = " << errno << "\n";
                 return false;
@@ -345,7 +359,7 @@ namespace
             if (!checkSystemSemFile(name)) {
                 return true;
             }
-            if (InvalidHandle == ::sem_unlink(name.data())) {
+            if (InvalidHandle == sem_unlink(name.data())) {
                 ERR << "sem_unlink(" << name << ") failed. Error = " << errno << std::endl;
                 return false;
             }
@@ -356,7 +370,7 @@ namespace
         [[nodiscard]]
         static bool closeSemaphore(sem_t*& sem)
         {
-            if (InvalidHandle == ::sem_close(sem)) {
+            if (InvalidHandle == sem_close(sem)) {
                 ERR << "sem_close(" << sem << ") failed. Error = " << errno << std::endl;
                 return false;
             }
@@ -434,15 +448,6 @@ namespace
 
         using SharedDataPtr = std::unique_ptr<SharedData, decltype(&SharedMemoryChannel::closeMapping)>;
         SharedDataPtr sharedData { SharedDataPtr (nullptr, closeMapping )};
-#if 1
-    public:
-
-        void TEST()
-        {
-            unlinkSemaphores();
-            // std::cout << std::boolalpha << checkSystemSemFile("nrjmfzqdpfdpgifpzihdqevzyxjmtdxg") << std::endl;
-        }
-#endif
     };
 }
 
@@ -454,48 +459,15 @@ namespace tests
 
     using namespace std::chrono_literals;
 
-    void Parent()
+    static void Parent()
     {
-        DGB_PARENT << "Started\n";
+        // DGB_PARENT << "Started\n";
         SharedMemoryChannel channel;
         channel.InitializeOwner();
 
-        std::this_thread::sleep_for(std::chrono::seconds(10));
-
-        channel.closeWriteSemaphore();
-        channel.closeReadSemaphore();
-        channel.unlinkMapping();
-
-        DGB_PARENT << "Completed\n";
-    }
-
-    void Child()
-    {
-        DGB_CHILD << "Started\n";
-        std::this_thread::sleep_for(std::chrono::seconds(2));
-
-        SharedMemoryChannel channel;
-        channel.InitializeClient();
-
-        std::this_thread::sleep_for(std::chrono::seconds(5));
-
-        channel.closeWriteSemaphore();
-        channel.closeReadSemaphore();
-
-        DGB_CHILD << "Completed\n";
-    }
-
-    void Parent_WR()
-    {
-        DGB_PARENT << "Started\n";
-        SharedMemoryChannel channel;
-        channel.InitializeOwner();
-
-        DGB_PARENT << "Waiting 'writeReadySemaphore'. . . . \n";
         channel.write();
-        DGB_PARENT << "Waiting 'writeReadySemaphore' done\n";
 
-        std::this_thread::sleep_for(1s);
+        std::this_thread::sleep_for(500ms);
 
         channel.closeWriteSemaphore();
         channel.closeReadSemaphore();
@@ -504,9 +476,9 @@ namespace tests
         DGB_PARENT << "Completed\n";
     }
 
-    void Child_WR()
+    static void Child()
     {
-        DGB_CHILD << "Started\n";
+        // DGB_CHILD << "Started\n";
         std::this_thread::sleep_for(500ms);
 
         SharedMemoryChannel channel;
@@ -514,8 +486,9 @@ namespace tests
 
         std::this_thread::sleep_for(1s);
 
-        DGB_CHILD << "Release semaphore\n";
         channel.setWriteReady();
+
+        channel.read();
 
         channel.closeWriteSemaphore();
         channel.closeReadSemaphore();
@@ -523,26 +496,20 @@ namespace tests
         DGB_CHILD << "Completed\n";
     }
 
-    void multiProcessTests()
+    static void multiProcessTests_WriteRead()
     {
         if (const pid_t pid = fork(); pid == 0)
             Child();
         else if (pid > 0)
             Parent();
     }
-
-    void multiProcessTests_WriteRead()
-    {
-        if (const pid_t pid = fork(); pid == 0)
-            Child_WR();
-        else if (pid > 0)
-            Parent_WR();
-    }
 }
 
 
 void ipc::shared_memory_channel::TestSharedMemoryChannel()
 {
+    shm_unlink("__SHARED_MEMORY_SEGMENT_NAME_00000__1__") ;
+
     // tests::multiProcessTests();
     tests::multiProcessTests_WriteRead();
     // SharedMemoryChannel{}.TEST();
