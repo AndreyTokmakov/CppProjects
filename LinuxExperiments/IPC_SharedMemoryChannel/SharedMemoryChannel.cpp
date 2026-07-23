@@ -265,7 +265,7 @@ namespace
             TRACE << "Waiting to be able to Write." << std::endl;
             SemaphoreGuard guard { writeReadySemaphore, readReadySemaphore };
             TRACE << "Writing ......" << std::endl;
-            std::this_thread::sleep_for(std::chrono::milliseconds(500));
+            std::this_thread::sleep_for(std::chrono::milliseconds(100));
             TRACE << "Writing done\n";
         }
 
@@ -274,8 +274,20 @@ namespace
             TRACE << "Waiting to be able to Read." << std::endl;
             SemaphoreGuard guard { readReadySemaphore, writeReadySemaphore };
             TRACE << "Reading ......" << std::endl;
-            std::this_thread::sleep_for(std::chrono::milliseconds(500));
+            std::this_thread::sleep_for(std::chrono::milliseconds(100));
             TRACE << "Reading done\n";
+        }
+
+        void write(uint32_t& counter) {
+            SemaphoreGuard guard { writeReadySemaphore, readReadySemaphore };
+            ++counter;
+            // LOG << "Write. Counter = " << counter << std::endl;
+        }
+
+        void read(uint32_t& counter) {
+            SemaphoreGuard guard { readReadySemaphore, writeReadySemaphore };
+            ++counter;
+            // LOG << "Read. Counter = " << counter << std::endl;
         }
 
         void setWriteReady() const
@@ -479,12 +491,12 @@ namespace tests
     static void Child()
     {
         // DGB_CHILD << "Started\n";
-        std::this_thread::sleep_for(500ms);
+        std::this_thread::sleep_for(100ms);
 
         SharedMemoryChannel channel;
         channel.InitializeClient();
 
-        std::this_thread::sleep_for(1s);
+        std::this_thread::sleep_for(100ms);
 
         channel.setWriteReady();
 
@@ -505,12 +517,66 @@ namespace tests
     }
 }
 
+namespace tests::perf
+{
+    using namespace std::chrono_literals;
+
+    constexpr uint64_t MaxIterations { 1'000 };
+
+    static void Parent()
+    {
+        DGB_PARENT << "Started\n";
+        SharedMemoryChannel channel;
+        channel.InitializeOwner();
+
+        uint32_t counter { 0 };
+        for (uint64_t i = 0; i < MaxIterations; ++i) {
+            channel.write(counter);
+        }
+
+        channel.closeWriteSemaphore();
+        channel.closeReadSemaphore();
+        channel.unlinkMapping();
+
+        DGB_PARENT << "Completed. counter = " << counter << "\n";
+    }
+
+    static void Child()
+    {
+        std::this_thread::sleep_for(100ms);
+
+        DGB_CHILD << "Started\n";
+        SharedMemoryChannel channel;
+        channel.InitializeClient();
+
+        channel.setWriteReady();
+        uint32_t counter { 0 };
+        for (uint64_t i = 0; i < MaxIterations; ++i) {
+            channel.read(counter);
+        }
+
+        channel.closeWriteSemaphore();
+        channel.closeReadSemaphore();
+
+        DGB_CHILD << "Completed. counter = " << counter << "\n";
+    }
+
+    static void loadTest()
+    {
+        if (const pid_t pid = fork(); pid == 0)
+            Child();
+        else if (pid > 0)
+            Parent();
+    }
+}
+
+
 
 void ipc::shared_memory_channel::TestSharedMemoryChannel()
 {
     shm_unlink("__SHARED_MEMORY_SEGMENT_NAME_00000__1__") ;
 
     // tests::multiProcessTests();
-    tests::multiProcessTests_WriteRead();
-    // SharedMemoryChannel{}.TEST();
+    tests::perf::loadTest();
+
 }
