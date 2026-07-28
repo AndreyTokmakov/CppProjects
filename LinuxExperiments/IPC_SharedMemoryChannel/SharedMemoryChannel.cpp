@@ -96,6 +96,10 @@ namespace
 
     struct SharedMemoryChannel
     {
+        explicit SharedMemoryChannel(std::string segmentName):
+            sharedSegmentName { std::move(segmentName) } {
+        }
+
         ~SharedMemoryChannel()
         {
             sharedData.reset();
@@ -253,7 +257,7 @@ namespace
             }
         }
 
-        static void unlinkMapping()
+        void unlinkMapping()
         {
             // TODO: Check if called by owner ???
             if (InvalidHandle == shm_unlink(sharedSegmentName.data())) {
@@ -266,6 +270,11 @@ namespace
             TRACE << "Waiting to be able to Write." << std::endl;
             SemaphoreGuard guard { writeReadySemaphore, readReadySemaphore };
             TRACE << "Writing ......" << std::endl;
+
+            std::string data("qwerty_2");
+            std::ranges::copy(data, sharedData->buffer.data());
+            sharedData->size = data.size();
+
             std::this_thread::sleep_for(std::chrono::milliseconds(100));
             TRACE << "Writing done\n";
         }
@@ -275,6 +284,10 @@ namespace
             TRACE << "Waiting to be able to Read." << std::endl;
             SemaphoreGuard guard { readReadySemaphore, writeReadySemaphore };
             TRACE << "Reading ......" << std::endl;
+
+            const std::string_view data { sharedData->buffer.data(), sharedData->size };
+            std::cout << data << std::endl;
+
             std::this_thread::sleep_for(std::chrono::milliseconds(100));
             TRACE << "Reading done\n";
         }
@@ -445,11 +458,11 @@ namespace
 
     private:
 
-        constexpr static std::string_view sharedSegmentName { "__SHARED_MEMORY_SEGMENT_NAME_00000__1__" };
         constexpr static std::string_view shmFsPath  { R"(/dev/shm/sem.)" };
         constexpr static std::string_view semFilePath { R"(/tmp/shared_memory_channel.shm)" };
 
         Handle handle { InvalidHandle };
+        std::string sharedSegmentName;
 
         /** FIXME: --> std::unique_ptr<T> **/
         sem_t* writeReadySemaphore { SEM_FAILED };
@@ -471,11 +484,12 @@ namespace tests
 #define DGB_CHILD  LOG << "[Child ] "
 
     using namespace std::chrono_literals;
+    const std::string semaphoreFileName { "__SHARED_MEMORY_SEGMENT_NAME_00000__1__" };
 
     static void Parent()
     {
         // DGB_PARENT << "Started\n";
-        SharedMemoryChannel channel;
+        SharedMemoryChannel channel { semaphoreFileName};
         channel.InitializeOwner();
 
         channel.write();
@@ -494,7 +508,7 @@ namespace tests
         // DGB_CHILD << "Started\n";
         std::this_thread::sleep_for(100ms);
 
-        SharedMemoryChannel channel;
+        SharedMemoryChannel channel { semaphoreFileName };
         channel.InitializeClient();
 
         std::this_thread::sleep_for(100ms);
@@ -509,7 +523,7 @@ namespace tests
         DGB_CHILD << "Completed\n";
     }
 
-    static void multiProcessTests_WriteRead()
+    static void multiProcessTests()
     {
         if (const pid_t pid = fork(); pid == 0)
             Child();
@@ -527,7 +541,7 @@ namespace tests::perf
     static void Parent()
     {
         DGB_PARENT << "Started\n";
-        SharedMemoryChannel channel;
+        SharedMemoryChannel channel { semaphoreFileName };
         channel.InitializeOwner();
 
         PerfUtilities::ScopedTimer timer { "Parent"};
@@ -548,7 +562,7 @@ namespace tests::perf
         std::this_thread::sleep_for(100ms);
 
         DGB_CHILD << "Started\n";
-        SharedMemoryChannel channel;
+        SharedMemoryChannel channel { semaphoreFileName };
         channel.InitializeClient();
 
         PerfUtilities::ScopedTimer timer { "Child"};
@@ -577,9 +591,9 @@ namespace tests::perf
 
 void ipc::shared_memory_channel::TestSharedMemoryChannel()
 {
-    shm_unlink("__SHARED_MEMORY_SEGMENT_NAME_00000__1__") ;
+    shm_unlink(tests::semaphoreFileName.c_str()) ;
 
-    // tests::multiProcessTests();
-    tests::perf::loadTest();
+    tests::multiProcessTests();
+    // tests::perf::loadTest();
 
 }

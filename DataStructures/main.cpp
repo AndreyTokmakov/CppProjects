@@ -150,10 +150,10 @@ int main([[maybe_unused]] int argc,
 
 	// state_manager::TestAll();
 
-	// synchronized_wrapper::TestAll();
+	synchronized_wrapper::TestAll();
 
-	task_executor::TestAll();
-	tast_sbo::TestAll();
+	// task_executor::TestAll();
+	// tast_sbo::TestAll();
 
 	/*********************************** Multithreading ***********************************/
 

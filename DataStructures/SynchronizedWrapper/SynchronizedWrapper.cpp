@@ -9,9 +9,11 @@ Description : SynchronizedWrapper.cpp
 
 #include "SynchronizedWrapper.hpp"
 
+#include <iostream>
 #include <print>
 #include <string>
 #include <concepts>
+#include <thread>
 #include <mutex>
 
 namespace
@@ -25,6 +27,9 @@ namespace
         Resource& operator=(const Resource&) = delete;
 
         int increment() {
+            std::cout << "Increment: " << v << " --> " << (v + 1) << std::endl;
+            std::this_thread::sleep_for(std::chrono::milliseconds(250));
+            std::cout << "Increment done\n";
             return ++v;
         }
 
