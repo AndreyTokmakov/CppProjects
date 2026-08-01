@@ -27,7 +27,7 @@ Description : Software design patterns C++ test project
 #include "Bridge/Bridge.h"
 #include "PImpl/PImpl.h"
 #include "Command/Command.hpp"
-#include "ChainOfResponsibility/ChainOfResponsibility.h"
+#include "ChainOfResponsibility/ChainOfResponsibility.hpp"
 #include "Decorator/Decorator.h"
 #include "Observer/Observer.h"
 #include "FabricMethod/FabricMethod.h"
@@ -95,8 +95,8 @@ int main([[maybe_unused]]  int argc,
     /** Behaviour patterns **/
     // Strategy::Test();
     // Policy::Test();
-    // ChainOfResponsibility::TestAll();
-    Command::TestAll();
+    chain_of_responsibility::TestAll();
+    // command::testAll();
     // Iterator::Test();
     // Interpreter::Test();
     // Mediator::TestAll();

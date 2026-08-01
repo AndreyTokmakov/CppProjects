@@ -7,6 +7,8 @@ Copyright   : Your copyright notice
 Description : Test_MethodPtr pattern src
 ============================================================================**/
 
+#include <algorithm>
+
 #include "Command.hpp"
 
 #include <iostream>
@@ -14,7 +16,7 @@ Description : Test_MethodPtr pattern src
 #include <functional>
 
 
-namespace Command::MethodPtr
+namespace
 {
     template <class Type>
     class Command
@@ -40,71 +42,48 @@ namespace Command::MethodPtr
         Command<Person> cmd {};
 
     public:
-
-        Person(std::string n): name { std::move(n) } {
-        }
-
-        Person(std::string n, Command<Person>& c): name { std::move(n) }, cmd(c) {
-        }
-
-        Person(std::string n, Command<Person>&& c): name { std::move(n) }, cmd(c) {
+        explicit Person(std::string n): name { std::move(n) } {
         }
 
         void talk()
         {
             std::cout << name << " is talking" << std::endl;
-            cmd.execute(); // ask the "black box" to callback the receiver
         }
 
-        void passOn()
-        {
-            std::cout << name << " is passing on" << std::endl;
-            // When the sender is ready to callback to the receiver,it calls execute()
-            cmd.execute();
-        }
-
-        void gossip()
-        {
-            std::cout << name << " is gossiping" << std::endl;
-            cmd.execute();
-        }
-
-        void listen()
-        {
+        void listen() {
             std::cout << name << " is listening" << std::endl;
         }
     };
 
-
-    void Test_Commands()
-    {
-        Person wilma("Wilma" );
-        Command cmdListen = Command(&wilma, &Person::listen);
-        // cmdListen.execute();
-
-        Person betty("Betty", cmdListen);
-        Command cmdGossip = Command(&betty, &Person::gossip);
-
-        cmdGossip.execute();
-    }
-
     void Test()
     {
-        Person wilma("Wilma");
+        Person wilma("Wilma" );
+        Person betty("Betty");
 
-        Person betty("Betty", Command(&wilma, &Person::listen));
-        Person barney("Barney", Command(&betty, &Person::gossip));
-        Person fred("Fred", Command(&barney, &Person::passOn));
+        using Cmd = Command<Person>;
 
-        fred.talk();
+        std::cout << sizeof(Cmd) << std::endl;
+
+        std::vector<Cmd> commands {};
+
+        commands.emplace_back(&wilma, &Person::listen);
+        commands.emplace_back(&betty, &Person::talk);
+        commands.emplace_back(&betty, &Person::listen);
+        commands.emplace_back(&wilma, &Person::listen);
+
+        std::ranges::for_each(commands, [](Cmd cmd) {  cmd.execute(); });
+
     }
 }
 
-void Command::method_ptr::TestAll()
+void command::method_ptr::TestAll()
 {
-    Command::MethodPtr::Test_Commands();
-    std::cout << "---------------------------------------\n";
-    Command::MethodPtr::Test();
+    Test();
+
+    // Wilma is listening
+    // Betty is talking
+    // Betty is listening
+    // Wilma is listening
 }
 
 

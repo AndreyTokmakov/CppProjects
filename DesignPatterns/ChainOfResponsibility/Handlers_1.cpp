@@ -9,6 +9,7 @@ Description : ChainOfHandlers.cpp
 
 #include <iostream>
 #include <memory>
+#include "ChainOfResponsibility.hpp"
 
 namespace
 {
@@ -34,10 +35,10 @@ namespace
         int id;
 
     public:
-        SpecialHandler(int limit, int id): limit {limit}, id {id} {
+        SpecialHandler(const int limit, const int id): limit {limit}, id {id} {
         }
 
-        void request(int value) override
+        void request(const int value) override
         {
             if (value < limit) {
                 std::cout << "Handler with ID=" << id << " handled the request " << value << " with a limit of "
@@ -51,9 +52,10 @@ namespace
     };
 }
 
-void ChainOfHandlers_Test()
+
+void chain_of_responsibility::handlers_1::testAll()
 {
-    std::unique_ptr<IHandler> handler = std::make_unique<SpecialHandler>(10, 1);
+    const std::unique_ptr<IHandler> handler = std::make_unique<SpecialHandler>(10, 1);
     handler->setNextHandler(std::make_unique<SpecialHandler>(20, 2))
         ->setNextHandler(std::make_unique<SpecialHandler>(30, 3));
 

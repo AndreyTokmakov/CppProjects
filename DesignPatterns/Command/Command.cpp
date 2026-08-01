@@ -1,11 +1,11 @@
-//============================================================================
-// Name        : Command.h
-// Created on  : 12.04.2020
-// Author      : Tokmakov Andrey
-// Version     : 1.0
-// Copyright   : Your copyright notice
-// Description : Command pattern src
-//============================================================================
+/**============================================================================
+Name        : Command.h
+Created on  : 12.04.2020
+Author      : Tokmakov Andrey
+Version     : 1.0
+Copyright   : Your copyright notice
+Description : Command pattern src
+============================================================================**/
 
 #include "Command.hpp"
 
@@ -14,7 +14,7 @@
 #include <utility>
 #include <vector>
 
-namespace Command::Switch_ON_OFF_Light
+namespace
 {
     // Command Interface
     struct ICommand {
@@ -101,10 +101,12 @@ namespace Command::Switch_ON_OFF_Light
 }
 
 
-void Command::TestAll()
+void command::testAll()
 {
     // method_ptr::TestAll();
     // filesystem_command_dispatcher::TestAll();
     // Switch_ON_OFF_Light::Test();
-    command_crtp::TestAll();
+    // command_crtp::TestAll();
+    command_bus_handler::TestAll();
+    command_bus_handler_crtp::TestAll();
 }

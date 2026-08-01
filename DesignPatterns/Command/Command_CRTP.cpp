@@ -13,11 +13,10 @@ Description : Command_CRTP
 #include <string>
 #include <functional>
 
-namespace Command::command_crtp
+namespace
 {
-
     template<typename Derived>
-    struct Command
+    struct ICommand
     {
         void execute()
         {
@@ -43,7 +42,7 @@ namespace Command::command_crtp
         }
     };
 
-    struct MoveCommand : public Command<Player>
+    struct MoveCommand : public ICommand<Player>
     {
         Player& player ;
         int x { 0 };
@@ -58,7 +57,7 @@ namespace Command::command_crtp
         }
     };
 
-    struct JumpCommand : public Command<Player>
+    struct JumpCommand : public ICommand<Player>
     {
         Player& player ;
 
@@ -74,7 +73,7 @@ namespace Command::command_crtp
     {
         static constexpr size_t StorageSize { 32 };
 
-        StaticCommand() = default;
+        // StaticCommand() = default;
 
         template<typename Cmd>
         explicit StaticCommand(Cmd cmd)
@@ -89,7 +88,8 @@ namespace Command::command_crtp
         }
 
         void execute() {
-            callback(storage.data());
+            std::invoke(callback, storage.data());
+            // callback(storage.data());
         }
 
     private:
@@ -100,7 +100,7 @@ namespace Command::command_crtp
     };
 }
 
-void Command::command_crtp::TestAll()
+void command::command_crtp::TestAll()
 {
     Player player;
 

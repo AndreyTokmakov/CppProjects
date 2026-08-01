@@ -1,5 +1,5 @@
 /**============================================================================
-Name        : ChainOfResponsibility.cpp
+Name        : Handlers_2.cpp
 Created on  : 19.04.2020
 Author      : Tokmakov Andrey
 Version     : 1.0
@@ -7,11 +7,13 @@ Copyright   : Your copyright notice
 Description : Chain of pesponsibility pattern src
 ============================================================================**/
 
-#include "ChainOfResponsibility.h"
+#include "ChainOfResponsibility.hpp"
 
 #include <vector>
+#include <memory>
+#include <iostream>
 
-namespace ChainOfResponsibility
+namespace
 {
     struct Handler
     {
@@ -106,7 +108,7 @@ namespace ChainOfResponsibility
     }
 }
 
-void ChainOfResponsibility::Example2_Test()
+void chain_of_responsibility::handlers_2::testAll()
 {
     std::unique_ptr<MonkeyHandler> monkey { std::make_unique<MonkeyHandler>("Monkey")};
     std::unique_ptr<SquirrelHandler> squirrel { std::make_unique<SquirrelHandler>("Squirrel")};

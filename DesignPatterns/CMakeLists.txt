@@ -18,13 +18,19 @@ add_executable(${PROJECT_NAME}
 		Bridge/Bridge.cpp
 		Builder/Builder.cpp
 		Builder/BlochBuilder.cpp
+
 		ChainOfResponsibility/ChainOfResponsibility.cpp
-		ChainOfResponsibility/ChainOfHandlers.cpp
+		ChainOfResponsibility/Handlers_1.cpp
+		ChainOfResponsibility/Handlers_2.cpp
+		ChainOfResponsibility/FrequencyValidator.cpp
+		ChainOfResponsibility/FrequencyValidator_Pipeline.cpp
 
 		Command/Command.cpp
 		Command/Command_MethodPtr.cpp
 		Command/FilesystemCommandDispatcher.cpp
 		Command/Command_CRTP.cpp
+		Command/CommandBusHandler.cpp
+		Command/CommandBusHandler_Crtp.cpp
 
 		Composite/Composite.cpp
 		CRTP/CRTP.cpp
@@ -93,7 +99,6 @@ add_executable(${PROJECT_NAME}
 		Decorator/ShapeDecorator.cpp
 		LazyInitialization/LazyInitialization.cpp
 		Lazy_Computation/LazyComputation.cpp
-		ChainOfResponsibility/Example2.cpp
 		Iterator/RangeIterator.cpp
 		Mediator/ChatMediator.cpp
 		Observer/ObserverBasic.cpp

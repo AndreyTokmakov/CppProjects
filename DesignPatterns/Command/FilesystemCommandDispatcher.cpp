@@ -75,7 +75,7 @@ namespace
 }
 
 
-void Command::filesystem_command_dispatcher::TestAll()
+void command::filesystem_command_dispatcher::TestAll()
 {
     FileSystemService fs;
     CommandDispatcher dispatcher(fs);

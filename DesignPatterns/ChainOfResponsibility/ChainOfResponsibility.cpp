@@ -1,17 +1,20 @@
-//============================================================================
-// Name        : ChainOfResponsibility.cpp
-// Created on  : 19.04.2020
-// Author      : Tokmakov Andrey
-// Version     : 1.0
-// Copyright   : Your copyright notice
-// Description : Chain of pesponsibility pattern src
-//============================================================================
+/**============================================================================
+Name        : ChainOfResponsibility.cpp
+Created on  : 19.04.2020
+Author      : Tokmakov Andrey
+Version     : 1.0
+Copyright   : Your copyright notice
+Description : Chain of pesponsibility pattern src
+============================================================================**/
 
-#include "ChainOfResponsibility.h"
+#include "ChainOfResponsibility.hpp"
 
 #include <utility>
+#include <iostream>
+#include <string>
+#include <memory>
 
-namespace ChainOfResponsibility
+namespace
 {
     /** Criminal action class: **/
     class CriminalAction
@@ -82,7 +85,7 @@ namespace ChainOfResponsibility
             std::cout << "Case investigation '" << description << "' leads Sergeant Martin Riggs" << std::endl;
         }
     public:
-        explicit MartinRiggs(int deduction) : Policeman(deduction) {
+        explicit MartinRiggs(const int deduction) : Policeman(deduction) {
         }
     };
 
@@ -106,14 +109,14 @@ namespace ChainOfResponsibility
         }
     public:
 
-        explicit VincentHanna(int deduction) : Policeman(deduction) {
+        explicit VincentHanna(const int deduction) : Policeman(deduction) {
         }
     };
 
 
 	void Test()
 	{
-		std::shared_ptr<Policeman> policeman = std::make_shared<MartinRiggs>(3);
+		const std::shared_ptr<Policeman> policeman = std::make_shared<MartinRiggs>(3);
 		policeman->setNext(std::make_shared<JohnMcClane>(5))
                   ->setNext(std::make_shared<VincentHanna>(8));
 		policeman->investigate(std::make_shared<CriminalAction>(2, "Drug trade from Vietnam"));
@@ -122,12 +125,12 @@ namespace ChainOfResponsibility
 	}
 }
 
-void ChainOfHandlers_Test();
-
-void ChainOfResponsibility::TestAll()
+void chain_of_responsibility::TestAll()
 {
     // Test();
     // Example2_Test();
-
-    ChainOfHandlers_Test();
+    // handlers_1::testAll();
+    // handlers_2::testAll();
+    // frequency_validator::testAll();
+    frequency_validator_pipeline::testAll();
 }
