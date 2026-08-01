@@ -14,7 +14,7 @@ Description : Software design patterns C++ test project
 #include "Passkey_Idiom/PasskeyIdiom.hpp"
 #include "CopyAndSwap/CopyAndSwap.h"
 #include "Prototype/Prototype.h"
-#include "Interpreter/Interpreter.h"
+#include "Interpreter/Interpreter.hpp"
 #include "Iterator/Iterator.h"
 #include "Composite/Composite.h"
 #include "AbstractFactory/AbstractFactory.h"
@@ -95,10 +95,10 @@ int main([[maybe_unused]]  int argc,
     /** Behaviour patterns **/
     // Strategy::Test();
     // Policy::Test();
-    chain_of_responsibility::TestAll();
+    // chain_of_responsibility::TestAll();
     // command::testAll();
     // Iterator::Test();
-    // Interpreter::Test();
+    interpreter::TestAll();
     // Mediator::TestAll();
     // Memento::TestAll();
     // Observer::TestAll();

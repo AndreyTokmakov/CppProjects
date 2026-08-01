@@ -17,6 +17,8 @@ namespace chain_of_responsibility
 	namespace handlers_2 { void testAll(); }
 	namespace frequency_validator { void testAll(); }
 	namespace frequency_validator_pipeline { void testAll(); }
+	namespace packet_processing_pipeline { void testAll(); }
+	namespace packet_processing_pipeline_2 { void testAll(); }
 }
 
 #endif /* CHAIN_OF_RESPONSIBILITY_PATTERN_TESTS__H_ */

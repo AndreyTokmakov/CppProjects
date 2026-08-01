@@ -24,6 +24,8 @@ add_executable(${PROJECT_NAME}
 		ChainOfResponsibility/Handlers_2.cpp
 		ChainOfResponsibility/FrequencyValidator.cpp
 		ChainOfResponsibility/FrequencyValidator_Pipeline.cpp
+		ChainOfResponsibility/PacketProcessing_Pipeline.cpp
+		ChainOfResponsibility/PacketProcessing_Pipeline2.cpp
 
 		Command/Command.cpp
 		Command/Command_MethodPtr.cpp
@@ -53,7 +55,10 @@ add_executable(${PROJECT_NAME}
 		Facade/Facade.cpp Facade/Facade.h
 		Filter/Filter.cpp Filter/Filter.h Filter/Filter_ColorSize.cpp
 		Flyweight/Flyweight.cpp Flyweight/Flyweight.h Flyweight/IconFlyweight.cpp
-		Interpreter/Interpreter.cpp Interpreter/Interpreter.h
+
+		Interpreter/Interpreter.cpp
+		Interpreter/Interpreter_DSL.cpp
+
 		Mediator/Mediator.cpp Mediator/Mediator.h
 		Memento/Memento.cpp Memento/Memento.h
 		Named_Parameter_Idiom/NamedParameter.cpp Named_Parameter_Idiom/NamedParameter.h

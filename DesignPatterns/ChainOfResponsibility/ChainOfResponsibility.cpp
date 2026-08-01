@@ -132,5 +132,7 @@ void chain_of_responsibility::TestAll()
     // handlers_1::testAll();
     // handlers_2::testAll();
     // frequency_validator::testAll();
-    frequency_validator_pipeline::testAll();
+    // frequency_validator_pipeline::testAll();
+    // packet_processing_pipeline::testAll();
+    packet_processing_pipeline_2::testAll();
 }
