@@ -83,6 +83,7 @@ add_executable(${PROJECT_NAME}
 		State/ClimateControl.cpp
 		State/TCPStateMachine.cpp
 		State/TCPStateMachine_Visitor.cpp
+		State/StaticTransitionTable.cpp
 
 		Strategy/Strategy.cpp
 		Visitor/Visitor.cpp

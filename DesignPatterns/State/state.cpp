@@ -13,5 +13,6 @@ void state::TestAll()
 {
     // climate_control::TestAll();
     // tcp_state_machine::TestAll();
-    tcp_state_machine_visitor::TestAll();
+    // tcp_state_machine_visitor::TestAll();
+    static_transition_table::TestAll();
 }

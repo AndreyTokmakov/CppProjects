@@ -17,6 +17,7 @@ namespace state
     namespace climate_control { void TestAll(); }
     namespace tcp_state_machine { void TestAll(); }
     namespace tcp_state_machine_visitor { void TestAll(); }
+    namespace static_transition_table { void TestAll(); }
 }
 
 #endif // !CPPPROJECTS_STATE_H
