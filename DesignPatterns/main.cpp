@@ -24,7 +24,7 @@ Description : Software design patterns C++ test project
 #include "Filter/Filter.h"
 #include "Flyweight/Flyweight.h"
 #include "Facade//Facade.h"
-#include "Bridge/Bridge.h"
+#include "Bridge/Bridge.hpp"
 #include "PImpl/PImpl.h"
 #include "Command/Command.hpp"
 #include "ChainOfResponsibility/ChainOfResponsibility.hpp"
@@ -35,7 +35,7 @@ Description : Software design patterns C++ test project
 #include "Proxy/Proxy.h"
 #include "Singleton/Singleton.h"
 #include "Multiton/Multiton.h"
-#include "State/State.h"
+#include "State/state.hpp"
 #include "Mediator/Mediator.h"
 #include "Memento/Memento.h"
 #include "Monostate/Monostate.h"
@@ -80,7 +80,7 @@ int main([[maybe_unused]]  int argc,
 
     /** Structural patterns: **/
     // Adapter::TestAll();
-    // Bridge::TestAll();
+    // bridge::TestAll();
     // PImpl::TestAll();
     // Composite::Test();
     // Facade::Test();
@@ -98,11 +98,11 @@ int main([[maybe_unused]]  int argc,
     // chain_of_responsibility::TestAll();
     // command::testAll();
     // Iterator::Test();
-    interpreter::TestAll();
+    // interpreter::TestAll();
     // Mediator::TestAll();
     // Memento::TestAll();
     // Observer::TestAll();
-    // State::TestAll();
+    state::TestAll();
     // TemplateMethod::TestAll();
     // Visitor::test();
     // NULL OBJECT

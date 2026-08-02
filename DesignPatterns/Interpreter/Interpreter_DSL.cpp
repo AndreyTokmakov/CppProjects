@@ -58,14 +58,20 @@ namespace
         Or
     };
 
-    using NodeId = std::size_t;
-
     struct Comparison
     {
         Field field;
         Operator operator_;
         double value;
     };
+
+    struct DeviceState
+    {
+        uint64_t frequency { 0 };
+        double attenuation { 0.0 };
+    };
+
+    using NodeId = std::size_t;
 
     struct LogicalExpression
     {
@@ -76,36 +82,24 @@ namespace
 
     using Node = std::variant<Comparison, LogicalExpression>;
 
-    class Expression
+    struct Expression
     {
-    public:
-
-        [[nodiscard]] NodeId addComparison(const Comparison comparison)
+        [[nodiscard]]
+        NodeId add(const Node& expression)
         {
-            nodes_.emplace_back(comparison);
-            return nodes_.size() - 1;
+            nodes.emplace_back(expression);
+            return nodes.size() - 1;
         }
 
-        [[nodiscard]] NodeId addLogicalExpression(const LogicalExpression expression)
+        [[nodiscard]]
+        const Node& get(const NodeId id) const noexcept
         {
-            nodes_.emplace_back(expression);
-            return nodes_.size() - 1;
-        }
-
-        [[nodiscard]] const Node& get(const NodeId id) const noexcept
-        {
-            return nodes_[id];
+            return nodes[id];
         }
 
     private:
 
-        std::vector<Node> nodes_;
-    };
-
-    struct DeviceState
-    {
-        uint64_t frequency { 0 };
-        double attenuation { 0.0 };
+        std::vector<Node> nodes;
     };
 
     class Parser
@@ -115,104 +109,84 @@ namespace
         explicit Parser(const std::string_view input) noexcept : input_ { input } {
         }
 
-        [[nodiscard]] std::expected<Expression, Error> parse()
+        [[nodiscard]]
+        std::expected<Expression, Error> parse()
         {
             Expression expression;
-
             skipSpaces();
-
             const auto root = parseExpression(expression);
-
-            if (!root)
-            {
+            if (!root) {
                 return std::unexpected(root.error());
             }
 
             skipSpaces();
-
-            if (position_ != input_.size())
-            {
+            if (position_ != input_.size()) {
                 return std::unexpected(Error::UnexpectedToken);
             }
 
             root_ = *root;
-
             return expression;
         }
 
-        [[nodiscard]] NodeId root() const noexcept
+        [[nodiscard]]
+        NodeId root() const noexcept
         {
             return root_;
         }
 
     private:
 
-        [[nodiscard]] std::expected<NodeId, Error> parseExpression(Expression& expression)
+        [[nodiscard]]
+        std::expected<NodeId, Error> parseExpression(Expression& expression)
         {
             auto left = parseComparison(expression);
-
-            if (!left)
-            {
+            if (!left) {
                 return left;
             }
 
             while (true)
             {
                 skipSpaces();
-
                 const auto logicalOperator = parseLogicalOperator();
-
-                if (!logicalOperator)
-                {
+                if (!logicalOperator) {
                     return left;
                 }
 
                 auto right = parseComparison(expression);
-
-                if (!right)
-                {
+                if (!right) {
                     return right;
                 }
 
-                left = expression.addLogicalExpression(
-                    LogicalExpression{
+                left = expression.add(LogicalExpression{
                         .operator_ = *logicalOperator,
                         .left = *left,
                         .right = *right
-                    });
+                });
             }
         }
 
-        [[nodiscard]] std::expected<NodeId, Error> parseComparison(Expression& expression)
+        [[nodiscard]]
+        std::expected<NodeId, Error> parseComparison(Expression& expression)
         {
             skipSpaces();
-
             const auto field = parseField();
-
-            if (!field)
-            {
+            if (!field) {
                 return std::unexpected(field.error());
             }
 
             skipSpaces();
-
             const auto operator_ = parseOperator();
-
-            if (!operator_)
-            {
+            if (!operator_) {
                 return std::unexpected(operator_.error());
             }
 
             skipSpaces();
-
             const auto value = parseValue(*field);
-
-            if (!value)
-            {
+            if (!value) {
                 return std::unexpected(value.error());
             }
 
-            return expression.addComparison(
+            return expression.add(
                 Comparison{
                     .field = *field,
                     .operator_ = *operator_,
@@ -235,57 +209,45 @@ namespace
             return std::unexpected(Error::InvalidIdentifier);
         }
 
-        [[nodiscard]] std::expected<Operator, Error> parseOperator() noexcept
+        [[nodiscard]]
+        std::expected<Operator, Error> parseOperator() noexcept
         {
-            if (match(">="))
-            {
+            if (match(">=")) {
                 return Operator::GreaterOrEqual;
             }
-
-            if (match("<="))
-            {
+            if (match("<=")) {
                 return Operator::LessOrEqual;
             }
-
-            if (match("!="))
-            {
+            if (match("!=")) {
                 return Operator::NotEqual;
             }
-
-            if (match("=="))
-            {
+            if (match("==")) {
                 return Operator::Equal;
             }
-
-            if (match(">"))
-            {
+            if (match(">")) {
                 return Operator::Greater;
             }
-
-            if (match("<"))
-            {
+            if (match("<")) {
                 return Operator::Less;
             }
-
             return std::unexpected(Error::InvalidOperator);
         }
 
-        [[nodiscard]] std::expected<LogicalOperator, Error> parseLogicalOperator() noexcept
+        [[nodiscard]]
+        std::expected<LogicalOperator, Error> parseLogicalOperator() noexcept
         {
-            if (match("AND"))
-            {
+            if (match("AND")) {
                 return LogicalOperator::And;
             }
-
-            if (match("OR"))
-            {
+            if (match("OR")) {
                 return LogicalOperator::Or;
             }
 
             return std::unexpected(Error::UnexpectedToken);
         }
 
-        [[nodiscard]] std::expected<double, Error> parseValue(const Field field)
+        [[nodiscard]]
+        std::expected<double, Error> parseValue(const Field field)
         {
             skipSpaces();
 
@@ -298,23 +260,19 @@ namespace
                 ++position_;
             }
 
-            if (begin == position_)
-            {
+            if (begin == position_) {
                 return std::unexpected(Error::InvalidNumber);
             }
 
             const auto number = parseNumber(begin, position_);
 
-            if (!number)
-            {
+            if (!number) {
                 return std::unexpected(Error::InvalidNumber);
             }
 
             const auto unitBegin = position_;
 
-            while (position_ < input_.size() &&
-                   std::isalpha(static_cast<unsigned char>(input_[position_])) != 0)
-            {
+            while (position_ < input_.size() && std::isalpha(static_cast<unsigned char>(input_[position_])) != 0){
                 ++position_;
             }
 
@@ -322,21 +280,16 @@ namespace
 
             if (field == Field::Frequency)
             {
-                if (unit == "MHz")
-                {
+                if (unit == "MHz") {
                     return *number * static_cast<double>(Mhz);
                 }
-
-                if (unit == "GHz")
-                {
+                if (unit == "GHz") {
                     return *number * static_cast<double>(Ghz);
                 }
-
                 return std::unexpected(Error::InvalidUnit);
             }
 
-            if (field == Field::Attenuation && unit == "dB")
-            {
+            if (field == Field::Attenuation && unit == "dB") {
                 return *number * Db;
             }
 
@@ -354,7 +307,6 @@ namespace
             for (std::size_t index = begin; index < end; ++index)
             {
                 const char character = input_[index];
-
                 if (character == '.')
                 {
                     fractional = true;
@@ -362,9 +314,7 @@ namespace
                 }
 
                 const auto digit = static_cast<double>(character - '0');
-
-                if (!fractional)
-                {
+                if (!fractional){
                     value = value * NumberBase + digit;
                 }
                 else
@@ -377,17 +327,15 @@ namespace
             return value;
         }
 
-        [[nodiscard]] bool match(const std::string_view token) noexcept
+        [[nodiscard]]
+        bool match(const std::string_view token) noexcept
         {
             skipSpaces();
-
-            if (input_.substr(position_, token.size()) != token)
-            {
+            if (input_.substr(position_, token.size()) != token) {
                 return false;
             }
 
             position_ += token.size();
-
             return true;
         }
 

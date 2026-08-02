@@ -8,9 +8,9 @@ Description : DrawingBridge src
 ============================================================================**/
 
 #include <iostream>
+#include "Bridge.hpp"
 
-
-namespace Bridge
+namespace
 {
     struct DrawingAPI
     {
@@ -55,10 +55,8 @@ namespace Bridge
     };
 }
 
-void DrawingAPITest()
+void bridge::drawing_bridge::TestAll()
 {
-    using namespace Bridge;
-
     DrawingAPI_1 API_1;
     DrawingAPI_2 API_2;
     Circle(API_1).draw();

@@ -9,6 +9,7 @@ Description : DrawingBridgeTwo src
 
 #include <iostream>
 #include <memory>
+#include "Bridge.hpp"
 
 namespace
 {
@@ -64,7 +65,8 @@ namespace
     };
 }
 
-void Bridge_DrawingAPI_Two_Test()
+
+void bridge::drawing_bridge_two::TestAll()
 {
     CircleShape circle1(1,2,3,std::make_shared<DrawingAPI1>());
     CircleShape circle2(5,7,11,std::make_shared<DrawingAPI2>());

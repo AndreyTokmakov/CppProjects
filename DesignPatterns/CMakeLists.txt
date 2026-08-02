@@ -15,9 +15,13 @@ add_executable(${PROJECT_NAME}
 		AbstractFactory/ShapeFactory.cpp
 		Adapter/Adapter.cpp
 		Adapter/USBAdapter.cpp
-		Bridge/Bridge.cpp
 		Builder/Builder.cpp
 		Builder/BlochBuilder.cpp
+
+		Bridge/Bridge.cpp
+		Bridge/DrawingBridge.cpp
+		Bridge/DrawingBridgeTwo.cpp
+		Bridge/Logger.cpp
 
 		ChainOfResponsibility/ChainOfResponsibility.cpp
 		ChainOfResponsibility/Handlers_1.cpp
@@ -74,7 +78,12 @@ add_executable(${PROJECT_NAME}
 		Singleton/Singleton.cpp
 		Singleton/SingletonCRTP.cpp
 		ExecutorAdapter/ExecutorAdapter.cpp
-		State/State.cpp
+
+		State/state.cpp
+		State/ClimateControl.cpp
+		State/TCPStateMachine.cpp
+		State/TCPStateMachine_Visitor.cpp
+
 		Strategy/Strategy.cpp
 		Visitor/Visitor.cpp
 		Visitor/StockVisitor.cpp
@@ -99,8 +108,6 @@ add_executable(${PROJECT_NAME}
 		VirtualConstructor/VirtualConstructor.cpp
 		TemplateMethod/TemplateMethod.cpp
 		Adapter/BaseAdapter.cpp Adapter/GoodExample.cpp
-		Bridge/DrawingBridge.cpp
-		Bridge/DrawingBridgeTwo.cpp
 		Decorator/ShapeDecorator.cpp
 		LazyInitialization/LazyInitialization.cpp
 		Lazy_Computation/LazyComputation.cpp

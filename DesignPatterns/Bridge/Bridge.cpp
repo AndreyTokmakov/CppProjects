@@ -1,23 +1,22 @@
-//============================================================================
-// Name        : Bridge.cpp
-// Created on  : 08.06.2020
-// Author      : Tokmakov Andrey
-// Version     : 1.0
-// Copyright   : Your copyright notice
-// Description : Bridge src
-//============================================================================
+/**============================================================================
+Name        : Bridge.cpp
+Created on  : 08.06.2020
+Author      : Andrei Tokmakov
+Version     : 1.0
+Copyright   : Your copyright notice
+escription : Bridge src
+============================================================================**/
 
 #define _CRT_SECURE_NO_WARNINGS
 
-#include "Bridge.h"
+#include "Bridge.hpp"
 
 #include <chrono>
 #include <iostream>
 #include <string>
-#include <string_view>
 #include <thread>
 
-namespace Bridge::Clock
+namespace bridge::Clock
 {
     struct AlarmClockImpl
     {
@@ -130,9 +129,11 @@ namespace Bridge::Clock
 void DrawingAPITest();
 void Bridge_DrawingAPI_Two_Test();
 
-void Bridge::TestAll()
+void bridge::TestAll()
 {
     // Clock::Test();
     // DrawingAPITest();
-    Bridge_DrawingAPI_Two_Test();
+    // drawing_bridge::TestAll();
+    // drawing_bridge_two::TestAll();
+    logger::TestAll();
 }
