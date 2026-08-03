@@ -9,9 +9,11 @@ Description : FlatMap.cpp
 
 #include "FlatMap.hpp"
 
-#include <iostream>
-#include <array>
-
+#include <algorithm>
+#include <utility>
+#include <memory>
+#include <cstddef>
+#include <cstdint>
 
 namespace impl
 {

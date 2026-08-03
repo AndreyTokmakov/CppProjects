@@ -10,8 +10,10 @@ Description : FlatMap_Fast.hpp
 #ifndef CPPPROJECTS_FLATMAP_FAST_HPP
 #define CPPPROJECTS_FLATMAP_FAST_HPP
 
+#include <algorithm>
 #include <utility>
 #include <memory>
+#include <cstdint>
 
 namespace flat_map_fast::impl
 {

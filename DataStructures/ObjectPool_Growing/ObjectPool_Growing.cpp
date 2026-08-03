@@ -14,6 +14,8 @@ Description : ObjectPool_Growing
 #include <numeric>
 #include <iostream>
 #include <cassert>
+#include <cmath>
+
 
 namespace ObjectPool_Growing
 {

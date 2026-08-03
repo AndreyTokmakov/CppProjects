@@ -13,6 +13,8 @@ Description : InplaceVector.cpp
 #include <print>
 #include <inplace_vector>
 
+#if __cplusplus > 202302L
+
 namespace inplace_vector_tests
 {
     void basics()
@@ -65,10 +67,14 @@ namespace inplace_vector_tests
     }
 }
 
+#endif
+
 void inplace_vector::TestAll()
 {
+#if __cplusplus > 202302L
     inplace_vector_tests::basics();
 
     // inplace_vector_tests::try_emplace_back();
     // inplace_vector_tests::unchecked_emplace_back();
+#endif
 }
