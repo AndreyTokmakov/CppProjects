@@ -31,7 +31,7 @@ namespace
 namespace Variant::set_value_bases_on_type_1
 {
     template<typename VarType, typename Variant, typename Item>
-    bool checkTypeAndSet(Variant& variable, const Item& item)
+    constexpr bool checkTypeAndSet(Variant& variable, const Item& item)
     {
         using ItemType = std::remove_cv_t<std::remove_reference_t<Item>>;
         if constexpr  (std::is_same_v<VarType, ItemType>) {
@@ -42,7 +42,7 @@ namespace Variant::set_value_bases_on_type_1
     }
 
     template<typename VarType, typename Item, size_t... Idx>
-    bool setValueImpl(std::index_sequence<Idx...>, VarType& variable, const Item& item) {
+    constexpr bool setValueImpl(std::index_sequence<Idx...>, VarType& variable, const Item& item) {
         return (checkTypeAndSet<std::variant_alternative_t<Idx, VarType>>(variable, item) || ... );
     }
 
@@ -57,7 +57,7 @@ namespace Variant::set_value_bases_on_type_1
 namespace Variant::set_value_bases_on_type_2
 {
     template<typename VarType, typename Variant, typename Item>
-    bool checkTypeAndSet(Variant& variable, const Item& item)
+    constexpr bool checkTypeAndSet(Variant& variable, const Item& item)
     {
         using ItemType = std::remove_cv_t<std::remove_reference_t<Item>>;
         if constexpr  (std::is_same_v<VarType, ItemType>) {
@@ -68,7 +68,7 @@ namespace Variant::set_value_bases_on_type_2
     }
 
     template<typename ... Ts, typename Ty>
-    bool setValue(std::variant<Ts...>& variable, const Ty& value)
+    constexpr bool setValue(std::variant<Ts...>& variable, const Ty& value)
     {
         return (checkTypeAndSet<Ts>(variable, value) || ... );
     }
@@ -76,10 +76,32 @@ namespace Variant::set_value_bases_on_type_2
 
 namespace Variant::set_value_bases_on_type_tests
 {
-    using set_value_bases_on_type_1::setValue;
-    // using set_value_bases_on_type_2::setValue;
+    // using set_value_bases_on_type_1::setValue;
+    using set_value_bases_on_type_2::setValue;
 
-    void test1()
+    template<typename ... Ts,typename Item>
+    bool testImpl(std::variant<Ts...> variable, const Item& item, const bool resultExpected)
+    {
+        using ItemType = std::remove_cv_t<std::remove_reference_t<Item>>;
+        if (const bool result = setValue(variable, item); resultExpected != result) {
+            std::cerr << "Failed to set value" << std::endl;
+            return false;
+        }
+        if (!std::holds_alternative<ItemType>(variable)) {
+            std::cerr << "std::variant<Ts...> variable initialized with wrong type" << std::endl;
+            return false;
+        }
+        const ItemType varValue = std::get<ItemType>(variable);
+        if (varValue != item) {
+            std::cerr << varValue << " != " << item << std::endl;
+            return false;
+        }
+
+        std::cout <<"Test passed\n";
+        return true;
+    }
+
+    void debugTest()
     {
         // const bool item = true;
         // const int item = 1;
@@ -94,12 +116,19 @@ namespace Variant::set_value_bases_on_type_tests
         }
     }
 
-
+    void runTests()
+    {
+        testImpl( std::variant<bool, int32_t, double, std::string> {}, int32_t{0}, true);
+        testImpl( std::variant<bool, int32_t, double, std::string> {}, false, true);
+        testImpl( std::variant<bool, int32_t, double, std::string> {}, 12.23, true);
+        testImpl( std::variant<bool, int32_t, double, std::string> {}, std::string { "1234"}, true);
+    }
 }
 
 
 void Variant::Set_Value_Bases_on_Type::TestAll()
 {
     using namespace set_value_bases_on_type_tests;
-    test1();
+    // debugTest();
+    runTests();
 }
