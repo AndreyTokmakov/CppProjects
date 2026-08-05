@@ -1418,6 +1418,7 @@ void Variant::TestAll()
 {
 	// Matcher_Visitor::TestAll();
 	// ParsersVariantDemo::TestAll();
+	Set_Value_Bases_on_Type::TestAll();
 
 	// Variant_Tests::VariantCreate_Tests();
 
@@ -1461,7 +1462,7 @@ void Variant::TestAll()
 	// VisitTests::Visit_With_Overloads_2();
 	// VisitTests::Vizit_Multiple_Variants();
 
-	StoreVariants_InCollection_FindElement::findInCollection();
+	// StoreVariants_InCollection_FindElement::findInCollection();
 
     // Variant_InitAndGetValue_Tests_1();
     // Variant_InitAndGetValue_Tests_2();

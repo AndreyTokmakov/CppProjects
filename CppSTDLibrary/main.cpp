@@ -129,7 +129,7 @@ int main([[maybe_unused]] const int argc,
     // Auto::TestAll();
     // BitSet::TestAll();
     // Bit_Manipulation::TestAll();
-    bytes::TestAll();
+    // bytes::TestAll();
     // Chrono::TestAll();
     // ContextControl::TestAll();
     // Comparators::TestAll();
@@ -192,7 +192,7 @@ int main([[maybe_unused]] const int argc,
     // Stacktrace::TestAll();
     // SourceLocation::TestAll();
     // SharedPtr_Tests::TestAll();
-    // Variant::TestAll();
+    Variant::TestAll();
     // VolatileTests::TestAll();
     // TypeTraits::TestAll();
     // Types::Tests();

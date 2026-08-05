@@ -115,6 +115,7 @@ add_executable(${PROJECT_NAME}
 		Variant/Variant.cpp
 		Variant/Matcher_Visitor.cpp
 		Variant/ParsersVariantDemo.cpp
+		Variant/Set_Value_Bases_on_Type.cpp
 
 		WeakPtr/WeakPtr.cpp
 		WeakPtr/WeakPtr_MakeShared.cpp

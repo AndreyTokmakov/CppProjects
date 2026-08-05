@@ -10,10 +10,8 @@ Description : FlatMap.cpp
 #include "FlatMap.hpp"
 
 #include <algorithm>
-#include <utility>
-#include <memory>
-#include <cstddef>
-#include <cstdint>
+#include <iostream>
+
 
 namespace impl
 {

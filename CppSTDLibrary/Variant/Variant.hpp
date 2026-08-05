@@ -16,6 +16,7 @@ namespace Variant
 
 	namespace Matcher_Visitor { void TestAll(); }
 	namespace ParsersVariantDemo { void TestAll(); }
+	namespace Set_Value_Bases_on_Type { void TestAll(); }
 }
 
 #endif //!VARIANT__INCLUDE_GUARD__H
