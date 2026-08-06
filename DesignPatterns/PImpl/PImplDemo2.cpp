@@ -1,5 +1,5 @@
 /**============================================================================
-Name        : PImplDemo2.h
+Name        : PImplDemo2.cpp
 Created on  : 03.06.2023
 Author      : Andrei Tokmakov
 Version     : 1.0
@@ -7,16 +7,16 @@ Copyright   : Your copyright notice
 Description : PImpl Pointer to implementation
 ============================================================================**/
 
-#include "PImpl.h"
+#include "PImpl.hpp"
 
 #include <iostream>
 #include <memory>
-#include <vector>
 
 
-namespace PImpl::PImplDemo2
+namespace
 {
-    struct Interface {
+    struct Interface
+    {
         virtual ~Interface() = default;
 
         virtual void DoSth() = 0;
@@ -99,14 +99,11 @@ namespace PImpl::PImplDemo2
     };
 }
 
-
-void Demo2()
+void pimpl::pimpl_demo_2::TestAll()
 {
-    using namespace PImpl::PImplDemo2;
 
     std::shared_ptr<Interface> impl1 { std::make_shared<MyClassImpl>() };
     std::shared_ptr<Interface> impl2 { std::make_shared<MyClassImplEx>() };
-
     std::unique_ptr<Interface> client { std::make_unique<MyClass>(impl1)};
 
     client->DoSth();

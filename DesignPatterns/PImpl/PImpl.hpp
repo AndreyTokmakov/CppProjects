@@ -1,5 +1,5 @@
 /**============================================================================
-Name        : PImpl.h
+Name        : PImpl.hpp
 Created on  : 24.02.2023
 Author      : Andrei Tokmakov
 Version     : 1.0
@@ -10,8 +10,11 @@ Description : PImpl" Pointer to implementation
 #ifndef CPPPROJECTS_PIMPL_H
 #define CPPPROJECTS_PIMPL_H
 
-namespace PImpl {
+namespace pimpl
+{
     void TestAll();
+    namespace pimpl_demo_1 {  void TestAll(); }
+    namespace pimpl_demo_2 {  void TestAll(); }
 }
 
 #endif // !CPPPROJECTS_PIMPL_H

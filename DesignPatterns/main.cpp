@@ -25,7 +25,7 @@ Description : Software design patterns C++ test project
 #include "Flyweight/Flyweight.h"
 #include "Facade//Facade.h"
 #include "Bridge/Bridge.hpp"
-#include "PImpl/PImpl.h"
+#include "PImpl/PImpl.hpp"
 #include "Command/Command.hpp"
 #include "ChainOfResponsibility/ChainOfResponsibility.hpp"
 #include "Decorator/Decorator.h"
@@ -81,7 +81,7 @@ int main([[maybe_unused]]  int argc,
     /** Structural patterns: **/
     // Adapter::TestAll();
     // bridge::TestAll();
-    // PImpl::TestAll();
+    pimpl::TestAll();
     // Composite::Test();
     // Facade::Test();
     // Decorator::Test();
@@ -102,7 +102,7 @@ int main([[maybe_unused]]  int argc,
     // Mediator::TestAll();
     // Memento::TestAll();
     // Observer::TestAll();
-    state::TestAll();
+    // state::TestAll();
     // TemplateMethod::TestAll();
     // Visitor::test();
     // NULL OBJECT

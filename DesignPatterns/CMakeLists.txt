@@ -123,8 +123,11 @@ add_executable(${PROJECT_NAME}
 		Visitor/DynamicComponentsVisitor.cpp
 		Observer/ObserverSubject.cpp
 		Visitor/CarVisitor.cpp
+
 		PImpl/PImpl.cpp
+		PImpl/PImplDemo1.cpp
 		PImpl/PImplDemo2.cpp
+
 		Monostate/Monostate.cpp
 		NVI/NVI_SimpleExample.cpp
 		Decorator/MoneyTaxesDecoratorOne.cpp
