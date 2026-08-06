@@ -1,13 +1,13 @@
-//============================================================================
-// Name        : FlyweightIcon.cpp
-// Created on  : 12.04.2020
-// Author      : Tokmakov Andrey
-// Version     : 1.0
-// Copyright   : Your copyright notice
-// Description : Flyweight pattern src
-//============================================================================
+/**============================================================================
+Name        : IconFlyweight.cpp
+Created on  : 12.04.2020
+Author      : Andrei Tokmakov
+Version     : 1.0
+Copyright   : Your copyright notice
+Description : Flyweight pattern src
+============================================================================**/
 
-#include "Flyweight.h"
+#include "Flyweight.hpp"
 
 #include <iostream>
 #include <string>
@@ -15,15 +15,14 @@
 #include <memory>
 #include <vector>
 
-
-namespace Flyweight::FlyweightIcon {
-
-    class Icon {
-    private:
-        inline static constexpr std::string_view goIconName = "go";
-        inline static constexpr std::string_view stopIconName = "stop";
-        inline static constexpr std::string_view selectIconName = "select";
-        inline static constexpr std::string_view undoIconName = "go";
+namespace
+{
+    class Icon
+    {
+        static constexpr std::string_view goIconName = "go";
+        static constexpr std::string_view stopIconName = "stop";
+        static constexpr std::string_view selectIconName = "select";
+        static constexpr std::string_view undoIconName = "go";
 
     protected:
         std::string name;
@@ -33,7 +32,8 @@ namespace Flyweight::FlyweightIcon {
     public:
 
         template<typename S>
-        explicit Icon(S &&name) : name{std::forward<S>(name)} {
+        explicit Icon(S &&name) : name{std::forward<S>(name)}
+        {
             if (Icon::goIconName == name) {
                 this->width = 20;
                 this->height = 20;
@@ -53,11 +53,11 @@ namespace Flyweight::FlyweightIcon {
         }
 
         [[nodiscard]]
-        inline const std::string &getName() const noexcept {
+        const std::string &getName() const noexcept {
             return this->name;
         }
 
-        void draw(size_t x, size_t y) const noexcept {
+        void draw(const size_t x, const size_t y) const noexcept {
             std::cout << "   drawing " << name << ": upper left (" << x << "," << y
                       << ") - lower right (" << x + width << "," << y + height << ")"
                       << std::endl;
@@ -65,10 +65,10 @@ namespace Flyweight::FlyweightIcon {
     };
 
 
-    class FlyweightFactory final {
-    private:
+    class FlyweightFactory final
+    {
         std::unordered_map<std::string_view , std::shared_ptr<Icon>> icons;
-        inline static constexpr size_t INITIAL_CAPACITY{10};
+        static constexpr size_t INITIAL_CAPACITY{10};
 
     public:
         static FlyweightFactory *getFactory() {
@@ -77,17 +77,19 @@ namespace Flyweight::FlyweightIcon {
         }
 
     public:
+
         template<typename S>
-        std::shared_ptr<Icon> getIcon(S &&iconName) {
+        std::shared_ptr<Icon> getIcon(S &&iconName)
+        {
             if (auto iter = this->icons.find(std::forward<S>(iconName)); this->icons.end() != iter)
                 return iter->second;
             return this->icons.emplace(std::forward<S>(iconName),
                                        std::make_shared<Icon>(std::forward<S>(iconName))).first->second;
         }
 
-        // std::shared_ptr<Icon> getIcon(const std::string& iconName);
 
-        void reportTheIcons() const noexcept {
+        void reportTheIcons() const noexcept
+        {
             std::cout << "\nActive Flyweights: " << std::endl;
             for (const auto &[k, v]: this->icons)
                 std::cout << "   [ " << k << " ]" << std::endl;
@@ -100,31 +102,31 @@ namespace Flyweight::FlyweightIcon {
 
         // Seal copy & move constructor
         FlyweightFactory(const FlyweightFactory &root) = delete;
-
         FlyweightFactory(FlyweightFactory &&root) noexcept = delete;
 
         // Disable copy assign
         FlyweightFactory operator=(const FlyweightFactory &) = delete;
-
         FlyweightFactory operator=(FlyweightFactory &&) noexcept = delete;
     };
 
 }
 
-namespace Flyweight::FlyweightIcon_Impl1 {
-
-    using namespace FlyweightIcon;
+namespace flyweight::FlyweightIcon_Impl1
+{
 
     // DialogBox abstract class:
-    struct DialogBox {
+    struct DialogBox
+    {
         std::vector<std::shared_ptr<Icon>> icons;
         int iconsOriginX;
         int iconsOriginY;
         int iconsXIncrement;
         inline const static int ICON_MAX = 3;
 
-    public:
-        DialogBox(int x, int y, int incr): iconsOriginX(x), iconsOriginY(y), iconsXIncrement(incr) {
+
+        DialogBox(const int x, const int y, const int incr):
+        iconsOriginX(x), iconsOriginY(y), iconsXIncrement(incr)
+        {
             // Reserve some space.
             this->icons.reserve(DialogBox::ICON_MAX);
         }
@@ -135,7 +137,8 @@ namespace Flyweight::FlyweightIcon_Impl1 {
     };
 
 
-    struct FileSelection: DialogBox {
+    struct FileSelection: DialogBox
+    {
         FileSelection(const std::shared_ptr<Icon>& first,
                       const std::shared_ptr<Icon>& second,
                       const std::shared_ptr<Icon>& third) : DialogBox(100, 100, 100)
@@ -152,7 +155,8 @@ namespace Flyweight::FlyweightIcon_Impl1 {
         }
     };
 
-    struct CommitTransaction: DialogBox {
+    struct CommitTransaction: DialogBox
+    {
         CommitTransaction(const std::shared_ptr<Icon>& first,
                           const std::shared_ptr<Icon>& second,
                           const std::shared_ptr<Icon>& third) : DialogBox(150, 150, 150)
@@ -193,9 +197,8 @@ namespace Flyweight::FlyweightIcon_Impl1 {
 }
 
 
-namespace Flyweight::FlyweightIcon_Impl2{
-
-    using namespace FlyweightIcon;
+namespace flyweight::FlyweightIcon_Impl2
+{
 
     struct DialogBox
     {
@@ -242,10 +245,11 @@ namespace Flyweight::FlyweightIcon_Impl2{
         }
     };
 
-    struct CommitTransaction: DialogBox {
-        CommitTransaction(std::string_view first,
-                          std::string_view second,
-                          std::string_view third) : DialogBox(150, 150, 150)
+    struct CommitTransaction: DialogBox
+    {
+        CommitTransaction(const std::string_view first,
+                          const std::string_view second,
+                          const std::string_view third) : DialogBox(150, 150, 150)
         {
             addIcon(first);
             addIcon(second);
@@ -276,6 +280,6 @@ namespace Flyweight::FlyweightIcon_Impl2{
 
 void IconFlyweightTest()
 {
-    // Flyweight::FlyweightIcon_Impl1::Test();
-    Flyweight::FlyweightIcon_Impl2::Test();
+    flyweight::FlyweightIcon_Impl1::Test();
+    // flyweight::FlyweightIcon_Impl2::Test();
 }

@@ -22,7 +22,7 @@ Description : Software design patterns C++ test project
 #include "Builder/Builder.h"
 #include "ObjectPools/ObjectPools.h"
 #include "Filter/Filter.h"
-#include "Flyweight/Flyweight.h"
+#include "Flyweight/Flyweight.hpp"
 #include "Facade//Facade.h"
 #include "Bridge/Bridge.hpp"
 #include "PImpl/PImpl.hpp"
@@ -81,11 +81,11 @@ int main([[maybe_unused]]  int argc,
     /** Structural patterns: **/
     // Adapter::TestAll();
     // bridge::TestAll();
-    pimpl::TestAll();
+    // pimpl::TestAll();
     // Composite::Test();
     // Facade::Test();
     // Decorator::Test();
-    // Flyweight::Test();
+    flyweight::TestAll();
     // ModelViewController::TestAll();
     // Proxy::CarTest();
     // Proxy::DocumentTest();

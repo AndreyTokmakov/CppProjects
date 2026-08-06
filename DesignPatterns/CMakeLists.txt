@@ -58,7 +58,10 @@ add_executable(${PROJECT_NAME}
 
 		Facade/Facade.cpp Facade/Facade.h
 		Filter/Filter.cpp Filter/Filter.h Filter/Filter_ColorSize.cpp
-		Flyweight/Flyweight.cpp Flyweight/Flyweight.h Flyweight/IconFlyweight.cpp
+
+		Flyweight/Flyweight.cpp
+		Flyweight/IconFlyweight.cpp
+		Flyweight/FlyweightCharacter.cpp
 
 		Interpreter/Interpreter.cpp
 		Interpreter/Interpreter_DSL.cpp
