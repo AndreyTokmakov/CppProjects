@@ -1,0 +1,29 @@
+{
+  "version": "1.2.3.4",
+  "profiles":
+  [
+    {
+      "id": 11,
+      "seq": null,
+      "uuid": "9efb0278-9898-4e54-96e0-af476a73b1d1",
+      "name": "Profile-1",
+      "description": "Some Test Profile-1 description",
+      "ratio": 12.34
+    },
+    {
+      "id": 1,
+      "seq": 1,
+      "uuid": "7e3f47ec-c682-4a02-9336-82c4aa643849",
+      "name": "Profile-2",
+      "description": "Some Test Profile-2 description",
+      "ratio": 1.005
+    },
+    {
+      "seq": 2,
+      "uuid": "9ac9b1f5-f868-4339-b523-3a0294f8bcfc",
+      "name": "Profile-3",
+      "description": "Some Test Profile-3 description",
+      "ratio": 0.001
+    }
+  ]
+}

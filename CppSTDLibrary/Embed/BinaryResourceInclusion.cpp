@@ -9,20 +9,42 @@ Description : BinaryResourceInclusion.cpp
 
 #include "BinaryResourceInclusion.hpp"
 
+#include <filesystem>
 #include <iostream>
+#include <vector>
+#include <fstream>
+#include <print>
 
-namespace Embed
+#define TEST_DIR "\"../../CppSTDLibrary/data/"
+#define TEST_DIR_FILE(file) TEST_DIR file "\""
+
+namespace
 {
-    static constexpr unsigned char data[] = {
+    constexpr unsigned char data[] {
         #embed "../../CppSTDLibrary/data/test_file.txt"
             ,'\0' // null terminator
     };
 
-    static constexpr unsigned char message[] =
-    {
+    constexpr unsigned char message[] {
         #embed "../../CppSTDLibrary/data/message.txt" if_empty('M', 'i', 's', 's', 'i', 'n', 'g', '\n')
             ,'\0' // null terminator
     };
+
+    constexpr unsigned char largeMessage[] {
+        #embed "../../CppSTDLibrary/data/large_message.txt" limit(16)
+    };
+
+    constexpr unsigned char default_config[] = {
+        #embed "../../CppSTDLibrary/data/defaults.json"
+    };
+
+    std::vector<uint8_t> loadConfig(const std::filesystem::path & path)
+    {
+        if (std::ifstream file(path, std::ios::binary); file.is_open()) {
+            return {std::istreambuf_iterator<char>(file),std::istreambuf_iterator<char>()};
+        }
+        return {std::begin(default_config), std::end(default_config)};
+    }
 
     /*
     static constexpr unsigned char data2[] = {
@@ -30,7 +52,7 @@ namespace Embed
     };
 
     constexpr auto config = {
-        #embed "config.toml" as(text)
+        #embed "../../CppSTDLibrary/data/large_message.txt" as(text)
     };
 
     constexpr auto blob = {
@@ -49,15 +71,27 @@ namespace Embed
 
     */
 
+    // limit(64)
+
     void test()
     {
         std::cout << data << std::endl;
         std::cout << message << std::endl;
+        std::cout << largeMessage << std::endl;
+    }
+
+    void loadConfigTest()
+    {
+        // std::println("{}", loadConfig(""));
+        for (char c: loadConfig("")) {
+            std::cout << c;
+        }
     }
 }
 
 
 void Embed::TestAll()
 {
-    Embed::test();
+    // test();
+    loadConfigTest();
 }
