@@ -15,6 +15,7 @@ namespace published_subscriber
     void TestAll();
     namespace simple_subscriber_callback { void TestAll(); }
     namespace subscriber_different_events { void TestAll(); }
+    namespace subscriber_different_topics_static { void TestAll(); }
 }
 
 #endif //CPPPROJECTS_PUBSUB_HPP

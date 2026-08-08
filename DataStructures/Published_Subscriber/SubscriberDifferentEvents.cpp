@@ -127,7 +127,9 @@ namespace
     {
         Subscription() noexcept = default;
 
-        Subscription(const std::shared_ptr<IEventBus>& bus, const std::type_index type, const SubscriptionId id) noexcept
+        Subscription(const std::shared_ptr<IEventBus>& bus,
+                     const std::type_index type,
+                     const SubscriptionId id) noexcept
             : eventBus { bus }, type { type }, id { id } {
         }
 
@@ -169,7 +171,8 @@ namespace
         SubscriptionId id { 0 };
     };
 
-    struct EventBus final: IEventBus, std::enable_shared_from_this<EventBus>
+    struct EventBus final: public IEventBus,
+                           public std::enable_shared_from_this<EventBus>
     {
         template<typename Event, typename SubType>
         class Subscriber final : public ISubscriber
@@ -195,7 +198,7 @@ namespace
             SubType& subscriber;
         };
 
-        using Subscribers = std::vector<std::unique_ptr<ISubscriber>>;
+        using Channel = std::vector<std::unique_ptr<ISubscriber>>;
 
     public:
 
@@ -208,7 +211,7 @@ namespace
             const std::type_index type = std::type_index { typeid(Event) };
             const SubscriptionId id = nextId++;
 
-            Subscribers& subscribers = getSubscribers(type);
+            Channel& subscribers = getSubscribers(type);
 
             subscribers.push_back(std::make_unique<Subscriber<Event, SubType>>(id, subscriber));
             return Subscription { shared_from_this(), type, id };
@@ -235,7 +238,7 @@ namespace
                 return;
             }
 
-            Subscribers& subscribersForType = iterator->second;
+            Channel& subscribersForType = iterator->second;
             const auto subscriber = std::ranges::find_if(subscribersForType, [id](const auto& item) {
                 return item->getId() == id;
             });
@@ -247,13 +250,13 @@ namespace
     private:
 
         [[nodiscard]]
-        Subscribers& getSubscribers(const std::type_index type){
+        Channel& getSubscribers(const std::type_index type){
             return subscribersTable[type];
         }
 
     private:
 
-        std::unordered_map<std::type_index, Subscribers> subscribersTable;
+        std::unordered_map<std::type_index, Channel> subscribersTable;
         SubscriptionId nextId { 0 };
 
         friend struct Subscription;
@@ -345,4 +348,4 @@ AuditLog: renamed user 42 from Alice to Alice Smith
 Created users: 1
 Deleted users: 1
 UserLogger: user created: 100, Bob
-**.
+**/
