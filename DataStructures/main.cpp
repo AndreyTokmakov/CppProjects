@@ -72,6 +72,7 @@ Description : DataStructures
 #include "SynchronizedWrapper/SynchronizedWrapper.hpp"
 #include "TaskExecutor/Executors.hpp"
 #include "TaskSBO/TaskSBO.hpp"
+#include "Published_Subscriber/PubSub.hpp"
 
 
 
@@ -130,6 +131,8 @@ int main([[maybe_unused]] int argc,
 
 	// MPMCQueue::TestAll();
 
+	published_subscriber::TestAll();
+
     // GenericTableTemplate::TestAll();
 
     // Memory::AlignedStackAllocator::TestAll();
@@ -150,7 +153,7 @@ int main([[maybe_unused]] int argc,
 
 	// state_manager::TestAll();
 
-	synchronized_wrapper::TestAll();
+	// synchronized_wrapper::TestAll();
 
 	// task_executor::TestAll();
 	// tast_sbo::TestAll();

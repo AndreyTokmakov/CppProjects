@@ -76,6 +76,9 @@ add_executable(${PROJECT_NAME}
 		SharedPtr/SharedPtr.cpp
 		UniquePtr/UniquePtr.cpp
 
+		Published_Subscriber/PubSub.cpp
+		Published_Subscriber/SimpleSubscriberCallback.cpp
+
 		Barrier/Barrier.cpp
 		Semaphore/Semaphore.cpp
 
