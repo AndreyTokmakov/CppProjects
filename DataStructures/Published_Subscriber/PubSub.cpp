@@ -11,5 +11,6 @@ Description : PubSub.cpp
 
 void published_subscriber::TestAll()
 {
-    simple_subscriber_callback::TestAll();
+    // simple_subscriber_callback::TestAll();
+    subscriber_different_events::TestAll();
 }

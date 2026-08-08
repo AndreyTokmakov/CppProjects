@@ -78,6 +78,7 @@ add_executable(${PROJECT_NAME}
 
 		Published_Subscriber/PubSub.cpp
 		Published_Subscriber/SimpleSubscriberCallback.cpp
+		Published_Subscriber/SubscriberDifferentEvents.cpp
 
 		Barrier/Barrier.cpp
 		Semaphore/Semaphore.cpp
