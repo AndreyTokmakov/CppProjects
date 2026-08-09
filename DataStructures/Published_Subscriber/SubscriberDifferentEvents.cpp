@@ -82,7 +82,6 @@ Description : SubscriberDifferentEvents.cpp
 
 namespace
 {
-    //struct IEvent{};
     using SubscriptionId = size_t;
 
     struct UserCreated

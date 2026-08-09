@@ -184,8 +184,8 @@ namespace
         template<Topic TopicType>
         void publish(const EventType<TopicType>& event)
         {
-            Channel<TopicType>& channel = getChannel<TopicType>();
-            for (const auto& subscriber : channel.subscribers) {
+            const Channel<TopicType>& channel = getChannel<TopicType>();
+            for (const std::unique_ptr<ISubscriber>& subscriber : channel.subscribers) {
                 subscriber->invoke(&event);
             }
         }

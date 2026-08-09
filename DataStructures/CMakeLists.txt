@@ -80,6 +80,7 @@ add_executable(${PROJECT_NAME}
 		Published_Subscriber/SimpleSubscriberCallback.cpp
 		Published_Subscriber/SubscriberDifferentEvents.cpp
 		Published_Subscriber/SubscriberDifferentTopicsStatic.cpp
+		Published_Subscriber/SubscriberDifferentTopicsDeferRemove.cpp
 
 		Barrier/Barrier.cpp
 		Semaphore/Semaphore.cpp

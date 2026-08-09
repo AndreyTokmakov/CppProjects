@@ -13,5 +13,6 @@ void published_subscriber::TestAll()
 {
     // simple_subscriber_callback::TestAll();
     // subscriber_different_events::TestAll();
-    subscriber_different_topics_static::TestAll();
+    // subscriber_different_topics_static::TestAll();
+    subscriber_different_topics_defer_remove::TestAll();
 }
