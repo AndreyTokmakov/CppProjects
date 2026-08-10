@@ -14,6 +14,7 @@ namespace queues
 {
     void TestAll();
     namespace priority_dispatcher { void TestAll(); }
+    namespace multi_level_queue { void TestAll(); }
 }
 
 #endif //CPPPROJECTS_QUEUES_HPP

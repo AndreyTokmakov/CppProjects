@@ -73,6 +73,7 @@ add_executable(${PROJECT_NAME}
 
 		Queues/Queues.cpp
 		Queues/PriorityDispatcher.cpp
+		Queues/MultiLevelQueue.cpp
 
 		SynchronizedWrapper/SynchronizedWrapper.cpp
 

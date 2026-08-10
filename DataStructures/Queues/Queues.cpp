@@ -11,5 +11,26 @@ Description : Queues.cpp
 
 void queues::TestAll()
 {
-    priority_dispatcher::TestAll();
+    // priority_dispatcher::TestAll();
+    multi_level_queue::TestAll();
 }
+
+/*
+Priority Queue
+      ↓
+Priority Dispatcher
+      ↓
+Multi-Level Queue
+      ↓
+Weighted Fair Queue
+      ↓
+Aging
+      ↓
+Priority Inversion
+      ↓
+Priority Inheritance
+      ↓
+Deadline Scheduling
+      ↓
+EDF
+*/
