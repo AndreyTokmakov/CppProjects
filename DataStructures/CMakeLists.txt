@@ -71,6 +71,9 @@ add_executable(${PROJECT_NAME}
 		RingBuffer/RingBuffer_SPSC.cpp
 		StaticString/StaticString.cpp
 
+		Queues/Queues.cpp
+		Queues/PriorityDispatcher.cpp
+
 		SynchronizedWrapper/SynchronizedWrapper.cpp
 
 		SharedPtr/SharedPtr.cpp

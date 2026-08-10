@@ -18,6 +18,7 @@ Description : SubscriberDifferentTopicsDeferRemove.cpp
 #include <cstdint>
 #include <map>
 #include <memory>
+#include <atomic>
 
 namespace
 {
