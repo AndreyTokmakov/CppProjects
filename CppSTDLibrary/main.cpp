@@ -145,7 +145,7 @@ int main([[maybe_unused]] const int argc,
     // DateAndTime::TestAll();
     // enums::TestAll();
     // Errors::TestAll();
-    Embed::TestAll();
+    // Embed::TestAll();
     // Exceptions::TestAll();
     // Expected::TestAll();
     // StrongTypes::TestAll();
@@ -199,7 +199,7 @@ int main([[maybe_unused]] const int argc,
     // Tuple::TestAll();
     // TypeCast::TestAll();
     // Int::TestAll();
-    // Templates::TestAll();
+    Templates::TestAll();
     // Utilities::TestAll();
     // UniquePtr::TestAll();
     // WeakPtr::TestAll();
