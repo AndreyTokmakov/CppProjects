@@ -74,6 +74,7 @@ Description : DataStructures
 #include "TaskSBO/TaskSBO.hpp"
 #include "Published_Subscriber/PubSub.hpp"
 #include "Queues/Queues.hpp"
+#include "MeticsCollector/metrics.hpp"
 
 
 
@@ -132,7 +133,9 @@ int main([[maybe_unused]] int argc,
 
 	// MPMCQueue::TestAll();
 
-	queues::TestAll();
+	// queues::TestAll();
+
+	metrics::TestAll();
 
 	// published_subscriber::TestAll();
 

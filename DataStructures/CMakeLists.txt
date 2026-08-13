@@ -97,6 +97,9 @@ add_executable(${PROJECT_NAME}
 
 		MineSet_Fast/MiniSet.cpp
 		StateManager/StateManager.cpp
+
+		MeticsCollector/metrics.cpp
+		MeticsCollector/MetricsController.cpp
 )
 
 
