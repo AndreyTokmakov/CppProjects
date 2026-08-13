@@ -100,6 +100,7 @@ add_executable(${PROJECT_NAME}
 
 		MeticsCollector/metrics.cpp
 		MeticsCollector/MetricsController.cpp
+		MeticsCollector/MetricsControllerEx.cpp
 )
 
 

@@ -11,5 +11,6 @@ Description : metrics.cpp
 
 void metrics::TestAll()
 {
-    metrics_controller::TestAll();
+    // metrics_controller::TestAll();
+    metrics_controller_ex::TestAll();
 }
