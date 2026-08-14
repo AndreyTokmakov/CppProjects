@@ -14,6 +14,7 @@ add_executable(${PROJECT_NAME}
 		BitSet/BitSet.cpp
 		BitFlags/BitFlags.cpp
 		CircularBuffers/CircularBuffers.cpp
+		CommandWrapper/CommandWrapper.cpp
 		Logger/Logger.cpp
 		LRUCache/LRUCache.cpp
         ObjectPool/ObjectPool.cpp
@@ -101,6 +102,8 @@ add_executable(${PROJECT_NAME}
 		MeticsCollector/metrics.cpp
 		MeticsCollector/MetricsController.cpp
 		MeticsCollector/MetricsControllerEx.cpp
+
+
 )
 
 

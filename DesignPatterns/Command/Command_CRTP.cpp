@@ -87,7 +87,8 @@ namespace
             };
         }
 
-        void execute() {
+        void execute()
+        {
             std::invoke(callback, storage.data());
             // callback(storage.data());
         }

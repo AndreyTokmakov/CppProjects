@@ -85,7 +85,7 @@ int main([[maybe_unused]]  int argc,
     // Composite::Test();
     // Facade::Test();
     // Decorator::Test();
-    flyweight::TestAll();
+    // flyweight::TestAll();
     // ModelViewController::TestAll();
     // Proxy::CarTest();
     // Proxy::DocumentTest();
@@ -96,7 +96,7 @@ int main([[maybe_unused]]  int argc,
     // Strategy::Test();
     // Policy::Test();
     // chain_of_responsibility::TestAll();
-    // command::testAll();
+    command::testAll();
     // Iterator::Test();
     // interpreter::TestAll();
     // Mediator::TestAll();

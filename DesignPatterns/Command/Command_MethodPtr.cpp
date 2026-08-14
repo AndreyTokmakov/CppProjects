@@ -39,7 +39,7 @@ namespace
     class Person
     {
         std::string name {};
-        Command<Person> cmd {};
+        // Command<Person> cmd {};
 
     public:
         explicit Person(std::string n): name { std::move(n) } {

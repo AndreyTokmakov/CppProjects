@@ -75,6 +75,7 @@ Description : DataStructures
 #include "Published_Subscriber/PubSub.hpp"
 #include "Queues/Queues.hpp"
 #include "MeticsCollector/metrics.hpp"
+#include "CommandWrapper/CommandWrapper.hpp"
 
 
 
@@ -135,7 +136,9 @@ int main([[maybe_unused]] int argc,
 
 	// queues::TestAll();
 
-	metrics::TestAll();
+	// metrics::TestAll();
+
+	command_wrapper::TestAll();
 
 	// published_subscriber::TestAll();
 

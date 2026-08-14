@@ -83,6 +83,10 @@ add_executable(${PROJECT_NAME}
         Optional/Custom_Optional.cpp
 		PolymorphicMemoryResources/PolymorphicMemoryResources.cpp
 		Polymorphic/Polymorphic.cpp
+
+		Indirect/Indirect.cpp
+		Indirect/pImpl.cpp
+
 		Random/Random.cpp
 
 		Ranges_Views/Ranges.cpp

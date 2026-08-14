@@ -57,6 +57,7 @@ Description : Cpp STD lib
 #include "Print/Print.h"
 #include "PolymorphicMemoryResources/PolymorphicMemoryResources.h"
 #include "Polymorphic/Polymorphic.hpp"
+#include "Indirect/Indirect.hpp"
 #include "MoveSemantics/MoveSemantics.h"
 #include "NameSpaces/InlineNamespaces.h"
 #include "Numbers/Numbers.h"
@@ -100,7 +101,6 @@ Description : Cpp STD lib
 #include <vector>
 #include <map>
 #include <string_view>
-
 
 
 int main([[maybe_unused]] const int argc,
@@ -174,6 +174,7 @@ int main([[maybe_unused]] const int argc,
     // Optional::TestAll();
     // Overflow::TestAll();
     // PolymorphicMemoryResources::TestAll();
+    memory::indirect::TestAll();
     // Print::TestAll();
     // Random::TestAll();
     // Ranges::TestAll();
@@ -199,7 +200,7 @@ int main([[maybe_unused]] const int argc,
     // Tuple::TestAll();
     // TypeCast::TestAll();
     // Int::TestAll();
-    Templates::TestAll();
+    // Templates::TestAll();
     // Utilities::TestAll();
     // UniquePtr::TestAll();
     // WeakPtr::TestAll();
