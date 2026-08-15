@@ -8,6 +8,7 @@ project(${PROJECT_NAME} VERSION ${PROJECT_VERSION} LANGUAGES CXX)
 add_compile_options(-c -Wall -Wextra -O3 -std=c++2c)
 
 add_library(utils
+        Arrays.hpp
         StringUtilities.cpp
         FileUtilities.cpp
         CSVReader/CSVReader.cpp

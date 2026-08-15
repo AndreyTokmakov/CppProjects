@@ -30,6 +30,7 @@ Description : C++ Utilities
 #include "PerfUtilities.hpp"
 #include "Testing.hpp"
 #include "Random.hpp"
+#include "Arrays.hpp"
 
 
 #include "FinalAction.hpp"
@@ -471,12 +472,107 @@ namespace scoped_timer_tests
     }
 }
 
-// TODO: BitUtils
-//      - check bit is set
-//      - set bit
-//      - unset bit
-//      - check is Odd
-//      - check is Even
+namespace utilities::arrays::tests
+{
+    void assertTrue(const bool condition)
+    {
+        if (!condition)
+            std::terminate();
+    }
+
+    void testEmpty()
+    {
+        constexpr auto result = array_cat<int>();
+        static_assert(result.empty());
+        static_assert(result.size() == 0);
+        assertTrue(result.empty());
+    }
+
+    void testSingleArray()
+    {
+        constexpr std::array source { 1, 2, 3 };
+
+        constexpr auto result = array_cat(source);
+        static_assert(result.size() == 3);
+        static_assert(result[0] == 1);
+        static_assert(result[1] == 2);
+        static_assert(result[2] == 3);
+        static_assert(result == source);
+    }
+
+    void testTwoArrays()
+    {
+        constexpr std::array first { 1, 2, 3 };
+        constexpr std::array second { 4, 5 };
+        constexpr auto result = array_cat(first, second);
+
+        static_assert(result.size() == 5);
+        static_assert(result[0] == 1);
+        static_assert(result[1] == 2);
+        static_assert(result[2] == 3);
+        static_assert(result[3] == 4);
+        static_assert(result[4] == 5);
+        static_assert(result == std::array { 1, 2, 3, 4, 5 });
+    }
+
+
+    void testMultipleArrays()
+    {
+        constexpr std::array first { 1, 2 };
+        constexpr std::array second { 3, 4 };
+        constexpr std::array third { 5, 6 };
+        constexpr std::array fourth { 7, 8, 9 };
+        constexpr auto result = array_cat(first, second, third, fourth);
+
+        static_assert(result.size() == 9);
+        static_assert(result == std::array { 1, 2, 3, 4, 5, 6, 7, 8, 9 });
+    }
+
+    void testEmptyArrays()
+    {
+        constexpr std::array<int, 0> first {};
+        constexpr std::array second { 1, 2 };
+        constexpr std::array<int, 0> third {};
+        constexpr std::array fourth { 3, 4 };
+        constexpr auto result = array_cat(first, second, third, fourth);
+
+        static_assert(result.size() == 4);
+        static_assert(result == std::array { 1, 2, 3, 4 });
+    }
+
+    void testAllEmptyArrays()
+    {
+        constexpr std::array<int, 0> first {}, second {}, third {};
+        constexpr auto result = array_cat(first, second, third);
+
+        static_assert(result.empty());
+        static_assert(result.empty());
+    }
+
+    void testDifferentSizes()
+    {
+        constexpr std::array first  { 1 };
+        constexpr std::array second { 2, 3, 4 };
+        constexpr std::array third  { 5, 6, 7, 8, 9 };
+        constexpr auto result = array_cat(first, second, third);
+
+        static_assert(result.size() == 9);
+        static_assert(result == std::array { 1, 2, 3, 4, 5, 6, 7, 8, 9 });
+    }
+
+    void runAllTests()
+    {
+        testEmpty();
+        testSingleArray();
+        testTwoArrays();
+        testMultipleArrays();
+        testEmptyArrays();
+        testAllEmptyArrays();
+        testDifferentSizes();
+    }
+}
+
+
 
 int main([[maybe_unused]] int argc,
          [[maybe_unused]] char** argv)
@@ -528,6 +624,9 @@ int main([[maybe_unused]] int argc,
     // testing_utils::test_assert_false();
     // testing_utils::test_assert_null();
 
+    utilities::arrays::tests::runAllTests();
+
+    /*
     {
         const auto v = utilities::random::getRandomInRange<int>(1.0, 20.0);
         std::cout << v << std::endl;
@@ -539,7 +638,7 @@ int main([[maybe_unused]] int argc,
     {
         std::cout << utilities::random::getRandomInt() << std::endl;
         std::cout << utilities::random::randomString(64) << std::endl;
-    }
+    }*/
 
 
 
