@@ -12,7 +12,7 @@ Description : FileUtilities.cpp
 #include <iostream>
 #include <fstream>
 
-namespace FileUtilities
+namespace utilities::files
 {
     constexpr size_t readBlockSize { 1024 };
 

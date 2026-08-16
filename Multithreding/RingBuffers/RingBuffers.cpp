@@ -28,7 +28,7 @@ Description : RingBuffers.cpp
 
 namespace
 {
-    using DateTimeUtilities::getCurrentTime;
+    using utilities::datetime::getCurrentTime;
 
 #define LOG  std::osyncstream { std::cout } << '[' << getCurrentTime() << "] "
 }
@@ -418,6 +418,10 @@ namespace ring_buffers::impl_4
 
 namespace ring_buffers::tests
 {
+    using utilities::testing::AssertTrue;
+    using utilities::testing::AssertFalse;
+    using utilities::testing::AssertEqual;
+
     template<typename Ty>
     concept IRingBuffer = requires(Ty ring_buffer, int64_t value)
     {
@@ -428,22 +432,22 @@ namespace ring_buffers::tests
     void test_basic_push_pop(IRingBuffer auto& ringBuffer)
     {
         int64_t value = 0;
-        testing::AssertTrue(ringBuffer.push(1));
-        testing::AssertTrue(ringBuffer.pop(value));
-        testing::AssertEqual(1L, value);
+        AssertTrue(ringBuffer.push(1));
+        AssertTrue(ringBuffer.pop(value));
+        AssertEqual(1L, value);
     }
 
     void test_empty_pop(IRingBuffer auto& ringBuffer)
     {
         int64_t value = 0;
-        testing::AssertFalse(ringBuffer.pop(value));
+        AssertFalse(ringBuffer.pop(value));
     }
 
     void test_full_push(IRingBuffer auto& ringBuffer)
     {
-        testing::AssertTrue(ringBuffer.push(1));
-        testing::AssertTrue(ringBuffer.push(2));
-        testing::AssertFalse(ringBuffer.push(3));
+        AssertTrue(ringBuffer.push(1));
+        AssertTrue(ringBuffer.push(2));
+        AssertFalse(ringBuffer.push(3));
     }
 
     void test_fifo_order(IRingBuffer auto& ringBuffer)
@@ -456,58 +460,58 @@ namespace ring_buffers::tests
         int64_t item = 0;
 
         result = ringBuffer.pop(item);
-        testing::AssertEqual(1L, item);
+        AssertEqual(1L, item);
 
         result = ringBuffer.pop(item);
-        testing::AssertEqual(2L, item);
+        AssertEqual(2L, item);
 
         result = ringBuffer.pop(item);
-        testing::AssertEqual(3L, item);
+        AssertEqual(3L, item);
     }
 
     void test_wrap_around(IRingBuffer auto& ringBuffer)
     {
         int64_t item = 0;
 
-        testing::AssertTrue(ringBuffer.push(1));
-        testing::AssertTrue(ringBuffer.push(2));
+        AssertTrue(ringBuffer.push(1));
+        AssertTrue(ringBuffer.push(2));
 
-        testing::AssertTrue(ringBuffer.pop(item));
-        testing::AssertEqual(1L, item);
+        AssertTrue(ringBuffer.pop(item));
+        AssertEqual(1L, item);
 
-        testing::AssertTrue(ringBuffer.push(3));
-        testing::AssertTrue(ringBuffer.push(4));
-        testing::AssertFalse(ringBuffer.push(5));
+        AssertTrue(ringBuffer.push(3));
+        AssertTrue(ringBuffer.push(4));
+        AssertFalse(ringBuffer.push(5));
 
-        testing::AssertTrue(ringBuffer.pop(item));
-        testing::AssertEqual(2L, item);
+        AssertTrue(ringBuffer.pop(item));
+        AssertEqual(2L, item);
 
-        testing::AssertTrue(ringBuffer.pop(item));
-        testing::AssertEqual(3L, item);
+        AssertTrue(ringBuffer.pop(item));
+        AssertEqual(3L, item);
     }
 
     void test_alternating_push_pop(IRingBuffer auto& ringBuffer)
     {
         int64_t item = 0;
 
-        testing::AssertTrue(ringBuffer.push(1));
-        testing::AssertTrue(ringBuffer.pop(item));
-        testing::AssertEqual(1L, item);
+        AssertTrue(ringBuffer.push(1));
+        AssertTrue(ringBuffer.pop(item));
+        AssertEqual(1L, item);
 
-        testing::AssertTrue(ringBuffer.push(2));
-        testing::AssertTrue(ringBuffer.pop(item));
-        testing::AssertEqual(2L, item);
+        AssertTrue(ringBuffer.push(2));
+        AssertTrue(ringBuffer.pop(item));
+        AssertEqual(2L, item);
     }
 
     void test_large_sequence(IRingBuffer auto& ringBuffer)
     {
         for (int i = 0; i < 1000; ++i)
-            testing::AssertTrue(ringBuffer.push(i));
+            AssertTrue(ringBuffer.push(i));
 
         for (int64_t i = 0; i < 1000; ++i) {
             int64_t item = 0;
-            testing::AssertTrue(ringBuffer.pop(item));
-            testing::AssertEqual(i, item);
+            AssertTrue(ringBuffer.pop(item));
+            AssertEqual(i, item);
         }
     }
 
@@ -699,9 +703,9 @@ namespace ring_buffers::tests::multithreading
         consumer.join();
         producer.join();
 
-        testing::AssertEqual(eventsCount, reads);
-        testing::AssertEqual(eventsCount + 1, writes);
-        testing::AssertTrue(0 == errors);
+        AssertEqual(eventsCount, reads);
+        AssertEqual(eventsCount + 1, writes);
+        AssertTrue(0 == errors);
     }
 
     void test_2(IRingBuffer auto& ringBuffer)
@@ -721,12 +725,12 @@ namespace ring_buffers::tests::multithreading
             int64_t recordsPoped = 0, value;
             while (!producer_done || recordsPoped < eventsCount) {
                 if (ringBuffer.pop(value)) {
-                    testing::AssertEqual(value, recordsPoped);
+                    AssertEqual(value, recordsPoped);
                     ++recordsPoped;
                 }
             }
 
-            testing::AssertEqual(eventsCount, recordsPoped);
+            AssertEqual(eventsCount, recordsPoped);
         });
     }
 
@@ -783,7 +787,7 @@ namespace ring_buffers::tests::performance_tests
                  const int64_t eventsCount,
                  std::string_view name)
     {
-        const PerfUtilities::ScopedTimer timer {name};
+        const utilities::perf::ScopedTimer timer {name};
         auto consume = [&]
         {
             int64_t item {0}, itemsPopped {0};

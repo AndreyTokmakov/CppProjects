@@ -329,7 +329,7 @@ namespace Collections::ThreadSafeQueue_CV_vs_RingBuffer::BasicQueue_Test
             }
         };
 
-        PerfUtilities::ScopedTimer timer { "Dequeue_Tests" };
+        utilities::perf::ScopedTimer timer { "Dequeue_Tests" };
         {
             std::jthread producer{produce, eventMax };
             std::jthread consumer{consume, eventMax };
@@ -360,7 +360,7 @@ namespace Collections::ThreadSafeQueue_CV_vs_RingBuffer::RFQueue_Tests
             }
         };
 
-        PerfUtilities::ScopedTimer timer { "RFQueue_Tests" };
+        utilities::perf::ScopedTimer timer { "RFQueue_Tests" };
         {
             std::jthread consumer{consume, eventMax };
             std::jthread producer{produce, eventMax };
@@ -393,7 +393,7 @@ namespace Collections::ThreadSafeQueue_CV_vs_RingBuffer::Queue_List_Atomic_Tests
         };
 
 
-        PerfUtilities::ScopedTimer timer { "Queue_List_Atomic" };
+        utilities::perf::ScopedTimer timer { "Queue_List_Atomic" };
         {
             std::jthread consumer { consume, eventMax };
             std::jthread producer { produce, eventMax };
@@ -423,7 +423,7 @@ namespace Collections::ThreadSafeQueue_CV_vs_RingBuffer::RingBuffer_AtomicSize_T
             }
         };
 
-        PerfUtilities::ScopedTimer timer { "RingBuffer_AtomicSize" };
+        utilities::perf::ScopedTimer timer { "RingBuffer_AtomicSize" };
         {
             std::jthread consumer { consume, eventMax };
             std::jthread producer { produce, eventMax };
@@ -453,7 +453,7 @@ namespace Collections::ThreadSafeQueue_CV_vs_RingBuffer::RingBuffer_AtomicSize_N
             }
         };
 
-        PerfUtilities::ScopedTimer timer { "RingBuffer_AtomicSize" };
+        utilities::perf::ScopedTimer timer { "RingBuffer_AtomicSize" };
         {
             std::jthread consumer { consume, eventMax };
             std::jthread producer { produce, eventMax };

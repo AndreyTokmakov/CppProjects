@@ -24,7 +24,7 @@
 #include "Threads.h"
 #include "DateTimeUtilities.hpp"
 
-#define LOG  std::osyncstream { std::cout } << DateTimeUtilities::getCurrentTime() << " "
+#define LOG  std::osyncstream { std::cout } << utilities::datetime::getCurrentTime() << " "
 
 namespace Threads
 {

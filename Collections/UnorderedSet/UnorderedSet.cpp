@@ -626,7 +626,7 @@ namespace UnorderedSet::MAP_vs_SET
 		}
 
 		{
-			PerfUtilities::ScopedTimer timer { "SET" };
+			utilities::perf::ScopedTimer timer { "SET" };
 			for (int i = 0; i < iter; ++i) {
 				for (int entry: samples) {
 					const auto _ = set.contains(entry);
@@ -635,7 +635,7 @@ namespace UnorderedSet::MAP_vs_SET
 		}
 
 		{
-			PerfUtilities::ScopedTimer timer { "MAP" };
+			utilities::perf::ScopedTimer timer { "MAP" };
 			for (int i = 0; i < iter; ++i) {
 				for (int entry: samples) {
 					const auto _ = map.contains(entry);

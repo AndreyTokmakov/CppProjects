@@ -29,47 +29,41 @@ namespace
     // constexpr char PADDING { '=' };
     constexpr size_t MAX_BITS_TO_ENCODE {6};
     constexpr size_t BITS_IN_BYTE {8};
+    constexpr size_t BYTES_PER_BLOCK { 3 };
+    constexpr size_t OUTPUT_CHARS_PER_BLOCK { 4 };
 }
 
-namespace Base64
+namespace utilities::bas64
 {
     std::string base64Encode(const std::string &str)
     {
+        const size_t outputSize {
+            OUTPUT_CHARS_PER_BLOCK * ((str.size() + BYTES_PER_BLOCK - 1) / BYTES_PER_BLOCK)
+        };
+
         std::string result;
-        result.reserve(str.size());
+        result.reserve(outputSize);
 
-        int encodedByte {0};
-        for (size_t bit_to_set {MAX_BITS_TO_ENCODE}; const char byte: str)
+        for (size_t index { 0 }; index < str.size(); index += 3)
         {
-            for (int i = BITS_IN_BYTE - 1; i >= 0; --i, --bit_to_set)
-            {
-                if (bit_to_set <= 0)
-                {
-                    bit_to_set = MAX_BITS_TO_ENCODE;
-                    // if ((result.size() + 1 ) >= result.capacity()) std::cout  << "RESIZE!" << std::endl;
-                    result.append(1, ENCODING_TABLE[encodedByte]);
-                    encodedByte = 0;
-                }
-                if (byte & (1u << i)) {
-                    encodedByte |= (1 << (bit_to_set - 1));
-                }
-            }
+            const uint8_t byte0 { static_cast<uint8_t>(str[index]) };
+            const uint8_t byte1 { index + 1 < str.size() ? static_cast<uint8_t>(str[index + 1]) : static_cast<uint8_t>(0) };
+            const uint8_t byte2 { index + 2 < str.size() ? static_cast<uint8_t>(str[index + 2]) : static_cast<uint8_t>(0) };
+
+            result.push_back(ENCODING_TABLE[byte0 >> 2]);
+            result.push_back(ENCODING_TABLE[((byte0 & 0x03) << 4) | (byte1 >> 4)]);
+
+            if (index + 1 < str.size())
+                result.push_back(ENCODING_TABLE[((byte1 & 0x0f) << 2) | (byte2 >> 6)]);
+            else
+                result.push_back('=');
+
+            if (index + 2 < str.size())
+                result.push_back(ENCODING_TABLE[byte2 & 0x3f]);
+            else
+                result.push_back('=');
         }
-        result.append(1, ENCODING_TABLE[encodedByte]);
-        result.append(2 == str.size() % 3 ? 1 : 2, '=');
+
         return result;
-    }
-
-    std::string base64Encode2(const std::string &str)
-    {
-        std::cout << str << std::endl;
-
-        for (uint32_t idx = 0, size = str.size(); idx + 3 < size; ++idx)
-        {
-
-        }
-
-
-        return {};
     }
 };

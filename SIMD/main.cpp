@@ -393,11 +393,11 @@ namespace load_data
         };
 
         {
-            PerfUtilities::ScopedTimer timer { "aligned load"};
+            utilities::perf::ScopedTimer timer { "aligned load"};
             aligned_load();
         }
         {
-            PerfUtilities::ScopedTimer timer { "unaligned load"};
+            utilities::perf::ScopedTimer timer { "unaligned load"};
             unaligned_load();
         }
     }

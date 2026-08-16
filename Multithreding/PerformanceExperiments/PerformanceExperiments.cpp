@@ -60,7 +60,7 @@ namespace PerformanceExperiments::AtomicCounter_vs_Mutex
             };
 
             {
-                const PerfUtilities::ScopedTimer timer {"Mutex"};
+                const utilities::perf::ScopedTimer timer {"Mutex"};
                 std::vector<std::jthread> jobs;
                 for (int t = 0; t < threadsMax; ++t)
                     jobs.emplace_back(task);
@@ -76,7 +76,7 @@ namespace PerformanceExperiments::AtomicCounter_vs_Mutex
             };
 
             {
-                const PerfUtilities::ScopedTimer timer {"atomic"};
+                const utilities::perf::ScopedTimer timer {"atomic"};
                 std::vector<std::jthread> jobs;
                 for (int t = 0; t < threadsMax; ++t)
                     jobs.emplace_back(task);
@@ -92,7 +92,7 @@ namespace PerformanceExperiments::AtomicCounter_vs_Mutex
             };
 
             {
-                const PerfUtilities::ScopedTimer timer {"atomic"};
+                const utilities::perf::ScopedTimer timer {"atomic"};
                 std::vector<std::jthread> jobs;
                 for (int t = 0; t < threadsMax; ++t)
                     jobs.emplace_back(task);
@@ -109,7 +109,7 @@ namespace PerformanceExperiments::AtomicCounter_vs_Mutex
             };
 
             {
-                const PerfUtilities::ScopedTimer timer {"atomic"};
+                const utilities::perf::ScopedTimer timer {"atomic"};
                 std::vector<std::jthread> jobs;
                 for (int t = 0; t < threadsMax; ++t)
                     jobs.emplace_back(task);
@@ -126,7 +126,7 @@ namespace PerformanceExperiments::AtomicCounter_vs_Mutex
             };
 
             {
-                const PerfUtilities::ScopedTimer timer {"atomic"};
+                const utilities::perf::ScopedTimer timer {"atomic"};
                 std::vector<std::jthread> jobs;
                 for (int t = 0; t < threadsMax; ++t)
                     jobs.emplace_back(task);
@@ -146,7 +146,7 @@ namespace PerformanceExperiments::AtomicCounter_vs_Mutex
             };
 
             {
-                const PerfUtilities::ScopedTimer timer {"atomic"};
+                const utilities::perf::ScopedTimer timer {"atomic"};
                 std::vector<std::jthread> jobs;
                 for (int t = 0; t < threadsMax; ++t)
                     jobs.emplace_back(task);
@@ -173,13 +173,13 @@ namespace PerformanceExperiments::Atomic_vs_Volatile
         constexpr size_t iterCount { 100'000'000 };
 
         {
-            const PerfUtilities::ScopedTimer timer {"atomicCounter"};
+            const utilities::perf::ScopedTimer timer {"atomicCounter"};
             for (size_t t = 0; t < iterCount; ++t)
                 atomicCounter.fetch_add(1, std::memory_order::relaxed);
         }
 
         {
-            const PerfUtilities::ScopedTimer timer {"volatileCounter"};
+            const utilities::perf::ScopedTimer timer {"volatileCounter"};
             for (size_t t = 0; t < iterCount; ++t)
                 volatileCounter += 1;
         }
@@ -206,7 +206,7 @@ namespace PerformanceExperiments::Atomic_vs_Volatile
                 }
             };
 
-            const PerfUtilities::ScopedTimer timer {"atomicCounter"};
+            const utilities::perf::ScopedTimer timer {"atomicCounter"};
             std::vector<std::jthread> jobs;
             for (int32_t t = 0; t < threadsMax / 2; ++t) {
                 jobs.emplace_back(writer);
@@ -229,7 +229,7 @@ namespace PerformanceExperiments::Atomic_vs_Volatile
                 (void)val; // -Wunused-but-set-variable
             };
 
-            const PerfUtilities::ScopedTimer timer {"volatileCounter"};
+            const utilities::perf::ScopedTimer timer {"volatileCounter"};
             std::vector<std::jthread> jobs;
             for (uint32_t t = 0; t < threadsMax / 2; ++t) {
                 jobs.emplace_back(writer);

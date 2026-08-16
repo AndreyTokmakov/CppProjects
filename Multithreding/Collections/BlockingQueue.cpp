@@ -127,7 +127,7 @@ void Collections::BlockingQueue::TestAll()
 
     constexpr int eventsCount {1'000'000};
 
-    const PerfUtilities::ScopedTimer timer {"benchmark"};
+    const utilities::perf::ScopedTimer timer {"benchmark"};
 
     auto consume = [&]() {
         int eventsRead = 0, result;

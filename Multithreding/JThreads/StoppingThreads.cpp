@@ -20,7 +20,7 @@ Description : StoppingThreads.cpp
 
 namespace
 {
-    using DateTimeUtilities::getCurrentTime;
+    using utilities::datetime::getCurrentTime;
 
 #define LOG  std::osyncstream { std::cout } << getCurrentTime() << " "
 }

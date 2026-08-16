@@ -430,7 +430,7 @@ namespace CollectionsTests::Trie
             trie.insert(str);
         }
         {
-            const PerfUtilities::ScopedTimer timer { "Benchmark" };
+            const utilities::perf::ScopedTimer timer { "Benchmark" };
             for (size_t idx = 0; idx < testsCount; ++idx) {
                 for (const std::string& str: samples)
                 {
@@ -442,7 +442,7 @@ namespace CollectionsTests::Trie
             }
         }
         {
-            const PerfUtilities::ScopedTimer timer { "Benchmark" };
+            const utilities::perf::ScopedTimer timer { "Benchmark" };
             for (size_t idx = 0; idx < testsCount; ++idx) {
                 for (const std::string& str: samples) {
                     if (!trie.search(str))

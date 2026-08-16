@@ -176,12 +176,12 @@ namespace DateAndTime::Performance
         constexpr std::string_view timeStr {"11:13:35.0400123"};
 
         {
-            const PerfUtilities::ScopedTimer timer { "str2Date1" };
+            const utilities::perf::ScopedTimer timer { "str2Date1" };
             for (size_t i = 0; i < COUNT; i++)
                 auto _ = str2Date1(timeStr);
         }
         {
-            const PerfUtilities::ScopedTimer timer { "str2Date2" };
+            const utilities::perf::ScopedTimer timer { "str2Date2" };
             for (size_t i = 0; i < COUNT; i++)
                 auto _ = str2Date2(timeStr);
         }
@@ -231,7 +231,7 @@ namespace DateAndTime::FunctionPerformance
         constexpr int32_t iterCount {100'000'000};
 
         {
-            const PerfUtilities::ScopedTimer timer{"system_clock::now()"};
+            const utilities::perf::ScopedTimer timer{"system_clock::now()"};
             for (int i = 0; i < iterCount; ++i)
             {
                 const std::chrono::system_clock::time_point _ = std::chrono::system_clock::now();
@@ -240,7 +240,7 @@ namespace DateAndTime::FunctionPerformance
         }
 
         {
-            const PerfUtilities::ScopedTimer timer{"high_resolution_clock::now()"};
+            const utilities::perf::ScopedTimer timer{"high_resolution_clock::now()"};
             for (int i = 0; i < iterCount; ++i)
             {
                 auto _ = std::chrono::high_resolution_clock::now();
@@ -248,7 +248,7 @@ namespace DateAndTime::FunctionPerformance
         }
 
         {
-            const PerfUtilities::ScopedTimer timer{"clock_gettime()"};
+            const utilities::perf::ScopedTimer timer{"clock_gettime()"};
             timespec time{};
             for (int i = 0; i < iterCount; ++i)
             {
@@ -257,7 +257,7 @@ namespace DateAndTime::FunctionPerformance
         }
 
         {
-            const PerfUtilities::ScopedTimer timer{"std::time(1)"};
+            const utilities::perf::ScopedTimer timer{"std::time(1)"};
             for (int i = 0; i < iterCount; ++i)
             {
                 std::time_t t = std::time(nullptr);
@@ -266,7 +266,7 @@ namespace DateAndTime::FunctionPerformance
         }
 
         {
-            const PerfUtilities::ScopedTimer timer{"std::time(2)"};
+            const utilities::perf::ScopedTimer timer{"std::time(2)"};
             time_t rawTime;
             for (int i = 0; i < iterCount; ++i)
             {
@@ -275,7 +275,7 @@ namespace DateAndTime::FunctionPerformance
         }
 
         {
-            const PerfUtilities::ScopedTimer timer{"std::time(3)"};
+            const utilities::perf::ScopedTimer timer{"std::time(3)"};
 
             [[maybe_unused]]
             time_t rawTime;
@@ -286,7 +286,7 @@ namespace DateAndTime::FunctionPerformance
         }
 
         {
-            const PerfUtilities::ScopedTimer timer{"std::timespec_get"};
+            const utilities::perf::ScopedTimer timer{"std::timespec_get"};
             std::timespec ts {};
             for (int i = 0; i < iterCount; ++i)
             {

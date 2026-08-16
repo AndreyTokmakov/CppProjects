@@ -46,7 +46,7 @@ namespace
             const std::string data("Data");
 
             {
-                PerfUtilities::ScopedTimer clock { "virtual_call" };
+                utilities::perf::ScopedTimer clock { "virtual_call" };
 
                 std::unique_ptr<IParser> parser = std::make_unique<ParserOne>();
                 for (uint32_t i = 0; i < testIterCount; ++i) {
@@ -86,7 +86,7 @@ namespace
             };
 
             {
-                PerfUtilities::ScopedTimer clock { "variant_call" };
+                utilities::perf::ScopedTimer clock { "variant_call" };
 
                 for (uint32_t i = 0; i < testIterCount; ++i) {
                     std::visit(parseEvent, varParser);

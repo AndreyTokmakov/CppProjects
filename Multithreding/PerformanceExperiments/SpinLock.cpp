@@ -18,7 +18,7 @@ Description :
 #include "PerfUtilities.hpp"
 #include "DateTimeUtilities.hpp"
 
-#define LOG  std::osyncstream { std::cout } << DateTimeUtilities::getCurrentTime() << " "
+#define LOG  std::osyncstream { std::cout } << utilities::datetime::getCurrentTime() << " "
 
 namespace
 {
@@ -220,7 +220,7 @@ namespace
             };
 
             {
-                const PerfUtilities::ScopedTimer timer {"Mutex"};
+                const utilities::perf::ScopedTimer timer {"Mutex"};
                 std::vector<std::jthread> jobs;
                 for (int t = 0; t < threadsMax; ++t)
                     jobs.emplace_back(task);
@@ -240,7 +240,7 @@ namespace
             };
 
             {
-                const PerfUtilities::ScopedTimer timer{"SpinLock_AtomicFlag"};
+                const utilities::perf::ScopedTimer timer{"SpinLock_AtomicFlag"};
                 std::vector<std::jthread> jobs;
                 for (int t = 0; t < threadsMax; ++t)
                     jobs.emplace_back(task);
@@ -260,7 +260,7 @@ namespace
             };
 
             {
-                const PerfUtilities::ScopedTimer timer {"SpinLock2"};
+                const utilities::perf::ScopedTimer timer {"SpinLock2"};
                 std::vector<std::jthread> jobs;
                 for (int t = 0; t < threadsMax; ++t)
                     jobs.emplace_back(task);
@@ -280,7 +280,7 @@ namespace
             };
 
             {
-                const PerfUtilities::ScopedTimer timer {"SpinLock2_Int"};
+                const utilities::perf::ScopedTimer timer {"SpinLock2_Int"};
                 std::vector<std::jthread> jobs;
                 for (int t = 0; t < threadsMax; ++t)
                     jobs.emplace_back(task);
@@ -301,7 +301,7 @@ namespace
             };
 
             {
-                const PerfUtilities::ScopedTimer timer {"SpinLock2_Int_Timer"};
+                const utilities::perf::ScopedTimer timer {"SpinLock2_Int_Timer"};
                 std::vector<std::jthread> jobs;
                 for (int t = 0; t < threadsMax; ++t)
                     jobs.emplace_back(task);
@@ -321,7 +321,7 @@ namespace
             };
 
             {
-                const PerfUtilities::ScopedTimer timer {"SpinLock2_Timer_Ex"};
+                const utilities::perf::ScopedTimer timer {"SpinLock2_Timer_Ex"};
                 std::vector<std::jthread> jobs;
                 for (int t = 0; t < threadsMax; ++t)
                     jobs.emplace_back(task);
@@ -340,7 +340,7 @@ namespace
             };
 
             {
-                const PerfUtilities::ScopedTimer timer {"SpinLock3"};
+                const utilities::perf::ScopedTimer timer {"SpinLock3"};
                 std::vector<std::jthread> jobs;
                 for (int t = 0; t < threadsMax; ++t)
                     jobs.emplace_back(task);
@@ -360,7 +360,7 @@ namespace
             };
 
             {
-                const PerfUtilities::ScopedTimer timer {"SpinLock4"};
+                const utilities::perf::ScopedTimer timer {"SpinLock4"};
                 std::vector<std::jthread> jobs;
                 for (int t = 0; t < threadsMax; ++t)
                     jobs.emplace_back(task);
@@ -380,7 +380,7 @@ namespace
             };
 
             {
-                const PerfUtilities::ScopedTimer timer {"spin_mutex_M2"};
+                const utilities::perf::ScopedTimer timer {"spin_mutex_M2"};
                 std::vector<std::jthread> jobs;
                 for (int t = 0; t < threadsMax; ++t)
                     jobs.emplace_back(task);

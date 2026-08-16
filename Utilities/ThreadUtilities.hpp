@@ -12,7 +12,7 @@ Description : ThreadUtilities.h
 
 #include <cstdint>
 
-namespace ThreadUtilities
+namespace utilities::threading
 {
     bool setThreadCore(const uint32_t coreId) noexcept;
 

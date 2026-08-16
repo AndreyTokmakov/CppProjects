@@ -27,7 +27,7 @@ namespace Experiments
         std::vector<std::jthread> workers;
         for (int n = 0; n < threadsCount; ++n) {
             workers.emplace_back([&] {
-                ThreadUtilities::setThreadCore(n);
+                utilities::threading::setThreadCore(n);
                 barrier.arrive_and_wait();
                 for (int i = 0; i < 10'000; ++i)
                     counter++;

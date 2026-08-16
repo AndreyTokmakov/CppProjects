@@ -12,10 +12,9 @@ Description : Base64.h
 
 #include <string>
 
-namespace Base64
+namespace utilities::bas64
 {
     std::string base64Encode(const std::string &str);
-    std::string base64Encode2(const std::string &str);
 };
 
 #endif //CPPPROJECTS_BASE64_HPP

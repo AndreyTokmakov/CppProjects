@@ -268,7 +268,7 @@ namespace benchmarks
             // std::osyncstream { std::cout } << getCurrentTime() << " Consumer done\n";
         };
 
-        const PerfUtilities::ScopedTimer timer { "CV Queue" };
+        const utilities::perf::ScopedTimer timer { "CV Queue" };
         for (uint16_t n = 0; n < producersCount; ++n) {
             workers.emplace_back(produce);
         }
@@ -314,7 +314,7 @@ namespace benchmarks
             // std::osyncstream { std::cout } << getCurrentTime() << " Consumer done\n";
         };
 
-        const PerfUtilities::ScopedTimer timer { "LockFree Queue" };
+        const utilities::perf::ScopedTimer timer { "LockFree Queue" };
         for (uint16_t n = 0; n < producersCount; ++n) {
             workers.emplace_back(produce);
         }

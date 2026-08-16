@@ -29,8 +29,8 @@ Description : Producers.cpp
 #include <cstdint>
 #include <unistd.h>
 
-#define LOG  std::osyncstream { std::cout } << DateTimeUtilities::getCurrentTime() << " "
-#define ERR  std::osyncstream { std::cerr } << DateTimeUtilities::getCurrentTime() << " "
+#define LOG  std::osyncstream { std::cout } << utilities::datetime::getCurrentTime() << " "
+#define ERR  std::osyncstream { std::cerr } << utilities::datetime::getCurrentTime() << " "
 
 namespace
 {

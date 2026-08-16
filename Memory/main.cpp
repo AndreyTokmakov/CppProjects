@@ -63,7 +63,7 @@ namespace Tests
         Memory::ObjectPool<TestType> objectPool;
 
         {
-            PerfUtilities::ScopedTimer timer {"Pool"};
+            utilities::perf::ScopedTimer timer {"Pool"};
             std::vector<std::jthread> workers;
             for (int32_t i = 0; i < threadsCount; ++i) {
                 workers.emplace_back([&] {
@@ -87,7 +87,7 @@ namespace Tests
     {
         std::vector<std::jthread> workers;
 
-        PerfUtilities::ScopedTimer timer{"NoPool"};
+        utilities::perf::ScopedTimer timer{"NoPool"};
         for (int32_t i = 0; i < threadsCount; ++i)
         {
             workers.emplace_back([&]{
@@ -216,7 +216,7 @@ namespace Memory::GoodPools_Tests
     {
 
         {
-            PerfUtilities::ScopedTimer timer {"NoPool"};
+            utilities::perf::ScopedTimer timer {"NoPool"};
 
             std::vector<std::unique_ptr<TestType>> store;
             store.reserve(allocations);
@@ -232,7 +232,7 @@ namespace Memory::GoodPools_Tests
         {
             ObjectPool<TestType> pool{};
             {
-                PerfUtilities::ScopedTimer timer{"Pool 1"};
+                utilities::perf::ScopedTimer timer{"Pool 1"};
 
                 std::vector<decltype(pool)::ObjectPtr> store;
                 store.reserve(allocations);
@@ -247,7 +247,7 @@ namespace Memory::GoodPools_Tests
 
         {
             Memory::ObjectPool<TestType> pool;
-            const PerfUtilities::ScopedTimer timer {"Pool 2"};
+            const utilities::perf::ScopedTimer timer {"Pool 2"};
 
             std::vector<decltype(pool)::ObjectPtr> store;
             store.reserve(allocations);

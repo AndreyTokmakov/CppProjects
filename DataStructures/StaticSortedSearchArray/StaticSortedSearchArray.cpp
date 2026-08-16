@@ -276,7 +276,7 @@ namespace static_sorted_search_array::testing
         constexpr uint32_t collectionSize { 1'000 }, testDataSize = 100'000'000;
         const std::vector<int32_t> data = getTestData(testDataSize);
 
-        PerfUtilities::ScopedTimer timer { "SortedArray"};
+        utilities::perf::ScopedTimer timer { "SortedArray"};
         SortedArray<int> array (collectionSize);
         for (uint32_t idx = 0; idx < testDataSize; ++idx)
         {

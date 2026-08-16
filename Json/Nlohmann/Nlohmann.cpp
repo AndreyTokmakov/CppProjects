@@ -15,6 +15,8 @@ Description : Nlohmann.cpp
 #include <iostream>
 #include <fstream>
 
+#include "../../Utilities/FileUtilities.hpp"
+
 namespace Nlohmann
 {
     using json = nlohmann::json;
@@ -61,7 +63,7 @@ namespace Nlohmann
     void ParseJson_File()
     {
         std::string jsonString;
-        FileUtilities::ReadFile2String(R"(../../Json/data/snapshot.json)", jsonString);
+        utilities::files::ReadFile2String(R"(../../Json/data/snapshot.json)", jsonString);
 
         std::cout << json::parse(jsonString) << std::endl;
     }

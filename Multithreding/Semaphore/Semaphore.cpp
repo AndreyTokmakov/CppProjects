@@ -21,7 +21,7 @@ Description : Semaphore
 #include "Semaphore.h"
 #include "DateTimeUtilities.hpp"
 
-#define LOG  std::osyncstream { std::cout } << DateTimeUtilities::getCurrentTime() << " "
+#define LOG  std::osyncstream { std::cout } << utilities::datetime::getCurrentTime() << " "
 
 using namespace std::literals;
 

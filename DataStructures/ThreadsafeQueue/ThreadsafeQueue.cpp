@@ -21,7 +21,7 @@
 #include "ThreadsafeQueue.h"
 #include "DateTimeUtilities.hpp"
 
-#define LOG  std::osyncstream { std::cout } << DateTimeUtilities::getCurrentTime() << " "
+#define LOG  std::osyncstream { std::cout } << utilities::datetime::getCurrentTime() << " "
 
 namespace Queues::Multithreading 
 {
@@ -94,7 +94,7 @@ namespace Queues::Multithreading
 		constexpr size_t MAX_VALUE {10'000'000};
 		constexpr size_t PRODUCER_COUNT {10};
 
-		const PerfUtilities::ScopedTimer timer { "Perf_Test_1" };
+		const utilities::perf::ScopedTimer timer { "Perf_Test_1" };
 		for (size_t n = 0; n < PRODUCER_COUNT; ++n) {
 			workers.emplace_back(std::async([&queue, n] {
 				for (size_t i = MAX_VALUE * n; i <= MAX_VALUE * (n + 1); ++i) {

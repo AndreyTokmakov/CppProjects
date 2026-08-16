@@ -686,19 +686,19 @@ namespace Chrono::FunctionPerformance
     {
         constexpr int COUNT {100'000'000};
         {
-            PerfUtilities::ScopedTimer timer { "std::time" };
+            utilities::perf::ScopedTimer timer { "std::time" };
             for (int i = 0; i < COUNT;  ++i) {
                 std::time_t _ = std::time(nullptr);
             }
         }
         {
-            PerfUtilities::ScopedTimer timer { "system_clock::now" };
+            utilities::perf::ScopedTimer timer { "system_clock::now" };
             for (int i = 0; i < COUNT; ++i) {
                 auto _ = std::chrono::system_clock::now();
             }
         }
         {
-            PerfUtilities::ScopedTimer timer { "high_resolution_clock::now" };
+            utilities::perf::ScopedTimer timer { "high_resolution_clock::now" };
             for (int i = 0; i < COUNT; ++i) {
                 auto _ = std::chrono::high_resolution_clock::now();
             }
@@ -713,7 +713,7 @@ namespace Chrono::FunctionPerformance
         constexpr int32_t iterCount {100'000'000};
 
         {
-            const PerfUtilities::ScopedTimer timer{"system_clock::now()"};
+            const utilities::perf::ScopedTimer timer{"system_clock::now()"};
             for (int i = 0; i < iterCount; ++i)
             {
                 std::chrono::system_clock::time_point today = std::chrono::system_clock::now();
@@ -722,7 +722,7 @@ namespace Chrono::FunctionPerformance
         }
 
         {
-            const PerfUtilities::ScopedTimer timer{"high_resolution_clock::now()"};
+            const utilities::perf::ScopedTimer timer{"high_resolution_clock::now()"};
             for (int i = 0; i < iterCount; ++i)
             {
                 [[maybe_unused]]
@@ -731,7 +731,7 @@ namespace Chrono::FunctionPerformance
         }
 
         {
-            const PerfUtilities::ScopedTimer timer{"clock_gettime()"};
+            const utilities::perf::ScopedTimer timer{"clock_gettime()"};
             timespec time{};
             for (int i = 0; i < iterCount; ++i)
             {
@@ -740,7 +740,7 @@ namespace Chrono::FunctionPerformance
         }
 
         {
-            const PerfUtilities::ScopedTimer timer{"std::time(1)"};
+            const utilities::perf::ScopedTimer timer{"std::time(1)"};
             for (int i = 0; i < iterCount; ++i)
             {
                 std::time_t _ = std::time(nullptr);
@@ -749,7 +749,7 @@ namespace Chrono::FunctionPerformance
         }
 
         {
-            const PerfUtilities::ScopedTimer timer{"std::time(2)"};
+            const utilities::perf::ScopedTimer timer{"std::time(2)"};
             time_t rawTime;
             for (int i = 0; i < iterCount; ++i)
             {
@@ -758,7 +758,7 @@ namespace Chrono::FunctionPerformance
         }
 
         {
-            const PerfUtilities::ScopedTimer timer{"std::timespec_get"};
+            const utilities::perf::ScopedTimer timer{"std::timespec_get"};
             std::timespec ts {};
             for (int i = 0; i < iterCount; ++i)
             {

@@ -145,7 +145,7 @@ namespace PerformanceTests::Buffers {
             std::array<std::byte, SIZE> buffer{};
             {
                 std::byte b{};
-                const PerfUtilities::ScopedTimer timer { "Benchmark" };
+                const utilities::perf::ScopedTimer timer { "Benchmark" };
                 for (int n = 0; n < COUNT; n++) {
                     for (int i = 0; n < COUNT; n++) {
                         buffer[i];
@@ -158,7 +158,7 @@ namespace PerformanceTests::Buffers {
             char buffer[SIZE];
             {
                 char c;
-                const PerfUtilities::ScopedTimer timer { "Benchmark" };
+                const utilities::perf::ScopedTimer timer { "Benchmark" };
                 for (int n = 0; n < COUNT; n++) {
                     for (int i = 0; n < COUNT; n++) {
                         buffer[i];
@@ -171,7 +171,7 @@ namespace PerformanceTests::Buffers {
             std::array<std::byte, SIZE> buffer{};
             {
                 std::byte b{};
-                const PerfUtilities::ScopedTimer timer { "Benchmark" };
+                const utilities::perf::ScopedTimer timer { "Benchmark" };
                 for (int n = 0; n < COUNT; n++) {
                     for (int i = 0; n < COUNT; n++) {
                         buffer[i];
@@ -216,7 +216,7 @@ namespace PerformanceTests::Span {
         }();
 
         {
-            const PerfUtilities::ScopedTimer timer { "Benchmark" };
+            const utilities::perf::ScopedTimer timer { "Benchmark" };
             for (int n = 0; n < count; n++) {
                 handle_vector_copy(numbers);
             }
@@ -224,7 +224,7 @@ namespace PerformanceTests::Span {
 
         {
             const std::vector<int>& vec_ref = numbers;
-            const PerfUtilities::ScopedTimer timer { "Benchmark" };
+            const utilities::perf::ScopedTimer timer { "Benchmark" };
             for (int n = 0; n < count; n++) {
                 handle_vector_ref(vec_ref);
             }
@@ -232,7 +232,7 @@ namespace PerformanceTests::Span {
 
         {
             auto ptr = &numbers;
-            const PerfUtilities::ScopedTimer timer { "Benchmark" };
+            const utilities::perf::ScopedTimer timer { "Benchmark" };
             for (int n = 0; n < count; n++) {
                 handle_vector_ptr(ptr);
             }
@@ -241,7 +241,7 @@ namespace PerformanceTests::Span {
         // SPAN:
 
         {
-            const PerfUtilities::ScopedTimer timer { "Benchmark" };
+            const utilities::perf::ScopedTimer timer { "Benchmark" };
             for (int n = 0; n < count; n++) {
                 handle_vector_span(numbers);
             }
@@ -249,7 +249,7 @@ namespace PerformanceTests::Span {
 
         {
             std::span<int> sp(numbers);
-            const PerfUtilities::ScopedTimer timer { "Benchmark" };;
+            const utilities::perf::ScopedTimer timer { "Benchmark" };;
             for (int n = 0; n < count; n++) {
                 handle_vector_span(sp);
             }
@@ -276,7 +276,7 @@ namespace PerformanceTests::Ranges {
 
         {
             int sum = 0;
-            const PerfUtilities::ScopedTimer timer { "Benchmark" };;
+            const utilities::perf::ScopedTimer timer { "Benchmark" };;
             for (int n = 0; n < 1000000; n++) {
                 for (int i = 0; i < size; i++) {
                     if (0 == numbers[i] % 2)
@@ -288,7 +288,7 @@ namespace PerformanceTests::Ranges {
         {
             int sum = 0;
 
-            const PerfUtilities::ScopedTimer timer { "Benchmark" };;
+            const utilities::perf::ScopedTimer timer { "Benchmark" };;
             for (int n = 0; n < 1000000; n++) {
                 for (auto v : numbers | std::ranges::views::filter([](auto v){ return 0 == v % 2; })) {
                     sum += v;
@@ -354,7 +354,7 @@ namespace PerformanceTests::Pass_ConstStringRef_AsParameter {
     {
         volatile unsigned int N1 = 10000, N2 = 10000;
         {
-            const PerfUtilities::ScopedTimer timer { "Benchmark" };;
+            const utilities::perf::ScopedTimer timer { "Benchmark" };;
             for (int i = 0; i < N1; i++) {
                 for (int n = 0; n < N2; n++) {
                     Foo f(1, "Test");
@@ -362,7 +362,7 @@ namespace PerformanceTests::Pass_ConstStringRef_AsParameter {
             }
         }
         {
-            const PerfUtilities::ScopedTimer timer { "Benchmark" };;
+            const utilities::perf::ScopedTimer timer { "Benchmark" };;
             for (int i = 0; i < N1; i++) {
                 for (int n = 0; n < N2; n++) {
                     Foo2 f(1, "Test");
@@ -370,7 +370,7 @@ namespace PerformanceTests::Pass_ConstStringRef_AsParameter {
             }
         }
         {
-            const PerfUtilities::ScopedTimer timer { "Benchmark" };;
+            const utilities::perf::ScopedTimer timer { "Benchmark" };;
             for (int i = 0; i < N1; i++) {
                 for (int n = 0; n < N2; n++) {
                     Foo3 f(1, "Test");
@@ -379,7 +379,7 @@ namespace PerformanceTests::Pass_ConstStringRef_AsParameter {
         }
 
         {
-            const PerfUtilities::ScopedTimer timer { "Benchmark" };;
+            const utilities::perf::ScopedTimer timer { "Benchmark" };;
             for (int i = 0; i < N1; i++) {
                 for (int n = 0; n < N2; n++) {
                     Foo4 f(1, "Test");
@@ -389,7 +389,7 @@ namespace PerformanceTests::Pass_ConstStringRef_AsParameter {
 
 
         {
-            const PerfUtilities::ScopedTimer timer { "Benchmark" };;
+            const utilities::perf::ScopedTimer timer { "Benchmark" };;
             for (int i = 0; i < N1; i++) {
                 for (int n = 0; n < N2; n++) {
                     FooBad f(1, "Test");
@@ -427,7 +427,7 @@ namespace PerformanceTests::Pass_ConstStringRef_AsParameter {
     void Emplace_StringParameter_ToVector()
     {
         {
-            const PerfUtilities::ScopedTimer timer { "Benchmark" };;
+            const utilities::perf::ScopedTimer timer { "Benchmark" };;
             for (int i = 0; i < 1000; i++) {
                 Bar bar;
                 for (int n = 0; n < 100000; n++) {
@@ -436,7 +436,7 @@ namespace PerformanceTests::Pass_ConstStringRef_AsParameter {
             }
         }
         {
-            const PerfUtilities::ScopedTimer timer { "Benchmark" };;
+            const utilities::perf::ScopedTimer timer { "Benchmark" };;
             for (int i = 0; i < 1000; i++) {
                 BarBad bar;
                 for (int n = 0; n < 100000; n++) {
@@ -445,7 +445,7 @@ namespace PerformanceTests::Pass_ConstStringRef_AsParameter {
             }
         }
         {
-            const PerfUtilities::ScopedTimer timer { "Benchmark" };;
+            const utilities::perf::ScopedTimer timer { "Benchmark" };;
             for (int i = 0; i < 1000; i++) {
                 BarX bar;
                 for (int n = 0; n < 100000; n++) {
@@ -523,7 +523,7 @@ namespace PerformanceTests::StringBasedObject {
     {
         volatile unsigned int N1 = 10000, N2 = 10000;
         {
-            const PerfUtilities::ScopedTimer timer { "Benchmark" };;
+            const utilities::perf::ScopedTimer timer { "Benchmark" };;
             for (int i = 0; i < N1; i++) {
                 for (int n = 0; n < N2; n++) {
                     TestClass0 f("Test");
@@ -531,7 +531,7 @@ namespace PerformanceTests::StringBasedObject {
             }
         }
         {
-            const PerfUtilities::ScopedTimer timer { "Benchmark" };;
+            const utilities::perf::ScopedTimer timer { "Benchmark" };;
             for (int i = 0; i < N1; i++) {
                 for (int n = 0; n < N2; n++) {
                     TestClass01 f("Test");
@@ -539,7 +539,7 @@ namespace PerformanceTests::StringBasedObject {
             }
         }
         {
-            const PerfUtilities::ScopedTimer timer { "Benchmark" };;
+            const utilities::perf::ScopedTimer timer { "Benchmark" };;
             for (int i = 0; i < N1; i++) {
                 for (int n = 0; n < N2; n++) {
                     TestClass1 f("Test");
@@ -547,7 +547,7 @@ namespace PerformanceTests::StringBasedObject {
             }
         }
         {
-            const PerfUtilities::ScopedTimer timer { "Benchmark" };;
+            const utilities::perf::ScopedTimer timer { "Benchmark" };;
             for (int i = 0; i < N1; i++) {
                 for (int n = 0; n < N2; n++) {
                     TestClass2 f("Test");
@@ -555,7 +555,7 @@ namespace PerformanceTests::StringBasedObject {
             }
         }
         {
-            const PerfUtilities::ScopedTimer timer { "Benchmark" };;
+            const utilities::perf::ScopedTimer timer { "Benchmark" };;
             for (int i = 0; i < N1; i++) {
                 for (int n = 0; n < N2; n++) {
                     TestClass3 f("Test");
@@ -563,7 +563,7 @@ namespace PerformanceTests::StringBasedObject {
             }
         }
         {
-            const PerfUtilities::ScopedTimer timer { "Benchmark" };;
+            const utilities::perf::ScopedTimer timer { "Benchmark" };;
             for (int i = 0; i < N1; i++) {
                 for (int n = 0; n < N2; n++) {
                     TestClass4 f("Test");
@@ -571,7 +571,7 @@ namespace PerformanceTests::StringBasedObject {
             }
         }
         {
-            const PerfUtilities::ScopedTimer timer { "Benchmark" };;
+            const utilities::perf::ScopedTimer timer { "Benchmark" };;
             for (int i = 0; i < N1; i++) {
                 for (int n = 0; n < N2; n++) {
                     TestClass5 f("Test");
@@ -579,7 +579,7 @@ namespace PerformanceTests::StringBasedObject {
             }
         }
         {
-            const PerfUtilities::ScopedTimer timer { "Benchmark" };;
+            const utilities::perf::ScopedTimer timer { "Benchmark" };;
             for (int i = 0; i < N1; i++) {
                 for (int n = 0; n < N2; n++) {
                     TestClass6 f("Test");
@@ -593,7 +593,7 @@ namespace PerformanceTests::StringBasedObject {
     {
         volatile unsigned int N1 = 10000, N2 = 10000;
         {
-            const PerfUtilities::ScopedTimer timer { "Benchmark" };;
+            const utilities::perf::ScopedTimer timer { "Benchmark" };;
             for (int i = 0; i < N1; i++) {
                 for (int n = 0; n < N2; n++) {
                     std::string str("Test_111111111111111111111111111111111111");
@@ -602,7 +602,7 @@ namespace PerformanceTests::StringBasedObject {
             }
         }
         {
-            const PerfUtilities::ScopedTimer timer { "Benchmark" };;
+            const utilities::perf::ScopedTimer timer { "Benchmark" };;
             for (int i = 0; i < N1; i++) {
                 for (int n = 0; n < N2; n++) {
                     std::string str("Test_111111111111111111111111111111111111");
@@ -611,7 +611,7 @@ namespace PerformanceTests::StringBasedObject {
             }
         }
         {
-            const PerfUtilities::ScopedTimer timer { "Benchmark" };
+            const utilities::perf::ScopedTimer timer { "Benchmark" };
             for (int i = 0; i < N1; i++) {
                 for (int n = 0; n < N2; n++) {
                     std::string str("Test_111111111111111111111111111111111111");
@@ -620,7 +620,7 @@ namespace PerformanceTests::StringBasedObject {
             }
         }
         {
-            const PerfUtilities::ScopedTimer timer { "Benchmark" };
+            const utilities::perf::ScopedTimer timer { "Benchmark" };
             for (int i = 0; i < N1; i++) {
                 for (int n = 0; n < N2; n++) {
                     std::string str("Test_111111111111111111111111111111111111");
@@ -629,7 +629,7 @@ namespace PerformanceTests::StringBasedObject {
             }
         }
         {
-            const PerfUtilities::ScopedTimer timer { "Benchmark" };
+            const utilities::perf::ScopedTimer timer { "Benchmark" };
             for (int i = 0; i < N1; i++) {
                 for (int n = 0; n < N2; n++) {
                     std::string str("Test_111111111111111111111111111111111111");
@@ -639,7 +639,7 @@ namespace PerformanceTests::StringBasedObject {
         }
 
         {
-            const PerfUtilities::ScopedTimer timer { "Benchmark" };
+            const utilities::perf::ScopedTimer timer { "Benchmark" };
             for (int i = 0; i < N1; i++) {
                 for (int n = 0; n < N2; n++) {
                     std::string str("Test_111111111111111111111111111111111111");
@@ -648,7 +648,7 @@ namespace PerformanceTests::StringBasedObject {
             }
         }
         {
-            const PerfUtilities::ScopedTimer timer { "Benchmark" };
+            const utilities::perf::ScopedTimer timer { "Benchmark" };
             for (int i = 0; i < N1; i++) {
                 for (int n = 0; n < N2; n++) {
                     std::string str("Test_111111111111111111111111111111111111");
@@ -657,7 +657,7 @@ namespace PerformanceTests::StringBasedObject {
             }
         }
         {
-            const PerfUtilities::ScopedTimer timer { "Benchmark" };
+            const utilities::perf::ScopedTimer timer { "Benchmark" };
             for (int i = 0; i < N1; i++) {
                 for (int n = 0; n < N2; n++) {
                     char buffer[] = "Test_111111111111111111111111111111111111";
@@ -717,7 +717,7 @@ namespace PerformanceTests::SharedPtr_PassTests {
 
     void PassByValue_ToBaseClass()
     {
-        const PerfUtilities::ScopedTimer timer { "Benchmark" };
+        const utilities::perf::ScopedTimer timer { "Benchmark" };
         for (int i = 0; i < 10; i++) {
             std::shared_ptr<Derived> ptr = std::make_shared<Derived>(0);
             for (int n = 0; n < 100000000; n++) {
@@ -728,7 +728,7 @@ namespace PerformanceTests::SharedPtr_PassTests {
 
     void PassByValue_ToDerivedClass()
     {
-        const PerfUtilities::ScopedTimer timer { "Benchmark" };
+        const utilities::perf::ScopedTimer timer { "Benchmark" };
         for (int i = 0; i < 10; i++) {
             std::shared_ptr<Derived> ptr = std::make_shared<Derived>(0);
             for (int n = 0; n < 100000000; n++) {
@@ -739,7 +739,7 @@ namespace PerformanceTests::SharedPtr_PassTests {
 
     void Pass_ByValue_vs_PassRef() {
         {
-            const PerfUtilities::ScopedTimer timer { "Benchmark" };
+            const utilities::perf::ScopedTimer timer { "Benchmark" };
             for (int i = 0; i < 10; i++) {
                 std::shared_ptr<Integer> int_var = std::make_shared<Integer>(0);
                 for (int n = 0; n < 100000000; n++) {
@@ -748,7 +748,7 @@ namespace PerformanceTests::SharedPtr_PassTests {
             }
         }
         {
-            const PerfUtilities::ScopedTimer timer { "Benchmark" };
+            const utilities::perf::ScopedTimer timer { "Benchmark" };
             for (int i = 0; i < 10; i++) {
                 std::shared_ptr<Integer> int_var = std::make_shared<Integer>(0);
                 for (int n = 0; n < 100000000; n++) {
@@ -760,7 +760,7 @@ namespace PerformanceTests::SharedPtr_PassTests {
 
     void Pass_ByValue_vs_PassRef_WEAK() {
         {
-            const PerfUtilities::ScopedTimer timer { "Benchmark" };
+            const utilities::perf::ScopedTimer timer { "Benchmark" };
             for (int i = 0; i < 10; i++) {
                 std::shared_ptr<Integer> int_var = std::make_shared<Integer>(0);
                 for (int n = 0; n < 100000000; n++) {
@@ -769,7 +769,7 @@ namespace PerformanceTests::SharedPtr_PassTests {
             }
         }
         {
-            const PerfUtilities::ScopedTimer timer { "Benchmark" };
+            const utilities::perf::ScopedTimer timer { "Benchmark" };
             for (int i = 0; i < 10; i++) {
                 std::shared_ptr<Integer> int_var = std::make_shared<Integer>(0);
                 for (int n = 0; n < 100000000; n++) {
@@ -781,7 +781,7 @@ namespace PerformanceTests::SharedPtr_PassTests {
 
     void Put_SharedPtr_To_Vector() {
         {
-            const PerfUtilities::ScopedTimer timer { "Benchmark" };
+            const utilities::perf::ScopedTimer timer { "Benchmark" };
             for (int i = 0; i < 10000; i++) {
                 std::vector<std::shared_ptr<Integer>> sharedIntegers;
                 for (int n = 0; n < 100; n++) {
@@ -790,7 +790,7 @@ namespace PerformanceTests::SharedPtr_PassTests {
             }
         }
         {
-            const PerfUtilities::ScopedTimer timer { "Benchmark" };
+            const utilities::perf::ScopedTimer timer { "Benchmark" };
             for (int i = 0; i < 10000; i++) {
                 std::vector<std::shared_ptr<Integer>> sharedIntegers;
                 for (int n = 0; n < 100; n++) {
@@ -799,7 +799,7 @@ namespace PerformanceTests::SharedPtr_PassTests {
             }
         }
         {
-            const PerfUtilities::ScopedTimer timer { "Benchmark" };
+            const utilities::perf::ScopedTimer timer { "Benchmark" };
             for (int i = 0; i < 10000; i++) {
                 std::vector<std::shared_ptr<Integer>> sharedIntegers;
                 for (int n = 0; n < 100; n++) {
@@ -808,7 +808,7 @@ namespace PerformanceTests::SharedPtr_PassTests {
             }
         }
         {
-            const PerfUtilities::ScopedTimer timer { "Benchmark" };
+            const utilities::perf::ScopedTimer timer { "Benchmark" };
             for (int i = 0; i < 10000; i++) {
                 std::vector<std::shared_ptr<Integer>> sharedIntegers;
                 for (int n = 0; n < 100; n++) {
@@ -823,7 +823,7 @@ namespace PerformanceTests::SharedPtr_PassTests {
     {
         constexpr int N = 10000, M = 1000;
         {
-            const PerfUtilities::ScopedTimer timer { "Benchmark" };
+            const utilities::perf::ScopedTimer timer { "Benchmark" };
             for (int i = 0; i < N; i++) {
                 for (int n = 0; n < M; n++) {
                     auto ptr = std::make_shared<Integer>(n);
@@ -831,7 +831,7 @@ namespace PerformanceTests::SharedPtr_PassTests {
             }
         }
         {
-            const PerfUtilities::ScopedTimer timer { "Benchmark" };
+            const utilities::perf::ScopedTimer timer { "Benchmark" };
             for (int i = 0; i < N; i++) {
                 for (int n = 0; n < M; n++) {
                     auto ptr = std::make_unique<Integer>(n);
@@ -839,7 +839,7 @@ namespace PerformanceTests::SharedPtr_PassTests {
             }
         }
         {
-            const PerfUtilities::ScopedTimer timer { "Benchmark" };
+            const utilities::perf::ScopedTimer timer { "Benchmark" };
             for (int i = 0; i < N; i++) {
                 for (int n = 0; n < M; n++) {
                     auto *ptr = new Integer(n);
@@ -848,7 +848,7 @@ namespace PerformanceTests::SharedPtr_PassTests {
             }
         }
         {
-            const PerfUtilities::ScopedTimer timer { "Benchmark" };
+            const utilities::perf::ScopedTimer timer { "Benchmark" };
             for (int i = 0; i < N; i++) {
                 for (int n = 0; n < M; n++) {
                     Integer intger(n);
@@ -893,7 +893,7 @@ namespace PerformanceTests::UniquedPtr_PassTests {
     {
         constexpr int TESTS_COUNT = 1'00;
         {
-            const PerfUtilities::ScopedTimer timer { "Benchmark" };
+            const utilities::perf::ScopedTimer timer { "Benchmark" };
             for (int i = 0; i < TESTS_COUNT; i++) {
                 for (int n = 0; n < TESTS_COUNT; ++n) {
                     std::unique_ptr<Base> ptr{ std::unique_ptr< Base >(new Base()) };
@@ -901,7 +901,7 @@ namespace PerformanceTests::UniquedPtr_PassTests {
             }
         }
         {
-            const PerfUtilities::ScopedTimer timer { "Benchmark" };
+            const utilities::perf::ScopedTimer timer { "Benchmark" };
             for (int i = 0; i < TESTS_COUNT; i++) {
                 for (int n = 0; n < TESTS_COUNT; ++n) {
                     std::unique_ptr<Base> ptr{ std::make_unique<Base>() };
@@ -912,7 +912,7 @@ namespace PerformanceTests::UniquedPtr_PassTests {
 #pragma optimize( "", on )
 
     void PassByRawPointer() {
-        const PerfUtilities::ScopedTimer timer { "Benchmark" };
+        const utilities::perf::ScopedTimer timer { "Benchmark" };
         for (int i = 0; i < 100000; i++) {
             Integer* int_var = new Integer(0);
             IncrementByRawPointer(int_var, 10000);
@@ -922,7 +922,7 @@ namespace PerformanceTests::UniquedPtr_PassTests {
     }
 
     void PassByValueTest() {
-        const PerfUtilities::ScopedTimer timer { "Benchmark" };
+        const utilities::perf::ScopedTimer timer { "Benchmark" };
         for (int i = 0; i < 100000; i++) {
             std::unique_ptr<Integer> int_var = std::make_unique<Integer>(0);
             IncrementByValue(std::move(int_var), 10000);
@@ -932,7 +932,7 @@ namespace PerformanceTests::UniquedPtr_PassTests {
 
     void PassByRefTest() {
 
-        const PerfUtilities::ScopedTimer timer { "Benchmark" };
+        const utilities::perf::ScopedTimer timer { "Benchmark" };
         for (int i = 0; i < 100000; i++) {
             std::unique_ptr<Integer> int_var = std::make_unique<Integer>(0);
             IncrementByRef(int_var, 10000);
@@ -949,7 +949,7 @@ namespace PerformanceTests::Const_vs_NonConst_Variables {
 
     void ConstLocalVariable() {
         {
-            const PerfUtilities::ScopedTimer timer { "Benchmark" };
+            const utilities::perf::ScopedTimer timer { "Benchmark" };
             for (int i = 0; i < max_count; i++) {
                 for (int n = 0; n < max_count; n++) {
                     const std::string s = "SomeShortString22222222222222222222222222222222";
@@ -958,7 +958,7 @@ namespace PerformanceTests::Const_vs_NonConst_Variables {
         }
 
         {
-            const PerfUtilities::ScopedTimer timer { "Benchmark" };
+            const utilities::perf::ScopedTimer timer { "Benchmark" };
             for (int i = 0; i < max_count; i++) {
                 for (int n = 0; n < max_count; n++) {
                     std::string s = "SomeShortString22222222222222222222222222222222";
@@ -977,7 +977,7 @@ namespace PerformanceTests::Const_vs_NonConst_Variables {
 
 
         {
-            const PerfUtilities::ScopedTimer timer { "Benchmark" };
+            const utilities::perf::ScopedTimer timer { "Benchmark" };
             for (int i = 0; i < max_count; i++) {
                 for (int n = 0; n < 100; n++) {
                     // constexpr
@@ -997,7 +997,7 @@ namespace PerformanceTests::AccessVariable_Map_vs_ArrayOnStack {
         int tmp[256] = { 0 };
         tmp[123] = 222;
 
-        const PerfUtilities::ScopedTimer timer { "Benchmark" };
+        const utilities::perf::ScopedTimer timer { "Benchmark" };
         for (int i = 0; i < 10000; i++) {
             volatile int v = tmp[123];
             for (int n = 0; n < 1000000; n++) {
@@ -1013,7 +1013,7 @@ namespace PerformanceTests::AccessVariable_Map_vs_ArrayOnStack {
         while (i)
             tmp.insert(i--);
 
-        const PerfUtilities::ScopedTimer timer { "Benchmark" };
+        const utilities::perf::ScopedTimer timer { "Benchmark" };
         for (int i = 0; i < 10000; i++) {
             auto it = tmp.find(123);
             for (int n = 0; n < 1000000; n++) {
@@ -1122,7 +1122,7 @@ namespace PerformanceTests::Move_Experiments {
     void Move_vs_Copy_VectorToMap() {
 
         {
-            const PerfUtilities::ScopedTimer timer { "Benchmark" };
+            const utilities::perf::ScopedTimer timer { "Benchmark" };
             std::map<std::string, std::vector<Integer>> map{};
             for (int n = 0; n < TESTS; n++) {
                 std::vector<Integer> items{};
@@ -1135,7 +1135,7 @@ namespace PerformanceTests::Move_Experiments {
         }
 
         {
-            const PerfUtilities::ScopedTimer timer { "Benchmark" };
+            const utilities::perf::ScopedTimer timer { "Benchmark" };
             std::map<std::string, std::vector<Integer>> map{};
             for (int n = 0; n < TESTS; n++) {
                 std::vector<Integer> items{};
@@ -1193,7 +1193,7 @@ namespace PerformanceTests::Exceptions
     {
         constexpr size_t MAX_COUNT = 1'000'000;
         {
-            const PerfUtilities::ScopedTimer timer { "Benchmark" };
+            const utilities::perf::ScopedTimer timer { "Benchmark" };
             for (size_t i = 0; i < MAX_COUNT; i++) {
                 try {
                     exitWithBasicException();
@@ -1205,7 +1205,7 @@ namespace PerformanceTests::Exceptions
         }
 
         {
-            const PerfUtilities::ScopedTimer timer { "Benchmark" };
+            const utilities::perf::ScopedTimer timer { "Benchmark" };
             for (size_t i = 0; i < MAX_COUNT; i++) {
                 try {
                     exitWithMessageException();
@@ -1217,14 +1217,14 @@ namespace PerformanceTests::Exceptions
         }
 
         {
-            const PerfUtilities::ScopedTimer timer { "Benchmark" };
+            const utilities::perf::ScopedTimer timer { "Benchmark" };
             for (size_t i = 0; i < MAX_COUNT; i++) {
                 exitWithReturn();
             }
         }
 
         {
-            const PerfUtilities::ScopedTimer timer { "Benchmark" };
+            const utilities::perf::ScopedTimer timer { "Benchmark" };
             for (size_t i = 0; i < MAX_COUNT; i++) {
                 auto err = exitWithErrorCode();
                 if (err < 0) {
@@ -1261,7 +1261,7 @@ namespace PerformanceTests::FinalMethods {
 
     void TestFinalMethod()
     {
-        const PerfUtilities::ScopedTimer timer { "Benchmark" };
+        const utilities::perf::ScopedTimer timer { "Benchmark" };
         Derived* d = new Derived();
         for (int i = 0; i < 10000; ++i) {
             for (int i = 0; i < 10000; ++i) {
@@ -1273,7 +1273,7 @@ namespace PerformanceTests::FinalMethods {
 
     void TestNotFinalMethod()
     {
-        const PerfUtilities::ScopedTimer timer { "Benchmark" };
+        const utilities::perf::ScopedTimer timer { "Benchmark" };
         Derived* d = new Derived();
         for (int i = 0; i < 10000; ++i) {
             for (int i = 0; i < 10000; ++i) {
@@ -1336,7 +1336,7 @@ namespace PerformanceTests::MoveOperatios {
     void Construct_String_Object()
     {
         {
-            const PerfUtilities::ScopedTimer timer { "Benchmark" };
+            const utilities::perf::ScopedTimer timer { "Benchmark" };
             for (int i = 0; i < 10000000; ++i) {
                 std::string s = std::string("a not very short string");
                 Object_Move o(s);
@@ -1344,7 +1344,7 @@ namespace PerformanceTests::MoveOperatios {
         }
 
         {
-            const PerfUtilities::ScopedTimer timer { "Benchmark" };
+            const utilities::perf::ScopedTimer timer { "Benchmark" };
             for (int i = 0; i < 10000000; ++i) {
                 std::string s = std::string("a not very short string");
                 Object_Move o(std::move(s));
@@ -1352,7 +1352,7 @@ namespace PerformanceTests::MoveOperatios {
         }
 
         {
-            const PerfUtilities::ScopedTimer timer { "Benchmark" };
+            const utilities::perf::ScopedTimer timer { "Benchmark" };
             for (int i = 0; i < 10000000; ++i) {
                 std::string s{ "a not very short string" };
                 Object_ConstRef o(s);
@@ -1360,21 +1360,21 @@ namespace PerformanceTests::MoveOperatios {
         }
 
         {
-            const PerfUtilities::ScopedTimer timer { "Benchmark" };
+            const utilities::perf::ScopedTimer timer { "Benchmark" };
             for (int i = 0; i < 10000000; ++i) {
                 Object_ConstRef o("a not very short string");
             }
         }
 
         {
-            const PerfUtilities::ScopedTimer timer { "Benchmark" };
+            const utilities::perf::ScopedTimer timer { "Benchmark" };
             for (int i = 0; i < 10000000; ++i) {
                 Object_RValue_Forward o("a not very short string");
             }
         }
 
         {
-            const PerfUtilities::ScopedTimer timer { "Benchmark" };
+            const utilities::perf::ScopedTimer timer { "Benchmark" };
             for (int i = 0; i < 10000000; ++i) {
                 Object_UniversalRef_Forward o("a not very short string");
             }
@@ -1456,7 +1456,7 @@ namespace PerformanceTests::MemoryPoolsTests {
         constexpr size_t MAX_COUNT = 100;
 
         {
-            const PerfUtilities::ScopedTimer timer { "Benchmark" };
+            const utilities::perf::ScopedTimer timer { "Benchmark" };
             for (int i = 0; i < MAX_COUNT; i++) {
                 for (int n = 0; n < MAX_COUNT; n++) {
                     for (size_t k = 0; k < size; k++)
@@ -1468,7 +1468,7 @@ namespace PerformanceTests::MemoryPoolsTests {
         }
 
         {
-            const PerfUtilities::ScopedTimer timer { "Benchmark" };
+            const utilities::perf::ScopedTimer timer { "Benchmark" };
             for (int i = 0; i < MAX_COUNT; i++) {
                 for (int n = 0; n < MAX_COUNT; n++) {
                     for (size_t k = 0; k < size; k++)
@@ -1490,7 +1490,7 @@ namespace PerformanceTests::CollectionsTests::Vector {
         using type = std::string;
 
         {
-            const PerfUtilities::ScopedTimer timer { "Benchmark" };
+            const utilities::perf::ScopedTimer timer { "Benchmark" };
             std::vector<type> vect;
             vect.reserve(10000);
             for (int i = 0; i < 10000; ++i) {
@@ -1501,7 +1501,7 @@ namespace PerformanceTests::CollectionsTests::Vector {
             }
         }
         {
-            const PerfUtilities::ScopedTimer timer { "Benchmark" };
+            const utilities::perf::ScopedTimer timer { "Benchmark" };
             std::vector<type> vect;
             vect.reserve(10000);
             for (int i = 0; i < 10000; ++i) {
@@ -1512,7 +1512,7 @@ namespace PerformanceTests::CollectionsTests::Vector {
             }
         }
         {
-            const PerfUtilities::ScopedTimer timer { "Benchmark" };
+            const utilities::perf::ScopedTimer timer { "Benchmark" };
             std::vector<type> vect;
             vect.reserve(10000);
             for (int i = 0; i < 10000; ++i) {
@@ -1528,7 +1528,7 @@ namespace PerformanceTests::CollectionsTests::Vector {
         using type = const char*;
 
         {
-            const PerfUtilities::ScopedTimer timer { "Benchmark" };
+            const utilities::perf::ScopedTimer timer { "Benchmark" };
             std::vector<type> vect;
             vect.reserve(10000);
             for (int i = 0; i < 10000; ++i) {
@@ -1539,7 +1539,7 @@ namespace PerformanceTests::CollectionsTests::Vector {
             }
         }
         {
-            const PerfUtilities::ScopedTimer timer { "Benchmark" };
+            const utilities::perf::ScopedTimer timer { "Benchmark" };
             std::vector<type> vect;
             vect.reserve(10000);
             for (int i = 0; i < 10000; ++i) {
@@ -1550,7 +1550,7 @@ namespace PerformanceTests::CollectionsTests::Vector {
             }
         }
         {
-            const PerfUtilities::ScopedTimer timer { "Benchmark" };
+            const utilities::perf::ScopedTimer timer { "Benchmark" };
             std::vector<type> vect;
             vect.reserve(10000);
             for (int i = 0; i < 10000; ++i) {
@@ -1621,7 +1621,7 @@ namespace PerformanceTests::Strings {
     {
         volatile unsigned int N1 = 10000, N2 = 10000;
         {
-            const PerfUtilities::ScopedTimer timer { "Benchmark" };
+            const utilities::perf::ScopedTimer timer { "Benchmark" };
             for (int i = 0; i < N1; i++) {
                 for (int n = 0; n < N2; n++) {
                     std::string s { "123456789012345678901234567890"};
@@ -1631,7 +1631,7 @@ namespace PerformanceTests::Strings {
         }
 
         {
-            const PerfUtilities::ScopedTimer timer { "Benchmark" };
+            const utilities::perf::ScopedTimer timer { "Benchmark" };
             for (int i = 0; i < N1; i++) {
                 for (int n = 0; n < N2; n++) {
                     std::string s { "123456789012345678901234567890"};
@@ -1641,7 +1641,7 @@ namespace PerformanceTests::Strings {
         }
 
         {
-            const PerfUtilities::ScopedTimer timer { "Benchmark" };
+            const utilities::perf::ScopedTimer timer { "Benchmark" };
             for (int i = 0; i < N1; i++) {
                 for (int n = 0; n < N2; n++) {
                     std::string s { "123456789012345678901234567890"};
@@ -1651,7 +1651,7 @@ namespace PerformanceTests::Strings {
         }
 
         {
-            const PerfUtilities::ScopedTimer timer { "Benchmark" };
+            const utilities::perf::ScopedTimer timer { "Benchmark" };
             for (int i = 0; i < N1; i++) {
                 for (int n = 0; n < N2; n++) {
                     char s[] = "123456789012345678901234567890";
@@ -1661,7 +1661,7 @@ namespace PerformanceTests::Strings {
         }
 
         {
-            const PerfUtilities::ScopedTimer timer { "Benchmark" };
+            const utilities::perf::ScopedTimer timer { "Benchmark" };
             for (int i = 0; i < N1; i++) {
                 for (int n = 0; n < N2; n++) {
                     std::string s { "123456789012345678901234567890"};
@@ -1671,7 +1671,7 @@ namespace PerformanceTests::Strings {
         }
 
         {
-            const PerfUtilities::ScopedTimer timer { "Benchmark" };
+            const utilities::perf::ScopedTimer timer { "Benchmark" };
             for (int i = 0; i < N1; i++) {
                 for (int n = 0; n < N2; n++) {
                     char s[] = "123456789012345678901234567890";
@@ -1688,7 +1688,7 @@ namespace PerformanceTests::Strings {
     {
         constexpr size_t TEST_ITER_COUNT = 3000;
         {
-            const PerfUtilities::ScopedTimer timer { "Benchmark" };
+            const utilities::perf::ScopedTimer timer { "Benchmark" };
             for (int i = 0; i < TEST_ITER_COUNT; ++i) {
                 for (int n = 0; n < TEST_ITER_COUNT; ++n) {
                     Handle_String(TEST_STRING);
@@ -1696,7 +1696,7 @@ namespace PerformanceTests::Strings {
             }
         }
         {
-            const PerfUtilities::ScopedTimer timer { "Benchmark" };
+            const utilities::perf::ScopedTimer timer { "Benchmark" };
             for (int i = 0; i < TEST_ITER_COUNT; ++i) {
                 for (int n = 0; n < TEST_ITER_COUNT; ++n) {
                     Handle_StringValue(TEST_STRING);
@@ -1704,7 +1704,7 @@ namespace PerformanceTests::Strings {
             }
         }
         {
-            const PerfUtilities::ScopedTimer timer { "Benchmark" };
+            const utilities::perf::ScopedTimer timer { "Benchmark" };
             for (int i = 0; i < TEST_ITER_COUNT; ++i) {
                 for (int n = 0; n < TEST_ITER_COUNT; ++n) {
                     Handle_String_RValue(TEST_STRING);
@@ -1715,7 +1715,7 @@ namespace PerformanceTests::Strings {
         std::cout << "String views\n";
 
         {
-            const PerfUtilities::ScopedTimer timer { "Benchmark" };
+            const utilities::perf::ScopedTimer timer { "Benchmark" };
             for (int i = 0; i < TEST_ITER_COUNT; ++i) {
                 for (int n = 0; n < TEST_ITER_COUNT; ++n) {
                     Handle_String_View(TEST_STRING);
@@ -1726,7 +1726,7 @@ namespace PerformanceTests::Strings {
         std::cout << "CharSequence pointer\n";
 
         {
-            const PerfUtilities::ScopedTimer timer { "Benchmark" };
+            const utilities::perf::ScopedTimer timer { "Benchmark" };
             for (int i = 0; i < TEST_ITER_COUNT; ++i) {
                 for (int n = 0; n < TEST_ITER_COUNT; ++n) {
                     Handle_CharSequence_Pointer("Longggggggggggggggggggggg12345stringggggggggggg");
@@ -1744,7 +1744,7 @@ namespace PerformanceTests::Strings {
         std::string text = "Short_String";
 
         {
-            const PerfUtilities::ScopedTimer timer { "Benchmark" };
+            const utilities::perf::ScopedTimer timer { "Benchmark" };
             for (int i = 0; i < TEST_ITER_COUNT; ++i) {
                 for (int n = 0; n < TEST_ITER_COUNT; ++n) {
                     Handle_String(text);
@@ -1752,7 +1752,7 @@ namespace PerformanceTests::Strings {
             }
         }
         {
-            const PerfUtilities::ScopedTimer timer { "Benchmark" };
+            const utilities::perf::ScopedTimer timer { "Benchmark" };
             for (int i = 0; i < TEST_ITER_COUNT; ++i) {
                 for (int n = 0; n < TEST_ITER_COUNT; ++n) {
                     Handle_StringValue(text);
@@ -1760,7 +1760,7 @@ namespace PerformanceTests::Strings {
             }
         }
         {
-            const PerfUtilities::ScopedTimer timer { "Benchmark" };
+            const utilities::perf::ScopedTimer timer { "Benchmark" };
             for (int i = 0; i < TEST_ITER_COUNT; ++i) {
                 for (int n = 0; n < TEST_ITER_COUNT; ++n) {
                     Handle_String_RValue(std::move(text));
@@ -1771,7 +1771,7 @@ namespace PerformanceTests::Strings {
         std::cout << "String views\n";
 
         {
-            const PerfUtilities::ScopedTimer timer { "Benchmark" };
+            const utilities::perf::ScopedTimer timer { "Benchmark" };
             for (int i = 0; i < TEST_ITER_COUNT; ++i) {
                 for (int n = 0; n < TEST_ITER_COUNT; ++n) {
                     Handle_String_View(text);
@@ -1779,7 +1779,7 @@ namespace PerformanceTests::Strings {
             }
         }
         {
-            const PerfUtilities::ScopedTimer timer { "Benchmark" };
+            const utilities::perf::ScopedTimer timer { "Benchmark" };
             for (int i = 0; i < TEST_ITER_COUNT; ++i) {
                 for (int n = 0; n < TEST_ITER_COUNT; ++n) {
                     Handle_String_View(text.c_str());
@@ -1798,7 +1798,7 @@ namespace PerformanceTests::Strings {
         std::string text = "123456789123456789123456789123456789123456789123456789123456789123456789";
 
         {
-            const PerfUtilities::ScopedTimer timer { "Benchmark" };
+            const utilities::perf::ScopedTimer timer { "Benchmark" };
             for (int i = 0; i < TEST_ITER_COUNT; ++i) {
                 for (int n = 0; n < TEST_ITER_COUNT; ++n) {
                     Handle_String(text.substr(beg, end - beg));
@@ -1807,7 +1807,7 @@ namespace PerformanceTests::Strings {
         }
 
         {
-            const PerfUtilities::ScopedTimer timer { "Benchmark" };
+            const utilities::perf::ScopedTimer timer { "Benchmark" };
             for (int i = 0; i < TEST_ITER_COUNT; ++i) {
                 for (int n = 0; n < TEST_ITER_COUNT; ++n) {
                     Handle_StringValue(text.substr(beg, end - beg));
@@ -1816,7 +1816,7 @@ namespace PerformanceTests::Strings {
         }
 
         {
-            const PerfUtilities::ScopedTimer timer { "Benchmark" };
+            const utilities::perf::ScopedTimer timer { "Benchmark" };
             for (int i = 0; i < TEST_ITER_COUNT; ++i) {
                 for (int n = 0; n < TEST_ITER_COUNT; ++n) {
                     Handle_String_View(std::string_view(text.begin() + beg, text.begin() + end));
@@ -1843,7 +1843,7 @@ namespace PerformanceTests::Strings {
         };
 
         {
-            const PerfUtilities::ScopedTimer timer { "Benchmark" };
+            const utilities::perf::ScopedTimer timer { "Benchmark" };
             for (int i = 0; i < TESTS_COUNT; i++) {
                 for (int n = 0; n < TESTS_COUNT; n++)
                 {
@@ -1853,7 +1853,7 @@ namespace PerformanceTests::Strings {
         }
 
         {
-            const PerfUtilities::ScopedTimer timer { "Benchmark" };
+            const utilities::perf::ScopedTimer timer { "Benchmark" };
             for (int i = 0; i < TESTS_COUNT; i++) {
                 for (int n = 0; n < TESTS_COUNT; n++)
                 {
@@ -1863,7 +1863,7 @@ namespace PerformanceTests::Strings {
         }
 
         {
-            const PerfUtilities::ScopedTimer timer { "Benchmark" };
+            const utilities::perf::ScopedTimer timer { "Benchmark" };
             for (int i = 0; i < TESTS_COUNT; i++) {
                 for (int n = 0; n < TESTS_COUNT; n++)
                 {
@@ -1873,7 +1873,7 @@ namespace PerformanceTests::Strings {
         }
 
         {
-            const PerfUtilities::ScopedTimer timer { "Benchmark" };
+            const utilities::perf::ScopedTimer timer { "Benchmark" };
             for (int i = 0; i < TESTS_COUNT; i++) {
                 for (int n = 0; n < TESTS_COUNT; n++) {
                     auto x = complex_check(data);
@@ -1882,7 +1882,7 @@ namespace PerformanceTests::Strings {
         }
 
         {
-            const PerfUtilities::ScopedTimer timer { "Benchmark" };
+            const utilities::perf::ScopedTimer timer { "Benchmark" };
             for (int i = 0; i < TESTS_COUNT; i++) {
                 for (int n = 0; n < TESTS_COUNT; n++) {
                     auto x = (data[0] == '1' && data[1] == '2' && data[2] == '3' && data[3] == '4' && data[4] == '5');
@@ -1900,7 +1900,7 @@ namespace PerformanceTests::Strings {
 
     void ReassignementTest() {
         {
-            const PerfUtilities::ScopedTimer timer { "Benchmark" };
+            const utilities::perf::ScopedTimer timer { "Benchmark" };
             std::string val; // default construct
             for (int i = 0; i < 10000; ++i) {
                 for (int n = 0; n < 10000; ++n) {
@@ -1909,7 +1909,7 @@ namespace PerformanceTests::Strings {
             }
         }
         {
-            const PerfUtilities::ScopedTimer timer { "Benchmark" };
+            const utilities::perf::ScopedTimer timer { "Benchmark" };
             for (int i = 0; i < 10000; ++i) {
                 for (int n = 0; n < 10000; ++n) {
                     std::string val = get_value(); // direct-init/RVO
@@ -1920,7 +1920,7 @@ namespace PerformanceTests::Strings {
 
     void Append_Performace_Tests() {
         {
-            const PerfUtilities::ScopedTimer timer { "Benchmark" };
+            const utilities::perf::ScopedTimer timer { "Benchmark" };
             for (int i = 0; i < 100000; ++i) {
                 std::string text;
                 for (int n = 0; n < 1000; ++n) {
@@ -1932,7 +1932,7 @@ namespace PerformanceTests::Strings {
             }
         }
         {
-            const PerfUtilities::ScopedTimer timer { "Benchmark" };
+            const utilities::perf::ScopedTimer timer { "Benchmark" };
             for (int i = 0; i < 100000; ++i) {
                 std::string text;
                 for (int n = 0; n < 1000; ++n) {
@@ -1942,7 +1942,7 @@ namespace PerformanceTests::Strings {
         }
         {
             // APPEND WITH RESERVE
-            const PerfUtilities::ScopedTimer timer { "Benchmark" };
+            const utilities::perf::ScopedTimer timer { "Benchmark" };
             for (int i = 0; i < 100000; ++i) {
                 std::string text;
                 text.reserve(1000 * 6 * 4);
@@ -1952,7 +1952,7 @@ namespace PerformanceTests::Strings {
             }
         }
         {
-            const PerfUtilities::ScopedTimer timer { "Benchmark" };
+            const utilities::perf::ScopedTimer timer { "Benchmark" };
             for (int i = 0; i < 100000; ++i) {
                 std::string text;
                 for (int n = 0; n < 1000; ++n) {
@@ -1964,7 +1964,7 @@ namespace PerformanceTests::Strings {
             }
         }
         {
-            const PerfUtilities::ScopedTimer timer { "Benchmark" };
+            const utilities::perf::ScopedTimer timer { "Benchmark" };
             for (int i = 0; i < 100000; ++i) {
                 std::string text = "";
                 for (int n = 0; n < 1000; ++n) {
@@ -1992,7 +1992,7 @@ namespace PerformanceTests::Strings {
 
     void RVO_For_Default_Parameters() {
         {
-            const PerfUtilities::ScopedTimer timer { "Benchmark" };
+            const utilities::perf::ScopedTimer timer { "Benchmark" };
             for (int i = 0; i < 100000; ++i) {
                 for (int n = 0; n < 1000; ++n) {
                     ProcessString("123456789");
@@ -2000,7 +2000,7 @@ namespace PerformanceTests::Strings {
             }
         }
         {
-            const PerfUtilities::ScopedTimer timer { "Benchmark" };;
+            const utilities::perf::ScopedTimer timer { "Benchmark" };;
             for (int i = 0; i < 100000; ++i) {
                 for (int n = 0; n < 1000; ++n) {
                     ProcessString(get_some_string());
@@ -2008,7 +2008,7 @@ namespace PerformanceTests::Strings {
             }
         }
         {
-            const PerfUtilities::ScopedTimer timer { "Benchmark" };;
+            const utilities::perf::ScopedTimer timer { "Benchmark" };;
             for (int i = 0; i < 100000; ++i) {
                 for (int n = 0; n < 1000; ++n) {
                     ProcessStringDefault1();
@@ -2016,7 +2016,7 @@ namespace PerformanceTests::Strings {
             }
         }
         {
-            const PerfUtilities::ScopedTimer timer { "Benchmark" };;
+            const utilities::perf::ScopedTimer timer { "Benchmark" };;
             for (int i = 0; i < 100000; ++i) {
                 for (int n = 0; n < 1000; ++n) {
                     ProcessStringDefault2();
@@ -2025,7 +2025,7 @@ namespace PerformanceTests::Strings {
         }
         {
             std::string str = "123456789";
-            const PerfUtilities::ScopedTimer timer { "Benchmark" };;
+            const utilities::perf::ScopedTimer timer { "Benchmark" };;
             for (int i = 0; i < 100000; ++i) {
                 for (int n = 0; n < 1000; ++n) {
                     ProcessString(str);
@@ -2034,7 +2034,7 @@ namespace PerformanceTests::Strings {
         }
         {
             std::string str = "123456789";
-            const PerfUtilities::ScopedTimer timer { "Benchmark" };;
+            const utilities::perf::ScopedTimer timer { "Benchmark" };;
             for (int i = 0; i < 100000; ++i) {
                 for (int n = 0; n < 1000; ++n) {
                     ProcessStringByRef(str);
@@ -2043,7 +2043,7 @@ namespace PerformanceTests::Strings {
         }
         {
 
-            const PerfUtilities::ScopedTimer timer { "Benchmark" };;
+            const utilities::perf::ScopedTimer timer { "Benchmark" };;
             for (int i = 0; i < 100000; ++i) {
                 for (int n = 0; n < 1000; ++n) {
                     ProcessStringByRef();
@@ -2081,7 +2081,7 @@ namespace PerformanceTests::Strings {
         constexpr int TESTS = 1000;
 
         {
-            const PerfUtilities::ScopedTimer timer { "Benchmark" };;
+            const utilities::perf::ScopedTimer timer { "Benchmark" };;
             for (int i = 0; i < TESTS; i++) {
                 for (int n = 0; n < TESTS; n++) {
 
@@ -2092,7 +2092,7 @@ namespace PerformanceTests::Strings {
         }
 
         {
-            const PerfUtilities::ScopedTimer timer { "Benchmark" };;
+            const utilities::perf::ScopedTimer timer { "Benchmark" };;
             for (int i = 0; i < TESTS; i++) {
                 for (int n = 0; n < TESTS; n++) {
                     SplitString_Stream(base, parts);
@@ -2124,7 +2124,7 @@ namespace PerformanceTests::Strings {
         constexpr size_t TESTS_COUNT = 10'000;
 
         {
-            const PerfUtilities::ScopedTimer timer { "Benchmark" };;
+            const utilities::perf::ScopedTimer timer { "Benchmark" };;
             for (size_t i = 0; i < TESTS_COUNT; i++) {
                 for (size_t n = 0; n < TESTS_COUNT; n++) {
                     std::string result = stringWithFormat("String: %s, Value: %d", "Str_Text", 123);
@@ -2133,7 +2133,7 @@ namespace PerformanceTests::Strings {
         }
 
         {
-            const PerfUtilities::ScopedTimer timer { "Benchmark" };;
+            const utilities::perf::ScopedTimer timer { "Benchmark" };;
             for (size_t i = 0; i < TESTS_COUNT; i++) {
                 for (size_t n = 0; n < TESTS_COUNT; n++) {
                     std::string result = stringWithFormat_Move("String: %s, Value: %d", "Str_Text", 123);
@@ -2149,7 +2149,7 @@ namespace PerformanceTests::Strings {
         constexpr size_t TESTS_COUNT = 1'000;
 
         {
-            const PerfUtilities::ScopedTimer timer { "Benchmark" };;
+            const utilities::perf::ScopedTimer timer { "Benchmark" };;
             for (size_t i = 0; i < TESTS_COUNT; i++) {
                 for (size_t n = 0; n < TESTS_COUNT; n++) {
                     std::string str(s1 + s2);
@@ -2158,7 +2158,7 @@ namespace PerformanceTests::Strings {
         }
 
         {
-            const PerfUtilities::ScopedTimer timer { "Benchmark" };;
+            const utilities::perf::ScopedTimer timer { "Benchmark" };;
             for (size_t i = 0; i < TESTS_COUNT; i++) {
                 for (size_t n = 0; n < TESTS_COUNT; n++) {
                     std::string str{ std::string(s1 + s2) };
@@ -2277,7 +2277,7 @@ Cookie: _ga=GA1.1.299330640.1605022705; PGADMIN_KEY=26c6d221-b0a7-4ae6-b030-2aeb
 #pragma optimize( "", off )
     void Compare_HTTP_Method_Parsers() {
         {
-            const PerfUtilities::ScopedTimer timer { "Benchmark" };;
+            const utilities::perf::ScopedTimer timer { "Benchmark" };;
             for (int i = 0; i < 10000; i++) {
                 for (int n = 0; n < 10000; n++) {
                     OldStyle_Test();
@@ -2285,7 +2285,7 @@ Cookie: _ga=GA1.1.299330640.1605022705; PGADMIN_KEY=26c6d221-b0a7-4ae6-b030-2aeb
             }
         }
         {
-            const PerfUtilities::ScopedTimer timer { "Benchmark" };;
+            const utilities::perf::ScopedTimer timer { "Benchmark" };;
             for (int i = 0; i < 10000; i++) {
                 for (int n = 0; n < 10000; n++) {
                     NewStyle_Test();
@@ -2305,7 +2305,7 @@ namespace PerformanceTests::PolymorphicMemoryResources {
         constexpr size_t max_elements = 1000, count = 1000000;
         constexpr size_t buffer_size = max_elements * sizeof(Type);
 
-        const PerfUtilities::ScopedTimer timer { "Benchmark" };;
+        const utilities::perf::ScopedTimer timer { "Benchmark" };;
         for (size_t i = 0; i < count; ++i) {
 #if 0
             char buffer[buffer_size] = {};
@@ -2332,7 +2332,7 @@ namespace PerformanceTests::PolymorphicMemoryResources {
         constexpr size_t buffer_size = max_elements * sizeof(Type);
 
         {
-            const PerfUtilities::ScopedTimer timer { "Benchmark" };;
+            const utilities::perf::ScopedTimer timer { "Benchmark" };;
             for (size_t i = 0; i < count; ++i) {
                 std::vector<Type> coll;
                 coll.reserve(max_elements);
@@ -2343,7 +2343,7 @@ namespace PerformanceTests::PolymorphicMemoryResources {
         }
 
         {
-            const PerfUtilities::ScopedTimer timer { "Benchmark" };;
+            const utilities::perf::ScopedTimer timer { "Benchmark" };;
             for (size_t i = 0; i < count; ++i) {
                 std::pmr::vector<Type> coll;
                 coll.reserve(max_elements);
@@ -2373,7 +2373,7 @@ namespace PerformanceTests::PolymorphicMemoryResources {
         std::cout << "PMR Vector + String       : ";
 
         {
-            const PerfUtilities::ScopedTimer timer { "Benchmark" };;
+            const utilities::perf::ScopedTimer timer { "Benchmark" };;
             for (int i = 0; i < count; ++i) {
                 std::pmr::vector<std::pmr::string> coll{ &unsynchronized_pool1 };
                 coll.reserve(size);
@@ -2386,7 +2386,7 @@ namespace PerformanceTests::PolymorphicMemoryResources {
         std::cout << "PMR Vector + String [Pool]: ";
 
         {
-            const PerfUtilities::ScopedTimer timer { "Benchmark" };;
+            const utilities::perf::ScopedTimer timer { "Benchmark" };;
             for (int i = 0; i < count; ++i) {
                 std::pmr::vector<std::pmr::string> coll;
                 coll.reserve(size);
@@ -2399,7 +2399,7 @@ namespace PerformanceTests::PolymorphicMemoryResources {
         std::cout << "STD Vector + String       : ";
 
         {
-            const PerfUtilities::ScopedTimer timer { "Benchmark" };;
+            const utilities::perf::ScopedTimer timer { "Benchmark" };;
             for (int i = 0; i < count; ++i) {
                 std::vector<std::string> coll;
                 coll.reserve(size);
@@ -2418,7 +2418,7 @@ namespace PerformanceTests::PolymorphicMemoryResources {
         std::pmr::monotonic_buffer_resource pool{ buffer.data(), buffer.size() };
 
         {
-            const PerfUtilities::ScopedTimer timer { "Benchmark" };;
+            const utilities::perf::ScopedTimer timer { "Benchmark" };;
             for (int i = 0; i < 10000; ++i) {
                 std::pmr::vector<std::pmr::string> coll{ &pool };
                 coll.reserve(1000);
@@ -2429,7 +2429,7 @@ namespace PerformanceTests::PolymorphicMemoryResources {
         }
 
         {
-            const PerfUtilities::ScopedTimer timer { "Benchmark" };;
+            const utilities::perf::ScopedTimer timer { "Benchmark" };;
             for (int i = 0; i < 10000; ++i) {
                 std::vector<std::string> coll;
                 coll.reserve(1000);
@@ -2505,7 +2505,7 @@ namespace PerformanceTests::BasicLoops {
         std::vector<int> nums = { 1,2,3,4,5,6,7,8,9,1,2,3,4,5,6,7,8,9,1,2,3,4,5,6,7,8,9 };
 
         {
-            const PerfUtilities::ScopedTimer timer { "Benchmark" };;
+            const utilities::perf::ScopedTimer timer { "Benchmark" };;
             for (int i = 0; i < 1000000000; ++i) {
                 volatile int sum = 0;
                 for (size_t n = 0; n < nums.size(); ++n) {
@@ -2514,7 +2514,7 @@ namespace PerformanceTests::BasicLoops {
             }
         }
         {
-            const PerfUtilities::ScopedTimer timer { "Benchmark" };;
+            const utilities::perf::ScopedTimer timer { "Benchmark" };;
             for (int i = 0; i < 1000000000; ++i) {
                 volatile int sum = 0;
                 for (int n : nums) {
@@ -2539,7 +2539,7 @@ namespace PerformanceTests::BasicLoops {
         constexpr unsigned long count = 100000;
 
         {
-            const PerfUtilities::ScopedTimer timer { "Benchmark" };;
+            const utilities::perf::ScopedTimer timer { "Benchmark" };;
             for (auto i = 0; i < count; ++i) {
                 int sum = 0;
                 for (size_t n = 0; n < 10000; ++n) {
@@ -2548,7 +2548,7 @@ namespace PerformanceTests::BasicLoops {
             }
         }
         {
-            const PerfUtilities::ScopedTimer timer { "Benchmark" };;
+            const utilities::perf::ScopedTimer timer { "Benchmark" };;
             for (auto i = 0; i < count; ++i) {
                 int sum = 0;
                 for (size_t n = 0; n < 10000; ++n) {
@@ -2570,7 +2570,7 @@ namespace PerformanceTests::BasicLoops {
         std::vector<Big> vector_big(SIZE);
 
         {
-            const PerfUtilities::ScopedTimer timer { "Benchmark" };;
+            const utilities::perf::ScopedTimer timer { "Benchmark" };;
             int sum{ 0 };
             for (size_t i = 0; i < COUNT; ++i) {
                 for (auto& entry : vector_small) {
@@ -2580,7 +2580,7 @@ namespace PerformanceTests::BasicLoops {
         }
 
         {
-            const PerfUtilities::ScopedTimer timer { "Benchmark" };;
+            const utilities::perf::ScopedTimer timer { "Benchmark" };;
             int sum{ 0 };
             for (size_t i = 0; i < COUNT; ++i) {
                 for (auto& entry : vector_medium) {
@@ -2590,7 +2590,7 @@ namespace PerformanceTests::BasicLoops {
         }
 
         {
-            const PerfUtilities::ScopedTimer timer { "Benchmark" };;
+            const utilities::perf::ScopedTimer timer { "Benchmark" };;
             int sum{ 0 };
             for (size_t i = 0; i < COUNT; ++i) {
                 for (auto& entry : vector_big) {
@@ -2626,7 +2626,7 @@ namespace PerformanceTests::BasicLoops {
 
 
         {
-            const PerfUtilities::ScopedTimer timer { "Benchmark" };;
+            const utilities::perf::ScopedTimer timer { "Benchmark" };;
             // int sum{ 0 };
             for (size_t i = 0; i < COUNT; ++i) {
                 for (auto& entry : _set) {
@@ -2636,7 +2636,7 @@ namespace PerformanceTests::BasicLoops {
         }
 
         {
-            const PerfUtilities::ScopedTimer timer { "Benchmark" };;
+            const utilities::perf::ScopedTimer timer { "Benchmark" };;
             // int sum{ 0 };
             for (size_t i = 0; i < COUNT; ++i) {
                 for (auto& entry : _set_events) {
@@ -2646,7 +2646,7 @@ namespace PerformanceTests::BasicLoops {
         }
 
         {
-            const PerfUtilities::ScopedTimer timer { "Benchmark" };;
+            const utilities::perf::ScopedTimer timer { "Benchmark" };;
             // int sum{ 0 };
             for (size_t i = 0; i < COUNT; ++i) {
                 for (auto& entry : _map) {
@@ -2672,7 +2672,7 @@ namespace PerformanceTests::Algoritms {
             numbers.push_back(i);
 
         {
-            const PerfUtilities::ScopedTimer timer { "Benchmark" };;
+            const utilities::perf::ScopedTimer timer { "Benchmark" };;
             for (int i = 0; i < 10000000; ++i) {
                 bool x = false;
                 for (int n = 0; n < size; n++) {
@@ -2685,7 +2685,7 @@ namespace PerformanceTests::Algoritms {
         }
 
         {
-            const PerfUtilities::ScopedTimer timer { "Benchmark" };;
+            const utilities::perf::ScopedTimer timer { "Benchmark" };;
             for (int i = 0; i < 10000000; ++i) {
                 bool x = std::any_of(numbers.begin(), numbers.end(), [&](int v) { return v == find; });
             }
@@ -2706,7 +2706,7 @@ namespace PerformanceTests::GlobalVariables {
     void Access_Global_Vs_Local_Variable() {
         constexpr int max_count = 10000;
         {
-            const PerfUtilities::ScopedTimer timer { "Benchmark" };;
+            const utilities::perf::ScopedTimer timer { "Benchmark" };;
             for (int i = 0; i < max_count; ++i) {
                 globalIntVar = 0;
                 for (int n = 0; n < max_count; n++) {
@@ -2717,7 +2717,7 @@ namespace PerformanceTests::GlobalVariables {
 
         int localIntVar = 0;
         {
-            const PerfUtilities::ScopedTimer timer { "Benchmark" };;
+            const utilities::perf::ScopedTimer timer { "Benchmark" };;
             for (int i = 0; i < max_count; ++i) {
                 localIntVar = 0;
                 for (int n = 0; n < max_count; ++n) {
@@ -2728,7 +2728,7 @@ namespace PerformanceTests::GlobalVariables {
 
         static int staticIntVar = 0;
         {
-            const PerfUtilities::ScopedTimer timer { "Benchmark" };;
+            const utilities::perf::ScopedTimer timer { "Benchmark" };;
             for (int i = 0; i < max_count; ++i) {
                 staticIntVar = 0;
                 for (int n = 0; n < max_count; ++n) {
@@ -2788,7 +2788,7 @@ namespace PerformanceTests::Objects {
     void Object_Variables_InitInConstructor() {
         constexpr int size = 10000;
         {
-            const PerfUtilities::ScopedTimer timer { "Benchmark" };;
+            const utilities::perf::ScopedTimer timer { "Benchmark" };;
             for (int i = 0; i < size; ++i) {
                 for (int n = 0; n < size; ++n) {
                     Object* obj = new Object(10, 20, 30, 40);
@@ -2797,7 +2797,7 @@ namespace PerformanceTests::Objects {
             }
         }
         {
-            const PerfUtilities::ScopedTimer timer { "Benchmark" };;
+            const utilities::perf::ScopedTimer timer { "Benchmark" };;
             for (int i = 0; i < size; ++i) {
                 for (int n = 0; n < size; ++n) {
                     Object1* obj = new Object1();
@@ -2806,7 +2806,7 @@ namespace PerformanceTests::Objects {
             }
         }
         {
-            const PerfUtilities::ScopedTimer timer { "Benchmark" };;
+            const utilities::perf::ScopedTimer timer { "Benchmark" };;
             for (int i = 0; i < size; ++i) {
                 for (int n = 0; n < size; ++n) {
                     Object2* obj = new Object2();
@@ -2832,7 +2832,7 @@ namespace PerformanceTests::Attributes {
     void NoReturn_Test() {
         constexpr int size = 10000;
         {
-            const PerfUtilities::ScopedTimer timer { "Benchmark" };;
+            const utilities::perf::ScopedTimer timer { "Benchmark" };;
             for (int i = 0; i < size; ++i) {
                 for (int n = 0; n < size; ++n) {
                     Test1();
@@ -2840,7 +2840,7 @@ namespace PerformanceTests::Attributes {
             }
         }
         {
-            const PerfUtilities::ScopedTimer timer { "Benchmark" };;
+            const utilities::perf::ScopedTimer timer { "Benchmark" };;
             for (int i = 0; i < size; ++i) {
                 for (int n = 0; n < size; ++n) {
                     Test2();
@@ -2900,7 +2900,7 @@ namespace PerformanceTests::Memory {
     void Constructor_Defaut_vs_Explicit() {
         constexpr int size = 1000;
         {
-            const PerfUtilities::ScopedTimer timer { "Benchmark" };;
+            const utilities::perf::ScopedTimer timer { "Benchmark" };;
             for (int i = 0; i < size; ++i) {
                 for (int n = 0; n < size; ++n) {
                     TestTypeExplicit* obj = new TestTypeExplicit();
@@ -2909,7 +2909,7 @@ namespace PerformanceTests::Memory {
             }
         }
         {
-            const PerfUtilities::ScopedTimer timer { "Benchmark" };;
+            const utilities::perf::ScopedTimer timer { "Benchmark" };;
             for (int i = 0; i < size; ++i) {
                 for (int n = 0; n < size; ++n) {
                     TestTypeDefault* obj = new TestTypeDefault();
@@ -2927,7 +2927,7 @@ namespace PerformanceTests::Memory {
     constexpr int BUFFER_SIZE = 10 * 1024 * 1024;
 
     void AllocateBuffer() {
-        const PerfUtilities::ScopedTimer timer { "Benchmark" };;
+        const utilities::perf::ScopedTimer timer { "Benchmark" };;
 
         for (int i = 0; i < TEST_REPS_COUNT; ++i) {
             char* buffer = new char[BUFFER_SIZE];
@@ -3012,7 +3012,7 @@ namespace PerformanceTests::PolimorphismTypes {
     void RunTest()
     {
         {
-            const PerfUtilities::ScopedTimer timer { "Benchmark" };
+            const utilities::perf::ScopedTimer timer { "Benchmark" };
             {
                 std::vector<std::unique_ptr<ICalculator>> calcs;
                 for (int i = 0; i < 100; i++) {
@@ -3031,7 +3031,7 @@ namespace PerformanceTests::PolimorphismTypes {
         }
 
         {
-            const PerfUtilities::ScopedTimer timer { "Benchmark" };
+            const utilities::perf::ScopedTimer timer { "Benchmark" };
             {
                 std::vector<Calculator> calcs;
                 for (int i = 0; i < 100; i++) {
@@ -3104,7 +3104,7 @@ namespace PerformanceTests::PolimorphismTypes {
     void Inheritance_VS_Composition() {
         constexpr long TEST_REPS_COUNT = 100'000'000;
         {
-            const PerfUtilities::ScopedTimer timer { "Benchmark" };
+            const utilities::perf::ScopedTimer timer { "Benchmark" };
             {
                 for (int i = 0; i < TEST_REPS_COUNT; ++i) {
                     Objects_1::Complex obj{};
@@ -3113,7 +3113,7 @@ namespace PerformanceTests::PolimorphismTypes {
         }
 
         {
-            const PerfUtilities::ScopedTimer timer { "Benchmark" };
+            const utilities::perf::ScopedTimer timer { "Benchmark" };
             {
                 for (int i = 0; i < TEST_REPS_COUNT; ++i) {
                     Objects_2::Complex obj{};
@@ -3201,7 +3201,7 @@ namespace Files {
         lines.reserve(TEST_REPS_COUNT + 1);
 
         {
-            const PerfUtilities::ScopedTimer timer { "Benchmark" };
+            const utilities::perf::ScopedTimer timer { "Benchmark" };
             {
                 for (long i = 0; i < TEST_REPS_COUNT; ++i) {
                     for (long n = 0; n < TEST_REPS_COUNT; ++n) {
@@ -3215,7 +3215,7 @@ namespace Files {
         }
 
         {
-            const PerfUtilities::ScopedTimer timer { "Benchmark" };
+            const utilities::perf::ScopedTimer timer { "Benchmark" };
             {
                 std::string line;
                 for (long i = 0; i < TEST_REPS_COUNT; ++i) {
@@ -3313,7 +3313,7 @@ namespace NetworkModules_Tests {
         std::vector<ClientRequest> requests;
 
         {
-            const PerfUtilities::ScopedTimer timer { "Benchmark" };
+            const utilities::perf::ScopedTimer timer { "Benchmark" };
             {
                 for (long i = 0; i < TEST_REPS_COUNT; ++i) {
                     for (long n = 0; n < TEST_REPS_COUNT; ++n) {
@@ -3328,7 +3328,7 @@ namespace NetworkModules_Tests {
         requests.clear();
 
         {
-            const PerfUtilities::ScopedTimer timer { "Benchmark" };
+            const utilities::perf::ScopedTimer timer { "Benchmark" };
             {
                 for (long i = 0; i < TEST_REPS_COUNT; ++i) {
                     for (long n = 0; n < TEST_REPS_COUNT; ++n) {
@@ -3363,7 +3363,7 @@ namespace Caching_Performance {
                 *data = *data + rand();
         };
 
-        const PerfUtilities::ScopedTimer timer { "Benchmark" };
+        const utilities::perf::ScopedTimer timer { "Benchmark" };
 
         std::thread t1(proc, &p[0]);
         std::thread t2(proc, &p[SIZE - 1]);
@@ -3382,7 +3382,7 @@ namespace Caching_Performance {
         int matrix[SIZE][SIZE]{};
 
         {
-            const PerfUtilities::ScopedTimer timer { "Benchmark" };
+            const utilities::perf::ScopedTimer timer { "Benchmark" };
             {
                 for (size_t n = 0; n < TESTS_COUNT; ++n) {
                     int x = 0;
@@ -3395,7 +3395,7 @@ namespace Caching_Performance {
             }
         }
         {
-            const PerfUtilities::ScopedTimer timer { "Benchmark" };
+            const utilities::perf::ScopedTimer timer { "Benchmark" };
             {
                 for (size_t n = 0; n < TESTS_COUNT; ++n) {
                     int x = 0;
@@ -3423,7 +3423,7 @@ namespace Parralel_Algoritms {
         std::vector<int> data(COUNT);
 
         {
-            const PerfUtilities::ScopedTimer timer { "Benchmark" };
+            const utilities::perf::ScopedTimer timer { "Benchmark" };
             {
                 generate(data.begin(), data.end(), std::mt19937{ seed });
                 sort(data.begin(), data.end());
@@ -3431,7 +3431,7 @@ namespace Parralel_Algoritms {
             }
         }
         {
-            const PerfUtilities::ScopedTimer timer { "Benchmark" };
+            const utilities::perf::ScopedTimer timer { "Benchmark" };
             {
                 std::generate(std::execution::par_unseq, data.begin(), data.end(), std::mt19937{ seed });
                 std::sort(std::execution::par_unseq, data.begin(), data.end());
@@ -3449,21 +3449,21 @@ namespace Parralel_Algoritms {
         std::generate(std::execution::par_unseq, data3.begin(), data3.end(), std::mt19937{ seed });
 
         {
-            const PerfUtilities::ScopedTimer timer { "Benchmark" };
+            const utilities::perf::ScopedTimer timer { "Benchmark" };
             {
                 sort(data1.begin(), data1.end());
                 is_sorted(data1.begin(), data1.end());
             }
         }
         {
-            const PerfUtilities::ScopedTimer timer { "Benchmark" };
+            const utilities::perf::ScopedTimer timer { "Benchmark" };
             {
                 std::sort(std::execution::par_unseq, data2.begin(), data2.end());
                 //std::is_sorted(std::execution::par_unseq, data2.begin(), data2.end());
             }
         }
         {
-            const PerfUtilities::ScopedTimer timer { "Benchmark" };
+            const utilities::perf::ScopedTimer timer { "Benchmark" };
             {
                 std::sort(std::execution::par_unseq, data3.begin(), data3.end());
                 //std::is_sorted(std::execution::par_unseq, data2.begin(), data2.end());
@@ -3541,7 +3541,7 @@ namespace Search {
         const int value = data[index];
 
         {
-            const PerfUtilities::ScopedTimer timer { "Benchmark" };
+            const utilities::perf::ScopedTimer timer { "Benchmark" };
             {
                 for (int i = 0; i < TESTS_COUNT; ++i) {
                     SequentialSearch(data, value);
@@ -3549,7 +3549,7 @@ namespace Search {
             }
         }
         {
-            const PerfUtilities::ScopedTimer timer { "Benchmark" };
+            const utilities::perf::ScopedTimer timer { "Benchmark" };
             {
                 for (int i = 0; i < TESTS_COUNT; ++i) {
                     BinarySearch(data, value);
@@ -3635,7 +3635,7 @@ namespace Vector
         }();
 
         {
-            const PerfUtilities::ScopedTimer timer { "Benchmark" };
+            const utilities::perf::ScopedTimer timer { "Benchmark" };
             {
                 for (int i = 0; i < TESTS_COUNT; ++i) {
                     {
@@ -3645,7 +3645,7 @@ namespace Vector
             }
         }
         {
-            const PerfUtilities::ScopedTimer timer { "Benchmark" };
+            const utilities::perf::ScopedTimer timer { "Benchmark" };
             {
                 for (int i = 0; i < TESTS_COUNT; ++i) {
                     {
@@ -3655,7 +3655,7 @@ namespace Vector
             }
         }
         {
-            const PerfUtilities::ScopedTimer timer { "Benchmark" };
+            const utilities::perf::ScopedTimer timer { "Benchmark" };
             {
                 for (int i = 0; i < TESTS_COUNT; ++i) {
                     {
@@ -3665,7 +3665,7 @@ namespace Vector
             }
         }
         {
-            const PerfUtilities::ScopedTimer timer { "Benchmark" };
+            const utilities::perf::ScopedTimer timer { "Benchmark" };
             {
                 for (int i = 0; i < TESTS_COUNT; ++i) {
                     {
@@ -3747,7 +3747,7 @@ namespace DataLayout
         objectList.values.resize(objCount);
 
         {
-            const PerfUtilities::ScopedTimer timer { "Benchmark" };
+            const utilities::perf::ScopedTimer timer { "Benchmark" };
             {
                 uint32_t sum = 0;
                 for (size_t i = 0; i < TESTS_COUNT; ++i) {
@@ -3759,7 +3759,7 @@ namespace DataLayout
             }
         }
         {
-            const PerfUtilities::ScopedTimer timer { "Benchmark" };
+            const utilities::perf::ScopedTimer timer { "Benchmark" };
             {
                 uint32_t sum = 0;
                 for (size_t i = 0; i < TESTS_COUNT; ++i) {

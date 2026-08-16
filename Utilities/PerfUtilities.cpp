@@ -12,7 +12,7 @@ Description : Utilities.h
 #include <iomanip>
 
 
-namespace PerfUtilities
+namespace utilities::perf
 {
     ScopedTimer::~ScopedTimer()
     {
@@ -40,7 +40,7 @@ namespace PerfUtilities
 }
 
 
-namespace PerfUtilities
+namespace utilities::perf
 {
     TSCScopedTimer::~TSCScopedTimer()
     {

@@ -11,7 +11,7 @@ Description : ThreadUtilities.cpp
 
 #include <thread>
 
-namespace ThreadUtilities
+namespace utilities::threading
 {
     bool setThreadCore(const uint32_t coreId) noexcept
     {

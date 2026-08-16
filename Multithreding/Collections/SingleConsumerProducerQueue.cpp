@@ -474,7 +474,7 @@ namespace Collections::SingleConsumerProducerQueue::Tests
             }
         };
 
-        const PerfUtilities::ScopedTimer timer {"benchmark_DemoTwo"};
+        const utilities::perf::ScopedTimer timer {"benchmark_DemoTwo"};
 
         std::jthread consumer {consume};
         std::jthread producer {produce};
@@ -519,7 +519,7 @@ namespace Collections::SingleConsumerProducerQueue::Tests
             }
         };
 
-        const PerfUtilities::ScopedTimer timer {"benchmark_DemoTwo"};
+        const utilities::perf::ScopedTimer timer {"benchmark_DemoTwo"};
 
         std::jthread consumer {consume};
         std::jthread producer {produce};

@@ -18,7 +18,7 @@ Description :
 #include "PerfUtilities.hpp"
 
 
-#define LOG  std::osyncstream { std::cout } << DateTimeUtilities::getCurrentTime() << " "
+#define LOG  std::osyncstream { std::cout } << utilities::datetime::getCurrentTime() << " "
 
 
 namespace ConditionVariable_vs_Atomic::TriggerLatency
@@ -72,7 +72,7 @@ namespace ConditionVariable_vs_Atomic::TriggerLatency
 
         void runSimulation() noexcept
         {
-            const PerfUtilities::ScopedTimer timer {"ConditionVariable "};
+            const utilities::perf::ScopedTimer timer {"ConditionVariable "};
             std::jthread producer { &CVTester::produce, this };
             std::jthread consumer { &CVTester::consume, this };
             producer.join();
@@ -122,7 +122,7 @@ namespace ConditionVariable_vs_Atomic::TriggerLatency
 
         void runSimulation() noexcept
         {
-            const PerfUtilities::ScopedTimer timer {"AtomicVariableWait"};
+            const utilities::perf::ScopedTimer timer {"AtomicVariableWait"};
             std::jthread producer { &AtomicTester::produce, this };
             std::jthread consumer { &AtomicTester::consume, this };
             producer.join();
@@ -172,7 +172,7 @@ namespace ConditionVariable_vs_Atomic::TriggerLatency
 
         void runSimulation() noexcept
         {
-            const PerfUtilities::ScopedTimer timer {"AtomicVariableWait"};
+            const utilities::perf::ScopedTimer timer {"AtomicVariableWait"};
             std::jthread producer { &AtomicTesterBool::produce, this };
             std::jthread consumer { &AtomicTesterBool::consume, this };
             producer.join();
@@ -250,7 +250,7 @@ namespace ConditionVariable_vs_Atomic::PingPong
 
         void runSimulation() noexcept
         {
-            const PerfUtilities::ScopedTimer timer {"ConditionVariable "};
+            const utilities::perf::ScopedTimer timer {"ConditionVariable "};
             std::jthread producer { &CVTester::produce, this };
             std::jthread consumer { &CVTester::consume, this };
         }
@@ -295,7 +295,7 @@ namespace ConditionVariable_vs_Atomic::PingPong
 
         void runSimulation() noexcept
         {
-            const PerfUtilities::ScopedTimer timer {"AtomicVariableWait"};
+            const utilities::perf::ScopedTimer timer {"AtomicVariableWait"};
             std::jthread producer { &AtomicTester::produce, this };
             std::jthread consumer { &AtomicTester::consume, this };
         }
@@ -421,7 +421,7 @@ namespace ConditionVariable_vs_Atomic::PingPong2
     void benchmark()
     {
         {
-            const PerfUtilities::ScopedTimer timer {"Atomic variable     "};
+            const utilities::perf::ScopedTimer timer {"Atomic variable     "};
             if (auto engine = new AtomicEngine(); engine->start()) {
                 std::jthread ping = std::jthread(&AtomicEngine::ping, engine);
                 std::jthread pong = std::jthread(&AtomicEngine::pong, engine);
@@ -429,7 +429,7 @@ namespace ConditionVariable_vs_Atomic::PingPong2
         }
 
         {
-            const PerfUtilities::ScopedTimer timer {"Conditional variable"};
+            const utilities::perf::ScopedTimer timer {"Conditional variable"};
             if (auto engine = new CVEngine(); engine->start()) {
                 std::jthread ping = std::jthread(&CVEngine::ping, engine);
                 std::jthread pong = std::jthread(&CVEngine::pong, engine);

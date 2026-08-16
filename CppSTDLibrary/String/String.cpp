@@ -449,7 +449,7 @@ namespace String
 		const std::string base = "   Some   Sample    String  ";
 
 		{
-			const PerfUtilities::ScopedTimer timer { "trim_1" };
+			const utilities::perf::ScopedTimer timer { "trim_1" };
 			for (int i = 0; i < 10000; i++) {
 				for (int n = 0; n < 10000; n++) {
 					std::string str(base);
@@ -458,7 +458,7 @@ namespace String
 			}
 		}
 		{
-			const PerfUtilities::ScopedTimer timer { "trim_2" };
+			const utilities::perf::ScopedTimer timer { "trim_2" };
 			for (int i = 0; i < 10000; i++) {
 				for (int n = 0; n < 10000; n++) {
 					std::string str(base);
@@ -468,7 +468,7 @@ namespace String
 		}
 
         {
-			const PerfUtilities::ScopedTimer timer { "trim_3" };
+			const utilities::perf::ScopedTimer timer { "trim_3" };
             for (int i = 0; i < 10000; i++) {
                 for (int n = 0; n < 10000; n++) {
                     std::string str(base);
@@ -829,28 +829,28 @@ namespace String::Performance_Tests
 		constexpr size_t ITER_COUNT { 1'000'000 };
 
 		{
-			const PerfUtilities::ScopedTimer timer { "split_string_1" };
+			const utilities::perf::ScopedTimer timer { "split_string_1" };
 			for (size_t i = 0; i < ITER_COUNT; i++) {
 				Utilities::split_string_1(base, parts);
 				parts.clear();
 			}
 		}
 		{
-			const PerfUtilities::ScopedTimer timer { "split_string_2" };
+			const utilities::perf::ScopedTimer timer { "split_string_2" };
 			for (size_t i = 0; i < ITER_COUNT; i++) {
 				Utilities::split_string_2(base, parts, " ");
 				parts.clear();
 			}
 		}
 		{
-			const PerfUtilities::ScopedTimer timer { "split_string_3" };
+			const utilities::perf::ScopedTimer timer { "split_string_3" };
 			for (size_t i = 0; i < ITER_COUNT; i++) {
 				Utilities::split_string_3(base, parts, " ");
 				parts.clear();
 			}
 		}
 		{
-			const PerfUtilities::ScopedTimer timer { "split_string_4" };
+			const utilities::perf::ScopedTimer timer { "split_string_4" };
 			for (size_t i = 0; i < ITER_COUNT; i++) {
 				Utilities::split_string_4(base, parts, " ");
 				parts.clear();
@@ -869,13 +869,13 @@ namespace String::Performance_Tests
 
         /*
         {
-            const PerfUtilities::ScopedTimer timer { "Benchmark" };
+            const utilities::perf::ScopedTimer timer { "Benchmark" };
             for (int i = 0; i < ITER_COUNT; i++) {
                 auto x = (a == b);
             }
         }
         {
-            const PerfUtilities::ScopedTimer timer { "Benchmark" };
+            const utilities::perf::ScopedTimer timer { "Benchmark" };
             for (int i = 0; i < ITER_COUNT; i++) {
                 auto x = a.compare(b);
             }
@@ -1125,19 +1125,19 @@ namespace String::Performance
 		std::string dest;
 
 		{
-			const PerfUtilities::ScopedTimer timer { "assign 1" };
+			const utilities::perf::ScopedTimer timer { "assign 1" };
 			for (int i = 0; i < TESTS_COUNT; ++i) {
 				dest.assign(src.substr(startPos, endPos - startPos));
 			}
 		}
 		{
-			const PerfUtilities::ScopedTimer timer { "assign 2" };
+			const utilities::perf::ScopedTimer timer { "assign 2" };
 			for (int i = 0; i < TESTS_COUNT; ++i) {
 				dest.assign(src.begin() + startPos, src.begin() + endPos);
 			}
 		}
 		{
-			const PerfUtilities::ScopedTimer timer { "insert" };
+			const utilities::perf::ScopedTimer timer { "insert" };
 			for (int i = 0; i < TESTS_COUNT; ++i) {
 				dest.clear();
 				dest.insert(dest.begin(), src.begin() + startPos, src.begin() + endPos);
@@ -1155,13 +1155,13 @@ namespace String::Performance
 		constexpr int TESTS_COUNT{ 100'000'000 };
 
 		{
-			const PerfUtilities::ScopedTimer timer { "Benchmark" };
+			const utilities::perf::ScopedTimer timer { "Benchmark" };
 			for (int i = 0; i < TESTS_COUNT; ++i) {
 				const auto _ = src.find(HTTP_VERSION_SEPARATOR_STR);
 			}
 		}
 		{
-			const PerfUtilities::ScopedTimer timer { "Benchmark" };
+			const utilities::perf::ScopedTimer timer { "Benchmark" };
 			for (int i = 0; i < TESTS_COUNT; ++i) {
 				auto _ = src.find(HTTP_VERSION_SEPARATOR);
 			}
@@ -1179,7 +1179,7 @@ namespace String::Performance
 		constexpr size_t TESTS_COUNT = 100'000'000;
 
 		{
-			const PerfUtilities::ScopedTimer timer { "substr (string)" };
+			const utilities::perf::ScopedTimer timer { "substr (string)" };
 			for (size_t i = 0; i < TESTS_COUNT; ++i)
 			{
 				const auto x1 = str1.substr(offset, str1.length() - offset);
@@ -1189,7 +1189,7 @@ namespace String::Performance
 			}
 		}
 		{
-			const PerfUtilities::ScopedTimer timer { "substr (string_view)" };
+			const utilities::perf::ScopedTimer timer { "substr (string_view)" };
 			for (size_t i = 0; i < TESTS_COUNT; ++i)
 			{
 				const auto x1 = std::string_view(str1).substr(offset, str1.length() - offset);

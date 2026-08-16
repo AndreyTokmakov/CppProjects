@@ -131,7 +131,7 @@ namespace FlatMap::performance
         for (uint32_t idx = 0; idx < size; ++idx)
         {
             const int key = utilities::random::getRandomInRange(0, static_cast<int>(size * 5));
-            std::string const value = StringUtilities::randomString(24);
+            std::string const value = utilities::strings::randomString(24);
             data.emplace_back(key, value);
         }
 
@@ -169,7 +169,7 @@ namespace FlatMap::performance
         std::ranges::shuffle(keys, std::default_random_engine {});
 
         volatile uint64_t sink = 0;
-        PerfUtilities::ScopedTimer timer { name };
+        utilities::perf::ScopedTimer timer { name };
         for (uint64_t i = 0; i < iterations; ++i ) {
             for (const auto& key : keys) {
                 map.find(key);

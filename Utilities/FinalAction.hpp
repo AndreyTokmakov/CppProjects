@@ -15,7 +15,7 @@ Description : FinalAction.hpp
 #include <cstdint>
 #include <exception>
 
-namespace final_action
+namespace utilities::final_action
 {
     template<typename Fn>
     struct [[nodiscard]] ScopeExit

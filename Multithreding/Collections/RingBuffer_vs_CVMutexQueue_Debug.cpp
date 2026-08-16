@@ -232,7 +232,7 @@ namespace Collections::RingBuffer_vs_CVMutexQueue_Debug::Tests
     void multithreaded_buffer_test(bool warmUp = false)
     {
         RingBuffer<Type> buffer;
-        const PerfUtilities::ScopedTimer timer { "multithreaded_buffer_test", warmUp};
+        const utilities::perf::ScopedTimer timer { "multithreaded_buffer_test", warmUp};
         std::jthread producer ([&buffer] {
             for (int i = 0; i < evtCount; ++i) {
                 // buffer.put(Type {i});
@@ -255,7 +255,7 @@ namespace Collections::RingBuffer_vs_CVMutexQueue_Debug::Tests
     void multithreaded_lf_queue_test(bool warmUp = false)
     {
         LFQueue<Type> buffer(256 * 256);
-        const PerfUtilities::ScopedTimer timer { "multithreaded_lf_queue_test", warmUp};
+        const utilities::perf::ScopedTimer timer { "multithreaded_lf_queue_test", warmUp};
         std::jthread producer ([&buffer] {
             Type* next_write = nullptr;
             for (int i = 0; i < evtCount; ++i) {
@@ -285,7 +285,7 @@ namespace Collections::RingBuffer_vs_CVMutexQueue_Debug::Tests
     {
         BlockingQueue<Type> queue;
 
-        const PerfUtilities::ScopedTimer timer { "multithreaded_queue_test", warmUp };
+        const utilities::perf::ScopedTimer timer { "multithreaded_queue_test", warmUp };
         std::jthread producer ([&queue] {
             for (int i = 0; i < evtCount; ++i) {
                 queue.push(Type {i});

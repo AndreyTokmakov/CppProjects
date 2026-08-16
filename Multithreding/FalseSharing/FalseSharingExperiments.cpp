@@ -47,7 +47,7 @@ namespace FalseSharingExperiments::Base
     void test()
     {
         std::vector<T> store (THREADS_COUNT);
-        const PerfUtilities::ScopedTimer timer { "Benchmark" };;
+        const utilities::perf::ScopedTimer timer { "Benchmark" };;
         {
             std::vector<std::jthread> threads{};
             for (T &entry: store)
@@ -62,7 +62,7 @@ namespace FalseSharingExperiments::Base
     {
         std::atomic<int> v {0};
 
-        const PerfUtilities::ScopedTimer timer { "Benchmark" };;
+        const utilities::perf::ScopedTimer timer { "Benchmark" };;
         for (size_t i = 0; i < THREADS_COUNT; ++i) {
             doWork(v);
         }
@@ -76,7 +76,7 @@ namespace FalseSharingExperiments::Base
         for (size_t i = 0; i < THREADS_COUNT; ++i)
             threads.emplace_back(doWork, std::ref(var));
 
-        const PerfUtilities::ScopedTimer timer { "Benchmark" };;
+        const utilities::perf::ScopedTimer timer { "Benchmark" };;
         std::for_each(threads.begin(), threads.end(), [](std::thread&T ) { T.join(); });
     }
 
@@ -139,7 +139,7 @@ namespace FalseSharingExperiments::DemoTwo
             threads.emplace_back(task<int>, std::ref(entry.d));
         }
 
-        const PerfUtilities::ScopedTimer timer { "Benchmark" };;
+        const utilities::perf::ScopedTimer timer { "Benchmark" };;
         std::for_each(threads.begin(), threads.end(), [](std::thread& job ) { job.join(); });
     }
 
@@ -197,7 +197,7 @@ namespace FalseSharingExperiments::DemoThree
 
         if constexpr (not warmUp)
         {
-            const PerfUtilities::ScopedTimer timer { message };
+            const utilities::perf::ScopedTimer timer { message };
             benchmark();
         } else
         {

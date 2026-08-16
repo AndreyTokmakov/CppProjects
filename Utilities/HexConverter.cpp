@@ -22,7 +22,7 @@ namespace
     constexpr std::array<char, 16> table { '0','1','2','3','4','5','6','7','8','9','A','B','C','D','E','F'};
 }
 
-namespace HexConverter
+namespace utilities::hex
 {
     void bytesToHexStr(const char *src,
                        size_t len,
@@ -124,7 +124,7 @@ void dump(T v, const char term = '\n')
 }
 
 
-void HexConverter::TestAll()
+void utilities::hex::TestAll()
 {
 #if 0
     const int val { 123456 };

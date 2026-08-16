@@ -946,7 +946,7 @@ namespace TwoSidedVector::PerfTests
     void RunTests()
     {
         {
-            const PerfUtilities::ScopedTimer timer { "Benchmark" };
+            const utilities::perf::ScopedTimer timer { "Benchmark" };
             for (size_t test = 0; test < testsCount; ++test)
             {
                 std::deque<Type> vector;
@@ -963,7 +963,7 @@ namespace TwoSidedVector::PerfTests
         }
 
         {
-            const PerfUtilities::ScopedTimer timer { "Benchmark" };
+            const utilities::perf::ScopedTimer timer { "Benchmark" };
             for (size_t test = 0; test < testsCount; ++test)
             {
                 std::deque<Type> deque;
@@ -980,7 +980,7 @@ namespace TwoSidedVector::PerfTests
         }
 
         {
-            const PerfUtilities::ScopedTimer timer { "Benchmark" };
+            const utilities::perf::ScopedTimer timer { "Benchmark" };
             for (size_t test = 0; test < testsCount; ++test)
             {
                 DVector<Type> vector;

@@ -74,7 +74,7 @@ namespace MemoryPool
 
         std::cout << " ======================== Using pool: =========================\n";
         {
-            const PerfUtilities::ScopedTimer timer { "Pool" };
+            const utilities::perf::ScopedTimer timer { "Pool" };
             std::vector<std::jthread> workers;
             for (uint32_t i = 0; i < threadsCount; ++i)
                 workers.emplace_back(task_memory_pool);
@@ -84,7 +84,7 @@ namespace MemoryPool
 
         std::cout << " ======================== Using std::new(): =========================\n";
         {
-            const PerfUtilities::ScopedTimer timer { "New" };
+            const utilities::perf::ScopedTimer timer { "New" };
             std::vector<std::jthread> workers;
             for (uint32_t i = 0; i < threadsCount; ++i)
                 workers.emplace_back(task_allocator);

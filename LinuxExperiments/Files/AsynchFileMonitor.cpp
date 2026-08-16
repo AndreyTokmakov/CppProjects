@@ -72,7 +72,7 @@ namespace AsynchFileMonitor::Demo_1
             std::cout << "Cleanup (fileHandle: " << fileHandle << ")\n";
             ::close(fileHandle);
         };
-        final_action::ScopeExit onExit(cleanup);
+        utilities::final_action::ScopeExit onExit(cleanup);
 
         if (!setNonBlocking(fileHandle)) {
             return;

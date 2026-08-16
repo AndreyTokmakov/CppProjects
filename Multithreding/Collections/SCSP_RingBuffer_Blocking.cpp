@@ -17,7 +17,7 @@ Description : SCSP_RingBuffer_Blocking.cpp
 #include "PerfUtilities.hpp"
 #include "DateTimeUtilities.hpp"
 
-#define LOG  std::osyncstream { std::cout } << DateTimeUtilities::getCurrentTime() << " "
+#define LOG  std::osyncstream { std::cout } << utilities::datetime::getCurrentTime() << " "
 
 
 namespace Collections::SCSP_RingBuffer_Blocking
@@ -138,7 +138,7 @@ namespace Collections::SCSP_RingBuffer_Blocking::Tests
 
 
         constexpr int events { 10'000'000 };
-        const PerfUtilities::ScopedTimer timer { "Test" };
+        const utilities::perf::ScopedTimer timer { "Test" };
 
         std::vector<std::jthread> tasks;
         tasks.emplace_back(consume, events);
@@ -169,7 +169,7 @@ namespace Collections::SCSP_RingBuffer_Blocking::Tests
 
 
         constexpr int events { 10'000'000 };
-        const PerfUtilities::ScopedTimer timer { "Test" };
+        const utilities::perf::ScopedTimer timer { "Test" };
 
         std::vector<std::jthread> tasks;
         tasks.emplace_back(consume, events);

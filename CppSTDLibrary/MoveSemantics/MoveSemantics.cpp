@@ -740,7 +740,7 @@ namespace MoveSemantics {
 		}*/
 		{
 			TestString testString("Test_String_1");
-			const PerfUtilities::ScopedTimer timer { "Benchmark" };
+			const utilities::perf::ScopedTimer timer { "Benchmark" };
 			for (int i = 0; i < 1000; i++) {
 				for (int n = 0; n < 100; n++) {
 					handleTestString_Move(testString);

@@ -367,7 +367,7 @@ namespace SpinLock_PerformanceTests::Tests
                 }
             };
 
-            const PerfUtilities::ScopedTimer timer { name };
+            const utilities::perf::ScopedTimer timer { name };
             std::vector<std::jthread> jobs;
             for (int t = 0; t < threadsMax; ++t)
                 jobs.emplace_back(task);
@@ -408,7 +408,7 @@ namespace SpinLock_PerformanceTests::Tests
             };
 
             {
-                const PerfUtilities::ScopedTimer timer {"SpinLock4"};
+                const utilities::perf::ScopedTimer timer {"SpinLock4"};
                 std::vector<std::jthread> jobs;
                 for (int t = 0; t < threadsMax; ++t)
                     jobs.emplace_back(task);
@@ -428,7 +428,7 @@ namespace SpinLock_PerformanceTests::Tests
             };
 
             {
-                const PerfUtilities::ScopedTimer timer {"SpinLock4_1"};
+                const utilities::perf::ScopedTimer timer {"SpinLock4_1"};
                 std::vector<std::jthread> jobs;
                 for (int t = 0; t < threadsMax; ++t)
                     jobs.emplace_back(task);
@@ -457,7 +457,7 @@ namespace SpinLock_PerformanceTests::Tests
             };
 
             {
-                const PerfUtilities::ScopedTimer timer {"SpinLock4"};
+                const utilities::perf::ScopedTimer timer {"SpinLock4"};
                 std::vector<std::jthread> jobs;
                 for (int t = 0; t < threadsMax; ++t)
                     jobs.emplace_back(task);
@@ -477,7 +477,7 @@ namespace SpinLock_PerformanceTests::Tests
             };
 
             {
-                const PerfUtilities::ScopedTimer timer {"SpinLock4_1"};
+                const utilities::perf::ScopedTimer timer {"SpinLock4_1"};
                 std::vector<std::jthread> jobs;
                 for (int t = 0; t < threadsMax; ++t)
                     jobs.emplace_back(task);

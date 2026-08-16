@@ -609,11 +609,11 @@ namespace FunctionObjects::Function {
     void Function_VS_Lambda_Performance()
 	{
         {
-        	const PerfUtilities::ScopedTimer timer { "test_direct_lambda" };
+        	const utilities::perf::ScopedTimer timer { "test_direct_lambda" };
             test_direct_lambda();
         }
         {
-        	const PerfUtilities::ScopedTimer timer { "test_std_function" };
+        	const utilities::perf::ScopedTimer timer { "test_std_function" };
             test_std_function();
         }
     }

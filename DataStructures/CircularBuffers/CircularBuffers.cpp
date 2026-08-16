@@ -328,7 +328,7 @@ namespace CircularBuffers::PerformanceTests {
 		std::vector<int> numbers;
 		numbers.reserve(_Size);
 
-		const PerfUtilities::ScopedTimer timer { "Benchmark" };
+		const utilities::perf::ScopedTimer timer { "Benchmark" };
 		for (size_t n = 0; n < _Count; ++n) {
 			for (size_t i = 0; i < _Size; ++i) {
 				numbers.push_back(static_cast<int>(i));
@@ -344,7 +344,7 @@ namespace CircularBuffers::PerformanceTests {
 	{
 		Demo1::RingBuffer<int, _Size> ringBuffer;
 
-		const PerfUtilities::ScopedTimer timer { "Benchmark" };
+		const utilities::perf::ScopedTimer timer { "Benchmark" };
 		for (size_t n = 0; n < _Count; ++n) {
 			for (size_t i = 0; i < _Size; ++i) {
 				ringBuffer.put(static_cast<int>(i));

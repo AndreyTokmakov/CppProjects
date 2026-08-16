@@ -278,7 +278,7 @@ namespace MinHeap::Tests
 
         {
             MinHeap<int> minHeap;
-            const PerfUtilities::ScopedTimer timer { "Benchmark" };
+            const utilities::perf::ScopedTimer timer { "Benchmark" };
             for (size_t i = 0; i < testsCount; ++i)
             {
                 minHeap.data = data;
@@ -287,7 +287,7 @@ namespace MinHeap::Tests
         }
         {
             MinHeap<int> minHeap;
-            const PerfUtilities::ScopedTimer timer { "Benchmark" };
+            const utilities::perf::ScopedTimer timer { "Benchmark" };
             for (size_t i = 0; i < testsCount; ++i)
             {
                 minHeap.data = data;

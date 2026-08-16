@@ -866,7 +866,7 @@ namespace Graphs_Perf::Find_Shortest_Path {
         g.addEdge(1, 3);
 
         {
-        	const PerfUtilities::ScopedTimer timer { "PerfTest" };
+        	const utilities::perf::ScopedTimer timer { "PerfTest" };
             constexpr int reps = 100'000'000;
             // constexpr int reps = 1;
             for (int i = 0; i < reps; ++i) {

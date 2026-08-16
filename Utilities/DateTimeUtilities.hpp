@@ -12,7 +12,7 @@ Description : DateTimeUtilities.h
 
 #include <chrono>
 
-namespace DateTimeUtilities
+namespace utilities::datetime
 {
     [[nodiscard]]
     std::string timeString(const std::chrono::time_point<std::chrono::system_clock>& timestamp

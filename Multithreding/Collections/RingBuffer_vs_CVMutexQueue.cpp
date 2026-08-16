@@ -21,7 +21,7 @@ Description :
 #include "PerfUtilities.hpp"
 #include "DateTimeUtilities.hpp"
 
-#define LOG  std::osyncstream { std::cout } << DateTimeUtilities::getCurrentTime() << " "
+#define LOG  std::osyncstream { std::cout } << utilities::datetime::getCurrentTime() << " "
 
 namespace Collections::RingBuffer_vs_CVMutexQueue
 {
@@ -155,7 +155,7 @@ namespace Collections::RingBuffer_vs_CVMutexQueue::Tests
     void multithreaded_buffer_test(bool warmUp = false)
     {
         RingBuffer<Type> buffer;
-        const PerfUtilities::ScopedTimer timer { "multithreaded_buffer_test", warmUp};
+        const utilities::perf::ScopedTimer timer { "multithreaded_buffer_test", warmUp};
         std::jthread producer ([&buffer] {
            for (int i = 0; i < evtCount; ++i) {
                // buffer.put(Type {i});
@@ -179,7 +179,7 @@ namespace Collections::RingBuffer_vs_CVMutexQueue::Tests
     {
         BlockingQueue<Type> queue;
 
-        const PerfUtilities::ScopedTimer timer { "multithreaded_queue_test", warmUp };
+        const utilities::perf::ScopedTimer timer { "multithreaded_queue_test", warmUp };
         std::jthread producer ([&queue] {
             for (int i = 0; i < evtCount; ++i) {
                 queue.push(Type {i});

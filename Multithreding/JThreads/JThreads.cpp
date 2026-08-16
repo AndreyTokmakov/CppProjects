@@ -25,7 +25,7 @@ Description : Threads src class
 
 namespace
 {
-    using DateTimeUtilities::getCurrentTime;
+    using utilities::datetime::getCurrentTime;
 
 #define LOG  std::osyncstream { std::cout } << getCurrentTime() << " "
 }

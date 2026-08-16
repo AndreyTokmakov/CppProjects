@@ -51,7 +51,7 @@ namespace tcp_server_asynch
     template<typename ...Args>
     void debug(Args&&... args)
     {
-        std::cout << DateTimeUtilities::getCurrentTime() << " [DEBUG]";
+        std::cout << utilities::datetime::getCurrentTime() << " [DEBUG]";
         (std::cout << ... << addSpace(std::forward<Args>(args))) << std::endl;
     }
 

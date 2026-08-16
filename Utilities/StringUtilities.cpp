@@ -14,7 +14,7 @@ Description : StringUtilities.cpp
 #include <random>
 #include <ranges>
 
-namespace StringUtilities
+namespace utilities::strings
 {
     std::string randomString(size_t size)
     {
@@ -76,7 +76,7 @@ namespace StringUtilities
     }
 }
 
-namespace StringUtilities
+namespace utilities::strings
 {
     /** Remove ' ', '\t', '\n', '\r', '\n' symbols from the END and BEGINNING of the string **/
     void strip(std::string &str)
@@ -127,7 +127,7 @@ namespace StringUtilities
     }
 }
 
-namespace StringUtilities
+namespace utilities::strings
 {
     constexpr std::array<char, 256> toExclude = []() -> std::array<char, 256> {
         std::array<char, 256> tmp{};
@@ -149,8 +149,7 @@ namespace StringUtilities
 }
 
 
-
-namespace StringUtilities
+namespace utilities::strings
 {
     void trim_1(std::string& str)
     {

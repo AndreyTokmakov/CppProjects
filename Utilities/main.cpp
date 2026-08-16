@@ -85,7 +85,7 @@ namespace StringUtilities
 
 namespace StringUtilitiesTests
 {
-    using namespace StringUtilities;
+    using namespace utilities::strings;
 
     void split_test_1()
     {
@@ -118,17 +118,17 @@ namespace StringUtilitiesTests
 
             if (std::string str(base); not str.empty())
             {
-                StringUtilities::trim_1(str);
+                trim_1(str);
                 std::cout << std::quoted(str) << std::endl;
             }
             if (std::string str(base); not str.empty())
             {
-                StringUtilities::trim_2(str);
+                trim_2(str);
                 std::cout << std::quoted(str) << std::endl;
             }
             if (std::string str(base); not str.empty())
             {
-                StringUtilities::trim_3(str);
+                trim_3(str);
                 std::cout << std::quoted(str) << std::endl;
             }
         }
@@ -156,7 +156,7 @@ namespace StringUtilitiesTests
         std::string str { "0123456789___________________" };
         std::cout << std::quoted(str) << "  " << str.capacity() << std::endl;
 
-        slice_string(str, 3, 8);
+        StringUtilities::slice_string(str, 3, 8);
 
         std::cout << std::quoted(str) << "  " << str.capacity() << std::endl;
     }
@@ -174,31 +174,31 @@ namespace FileUtilities_Tests
 
     void ReadFile()
     {
-        std::string text = FileUtilities::ReadFile(testFilePath);
+        std::string text = utilities::files::ReadFile(testFilePath);
         std::cout << text << std::endl;
     }
 
     void ReadFile2String()
     {
         std::string text;
-        FileUtilities::ReadFile2String(testFilePath, text);
+        utilities::files::ReadFile2String(testFilePath, text);
         std::cout << text << std::endl;
     }
 
     void FileSize()
     {
-        std::cout << FileUtilities::getFileSize(testFilePath) << std::endl;
-        std::cout << FileUtilities::getFileSizeFS(testFilePath) << std::endl;
+        std::cout << utilities::files::getFileSize(testFilePath) << std::endl;
+        std::cout << utilities::files::getFileSizeFS(testFilePath) << std::endl;
     }
 
     void WriteToFile()
     {
-        int32_t _ = FileUtilities::WriteToFile(testFilePath, "12345");
+        int32_t _ = utilities::files::WriteToFile(testFilePath, "12345");
     }
 
     void AppendToFile()
     {
-        int32_t bytesWriten = FileUtilities::AppendToFile(testFilePath, "12345");
+        int32_t bytesWriten = utilities::files::AppendToFile(testFilePath, "12345");
         std::cout << bytesWriten << std::endl;
     }
 }
@@ -208,7 +208,7 @@ namespace Base64Tests
     void Test()
     {
         //const std::string result = Base64::base64Encode("111111111122222222222223333333333333");
-        const std::string result = Base64::base64Encode2("Man");
+        const std::string result = utilities::bas64::base64Encode("Man");
         std::cout << result << std::endl;
 
     }
@@ -217,7 +217,7 @@ namespace Base64Tests
 
 namespace TimeMeasurement
 {
-    using namespace PerfUtilities;
+    using namespace utilities::perf;
 
     void doSomething()
     {
@@ -291,7 +291,7 @@ namespace StringUtilitiesTests
 
 namespace HexConverter_Tests
 {
-    using namespace HexConverter;
+    using namespace utilities::hex;
 
     constexpr std::array<char, 16> table { '0','1','2','3','4','5','6','7','8','9','A','B','C','D','E','F'};
 
@@ -332,14 +332,14 @@ namespace final_action_test
     void test_1()
     {
         auto cleanup = []{ std::cout << "Cleanup-1" << std::endl; };
-        final_action::ScopeExit onExit(cleanup);
+        utilities::final_action::ScopeExit onExit(cleanup);
         std::cout << "Done-1" << std::endl;
     }
 
     void test_2()
     {
         auto cleanup = []{ std::cout << "Cleanup-2" << std::endl; };
-        final_action::ScopeExit onExit(cleanup);
+        utilities::final_action::ScopeExit onExit(cleanup);
 
         onExit.release();
         std::cout << "Done-2" << std::endl;
@@ -347,7 +347,7 @@ namespace final_action_test
 
     void test_3()
     {
-        auto guard = final_action::scopeExit([] {
+        auto guard = utilities::final_action::scopeExit([] {
            std::puts("cleanup");
         });
 
@@ -417,7 +417,7 @@ namespace final_action_test
 
 namespace testing_utils
 {
-    using namespace testing;
+    using namespace utilities::testing;
 
     void test_assert_equal()
     {
@@ -456,7 +456,7 @@ namespace testing_utils
 namespace scoped_timer_tests
 {
     using namespace std::chrono_literals;
-    using namespace PerfUtilities;
+    using namespace utilities::perf;
 
     void tests()
     {

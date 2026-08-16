@@ -12,7 +12,7 @@ Description : FileUtilities.h
 
 #include <filesystem>
 
-namespace FileUtilities
+namespace utilities::files
 {
     void PrintFileContent(const std::filesystem::path& filePath);
 

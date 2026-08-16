@@ -122,11 +122,11 @@ namespace Collections::Sort
         }
 
         {
-            const PerfUtilities::ScopedTimer timer { "Vector" };
+            const utilities::perf::ScopedTimer timer { "Vector" };
             std::sort(vector.begin(), vector.end());
         }
         {
-            const PerfUtilities::ScopedTimer timer { "List" };
+            const utilities::perf::ScopedTimer timer { "List" };
             list.sort();
         }
     }

@@ -587,7 +587,7 @@ namespace UnorderedMap
 
 		constexpr size_t TESTS_COUNT {100'000};
 		{
-			const PerfUtilities::ScopedTimer timer { "map_str.find" };
+			const utilities::perf::ScopedTimer timer { "map_str.find" };
 			for (size_t i = 0; i < TESTS_COUNT; ++i) {
 				for (auto& s : cities) {
 					map_str.find(s);
@@ -595,7 +595,7 @@ namespace UnorderedMap
 			}
 		}
 		{
-			const PerfUtilities::ScopedTimer timer { "map_str_view.find" };
+			const utilities::perf::ScopedTimer timer { "map_str_view.find" };
 			for (size_t i = 0; i < TESTS_COUNT; ++i) {
 				for (auto& s : cities) {
 					map_str_view.find(std::string_view{ s });

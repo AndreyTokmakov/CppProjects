@@ -663,7 +663,7 @@ namespace Sorting {
 		unsigned int size = 100;
 		int* values = MakeIntArray(size, 0, (size * 2));
 
-		const PerfUtilities::ScopedTimer timer { "Benchmark" };
+		const utilities::perf::ScopedTimer timer { "Benchmark" };
 		for (int i = 0; i < 1000; i++) {
 			for (int n = 0; n < 1000; n++) {
 				int* data = new int[100];
@@ -712,7 +712,7 @@ namespace Sorting {
 
 
 		{
-			const PerfUtilities::ScopedTimer timer { "Benchmark" };
+			const utilities::perf::ScopedTimer timer { "Benchmark" };
 			for (int i = 0; i < 1000; i++) {
 				for (int n = 0; n < 1000; n++) {
 					int* test_values = new int[size];
@@ -739,7 +739,7 @@ namespace Sorting {
 		}
 
 		{
-			const PerfUtilities::ScopedTimer timer { "Benchmark" };
+			const utilities::perf::ScopedTimer timer { "Benchmark" };
 			for (int i = 0; i < 1000; i++) {
 				for (int n = 0; n < 1000; n++) {
 					int* test_values = new int[size];
@@ -767,7 +767,7 @@ namespace Sorting {
 		}
 
 		{
-			const PerfUtilities::ScopedTimer timer { "Benchmark" };;
+			const utilities::perf::ScopedTimer timer { "Benchmark" };;
 			for (int i = 0; i < 1000; i++) {
 				for (int n = 0; n < 1000; n++) {
 					int* test_values = new int[size];

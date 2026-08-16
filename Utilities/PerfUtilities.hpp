@@ -14,8 +14,7 @@ Description : Utilities.h
 #include <chrono>
 #include <x86intrin.h>
 
-
-namespace PerfUtilities
+namespace utilities::perf
 {
     struct NonCopyableMovable
     {

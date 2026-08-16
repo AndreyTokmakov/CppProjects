@@ -690,7 +690,7 @@ namespace FalseSharingExperiments
             threads.emplace_back(task<int>, std::ref(entry.d));
         }
 
-        const PerfUtilities::ScopedTimer timer { message };
+        const utilities::perf::ScopedTimer timer { message };
         std::for_each(threads.begin(), threads.end(), [](std::thread& job ) { job.join(); });
     }
 

@@ -32,7 +32,7 @@ Description : Semaphores.cpp
 namespace
 {
     using namespace utilities::random;
-    using namespace DateTimeUtilities;
+    using namespace utilities::datetime;
 
     constexpr int32_t InvalidHandle { -1 };
 

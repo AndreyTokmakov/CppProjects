@@ -149,7 +149,7 @@ namespace StringView {
 
 	void PerformanceTest()
 	{
-		const PerfUtilities::ScopedTimer timer { "benchmark" };
+		const utilities::perf::ScopedTimer timer { "benchmark" };
 		constexpr char text[] = "Some_test_value";
 		//std::this_thread::sleep_for(std::chrono::milliseconds(125));
 
@@ -196,7 +196,7 @@ namespace StringView::UsageExamples
 		constexpr size_t TESTS_COUNT = 100'000'000;	
 
 		{
-			const PerfUtilities::ScopedTimer timer { "string" };
+			const utilities::perf::ScopedTimer timer { "string" };
 			for (size_t i = 0; i < TESTS_COUNT; ++i)
 			{
 				auto x1 = str1.substr(offset, str1.length() - offset);
@@ -207,7 +207,7 @@ namespace StringView::UsageExamples
 		}
 
 		{
-			const PerfUtilities::ScopedTimer timer { "string_view" };
+			const utilities::perf::ScopedTimer timer { "string_view" };
 			for (size_t i = 0; i < TESTS_COUNT; ++i)
 			{
 				const auto x1 = std::string_view(str1).substr(offset, str1.length() - offset);
@@ -227,13 +227,13 @@ namespace StringView::UsageExamples
 		constexpr size_t TESTS_COUNT = 100'000'000;
 
 		{
-			const PerfUtilities::ScopedTimer timer { "Benchmark" };
+			const utilities::perf::ScopedTimer timer { "Benchmark" };
 			for (size_t i = 0; i < TESTS_COUNT; ++i) {
 				int _ = atoi(strNumber.substr(3, 4).data());
 			}
 		}
 		{
-			const PerfUtilities::ScopedTimer timer { "Benchmark" };
+			const utilities::perf::ScopedTimer timer { "Benchmark" };
 			for (size_t i = 0; i < TESTS_COUNT; ++i) {
 				int _ = atoi(std::string_view(strNumber).substr(3, 4).data());
 			}

@@ -126,7 +126,7 @@ namespace ObjectPool::MyPools1 {
 		std::cout << " ======================== Using std::new(): =========================\n";
 
 		{
-			const PerfUtilities::ScopedTimer timer { "Using std::new()" };;
+			const utilities::perf::ScopedTimer timer { "Using std::new()" };;
 			for (size_t i = 0; i < MAX_COUNT; i++) {
 				for (size_t n = 0; n < MAX_COUNT; n++) {
 					for (size_t k = 0; k < size; k++)
@@ -140,7 +140,7 @@ namespace ObjectPool::MyPools1 {
 		std::cout << " ======================== Using pool: =========================\n";
 
 		{
-			const PerfUtilities::ScopedTimer timer { "Using pool" };;
+			const utilities::perf::ScopedTimer timer { "Using pool" };;
 			for (size_t i = 0; i < MAX_COUNT; i++) {
 				for (size_t n = 0; n < MAX_COUNT; n++) {
 					for (size_t k = 0; k < size; k++)
@@ -220,7 +220,7 @@ namespace ObjectPool::MyPools2 {
 		std::cout << " ======================== Using std::new(): =========================\n";
 
 		{
-			const PerfUtilities::ScopedTimer timer { "Using std::new()" };
+			const utilities::perf::ScopedTimer timer { "Using std::new()" };
 			for (size_t i = 0; i < MAX_COUNT; i++) {
 				for (size_t n = 0; n < MAX_COUNT; n++) {
 					for (size_t k = 0; k < size; k++)
@@ -234,7 +234,7 @@ namespace ObjectPool::MyPools2 {
 		std::cout << " ======================== Using pool: =========================\n";
 
 		{
-			const PerfUtilities::ScopedTimer timer { "Using pool" };
+			const utilities::perf::ScopedTimer timer { "Using pool" };
 			for (size_t i = 0; i < MAX_COUNT; i++) {
 				for (size_t n = 0; n < MAX_COUNT; n++) {
 					for (size_t k = 0; k < size; k++)
@@ -368,7 +368,7 @@ namespace ObjectPool::GoodPools_Basic {
 		ObjectPool<TestType> pool{};
 		std::cout << " ======================== Using std::new(): =========================\n";
 		{
-			const PerfUtilities::ScopedTimer timer { "new" };
+			const utilities::perf::ScopedTimer timer { "new" };
 			for (size_t i = 0; i < MAX_COUNT; i++) {
 				for (size_t n = 0; n < MAX_COUNT; n++) {
 					for (size_t k = 0; k < size; k++)
@@ -380,7 +380,7 @@ namespace ObjectPool::GoodPools_Basic {
 		}
 		std::cout << " ======================== Using pool: =========================\n";
 		{
-			const PerfUtilities::ScopedTimer timer { "pool" };
+			const utilities::perf::ScopedTimer timer { "pool" };
 			for (size_t i = 0; i < MAX_COUNT; i++) {
 				for (size_t n = 0; n < MAX_COUNT; n++) {
 					for (size_t k = 0; k < size; k++)
@@ -570,7 +570,7 @@ namespace ObjectPool::GoodPools_Tests {
 		std::cout << " ======================== Using std::new(): =========================\n";
 
 		{
-			const PerfUtilities::ScopedTimer timer { "new" };
+			const utilities::perf::ScopedTimer timer { "new" };
 			for (size_t i = 0; i < MAX_COUNT; i++) {
 				for (size_t n = 0; n < MAX_COUNT; n++) {
 					for (size_t k = 0; k < size; k++)
@@ -582,7 +582,7 @@ namespace ObjectPool::GoodPools_Tests {
 		}
 		std::cout << " ======================== Using pool: =========================\n";
 		{
-			const PerfUtilities::ScopedTimer timer { "pool" };
+			const utilities::perf::ScopedTimer timer { "pool" };
 			for (size_t i = 0; i < MAX_COUNT; i++) {
 				for (size_t n = 0; n < MAX_COUNT; n++) {
 					for (size_t k = 0; k < size; k++)
@@ -744,7 +744,7 @@ namespace ObjectPool::GoodPools_MultiThreaded
         std::cout << " ======================== Using std::new(): =========================\n";
 
         {
-            const PerfUtilities::ScopedTimer timer { "new" };;
+            const utilities::perf::ScopedTimer timer { "new" };;
             for (size_t i = 0; i < MAX_COUNT; i++) {
                 for (size_t n = 0; n < MAX_COUNT; n++) {
                     for (size_t k = 0; k < size; k++)
@@ -758,7 +758,7 @@ namespace ObjectPool::GoodPools_MultiThreaded
         std::cout << " ======================== Using pool: =========================\n";
 
         {
-            const PerfUtilities::ScopedTimer timer { "pool" };;
+            const utilities::perf::ScopedTimer timer { "pool" };;
             for (size_t i = 0; i < MAX_COUNT; i++) {
                 for (size_t n = 0; n < MAX_COUNT; n++) {
                     for (size_t k = 0; k < size; k++)

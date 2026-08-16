@@ -55,7 +55,7 @@ namespace
 namespace
 {
     using namespace utilities::random;
-    using namespace DateTimeUtilities;
+    using namespace utilities::datetime;
 
     using Handle = int32_t;
     constexpr int32_t InvalidHandle { -1 };
@@ -544,7 +544,7 @@ namespace tests::perf
         SharedMemoryChannel channel { semaphoreFileName };
         channel.InitializeOwner();
 
-        PerfUtilities::ScopedTimer timer { "Parent"};
+        utilities::perf::ScopedTimer timer { "Parent"};
         uint64_t counter { 0 };
         for (uint64_t i = 0; i < MaxIterations; ++i) {
             channel.write(counter);
@@ -565,7 +565,7 @@ namespace tests::perf
         SharedMemoryChannel channel { semaphoreFileName };
         channel.InitializeClient();
 
-        PerfUtilities::ScopedTimer timer { "Child"};
+        utilities::perf::ScopedTimer timer { "Child"};
         channel.setWriteReady();
         uint64_t counter { 0 };
         for (uint64_t i = 0; i < MaxIterations; ++i) {

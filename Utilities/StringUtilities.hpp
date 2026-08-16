@@ -14,8 +14,7 @@ Description : StringUtilities.h
 #include <string>
 #include <string_view>
 
-
-namespace StringUtilities
+namespace utilities::strings
 {
     [[nodiscard]]
     std::vector<std::string> split(std::string_view input,

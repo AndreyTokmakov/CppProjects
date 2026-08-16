@@ -9,7 +9,7 @@ Description : DateTimeUtilities.cpp
 
 #include "DateTimeUtilities.hpp"
 
-namespace DateTimeUtilities
+namespace utilities::datetime
 {
     using namespace std::chrono;
 

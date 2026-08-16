@@ -18,7 +18,7 @@ Description : Semaphore.cpp
 #include "DateTimeUtilities.hpp"
 #include "Testing.hpp"
 
-#define LOG  std::osyncstream { std::cout } << DateTimeUtilities::getCurrentTime() << " "
+#define LOG  std::osyncstream { std::cout } << utilities::datetime::getCurrentTime() << " "
 
 
 namespace semaphore
@@ -186,11 +186,11 @@ namespace unit_tests
 
         {
             std::this_thread::sleep_for(std::chrono::milliseconds(10));
-            testing::AssertEqual( 1, counter.load() , "Semaphore failed.");
+            utilities::testing::AssertEqual( 1, counter.load() , "Semaphore failed.");
         }
 
         t1.join(); t2.join();
-        testing::AssertEqual( 0, counter.load() , "Semaphore failed.");
+        utilities::testing::AssertEqual( 0, counter.load() , "Semaphore failed.");
     }
 
     template<ISemaphore SemT>
@@ -205,7 +205,7 @@ namespace unit_tests
         });
 
         std::this_thread::sleep_for(std::chrono::milliseconds(100));
-        testing::AssertTrue( 0 == acquired.load() , "Semaphore did not block when initialized with ");
+        utilities::testing::AssertTrue( 0 == acquired.load() , "Semaphore did not block when initialized with ");
         sem.release();
         t.join();
     }
@@ -227,7 +227,7 @@ namespace unit_tests
         sem.release();
         std::this_thread::sleep_for(std::chrono::milliseconds(100));
 
-        testing::AssertEqual(1, counter.load(), "notify_one woke more than one thread");
+        utilities::testing::AssertEqual(1, counter.load(), "notify_one woke more than one thread");
         sem.release();
     }
 
@@ -244,7 +244,7 @@ namespace unit_tests
                 const uint32_t now = ++current;
 
                 max_seen.store(std::max(max_seen.load(), now));
-                testing::AssertFalse(now > maxConcurrent, std::format("Too many threads: {}", now));
+                utilities::testing::AssertFalse(now > maxConcurrent, std::format("Too many threads: {}", now));
                 std::this_thread::sleep_for(std::chrono::milliseconds(100));
                 --current;
                 sem.release();
@@ -254,7 +254,7 @@ namespace unit_tests
         for (std::jthread& task : threads) {
             task.join();
         }
-        testing::AssertTrue(maxConcurrent >= max_seen.load(),
+        utilities::testing::AssertTrue(maxConcurrent >= max_seen.load(),
             std::format("Max concurrent more than expected {}", maxConcurrent ));
     }
 

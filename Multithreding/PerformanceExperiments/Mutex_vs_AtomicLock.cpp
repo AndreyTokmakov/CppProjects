@@ -107,7 +107,7 @@ namespace Mutex_vs_AtomicLock
             }
         };
 
-        const PerfUtilities::ScopedTimer timer { name };
+        const utilities::perf::ScopedTimer timer { name };
         std::vector<std::jthread> tasks;
         for (uint16_t it = 0; it < threadsCount; ++it) {
             tasks.emplace_back(task);

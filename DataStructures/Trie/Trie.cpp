@@ -124,7 +124,7 @@ namespace Trie::Tests
         }
 
         {
-            const PerfUtilities::ScopedTimer timer { "set.find" };
+            const utilities::perf::ScopedTimer timer { "set.find" };
             for (size_t idx = 0; idx < testsCount; ++idx) {
                 for (const std::string& str: samples)
                 {
@@ -136,7 +136,7 @@ namespace Trie::Tests
             }
         }
         {
-            const PerfUtilities::ScopedTimer timer { "trie.search" };
+            const utilities::perf::ScopedTimer timer { "trie.search" };
             for (size_t idx = 0; idx < testsCount; ++idx) {
                 for (const std::string& str: samples) {
                     if (!trie.search(str))

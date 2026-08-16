@@ -17,8 +17,8 @@ Description : FlatMap.cpp
 
 namespace flat_map_fast::testing::utils
 {
-    using ::testing::AssertEqual;
-    using ::testing::AssertTrue;
+    using ::utilities::testing::AssertEqual;
+    using ::utilities::testing::AssertTrue;
     using namespace flat_map_fast::impl;
 
     std::random_device rd{};
