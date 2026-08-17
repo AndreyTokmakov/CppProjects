@@ -8,25 +8,30 @@ project(${PROJECT_NAME} VERSION ${PROJECT_VERSION} LANGUAGES CXX)
 add_compile_options(-c -Wall -Wextra -O3 -std=c++2c)
 
 add_library(utils
-        Arrays.hpp
-        StringUtilities.cpp
-        FileUtilities.cpp
+        src/StringUtilities.cpp
+        src/FileUtilities.cpp
         CSVReader/CSVReader.cpp
         CSVReader/Tests.cpp
-        Base64.cpp
-        HexConverter.cpp
-        PerfUtilities.cpp
-        ThreadUtilities.cpp
-        DateTimeUtilities.cpp
-        Testing.cpp
-        Random.hpp
+        src/Base64.cpp
+        src/HexConverter.cpp
+        src/PerfUtilities.cpp
+        src/ThreadUtilities.cpp
+        src/DateTimeUtilities.cpp
+        src/Testing.cpp
+        include/Arrays.hpp
+        include/Random.hpp
+)
+
+target_include_directories(utils
+        PUBLIC
+        ${PROJECT_SOURCE_DIR}/include
 )
 
 add_executable(${PROJECT_NAME}
         main.cpp
 )
 
-TARGET_LINK_LIBRARIES(${PROJECT_NAME}
+target_link_libraries(${PROJECT_NAME}
         utils
         pthread
         ${EXTRA_LIBS}

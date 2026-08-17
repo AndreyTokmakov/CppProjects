@@ -35,6 +35,11 @@ add_executable(${PROJECT_NAME}
         PerformanceTests.cpp  PerformanceTests.h
 )
 
+target_include_directories(${PROJECT_NAME} PUBLIC "${CMAKE_SOURCE_DIR}/Utilities")
+target_link_directories(${PROJECT_NAME} PUBLIC "${CMAKE_BINARY_DIR}/Utilities")
+
 target_link_libraries(${PROJECT_NAME} PUBLIC
         -ljsoncpp
+        utils
+        pthread
 )
