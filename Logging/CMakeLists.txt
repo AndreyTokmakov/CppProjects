@@ -26,6 +26,12 @@ add_executable(${PROJECT_NAME}
         main.cpp
         # Quill/Quill.cpp
         SPDLog/SPDLog.cpp
+        SpdLogWrapper/SpdLogWrapper.cpp
+        SpdLogWrapper/logger.hpp
+        SpdLogWrapper/spdlog_logger.hpp
+        SpdLogWrapper/spdlog_logger.cpp
+        SpdLogWrapper/logger_factory.hpp
+        SpdLogWrapper/logger_factory.cpp
         XTR/XTR.cpp
 )
 

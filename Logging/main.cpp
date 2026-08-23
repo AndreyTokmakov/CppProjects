@@ -14,7 +14,7 @@ Description : C++ Logging tests
 #include "Quill/Quill.h"
 #include "SPDLog/SPDLog.h"
 #include "XTR/XTR.h"
-
+#include "SpdLogWrapper/SpdLogWrapper.hpp"
 
 int main([[maybe_unused]] int argc,
          [[maybe_unused]] char** argv)
@@ -23,7 +23,8 @@ int main([[maybe_unused]] int argc,
 
     // Quill::TestAll();
     // XTR::TestAll();
-    SPDLog::TestAll();
+    // SPDLog::TestAll();
+    spd_log_wrapper::TestAll();
 
     return EXIT_SUCCESS;
 }
