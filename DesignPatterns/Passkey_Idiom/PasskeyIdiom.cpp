@@ -75,14 +75,12 @@ namespace demo2
 
     public:
 
-        // Whoever can provide a key has access:
         explicit Secret(std::string str, AccessKey) : data(std::move(str)) {
             std::cout << "Secret::Secret(" << data << ")" << std::endl;
         }
 
     private:
 
-        // these stay private, since Secret itself has no friends anymore
         void addData(const std::string& moreData) {
             std::cout << "Secret::addData(" << moreData << ")" << std::endl;
         }
@@ -90,9 +88,7 @@ namespace demo2
         std::string data {};
     };
 
-    // 1. Do not have access to Secret private data
-    // 2. yet can create Secret objects
-    // 3. .. and Secret can be created ONLY buy  SecretFactory
+
     struct SecretFactory
     {
         Secret getSecret([[maybe_unused]] std::string str)

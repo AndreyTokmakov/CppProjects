@@ -9,48 +9,141 @@ Description : Polymorphic.cpp
 
 #include <iostream>
 #include <vector>
-//#include <polymorphic> // C++26 header
-
+#include <memory>
 #include "Polymorphic.hpp"
 
-namespace
+#include <cassert>
+
+namespace using_std_unique_ptr
 {
-    struct  Enemy
+    struct Shape
     {
-        virtual ~Enemy() = default;
-        virtual void attack() const { std::cout << "Basic punch!\n"; }
+        virtual ~Shape() = default;
+
+        [[nodiscard]]
+        virtual std::unique_ptr<Shape> clone() const = 0;
+
+        [[nodiscard]]
+        virtual double area() const = 0;
     };
 
-    struct Boss : Enemy
+    struct Circle final : public Shape
     {
-        void attack() const override { std::cout << "Fire breath!\n"; }
+        double radius_;
+        explicit Circle(const double r) : radius_(r) {}
+
+        [[nodiscard]]
+        std::unique_ptr<Shape> clone() const override
+        {
+            return std::make_unique<Circle>(*this);
+        }
+
+        [[nodiscard]]
+        double area() const override
+        {
+            return 3.14159 * radius_ * radius_;
+        }
     };
 
-    void simpleTest()
+    struct Rectangle final : public Shape
     {
-#if 0
-        std::vector<std::polymorphic<Enemy>> level_enemies;
+        double w_, h_;
+        Rectangle(double w, double h) : w_(w), h_(h) {}
 
-        // We tell it to build a Boss on the heap.
-        // std::in_place_type is just a tag telling the compiler what class to make.
-        level_enemies.push_back(std::polymorphic<Enemy>(std::in_place_type<Boss>));
+        [[nodiscard]] std::unique_ptr<Shape> clone() const override { return std::make_unique<Rectangle>(*this);}
+        [[nodiscard]] double area() const override { return w_ * h_; }
+    };
 
-        // We access it with an arrow -> just like a pointer.
-        level_enemies[0]->attack(); // Outputs: Fire breath!
+    class Picture
+    {
+        std::vector<std::unique_ptr<Shape>> shapes_;
+    public:
+        Picture(const Picture& other)
+        {
+            shapes_.reserve(other.shapes_.size());
+            for (const auto& s : other.shapes_)
+                shapes_.push_back(s->clone());
+        }
 
-        // The copy operation automatically preserves the dynamic type
-        // of every stored object.
-        // Every single polymorphic object inside automatically deep-copies itself.
-        // No clone() methods, no manual for-loops.
-        std::vector<std::polymorphic<Enemy>> backup = level_enemies;
+        Picture& operator=(const Picture& other)
+        {
+            auto tmp = other;          // copy-and-swap
+            swap(shapes_, tmp.shapes_);
+            return *this;
+        }
+    };
+}
 
-        backup[0]->attack(); // Outputs: Fire breath!
-#endif
 
+namespace polymorphic_tests
+{
+    struct Shape
+    {
+        virtual ~Shape() = default;
+        [[nodiscard]] virtual double area() const = 0;
+    };
+
+    struct Circle final : public Shape
+    {
+        double radius_;
+        explicit Circle(const double r) : radius_(r) {}
+
+        [[nodiscard]]
+        double area() const override {
+            return 3.14159 * radius_ * radius_;
+        }
+    };
+
+    struct Rectangle final : public Shape
+    {
+        double w_, h_;
+        Rectangle(const double w, const double h) : w_(w), h_(h) {}
+
+        [[nodiscard]]
+        double area() const override {
+            return w_ * h_;
+        }
+    };
+
+    class Picture
+    {
+        std::vector<std::polymorphic<Shape>> shapes;
+    public:
+
+        void add_circle(double r) {
+            shapes.emplace_back(std::in_place_type<Circle>, r);
+        }
+
+        void add_rectangle(double w, double h) {
+            shapes.emplace_back(std::in_place_type<Rectangle>, w, h);
+        }
+
+        double total_area() const
+        {
+            double sum = 0;
+            for (const auto& s : shapes)
+                sum += s->area();
+            return sum;
+        }
+    };
+
+    void demo()
+    {
+        Picture a;
+        a.add_circle(5.0);
+        a.add_rectangle(3.0, 4.0);
+
+        Picture b = a;  // deep copies both shapes, preserving their dynamic types
+        a.add_circle(1.0);
+
+        assert(a.size() == 3);  // a has three shapes
+        assert(b.size() == 21);  // b is unchanged — it's an independent copy
+        assert(a.total_area() != b.total_area());
     }
 }
 
 void Polymorphic::TestAll()
 {
-
+    // using_std_unique_ptr
+    polymorphic_tests::demo();
 }
