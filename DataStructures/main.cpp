@@ -39,6 +39,7 @@ Description : DataStructures
 #include "RingBuffer/RingBufferEx.h"
 #include "RingBuffer/RingBufferExAtomic.h"
 #include "RingBuffer/RingBuffer_SPSC.h"
+#include "RingBufferFast/RingBufferFast.hpp"
 #include "MinHeap/MinHeap.h"
 #include "Invoker_MethodClass/Invoker.h"
 #include "MinStack/MinStack.h"
@@ -129,6 +130,7 @@ int main([[maybe_unused]] int argc,
     // RingBufferEx::TestAll();
     // RingBufferExAtomic::TestAll();
     // RingBuffer_SPSC::TestAll();
+	ring_buffer_fast::TestAll();
 
 	// static_string::TestAll();
 
@@ -138,7 +140,7 @@ int main([[maybe_unused]] int argc,
 
 	// metrics::TestAll();
 
-	command_wrapper::TestAll();
+	// scommand_wrapper::TestAll();
 
 	// published_subscriber::TestAll();
 

@@ -66,6 +66,7 @@ add_executable(${PROJECT_NAME}
 		Wrapper/Wrapper.h
 		ThreadPool/ThreadPool.cpp
 		ThreadPool/ThreadPoolEx.cpp
+		RingBufferFast/RingBufferFast.cpp
 		RingBuffer/RingBuffer.cpp
 		RingBuffer/RingBufferEx.cpp
 		RingBuffer/RingBufferExAtomic.cpp
