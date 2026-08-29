@@ -146,6 +146,7 @@ add_executable(${PROJECT_NAME}
 		Templates/IndexSequence.cpp
 		Templates/Expression_Templates.cpp
 		Templates/PerfectForwarding.cpp
+		Templates/Template_For.cpp
 
 		RVO_CopyElision/CopyElision.cpp
 		RVO_CopyElision/RVO_FailureCases.cpp

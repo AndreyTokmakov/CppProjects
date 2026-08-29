@@ -174,7 +174,7 @@ int main([[maybe_unused]] const int argc,
     // Optional::TestAll();
     // Overflow::TestAll();
     // PolymorphicMemoryResources::TestAll();
-    memory::indirect::TestAll();
+    // memory::indirect::TestAll();
     // Print::TestAll();
     // Random::TestAll();
     // Ranges::TestAll();

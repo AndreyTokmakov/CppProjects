@@ -25,6 +25,7 @@ namespace Templates
 	namespace Metaprogramming { void TestAll(); }
 	namespace Expression_Templates { void TestAll(); }
 	namespace perfect_forwarding { void TestAll(); }
+	namespace template_for { void TestAll(); }
 };
 
 #endif /* TEMPLATES_TESTS__H_ */

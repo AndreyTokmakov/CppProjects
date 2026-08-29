@@ -1336,6 +1336,7 @@ void Templates::TestAll()
     // Metaprogramming::TestAll();
     // Expression_Templates::TestAll();
     // perfect_forwarding::TestAll();
+    template_for::TestAll();
 
     // Is_Base_Of__Test();
     // Is_Same();
