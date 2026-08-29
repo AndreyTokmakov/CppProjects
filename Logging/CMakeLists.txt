@@ -14,8 +14,10 @@ include_directories(${THIRD_PARTY_DIR}/spdlog/include)
 
 include_directories(${THIRD_PARTY_DIR}/xtr/single_include)
 link_directories(${THIRD_PARTY_DIR}/xtr/build/g++-14.2-lto-release)
-include_directories(${THIRD_PARTY_DIR}/xtr/third_party/fmt/include)
-link_directories(${THIRD_PARTY_DIR}/xtr/third_party/fmt/build)
+# include_directories(${THIRD_PARTY_DIR}/fmt/include)
+
+# include_directories(${THIRD_PARTY_DIR}/xtr/third_party/fmt/include)
+# link_directories(${THIRD_PARTY_DIR}/xtr/third_party/fmt/build)
 
 include_directories(Quill)
 
@@ -32,7 +34,8 @@ add_executable(${PROJECT_NAME}
         SpdLogWrapper/spdlog_logger.cpp
         SpdLogWrapper/logger_factory.hpp
         SpdLogWrapper/logger_factory.cpp
-        XTR/XTR.cpp
+        SpdLogWrapperEx/SpdLogWrapperEx.cpp
+        # XTR/XTR.cpp
 )
 
 TARGET_LINK_LIBRARIES(${PROJECT_NAME} PRIVATE
@@ -40,6 +43,6 @@ TARGET_LINK_LIBRARIES(${PROJECT_NAME} PRIVATE
         ${EXTRA_LIBS}
         # libquill.a
         # quill::quill
-        fmt
+        # fmt
         systemd
 )

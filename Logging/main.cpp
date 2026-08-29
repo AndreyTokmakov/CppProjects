@@ -15,6 +15,7 @@ Description : C++ Logging tests
 #include "SPDLog/SPDLog.h"
 #include "XTR/XTR.h"
 #include "SpdLogWrapper/SpdLogWrapper.hpp"
+#include "SpdLogWrapperEx/SpdLogWrapperEx.hpp"
 
 int main([[maybe_unused]] int argc,
          [[maybe_unused]] char** argv)
@@ -24,7 +25,8 @@ int main([[maybe_unused]] int argc,
     // Quill::TestAll();
     // XTR::TestAll();
     // SPDLog::TestAll();
-    spd_log_wrapper::TestAll();
+    // spd_log_wrapper::TestAll();
+    spd_log_wrapper_ex::TestAll();
 
     return EXIT_SUCCESS;
 }
