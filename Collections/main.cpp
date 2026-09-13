@@ -34,19 +34,21 @@ int main([[maybe_unused]] int argc,
 {
 	// Array::TestAll();
 	// List::TestAll();
+	// Vector::TestAll();
+	inplace_vector::TestAll();
+
+	// Set::TestAll();
+	// UnorderedSet::TestAll();
+	// Map::TestAll();
+	// FlatMap::TestAll();
+	// MultiMap::TestAll();
+	// UnorderedMap::TestAll();
+
 	// ForwardList::TestAll();
 	// Deque::TestAll();
 	// Stack::TestAll();
 	// Heap::TestAll();
-	// Vector::TestAll();
-	// inplace_vector::TestAll();
 	// Valarray::TestAll();
-	// Map::TestAll();
-	// FlatMap::TestAll();
-	// MultiMap::TestAll();
-    UnorderedMap::TestAll();
-    // Set::TestAll();
-    // UnorderedSet::TestAll();
 	// Queue::TestAll();
 	// PriorityQueue::TestAll();
 	// Custom_Vector::TestAll();

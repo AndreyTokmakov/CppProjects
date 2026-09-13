@@ -67,6 +67,7 @@ Description : DataStructures
 #include "UniquePtr/UniquePtr.hpp"
 #include "StaticSortedSearchArray/StaticSortedSearchArray.hpp"
 #include "StaticString/StaticString.hpp"
+#include "StaticTable/StaticTable.hpp"
 #include "MPMCQueue/MPMCQueue.hpp"
 #include "MineSet_Fast/MiniSet.hpp"
 #include "StateManager/StateManager.hpp"
@@ -130,9 +131,10 @@ int main([[maybe_unused]] int argc,
     // RingBufferEx::TestAll();
     // RingBufferExAtomic::TestAll();
     // RingBuffer_SPSC::TestAll();
-	ring_buffer_fast::TestAll();
+	//ring_buffer_fast::TestAll();
 
 	// static_string::TestAll();
+	static_table::testAll();
 
 	// MPMCQueue::TestAll();
 

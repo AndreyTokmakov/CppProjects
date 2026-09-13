@@ -72,6 +72,7 @@ add_executable(${PROJECT_NAME}
 		RingBuffer/RingBufferExAtomic.cpp
 		RingBuffer/RingBuffer_SPSC.cpp
 		StaticString/StaticString.cpp
+		StaticTable/StaticTable.cpp
 
 		Queues/Queues.cpp
 		Queues/PriorityDispatcher.cpp
