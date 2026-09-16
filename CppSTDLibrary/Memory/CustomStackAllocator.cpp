@@ -7,7 +7,7 @@ Copyright   : Your copyright notice
 Description : CustomStackAllocator.cpp
 ============================================================================**/
 
-#include "CustomStackAllocator.h"
+#include "Memory.hpp"
 
 #include <iostream>
 #include <array>
@@ -26,7 +26,7 @@ void operator delete(void* ptr) noexcept {
 }
 #endif
 
-namespace CustomStackAllocator
+namespace
 {
     using namespace Helpers;
 
@@ -108,7 +108,7 @@ namespace CustomStackAllocator
     };
 }
 
-namespace CustomStackAllocator::Tests
+namespace
 {
     void SimpleTest()
     {
@@ -127,7 +127,7 @@ namespace CustomStackAllocator::Tests
     }
 }
 
-void CustomStackAllocator::TestAll()
+void memory::custom_stack_allocator::TestAll()
 {
-    Tests::SimpleTest();
+    SimpleTest();
 }

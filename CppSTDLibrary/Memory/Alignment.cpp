@@ -7,9 +7,8 @@ Copyright   : Your copyright notice
 Description : Alignment.cpp
 ============================================================================**/
 
-#include "Alignment.h"
+#include "Memory.hpp"
 
-#include "Alignment.h"
 
 #include <memory>
 #include <vector>
@@ -27,7 +26,7 @@ Description : Alignment.cpp
 
 #include "../Helpers/Helpers.h"
 
-namespace Alignment
+namespace memory::alignment
 {
 
     class EmptyClass {
@@ -170,7 +169,7 @@ namespace Alignment
 
 
 
-namespace Alignment::Storage
+namespace memory::alignment::storage
 {
     struct MyLong
     {
@@ -212,7 +211,7 @@ namespace Alignment::Storage
 }
 
 
-namespace Alignment::NetworkHeaders
+namespace memory::alignment::NetworkHeaders
 {
     struct ARPHeader final {
         uint16_t htype{0};
@@ -257,7 +256,7 @@ namespace Alignment::NetworkHeaders
 }
 
 
-namespace Alignment::AlignAs
+namespace memory::alignment::AlignAs
 {
     struct alignas(std::hardware_destructive_interference_size) Item
     {
@@ -280,7 +279,7 @@ namespace Alignment::AlignAs
     }
 }
 
-namespace Alignment::Padding
+namespace memory::alignment::Padding
 {
     struct Data // sizeof == 48
     {
@@ -361,7 +360,7 @@ void STD_Align()
     */
 }
 
-namespace Alignment::packing_data
+namespace memory::alignment::packing_data
 {
     /**
     #pragma pack
@@ -456,7 +455,7 @@ namespace Alignment::packing_data
     }
 }
 
-void Alignment::TestAll()
+void memory::alignment::TestAll()
 {
     // Alignment_Of_Tests();
     // Alignas();

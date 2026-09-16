@@ -8,15 +8,8 @@ Description : Memory src class
 ============================================================================**/
 
 
-#include "Alignment.h"
-#include "AlignedStackAllocator.h"
-#include "CustomStackAllocator.h"
-#include "MemoryUsageMonitor.h"
-#include "MemoryPool.h"
-#include "Launder.hpp"
-#include "ObjectPool_Stack_FixedSize.h"
 
-#include "Memory.h"
+#include "Memory.hpp"
 #include <memory>
 #include <vector>
 #include <new>
@@ -25,13 +18,10 @@ Description : Memory src class
 #include <iterator>
 #include <algorithm>
 #include <string>
-#include <vector>
 #include <array>
 #include <memory_resource>
-#include <cstdlib> // for std::byte
 #include <iomanip>
 #include <functional>
-#include <memory_resource>
 
 #include "../Helpers/Helpers.h"
 
@@ -43,7 +33,7 @@ namespace {
 #define DEBUG_OUTPUT
 #define FOR(var_name, range) for (int var_name  = 0; var_name < range; ++var_name)
 
-namespace Memory::Allocators {
+namespace memory::Allocators {
 	
 	template <class T>
 	class SimpleAllocator {
@@ -235,7 +225,7 @@ namespace Memory::Allocators {
     }
 }
 
-namespace Memory::Allocators_Vector {
+namespace memory::Allocators_Vector {
 
 	template<typename _Ty>
 	struct MyAllocator {
@@ -314,7 +304,7 @@ namespace Memory::Allocators_Vector {
 }
 
 
-namespace Memory::Utilities {
+namespace memory::Utilities {
 
 	class Long {
 	protected:
@@ -384,7 +374,7 @@ namespace Memory {
 	}
 };
 
-namespace Memory::New_Placement {
+namespace memory::New_Placement {
 
 	class Long {
 	protected:
@@ -480,7 +470,7 @@ namespace Memory::New_Placement {
 };
 
 
-namespace Memory::ObjectPool {
+namespace memory::ObjectPool {
 
 	template<class T, size_t max_size>
 	class Pool {
@@ -635,7 +625,7 @@ namespace Memory::ObjectPool {
 }
 
 
-namespace Memory::Pointers {
+namespace memory::Pointers {
 
 	void Memcpy_Test1() {
 
@@ -743,7 +733,7 @@ namespace Memory::Pointers {
 }
 
 
-namespace Memory::Destroy {
+namespace memory::Destroy {
 
 	void Call_Destructor_Manualy() {
 		constexpr size_t length = 5;
@@ -838,7 +828,7 @@ namespace Memory::Destroy {
 
 ////////////////////////////////////////////////////////////////////////
 
-namespace Memory::CustomAllocator {
+namespace memory::CustomAllocator {
 
 	template<class T>
 	class TrackingAllocator
@@ -896,7 +886,7 @@ namespace Memory::CustomAllocator {
 	}
 }
 
-namespace Memory::OperatorNew {
+namespace memory::OperatorNew {
 
 	class Object {
 	public:
@@ -1027,7 +1017,7 @@ namespace Memory::OperatorNew {
     }
 }
 
-namespace Memory::Reload_New_and_Delete
+namespace memory::Reload_New_and_Delete
 {
 	class Object {
 	public:
@@ -1142,7 +1132,7 @@ namespace Memory::Reload_New_and_Delete
 	}
 }
 
-namespace Memory::Reload_New_and_Delete
+namespace memory::Reload_New_and_Delete
 {
     struct Deleters
     {
@@ -1221,7 +1211,7 @@ void operator delete(void* ptr) noexcept {
 */
 
 // TODO: Uncomment code above
-namespace Memory::ReleoadGlobal_NEW_DELETE 
+namespace memory::ReleoadGlobal_NEW_DELETE
 {
 	struct MyStruct
 	{
@@ -1236,7 +1226,7 @@ namespace Memory::ReleoadGlobal_NEW_DELETE
 
 
 //********* Tracker: ********//
-namespace Memory::Tracker {
+namespace memory::Tracker {
 
 	class TrackNew {
 	private:
@@ -1356,7 +1346,7 @@ namespace Memory::Tracker {
 }
 
 //********* PolymorphicMemoryResources: ********//
-namespace Memory::PolymorphicMemoryResources {
+namespace memory::PolymorphicMemoryResources {
 
 	class Object {
 	public:
@@ -1450,7 +1440,7 @@ namespace Memory::PolymorphicMemoryResources {
 }
 
 //********* Alligned_New_Delete: ********//
-namespace Memory::Alligned_New_Delete {
+namespace memory::Alligned_New_Delete {
 
 	struct alignas(32) MyType32 {
 		int i;
@@ -1473,7 +1463,7 @@ namespace Memory::Alligned_New_Delete {
 
 //*************************** Alligned_New_Delete: ***************************//
 
-namespace Memory::Address {
+namespace memory::Address {
 
 	class unreferenceable {
 	public:
@@ -1512,7 +1502,7 @@ namespace Memory::Address {
 
 //*************************** Objects copy: ***************************//
 
-namespace Memory::ObjectsCopy {
+namespace memory::ObjectsCopy {
 
 	class BadLong : public Utilities::Long {
 	protected:
@@ -1543,7 +1533,7 @@ namespace Memory::ObjectsCopy {
 
 //*************************** Objects copy: ***************************//
 
-namespace Memory::OffSet {
+namespace memory::OffSet {
 
 	struct foo {
 		char a;
@@ -1571,7 +1561,7 @@ namespace Memory::OffSet {
 	}
 }
 
-namespace Memory::Construct {
+namespace memory::Construct {
 
 
     template<size_t Max>
@@ -1608,7 +1598,7 @@ namespace Memory::Construct {
     }
 }
 
-namespace Memory::RestrictObjectHeapCreation
+namespace memory::RestrictObjectHeapCreation
 {
 
     template <typename... Ts>
@@ -1717,7 +1707,7 @@ namespace VectorOfUniquePointers_KeepReference_StoredInVector
 }
 
 
-namespace Memory::Override_Global_Memory_Handler
+namespace memory::Override_Global_Memory_Handler
 {
 	void handler()
 	{
@@ -1742,7 +1732,7 @@ namespace Memory::Override_Global_Memory_Handler
 	}
 }
 
-namespace Memory::Start_Lifetime_As
+namespace memory::Start_Lifetime_As
 {
 	void test(int x)
 	{
@@ -1776,19 +1766,18 @@ namespace Memory::Start_Lifetime_As
 	}
 }
 
-void Memory::TestAll()
+void memory::TestAll()
 {
-    // Launder::TestAll();
-    // Alignment::TestAll();
-    // AlignedStackAllocator::TestAll();
-    // CustomStackAllocator::TestAll();
-    // MemoryUsageMonitor::TestAll();
-    // MemoryPool::TestAll();
+    // launder::TestAll();
+    // alignment::TestAll();
+    // aligned_stack_allocator_basic::TestAll();
+    aligned_stack_allocator_extended::TestAll();
+    // custom_stack_allocator::TestAll();
+    // memory_usage_monitor::TestAll();
+    // memory_pool::TestAll();
+    // object_pool_stack_fixed_size::TestAll();
 
-	Start_Lifetime_As::start_lifetime_as_test();
-
-	// ObjectPool_Stack_FixedSize::TestAll();
-
+	// Start_Lifetime_As::start_lifetime_as_test();
 
 	// Delete_Array();
 	// NoThrowTest();

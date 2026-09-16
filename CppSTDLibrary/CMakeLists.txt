@@ -69,7 +69,8 @@ add_executable(${PROJECT_NAME}
 		Memory/MemoryUsageMonitor.cpp
 		Memory/Alignment.cpp
 		Memory/Launder.cpp
-		Memory/AlignedStackAllocator.cpp
+		Memory/AlignedStackAllocatorBase.cpp
+		Memory/AlignedStackAllocatorExtended.cpp
 		Memory/CustomStackAllocator.cpp
 		MoveSemantics/MoveSemantics.cpp
 		Numbers/Numbers.cpp
@@ -159,7 +160,6 @@ add_executable(${PROJECT_NAME}
         CompileTime_Constexpr/Constexpr.cpp
 		CompileTime_Constexpr/Constexpr.hpp
 		Memory/ObjectPool_Stack_FixedSize.cpp
-		Memory/ObjectPool_Stack_FixedSize.h
 
 		Utilities/Invoke.cpp
 		Utilities/Utilities.cpp

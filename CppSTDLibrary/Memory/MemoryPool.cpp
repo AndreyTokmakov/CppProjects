@@ -7,14 +7,13 @@ Copyright   : Your copyright notice
 Description : MemoryPool.cpp
 ============================================================================**/
 
-#include <cstddef>
 #include <stack>
 #include <memory>
 #include <iostream>
 
-#include "MemoryPool.h"
+#include "Memory.hpp"
 
-namespace MemoryPool
+namespace
 {
     template <typename T, size_t PoolSize>
     class MemoryPool
@@ -63,7 +62,7 @@ namespace MemoryPool
     };
 }
 
-void MemoryPool::TestAll()
+void memory::memory_pool::TestAll()
 {
     MemoryPool<SmallObject, 10> pool;
     auto obj1 = pool.allocate();

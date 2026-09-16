@@ -7,13 +7,13 @@ Copyright   : Your copyright notice
 Description : Launder.cpp
 ============================================================================**/
 
-#include "Launder.hpp"
+#include "Memory.hpp"
 
 #include <cstdint>
 #include <memory>
 #include <iostream>
 
-namespace Launder::Examples
+namespace
 {
     struct Object
     {
@@ -57,8 +57,8 @@ namespace Launder::Examples
 }
 
 
-void Launder::TestAll()
+void memory::launder::TestAll()
 {
-    // Examples::simpleExample();
-    Examples::simpleExample2();
+    // simpleExample();
+    simpleExample2();
 }

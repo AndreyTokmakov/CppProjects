@@ -7,7 +7,7 @@ Copyright   : Your copyright notice
 Description : MemoryUsageTest
 ============================================================================**/
 
-#include "MemoryUsageMonitor.h"
+#include "Memory.hpp"
 
 #include <iostream>
 #include <fstream>
@@ -16,8 +16,6 @@ Description : MemoryUsageTest
 #include <cstdint>
 #include <vector>
 #include <thread>
-
-
 
 namespace ProcessStatusInfo
 {
@@ -102,7 +100,7 @@ namespace ProcessStatusInfo
     };
 }
 
-namespace MemoryUsageMonitor::Tests
+namespace
 {
     using namespace ProcessStatusInfo;
 
@@ -149,8 +147,8 @@ namespace MemoryUsageMonitor::Tests
 
 
 
-void MemoryUsageMonitor::TestAll()
+void memory::memory_usage_monitor::TestAll()
 {
-    Tests::debug();
-    // Tests::AllocateMemory();
+    debug();
+    // AllocateMemory();
 }

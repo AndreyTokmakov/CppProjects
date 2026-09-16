@@ -7,7 +7,7 @@ Copyright   : Your copyright notice
 Description : AlignedStackAllocator
 ============================================================================**/
 
-#include "AlignedStackAllocator.h"
+#include "Memory.hpp"
 
 #include <iostream>
 #include <array>
@@ -15,11 +15,10 @@ Description : AlignedStackAllocator
 #include <numeric>
 #include "../Helpers/Helpers.h"
 
-namespace AlignedStackAllocator
+using namespace Helpers;
+
+namespace
 {
-
-    using namespace Helpers;
-
     template<class T, size_t N>
     struct Allocator
     {
@@ -75,32 +74,32 @@ namespace AlignedStackAllocator
             std::destroy_at(ptr);
             available[++tail] = offset;
         }
-    };
-};
+    };;
 
-namespace AlignedStackAllocator::Tests
-{
-    void SimpleTest()
+    namespace
     {
-        constexpr size_t capacity {100};
-        Allocator<Integer, capacity> allocator;
-
-
-        std::cout << "-----------------------------------------------------\n";
-        std::array<Integer*, capacity> objs {};
-        for (int testId  = 0; testId < 100; ++testId)
+        void SimpleTest()
         {
-            for (int i = 0; i < capacity; ++i)
-                objs[i] = allocator.AllocateAndConstruct((i + 1) * 10);
-            for (const auto ptr: objs)
-                allocator.DestroyAndDeallocate(ptr);
+            constexpr size_t capacity {100};
+            Allocator<Integer, capacity> allocator;
+
+
+            std::cout << "-----------------------------------------------------\n";
+            std::array<Integer*, capacity> objs {};
+            for (int testId  = 0; testId < 100; ++testId)
+            {
+                for (int i = 0; i < capacity; ++i)
+                    objs[i] = allocator.AllocateAndConstruct((i + 1) * 10);
+                for (const auto ptr: objs)
+                    allocator.DestroyAndDeallocate(ptr);
+            }
+            std::cout << "-----------------------------------------------------\n";
         }
-        std::cout << "-----------------------------------------------------\n";
     }
 }
 
 
-void AlignedStackAllocator::TestAll()
+void memory::aligned_stack_allocator_basic::TestAll()
 {
-    Tests::SimpleTest();
+    SimpleTest();
 }

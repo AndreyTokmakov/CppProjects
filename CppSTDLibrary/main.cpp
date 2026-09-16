@@ -92,8 +92,7 @@ Description : Cpp STD lib
 #include "Tuple/TupleTests.h"
 #include "TypeCast/TypeCast.h"
 #include "Metaprogramming/Metaprogramming.h"
-#include "Memory/Memory.h"
-#include "Memory/Launder.hpp"
+#include "Memory/Memory.hpp"
 #include "Templates/Templates.hpp"
 #include "Volatile/VolatileTests.h"
 #include "StaticAsserts/StaticAsserts.h"
@@ -166,7 +165,8 @@ int main([[maybe_unused]] const int argc,
     // MoveSemantics::TestAll();
     // Numbers::TestAll();
     // Math::TestAll();
-    // Memory::TestAll();
+    memory::TestAll();
+    // memory::indirect::TestAll();
     // Metaprogramming::TestAll();
     // InlineNamespaces::TestAll();
     // NumericLimits::TestAll();
@@ -174,7 +174,6 @@ int main([[maybe_unused]] const int argc,
     // Optional::TestAll();
     // Overflow::TestAll();
     // PolymorphicMemoryResources::TestAll();
-    // memory::indirect::TestAll();
     // Print::TestAll();
     // Random::TestAll();
     // Ranges::TestAll();
