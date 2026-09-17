@@ -137,7 +137,7 @@ int main([[maybe_unused]] const int argc,
     // ConstConstexprMutable::TestAll();
     // CompileTimeProgramming::TestAll();
     // Constexpr::TestAll();
-    // CopyElision::TestAll();
+    CopyElision::TestAll();
     // DeducingThis::TestAll();
     // RVO_FailureCases::TestAll();
     // ClassTemplateArgumentDeduction::TestAll();
@@ -165,7 +165,7 @@ int main([[maybe_unused]] const int argc,
     // MoveSemantics::TestAll();
     // Numbers::TestAll();
     // Math::TestAll();
-    memory::TestAll();
+    // memory::TestAll();
     // memory::indirect::TestAll();
     // Metaprogramming::TestAll();
     // InlineNamespaces::TestAll();

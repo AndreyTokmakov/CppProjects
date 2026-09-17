@@ -13,6 +13,7 @@ Description : AlignedStackAllocatorExtended
 #include <array>
 #include <memory>
 #include <numeric>
+#include <vector>
 #include "../Helpers/Helpers.h"
 
 using namespace Helpers;
@@ -27,7 +28,7 @@ namespace
 
         struct Deleter final
         {
-            static inline Allocator*  allocator { nullptr };
+            Allocator* allocator {};
 
             void operator()(const pointer ptr) const noexcept {
                 allocator->deallocate(ptr);
@@ -38,46 +39,59 @@ namespace
 
         static_assert(!std::is_same_v<object_type, void>, "Type of the Objects in the pool can not be void");
 
-        struct alignas(sizeof(object_type)) Placeholder {};
+        struct Slot
+        {
+            alignas(object_type) std::byte storage[sizeof(object_type)];
+        };
 
-        std::array<Placeholder, Capacity> pool {};
+        std::array<Slot, Capacity> pool {};
         std::array<uint16_t, Capacity> available {};
-        int32_t tail {0};
+        int32_t freeIndex {0};
 
     public:
 
         Allocator()
         {
-            tail = Capacity - 1;
+            freeIndex = Capacity - 1;
             std::iota(available.begin(), available.end(), 0);
-            Deleter::allocator = this;
         }
 
-        template<typename ... Args>
-        ObjectPtr AllocateAndConstruct(Args ... params)
+        template<typename... Args>
+        ObjectPtr allocate(Args&&... params)
         {
-            ObjectPtr result { nullptr };
-            if (tail < 0) {
+            if (freeIndex < 0) {
                 return nullptr;
             }
 
-            const size_t offset = available[tail--];
+            const std::size_t offset = available[freeIndex--];
+
             try {
-                pointer ptr = new (&pool[offset]) object_type { std::forward<Args>(params)... };
-                result = ObjectPtr { ptr, Deleter{} };
+                pointer ptr = std::construct_at(
+                    reinterpret_cast<pointer>(pool[offset].storage),
+                    std::forward<Args>(params)...);
+
+                return ObjectPtr { ptr, Deleter { this } };
             } catch (...) {
-                ++tail;
+                ++freeIndex;
                 throw;
             }
-
-            return result;
         }
 
-        void deallocate(pointer ptr)
+
+        void deallocate(pointer ptr) noexcept
         {
-            const size_t offset = (reinterpret_cast<size_t>(ptr) - reinterpret_cast<size_t>(&pool)) / sizeof (object_type);
+            const size_t offset = getOffset(ptr);
             std::destroy_at(ptr);
-            available[++tail] = offset;
+            available[++freeIndex] = offset;
+        }
+
+        [[nodiscard]]
+        std::size_t getOffset(const pointer ptr) const noexcept
+        {
+            const auto* first = reinterpret_cast<const std::byte*>(pool.data());
+            const auto* current = reinterpret_cast<const std::byte*>(ptr);
+
+            return (current - first) / sizeof(Slot);
         }
     };
 }
@@ -89,14 +103,20 @@ namespace
     {
         constexpr size_t capacity {100};
         Allocator<Integer, capacity> allocator;
-        const auto v = allocator.AllocateAndConstruct(123);
+        const auto v = allocator.allocate(123);
     }
 
     void complexTest()
     {
         constexpr size_t capacity {100};
         Allocator<Integer, capacity> allocator;
-        const auto v = allocator.AllocateAndConstruct(123);
+
+        std::vector<decltype(allocator)::ObjectPtr> objects;
+        objects.reserve(capacity);
+
+        for (int i = 0; i < capacity; ++i) {
+            objects.push_back(allocator.allocate(i));
+        }
     }
 }
 

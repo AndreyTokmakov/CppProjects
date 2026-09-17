@@ -390,24 +390,32 @@ namespace CopyElision::BasicExamples
         return {v};
     }
 
-    Integer create_RVO_2(int v)
+    Integer create_RVO_2(const int v)
     {
         return create_RVO(v);
     }
 
-    Integer create_NRVO(int v)
+	Integer create_RVO_3_Branch(const int v)
+    {
+    	if (v == 0) {
+    		Integer {0};
+    	}
+    	return Integer(v);
+    }
+
+    Integer create_NRVO(const int v)
     {
         Integer i {v};
         return i;
     }
 
-    Integer create_NRVO_2(int v)
+    Integer create_NRVO_2(const int v)
     {
         Integer i = Integer{v};
         return i;
     }
 
-    Integer create_NRVO_3(int v)
+    Integer create_NRVO_3(const int v)
     {
         Integer i = create_RVO_2(v);
         return i;
@@ -423,6 +431,10 @@ namespace CopyElision::BasicExamples
         {
             auto v = create_RVO_2(2);
         }
+    	std::cout << "-------------- RVO 3 Branch ---------------\n";
+	    {
+        	auto v = create_RVO_3_Branch(2);
+	    }
         std::cout << "-------------- RNVO ---------------\n";
         {
             auto v = create_NRVO(3);
