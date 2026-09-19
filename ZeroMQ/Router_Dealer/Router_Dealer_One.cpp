@@ -7,7 +7,7 @@ Copyright   : Your copyright notice
 Description : Router_Dealer_One.cpp
 ============================================================================**/
 
-#include "Router_Dealer_One.hpp"
+#include "Router_Dealer.hpp"
 #include "Logger.hpp"
 
 #include <thread>
@@ -16,7 +16,7 @@ Description : Router_Dealer_One.cpp
 #include <zmq.hpp>
 #include <zmq_addon.hpp>
 
-namespace Router_Dealer_One
+namespace
 {
     constexpr uint16_t clientPort { 5555 };
     constexpr uint16_t serverPort { 5556 };
@@ -137,7 +137,7 @@ namespace Router_Dealer_One
 
 }
 
-void Router_Dealer_One::TestAll()
+void router_dealer::demo_one::TestAll()
 {
     run();
 }

@@ -125,16 +125,17 @@ int main([[maybe_unused]] int argc,
 	// free_list::TestAll();
 	// free_list_thread_safe::TestAll();
 
-	// static_sorted_search_array::TestAll();
     // CircularBuffers::TEST_ALL();
     // RingBuffer::TestAll();
     // RingBufferEx::TestAll();
     // RingBufferExAtomic::TestAll();
     // RingBuffer_SPSC::TestAll();
-	//ring_buffer_fast::TestAll();
+	// ring_buffer_fast::TestAll();
+
+	static_sorted_search_array::TestAll();
 
 	// static_string::TestAll();
-	static_table::testAll();
+	// static_table::testAll();
 
 	// MPMCQueue::TestAll();
 

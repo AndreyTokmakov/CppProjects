@@ -10,9 +10,18 @@ Description : Router_Dealer.h
 #ifndef ROUTER_DEALER_H
 #define ROUTER_DEALER_H
 
-namespace Router_Dealer
+namespace router_dealer
 {
     void TestAll();
-};
+
+    namespace experiments { void TestAll(); }
+    namespace simple { void TestAll(); }
+    namespace demo_one { void TestAll(); }
+    namespace poller_timeout { void TestAll(); }
+
+    namespace asynch_1 { void TestAll(); }
+    namespace asynch_2 { void TestAll(); }
+    namespace asynch_server_class { void TestAll(); }
+}
 
 #endif //ROUTER_DEALER_H

@@ -7,7 +7,7 @@ Copyright   : Your copyright notice
 Description : Router_Dealer_Poller_Timeout.cpp
 ============================================================================**/
 
-#include "Router_Dealer_Poller_Timeout.hpp"
+#include "Router_Dealer.hpp"
 
 #include <thread>
 #include <format>
@@ -15,7 +15,7 @@ Description : Router_Dealer_Poller_Timeout.cpp
 #include <zmq.hpp>
 #include <zmq_addon.hpp>
 
-namespace Router_Dealer_Poller_Timeout
+namespace
 {
 
     constexpr uint16_t clientPort { 5555 };
@@ -83,7 +83,7 @@ namespace Router_Dealer_Poller_Timeout
 }
 
 
-void Router_Dealer_Poller_Timeout::TestAll()
+void router_dealer::poller_timeout::TestAll()
 {
 
 }

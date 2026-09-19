@@ -15,11 +15,7 @@ Description : C++ Utilities
 #include "PubSub/Publisher_Subscriber.hpp"
 #include "Request_Response/Request_Response.hpp"
 #include "Secure_Communication/Secure_Communication.hpp"
-#include "Router_Dealer_Simple/Router_Dealer_Simple.hpp"
-#include "Router_Dealer_One/Router_Dealer_One.hpp"
-#include "Router_Dealer_Poller_Timeout/Router_Dealer_Poller_Timeout.hpp"
 #include "Router_Dealer/Router_Dealer.hpp"
-#include "Router_Dealer_Asynch/RouterDealerAsynch.hpp"
 #include "Servers/Servers.hpp"
 #include "Experiments/Experiments.hpp"
 #include "Proxy/ZeroMqProxy.hpp"
@@ -42,16 +38,9 @@ int main([[maybe_unused]] int argc,
     // Publisher_Subscriber::TestAll();
     // Request_Response::TestAll();
     // Secure_Communication::TestAll();
-
-    // Router_Dealer::TestAll();
-    // Router_Dealer_One::TestAll();
-    // Router_Dealer_Simple::TestAll(); /** <--- NOT WORKING YET **/
-    // Router_Dealer_Poller_Timeout::TestAll();
-    // RouterDealerAsynch::TestAll();
-
+    router_dealer::TestAll();
     // ZeroMqProxy::TestAll();
-
-    Servers::TestAll(args);
+    // Servers::TestAll(args);
 
     return EXIT_SUCCESS;
 }

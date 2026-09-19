@@ -35,10 +35,13 @@ add_executable(${PROJECT_NAME}
         Request_Response/Request_Response.cpp
         Secure_Communication/Secure_Communication.cpp
         Router_Dealer/Router_Dealer.cpp
-        Router_Dealer_Simple/Router_Dealer_Simple.cpp
-        Router_Dealer_One/Router_Dealer_One.cpp
-        Router_Dealer_Poller_Timeout/Router_Dealer_Poller_Timeout.cpp
-        Router_Dealer_Asynch/RouterDealerAsynch.cpp
+        Router_Dealer/Router_Dealer_Experiments.cpp
+        Router_Dealer/Router_Dealer_Simple.cpp
+        Router_Dealer/Router_Dealer_One.cpp
+        Router_Dealer/Router_Dealer_Poller_Timeout.cpp
+        Router_Dealer/Router_Dealer_Async_1.cpp
+        Router_Dealer/Router_Dealer_Async_2.cpp
+        Router_Dealer/Router_Dealer_Async_ServerClass.cpp
         Servers/DebugServer.cpp
         Servers/Servers.cpp
         Servers/ReqRepServer.cpp

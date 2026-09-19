@@ -7,7 +7,7 @@ Copyright   : Your copyright notice
 Description : RouterDealerAsynch.cpp
 ============================================================================**/
 
-#include "RouterDealerAsynch.hpp"
+#include "Router_Dealer.hpp"
 #include "Logger.hpp"
 
 #include <thread>
@@ -25,7 +25,7 @@ namespace
         router.bind("tcp://*:5557");
 
         zmq::pollitem_t items[] = {
-            { static_cast<void*>(router), 0, ZMQ_POLLIN, 0 }
+            { .socket = static_cast<void*>(router), .fd = 0, .events = ZMQ_POLLIN, .revents = 0 }
         };
 
         logger.info("[SERVER] Polling ROUTER server at tcp://*:5557");
@@ -83,7 +83,7 @@ namespace
         logger.info("[{}] Connected to server", clientId);
 
         zmq::pollitem_t items[] = {
-            { static_cast<void*>(dealer), 0, ZMQ_POLLIN, 0 }
+            { .socket = static_cast<void*>(dealer), .fd = 0, .events = ZMQ_POLLIN, .revents = 0 }
         };
 
         std::vector<zmq::message_t> messages;
@@ -135,13 +135,13 @@ namespace
     }
 }
 
-void RouterDealerAsynch::TestAll()
+void router_dealer::asynch_1::TestAll()
 {
     run();
 }
 
 /**
-2025-10-05 09:41:48.996369 [SERVER] Polling ROUTER server at tcp://*:5557
+2025-10-05 09:41:48.996369 [SERVER] Polling ROUTER server at
 2025-10-05 09:41:49.096574 [Worker] Connected to server
 2025-10-05 09:41:49.096597 [Worker] Sent: Ping 0
 2025-10-05 09:41:49.098085 [SERVER] Got from client: Ping 0
