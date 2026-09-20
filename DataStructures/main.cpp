@@ -68,6 +68,7 @@ Description : DataStructures
 #include "StaticSortedSearchArray/StaticSortedSearchArray.hpp"
 #include "StaticString/StaticString.hpp"
 #include "StaticTable/StaticTable.hpp"
+#include "SortedPriceLevels/SortedPriceLevels.hpp"
 #include "MPMCQueue/MPMCQueue.hpp"
 #include "MineSet_Fast/MiniSet.hpp"
 #include "StateManager/StateManager.hpp"
@@ -132,8 +133,8 @@ int main([[maybe_unused]] int argc,
     // RingBuffer_SPSC::TestAll();
 	// ring_buffer_fast::TestAll();
 
-	static_sorted_search_array::TestAll();
-
+	// static_sorted_search_array::TestAll();
+	sorted_price_levels::TestAll();
 	// static_string::TestAll();
 	// static_table::testAll();
 

@@ -105,7 +105,7 @@ add_executable(${PROJECT_NAME}
 		MeticsCollector/MetricsController.cpp
 		MeticsCollector/MetricsControllerEx.cpp
 
-
+		SortedPriceLevels/SortedPriceLevels.cpp
 )
 
 

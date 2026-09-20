@@ -17,6 +17,9 @@ Description : StaticSortedSearchArray.cpp
 #include <random>
 
 
+#include <set>
+#include <flat_set>
+
 namespace static_sorted_search_array
 {
     enum class SortOrder
@@ -52,10 +55,12 @@ namespace static_sorted_search_array
 
         SortedArray & operator=(const SortedArray & other)
         {
+            auto newElements = std::make_unique<value_type[]>(other.capacity);
+            std::copy_n(other.elements.get(), other.size, newElements.get());
+
+            elements = std::move(newElements);
             size = other.size;
             capacity = other.capacity;
-            elements = std::make_unique_for_overwrite<array_type>(capacity);
-            std::copy_n(other.elements.get(), size, elements.get());
 
             return *this;
         }
@@ -77,139 +82,117 @@ namespace static_sorted_search_array
         }
 
         [[nodiscard]]
-        size_type findInsertIndex(const value_type item) const noexcept
+        size_type lowerBound(const value_type& item) const noexcept
         {
-            size_type left = 0, right = size;
+            size_type left = 0;
+            size_type right = size;
+
             while (left < right)
             {
-                const size_type mid = (left + right) >> 1;
-                if (better(item, elements[mid]))
-                    right = mid;
-                else
+                const size_type mid = left + (right - left) / 2;
+
+                if (better(elements[mid], item))
                     left = mid + 1;
+                else
+                    right = mid;
             }
+
             return left;
         }
 
-        bool push(const value_type item)
+
+        [[nodiscard]]
+        bool contains(const value_type& item) const noexcept
         {
-            if (size == capacity && item > elements[size - 1]) {
-                return false;
-            }
-            // TODO: Check if size > 0 && size == capacity  && item > elements[capacity - 1]
-            /*if (size > 0 && item > elements[size - 1]) {
-                elements[size++] = item;;
-                return true;
-            }*/
+            const size_type index = lowerBound(item);
+            return index < size && elements[index] == item;
+        }
 
-            const size_type idxInsert = findInsertIndex(item);
-            if (capacity == idxInsert || item == elements[idxInsert]) {
+
+        bool push(const value_type& item)
+        {
+            const size_type insertIndex = lowerBound(item);
+            if (insertIndex < size && elements[insertIndex] == item)
                 return false;
+
+            if (size == capacity) {
+                if (insertIndex == size)
+                    return false;
+            } else{
+                ++size;
             }
 
-            size = (capacity == size) ? size : size + 1;
-            for (size_type i = size - 1; i > idxInsert; --i) /** TODO: Prefetch **/
-                elements[i] = elements[i - 1];
-            elements[idxInsert] = item;
+            for (size_type index = size - 1; index > insertIndex; --index)
+                elements[index] = elements[index - 1];
+
+            elements[insertIndex] = item;
             return true;
         }
 
         [[nodiscard]]
-        pointer data() {
+        pointer data() noexcept {
             return elements.get();
         }
 
         [[nodiscard]]
-        const_pointer data() const {
+        const_pointer data() const noexcept {
             return elements.get();
         }
 
-        // TODO: compiler flags 'always inline'
-        // TODO: Rename
-        static constexpr bool better(const value_type a, const value_type b) noexcept
-        {
-            if constexpr (SortOrder::Descending == ordering)
-                return a >= b;
-            else
-                return a <= b;
-        }
-
         [[nodiscard]]
-        size_type Size() const noexcept {
+        size_type getSize() const noexcept {
             return size;
         }
 
-        // TODO: Methods
-        //  - size()
-
-        // TODO:
-        //  - Iterators
-
-        // TODO:
-        //  - Copy front()
-
-        // TODO:
-        //  - usee 'builtin_prefetch'
-
-        void print()
-        {
-            for (size_type i = 0; i < size; ++i)
-                std::cout << "[" << i << "] = " << elements[i] << "\n";
-        }
-
         [[nodiscard]]
-        size_type find_insert_pos_debug(const value_type item) const noexcept
-        {
-            size_type left = 0, right = size;
-            while (left < right)
-            {
-                const size_type mid = (left + right) >> 1;
-                // std::cout << "mid = " << mid;
-                if (better(item, elements[mid]))
-                    right = mid;
-                else
-                    left = mid + 1;
-                // std::cout << " left = " << left << " right = " << right << std::endl;
-            }
-            return left;
+        size_type getCapacity() const noexcept {
+            return capacity;
         }
 
-        void push_debug(const value_type item)
+        static constexpr bool better(const value_type& a, const value_type& b) noexcept
         {
-            const size_type idxInsert = find_insert_pos_debug(item);
-            // std::cout << "idxInsert = " << idxInsert << std::endl;
-            if (capacity == idxInsert || item == elements[idxInsert]) {
-                // std::cout << "Item already exists or out-of-range" << std::endl;
-                return;
-            }
+            if constexpr (ordering == SortOrder::Descending)
+                return a > b;
 
-            size = (capacity == size) ? size : size + 1;
-            for (size_type i = size - 1; i > idxInsert; --i)
-                elements[i] = elements[i - 1];
-            elements[idxInsert] = item;
+            return a < b;
         }
     };
 
-    template <typename Ty, typename Collection>
+    template<typename Ty, typename Collection>
     class base_iterator
     {
-        Collection::size_type index { 0 };
+        using size_type = Collection::size_type;
+
+        size_type index { 0 };
         Collection& collection;
 
     public:
-        base_iterator(Collection& collection, const size_t index) :
-            index(index), collection(collection) {
+        base_iterator(Collection& collection, const size_type index) noexcept :
+            index { index },
+            collection { collection }
+        {
         }
 
-        bool operator!= (const base_iterator & other) const {
-            return index != other.index;
+        [[nodiscard]]
+        bool operator==(const base_iterator& other) const noexcept
+        {
+            return index == other.index;
         }
 
-        const Ty& operator*() const {
+        [[nodiscard]]
+        bool operator!=(const base_iterator& other) const noexcept
+        {
+            return !(*this == other);
+        }
+
+        [[nodiscard]]
+        const Ty& operator*() const noexcept
+        {
             return collection.elements[index];
         }
 
-        const base_iterator& operator++ () {
+        base_iterator& operator++() noexcept
+        {
             ++index;
             return *this;
         }
@@ -228,7 +211,7 @@ namespace static_sorted_search_array
 
     template <typename T>
     array_iterator<T> end(SortedArray<T>& collection) {
-        return array_iterator<T>(collection, collection.Size());
+        return array_iterator<T>(collection, collection.getSize());
     }
 
     template <typename T>
@@ -238,7 +221,7 @@ namespace static_sorted_search_array
 
     template <typename T>
     array_const_iterator<T> end(const SortedArray<T>& collection) {
-        return array_const_iterator<T>(collection, collection.Size());
+        return array_const_iterator<T>(collection, collection.getSize());
     }
 }
 
@@ -283,22 +266,152 @@ namespace static_sorted_search_array::testing
             const auto key = data[idx];
             array.push(key);
         }
-        std::cout << array.Size() << std::endl;
+        std::cout << array.getSize() << std::endl;
     }
 }
 
+namespace static_sorted_search_array::perf_tests
+{
+    using Value = std::uint64_t;
+    using Clock = std::chrono::steady_clock;
+
+    constexpr std::size_t OperationCount = 5'000'000;
+    constexpr std::size_t WarmupCount = 100'000;
+
+    constexpr std::uint64_t RandomSeed = 0x123456789abcdef0ULL;
+
+
+    volatile std::uint64_t benchmarkSink = 0;
+    template<typename Container>
+    [[nodiscard]]
+    std::uint64_t checksum(const Container& container) noexcept
+    {
+        std::uint64_t result = 0;
+        for (const auto& value : container) {
+            result ^= value + 0x9e3779b97f4a7c15ULL + (result << 6) + (result >> 2);
+        }
+
+        return result;
+    }
+
+    template<typename Container>
+    void consume(const Container& container) noexcept
+    {
+        benchmarkSink ^= checksum(container);
+    }
+
+    [[nodiscard]]
+    std::vector<Value> generateValues()
+    {
+        std::mt19937_64 generator { RandomSeed };
+        std::uniform_int_distribution<Value> distribution { 0, std::numeric_limits<Value>::max()};
+
+        std::vector<Value> values(OperationCount);
+        for (std::size_t index = 0; index < OperationCount; ++index)
+            values[index] = distribution(generator);
+
+        return values;
+    }
+
+    template<typename Function>
+    [[nodiscard]]
+    double measure(const std::vector<Value>& values, Function&& function)
+    {
+        for (std::size_t index = 0; index < WarmupCount; ++index)
+            function(values[index]);
+
+        const auto start = Clock::now();
+        for (const Value value : values)
+            function(value);
+
+        const auto finish = Clock::now();
+        return std::chrono::duration<double, std::nano>(finish - start).count();
+    }
+
+    template<typename Set>
+    bool pushLimited(Set& set, const Value value, const std::size_t capacity)
+    {
+        if (set.size() < capacity)
+            return set.insert(value).second;
+        if (value > *set.rbegin())
+            return false;
+
+        const auto [iterator, inserted] = set.insert(value);
+        if (!inserted)
+            return false;
+
+        set.erase(std::prev(set.end()));
+        return true;
+    }
+
+    template<std::size_t Capacity>
+    void benchmarkSortedArray(const std::vector<Value>& values)
+    {
+        SortedArray<Value, SortOrder::Ascending> array { Capacity };
+        const double elapsed = measure(values, [&array](const Value value){
+            array.push(value);
+        });
+
+        consume(array);
+        std::cout << "SortedArray" << "   capacity=" << Capacity << "   time=" << elapsed / 1'000'000.0 << " ms"
+            << "   ns/op=" << elapsed / static_cast<double>(OperationCount) << '\n';
+    }
+
+    template<std::size_t Capacity>
+    void benchmarkSet(const std::vector<Value>& values)
+    {
+        std::set<Value> set;
+        const double elapsed = measure(values, [&set](const Value value) {
+            pushLimited(set, value, Capacity);
+        });
+
+        consume(set);
+        std::cout << "std::set" << "       capacity=" << Capacity<< "   time=" << elapsed / 1'000'000.0 << " ms"
+            << "   ns/op=" << elapsed / static_cast<double>(OperationCount)
+            << '\n';
+    }
+
+    template<std::size_t Capacity>
+    void benchmarkFlatSet(const std::vector<Value>& values)
+    {
+        std::flat_set<Value> set;
+        const double elapsed = measure(values, [&set](const Value value){
+            pushLimited(set, value, Capacity);
+        });
+
+        consume(set);
+        std::cout << "std::flat_set" << "   capacity=" << Capacity << "   time=" << elapsed / 1'000'000.0 << " ms"
+            << "   ns/op=" << elapsed / static_cast<double>(OperationCount) << '\n';
+    }
+
+    template<std::size_t Capacity>
+    void runBenchmark(const std::vector<Value>& values)
+    {
+        std::cout << '\n';
+        std::cout << "Capacity: " << Capacity << '\n';
+        std::cout << "----------------------------------------\n";
+
+        benchmarkSortedArray<Capacity>(values);
+        benchmarkSet<Capacity>(values);
+        benchmarkFlatSet<Capacity>(values);
+    }
+
+    void run()
+    {
+        const auto values = generateValues();
+
+        runBenchmark<16>(values);
+        runBenchmark<64>(values);
+        runBenchmark<256>(values);
+        runBenchmark<1024>(values);
+
+        std::cout << '\n';
+        std::cout << "Benchmark sink: " << benchmarkSink << '\n';
+    }
+}
 
 void static_sorted_search_array::TestAll()
 {
-    //testing::benchmark();
-
-    SortedArray<int> array (10);
-
-    for (int i = 0; i < 10; ++i) {
-        array.push(i);
-    }
-
-    for (const auto & e : array) {
-        std::cout << e << std::endl;
-    }
+    // testing::benchmark();
+    perf_tests::run();
 }
