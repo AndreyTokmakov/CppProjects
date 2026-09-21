@@ -1,5 +1,5 @@
 /**============================================================================
-Name        : FlatMap.cpp
+Name        : FlatMap.cppFlatMap
 Created on  : 12.05.2025
 Author      : Andrei Tokmakov
 Version     : 1.0
