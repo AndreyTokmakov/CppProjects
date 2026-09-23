@@ -422,7 +422,11 @@ namespace testing_utils
     void test_assert_equal()
     {
         // AssertEqual(1, 2);
-        AssertEqual(1, 2, "OPS");
+        // AssertEqual(1, 2, "OPS");
+
+        struct S{};
+
+        AssertEqual(S{}, S{}, "OPS");
     }
 
     void test_assert_true()
@@ -619,12 +623,12 @@ int main([[maybe_unused]] int argc,
     // final_action_test::test_ScopeFail();
     // final_action_test::test_TransactionalScope();
 
-    // testing_utils::test_assert_equal();
+    testing_utils::test_assert_equal();
     // testing_utils::test_assert_true();
     // testing_utils::test_assert_false();
     // testing_utils::test_assert_null();
 
-    utilities::arrays::tests::runAllTests();
+    // utilities::arrays::tests::runAllTests();
 
     /*
     {

@@ -14,6 +14,7 @@ Description : Testing.hpp
 #include <iostream>
 #include <source_location>
 #include <print>
+#include <format>
 
 
 namespace utilities::testing
@@ -32,20 +33,33 @@ namespace utilities::testing
         }
     }
 
+    template<typename Ty>
+    concept Comparable = requires(const Ty& a, const Ty& b)
+    {
+        { a == b } -> std::same_as<bool>;
+        { a != b } -> std::same_as<bool>;
+    };
+
+    template<typename T>
+    concept Printable = requires(T value)
+    {
+        std::format("{}", value);
+    };
+
     constexpr void printLocation(const std::source_location& location)
     {
         std::println(std::cerr, "\tFile: {}\n\tFunction: {}\n\tLine: {}",
             location.file_name(), location.function_name(), location.line());
     }
 
-    // TODO: Add concepts to 'Ty'
-    template<typename Ty>
+    template<Comparable Ty>
     constexpr void AssertEqual(const Ty& expected,
                                const Ty& actual,
                                const std::string_view message,
                                const Action action = Action::Terminate,
                                const std::source_location& location = std::source_location::current())
     {
+        static_assert(Printable<Ty>, "Type is not printable");
         if (expected != actual)
         {
             std::println(std::cerr, "{}: {} != {}", message, expected, actual);
@@ -54,8 +68,7 @@ namespace utilities::testing
         }
     }
 
-    // TODO: Add concepts to 'Ty'
-    template<typename Ty>
+    template<Comparable Ty>
     constexpr void AssertEqual(const Ty& expected,
                                const Ty& actual,
                                const Action action = Action::Terminate,
