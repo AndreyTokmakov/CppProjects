@@ -419,14 +419,23 @@ namespace testing_utils
 {
     using namespace utilities::testing;
 
+    struct S
+    {
+        int value { 0 };
+    };
+
+    static bool operator==(const S& lhs, const S& rhs)
+    {
+        return lhs.value == rhs.value;
+    }
+
     void test_assert_equal()
     {
         // AssertEqual(1, 2);
         // AssertEqual(1, 2, "OPS");
 
-        struct S{};
-
-        AssertEqual(S{}, S{}, "OPS");
+        //AssertEqual(S{1}, S{2}, "OPS");
+        AssertEqual(1, 2, "OPS");
     }
 
     void test_assert_true()

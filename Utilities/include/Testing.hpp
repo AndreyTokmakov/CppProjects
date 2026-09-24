@@ -40,11 +40,14 @@ namespace utilities::testing
         { a != b } -> std::same_as<bool>;
     };
 
-    template<typename T>
-    concept Printable = requires(T value)
-    {
-        std::format("{}", value);
-    };
+    template<typename Ty, typename  = void>
+    struct is_streamable : std::false_type {};
+
+    template<typename Ty>
+    struct is_streamable<Ty, std::void_t<decltype(std::declval<std::ostream&>() << std::declval<const Ty&>())>> : std::true_type {};
+
+    template<typename Ty>
+    inline constexpr bool is_streamable_v = is_streamable<Ty>::value;
 
     constexpr void printLocation(const std::source_location& location)
     {
@@ -59,10 +62,11 @@ namespace utilities::testing
                                const Action action = Action::Terminate,
                                const std::source_location& location = std::source_location::current())
     {
-        static_assert(Printable<Ty>, "Type is not printable");
         if (expected != actual)
         {
-            std::println(std::cerr, "{}: {} != {}", message, expected, actual);
+            if constexpr (is_streamable_v<Ty>) {
+                std::println(std::cerr, "{}: {} != {}", message, expected, actual);
+            }
             printLocation(location);
             performAction(action);
         }
