@@ -434,8 +434,8 @@ namespace testing_utils
         // AssertEqual(1, 2);
         // AssertEqual(1, 2, "OPS");
 
-        //AssertEqual(S{1}, S{2}, "OPS");
-        AssertEqual(1, 2, "OPS");
+        AssertEqual(S{1}, S{2}, "OPS");
+        // AssertEqual(1, 2, "OPS");
     }
 
     void test_assert_true()
