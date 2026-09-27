@@ -375,7 +375,7 @@ namespace utilities::testing
     template<ExpectedType Ty>
         requires Comparable<typename Ty::error_type>
     constexpr void AssertExpectedError(const Ty& actual,
-                                       const typename Ty::error_type& expected,
+                                          const typename Ty::error_type& expected,
                                        const std::string_view message,
                                        const Action action = Action::Terminate,
                                        const std::source_location location = std::source_location::current())

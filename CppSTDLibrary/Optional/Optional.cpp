@@ -27,7 +27,7 @@ Description :
 
 namespace
 {
-	using Integer = Helpers::Wrapper<int, false>;
+	using Integer = Helpers::Wrapper<int, true>;
 
     using namespace std::string_literals;
     using namespace std::string_view_literals;
@@ -802,6 +802,54 @@ namespace Optional::Optional_of_Reference
 	}
 }
 
+
+namespace Optional
+{
+	template<typename Func>
+	struct LazyGetter final
+	{
+		template<typename Ty>
+		operator Ty() const {
+			return initializer();
+		}
+
+		Func initializer;
+	};
+
+	Integer computeValue() {
+		return Integer { 222 };
+	}
+
+	void Value_Or__Lazy()
+	{
+		{
+			const std::optional<Integer> optInt {111};
+			std::cout << optInt.value_or(computeValue()).getValue() << std::endl;
+		}
+		std::cout << std::string(120, '=') << std::endl;
+		{
+			const std::optional<Integer> optInt {111};
+			std::cout << optInt.value_or(LazyGetter { computeValue }).getValue() << std::endl;
+		}
+	}
+
+	/*
+	Wrapper<i,true>(111)
+	Wrapper<i,true>(222)
+	Wrapper<i,true>(111) [Copy constructor]
+	111
+	~Wrapper<i,true>(111)
+	~Wrapper<i,true>(222)
+	~Wrapper<i,true>(111)
+	========================================================================================================================
+	Wrapper<i,true>(111)
+	Wrapper<i,true>(111) [Copy constructor]
+	111
+	~Wrapper<i,true>(111)
+	~Wrapper<i,true>(111)
+	*/
+}
+
 void Optional::TestAll()
 {
     // Custom_Optional::TestAll();
@@ -820,6 +868,7 @@ void Optional::TestAll()
 	// Options_ParseIntTest();
 
 	// ValueOR_Tests();
+	Value_Or__Lazy();
 	// ChangeValues();
 
 	// Optional_Reference_Wrapper();
@@ -828,8 +877,7 @@ void Optional::TestAll()
 
 	// Applications::ReadEnvironment();
 
-	Optional_of_Reference::create_and_assign();
-
+	// Optional_of_Reference::create_and_assign();
 
     // MonadicOperations::OrElse_Test();
     // MonadicOperations::AndThen_Test();
