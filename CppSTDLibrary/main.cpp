@@ -26,6 +26,7 @@ Description : Cpp STD lib
 #include "ConsoleInOut/ConsoleInOut.hpp"
 #include "CompileTime_Constexpr/ConstConstexprMutable.hpp"
 #include "CompileTime_Constexpr/CompileTimeProgramming.hpp"
+#include "Debugging/Debugging.hpp"
 #include "RVO_CopyElision/CopyElision.h"
 #include "RVO_CopyElision/RVO_FailureCases.h"
 #include "Comparators/Comparators.h"
@@ -139,6 +140,7 @@ int main([[maybe_unused]] const int argc,
     // Constexpr::TestAll();
     // CopyElision::TestAll();
     // DeducingThis::TestAll();
+    debugging::TestAll();
     // RVO_FailureCases::TestAll();
     // ClassTemplateArgumentDeduction::TestAll();
     // DateAndTime::TestAll();
@@ -171,7 +173,7 @@ int main([[maybe_unused]] const int argc,
     // InlineNamespaces::TestAll();
     // NumericLimits::TestAll();
     // ObjectOrientedProgramming::TestAll();
-    Optional::TestAll();
+    // Optional::TestAll();
     // Overflow::TestAll();
     // PolymorphicMemoryResources::TestAll();
     // Print::TestAll();
