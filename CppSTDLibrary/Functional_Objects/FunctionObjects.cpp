@@ -234,7 +234,7 @@ namespace FunctionObjects::BindTests {
 		ptrFunc1 = &printe_ext;
 		ptrFunc1("Old style test 1");
 
-		auto prtFunc2 = &printe_ext;
+		auto _ = &printe_ext;
 		ptrFunc1("Old style test 2");
 
 		using prtFunc3 = void (Utilities::*)(const std::string& str);
@@ -481,28 +481,30 @@ namespace FunctionObjects::HigherOrderFunctions
 
 	//---------------------------------------------------------------//
 
-	auto greater_than(int threshold) {
-		return [threshold](int x) -> bool {
+	static auto greater_than(int threshold) {
+		return [threshold](const int x) -> bool {
 			return x > threshold;
 		};
 	}
 
-	template<size_t v> 
-	inline bool greater_than_2(int x) {
+	template<size_t v>
+	static bool greater_than_2(const uint64_t x) {
 		return x > v;
 	}
 
 
-	void Algoritms_Test1() {
+	[[maybe_unused]]
+	static void Algoritms_Test1()
+	{
 		std::array<int, 5> numbers{ 1,2,3,4,5 };
 
 		{
-			auto count = std::count_if(numbers.begin(), numbers.end(), greater_than(3)); // HERE IS EXAMPLE
+			const auto count = std::ranges::count_if(numbers, greater_than(3)); // HERE IS EXAMPLE
 			std::cout << count << std::endl;
 		}
 		{
 
-			auto count = std::count_if(numbers.begin(), numbers.end(), greater_than_2<3>);
+			const auto count = std::ranges::count_if(numbers, greater_than_2<3>);
 			std::cout << count << std::endl;
 		}
 	}
@@ -704,13 +706,14 @@ void FunctionObjects::TestAll()
 {
     // MemberFunctionPointer::TestAll();
     // CallbackTests::TestAll();
-    // MoveOnlyFunction::TestAll();
 	// PassCallableToClass::TestAll();
 	// MemberFunctionPointer::TestAll();
-	Static_FunctionCall_Operator::TestAll();
+	// Static_FunctionCall_Operator::TestAll();
+	// MoveOnlyFunction::TestAll();
+	// CopyableFunction::TestAll();
+	Function_Ref::TestAll();
 
 	// Auto::Return_Type_Hint();
-
 
 	// BindTests::FuncPtr_Tests();
 	// BindTests::Bind_Test_1();
@@ -750,7 +753,7 @@ void FunctionObjects::TestAll()
 	// Function::Swap();
 	// Function::TargetType();
 	// Function::Lambda_To_Function();
-	Function::Function_VS_Lambda_Performance();
+	// Function::Function_VS_Lambda_Performance();
 
 	// PassToFunction::PassLambdaAsInput();
 	// PassToFunction::PassObject();

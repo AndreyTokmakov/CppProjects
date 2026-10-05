@@ -48,6 +48,7 @@ add_executable(${PROJECT_NAME}
         Functional_Objects/CallbackTests.cpp
         Functional_Objects/MoveOnlyFunction.cpp
         Functional_Objects/CopyableFunction.cpp
+        Functional_Objects/Function_Ref.cpp
         Functional_Objects/PassCallableToClass.cpp
         Functional_Objects/SmallFunctionWrapper.cpp
         Functional_Objects/Static_FunctionCall_Operator.cpp

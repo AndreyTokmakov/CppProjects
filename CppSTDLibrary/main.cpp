@@ -140,7 +140,7 @@ int main([[maybe_unused]] const int argc,
     // Constexpr::TestAll();
     // CopyElision::TestAll();
     // DeducingThis::TestAll();
-    debugging::TestAll();
+    // debugging::TestAll();
     // RVO_FailureCases::TestAll();
     // ClassTemplateArgumentDeduction::TestAll();
     // DateAndTime::TestAll();
@@ -157,7 +157,7 @@ int main([[maybe_unused]] const int argc,
     // FilesStreams::TestAll();
     // Filesystem::TestAll();
     // Format::TestAll();
-    // FunctionObjects::TestAll();
+    FunctionObjects::TestAll();
     // Hashing::TestAll();
     // LookupTypes::TestAll();
     // Lambdas::TestAll();

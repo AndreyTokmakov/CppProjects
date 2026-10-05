@@ -25,7 +25,7 @@ namespace
     }
 }
 
-namespace Templates::FoldExpressions::Basic_Operations
+namespace Templates::fold_expressions::Basic_Operations
 {
     template<typename... Args>
     consteval size_t count(Args&&...) {
@@ -40,7 +40,7 @@ namespace Templates::FoldExpressions::Basic_Operations
     }
 }
 
-namespace Templates::FoldExpressions::Basic_Operations
+namespace Templates::fold_expressions::Basic_Operations
 {
     template<typename Predicate, typename... Types>
     consteval size_t count_if(Predicate&& predicate, Types&&... args) {
@@ -56,7 +56,7 @@ namespace Templates::FoldExpressions::Basic_Operations
     }
 }
 
-namespace Templates::FoldExpressions::Basic_Operations
+namespace Templates::fold_expressions::Basic_Operations
 {
     template<template <typename T> typename Predicate, typename... Args>
     consteval size_t count_if_types() {
@@ -76,7 +76,7 @@ namespace Templates::FoldExpressions::Basic_Operations
     }
 }
 
-namespace Templates::FoldExpressions
+namespace Templates::fold_expressions
 {
     template<typename ...Args>
     auto sum(Args ...args) {
@@ -288,7 +288,7 @@ namespace Templates::FoldExpressions
     }
 };
 
-namespace Templates::FoldExpressions
+namespace Templates::fold_expressions
 {
     template<typename ...Ts>
     struct GetFirst{};
@@ -326,7 +326,7 @@ namespace Templates::FoldExpressions
 
 
 
-namespace Templates::FoldExpressions
+namespace Templates::fold_expressions
 {
     template<uint32_t N, class ... Nums>
     consteval uint32_t factorial(Nums ... values)
@@ -350,7 +350,7 @@ namespace Templates::FoldExpressions
     }
 }
 
-namespace Templates::FoldExpressions
+namespace Templates::fold_expressions
 {
 
     class Blob {
@@ -403,7 +403,7 @@ namespace Templates::FoldExpressions
 };
 
 
-namespace Templates::FoldExpressions
+namespace Templates::fold_expressions
 {
 
     template<typename... Types>
@@ -493,7 +493,7 @@ namespace Templates::FoldExpressions
     }
 }
 
-namespace Templates::FoldExpressions::Classes
+namespace Templates::fold_expressions::Classes
 {
     template<typename... Bases>
     struct MultiBase : private Bases...
@@ -524,7 +524,7 @@ namespace Templates::FoldExpressions::Classes
     }
 }
 
-namespace Templates::FoldExpressions::Classes
+namespace Templates::fold_expressions::Classes
 {
     struct One {
         One() { std::cout << "One::One()\n"; }
@@ -551,7 +551,7 @@ namespace Templates::FoldExpressions::Classes
 }
 
 
-namespace Templates::FoldExpressions::Classes
+namespace Templates::fold_expressions::Classes
 {
 
     template<typename... Ts>
@@ -574,7 +574,7 @@ namespace Templates::FoldExpressions::Classes
     }
 }
 
-namespace Templates::FoldExpressions
+namespace Templates::fold_expressions
 {
 
     template<typename T>
@@ -650,7 +650,7 @@ namespace Templates::FoldExpressions
     }
 }
 
-namespace Templates::FoldExpressions
+namespace Templates::fold_expressions
 {
     template<typename T, size_t... sizes>
     auto concat(const std::array<T, sizes>&... arrays)
@@ -686,7 +686,7 @@ namespace Templates::FoldExpressions
 }
 
 
-namespace Templates::FoldExpressions::Variadic_Friends
+namespace Templates::fold_expressions::Variadic_Friends
 {
     template<class Derived, class Message>
     struct Receiver
@@ -746,13 +746,49 @@ namespace Templates::FoldExpressions::Variadic_Friends
     }
 }
 
-void Templates::FoldExpressions::TestAll()
+namespace Templates::pack_indexing
+{
+    template<typename... Types>
+    using third_type_old_style = std::tuple_element_t<2, std::tuple<Types...>>;
+
+    template<typename... Types>
+    using third_type = Types...[2];
+
+    template<typename... Types>
+        requires (sizeof...(Types) >= 3)
+    struct TypeList
+    {
+        using first  = Types...[0];
+        using second = Types...[1];
+        using third  = Types...[2];
+    };
+
+
+    void demo()
+    {
+        using T1 = third_type_old_style<int, double, std::string>;
+        using T2 = third_type<int, double, std::string>;
+
+        T1 s1 = "123";
+        T2 s2 = "123";
+
+        using MyTypes = TypeList<int, double, std::string>;
+
+        static_assert(std::same_as<MyTypes::first,  int>);
+        static_assert(std::same_as<MyTypes::second, double>);
+        static_assert(std::same_as<MyTypes::third,  std::string>);
+
+    }
+}
+
+
+void Templates::fold_expressions::TestAll()
 {
     // Basic_Operations::Count_Number_Entries();
     // Basic_Operations::Count_If();
-    Basic_Operations::Count_If_Types();
+    // Basic_Operations::Count_If_Types();
 
-
+    pack_indexing::demo();
 
 
     // Test();
@@ -791,5 +827,5 @@ void Templates::FoldExpressions::TestAll()
     // SumElements_Default();
     // InvokeFunc_WithFolds();
 
-    // FoldExpressions::Factorial_Test();
+    // fold_expressions::Factorial_Test();
 }

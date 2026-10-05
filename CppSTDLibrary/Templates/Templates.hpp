@@ -18,7 +18,7 @@ namespace Templates
 	namespace PackIndexing { void TestAll(); }
 	namespace SFINAE { void TestAll(); }
 	namespace TemplateSpecialization { void TestAll(); }
-	namespace FoldExpressions { void TestAll(); }
+	namespace fold_expressions { void TestAll(); }
 	namespace ConditionalExplicit { void TestAll(); }
 	namespace TypeListChecker { void TestAll(); }
 	namespace IndexSequence { void TestAll(); }

@@ -1327,7 +1327,7 @@ namespace Templates::TemplateClass_StaticMethodCall
 void Templates::TestAll()
 {
     // TypeListChecker::TestAll();
-    // FoldExpressions::TestAll();
+    fold_expressions::TestAll();
     // NTTP::TestAll();
     // SFINAE::TestAll();
     // TemplateSpecialization::TestAll();
@@ -1336,7 +1336,7 @@ void Templates::TestAll()
     // Metaprogramming::TestAll();
     // Expression_Templates::TestAll();
     // perfect_forwarding::TestAll();
-    template_for::TestAll();
+    // template_for::TestAll();
 
     // Is_Base_Of__Test();
     // Is_Same();
