@@ -9,18 +9,10 @@ Description : Multithreading performance experiments
 
 #include "PerformanceExperiments.h"
 
-#include <iostream>
-#include <condition_variable>
 #include <mutex>
 #include <thread>
 #include <vector>
-#include <syncstream>
-#include <iomanip>
-
 #include "PerfUtilities.hpp"
-#include "ConditionVariable_vs_Atomic.h"
-#include "Mutex_vs_AtomicLock.h"
-#include "SpinLock.h"
 
 namespace PerformanceExperiments::AtomicCounter_vs_Mutex
 {
@@ -247,9 +239,12 @@ namespace PerformanceExperiments::Atomic_vs_Volatile
 
 void PerformanceExperiments::TestAll()
 {
+    // Multithreading_Performance::TestAll();
     // ConditionVariable_vs_Atomic::benchmarks();
     // SpinLock::benchmarks();
-    Mutex_vs_AtomicLock::benchmarks();
+    // Mutex_vs_AtomicLock::benchmarks();
     // AtomicCounter_vs_Mutex::RunBenchmark();
     // Atomic_vs_Volatile::RunBenchmark();
+    // McMp_LockFree_Queue_vs_CV_Queue::TestAll();
+    McMp_LockFree_Queue_vs_CV_Queue_2::TestAll();
 };

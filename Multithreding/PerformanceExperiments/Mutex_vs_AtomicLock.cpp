@@ -7,10 +7,7 @@ Copyright   : Your copyright notice
 Description : Mutex_vs_AtomicLock.cpp
 ============================================================================**/
 
-#include "Mutex_vs_AtomicLock.h"
-
-#include "Multithreading_Performance.h"
-
+#include "PerformanceExperiments.h"
 #include <iostream>
 #include <string>
 
@@ -24,7 +21,7 @@ Description : Mutex_vs_AtomicLock.cpp
 
 #include "PerfUtilities.hpp"
 
-namespace Mutex_vs_AtomicLock
+namespace PerformanceExperiments::Mutex_vs_AtomicLock
 {
     template<typename Ty>
     concept Lockable = requires(Ty& lk)
@@ -116,7 +113,7 @@ namespace Mutex_vs_AtomicLock
 };
 
 
-void Mutex_vs_AtomicLock::benchmarks()
+void PerformanceExperiments::Mutex_vs_AtomicLock::benchmarks()
 {
     constexpr uint16_t threadsCount = 16;
     constexpr uint64_t testIterations = 2'000'000;

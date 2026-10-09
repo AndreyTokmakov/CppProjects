@@ -71,6 +71,8 @@ add_executable(${PROJECT_NAME}
         PerformanceExperiments/SpinLock.cpp
         Experiments/Experiments.cpp
         PerformanceExperiments/McMp_LockFree_Queue_vs_CV_Queue.cpp
+        PerformanceExperiments/McMp_LockFree_Queue_vs_CV_Queue_2.cpp
+
         RingBuffers/RingBuffers.cpp
 )
 

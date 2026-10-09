@@ -7,7 +7,7 @@ Copyright   : Your copyright notice
 Description : McMp_LockFree_Queue_vs_CV_Queue.cpp
 ============================================================================**/
 
-#include "McMp_LockFree_Queue_vs_CV_Queue.hpp"
+#include "PerformanceExperiments.h"
 #include "PerfUtilities.hpp"
 
 #include <atomic>
@@ -327,7 +327,7 @@ namespace benchmarks
     }
 }
 
-void McMp_LockFree_Queue_vs_CV_Queue::TestAll()
+void PerformanceExperiments::McMp_LockFree_Queue_vs_CV_Queue::TestAll()
 {
     benchmarks::mpmc_cv_queue_test();
     benchmarks::mpmc_lockfree_queue_test();

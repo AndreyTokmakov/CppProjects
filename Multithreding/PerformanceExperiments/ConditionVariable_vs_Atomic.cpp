@@ -13,7 +13,7 @@ Description :
 #include <thread>
 #include <condition_variable>
 
-#include "ConditionVariable_vs_Atomic.h"
+#include "PerformanceExperiments.h"
 #include "DateTimeUtilities.hpp"
 #include "PerfUtilities.hpp"
 
@@ -21,7 +21,7 @@ Description :
 #define LOG  std::osyncstream { std::cout } << utilities::datetime::getCurrentTime() << " "
 
 
-namespace ConditionVariable_vs_Atomic::TriggerLatency
+namespace PerformanceExperiments::ConditionVariable_vs_Atomic::TriggerLatency
 {
     constexpr int32_t ITER_COUNT = 1'000'000;
 
@@ -202,7 +202,7 @@ namespace ConditionVariable_vs_Atomic::TriggerLatency
 }
 
 
-namespace ConditionVariable_vs_Atomic::PingPong
+namespace PerformanceExperiments::ConditionVariable_vs_Atomic::PingPong
 {
     constexpr int32_t ITER_COUNT = 1'000'000;
 
@@ -315,7 +315,7 @@ namespace ConditionVariable_vs_Atomic::PingPong
 }
 
 
-namespace ConditionVariable_vs_Atomic::PingPong2
+namespace PerformanceExperiments::ConditionVariable_vs_Atomic::PingPong2
 {
     struct RunnerBase
     {
@@ -441,8 +441,7 @@ namespace ConditionVariable_vs_Atomic::PingPong2
 };
 
 
-
-void ConditionVariable_vs_Atomic::benchmarks()
+void PerformanceExperiments::ConditionVariable_vs_Atomic::benchmarks()
 {
     // PingPong::benchmark();
     PingPong2::benchmark();

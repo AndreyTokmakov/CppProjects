@@ -1,13 +1,13 @@
-//============================================================================
-// Name        : Multithread_Performance.h
-// Created on  : 02.10.2020
-// Author      : Tokmakov Andrey
-// Version     : 1.0
-// Copyright   : Your copyright notice
-// Description : Multithread performance tests class
-//============================================================================
+/**============================================================================
+Name        : Multithread_Performance.cpp
+Created on  : 22.01.2025
+Author      : Andrei Tokmakov
+Version     : 1.0
+Copyright   : Your copyright notice
+Description : Multithread_Performance.cpp
+============================================================================**/
 
-#include "Multithreading_Performance.h"
+#include "PerformanceExperiments.h"
 
 #include <iostream>
 #include <atomic>
@@ -20,9 +20,8 @@
 #include <future>
 #include <cassert>
 
-
-namespace Multithreading_Performance::SycnronizationTests {
-
+namespace PerformanceExperiments::Multithreading_Performance::SycnronizationTests
+{
     constexpr int countlimit = 1'000'000;
 
     void ConditionVariables() {
@@ -68,7 +67,8 @@ namespace Multithreading_Performance::SycnronizationTests {
         assert(counter == countlimit + 1);
     }
 
-    void AtomicFlag() {
+    void AtomicFlag()
+    {
         std::atomic_flag condAtomicFlag1{};
         std::atomic_flag condAtomicFlag2{};
         std::atomic<int> counter{};
@@ -107,11 +107,12 @@ namespace Multithreading_Performance::SycnronizationTests {
         std::cout << "Done!\n";
 
         std::chrono::duration<double> dur = std::chrono::system_clock::now() - start;
-        std::cout << "Atomic Flag Sycnronization : Duration: " << dur.count() << " seconds" << std::endl;
+        std::cout << "Atomic Flag Synchronization : Duration: " << dur.count() << " seconds" << std::endl;
         assert(counter == countlimit + 1);
     }
 
-    void OneAtomicFlag() {
+    void OneAtomicFlag()
+    {
         std::atomic_flag condAtomicFlag{};
         std::atomic<int> counter{};
 
@@ -217,8 +218,7 @@ namespace Multithreading_Performance::SycnronizationTests {
     }
 }
 
-
-namespace Multithreading_Performance::IncrementCounterTests {
+namespace PerformanceExperiments::Multithreading_Performance::IncrementCounterTests {
 
     constexpr int countlimit = 10'000'000;
     constexpr int threadCount = 10;
@@ -275,8 +275,7 @@ namespace Multithreading_Performance::IncrementCounterTests {
     }
 }
 
-
-namespace Multithreading_Performance::AtomicRef {
+namespace PerformanceExperiments::Multithreading_Performance::AtomicRef {
 
     class SomeHeavyObjectToBeCopied {
     public:
@@ -431,7 +430,7 @@ namespace Multithreading_Performance::AtomicRef {
     }
 }
 
-namespace Multithreading_Performance::Atomics {
+namespace PerformanceExperiments::Multithreading_Performance::Atomics {
 
     void AtomicFlag_Test_MemoryMode() {
         constexpr size_t TESTS_COUNT { 10'000'000'000 };
@@ -515,10 +514,10 @@ namespace Multithreading_Performance::Atomics {
     }
 }
 
-void Multithreading_Performance::TEST_ALL()
+void PerformanceExperiments::Multithreading_Performance::TestAll()
 {
     // SycnronizationTests::ConditionVariables();
-    // SycnronizationTests::AtomicFlag();
+    SycnronizationTests::AtomicFlag();
     // SycnronizationTests::OneAtomicFlag();
     // SycnronizationTests::AtomicBool();
     // SycnronizationTests::Mutex();

@@ -134,7 +134,7 @@ int main([[maybe_unused]] int argc,
 	// ring_buffer_fast::TestAll();
 
 	// static_sorted_search_array::TestAll();
-	sorted_price_levels::TestAll();
+	// sorted_price_levels::TestAll();
 	// static_string::TestAll();
 	// static_table::testAll();
 
@@ -168,7 +168,7 @@ int main([[maybe_unused]] int argc,
 
 	// state_manager::TestAll();
 
-	// synchronized_wrapper::TestAll();
+
 
 	// task_executor::TestAll();
 	// tast_sbo::TestAll();
@@ -181,13 +181,11 @@ int main([[maybe_unused]] int argc,
     // ThreadPoolTwo::TEST_ALL();
     // ThreadPoolLimited::TestAll();
 
-	// thread_safe_bounded_queue::TestAll();
-
     // Queues::Multithreading::RunTests();
-
+	// thread_safe_bounded_queue::TestAll();
 	// LockFreeQueue::TEST_ALL();
 
     // barrier::TestAll();
-
     // semaphore::TestAll();
+	synchronized_wrapper::TestAll();
 }

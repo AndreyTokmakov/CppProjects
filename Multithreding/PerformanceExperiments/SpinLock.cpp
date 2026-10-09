@@ -14,7 +14,7 @@ Description :
 #include <thread>
 #include <condition_variable>
 
-#include "SpinLock.h"
+#include "PerformanceExperiments.h"
 #include "PerfUtilities.hpp"
 #include "DateTimeUtilities.hpp"
 
@@ -397,9 +397,7 @@ namespace
     }
 }
 
-
-
-void SpinLock::benchmarks()
+void PerformanceExperiments::SpinLock::benchmarks()
 {
     runSimulation();
 }

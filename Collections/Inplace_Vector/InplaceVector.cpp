@@ -40,6 +40,33 @@ namespace inplace_vector_tests
         std::println("fauna = {}", fauna);
     }
 
+    void try_push_back()
+    {
+        using Type = int;
+        std::inplace_vector<Type, 3> values;
+
+        auto printResult = []<typename T>(const std::optional<T&> opt) {
+            if (opt.has_value()) {
+                std::println("Result: {}", opt.value());
+            } else {
+                std::println("Result: None");
+            }
+        };
+        for (const int v: {1, 2, 3, 4, 5}) {
+            const std::optional<Type&> item = values.try_push_back(v);
+            printResult(item);
+        }
+
+        /*
+        Result: 1
+        Result: 2
+        Result: 3
+        Result: None
+        Result: None
+        */
+    }
+
+
     void try_emplace_back()
     {
         using Type = int;
@@ -72,9 +99,11 @@ namespace inplace_vector_tests
 void inplace_vector::TestAll()
 {
 #if __cplusplus > 202302L
-    inplace_vector_tests::basics();
 
+    // inplace_vector_tests::basics();
+    // inplace_vector_tests::try_push_back();
     // inplace_vector_tests::try_emplace_back();
-    // inplace_vector_tests::unchecked_emplace_back();
+    inplace_vector_tests::unchecked_emplace_back();
+
 #endif
 }

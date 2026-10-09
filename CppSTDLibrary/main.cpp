@@ -157,7 +157,7 @@ int main([[maybe_unused]] const int argc,
     // FilesStreams::TestAll();
     // Filesystem::TestAll();
     // Format::TestAll();
-    FunctionObjects::TestAll();
+    // FunctionObjects::TestAll();
     // Hashing::TestAll();
     // LookupTypes::TestAll();
     // Lambdas::TestAll();
@@ -193,7 +193,7 @@ int main([[maybe_unused]] const int argc,
     // ScopeExit::TestAll();
     // Stacktrace::TestAll();
     // SourceLocation::TestAll();
-    // SharedPtr_Tests::TestAll();
+    SharedPtr_Tests::TestAll();
     // Variant::TestAll();
     // VolatileTests::TestAll();
     // TypeTraits::TestAll();
