@@ -7,7 +7,7 @@ Copyright   : Your copyright notice
 Description : MPMC_Queue.cpp
 ============================================================================**/
 
-#include "Collections.h"
+#include "Collections.hpp"
 
 #include <iostream>
 #include <vector>
@@ -369,7 +369,7 @@ namespace tests
 
 
 
-void Collections::mpmc_queue::TestAll()
+void collections::mpmc_queue::TestAll()
 {
     using namespace tests;
 

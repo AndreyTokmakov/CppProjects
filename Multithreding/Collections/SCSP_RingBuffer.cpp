@@ -7,7 +7,7 @@ Copyright   : Your copyright notice
 Description : SCSP_RingBuffer.cpp
 ============================================================================**/
 
-#include "Collections.h"
+#include "Collections.hpp"
 
 #include <iostream>
 #include <vector>
@@ -18,7 +18,7 @@ Description : SCSP_RingBuffer.cpp
 #include <chrono>
 #include <syncstream>
 
-namespace Collections::SCSP_RingBuffer
+namespace collections::SCSP_RingBuffer
 {
     template<typename T>
     struct Queue
@@ -69,7 +69,7 @@ namespace Collections::SCSP_RingBuffer
 }
 
 
-namespace Collections::SCSP_RingBuffer::Tests
+namespace collections::SCSP_RingBuffer::Tests
 {
     template<typename T>
     void printQueue(const Queue<T>& queue)
@@ -102,7 +102,7 @@ namespace Collections::SCSP_RingBuffer::Tests
     }
 };
 
-void Collections::SCSP_RingBuffer::TestAll()
+void collections::SCSP_RingBuffer::TestAll()
 {
     using namespace Tests;
 

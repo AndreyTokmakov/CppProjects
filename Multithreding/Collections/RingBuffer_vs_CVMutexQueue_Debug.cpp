@@ -7,7 +7,7 @@ Copyright   : Your copyright notice
 Description :
 ============================================================================**/
 
-#include "Collections.h"
+#include "Collections.hpp"
 #include "PerfUtilities.hpp"
 
 #include <iostream>
@@ -22,7 +22,7 @@ Description :
 #include <syncstream>
 
 
-namespace Collections::RingBuffer_vs_CVMutexQueue_Debug
+namespace collections::RingBuffer_vs_CVMutexQueue_Debug
 {
     template<typename T,
             uint16_t Capacity = std::numeric_limits<uint16_t>::max()>
@@ -68,7 +68,7 @@ namespace Collections::RingBuffer_vs_CVMutexQueue_Debug
     };
 }
 
-namespace Collections::RingBuffer_vs_CVMutexQueue_Debug
+namespace collections::RingBuffer_vs_CVMutexQueue_Debug
 {
     template<typename T>
     struct LFQueue final
@@ -125,7 +125,7 @@ namespace Collections::RingBuffer_vs_CVMutexQueue_Debug
     };
 }
 
-namespace Collections::RingBuffer_vs_CVMutexQueue_Debug
+namespace collections::RingBuffer_vs_CVMutexQueue_Debug
 {
     template<typename T>
     class BlockingQueue
@@ -179,7 +179,7 @@ namespace Collections::RingBuffer_vs_CVMutexQueue_Debug
     };
 }
 
-namespace Collections::RingBuffer_vs_CVMutexQueue_Debug::Tests
+namespace collections::RingBuffer_vs_CVMutexQueue_Debug::Tests
 {
     constexpr int32_t evtCount = 10'000'000;
 
@@ -306,7 +306,7 @@ namespace Collections::RingBuffer_vs_CVMutexQueue_Debug::Tests
     }
 }
 
-void Collections::RingBuffer_vs_CVMutexQueue_Debug::TestAll()
+void collections::RingBuffer_vs_CVMutexQueue_Debug::TestAll()
 {
     // Tests::simple_test_lf_queue();
     // Tests::simple_test_ring_buffer();

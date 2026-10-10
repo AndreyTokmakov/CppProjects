@@ -39,7 +39,7 @@ Description : Multithreading tests main entry point
 #include "Exceptions_Handling/Exceptions_Handling.h"
 #include "ParallelExecutionAlgoritms/ParallelExecutionAlgoritms.h"
 #include "Multithreading_Communication/Multithreading_Communication.h"
-#include "Collections/Collections.h"
+#include "Collections/Collections.hpp"
 
 #include "Futex/Futex.hpp"
 
@@ -103,7 +103,6 @@ int main([[maybe_unused]] int argc,
     // SpinLockFutex::TestAll();
     // SpinLock_PerformanceTests::TestAll();
 
-
     // ThreadPools::TestAll();
     // ThreadPoolsEx::TestAll();
 
@@ -113,28 +112,13 @@ int main([[maybe_unused]] int argc,
     // Threads::TEST_ALL();
     // jthreads::TestAll();
 
-    /** Performance **/
+    /** ----------------- Performance --------------- **/
 
     // FalseSharingExperiments::TEST_ALL();
-    PerformanceExperiments::TestAll();
+    // PerformanceExperiments::TestAll();
 
-    /** ThreadSafeCollections **/
-
-    // ring_buffers::TestAll();
-    // Collections::RingBuffer::TestAll();
-
-    // Multithreading_Collections::TestAll();
-    // SingleConsumerProducerQueue::TestAll();
-    // Queue::TestAll();
-    // BlockingQueue::TestAll();
-    // LockFreeQueue::TEST_ALL()
-    // Collections::mpmc_queue::TestAll();
-    // SCSP_RingBuffer_Blocking::TestAll();
-    // SCSP_RingBuffer::TestAll();
-    // Collections::RingBuffer_vs_CVMutexQueue::TestAll();
-    // Collections::RingBuffer_vs_CVMutexQueue_2::TestAll();
-    // Collections::RingBuffer_vs_CVMutexQueue_Debug::TestAll();
-    // ThreadSafeQueue_CV_vs_RingBuffer::TestAll();
+    /** ----------------- Collections --------------- **/
+    collections::TestAll();
 
     /** Utilities **/
 

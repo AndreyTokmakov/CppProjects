@@ -10,7 +10,7 @@ Description : SingleConsumerProducerQueue.cpp
 #include "../Utilities/Wrapper.h"
 #include "PerfUtilities.hpp"
 
-#include "Collections.h"
+#include "Collections.hpp"
 
 #include <iostream>
 #include <vector>
@@ -26,7 +26,7 @@ namespace
     using Integer = Helpers::Wrapper<int, false>;
 }
 
-namespace Collections::SingleConsumerProducerQueue
+namespace collections::SingleConsumerProducerQueue
 {
     // TODO: Concepts ?
     //       trivial_destructible
@@ -159,7 +159,7 @@ namespace Collections::SingleConsumerProducerQueue
     };
 };
 
-namespace Collections::SingleConsumerProducerQueue::DemoTwo
+namespace collections::SingleConsumerProducerQueue::DemoTwo
 {
     template<class T,
             size_t Capacity = 100>
@@ -211,7 +211,7 @@ namespace Collections::SingleConsumerProducerQueue::DemoTwo
     };
 }
 
-namespace Collections::SingleConsumerProducerQueue::AtomicBusyWaitReadLoop
+namespace collections::SingleConsumerProducerQueue::AtomicBusyWaitReadLoop
 {
     // INFO: try_read_next() reading / waiting for the new element without any timeout -> busy wait ()
 
@@ -252,7 +252,7 @@ namespace Collections::SingleConsumerProducerQueue::AtomicBusyWaitReadLoop
     };
 }
 
-namespace Collections::SingleConsumerProducerQueue::AtomicBusyWaitReadLoop_NoMove
+namespace collections::SingleConsumerProducerQueue::AtomicBusyWaitReadLoop_NoMove
 {
     template<class T,
             int32_t Capacity = 100>
@@ -304,7 +304,7 @@ namespace Collections::SingleConsumerProducerQueue::AtomicBusyWaitReadLoop_NoMov
     };
 }
 
-namespace Collections::SingleConsumerProducerQueue::Tests
+namespace collections::SingleConsumerProducerQueue::Tests
 {
     void debugTest()
     {
@@ -534,7 +534,7 @@ namespace Collections::SingleConsumerProducerQueue::Tests
     }
 }
 
-void Collections::SingleConsumerProducerQueue::TestAll()
+void collections::SingleConsumerProducerQueue::TestAll()
 {
     // Tests::debugTest();
     // Tests::benchmark();

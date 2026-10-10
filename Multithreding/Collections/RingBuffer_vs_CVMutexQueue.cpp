@@ -17,13 +17,13 @@ Description :
 #include <chrono>
 #include <condition_variable>
 
-#include "Collections.h"
+#include "Collections.hpp"
 #include "PerfUtilities.hpp"
 #include "DateTimeUtilities.hpp"
 
 #define LOG  std::osyncstream { std::cout } << utilities::datetime::getCurrentTime() << " "
 
-namespace Collections::RingBuffer_vs_CVMutexQueue
+namespace collections::RingBuffer_vs_CVMutexQueue
 {
     template<typename T,
              uint16_t Capacity = std::numeric_limits<uint16_t>::max()>
@@ -67,7 +67,7 @@ namespace Collections::RingBuffer_vs_CVMutexQueue
     };
 }
 
-namespace Collections::RingBuffer_vs_CVMutexQueue
+namespace collections::RingBuffer_vs_CVMutexQueue
 {
     template<typename T>
     class BlockingQueue
@@ -121,7 +121,7 @@ namespace Collections::RingBuffer_vs_CVMutexQueue
     };
 }
 
-namespace Collections::RingBuffer_vs_CVMutexQueue::Tests
+namespace collections::RingBuffer_vs_CVMutexQueue::Tests
 {
     constexpr int32_t evtCount = 10'000'000;
 
@@ -200,7 +200,7 @@ namespace Collections::RingBuffer_vs_CVMutexQueue::Tests
     }
 }
 
-void Collections::RingBuffer_vs_CVMutexQueue::TestAll()
+void collections::RingBuffer_vs_CVMutexQueue::TestAll()
 {
     // Tests::simple_test();
 

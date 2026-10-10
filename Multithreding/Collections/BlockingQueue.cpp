@@ -12,10 +12,10 @@ Description : BlockingQueue.cpp
 #include <thread>
 #include <mutex>
 
-#include "Collections.h"
+#include "Collections.hpp"
 #include "PerfUtilities.hpp"
 
-namespace Collections::BlockingQueue
+namespace collections::BlockingQueue
 {
     template<typename T>
     struct QueueWithLock
@@ -120,7 +120,7 @@ namespace Collections::BlockingQueue
 }
 
 
-void Collections::BlockingQueue::TestAll()
+void collections::BlockingQueue::TestAll()
 {
     QueueWithLock<int> queue { 1000 };
     // QueueWithAtomics<int> queue { 1000 };

@@ -13,14 +13,14 @@ Description : SCSP_RingBuffer_Blocking.cpp
 #include <thread>
 #include <syncstream>
 
-#include "Collections.h"
+#include "Collections.hpp"
 #include "PerfUtilities.hpp"
 #include "DateTimeUtilities.hpp"
 
 #define LOG  std::osyncstream { std::cout } << utilities::datetime::getCurrentTime() << " "
 
 
-namespace Collections::SCSP_RingBuffer_Blocking
+namespace collections::SCSP_RingBuffer_Blocking
 {
     template<typename T>
     struct BlockingRingBuffer
@@ -112,7 +112,7 @@ namespace Collections::SCSP_RingBuffer_Blocking
     };
 }
 
-namespace Collections::SCSP_RingBuffer_Blocking::Tests
+namespace collections::SCSP_RingBuffer_Blocking::Tests
 {
     void Producer_Consumer_Blocking_Test()
     {
@@ -177,7 +177,7 @@ namespace Collections::SCSP_RingBuffer_Blocking::Tests
     }
 }
 
-void Collections::SCSP_RingBuffer_Blocking::TestAll()
+void collections::SCSP_RingBuffer_Blocking::TestAll()
 {
     Tests::Producer_Consumer_Blocking_Test();
     Tests::Producer_Consumer_NonBlocking_Test();

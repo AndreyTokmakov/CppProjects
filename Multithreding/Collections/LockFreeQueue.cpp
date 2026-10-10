@@ -1,50 +1,29 @@
-//============================================================================
-// Name        : LockFreeQueue.cpp
-// Created on  : 03.06.2022
-// Author      : Tokmakov Andrey
-// Version     : 1.0
-// Copyright   : Your copyright notice
-// Description : LockFreeQueue
-//============================================================================
+/**============================================================================
+Name        : LockFreeQueue.cpp
+Created on  :
+Author      : Andrei Tokmakov
+Version     : 1.0
+Copyright   : Your copyright notice
+Description : LockFreeQueue
+============================================================================**/
+
 
 #include <iostream>
-#include <optional>
+
 #include <memory>
 #include <string>
 #include <string_view>
-#include <cstdint>
-#include <cstring>
 #include <fstream>
-#include <filesystem>
-#include <tuple>
-#include <experimental/propagate_const>
-
 #include <thread>
 #include <future>
-
 #include <mutex>
 #include <atomic>
-
-#include <cmath>
-#include <numeric>
-#include <numbers>
-#include <ostream>
-
 #include <vector>
-#include <list>
-#include <map>
-#include <algorithm>
 #include <array>
-#include <set>
-#include <unordered_set>
-#include <unordered_map>
-#include <span>
-#include <concepts>
 
+#include "Collections.hpp"
 
-#include "Collections.h"
-
-namespace Collections::LockFreeQueue::One
+namespace collections::LockFreeQueue::One
 {
     template<class T, size_t N>
     class LockFreeQueue {
@@ -109,7 +88,7 @@ namespace Collections::LockFreeQueue::One
     }
 }
 
-namespace Collections::LockFreeQueue::Two
+namespace collections::LockFreeQueue::Two
 {
 
     template<typename T>
@@ -144,7 +123,7 @@ namespace Collections::LockFreeQueue::Two
     }
 }
 
-void Collections::LockFreeQueue::TestAll()
+void collections::LockFreeQueue::TestAll()
 {
     // One::test();
     Two::test();

@@ -29,6 +29,7 @@ add_executable(${PROJECT_NAME}
         Futex/Futex.cpp
         Latch/Latch.cpp
 
+        Collections/Collections.cpp
         Collections/LockFreeQueue.cpp
         Collections/Queue.cpp
         Collections/BlockingQueue.cpp

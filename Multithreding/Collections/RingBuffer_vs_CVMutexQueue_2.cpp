@@ -7,7 +7,7 @@ Copyright   : Your copyright notice
 Description :
 ============================================================================**/
 
-#include "Collections.h"
+#include "Collections.hpp"
 #include "PerfUtilities.hpp"
 
 #include <iostream>
@@ -22,7 +22,7 @@ Description :
 #include <syncstream>
 
 
-namespace Collections::RingBuffer_vs_CVMutexQueue_2
+namespace collections::RingBuffer_vs_CVMutexQueue_2
 {
     template<typename T>
     struct LFQueue final
@@ -79,7 +79,7 @@ namespace Collections::RingBuffer_vs_CVMutexQueue_2
     };
 }
 
-namespace Collections::RingBuffer_vs_CVMutexQueue_2
+namespace collections::RingBuffer_vs_CVMutexQueue_2
 {
     template<typename T>
     class BlockingQueue
@@ -133,7 +133,7 @@ namespace Collections::RingBuffer_vs_CVMutexQueue_2
     };
 }
 
-namespace Collections::RingBuffer_vs_CVMutexQueue_2::Tests
+namespace collections::RingBuffer_vs_CVMutexQueue_2::Tests
 {
     constexpr int32_t evtCount = 10'000'000;
 
@@ -223,7 +223,7 @@ namespace Collections::RingBuffer_vs_CVMutexQueue_2::Tests
     }
 }
 
-void Collections::RingBuffer_vs_CVMutexQueue_2::TestAll()
+void collections::RingBuffer_vs_CVMutexQueue_2::TestAll()
 {
     // Tests::simple_test();
 
