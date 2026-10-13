@@ -33,6 +33,7 @@ endif()
 
 add_executable(${PROJECT_NAME}
         main.cpp
+        AsyncZeroMq/AsyncClients.cpp
         Common/Logger.cpp
         Experiments/Experiments.cpp
         PubSub/Publisher_Subscriber.cpp

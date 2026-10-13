@@ -12,6 +12,7 @@ Description : C++ Utilities
 #include <vector>
 
 #include "DateTimeUtilities.hpp"
+#include "AsyncZeroMq/AsyncClients.hpp"
 #include "PubSub/Publisher_Subscriber.hpp"
 #include "Request_Response/Request_Response.hpp"
 #include "Secure_Communication/Secure_Communication.hpp"
@@ -33,13 +34,14 @@ int main([[maybe_unused]] int argc,
 {
     const std::vector<std::string_view> args(argv + 1, argv + argc);
 
+    async_zmq_clients::testAll(args);
     // Experiments::TestAll();
     // Publisher_Subscriber::TestAll();
     // Request_Response::TestAll();
     // Secure_Communication::TestAll();
     // router_dealer::TestAll();
     // ZeroMqProxy::TestAll();
-    Servers::TestAll(args);
+    // Servers::TestAll(args);
 
     return EXIT_SUCCESS;
 }
