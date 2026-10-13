@@ -12,5 +12,6 @@ Description : Servers.cpp
 void Servers::TestAll(const std::vector<std::string_view>& args)
 {
     // runDebugServer(args);
-    runReqRepServer(args);
+    // runReqRepServer(args);
+    runPollingReqRepServer(args);
 }

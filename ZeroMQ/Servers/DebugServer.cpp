@@ -38,7 +38,7 @@ namespace DebugServer
         zmq::context_t context;
         logger::Logger logger { "zmq", "/tmp/Logs/server/trace.log" };
 
-        explicit ZeroMQServer(int32_t workersCount = 4): context { workersCount } {
+        explicit ZeroMQServer(const int32_t workersCount = 4): context { workersCount } {
 
         }
 

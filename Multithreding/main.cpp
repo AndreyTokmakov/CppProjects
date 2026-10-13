@@ -118,7 +118,8 @@ int main([[maybe_unused]] int argc,
     // PerformanceExperiments::TestAll();
 
     /** ----------------- Collections --------------- **/
-    collections::TestAll();
+    // collections::TestAll();
+    ring_buffers::TestAll();
 
     /** Utilities **/
 

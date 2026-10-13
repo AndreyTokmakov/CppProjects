@@ -13,6 +13,7 @@ include_directories(${THIRD_PARTY_DIR}/cppzmq)
 find_package(Threads REQUIRED)
 find_package(PkgConfig REQUIRED)
 find_package(spdlog REQUIRED)
+find_package(Boost REQUIRED)
 
 pkg_check_modules(PC_ZMQ libzmq REQUIRED)
 find_path(ZMQ_INCLUDE_DIR zmq.h PATHS ${PC_ZMQ_INCLUDE_DIRS})
@@ -20,12 +21,15 @@ find_library(ZMQ_LIBRARY NAMES zmq PATHS ${PC_ZMQ_LIBRARY_DIRS})
 
 find_path(CPPZMQ_INCLUDE_DIR zmq.hpp)
 
-#[[
-message("CMAKE_SOURCE_DIR       : ${CMAKE_SOURCE_DIR}")
-message("PROJECT_SOURCE_DIR     : ${PROJECT_SOURCE_DIR}")
-message("CMAKE_BINARY_DIR       : ${CMAKE_BINARY_DIR}")
-message("CMAKE_CURRENT_LIST_DIR : ${CMAKE_CURRENT_LIST_DIR}")
-#]]
+set(AZMQ_ROOT ${THIRD_PARTY_DIR}/azmq-master)
+find_path(AZMQ_INCLUDE_DIR
+    NAMES azmq/socket.hpp
+    HINTS "${AZMQ_ROOT}/include" "${AZMQ_ROOT}"
+)
+
+if(NOT AZMQ_INCLUDE_DIR)
+    message(FATAL_ERROR "Cannot find azmq/socket.hpp. Set AZMQ_ROOT to the local azmq source/install directory.")
+endif()
 
 add_executable(${PROJECT_NAME}
         main.cpp
@@ -42,30 +46,27 @@ add_executable(${PROJECT_NAME}
         Router_Dealer/Router_Dealer_Async_1.cpp
         Router_Dealer/Router_Dealer_Async_2.cpp
         Router_Dealer/Router_Dealer_Async_ServerClass.cpp
+
         Servers/DebugServer.cpp
         Servers/Servers.cpp
         Servers/ReqRepServer.cpp
+        Servers/PollingReqRspServer.cpp
+
         Proxy/ZeroMqProxy.cpp
 )
 
-target_include_directories(${PROJECT_NAME} PRIVATE "${PROJECT_SOURCE_DIR}/Common")
-
-# **** Utilities ****
-target_include_directories(${PROJECT_NAME} PUBLIC "${CMAKE_SOURCE_DIR}/Utilities")
-target_link_directories(${PROJECT_NAME} PUBLIC "${CMAKE_BINARY_DIR}/Utilities")
-
-
-#[[
-target_include_directories(${PROJECT_NAME}  PRIVATE
-        ${ZMQ_INCLUDE_DIR}
-        ${CPPZMQ_INCLUDE_DIR}
+target_include_directories(${PROJECT_NAME} PRIVATE
+    "${PROJECT_SOURCE_DIR}/Common"
+    "${CMAKE_SOURCE_DIR}/Utilities"
+    "${AZMQ_INCLUDE_DIR}"
 )
-#]]
 
-TARGET_LINK_LIBRARIES(${PROJECT_NAME}
-        pthread
-        utils
-        Threads::Threads
-        ${ZMQ_LIBRARY}
-        ${EXTRA_LIBS}
+target_link_libraries(${PROJECT_NAME}
+    pthread
+    utils
+    Boost::boost
+    Threads::Threads
+    ${ZMQ_LIBRARY}
+    ${EXTRA_LIBS}
+    ${ZMQ_LIBRARY}
 )
