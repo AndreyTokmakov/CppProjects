@@ -117,7 +117,8 @@ namespace
                     continue;
                 }
 
-                // frames[0] = identity, frames[1] = empty delimiter,
+                // frames[0] = identity
+                // frames[1] = empty delimiter,
                 // frames[2] = payload. Copy only the two we keep.
                 const zmq::message_t& identity = frames[0];
                 const zmq::message_t& payload  = frames[2];

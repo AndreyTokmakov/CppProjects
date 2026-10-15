@@ -34,12 +34,12 @@ int main([[maybe_unused]] int argc,
 {
     const std::vector<std::string_view> args(argv + 1, argv + argc);
 
-    async_zmq_clients::testAll(args);
+    // async_zmq_clients::testAll(args);
     // Experiments::TestAll();
     // Publisher_Subscriber::TestAll();
     // Request_Response::TestAll();
     // Secure_Communication::TestAll();
-    // router_dealer::TestAll();
+    router_dealer::TestAll();
     // ZeroMqProxy::TestAll();
     // Servers::TestAll(args);
 

@@ -16,7 +16,7 @@ void router_dealer::TestAll()
     // poller_timeout::TestAll();
     // demo_one::TestAll();
 
-    // asynch_1::TestAll();
+    asynch_1::TestAll();
     // asynch_2::TestAll();
-    asynch_server_class::TestAll();
+    // asynch_server_class::TestAll();
 }

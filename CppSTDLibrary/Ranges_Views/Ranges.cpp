@@ -995,17 +995,14 @@ namespace Ranges::Ranges_To
                         | std::views::filter([](const int n) { return n % 2 == 0; })
                         | std::ranges::to<std::vector>();
 
-        auto text_numbers_map = even_numbers | std::views::transform([&number_to_text](int n) {
+        const auto text_numbers_map = even_numbers | std::views::transform([&number_to_text](int n) {
                     return std::pair{n, number_to_text.contains(n) ? number_to_text.at(n) : "unknown" };
                   }) | std::ranges::to<std::map>();
 
         std::cout << text_numbers_map << std::endl;
         // OUTPUT: { 2 : two, 4 : four, 6 : six, 8 : eight, 10 : ten, }
     }
-}
 
-namespace Ranges::Ranges_To
-{
     void Vector_pairs_to_Vector_First()
     {
         const std::vector<std::pair<int, std::string>> data {
@@ -1021,10 +1018,7 @@ namespace Ranges::Ranges_To
         // [1, 2, 3, 4, 5]
         // ["I", "II", "III", "IV", "V"]
     }
-}
 
-namespace Ranges::Ranges_To
-{
     void Vector_of_Array_to_Vector()
     {
         constexpr std::array<std::array<int,3>, 3> data { 1,2,3, 4,5,6, 7,8,9 };
@@ -1040,6 +1034,62 @@ namespace Ranges::Ranges_To
         // [1, 4, 7]
         // [2, 5, 8]
         // [3, 6, 9]
+    }
+
+    void Join_StringVector_to_String()
+    {
+        const std::vector<std::string_view> words {"One", "Two", "Three" };
+        constexpr std::string_view delimiter { " " };
+
+        const std::string result = words | std::views::join_with(delimiter) | std::ranges::to<std::string>();
+        std::println("{} -> '{}'", words, result);
+
+        /// Output:  One Two Three
+    }
+
+    void Get_Map_Values_as_Vector()
+    {
+        auto getValues = [] <typename KeyType, typename ValueType> (const std::map<KeyType, ValueType>& map) -> std::vector<ValueType> {
+            return map | std::views::values | std::ranges::to<std::vector>();
+        };
+
+        auto getValues2 = [] <typename KeyType, typename ValueType> (const std::map<KeyType, ValueType>& map) -> std::vector<ValueType> {
+            return std::views::values(map) | std::ranges::to<std::vector>();
+        };
+
+        const auto map = std::map<int, std::string> {
+                { 24, "Hello" },
+                { 42, "World" }
+        };
+
+        {
+            for (auto&& value : getValues(map))
+                std::println("{}", value);
+        }
+
+        {
+            for (auto&& value : getValues2(map))
+                std::println("{}", value);
+        }
+    }
+
+    using DefaultMatcher = decltype([] (const auto&) { return true; });
+
+    template<std::predicate<std::filesystem::path> Func = DefaultMatcher>
+    static std::vector<std::filesystem::path>
+    enumerateDirectory(const std::filesystem::path &dirPath,
+                   Func fn = Func{}) noexcept
+    {
+        return std::filesystem::directory_iterator(dirPath) | std::views::filter(fn)
+            | std::ranges::to<std::vector<std::filesystem::path>>();
+    }
+
+    void Enumerate_Directory_File_to_Vector()
+    {
+        const std::vector<std::filesystem::path> entries = enumerateDirectory("/tmp/Test_Folder_1");
+        for (const auto& entry : entries) {
+            std::cout << entry << std::endl;
+        }
     }
 }
 
@@ -1752,6 +1802,9 @@ void Ranges::TestAll()
     // Ranges_To::Get_Even_Numbers_Mapping();
     // Ranges_To::Vector_pairs_to_Vector_First();
     // Ranges_To::Vector_of_Array_to_Vector();
+    // Ranges_To::Join_StringVector_to_String();
+    // Ranges_To::Get_Map_Values_as_Vector();
+    Ranges_To::Enumerate_Directory_File_to_Vector();
 
     // Containers_From_Ranges::CreateVectorFromRange();
     // Containers_From_Ranges::CreateVectorFromRange_Inplace();
@@ -1793,7 +1846,7 @@ void Ranges::TestAll()
     // Take::Take_Test_0();
     // Take::Take_Test();
 
-    FileSystem::enumerateDirectoryTest();
+    // FileSystem::enumerateDirectoryTest();
 
     // Istream::Read_Ints();
     // Istream::Get_Strings_and_Floats();
