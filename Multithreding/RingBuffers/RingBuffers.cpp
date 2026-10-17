@@ -521,8 +521,146 @@ namespace ring_buffers::impl_5
         ProducerData producerData;
         ConsumerData consumerData;
     };
+
 }
 
+namespace ring_buffers::impl_6
+{
+    template<typename Ty, uint32_t Capacity>
+    class RingBuffer
+    {
+        using size_type  = size_t;
+        using value_type = Ty;
+        using collection_type = std::vector<value_type>;
+
+        static_assert(!std::is_same_v<value_type, void>, "ERROR: Value type can not be void");
+        static_assert(is_pow_of_2(Capacity), "ERROR: Capacity must be a power of 2");
+        static_assert(Capacity >= 2, "Buffer size must be at least 2");
+
+        // HFT contract: the queue element must be trivially copyable.
+        // Otherwise, placement-new / destructor cause allocations and jitter in the hot path.
+        static_assert(std::is_trivially_copyable_v<value_type>,
+                      "ERROR: value_type must be trivially copyable (no allocations in hot-path)");
+
+        // Sanity: the index should not overflow size_t.
+        static_assert(sizeof(value_type) <= std::numeric_limits<std::size_t>::max() / Capacity,
+                      "ERROR: Capacity * sizeof(value_type) overflows size_t");
+
+    public:
+        RingBuffer() : buffer(static_cast<size_type>(Capacity)) {
+            /** **/
+        }
+
+        RingBuffer(const RingBuffer&) = delete;
+        RingBuffer& operator=(const RingBuffer&) = delete;
+
+        template <typename... Args>
+        [[nodiscard]]
+        bool emplace(Args&&... args)
+        {
+            const size_type seq = producerData.writeCursor.load(std::memory_order_relaxed);
+            /** Full when write is exactly N ahead of read **/
+            if (seq - producerData.cachedReadCursor >= static_cast<size_type>(Capacity))
+            {
+                producerData.cachedReadCursor = consumerData.readCursor.load(std::memory_order_acquire);
+                if (seq - producerData.cachedReadCursor >= static_cast<size_type>(Capacity)) {
+                    return false; // full
+                }
+            }
+
+            // Construct the element directly in the slot
+            const size_type idx = seq & kMask;
+            buffer[idx] = value_type(std::forward<Args>(args)...);
+
+            // Publish: make the write visible to the consumer
+            producerData.writeCursor.store(seq + 1, std::memory_order_release);
+            return true;
+        }
+
+        [[nodiscard]]
+        bool push(const value_type& item)
+        {
+            const size_type seq = producerData.writeCursor.load(std::memory_order_relaxed);
+            /** Full when write is exactly N ahead of read **/
+            if (seq - producerData.cachedReadCursor >= static_cast<size_type>(Capacity))
+            {
+                producerData.cachedReadCursor = consumerData.readCursor.load(std::memory_order_acquire);
+                if (seq - producerData.cachedReadCursor >= static_cast<size_type>(Capacity)) {
+                    return false; // full
+                }
+            }
+
+            // Construct the element directly in the slot
+            const size_type idx = seq & kMask;
+            buffer[idx] = item;
+
+            // Publish: make the write visible to the consumer
+            producerData.writeCursor.store(seq + 1, std::memory_order_release);
+            return true;
+        }
+
+        [[nodiscard]]
+        bool pop(value_type& item)
+        {
+            const size_type seq = consumerData.readCursor.load(std::memory_order_relaxed);
+
+            // Empty when read has caught up to write
+            if (seq >= consumerData.cachedWriteCursor)
+            {
+                // Refresh our cached copy of the write cursor
+                consumerData.cachedWriteCursor = producerData.writeCursor.load(std::memory_order_acquire);
+                if (seq >= consumerData.cachedWriteCursor) {
+                    return false;
+                }
+            }
+
+            // Read from the slot
+            const size_type idx = seq & kMask;
+            item = std::move(buffer[idx]);
+
+            // Advance read cursor
+            consumerData.readCursor.store(seq + 1, std::memory_order_release);
+            return true;
+        }
+
+        // Approximate number of elements. Race-safe: snapshot of two cursors.
+        [[nodiscard]]
+        size_type size() const noexcept
+        {
+            return producerData.writeCursor.load(std::memory_order_acquire) -
+                   consumerData.readCursor.load(std::memory_order_acquire);
+        }
+
+        [[nodiscard]]
+        bool empty() const noexcept
+        {
+            return producerData.writeCursor.load(std::memory_order_acquire) ==
+                   consumerData.readCursor.load(std::memory_order_acquire);
+        }
+
+        static constexpr size_type capacity() noexcept { return Capacity; }
+
+    private:
+        static constexpr size_type kMask { Capacity - 1 };
+
+        struct alignas(kCacheLineSize) ProducerData
+        {
+            std::atomic<size_type> writeCursor { 0 };
+            size_type cachedReadCursor { 0 };  // producer's local cache
+        };
+
+        struct alignas(kCacheLineSize) ConsumerData
+        {
+            std::atomic<size_type> readCursor { 0 };
+            size_type cachedWriteCursor { 0 }; // consumer's local cache
+        };
+
+        alignas(kCacheLineSize) std::vector<value_type> buffer{};
+
+        ProducerData producerData;
+        ConsumerData consumerData;
+    };
+}
 
 namespace ring_buffers::tests
 {
@@ -951,6 +1089,10 @@ namespace ring_buffers::tests::performance_tests
             impl_5::RingBuffer<int64_t, capacity> ringBuffer;
             runTest(ringBuffer, eventsCount, "impl_5::RingBuffer");
         }
+        {
+            impl_6::RingBuffer<int64_t, capacity> ringBuffer;
+            runTest(ringBuffer, eventsCount, "impl_6::RingBuffer");
+        }
 
         // impl_1::RingBuffer:       0.974007 seconds.
         // impl_2::RingBuffer:       1.85482 seconds.
@@ -958,6 +1100,7 @@ namespace ring_buffers::tests::performance_tests
         // impl_3_size::RingBuffer:  1.30787 seconds.
         // impl_4::RingBuffer:       0.335618 seconds.
         // impl_5::RingBuffer:       0.344618 seconds.
+        // impl_6::RingBuffer:       0.344618 seconds.
     }
 }
 
