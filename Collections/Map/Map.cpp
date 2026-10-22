@@ -283,6 +283,70 @@ namespace Map
         std::cout << "\n\n" << std::endl;
     }
 
+	struct LazyGetter final
+    {
+    	template<typename Ty>
+	    explicit operator Ty() const
+    	{
+    		return std::make_unique<Integer>(1);
+    	}
+    };
+
+	template<typename Func>
+	struct LazyBuilder final
+	{
+		template<typename Ty>
+		explicit operator Ty() const {
+			return initializer();
+		}
+
+		Func initializer;
+	};
+
+	void try_emplace_lazy_construction_handle_exising_keys_1()
+	{
+		constexpr LazyBuilder builder { [] {
+			std::cout << "Constructing std::make_unique<Integer>()" << std::endl;
+			return std::make_unique<Integer>(2);
+		}};
+
+		std::map<int, std::unique_ptr<Integer>> intMap;
+
+		auto [it, inserted] = intMap.try_emplace(1, builder);
+		if (inserted) {
+			std::cout << it->second << std::endl;
+		}
+
+		std::tie(it, inserted) = intMap.try_emplace(1, builder);
+		if (!inserted) {
+			std::cout << it->second << std::endl;
+		}
+
+		/*
+		Constructing td::make_unique<Integer>()
+		Integer(2)
+		0x39fc3700
+		0x39fc3700
+		0x39fc3700
+		~Integer(2)
+		*/
+	};
+
+	void try_emplace_lazy_construction_handle_exising_keys_2()
+	{
+		constexpr LazyGetter getter {};
+		std::map<int, std::unique_ptr<Integer>> intMap;
+
+		auto [it, inserted] = intMap.try_emplace(1, getter);
+		if (inserted) {
+			std::cout << it->second << std::endl;
+		}
+
+		std::tie(it, inserted) = intMap.try_emplace(1, getter);
+		if (!inserted) {
+			std::cout << it->second << std::endl;
+		}
+	}
 
     void emplace_test_2_ReferenceWrapper()
 	{
@@ -1394,6 +1458,7 @@ namespace Map::Heterogeneous_Lookup
 
 
 
+
 void Map::TestAll()
 {
 	// test_loops();
@@ -1409,6 +1474,8 @@ void Map::TestAll()
 	// emplace_vs_insert();
 	// emplace_efficient_multiple_arguments();
 	// try_emplace_vs_emplace();
+	try_emplace_lazy_construction_handle_exising_keys_1();
+	try_emplace_lazy_construction_handle_exising_keys_2();
 	// emplace_test_2_ReferenceWrapper();
 
 	// Sorted_Map();
@@ -1454,7 +1521,7 @@ void Map::TestAll()
     // Extract_And_UpdateKey();
     // Extract_ByITer_And_UpdateKey();
 
-	LowerBound();
+	// LowerBound();
     // LowerBound_GreaterSorted();
 	// UpperBound();
 

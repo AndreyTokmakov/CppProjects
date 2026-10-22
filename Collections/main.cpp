@@ -35,11 +35,11 @@ int main([[maybe_unused]] int argc,
 	// Array::TestAll();
 	// List::TestAll();
 	// Vector::TestAll();
-	inplace_vector::TestAll();
+	// inplace_vector::TestAll();
 
 	// Set::TestAll();
 	// UnorderedSet::TestAll();
-	// Map::TestAll();
+	Map::TestAll();
 	// FlatMap::TestAll();
 	// MultiMap::TestAll();
 	// UnorderedMap::TestAll();
