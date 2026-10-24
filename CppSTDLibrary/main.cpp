@@ -178,7 +178,7 @@ int main([[maybe_unused]] const int argc,
     // PolymorphicMemoryResources::TestAll();
     // Print::TestAll();
     // Random::TestAll();
-    Ranges::TestAll();
+    // Ranges::TestAll();
     // ReferenceWrapper::TestAll();
     // StarshipOperator::TestAll();
     // Streams::TestAll();
@@ -210,7 +210,7 @@ int main([[maybe_unused]] const int argc,
     /** C++26 **/
 
     // Reflection::TestAll();
-    // Polymorphic::TestAll();
+    Polymorphic::TestAll();
 
 
 

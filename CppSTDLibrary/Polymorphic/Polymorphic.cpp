@@ -10,30 +10,48 @@ Description : Polymorphic.cpp
 #include <iostream>
 #include <vector>
 #include <memory>
+#include <print>
+#include <numeric>
+#include <source_location>
 #include "Polymorphic.hpp"
 
-#include <cassert>
+
+namespace
+{
+    void Assert(const bool condition,
+                 const std::source_location location = std::source_location::current())
+    {
+        if (!condition)
+        {
+            std::println(std::cerr, "\tFile: {}\n\tFunction: {}\n\tLine: {}",
+                         location.file_name(), location.function_name(), location.line());
+            std::terminate();
+        }
+    }
+}
+
 
 namespace using_std_unique_ptr
 {
-    struct Shape
+    struct IShape
     {
-        virtual ~Shape() = default;
+        virtual ~IShape() = default;
 
         [[nodiscard]]
-        virtual std::unique_ptr<Shape> clone() const = 0;
+        virtual std::unique_ptr<IShape> clone() const = 0;
 
         [[nodiscard]]
         virtual double area() const = 0;
     };
 
-    struct Circle final : public Shape
+    struct Circle final : IShape
     {
-        double radius_;
-        explicit Circle(const double r) : radius_(r) {}
+        explicit Circle(const double r) : radius(r)
+        {
+        }
 
         [[nodiscard]]
-        std::unique_ptr<Shape> clone() const override
+        std::unique_ptr<IShape> clone() const override
         {
             return std::make_unique<Circle>(*this);
         }
@@ -41,37 +59,101 @@ namespace using_std_unique_ptr
         [[nodiscard]]
         double area() const override
         {
-            return 3.14159 * radius_ * radius_;
+            return 3.14159 * radius * radius;
         }
+
+    private:
+        double radius { 0.0 };
     };
 
-    struct Rectangle final : public Shape
+    struct Rectangle final : IShape
     {
-        double w_, h_;
-        Rectangle(double w, double h) : w_(w), h_(h) {}
+        Rectangle(const double w, const double h) : wight(w), height(h)
+        {
+        }
 
-        [[nodiscard]] std::unique_ptr<Shape> clone() const override { return std::make_unique<Rectangle>(*this);}
-        [[nodiscard]] double area() const override { return w_ * h_; }
+        [[nodiscard]]
+        std::unique_ptr<IShape> clone() const override
+        {
+            return std::make_unique<Rectangle>(*this);
+        }
+
+        [[nodiscard]]
+        double area() const override
+        {
+            return wight * height;
+        }
+
+    private:
+        double wight { 0.0 };
+        double height { 0.0 };
     };
 
-    class Picture
+    struct Picture
     {
-        std::vector<std::unique_ptr<Shape>> shapes_;
-    public:
+        Picture() = default;
+
+        void addCircle(double r) {
+            shapes.push_back(std::make_unique<Circle>(r));
+        }
+
+        void addRectangle(double w, double h) {
+            shapes.push_back(std::make_unique<Rectangle>(w, h));
+        }
+
         Picture(const Picture& other)
         {
-            shapes_.reserve(other.shapes_.size());
-            for (const auto& s : other.shapes_)
-                shapes_.push_back(s->clone());
+            shapes.reserve(other.shapes.size());
+            for (const std::unique_ptr<IShape>& s : other.shapes) {
+                shapes.push_back(s->clone());
+            }
         }
 
         Picture& operator=(const Picture& other)
         {
-            auto tmp = other;          // copy-and-swap
-            swap(shapes_, tmp.shapes_);
+            Picture tmp = other;          // copy-and-swap
+            std::swap(shapes, tmp.shapes);
             return *this;
         }
+
+        Picture(Picture&& other) noexcept = default;
+        Picture& operator=(Picture&& other) noexcept = default;
+
+
+        double totalArea() const
+        {
+            return std::accumulate(shapes.cbegin(), shapes.cend(), 0.0, []
+                 (const double val, const std::unique_ptr<IShape>& shape)
+             {
+                 return val + shape->area();
+             });
+        }
+
+        size_t Size() const noexcept {
+            return shapes.size();
+        }
+
+    private:
+        std::vector<std::unique_ptr<IShape>> shapes;
+
     };
+
+    void demo()
+    {
+        Picture pic1;
+        pic1.addCircle(5.0);
+        pic1.addRectangle(3.0, 4.0);
+
+        Picture pic2 = pic1;
+
+        pic1.addCircle(1.0);
+
+        Assert(pic1.Size() == 3);  // pic1 has three shapes
+        Assert(pic2.Size() == 2);  // pic2 is unchanged — it's an independent copy
+        Assert(pic1.totalArea() != pic2.totalArea());
+
+        std::cout << pic1.totalArea() << std::endl;
+    }
 }
 
 
@@ -80,29 +162,36 @@ namespace polymorphic_tests
     struct Shape
     {
         virtual ~Shape() = default;
-        [[nodiscard]] virtual double area() const = 0;
+        [[nodiscard]]
+        virtual double area() const = 0;
     };
 
-    struct Circle final : public Shape
+    struct Circle final : Shape
     {
-        double radius_;
-        explicit Circle(const double r) : radius_(r) {}
+        explicit Circle(const double r) : radius(r) {
+        }
 
         [[nodiscard]]
         double area() const override {
-            return 3.14159 * radius_ * radius_;
+            return 3.14159 * radius * radius;
         }
+
+    private:
+        double radius { 0.0 };
     };
 
-    struct Rectangle final : public Shape
+    struct Rectangle final : Shape
     {
-        double w_, h_;
-        Rectangle(const double w, const double h) : w_(w), h_(h) {}
+        Rectangle(const double w, const double h) : wight(w), height(h) {}
 
         [[nodiscard]]
         double area() const override {
-            return w_ * h_;
+            return wight * height;
         }
+
+    private:
+        double wight { 0.0 };
+        double height { 0.0 };
     };
 
     class Picture
@@ -110,40 +199,48 @@ namespace polymorphic_tests
         std::vector<std::polymorphic<Shape>> shapes;
     public:
 
-        void add_circle(double r) {
+        void addCircle(double r) {
             shapes.emplace_back(std::in_place_type<Circle>, r);
         }
 
-        void add_rectangle(double w, double h) {
+        void addRectangle(double w, double h) {
             shapes.emplace_back(std::in_place_type<Rectangle>, w, h);
         }
 
-        double total_area() const
+        double totalArea() const
         {
-            double sum = 0;
-            for (const auto& s : shapes)
-                sum += s->area();
-            return sum;
+            return std::accumulate(shapes.cbegin(), shapes.cend(), 0.0, []
+                (const double val, const std::polymorphic<Shape>& shape)
+            {
+                return val + shape->area();
+            });
+        }
+
+        size_t Size() const noexcept
+        {
+            return shapes.size();
         }
     };
 
     void demo()
     {
         Picture a;
-        a.add_circle(5.0);
-        a.add_rectangle(3.0, 4.0);
+        a.addCircle(5.0);
+        a.addRectangle(3.0, 4.0);
 
-        Picture b = a;  // deep copies both shapes, preserving their dynamic types
-        a.add_circle(1.0);
+        const Picture b = a;  // deep copies both shapes, preserving their dynamic types
+        a.addCircle(1.0);
 
-        assert(a.size() == 3);  // a has three shapes
-        assert(b.size() == 21);  // b is unchanged — it's an independent copy
-        assert(a.total_area() != b.total_area());
+        Assert(a.Size() == 3);  // a has three shapes
+        Assert(b.Size() == 2);  // b is unchanged — it's an independent copy
+        Assert(a.totalArea() != b.totalArea());
+
+        std::cout << a.totalArea() << std::endl;
     }
 }
 
 void Polymorphic::TestAll()
 {
-    // using_std_unique_ptr
-    polymorphic_tests::demo();
+    using_std_unique_ptr::demo();
+    // polymorphic_tests::demo();
 }
