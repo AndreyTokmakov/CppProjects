@@ -35,6 +35,7 @@ Description : DataStructures
 #include "Optional/Optional.h"
 #include "Expected/Expected.h"
 #include "Logger/Logger.h"
+#include "RateLimiter/RateLimiter.hpp"
 #include "RingBuffer/RingBuffer.h"
 #include "RingBuffer/RingBufferEx.h"
 #include "RingBuffer/RingBufferExAtomic.h"
@@ -126,6 +127,8 @@ int main([[maybe_unused]] int argc,
 	// free_list::TestAll();
 	// free_list_thread_safe::TestAll();
 
+	rate_limiter::TestAll();
+
     // CircularBuffers::TEST_ALL();
     // RingBuffer::TestAll();
     // RingBufferEx::TestAll();
@@ -187,5 +190,5 @@ int main([[maybe_unused]] int argc,
 
     // barrier::TestAll();
     // semaphore::TestAll();
-	synchronized_wrapper::TestAll();
+	// synchronized_wrapper::TestAll();
 }
