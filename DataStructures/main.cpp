@@ -18,6 +18,7 @@ Description : DataStructures
 #include "ExecutorAdapter/ExecutorAdapter.h"
 #include "ExecutorAdapter2/ExecutorAdapter2.h"
 #include "HashTable/HashTable.h"
+#include "HitCounter/HitCounter.hpp"
 #include "Finalizers/Finalizers.h"
 #include "BinaryTree/BinaryTree.h"
 #include "BitSet/BitSet.h"
