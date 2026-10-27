@@ -64,15 +64,14 @@ namespace
         constexpr static counter_t WindowSize { 300 };
 
         // { timestamp, number_of_hits_at_this_timestamp )
-        std::array<std::pair<timestamp_t, counter_t>, WindowSize> slots;
+        std::array<std::pair<timestamp_t, counter_t>, WindowSize> slots {};
 
     public:
 
-        void hit (const timestamp_t timestamp)
+        void hit(const timestamp_t timestamp)
         {
             const counter_t index = timestamp % WindowSize;
-            if (auto& [storedTimestamp, count] = slots [index]; storedTimestamp != timestamp)
-            {
+            if (auto& [storedTimestamp, count] = slots[index]; storedTimestamp != timestamp) {
                 storedTimestamp = timestamp;
                 count = 1;
             } else {
@@ -80,7 +79,7 @@ namespace
             }
         }
 
-        counter_t getHits (const timestamp_t timestamp) const
+        counter_t getHits(const timestamp_t timestamp) const
         {
             counter_t total = 0;
             for (const auto& [storedTimestamp, count]: slots)
