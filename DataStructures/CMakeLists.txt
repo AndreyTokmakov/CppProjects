@@ -56,6 +56,7 @@ add_executable(${PROJECT_NAME}
 		TypeListChecker/TypeListChecker.cpp
 		Utilities/Long.cpp
         TwoSidedVector/TwoSidedVector.cpp
+		RandomizedSet/RandomizedSet.cpp
 		MinMaxStack/MinMaxStack.cpp
 		MinStack/MinStack.cpp
 		MPMCQueue/MPMCQueue.cpp

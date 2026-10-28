@@ -81,6 +81,7 @@ Description : DataStructures
 #include "Queues/Queues.hpp"
 #include "MeticsCollector/metrics.hpp"
 #include "CommandWrapper/CommandWrapper.hpp"
+#include "RandomizedSet/RandomizedSet.hpp"
 
 
 
@@ -125,10 +126,12 @@ int main([[maybe_unused]] int argc,
     // HeapWithComparator::TestAll();
     // CompressedPair::TestAll();
 
+	randomized_set::TestAll();
+
 	// free_list::TestAll();
 	// free_list_thread_safe::TestAll();
 
-	rate_limiter::TestAll();
+	// rate_limiter::TestAll();
 
     // CircularBuffers::TEST_ALL();
     // RingBuffer::TestAll();
