@@ -82,7 +82,7 @@ Description : DataStructures
 #include "MeticsCollector/metrics.hpp"
 #include "CommandWrapper/CommandWrapper.hpp"
 #include "RandomizedSet/RandomizedSet.hpp"
-
+#include "ThreadSafePriorityQueue/ThreadSafePriorityQueue.hpp"
 
 
 // TODO:
@@ -191,6 +191,8 @@ int main([[maybe_unused]] int argc,
     // Queues::Multithreading::RunTests();
 	// thread_safe_bounded_queue::TestAll();
 	// LockFreeQueue::TEST_ALL();
+
+	thread_safe_priority_queue::TestAll();
 
     // barrier::TestAll();
     // semaphore::TestAll();
