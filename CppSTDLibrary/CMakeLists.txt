@@ -24,6 +24,7 @@ add_executable(${PROJECT_NAME}
 		Chrono/Chrono.cpp
 		Chrono/TimeZones.cpp
 		Concepts/Concepts.cpp
+		Constant_Wrapper/Constant_Wrapper.cpp
 		CTAD/ClassTemplateArgumentDeduction.cpp
 		ConsoleInOut/ConsoleInOut.cpp
 		DateAndTime/DateAndTime.cpp
