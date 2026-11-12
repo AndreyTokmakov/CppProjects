@@ -77,6 +77,7 @@ add_executable(${PROJECT_NAME}
 		RingBuffer/RingBuffer_SPSC.cpp
 		StaticString/StaticString.cpp
 		StaticTable/StaticTable.cpp
+		MovingAverage/MovingAverage.cpp
 
 		Queues/Queues.cpp
 		Queues/PriorityDispatcher.cpp

@@ -83,6 +83,7 @@ Description : DataStructures
 #include "CommandWrapper/CommandWrapper.hpp"
 #include "RandomizedSet/RandomizedSet.hpp"
 #include "ThreadSafePriorityQueue/ThreadSafePriorityQueue.hpp"
+#include "MovingAverage/MovingAverage.hpp"
 
 
 // TODO:
@@ -126,7 +127,7 @@ int main([[maybe_unused]] int argc,
     // HeapWithComparator::TestAll();
     // CompressedPair::TestAll();
 
-	randomized_set::TestAll();
+	// randomized_set::TestAll();
 
 	// free_list::TestAll();
 	// free_list_thread_safe::TestAll();
@@ -175,7 +176,7 @@ int main([[maybe_unused]] int argc,
 
 	// state_manager::TestAll();
 
-
+	moving_average::TestAll();
 
 	// task_executor::TestAll();
 	// tast_sbo::TestAll();
@@ -192,7 +193,7 @@ int main([[maybe_unused]] int argc,
 	// thread_safe_bounded_queue::TestAll();
 	// LockFreeQueue::TEST_ALL();
 
-	thread_safe_priority_queue::TestAll();
+	// thread_safe_priority_queue::TestAll();
 
     // barrier::TestAll();
     // semaphore::TestAll();
