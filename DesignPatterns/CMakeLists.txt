@@ -131,6 +131,8 @@ add_executable(${PROJECT_NAME}
 		PImpl/PImplDemo1.cpp
 		PImpl/PImplDemo2.cpp
 
+		ImmutableObjects/ImmutableObjects.cpp
+
 		Monostate/Monostate.cpp
 		NVI/NVI_SimpleExample.cpp
 		Decorator/MoneyTaxesDecoratorOne.cpp

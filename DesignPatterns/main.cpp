@@ -58,6 +58,7 @@ Description : Software design patterns C++ test project
 #include "FactoryClasses/FactoryClasses.h"
 #include "Factory_Registry/Factory_Registry.hpp"
 #include "FactoryMethod_TypeSequence/FactoryMethod_TypeSequence.hpp"
+#include "ImmutableObjects/ImmutableObjects.hpp"
 
 
 int main([[maybe_unused]]  int argc,
@@ -96,7 +97,7 @@ int main([[maybe_unused]]  int argc,
     // Strategy::Test();
     // Policy::Test();
     // chain_of_responsibility::TestAll();
-    command::testAll();
+    // command::testAll();
     // Iterator::Test();
     // interpreter::TestAll();
     // Mediator::TestAll();
@@ -123,5 +124,7 @@ int main([[maybe_unused]]  int argc,
     // ExecutorAdapter::TestAll();
 	// NamedParameter::Test();
     // Filter::TestAll();
+
+    immutable_objects::TestAll();
 }
 
