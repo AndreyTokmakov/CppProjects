@@ -17,6 +17,7 @@ list(APPEND EXTRA_LIBS stdc++exp)
 
 add_subdirectory(Algorithms)
 add_subdirectory(AlgorithmsTests)
+add_subdirectory(BugsAndFailureCases)
 add_subdirectory(Collections)
 # add_subdirectory(Coroutines)
 add_subdirectory(CLI)
