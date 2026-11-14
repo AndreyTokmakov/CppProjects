@@ -84,6 +84,7 @@ Description : DataStructures
 #include "RandomizedSet/RandomizedSet.hpp"
 #include "ThreadSafePriorityQueue/ThreadSafePriorityQueue.hpp"
 #include "MovingAverage/MovingAverage.hpp"
+#include "AsynchExecutor/AsynchExecutor.hpp"
 
 
 // TODO:
@@ -176,8 +177,9 @@ int main([[maybe_unused]] int argc,
 
 	// state_manager::TestAll();
 
-	moving_average::TestAll();
+	// moving_average::TestAll();
 
+	asynch_executor::testAll();
 	// task_executor::TestAll();
 	// tast_sbo::TestAll();
 

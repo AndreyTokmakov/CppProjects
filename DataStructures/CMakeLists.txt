@@ -78,6 +78,7 @@ add_executable(${PROJECT_NAME}
 		StaticString/StaticString.cpp
 		StaticTable/StaticTable.cpp
 		MovingAverage/MovingAverage.cpp
+		AsynchExecutor/AsynchExecutor.cpp
 
 		Queues/Queues.cpp
 		Queues/PriorityDispatcher.cpp
