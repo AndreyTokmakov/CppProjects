@@ -126,7 +126,7 @@ int main([[maybe_unused]] int argc,
     // MinHeap::TestAll();
     // Invoker::TestAll();
     // HeapWithComparator::TestAll();
-    // CompressedPair::TestAll();
+    CompressedPair::TestAll();
 
 	// randomized_set::TestAll();
 
@@ -179,7 +179,7 @@ int main([[maybe_unused]] int argc,
 
 	// moving_average::TestAll();
 
-	asynch_executor::testAll();
+	// asynch_executor::testAll();
 	// task_executor::TestAll();
 	// tast_sbo::TestAll();
 

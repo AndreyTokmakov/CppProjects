@@ -59,6 +59,7 @@ Description : Software design patterns C++ test project
 #include "Factory_Registry/Factory_Registry.hpp"
 #include "FactoryMethod_TypeSequence/FactoryMethod_TypeSequence.hpp"
 #include "ImmutableObjects/ImmutableObjects.hpp"
+#include "SignalSlot/SignalSlot.hpp"
 
 
 int main([[maybe_unused]]  int argc,
@@ -125,6 +126,8 @@ int main([[maybe_unused]]  int argc,
 	// NamedParameter::Test();
     // Filter::TestAll();
 
-    immutable_objects::TestAll();
+    // immutable_objects::TestAll();
+
+    SignalSlot::TestAll();
 }
 

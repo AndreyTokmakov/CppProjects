@@ -127,6 +127,11 @@ add_executable(${PROJECT_NAME}
 		Observer/ObserverSubject.cpp
 		Visitor/CarVisitor.cpp
 
+		SignalSlot/SignalSlot.cpp
+		SignalSlot/SignalSlotBasic.cpp
+		SignalSlot/SignalSlotAdvanced.cpp
+		SignalSlot/SignalSlotTrading.cpp
+
 		PImpl/PImpl.cpp
 		PImpl/PImplDemo1.cpp
 		PImpl/PImplDemo2.cpp
