@@ -98,6 +98,7 @@ Description : Cpp STD lib
 #include "Templates/Templates.hpp"
 #include "Volatile/VolatileTests.h"
 #include "StaticAsserts/StaticAsserts.h"
+#include "Hazard_Pointers/Hazard_Pointers.hpp"
 
 #include <vector>
 #include <map>
@@ -139,7 +140,7 @@ int main([[maybe_unused]] const int argc,
     // ConstConstexprMutable::TestAll();
     // CompileTimeProgramming::TestAll();
     // Constexpr::TestAll();
-    constant_wrappers::TestAll();
+    // constant_wrappers::TestAll();
     // CopyElision::TestAll();
     // DeducingThis::TestAll();
     // debugging::TestAll();
@@ -170,7 +171,6 @@ int main([[maybe_unused]] const int argc,
     // Numbers::TestAll();
     // Math::TestAll();
     // memory::TestAll();
-    // memory::indirect::TestAll();
     // Metaprogramming::TestAll();
     // InlineNamespaces::TestAll();
     // NumericLimits::TestAll();
@@ -213,6 +213,8 @@ int main([[maybe_unused]] const int argc,
 
     // Reflection::TestAll();
     // Polymorphic::TestAll();
+    // memory::indirect::TestAll();
+    memory::hazard_pointers::TestAll();
 
 
 

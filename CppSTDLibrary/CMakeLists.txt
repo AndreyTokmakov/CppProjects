@@ -89,12 +89,14 @@ add_executable(${PROJECT_NAME}
 		Polymorphic/Polymorphic.cpp
 
 		Indirect/Indirect.cpp
-		Indirect/pImpl.cpp
+		Indirect/PImpl_Example.cpp
 
 		Random/Random.cpp
 
 		Ranges_Views/Ranges.cpp
 		Ranges_Views/Store.cpp
+
+		Hazard_Pointers/Hazard_Pointers.cpp
 
 		ReferenceWrapper/ReferenceWrapper.cpp
 		SharedPtr/SharedPtrTests.cpp

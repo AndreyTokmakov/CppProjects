@@ -13,7 +13,6 @@ Description : indirect.hpp
 namespace memory::indirect
 {
     void TestAll();
-    namespace pimpl { void TestAll(); }
 }
 
 #endif //CPPPROJECTS_INDIRECT_HPP

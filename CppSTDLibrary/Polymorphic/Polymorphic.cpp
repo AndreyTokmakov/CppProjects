@@ -44,16 +44,31 @@ namespace using_std_unique_ptr
         virtual double area() const = 0;
     };
 
-    struct Circle final : IShape
+    template<typename Base, typename Derived>
+    struct Clonable: public Base
+    {
+    private:
+
+        [[nodiscard]]
+        const Derived &self() const noexcept
+        {
+            return *static_cast<const Derived *const>(this);
+        }
+
+    public:
+
+        virtual ~Clonable() = default;
+
+        [[nodiscard]]
+        std::unique_ptr<Base> clone() const override {
+            return std::make_unique<Derived>(this->self());
+        }
+    };
+
+    struct Circle final : Clonable<IShape, Circle>
     {
         explicit Circle(const double r) : radius(r)
         {
-        }
-
-        [[nodiscard]]
-        std::unique_ptr<IShape> clone() const override
-        {
-            return std::make_unique<Circle>(*this);
         }
 
         [[nodiscard]]
@@ -66,16 +81,10 @@ namespace using_std_unique_ptr
         double radius { 0.0 };
     };
 
-    struct Rectangle final : IShape
+    struct Rectangle final : Clonable<IShape, Rectangle>
     {
         Rectangle(const double w, const double h) : wight(w), height(h)
         {
-        }
-
-        [[nodiscard]]
-        std::unique_ptr<IShape> clone() const override
-        {
-            return std::make_unique<Rectangle>(*this);
         }
 
         [[nodiscard]]
@@ -162,6 +171,7 @@ namespace polymorphic_tests
     struct Shape
     {
         virtual ~Shape() = default;
+
         [[nodiscard]]
         virtual double area() const = 0;
     };
